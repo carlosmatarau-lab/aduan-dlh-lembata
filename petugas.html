@@ -1,18 +1,23 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Portal Operasional & Tindak Lanjut Petugas - DLH Kabupaten Lembata</title>
-  <meta name="description" content="Dashboard khusus petugas Dinas Lingkungan Hidup Kabupaten Lembata untuk verifikasi lapangan, tindak lanjut penanganan, dan penerbitan berita acara pengaduan lingkungan.">
+  <meta name="description"
+    content="Dashboard khusus petugas Dinas Lingkungan Hidup Kabupaten Lembata untuk verifikasi lapangan, tindak lanjut penanganan, dan penerbitan berita acara pengaduan lingkungan.">
 
   <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
 
   <!-- Leaflet GIS CSS -->
-  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
 
   <style>
     /* ===================================================================
@@ -44,9 +49,9 @@
       --radius-md: 12px;
       --radius-lg: 16px;
       --radius-xl: 20px;
-      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
-      --shadow-md: 0 4px 14px -2px rgba(0,0,0,0.1);
-      --shadow-lg: 0 12px 28px -4px rgba(0,0,0,0.14);
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 14px -2px rgba(0, 0, 0, 0.1);
+      --shadow-lg: 0 12px 28px -4px rgba(0, 0, 0, 0.14);
     }
 
     * {
@@ -82,8 +87,11 @@
     .auth-gate-wrap::before {
       content: '';
       position: absolute;
-      top: 0; left: 0; right: 0; bottom: 0;
-      background-image: 
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background-image:
         linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
         linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
       background-size: 36px 36px;
@@ -104,8 +112,15 @@
     }
 
     @keyframes authCardIn {
-      from { transform: translateY(20px) scale(0.97); opacity: 0; }
-      to { transform: translateY(0) scale(1); opacity: 1; }
+      from {
+        transform: translateY(20px) scale(0.97);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0) scale(1);
+        opacity: 1;
+      }
     }
 
     .auth-card-top {
@@ -128,7 +143,7 @@
       align-items: center;
       justify-content: center;
       font-size: 2rem;
-      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+      box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2);
     }
 
     .auth-title {
@@ -236,9 +251,21 @@
     }
 
     @keyframes shake {
-      0%, 100% { transform: translateX(0); }
-      20%, 60% { transform: translateX(-6px); }
-      40%, 80% { transform: translateX(6px); }
+
+      0%,
+      100% {
+        transform: translateX(0);
+      }
+
+      20%,
+      60% {
+        transform: translateX(-6px);
+      }
+
+      40%,
+      80% {
+        transform: translateX(6px);
+      }
     }
 
     .btn-submit-auth {
@@ -291,7 +318,8 @@
        2. INTERNAL OFFICER DASHBOARD (TERLINDUNGI SETELAH LOGIN)
        =================================================================== */
     #officerAppContainer {
-      display: none; /* Disembunyikan sampai pengguna memasukkan password */
+      display: none;
+      /* Disembunyikan sampai pengguna memasukkan password */
       min-height: 100vh;
       flex-direction: column;
     }
@@ -301,7 +329,7 @@
       background: linear-gradient(135deg, #022c22 0%, #064e3b 60%, #065f46 100%);
       color: #ffffff;
       padding: 14px 24px;
-      box-shadow: 0 4px 20px rgba(2,44,34,0.3);
+      box-shadow: 0 4px 20px rgba(2, 44, 34, 0.3);
       position: sticky;
       top: 0;
       z-index: 1000;
@@ -327,15 +355,15 @@
     .brand-emblem {
       width: 44px;
       height: 44px;
-      background: rgba(255,255,255,0.12);
-      border: 1.5px solid rgba(255,255,255,0.25);
+      background: rgba(255, 255, 255, 0.12);
+      border: 1.5px solid rgba(255, 255, 255, 0.25);
       border-radius: var(--radius-md);
       display: flex;
       align-items: center;
       justify-content: center;
       font-size: 1.5rem;
       backdrop-filter: blur(8px);
-      box-shadow: inset 0 1px 2px rgba(255,255,255,0.2);
+      box-shadow: inset 0 1px 2px rgba(255, 255, 255, 0.2);
     }
 
     .brand-text h1 {
@@ -375,8 +403,8 @@
     }
 
     .officer-session-pill {
-      background: rgba(255,255,255,0.1);
-      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255, 255, 255, 0.1);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       padding: 6px 14px;
       border-radius: 999px;
       display: flex;
@@ -391,19 +419,27 @@
       height: 8px;
       background: #10b981;
       border-radius: 50%;
-      box-shadow: 0 0 0 0 rgba(16,185,129,0.7);
+      box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
       animation: officerPulse 1.8s infinite;
     }
 
     @keyframes officerPulse {
-      0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.7); }
-      70% { box-shadow: 0 0 0 8px rgba(16,185,129,0); }
-      100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+      0% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
+      }
+
+      70% {
+        box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
+      }
+
+      100% {
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
+      }
     }
 
     .btn-header-tool {
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.2);
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.2);
       color: #ffffff;
       padding: 7px 12px;
       border-radius: var(--radius-sm);
@@ -418,7 +454,7 @@
     }
 
     .btn-header-tool:hover {
-      background: rgba(255,255,255,0.22);
+      background: rgba(255, 255, 255, 0.22);
       transform: translateY(-1px);
     }
 
@@ -545,11 +581,25 @@
       background: #cbd5e1;
     }
 
-    .kpi-card.kpi-total::before { background: #059669; }
-    .kpi-card.kpi-urgent::before { background: #dc2626; }
-    .kpi-card.kpi-investigasi::before { background: #f59e0b; }
-    .kpi-card.kpi-penanganan::before { background: #2563eb; }
-    .kpi-card.kpi-selesai::before { background: #16a34a; }
+    .kpi-card.kpi-total::before {
+      background: #059669;
+    }
+
+    .kpi-card.kpi-urgent::before {
+      background: #dc2626;
+    }
+
+    .kpi-card.kpi-investigasi::before {
+      background: #f59e0b;
+    }
+
+    .kpi-card.kpi-penanganan::before {
+      background: #2563eb;
+    }
+
+    .kpi-card.kpi-selesai::before {
+      background: #16a34a;
+    }
 
     .kpi-label {
       font-size: 0.78rem;
@@ -747,7 +797,7 @@
       font-size: 0.74rem;
       font-weight: 700;
       color: #064e3b;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
     }
 
     .sop-step-node .node-idx {
@@ -804,7 +854,7 @@
     .search-input-wrap input:focus {
       border-color: #059669;
       background: #ffffff;
-      box-shadow: 0 0 0 3px rgba(5,150,105,0.12);
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.12);
     }
 
     .search-icon {
@@ -883,7 +933,8 @@
     /* Status Filter Tabs - Modern Segmented Pills TANPA SCROLLBAR GLITCH */
     .status-tab-bar {
       display: flex;
-      flex-wrap: wrap; /* Menghilangkan scrollbar dengan wrapping rapi */
+      flex-wrap: wrap;
+      /* Menghilangkan scrollbar dengan wrapping rapi */
       gap: 8px;
       padding: 12px 20px;
       background: #f8fafc;
@@ -956,12 +1007,12 @@
       display: flex;
       flex-direction: column;
       gap: 14px;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.04);
     }
 
     .case-card:hover {
       border-color: #cbd5e1;
-      box-shadow: 0 8px 24px -4px rgba(0,0,0,0.09);
+      box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.09);
       transform: translateY(-1px);
     }
 
@@ -1040,12 +1091,41 @@
       border: 1px solid transparent;
     }
 
-    .badge-baru { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
-    .badge-verif { background: #fef3c7; color: #92400e; border-color: #fde68a; }
-    .badge-investigasi { background: #ffedd5; color: #c2410c; border-color: #fed7aa; }
-    .badge-tindak { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
-    .badge-selesai { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
-    .badge-ditolak { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+    .badge-baru {
+      background: #fee2e2;
+      color: #991b1b;
+      border-color: #fca5a5;
+    }
+
+    .badge-verif {
+      background: #fef3c7;
+      color: #92400e;
+      border-color: #fde68a;
+    }
+
+    .badge-investigasi {
+      background: #ffedd5;
+      color: #c2410c;
+      border-color: #fed7aa;
+    }
+
+    .badge-tindak {
+      background: #dbeafe;
+      color: #1e40af;
+      border-color: #bfdbfe;
+    }
+
+    .badge-selesai {
+      background: #dcfce7;
+      color: #166534;
+      border-color: #bbf7d0;
+    }
+
+    .badge-ditolak {
+      background: #f1f5f9;
+      color: #475569;
+      border-color: #e2e8f0;
+    }
 
     /* Visual Case Pipeline Progress Mini-Stepper */
     .case-pipeline-stepper {
@@ -1132,7 +1212,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
     }
 
     .case-cat-pill {
@@ -1145,7 +1225,7 @@
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      box-shadow: 0 1px 2px rgba(6,78,59,0.05);
+      box-shadow: 0 1px 2px rgba(6, 78, 59, 0.05);
     }
 
     /* 4. Kotak Isi Laporan Masyarakat */
@@ -1239,7 +1319,7 @@
       display: flex;
       flex-direction: column;
       gap: 8px;
-      box-shadow: 0 1px 3px rgba(6,78,59,0.05);
+      box-shadow: 0 1px 3px rgba(6, 78, 59, 0.05);
     }
 
     .official-box-row {
@@ -1270,7 +1350,8 @@
       justify-content: space-between;
     }
 
-    .actions-group-left, .actions-group-right {
+    .actions-group-left,
+    .actions-group-right {
       display: flex;
       gap: 8px;
       flex-wrap: wrap;
@@ -1312,7 +1393,7 @@
       align-items: center;
       gap: 6px;
       text-decoration: none;
-      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
       transition: all 0.2s;
     }
 
@@ -1355,7 +1436,7 @@
       left: 0;
       right: 0;
       bottom: 0;
-      background: rgba(15,23,42,0.7);
+      background: rgba(15, 23, 42, 0.7);
       backdrop-filter: blur(4px);
       z-index: 2000;
       display: none;
@@ -1382,8 +1463,15 @@
     }
 
     @keyframes modalFadeIn {
-      from { transform: scale(0.95); opacity: 0; }
-      to { transform: scale(1); opacity: 1; }
+      from {
+        transform: scale(0.95);
+        opacity: 0;
+      }
+
+      to {
+        transform: scale(1);
+        opacity: 1;
+      }
     }
 
     .modal-header {
@@ -1405,7 +1493,7 @@
     }
 
     .btn-close-modal {
-      background: rgba(255,255,255,0.15);
+      background: rgba(255, 255, 255, 0.15);
       border: none;
       color: #ffffff;
       width: 32px;
@@ -1419,7 +1507,7 @@
     }
 
     .btn-close-modal:hover {
-      background: rgba(255,255,255,0.3);
+      background: rgba(255, 255, 255, 0.3);
     }
 
     .modal-body {
@@ -1496,7 +1584,7 @@
 
     .form-control:focus {
       border-color: #059669;
-      box-shadow: 0 0 0 3px rgba(5,150,105,0.1);
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.1);
     }
 
     textarea.form-control {
@@ -1527,24 +1615,49 @@
 
     /* ===================================================================
        OFFICIAL PRINTABLE INSPECTION REPORT VIEW (KOP RESMI DLH LEMBATA)
+       FIT STRICTLY ONTO 1 SINGLE A4 PAGE (SATU HALAMAN PAS)
        =================================================================== */
+    @page {
+      size: A4 portrait;
+      margin: 8mm 14mm 8mm 14mm;
+    }
+
     @media print {
+
+      html,
+      body {
+        height: 100%;
+        margin: 0 !important;
+        padding: 0 !important;
+        overflow: hidden !important;
+      }
+
       body * {
         visibility: hidden;
       }
-      #printArea, #printArea * {
+
+      #printArea,
+      #printArea * {
         visibility: visible;
       }
+
       #printArea {
         display: block !important;
         position: absolute;
         left: 0;
         top: 0;
         width: 100%;
+        box-sizing: border-box;
         background: #ffffff;
         color: #000000;
-        padding: 8mm 14mm 12mm 14mm;
+        padding: 0;
+        font-family: 'Times New Roman', Times, serif;
+        font-size: 9.5pt;
+        line-height: 1.25;
+        page-break-after: avoid;
+        page-break-inside: avoid;
       }
+
       .no-print {
         display: none !important;
       }
@@ -1555,7 +1668,8 @@
       background: #ffffff;
       color: #000000;
       font-family: 'Times New Roman', Times, serif;
-      line-height: 1.45;
+      line-height: 1.25;
+      font-size: 9.5pt;
     }
 
     /* KOP SURAT RESMI PEMERINTAH KABUPATEN LEMBATA */
@@ -1563,14 +1677,14 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 16px;
+      gap: 12px;
       position: relative;
-      margin-bottom: 2px;
+      margin-bottom: 1px;
     }
 
     .print-kop-logo-box {
-      width: 82px;
-      height: 98px;
+      width: 62px;
+      height: 76px;
       flex-shrink: 0;
       display: flex;
       align-items: center;
@@ -1580,139 +1694,146 @@
     .print-kop-text-box {
       flex: 1;
       text-align: center;
-      padding-right: 15px;
+      padding-right: 8px;
     }
 
     .print-kop-text-box h2 {
       font-family: Arial, Helvetica, sans-serif;
-      font-size: 13.5pt;
+      font-size: 11.5pt;
       font-weight: 800;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.5px;
       margin: 0;
       text-transform: uppercase;
       color: #000000;
-      line-height: 1.25;
+      line-height: 1.15;
     }
 
     .print-kop-text-box h1 {
       font-family: Arial, Helvetica, sans-serif;
-      font-size: 16pt;
+      font-size: 14pt;
       font-weight: 900;
-      letter-spacing: 0.8px;
-      margin: 2px 0 3px 0;
+      letter-spacing: 0.6px;
+      margin: 1px 0 2px 0;
       text-transform: uppercase;
       color: #000000;
-      line-height: 1.25;
+      line-height: 1.15;
     }
 
     .print-kop-text-box p.kop-address {
       font-family: 'Times New Roman', Times, serif;
-      font-size: 9.5pt;
+      font-size: 8.5pt;
       margin: 0;
       color: #000000;
-      line-height: 1.35;
+      line-height: 1.2;
     }
 
     .print-kop-text-box p.kop-contact {
       font-family: 'Times New Roman', Times, serif;
-      font-size: 9.5pt;
+      font-size: 8.5pt;
       margin: 0;
       color: #000000;
-      line-height: 1.35;
+      line-height: 1.2;
     }
 
     /* GARIS TEBAL GANDA PEMISAH KOP SURAT RESMI KEDINASAN */
     .print-kop-divider {
       border: none;
-      border-top: 3.5px solid #000000;
-      border-bottom: 1.5px solid #000000;
-      height: 6px;
-      margin: 6px 0 16px 0;
+      border-top: 3px solid #000000;
+      border-bottom: 1px solid #000000;
+      height: 4px;
+      margin: 3px 0 6px 0;
     }
 
     .print-title {
       text-align: center;
-      margin: 12px 0 16px 0;
+      margin: 4px 0 6px 0;
     }
 
     .print-title h3 {
       font-family: Arial, Helvetica, sans-serif;
-      font-size: 13pt;
+      font-size: 11.5pt;
       font-weight: bold;
       text-decoration: underline;
       margin: 0;
       text-transform: uppercase;
-      letter-spacing: 0.8px;
+      letter-spacing: 0.6px;
+      line-height: 1.2;
     }
 
     .print-title h4 {
       font-family: Arial, Helvetica, sans-serif;
-      font-size: 11pt;
+      font-size: 10pt;
       font-weight: bold;
-      margin: 3px 0;
+      margin: 1px 0;
       text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.4px;
+      line-height: 1.2;
     }
 
     .print-title p {
-      font-size: 10pt;
-      margin: 2px 0 0 0;
+      font-size: 9pt;
+      margin: 1px 0 0 0;
       font-family: 'Times New Roman', Times, serif;
+      line-height: 1.2;
     }
 
     .print-paragraph {
-      font-size: 11pt;
-      line-height: 1.5;
-      margin-bottom: 8px;
+      font-size: 9.5pt;
+      line-height: 1.28;
+      margin-bottom: 3px;
     }
 
     .print-parties-table {
       width: 100%;
       border-collapse: collapse;
-      margin: 6px 0 10px 0;
-      font-size: 11pt;
+      margin: 2px 0 4px 0;
+      font-size: 9.5pt;
+      line-height: 1.2;
     }
 
     .print-parties-table td {
-      padding: 2px 4px;
+      padding: 1px 2px;
       vertical-align: top;
     }
 
     .print-table {
       width: 100%;
       border-collapse: collapse;
-      margin: 10px 0 16px 0;
-      font-size: 10.5pt;
+      margin: 4px 0 6px 0;
+      font-size: 9pt;
+      line-height: 1.22;
     }
 
-    .print-table td, .print-table th {
-      padding: 5px 8px;
+    .print-table td,
+    .print-table th {
+      padding: 2px 5px;
       vertical-align: top;
       border: 1px solid #000000;
     }
 
     .print-table td:first-child {
-      width: 30%;
+      width: 28%;
       font-weight: bold;
-      background: #f9f9f9;
+      background: #fbfbfb;
     }
 
     .print-table td:nth-child(2) {
       width: 3%;
       text-align: center;
-      background: #f9f9f9;
+      background: #fbfbfb;
     }
 
     .print-signature-section {
-      margin-top: 24px;
+      margin-top: 10px;
       page-break-inside: avoid;
-      font-size: 11pt;
+      font-size: 9.5pt;
+      line-height: 1.2;
     }
 
     .print-sign-row {
       display: flex;
       justify-content: space-between;
-      margin-bottom: 24px;
+      margin-bottom: 8px;
     }
 
     .print-sign-col {
@@ -1721,7 +1842,7 @@
     }
 
     .print-sign-space {
-      height: 65px;
+      height: 38px;
     }
 
     .print-sign-acknowledge {
@@ -1752,11 +1873,19 @@
     }
 
     @keyframes toastSlide {
-      from { transform: translateY(100%); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
+      from {
+        transform: translateY(100%);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
     }
   </style>
 </head>
+
 <body>
 
   <!-- ===================================================================
@@ -1776,12 +1905,13 @@
 
       <div class="auth-card-body">
         <form id="formOfficerLogin">
-          
+
           <div class="auth-group">
             <label for="authUserId">Nama Petugas / NIP <span style="color: red;">*</span>:</label>
             <div class="auth-input-wrap">
               <span class="auth-input-icon">👤</span>
-              <input type="text" id="authUserId" class="auth-input" value="" required placeholder="Ketik nama lengkap & NIP / jabatan petugas...">
+              <input type="text" id="authUserId" class="auth-input" value="" required
+                placeholder="Ketik nama lengkap & NIP / jabatan petugas...">
             </div>
           </div>
 
@@ -1790,7 +1920,8 @@
             <div class="auth-input-wrap">
               <span class="auth-input-icon">🔑</span>
               <input type="password" id="authPassword" class="auth-input" required placeholder="Masukkan kata sandi...">
-              <button type="button" class="btn-toggle-eye" id="btnTogglePassword" title="Tampilkan / Sembunyikan Kata Sandi">👁️</button>
+              <button type="button" class="btn-toggle-eye" id="btnTogglePassword"
+                title="Tampilkan / Sembunyikan Kata Sandi">👁️</button>
             </div>
           </div>
 
@@ -1842,7 +1973,8 @@
             <span id="headerOfficerName">Petugas Lapangan</span>
           </div>
 
-          <button type="button" class="btn-header-tool" id="btnSyncGas" title="Sinkronkan data dengan Google Apps Script">
+          <button type="button" class="btn-header-tool" id="btnSyncGas"
+            title="Sinkronkan data dengan Google Apps Script">
             🔄 Sinkronkan Cloud
           </button>
 
@@ -1854,7 +1986,8 @@
             🌐 Portal Publik Warga ↗
           </a>
 
-          <button type="button" class="btn-header-tool btn-logout" id="btnLogoutOfficer" title="Kunci portal dan keluar sesi">
+          <button type="button" class="btn-header-tool btn-logout" id="btnLogoutOfficer"
+            title="Kunci portal dan keluar sesi">
             🔒 Kunci / Keluar
           </button>
         </div>
@@ -1871,7 +2004,8 @@
           <button type="button" class="btn-switch-officer" id="btnOpenSwitchModal">Ubah Nama Petugas</button>
         </div>
         <div>
-          <a href="https://docs.google.com/spreadsheets/d/1yA_6oYQyZ3gK4wZp8n6jR2X5-Q_x7m1a/edit" target="_blank" class="btn-switch-officer" style="color: #2563eb;">
+          <a href="https://docs.google.com/spreadsheets/d/1yA_6oYQyZ3gK4wZp8n6jR2X5-Q_x7m1a/edit" target="_blank"
+            class="btn-switch-officer" style="color: #2563eb;">
             📊 Buka Database Google Spreadsheet DLH ↗
           </a>
         </div>
@@ -1896,7 +2030,8 @@
           </div>
         </div>
 
-        <div class="kpi-card kpi-urgent" data-filter="Aduan Diterima" title="Klik untuk menyaring aduan baru yang perlu verifikasi">
+        <div class="kpi-card kpi-urgent" data-filter="Aduan Diterima"
+          title="Klik untuk menyaring aduan baru yang perlu verifikasi">
           <div class="kpi-label">
             <span>Perlu Verifikasi</span>
             <span class="kpi-icon">🚨</span>
@@ -1908,7 +2043,8 @@
           </div>
         </div>
 
-        <div class="kpi-card kpi-investigasi" data-filter="Sedang Diverifikasi" title="Klik untuk menyaring kasus dalam investigasi lapangan">
+        <div class="kpi-card kpi-investigasi" data-filter="Sedang Diverifikasi"
+          title="Klik untuk menyaring kasus dalam investigasi lapangan">
           <div class="kpi-label">
             <span>Investigasi Lapangan</span>
             <span class="kpi-icon">🔍</span>
@@ -1920,7 +2056,8 @@
           </div>
         </div>
 
-        <div class="kpi-card kpi-penanganan" data-filter="Dalam Penanganan" title="Klik untuk menyaring kasus yang sedang ditangani fisik oleh tim DLH">
+        <div class="kpi-card kpi-penanganan" data-filter="Dalam Penanganan"
+          title="Klik untuk menyaring kasus yang sedang ditangani fisik oleh tim DLH">
           <div class="kpi-label">
             <span>Dalam Penanganan</span>
             <span class="kpi-icon">🚜</span>
@@ -1932,7 +2069,8 @@
           </div>
         </div>
 
-        <div class="kpi-card kpi-selesai" data-filter="Selesai" title="Klik untuk menyaring aduan yang sudah selesai teratasi">
+        <div class="kpi-card kpi-selesai" data-filter="Selesai"
+          title="Klik untuk menyaring aduan yang sudah selesai teratasi">
           <div class="kpi-label">
             <span>Selesai / Teratasi</span>
             <span class="kpi-icon">✅</span>
@@ -1958,7 +2096,7 @@
           </div>
           <div class="panel-body">
             <div id="officerMap"></div>
-            
+
             <div class="map-controls-strip">
               <button type="button" class="btn-map-toggle active" id="btnMapStreets">Peta Jalan</button>
               <button type="button" class="btn-map-toggle" id="btnMapSat">Citra Satelit Nyata</button>
@@ -1992,7 +2130,8 @@
             <h2 class="panel-title">
               <span>📋</span> Meja Kerja &amp; Tindak Lanjut Aduan
             </h2>
-            <span style="font-size: 0.78rem; font-weight: 700; color: #059669;" id="txtCountFiltered">Menampilkan 0 aduan</span>
+            <span style="font-size: 0.78rem; font-weight: 700; color: #059669;" id="txtCountFiltered">Menampilkan 0
+              aduan</span>
           </div>
 
           <!-- SOP WORKFLOW GUIDE BAR (ALUR TAHAPAN KERJA DLH LEMBATA) -->
@@ -2002,7 +2141,8 @@
                 <span>🧭</span>
                 <span>Standar Alur Tindak Lanjut Aduan DLH Lembata:</span>
               </div>
-              <span style="font-size: 0.7rem; color: #047857; font-weight: 600;">5 Tahap Investigasi &amp; Eksekusi</span>
+              <span style="font-size: 0.7rem; color: #047857; font-weight: 600;">5 Tahap Investigasi &amp;
+                Eksekusi</span>
             </div>
             <div class="sop-steps-chain">
               <div class="sop-step-node" title="Tahap 1: Laporan masyarakat masuk ke sistem">
@@ -2036,8 +2176,10 @@
           <div class="filter-toolbar">
             <div class="search-input-wrap">
               <span class="search-icon">🔍</span>
-              <input type="text" id="officerSearchInput" placeholder="Cari ID tiket, desa, nama pelapor, atau kata kunci...">
-              <button type="button" class="btn-clear-search" id="btnClearSearch" title="Hapus pencarian">&times;</button>
+              <input type="text" id="officerSearchInput"
+                placeholder="Cari ID tiket, desa, nama pelapor, atau kata kunci...">
+              <button type="button" class="btn-clear-search" id="btnClearSearch"
+                title="Hapus pencarian">&times;</button>
             </div>
 
             <div class="filter-selects">
@@ -2069,7 +2211,8 @@
                 <option value="oldest">⌛ Aduan Terlama</option>
               </select>
 
-              <button type="button" id="btnResetFilters" class="btn-reset-filters" title="Reset filter dan tampilkan semua">
+              <button type="button" id="btnResetFilters" class="btn-reset-filters"
+                title="Reset filter dan tampilkan semua">
                 <span>🔄</span>
                 <span>Reset</span>
               </button>
@@ -2145,7 +2288,8 @@
             <div style="margin-top: 8px; display: flex; gap: 12px; align-items: center; font-size: 0.8rem;">
               <span>Pelapor: <strong id="modalDetailPelapor">-</strong></span>
               <span>Kontak: <strong id="modalDetailNoHp">-</strong></span>
-              <a id="modalDetailGpsLink" href="#" target="_blank" style="color: #059669; font-weight: 700; text-decoration: underline;">
+              <a id="modalDetailGpsLink" href="#" target="_blank"
+                style="color: #059669; font-weight: 700; text-decoration: underline;">
                 📍 Buka Titik GPS Google Maps
               </a>
             </div>
@@ -2174,7 +2318,8 @@
 
               <div class="form-group">
                 <label>Nama Petugas / Tim Lapangan <span style="color: red;">*</span></label>
-                <input type="text" id="editPetugasNama" class="form-control" required placeholder="Contoh: Petrus S., S.T. (Bidang Pengawasan LH)">
+                <input type="text" id="editPetugasNama" class="form-control" required
+                  placeholder="Contoh: Petrus S., S.T. (Bidang Pengawasan LH)">
               </div>
             </div>
 
@@ -2192,19 +2337,23 @@
 
             <div class="form-group">
               <label>Hasil Temuan Fakta di Lapangan (Berita Acara) <span style="color: red;">*</span></label>
-              <textarea id="editHasilVerifikasi" class="form-control" required placeholder="Jelaskan temuan tim saat mengecek lokasi secara faktual..."></textarea>
+              <textarea id="editHasilVerifikasi" class="form-control" required
+                placeholder="Jelaskan temuan tim saat mengecek lokasi secara faktual..."></textarea>
             </div>
 
             <div class="form-group">
               <label>Tindakan Teknis yang Dilakukan DLH <span style="color: red;">*</span></label>
-              <textarea id="editTindakanDLH" class="form-control" required placeholder="Contoh: Pengangkutan 2 truk sampah ke TPA, pemasangan papan larangan, teguran kepada pemilik tempat usaha..."></textarea>
+              <textarea id="editTindakanDLH" class="form-control" required
+                placeholder="Contoh: Pengangkutan 2 truk sampah ke TPA, pemasangan papan larangan, teguran kepada pemilik tempat usaha..."></textarea>
             </div>
 
-            <div class="modal-footer" style="padding: 16px 0 0 0; background: none; border-top: 1px solid #e2e8f0; display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end;">
+            <div class="modal-footer"
+              style="padding: 14px 0 0 0; background: none; border-top: 1px solid #e2e8f0; display: flex; gap: 8px; justify-content: flex-end;">
               <button type="button" class="btn-action-secondary" id="btnCancelModalTindak">Batal</button>
-              <button type="button" class="btn-action-secondary" id="btnPrintSingleCase" title="Cetak Berita Acara Verifikasi Pengaduan Resmi">📄 Cetak BA Aduan</button>
-              <button type="button" class="btn-action-secondary" id="btnPrintMalapariCase" title="Cetak Berita Acara Serah Terima Bibit / Barang Penghijauan Sesuai Format Lembata" style="color: #065f46; border-color: #a7f3d0; background: #ecfdf5;">🌱 Cetak BA Serah Terima</button>
-              <button type="submit" class="btn-action-primary" id="btnSubmitUpdate">💾 Simpan &amp; Publikasikan</button>
+              <button type="button" class="btn-action-secondary" id="btnPrintSingleCase"
+                title="Cetak Berita Acara Resmi DLH Lembata (1 Halaman)">📄 Cetak Berita Acara</button>
+              <button type="submit" class="btn-action-primary" id="btnSubmitUpdate">💾 Simpan &amp;
+                Publikasikan</button>
             </div>
           </form>
         </div>
@@ -2227,7 +2376,8 @@
 
           <div class="form-group">
             <label>Nama Lengkap Petugas / NIP / Bidang <span style="color: red;">*</span>:</label>
-            <input type="text" id="customOfficerInput" class="form-control" placeholder="Contoh: Nama Petugas, S.T. (Bidang Pengawasan LH)" autofocus>
+            <input type="text" id="customOfficerInput" class="form-control"
+              placeholder="Contoh: Nama Petugas, S.T. (Bidang Pengawasan LH)" autofocus>
           </div>
         </div>
         <div class="modal-footer">
@@ -2239,12 +2389,12 @@
 
   </div> <!-- End #officerAppContainer -->
 
-  <!-- OFFICIAL PRINTABLE INSPECTION REPORT SHEET (LEMBAR BERITA ACARA RESMI DLH LEMBATA) -->
+  <!-- OFFICIAL PRINTABLE INSPECTION REPORT SHEET (LEMBAR BERITA ACARA RESMI DLH LEMBATA - 1 HALAMAN PAS) -->
   <div id="printArea" class="printable-sheet">
     <!-- KOP SURAT DINAS RESMI PEMERINTAH KABUPATEN LEMBATA -->
     <div class="print-kop-wrapper">
       <div class="print-kop-logo-box">
-        <svg viewBox="0 0 100 120" width="76" height="92" style="display: block; margin: 0 auto;">
+        <svg viewBox="0 0 100 120" width="62" height="76" style="display: block; margin: 0 auto;">
           <!-- Perisai Kuning Emas Luar -->
           <path d="M 50 3 L 94 20 L 88 86 C 84 105, 50 117, 50 117 C 50 117, 16 105, 12 86 L 6 20 Z" fill="#d97706" stroke="#000000" stroke-width="1.8" />
           <!-- Perisai Dalam Putih -->
@@ -2290,7 +2440,7 @@
     <!-- PEMBUKA PARAGRAF -->
     <p class="print-paragraph">Kami yang bertanda tangan dibawah ini:</p>
 
-    <!-- TABEL PARA PIHAK (FORMAT RESMI FOTO) -->
+    <!-- TABEL PARA PIHAK (FORMAT RESMI KEDINASAN) -->
     <table class="print-parties-table">
       <tr>
         <td style="width: 14%;">Nama</td>
@@ -2303,7 +2453,7 @@
         <td id="printPihak1Jabatan">Petugas Pengawas &amp; Verifikator Lingkungan Hidup Kabupaten Lembata</td>
       </tr>
       <tr>
-        <td colspan="3" style="padding-top: 3px; padding-bottom: 8px; font-style: italic;">
+        <td colspan="3" style="padding-top: 1px; padding-bottom: 4px; font-style: italic;">
           Sebagai pihak yang melaksanakan verifikasi dan penanganan, selanjutnya disebut <strong style="font-style: normal;">PIHAK PERTAMA</strong>.
         </td>
       </tr>
@@ -2323,7 +2473,7 @@
         <td id="printPihak2Kontak">-</td>
       </tr>
       <tr>
-        <td colspan="3" style="padding-top: 3px; padding-bottom: 6px; font-style: italic;">
+        <td colspan="3" style="padding-top: 1px; padding-bottom: 3px; font-style: italic;">
           Sebagai pihak yang menyampaikan pengaduan / saksi lapangan, selanjutnya disebut <strong style="font-style: normal;">PIHAK KEDUA</strong>.
         </td>
       </tr>
@@ -2334,7 +2484,7 @@
       Pada hari ini, <strong id="printHariTeks">Kamis</strong> Tanggal <strong id="printTanggalTeks">Delapan</strong> Bulan <strong id="printBulanTeks">Oktober</strong> Tahun <strong id="printTahunTeks">Dua Ribu Dua Puluh Enam</strong>, bertempat di <span id="printTempatKejadian">Kabupaten Lembata</span>, PIHAK PERTAMA bersama PIHAK KEDUA telah melaksanakan pemeriksaan lapangan dan verifikasi pengaduan lingkungan hidup dengan rincian sebagai berikut:
     </p>
 
-    <!-- RINCIAN TABEL ADUAN (8 POIN LENGKAP) -->
+    <!-- RINCIAN TABEL ADUAN (8 POIN LENGKAP & PADAT) -->
     <table class="print-table" id="printTableAduan">
       <tr>
         <td>1. Nomor Registrasi</td>
@@ -2378,44 +2528,23 @@
       </tr>
     </table>
 
-    <!-- RINCIAN TABEL SERAH TERIMA BIBIT MALAPARI (JIKA MODE SERAH TERIMA DIAKTIFKAN) -->
-    <table class="print-table" id="printTableMalapari" style="display: none;">
-      <tr>
-        <td>1. Jenis Barang</td>
-        <td>:</td>
-        <td id="printMlpJenis">Anakan Malapari (Pongamia pinnata)</td>
-      </tr>
-      <tr>
-        <td>2. Jumlah</td>
-        <td>:</td>
-        <td id="printMlpJumlah" style="font-weight: bold;">311 anakan</td>
-      </tr>
-      <tr>
-        <td>3. Kondisi</td>
-        <td>:</td>
-        <td id="printMlpKondisi">Baik dan siap tanam</td>
-      </tr>
-    </table>
-
-    <p class="print-paragraph" style="text-align: justify; margin-top: 8px;" id="printPernyataanTutup">
-      PIHAK KEDUA telah menerima dan menyaksikan pelaksanaan verifikasi ini dalam kondisi baik dan menyetujui langkah-langkah yang diambil oleh Dinas Lingkungan Hidup Kabupaten Lembata.
-    </p>
-
-    <p class="print-paragraph" style="text-align: justify;">
-      Demikian Berita Acara ini dibuat dan ditandatangani oleh kedua belah pihak untuk dipergunakan sebagaimana mestinya.
+    <p class="print-paragraph" style="text-align: justify; margin-top: 4px;" id="printPernyataanTutup">
+      PIHAK KEDUA telah menyaksikan pemeriksaan lapangan dan menyepakati langkah penanganan yang diambil oleh Dinas Lingkungan Hidup Kabupaten Lembata. Demikian Berita Acara ini dibuat dan ditandatangani oleh kedua belah pihak untuk dipergunakan sebagaimana mestinya.
     </p>
 
     <!-- BLOK TANDA TANGAN (KIRI: PIHAK PERTAMA, KANAN: PIHAK KEDUA, BAWAH: KEPALA DINAS) -->
     <div class="print-signature-section">
       <div class="print-sign-row">
         <div class="print-sign-col">
-          <strong>PIHAK PERTAMA</strong>
+          <strong>PIHAK PERTAMA</strong><br>
+          <span style="font-size: 8.5pt;">Petugas Verifikator DLH</span>
           <div class="print-sign-space"></div>
           <strong id="printSignPihak1"><u>Christianus Rimbaraya, SE,MM</u></strong>
         </div>
 
         <div class="print-sign-col">
-          <strong>PIHAK KEDUA</strong>
+          <strong>PIHAK KEDUA</strong><br>
+          <span style="font-size: 8.5pt;">Pelapor / Warga Masyarakat</span>
           <div class="print-sign-space"></div>
           <strong id="printSignPihak2"><u>Stanislaus Palea</u></strong>
         </div>
@@ -2426,8 +2555,7 @@
         <strong>Kepala Dinas Lingkungan Hidup Kabupaten Lembata</strong>
         <div class="print-sign-space"></div>
         <strong><u>Christianus Rimbaraya, SE,MM</u></strong><br>
-        <span style="font-size: 10pt;">Pembina Tingkat I</span><br>
-        <span style="font-size: 9.5pt;">NIP. 19681125 199803 1 005</span>
+        <span style="font-size: 9pt;">Pembina Tingkat I &bull; NIP. 19681125 199803 1 005</span>
       </div>
     </div>
   </div>
@@ -2439,7 +2567,8 @@
   </div>
 
   <!-- Leaflet JS -->
-  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Embed Core Data & Logic for Seamless Officer Experience -->
   <script>
@@ -2726,7 +2855,7 @@
     }
 
     // Login Form Submit
-    document.getElementById('formOfficerLogin').addEventListener('submit', function(e) {
+    document.getElementById('formOfficerLogin').addEventListener('submit', function (e) {
       e.preventDefault();
       const enteredPass = (document.getElementById('authPassword').value || '').trim();
       const enteredUser = (document.getElementById('authUserId').value || '').trim();
@@ -2756,7 +2885,7 @@
     });
 
     // Toggle Eye Password
-    document.getElementById('btnTogglePassword').addEventListener('click', function() {
+    document.getElementById('btnTogglePassword').addEventListener('click', function () {
       const passInput = document.getElementById('authPassword');
       if (passInput.type === 'password') {
         passInput.type = 'text';
@@ -2769,7 +2898,7 @@
 
 
     // Logout Button Handler
-    document.getElementById('btnLogoutOfficer').addEventListener('click', function() {
+    document.getElementById('btnLogoutOfficer').addEventListener('click', function () {
       if (confirm('Apakah Anda ingin keluar dan mengunci portal petugas?')) {
         sessionStorage.removeItem(AUTH_SESSION_KEY);
         checkAuthentication();
@@ -2809,7 +2938,7 @@
       mapMarkersLayer = L.layerGroup().addTo(officerMap);
 
       // Map control buttons
-      document.getElementById('btnMapStreets').addEventListener('click', function() {
+      document.getElementById('btnMapStreets').addEventListener('click', function () {
         if (!officerMap.hasLayer(baseLayerStreets)) {
           officerMap.removeLayer(baseLayerSatellite);
           officerMap.addLayer(baseLayerStreets);
@@ -2818,7 +2947,7 @@
         }
       });
 
-      document.getElementById('btnMapSat').addEventListener('click', function() {
+      document.getElementById('btnMapSat').addEventListener('click', function () {
         if (!officerMap.hasLayer(baseLayerSatellite)) {
           officerMap.removeLayer(baseLayerStreets);
           officerMap.addLayer(baseLayerSatellite);
@@ -2827,7 +2956,7 @@
         }
       });
 
-      document.getElementById('btnMapReset').addEventListener('click', function() {
+      document.getElementById('btnMapReset').addEventListener('click', function () {
         officerMap.flyTo(centerLembata, 10, { duration: 0.8 });
       });
 
@@ -2922,7 +3051,7 @@
     function formatHumanDate(raw) {
       if (!raw || raw === '-') return '-';
       const cleanRaw = String(raw).trim();
-      
+
       // Jika format YYYY-MM-DD HH:MM
       if (/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/.test(cleanRaw)) {
         const parts = cleanRaw.split(' ');
@@ -2949,7 +3078,7 @@
           }
           return `${day} ${month} ${year} • ${hours}:${mins} WITA`;
         }
-      } catch (e) {}
+      } catch (e) { }
 
       return cleanRaw;
     }
@@ -3217,13 +3346,10 @@
             <div class="case-actions-bar">
               <div class="actions-group-left">
                 <button type="button" class="btn-action-primary" onclick="window.bukaModalTindakLanjut('${item.id}')" title="Buka form update status dan investigasi">
-                  ⚡ Tindak Lanjuti / Berita Acara
+                  ⚡ Tindak Lanjuti
                 </button>
-                <button type="button" class="btn-action-secondary" onclick="window.cetakBeritaAcaraById('${item.id}', 'aduan')" title="Cetak Lembar Berita Acara Verifikasi Pengaduan DLH">
-                  📄 Cetak BA
-                </button>
-                <button type="button" class="btn-action-secondary" onclick="window.cetakBeritaAcaraById('${item.id}', 'malapari')" title="Cetak Lembar Berita Acara Serah Terima Bibit Malapari / Penghijauan" style="color: #065f46; background: #ecfdf5; border-color: #a7f3d0;">
-                  🌱 BA Bibit
+                <button type="button" class="btn-action-secondary" onclick="window.cetakBeritaAcaraById('${item.id}')" title="Cetak Lembar Berita Acara Resmi DLH Lembata (1 Halaman Pas)">
+                  📄 Cetak Berita Acara
                 </button>
               </div>
 
@@ -3249,12 +3375,12 @@
     }
 
     // Window global functions for inline buttons
-    window.sorotPeta = function(id) {
+    window.sorotPeta = function (id) {
       const list = getAduanList();
       const item = list.find(x => x.id === id);
       if (item && item.lat && item.lng && officerMap) {
         officerMap.flyTo([item.lat, item.lng], 14, { duration: 0.8 });
-        
+
         // Buka popup jika marker terdaftar
         if (markersMap[id]) {
           setTimeout(() => markersMap[id].openPopup(), 450);
@@ -3266,7 +3392,7 @@
       }
     };
 
-    window.bukaModalTindakLanjut = function(id) {
+    window.bukaModalTindakLanjut = function (id) {
       const list = getAduanList();
       const item = list.find(x => x.id === id);
       if (!item) return;
@@ -3316,7 +3442,7 @@
       return n.toString();
     }
 
-    window.cetakBeritaAcaraById = function(id, mode = 'aduan') {
+    window.cetakBeritaAcaraById = function (id) {
       const list = getAduanList();
       const item = list.find(x => x.id === id);
       if (!item) {
@@ -3335,106 +3461,59 @@
       const dayTeks = konversiAngkaTeks(now.getDate());
       const yearTeks = konversiAngkaTeks(now.getFullYear());
 
-      // Set Common Date Teks
-      document.getElementById('printHariTeks').textContent = dayName;
-      document.getElementById('printTanggalTeks').textContent = dayTeks;
-      document.getElementById('printBulanTeks').textContent = monthName;
-      document.getElementById('printTahunTeks').textContent = yearTeks;
-      document.getElementById('printBulanRomawi').textContent = romanMonth;
-      document.getElementById('printTahunBA').textContent = now.getFullYear();
+      // Set Header & Nomor Surat Resmi DLH Lembata
+      document.getElementById('printJudulBA').textContent = 'BERITA ACARA';
+      document.getElementById('printSubJudulBA').textContent = 'VERIFIKASI & PENANGANAN PENGADUAN LINGKUNGAN HIDUP';
+      document.getElementById('printNomorSurat').innerHTML = `Nomor : 660 / <span id="printNoRegistrasi">${item.id}</span> / DLH-LMB / ${romanMonth} / ${now.getFullYear()}`;
 
+      // Pihak Pertama: Petugas Verifikator DLH Lembata
       const officer = (item.petugasVerifikasi && item.petugasVerifikasi !== '-') ? item.petugasVerifikasi : (getActiveOfficer() || 'Petugas Pengawas LH');
+      document.getElementById('printPihak1Nama').textContent = officer;
+      document.getElementById('printPihak1Jabatan').textContent = 'Petugas Pengawas & Verifikator DLH Kabupaten Lembata';
 
-      if (mode === 'malapari') {
-        // MODE: FORMAT RESMI SERAH TERIMA BIBIT MALAPARI PERSIS SEPERTI FOTO
-        document.getElementById('printJudulBA').textContent = 'BERITA ACARA';
-        document.getElementById('printSubJudulBA').textContent = 'SERAH TERIMA ANAKAN MALAPARI';
-        document.getElementById('printNomorSurat').innerHTML = `Nomor : 660 / BAST-MLP / DLH-LMB / ${romanMonth} / ${now.getFullYear()}`;
+      // Pihak Kedua: Pelapor / Warga Masyarakat
+      document.getElementById('printPihak2Nama').textContent = item.namaPelapor || 'Masyarakat (Anonim)';
+      document.getElementById('printPihak2Jabatan').textContent = 'Pelapor / Perwakilan Warga Masyarakat';
+      document.getElementById('printPihak2Kontak').textContent = `${item.noHp || '-'} (Alamat: Desa ${item.desa}, Kec. ${item.kecamatan})`;
+      document.getElementById('rowPihak2Kontak').style.display = 'table-row';
 
-        // Pihak Pertama: Kepala Dinas
-        document.getElementById('printPihak1Nama').textContent = 'Christianus Rimbaraya, SE,MM';
-        document.getElementById('printPihak1Jabatan').textContent = 'Kepala Dinas Lingkungan Hidup Kabupaten Lembata';
+      // Narasi Waktu & Tempat Terbilang
+      const locDesc = `${item.lokasiDetail ? item.lokasiDetail + ', ' : ''}Desa ${item.desa}, Kecamatan ${item.kecamatan}`;
+      document.getElementById('printNarasiWaktu').innerHTML = `Pada hari ini, <strong>${dayName}</strong> Tanggal <strong>${dayTeks}</strong> Bulan <strong>${monthName}</strong> Tahun <strong>${yearTeks}</strong>, bertempat di <strong>${locDesc}</strong>, PIHAK PERTAMA bersama PIHAK KEDUA telah melaksanakan pemeriksaan lapangan dan verifikasi pengaduan lingkungan hidup dengan rincian sebagai berikut:`;
 
-        // Pihak Kedua: Kepala Desa / Penerima
-        const namaPenerima = item.namaPelapor || 'Stanislaus Palea';
-        const desaPenerima = item.desa || 'Lerek';
-        document.getElementById('printPihak2Nama').textContent = namaPenerima;
-        document.getElementById('printPihak2Jabatan').textContent = `Kepala Desa ${desaPenerima}`;
-        document.getElementById('rowPihak2Kontak').style.display = 'none';
+      // Rincian 8 Poin Pemeriksaan Kasus
+      document.getElementById('printTableId').textContent = item.id;
+      document.getElementById('printTableWaktu').textContent = formatHumanDate(item.timestamp);
+      document.getElementById('printTableLokasi').textContent = `${locDesc}` + (item.lat && item.lng ? ` [GPS: ${item.lat}, ${item.lng}]` : '');
+      document.getElementById('printTableKategori').textContent = item.jenisPencemaran;
+      document.getElementById('printTableUraian').textContent = item.uraian;
+      document.getElementById('printTableHasil').textContent = item.hasilVerifikasi || 'Telah dilakukan verifikasi faktual dan investigasi langsung di lokasi kejadian.';
+      document.getElementById('printTableTindakan').textContent = item.tindakanDLH || 'Telah dilakukan koordinasi teknis serta langkah mitigasi penanganan pencemaran DLH.';
+      document.getElementById('printTableStatus').textContent = item.status;
 
-        // Narasi Waktu & Objek
-        document.getElementById('printNarasiWaktu').innerHTML = `Pada hari ini, <strong>${dayName}</strong> Tanggal <strong>${dayTeks}</strong> Bulan <strong>${monthName}</strong> Tahun <strong>${yearTeks}</strong>, bertempat di <strong>Desa ${desaPenerima}</strong>, PIHAK PERTAMA menyerahkan kepada PIHAK KEDUA barang berupa anakan tanaman malapari untuk kegiatan penghijauan dan rehabilitasi lingkungan di Desa ${desaPenerima}.<br>Adapun rincian barang yang diserahkan adalah sebagai berikut:`;
+      // Penutup
+      document.getElementById('printPernyataanTutup').textContent = 'PIHAK KEDUA telah menyaksikan pemeriksaan lapangan dan menyepakati langkah penanganan yang diambil oleh Dinas Lingkungan Hidup Kabupaten Lembata. Demikian Berita Acara ini dibuat dan ditandatangani oleh kedua belah pihak untuk dipergunakan sebagaimana mestinya.';
 
-        // Switch Table
-        document.getElementById('printTableAduan').style.display = 'none';
-        document.getElementById('printTableMalapari').style.display = 'table';
+      // Tanda Tangan: Pihak Pertama, Pihak Kedua, & Mengetahui Kepala Dinas DLH
+      document.getElementById('printSignPihak1').innerHTML = `<u>${officer}</u><br><span style="font-size: 8.5pt; font-weight: normal;">Petugas Verifikator DLH</span>`;
+      document.getElementById('printSignPihak2').innerHTML = `<u>${item.namaPelapor || 'Masyarakat'}</u><br><span style="font-size: 8.5pt; font-weight: normal;">Pelapor / Warga Masyarakat</span>`;
+      document.getElementById('printSignMengetahui').style.display = 'block';
 
-        // Pernyataan Penutup
-        document.getElementById('printPernyataanTutup').textContent = 'PIHAK KEDUA telah menerima barang tersebut dalam kondisi baik dan lengkap sesuai jumlah yang ditetapkan.';
-
-        // Tanda Tangan: Pihak Pertama & Kedua (Tanpa Mengetahui Karena Sudah Ditandatangani Langsung Kepala Dinas)
-        document.getElementById('printSignPihak1').innerHTML = `<u>Christianus Rimbaraya, SE,MM</u><br><span style="font-size: 9pt; font-weight: normal;">Kepala Dinas Lingkungan Hidup</span>`;
-        document.getElementById('printSignPihak2').innerHTML = `<u>${namaPenerima}</u><br><span style="font-size: 9pt; font-weight: normal;">Kepala Desa ${desaPenerima}</span>`;
-        document.getElementById('printSignMengetahui').style.display = 'none';
-
-      } else {
-        // MODE: FORMAT RESMI BERITA ACARA VERIFIKASI & PENANGANAN PENGADUAN LINGKUNGAN
-        document.getElementById('printJudulBA').textContent = 'BERITA ACARA';
-        document.getElementById('printSubJudulBA').textContent = 'VERIFIKASI & PENANGANAN PENGADUAN LINGKUNGAN HIDUP';
-        document.getElementById('printNomorSurat').innerHTML = `Nomor : 660 / <span id="printNoRegistrasi">${item.id}</span> / DLH-LMB / ${romanMonth} / ${now.getFullYear()}`;
-
-        // Pihak Pertama: Petugas Lapangan DLH
-        document.getElementById('printPihak1Nama').textContent = officer;
-        document.getElementById('printPihak1Jabatan').textContent = 'Petugas Pengawas & Verifikator DLH Kabupaten Lembata';
-
-        // Pihak Kedua: Pelapor / Warga
-        document.getElementById('printPihak2Nama').textContent = item.namaPelapor || 'Masyarakat (Anonim)';
-        document.getElementById('printPihak2Jabatan').textContent = 'Pelapor / Perwakilan Warga Masyarakat';
-        document.getElementById('printPihak2Kontak').textContent = `${item.noHp || '-'} (Alamat: Desa ${item.desa}, Kec. ${item.kecamatan})`;
-        document.getElementById('rowPihak2Kontak').style.display = 'table-row';
-
-        // Narasi Waktu & Lokasi
-        const locDesc = `${item.lokasiDetail ? item.lokasiDetail + ', ' : ''}Desa ${item.desa}, Kecamatan ${item.kecamatan}`;
-        document.getElementById('printNarasiWaktu').innerHTML = `Pada hari ini, <strong>${dayName}</strong> Tanggal <strong>${dayTeks}</strong> Bulan <strong>${monthName}</strong> Tahun <strong>${yearTeks}</strong>, bertempat di <strong>${locDesc}</strong>, PIHAK PERTAMA bersama PIHAK KEDUA telah melaksanakan pemeriksaan lapangan dan verifikasi pengaduan lingkungan hidup dengan rincian sebagai berikut:`;
-
-        // Switch Table
-        document.getElementById('printTableAduan').style.display = 'table';
-        document.getElementById('printTableMalapari').style.display = 'none';
-
-        // Rincian 8 Poin
-        document.getElementById('printTableId').textContent = item.id;
-        document.getElementById('printTableWaktu').textContent = formatHumanDate(item.timestamp);
-        document.getElementById('printTableLokasi').textContent = `${locDesc}` + (item.lat && item.lng ? ` [GPS: ${item.lat}, ${item.lng}]` : '');
-        document.getElementById('printTableKategori').textContent = item.jenisPencemaran;
-        document.getElementById('printTableUraian').textContent = item.uraian;
-        document.getElementById('printTableHasil').textContent = item.hasilVerifikasi || 'Telah dilakukan verifikasi faktual dan investigasi langsung di lokasi kejadian.';
-        document.getElementById('printTableTindakan').textContent = item.tindakanDLH || 'Telah dilakukan koordinasi teknis serta langkah mitigasi penanganan pencemaran DLH.';
-        document.getElementById('printTableStatus').textContent = item.status;
-
-        // Pernyataan Penutup
-        document.getElementById('printPernyataanTutup').textContent = 'PIHAK KEDUA telah menyaksikan pemeriksaan lapangan dan menyepakati langkah penanganan yang diambil oleh Dinas Lingkungan Hidup Kabupaten Lembata.';
-
-        // Tanda Tangan: Pihak Pertama, Pihak Kedua, & Mengetahui Kepala Dinas
-        document.getElementById('printSignPihak1').innerHTML = `<u>${officer}</u><br><span style="font-size: 9pt; font-weight: normal;">Petugas Verifikator DLH</span>`;
-        document.getElementById('printSignPihak2').innerHTML = `<u>${item.namaPelapor || 'Masyarakat'}</u><br><span style="font-size: 9pt; font-weight: normal;">Pelapor / Saksi Lapangan</span>`;
-        document.getElementById('printSignMengetahui').style.display = 'block';
-      }
-
-      // Trigger Dialog Cetak / Simpan PDF
+      // Trigger Dialog Cetak / Simpan PDF 1 Halaman Pas
       setTimeout(() => {
         window.print();
       }, 100);
     };
 
     // Helper: Reset Semua Filter
-    window.resetSemuaFilter = function() {
+    window.resetSemuaFilter = function () {
       document.getElementById('officerSearchInput').value = '';
       document.getElementById('filterKecamatan').value = 'ALL';
       document.getElementById('filterJenis').value = 'ALL';
       if (document.getElementById('filterSort')) document.getElementById('filterSort').value = 'newest';
-      
+
       currentFilterStatus = 'ALL';
-      
+
       // Sync tab buttons
       document.querySelectorAll('.status-tab-btn').forEach(b => {
         b.classList.toggle('active', b.getAttribute('data-status') === 'ALL');
@@ -3450,7 +3529,7 @@
     };
 
     // Form Update Submit Handler
-    document.getElementById('formUpdatePenanganan').addEventListener('submit', function(e) {
+    document.getElementById('formUpdatePenanganan').addEventListener('submit', function (e) {
       e.preventDefault();
 
       const id = document.getElementById('editAduanId').value;
@@ -3516,16 +3595,8 @@
 
     document.getElementById('btnPrintSingleCase').addEventListener('click', () => {
       const id = document.getElementById('editAduanId').value;
-      window.cetakBeritaAcaraById(id, 'aduan');
+      window.cetakBeritaAcaraById(id);
     });
-
-    const btnPrintMlp = document.getElementById('btnPrintMalapariCase');
-    if (btnPrintMlp) {
-      btnPrintMlp.addEventListener('click', () => {
-        const id = document.getElementById('editAduanId').value;
-        window.cetakBeritaAcaraById(id, 'malapari');
-      });
-    }
 
     // Officer Switch Modal Handlers
     document.getElementById('btnOpenSwitchModal').addEventListener('click', () => {
@@ -3554,11 +3625,11 @@
 
     // Status Tab Switcher
     document.querySelectorAll('.status-tab-btn').forEach(btn => {
-      btn.addEventListener('click', function() {
+      btn.addEventListener('click', function () {
         document.querySelectorAll('.status-tab-btn').forEach(b => b.classList.remove('active'));
         this.classList.add('active');
         currentFilterStatus = this.getAttribute('data-status');
-        
+
         // Sync active state on KPI cards
         document.querySelectorAll('.kpi-card').forEach(card => {
           card.classList.toggle('active-kpi', card.getAttribute('data-filter') === currentFilterStatus);
@@ -3570,7 +3641,7 @@
 
     // Interactive KPI Cards Click Handler (Filter Cepat)
     document.querySelectorAll('.kpi-card').forEach(card => {
-      card.addEventListener('click', function() {
+      card.addEventListener('click', function () {
         const filterVal = this.getAttribute('data-filter');
         if (!filterVal) return;
 
@@ -3695,4 +3766,5 @@
     });
   </script>
 </body>
+
 </html>
