@@ -266,34 +266,6 @@
       box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
     }
 
-    .auth-quick-hint {
-      margin-top: 18px;
-      background: #ecfdf5;
-      border: 1px dashed #a7f3d0;
-      border-radius: var(--radius-md);
-      padding: 12px;
-      text-align: center;
-      font-size: 0.78rem;
-      color: #065f46;
-    }
-
-    .btn-quick-fill-pass {
-      background: #10b981;
-      color: #ffffff;
-      border: none;
-      padding: 4px 10px;
-      border-radius: 6px;
-      font-size: 0.75rem;
-      font-weight: 700;
-      cursor: pointer;
-      margin-top: 6px;
-      display: inline-block;
-    }
-
-    .btn-quick-fill-pass:hover {
-      background: #059669;
-    }
-
     .auth-footer-nav {
       margin-top: 18px;
       text-align: center;
@@ -1374,14 +1346,6 @@
           </button>
         </form>
 
-        <!-- Quick Access Helper for DLH Personnel / Evaluators -->
-        <div class="auth-quick-hint">
-          <div><strong>KATA SANDI RESMI KEDINASAN:</strong></div>
-          <div style="font-family: monospace; font-size: 0.95rem; font-weight: 800; color: #064e3b; margin: 4px 0;">dlhlembata2026</div>
-          <button type="button" class="btn-quick-fill-pass" id="btnQuickFillPass">
-            💡 Isi Cepat Sandi
-          </button>
-        </div>
 
         <div class="auth-footer-nav">
           <a href="index.html">
@@ -2177,12 +2141,6 @@
       }
     });
 
-    // Quick Fill Demo Password
-    document.getElementById('btnQuickFillPass').addEventListener('click', function() {
-      document.getElementById('authPassword').value = 'dlhlembata2026';
-      document.getElementById('authErrorMsg').style.display = 'none';
-      document.getElementById('authPassword').focus();
-    });
 
     // Logout Button Handler
     document.getElementById('btnLogoutOfficer').addEventListener('click', function() {
