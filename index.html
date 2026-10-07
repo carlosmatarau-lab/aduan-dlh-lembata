@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 <head>
   <meta charset="UTF-8">
@@ -15,7 +15,1908 @@
   <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
   
   <!-- Main CSS -->
+    <!-- Main CSS (Embedded directly for 100% fail-proof rendering on Netlify & GitHub) -->
   <link rel="stylesheet" href="css/style.css">
+  <style>
+/* ===================================================================
+   SILAPOR DLH KABUPATEN LEMBATA — ULTRA-LIGHTWEIGHT & MOBILE-FIRST CSS
+   =================================================================== */
+
+:root {
+  --primary: #059669;
+  --primary-dark: #064e3b;
+  --primary-light: #10b981;
+  --primary-soft: #ecfdf5;
+  --accent: #d97706;
+  --bg-body: #f8fafc;
+  --card-bg: #ffffff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --border: #e2e8f0;
+  --radius-sm: 8px;
+  --radius-md: 12px;
+  --radius-lg: 16px;
+  --radius-xl: 20px;
+  --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+  --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
+  --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.12);
+}
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  background-color: var(--bg-body);
+  color: var(--text-main);
+  line-height: 1.5;
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ===================================================================
+   HEADER
+   =================================================================== */
+.app-header {
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+
+.header-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  padding: 12px 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.brand-group {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.brand-icon {
+  width: 40px;
+  height: 40px;
+  background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+  color: white;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  box-shadow: 0 3px 8px rgba(5, 150, 105, 0.3);
+}
+
+.brand-name {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  color: var(--primary-dark);
+  line-height: 1.2;
+}
+
+.brand-sub {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-cloud-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #f1f5f9;
+  border: 1px solid var(--border);
+  padding: 6px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.btn-cloud-badge:hover {
+  background: #e2e8f0;
+}
+
+.dot-indicator {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #10b981;
+  box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+}
+
+.btn-wa-header {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #25d366;
+  color: white;
+  text-decoration: none;
+  font-size: 0.78rem;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 999px;
+  transition: all 0.2s;
+}
+
+.btn-wa-header:hover {
+  background: #20ba5a;
+}
+
+@media (max-width: 600px) {
+  .btn-wa-header span {
+    display: none;
+  }
+}
+
+/* ===================================================================
+   NAVIGATION BAR (TABS)
+   =================================================================== */
+.nav-bar {
+  background: #ffffff;
+  border-bottom: 2px solid var(--border);
+  position: sticky;
+  top: 65px;
+  z-index: 90;
+}
+
+.nav-inner {
+  max-width: 960px;
+  margin: 0 auto;
+  display: flex;
+  overflow-x: auto;
+  scrollbar-width: none;
+  padding: 0 8px;
+}
+
+.nav-inner::-webkit-scrollbar {
+  display: none;
+}
+
+.nav-tab-btn {
+  background: none;
+  border: none;
+  padding: 12px 16px;
+  font-size: 0.88rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  cursor: pointer;
+  white-space: nowrap;
+  border-bottom: 3px solid transparent;
+  transition: all 0.2s;
+}
+
+.nav-tab-btn:hover {
+  color: var(--primary);
+}
+
+.nav-tab-btn.active {
+  color: var(--primary);
+  border-bottom-color: var(--primary);
+}
+
+/* ===================================================================
+   MAIN CONTAINER & TABS
+   =================================================================== */
+.main-wrap {
+  flex: 1;
+  max-width: 960px;
+  width: 100%;
+  margin: 0 auto;
+  padding: 20px 16px 80px 16px;
+}
+
+.tab-content {
+  display: none;
+  animation: fadeIn 0.25s ease-out forwards;
+}
+
+.tab-content.active {
+  display: block;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* Welcome Box */
+.welcome-box {
+  background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+  color: white;
+  border-radius: var(--radius-lg);
+  padding: 24px;
+  margin-bottom: 20px;
+  box-shadow: var(--shadow-md);
+}
+
+.welcome-tag {
+  display: inline-block;
+  background: rgba(255, 255, 255, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  padding: 3px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 700;
+  color: #a7f3d0;
+  margin-bottom: 10px;
+}
+
+.welcome-heading {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  line-height: 1.3;
+  margin-bottom: 8px;
+}
+
+.welcome-desc {
+  font-size: 0.88rem;
+  color: #d1fae5;
+  line-height: 1.5;
+}
+
+/* ===================================================================
+   FORMULIR ADUAN UTAMA
+   =================================================================== */
+.form-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  box-shadow: var(--shadow-sm);
+  overflow: hidden;
+}
+
+.form-card-header {
+  padding: 20px 24px;
+  background: #f8fafc;
+  border-bottom: 1px solid var(--border);
+}
+
+.form-card-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--primary);
+  letter-spacing: 0.5px;
+  margin-bottom: 4px;
+}
+
+.form-card-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.2rem;
+  font-weight: 800;
+  color: var(--text-main);
+}
+
+.form-card-desc {
+  font-size: 0.82rem;
+  color: var(--text-muted);
+}
+
+.aduan-form {
+  padding: 24px;
+}
+
+.form-section-title {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-family: 'Outfit', sans-serif;
+  font-size: 1rem;
+  font-weight: 800;
+  color: var(--primary-dark);
+  margin: 18px 0 14px 0;
+  padding-bottom: 6px;
+  border-bottom: 2px solid var(--primary-soft);
+}
+
+.form-section-title:first-child {
+  margin-top: 0;
+}
+
+.form-section-title span {
+  width: 22px;
+  height: 22px;
+  background: var(--primary);
+  color: white;
+  border-radius: 50%;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 0.75rem;
+}
+
+.form-row-2 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 14px;
+}
+
+@media (max-width: 640px) {
+  .form-row-2 {
+    grid-template-columns: 1fr;
+    gap: 12px;
+  }
+}
+
+.form-field {
+  margin-bottom: 16px;
+}
+
+.field-label {
+  display: block;
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #334155;
+  margin-bottom: 6px;
+}
+
+.req {
+  color: #e11d48;
+}
+
+.input-text,
+.input-select,
+.input-textarea {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: var(--radius-md);
+  border: 1px solid var(--border);
+  background: #ffffff;
+  font-size: 0.9rem;
+  font-family: inherit;
+  color: var(--text-main);
+  outline: none;
+  transition: all 0.2s ease;
+}
+
+.input-text:focus,
+.input-select:focus,
+.input-textarea:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+}
+
+.input-sm {
+  padding: 6px 10px;
+  font-size: 0.82rem;
+  background: #f8fafc;
+}
+
+/* Category Selection Chips */
+.category-chips {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.chip-item {
+  display: flex;
+  align-items: center;
+  padding: 10px 14px;
+  background: #f8fafc;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  cursor: pointer;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--text-main);
+  transition: all 0.2s;
+}
+
+.chip-item input[type="radio"] {
+  display: none;
+}
+
+.chip-item:hover {
+  background: var(--primary-soft);
+  border-color: #86efac;
+}
+
+.chip-item.active {
+  background: #dcfce7;
+  border-color: var(--primary);
+  color: #065f46;
+  box-shadow: 0 2px 6px rgba(5, 150, 105, 0.15);
+}
+
+/* GPS Button Box */
+.gps-box {
+  margin-bottom: 12px;
+}
+
+.btn-gps {
+  width: 100%;
+  padding: 10px 16px;
+  background: #f0fdf4;
+  border: 1px solid #86efac;
+  color: #059669;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.btn-gps:hover {
+  background: #dcfce7;
+}
+
+.gps-status-msg {
+  font-size: 0.78rem;
+  margin-top: 6px;
+  display: none;
+}
+
+/* Main Submit Button */
+.btn-submit-main {
+  width: 100%;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, var(--primary) 0%, #047857 100%);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.05rem;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  cursor: pointer;
+  box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+  transition: all 0.2s;
+  margin-top: 10px;
+}
+
+.btn-submit-main:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 6px 18px rgba(5, 150, 105, 0.4);
+}
+
+.submit-note {
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  text-align: center;
+  margin-top: 10px;
+}
+
+/* ===================================================================
+   TRACKING TAB
+   =================================================================== */
+.track-card {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  padding: 28px 24px;
+  box-shadow: var(--shadow-sm);
+}
+
+.track-title {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: var(--primary-dark);
+  margin-bottom: 6px;
+}
+
+.track-sub {
+  font-size: 0.88rem;
+  color: var(--text-muted);
+  margin-bottom: 20px;
+}
+
+.track-input-group {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 14px;
+}
+
+.input-track {
+  font-size: 1rem;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+.btn-track-action {
+  padding: 10px 24px;
+  background: var(--primary);
+  color: white;
+  border: none;
+  border-radius: var(--radius-md);
+  font-weight: 700;
+  cursor: pointer;
+  white-space: nowrap;
+}
+
+.btn-track-action:hover {
+  background: #047857;
+}
+
+.quick-sample-chips {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 8px;
+  font-size: 0.8rem;
+  color: var(--text-muted);
+  margin-bottom: 24px;
+}
+
+.btn-sample-tag {
+  background: #f1f5f9;
+  border: 1px solid var(--border);
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-family: monospace;
+  font-size: 0.78rem;
+  cursor: pointer;
+}
+
+.btn-sample-tag:hover {
+  background: #e2e8f0;
+}
+
+.track-result-wrap {
+  margin-top: 24px;
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+}
+
+/* Timeline */
+.timeline {
+  position: relative;
+  padding-left: 28px;
+  margin-top: 20px;
+}
+
+.timeline::before {
+  content: '';
+  position: absolute;
+  top: 8px;
+  bottom: 8px;
+  left: 8px;
+  width: 2px;
+  background: #e2e8f0;
+}
+
+.timeline-item {
+  position: relative;
+  margin-bottom: 20px;
+}
+
+.timeline-dot {
+  position: absolute;
+  left: -28px;
+  top: 4px;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  background: #ffffff;
+  border: 3px solid #cbd5e1;
+}
+
+.timeline-item.completed .timeline-dot {
+  background: var(--primary);
+  border-color: var(--primary-soft);
+}
+
+.timeline-item.active .timeline-dot {
+  background: #f59e0b;
+  border-color: #fef3c7;
+}
+
+.timeline-title {
+  font-weight: 700;
+  font-size: 0.92rem;
+  color: var(--text-main);
+}
+
+.timeline-time {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  margin-bottom: 4px;
+}
+
+.timeline-desc {
+  font-size: 0.85rem;
+  color: #475569;
+  background: #f8fafc;
+  padding: 8px 12px;
+  border-radius: var(--radius-sm);
+  margin-top: 4px;
+}
+
+/* ===================================================================
+   MAP TAB
+   =================================================================== */
+.map-card-box {
+  background: var(--card-bg);
+  border-radius: var(--radius-lg);
+  border: 1px solid var(--border);
+  overflow: hidden;
+  box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+}
+
+.map-header-bar {
+  padding: 18px 24px;
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+
+.map-header-info {
+  flex: 1;
+  min-width: 280px;
+}
+
+.map-badge-live {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  background: #ecfdf5;
+  color: #065f46;
+  border: 1px solid #a7f3d0;
+  font-size: 0.68rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  padding: 3px 8px;
+  border-radius: 999px;
+  margin-bottom: 6px;
+}
+
+.map-main-title {
+  font-size: 1.35rem;
+  font-weight: 800;
+  color: #064e3b;
+  margin: 0 0 4px 0;
+  line-height: 1.3;
+}
+
+.map-sub-title {
+  font-size: 0.85rem;
+  color: #64748b;
+  margin: 0;
+  line-height: 1.45;
+}
+
+/* Basemap Switcher Buttons */
+.map-basemap-buttons {
+  display: flex;
+  gap: 6px;
+  background: #e2e8f0;
+  padding: 4px;
+  border-radius: 10px;
+}
+
+.btn-basemap {
+  background: transparent;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 7px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #475569;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  white-space: nowrap;
+}
+
+.btn-basemap:hover {
+  color: #0f172a;
+}
+
+.btn-basemap.active {
+  background: white;
+  color: #065f46;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+
+/* Mini KPI Strip Above Map */
+.map-stats-strip {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+  gap: 12px;
+  padding: 12px 24px;
+  background: #f1f5f9;
+  border-bottom: 1px solid var(--border);
+}
+
+.map-stat-chip {
+  background: white;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 8px 12px;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+}
+
+.mstat-icon {
+  font-size: 1.4rem;
+  line-height: 1;
+}
+
+.mstat-num {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.3rem;
+  font-weight: 800;
+  color: #0f172a;
+  line-height: 1;
+}
+
+.mstat-lbl {
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.chip-amber .mstat-num { color: #d97706; }
+.chip-blue .mstat-num { color: #2563eb; }
+.chip-green .mstat-num { color: #059669; }
+
+/* Filter Toolbar */
+.map-toolbar {
+  padding: 12px 24px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+
+.map-filter-group {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.map-filter-label {
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: #475569;
+  white-space: nowrap;
+}
+
+/* Quick Region Pills */
+.map-region-pills {
+  padding: 10px 24px;
+  background: #f8fafc;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  overflow-x: auto;
+  scrollbar-width: thin;
+}
+
+.region-pills-label {
+  font-size: 0.75rem;
+  font-weight: 800;
+  color: #64748b;
+  text-transform: uppercase;
+  white-space: nowrap;
+  margin-right: 4px;
+}
+
+.pill-region {
+  background: white;
+  border: 1px solid #cbd5e1;
+  padding: 4px 11px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: #334155;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: all 0.15s ease;
+}
+
+.pill-region:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.pill-region.active {
+  background: #059669;
+  border-color: #059669;
+  color: white;
+  box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
+}
+
+/* Map Canvas Container */
+.map-container-relative {
+  position: relative;
+  width: 100%;
+}
+
+.map-render-container {
+  height: 540px;
+  width: 100%;
+  background: #e0f2fe;
+}
+
+/* Floating Interactive Legend Box */
+.map-legend-box {
+  position: absolute;
+  bottom: 24px;
+  left: 20px;
+  background: rgba(255, 255, 255, 0.95);
+  backdrop-filter: blur(8px);
+  border: 1px solid rgba(226, 232, 240, 0.9);
+  border-radius: 12px;
+  padding: 12px 14px;
+  box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  max-width: 260px;
+  transition: all 0.2s ease;
+}
+
+.legend-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.8rem;
+  color: #0f172a;
+  margin-bottom: 8px;
+  font-weight: 700;
+}
+
+.legend-toggle {
+  background: none;
+  border: none;
+  font-size: 13px;
+  color: #64748b;
+  cursor: pointer;
+  padding: 0 4px;
+}
+
+.legend-items {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.75rem;
+  color: #334155;
+  padding: 4px 6px;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.15s ease;
+}
+
+.legend-item:hover {
+  background: #f1f5f9;
+  color: #0f172a;
+}
+
+.legend-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+  box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+}
+
+.legend-text {
+  font-weight: 600;
+}
+
+/* Custom Marker Styling */
+.custom-leaflet-marker {
+  position: relative;
+  width: 32px;
+  height: 38px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.marker-pin {
+  width: 30px;
+  height: 30px;
+  border-radius: 50% 50% 50% 0;
+  transform: rotate(-45deg);
+  border: 2px solid #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+  transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+  cursor: pointer;
+}
+
+.marker-pin .marker-icon {
+  transform: rotate(45deg);
+  font-size: 13px;
+  line-height: 1;
+}
+
+.custom-leaflet-marker:hover .marker-pin {
+  transform: rotate(-45deg) scale(1.18);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.4);
+}
+
+.marker-pulse-ring {
+  position: absolute;
+  top: 1px;
+  left: 1px;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  border: 2px solid;
+  opacity: 0.8;
+  animation: markerHalo 2.2s infinite;
+  pointer-events: none;
+}
+
+@keyframes markerHalo {
+  0% { transform: scale(0.8); opacity: 0.9; }
+  100% { transform: scale(2.4); opacity: 0; }
+}
+
+/* Leaflet Tooltip */
+.leaflet-tooltip.custom-map-tooltip {
+  background: rgba(15, 23, 42, 0.94);
+  backdrop-filter: blur(6px);
+  border: 1px solid #334155;
+  border-radius: 10px;
+  color: white;
+  padding: 10px 14px;
+  box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  max-width: 260px;
+}
+
+.leaflet-tooltip-top:before {
+  border-top-color: rgba(15, 23, 42, 0.94);
+}
+
+.map-tooltip-content .tt-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 4px;
+  gap: 8px;
+}
+
+.map-tooltip-content .tt-id {
+  font-family: monospace;
+  font-weight: 800;
+  font-size: 0.75rem;
+  color: #34d399;
+}
+
+.map-tooltip-content .tt-status {
+  font-size: 0.68rem;
+  padding: 1px 6px;
+  border-radius: 4px;
+  font-weight: 700;
+}
+
+.map-tooltip-content .tt-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: #f8fafc;
+  margin-bottom: 2px;
+}
+
+.map-tooltip-content .tt-loc {
+  font-size: 0.74rem;
+  color: #cbd5e1;
+  margin-bottom: 6px;
+}
+
+.map-tooltip-content .tt-desc {
+  font-size: 0.72rem;
+  color: #94a3b8;
+  line-height: 1.35;
+  margin-bottom: 6px;
+}
+
+.map-tooltip-content .tt-hint {
+  font-size: 0.68rem;
+  color: #6ee7b7;
+  font-weight: 600;
+  border-top: 1px solid #334155;
+  padding-top: 4px;
+}
+
+/* Leaflet Popup Card */
+.map-popup-card {
+  font-family: 'Plus Jakarta Sans', sans-serif;
+  min-width: 250px;
+  max-width: 300px;
+  padding: 4px;
+}
+
+.popup-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+  padding-bottom: 6px;
+  border-bottom: 1px solid #e2e8f0;
+}
+
+.popup-id {
+  font-family: monospace;
+  font-weight: 800;
+  color: #065f46;
+  font-size: 0.9rem;
+}
+
+.popup-cat {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.85rem;
+  color: #059669;
+  margin-bottom: 6px;
+}
+
+.popup-location {
+  font-size: 0.78rem;
+  color: #334155;
+  margin-bottom: 8px;
+  background: #f8fafc;
+  padding: 8px;
+  border-radius: 6px;
+}
+
+.popup-detail-loc {
+  font-size: 0.75rem;
+  color: #64748b;
+  margin-top: 2px;
+}
+
+.popup-coords {
+  font-family: monospace;
+  font-size: 0.7rem;
+  color: #059669;
+  margin-top: 4px;
+}
+
+.popup-chronology {
+  font-size: 0.78rem;
+  color: #1e293b;
+  line-height: 1.4;
+  margin-bottom: 10px;
+}
+
+.popup-chronology p {
+  margin: 3px 0 0 0;
+  color: #475569;
+}
+
+.popup-dlh-status {
+  background: #ecfdf5;
+  border-left: 3px solid #10b981;
+  padding: 6px 8px;
+  border-radius: 4px;
+  font-size: 0.74rem;
+  color: #065f46;
+  margin-bottom: 10px;
+}
+
+.popup-actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* Map Cards Feed (Below Map) */
+.map-cards-section {
+  padding: 20px 24px;
+  background: #ffffff;
+  border-top: 1px solid var(--border);
+}
+
+.map-cards-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+}
+
+.map-aduan-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+  gap: 14px;
+}
+
+.map-aduan-card {
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 10px;
+  padding: 14px;
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+.map-aduan-card:hover {
+  background: white;
+  border-color: #cbd5e1;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.06);
+  transform: translateY(-2px);
+}
+
+.mac-top {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+
+.mac-id {
+  font-family: monospace;
+  font-weight: 800;
+  color: #065f46;
+  font-size: 0.85rem;
+}
+
+.mac-title {
+  font-size: 0.92rem;
+  font-weight: 700;
+  color: #0f172a;
+  margin-bottom: 4px;
+}
+
+.mac-loc {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-bottom: 6px;
+}
+
+.mac-desc {
+  font-size: 0.78rem;
+  color: #475569;
+  line-height: 1.4;
+  margin-bottom: 12px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.mac-actions {
+  display: flex;
+  gap: 6px;
+}
+
+/* ===================================================================
+   DATA & TABLE TAB
+   =================================================================== */
+.kpi-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 12px;
+  margin-bottom: 18px;
+}
+
+.kpi-box {
+  background: white;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-md);
+  padding: 14px 18px;
+  box-shadow: var(--shadow-sm);
+}
+
+.kpi-label {
+  font-size: 0.72rem;
+  font-weight: 800;
+  color: var(--text-muted);
+  letter-spacing: 0.5px;
+}
+
+.kpi-num {
+  font-family: 'Outfit', sans-serif;
+  font-size: 1.7rem;
+  font-weight: 900;
+  color: var(--text-main);
+  margin-top: 2px;
+}
+
+.kpi-baru .kpi-num { color: #e11d48; }
+.kpi-proses .kpi-num { color: #d97706; }
+.kpi-selesai .kpi-num { color: #059669; }
+
+.table-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  overflow: hidden;
+}
+
+.table-toolbar {
+  padding: 16px;
+  background: #f8fafc;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.search-box {
+  flex: 1;
+  min-width: 260px;
+}
+
+.table-responsive {
+  overflow-x: auto;
+}
+
+.data-table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+  font-size: 0.85rem;
+}
+
+.data-table th {
+  background: #f1f5f9;
+  color: #475569;
+  font-weight: 700;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+
+.data-table td {
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--border);
+}
+
+.data-table tr:hover {
+  background: #f8fafc;
+}
+
+.table-footer-info {
+  padding: 12px 16px;
+  font-size: 0.78rem;
+  color: var(--text-muted);
+  background: #f8fafc;
+  border-top: 1px solid var(--border);
+}
+
+/* Status Badges */
+.badge {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 999px;
+  font-size: 0.72rem;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.badge-baru,
+.badge-aduan-diterima { background: #fef3c7; color: #b45309; }
+.badge-verifikasi-administrasi { background: #fef9c3; color: #854d0e; }
+.badge-menunggu-verifikasi-lapangan { background: #ffedd5; color: #c2410c; }
+.badge-sedang-diverifikasi,
+.badge-diverifikasi { background: #f3e8ff; color: #7e22ce; }
+.badge-dalam-penanganan,
+.badge-ditindaklanjuti { background: #dbeafe; color: #1d4ed8; }
+.badge-selesai { background: #dcfce7; color: #15803d; }
+.badge-ditolak { background: #f1f5f9; color: #64748b; }
+
+/* Buttons */
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--radius-sm);
+  font-size: 0.85rem;
+  font-weight: 600;
+  cursor: pointer;
+  text-decoration: none;
+  border: 1px solid transparent;
+  transition: all 0.2s;
+}
+
+.btn-primary { background: var(--primary); color: white; }
+.btn-primary:hover { background: #047857; }
+
+.btn-secondary { background: #e2e8f0; color: #334155; }
+.btn-secondary:hover { background: #cbd5e1; }
+
+.btn-outline { background: white; border-color: var(--border); color: #334155; }
+.btn-outline:hover { background: #f1f5f9; }
+
+.btn-sm { padding: 4px 8px; font-size: 0.78rem; }
+
+/* ===================================================================
+   MODAL WINDOWS
+   =================================================================== */
+.modal-backdrop {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(15, 23, 42, 0.75);
+  backdrop-filter: blur(5px);
+  -webkit-backdrop-filter: blur(5px);
+  z-index: 10000;
+  display: none;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+}
+
+.modal-backdrop.show {
+  display: flex;
+}
+
+.modal-dialog {
+  background: #ffffff !important;
+  width: 100%;
+  max-width: 600px;
+  max-height: 90vh;
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-lg);
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--border);
+}
+
+.modal-header {
+  padding: 16px 20px;
+  background: #f8fafc;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.modal-header h3,
+.modal-title {
+  font-size: 1.1rem;
+  font-weight: 800;
+  color: var(--text-main);
+  margin: 0;
+}
+
+.modal-subtitle {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.modal-close {
+  background: none;
+  border: none;
+  font-size: 1.4rem;
+  color: var(--text-muted);
+  cursor: pointer;
+}
+
+.modal-body {
+  padding: 20px;
+  overflow-y: auto;
+  flex: 1;
+}
+
+.modal-footer {
+  padding: 14px 20px;
+  background: #f8fafc;
+  border-top: 1px solid var(--border);
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+/* Toast */
+.toast-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 11000;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  max-width: 360px;
+}
+
+.toast {
+  background: #0f172a;
+  color: white;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  font-size: 0.85rem;
+  box-shadow: var(--shadow-lg);
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  animation: slideUp 0.3s ease-out;
+}
+
+@keyframes slideUp {
+  from { transform: translateY(20px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+
+.toast-success { border-left: 4px solid #10b981; }
+.toast-warning { border-left: 4px solid #f59e0b; }
+.toast-info { border-left: 4px solid #3b82f6; }
+
+/* Floating WhatsApp Button */
+.floating-wa-btn {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 999;
+  display: inline-flex;
+  align-items: center;
+  background: #25d366;
+  color: white;
+  border-radius: 999px;
+  padding: 12px;
+  box-shadow: 0 6px 16px rgba(37, 211, 102, 0.4);
+  text-decoration: none;
+  transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.floating-wa-icon {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.floating-wa-text {
+  max-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  font-weight: 700;
+  font-size: 0.85rem;
+  opacity: 0;
+  transition: all 0.25s ease;
+}
+
+.floating-wa-btn:hover {
+  padding: 12px 18px;
+  gap: 8px;
+  transform: translateY(-2px);
+}
+
+.floating-wa-btn:hover .floating-wa-text {
+  max-width: 140px;
+  opacity: 1;
+}
+
+/* ===================================================================
+   MOBILE-FIRST PERFECTION & OVERFLOW SHIELD (< 520px)
+   =================================================================== */
+html, body {
+  width: 100%;
+  max-width: 100vw;
+  overflow-x: hidden !important;
+}
+
+@media (max-width: 520px) {
+  .header-inner {
+    padding: 10px 14px;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .brand-icon {
+    width: 34px;
+    height: 34px;
+    font-size: 1.1rem;
+    border-radius: 8px;
+  }
+
+  .brand-name {
+    font-size: 0.92rem;
+  }
+
+  .brand-sub {
+    font-size: 0.68rem;
+  }
+
+  .header-right {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    gap: 8px;
+    padding-top: 8px;
+    border-top: 1px solid #f1f5f9;
+  }
+
+  .btn-cloud-badge {
+    font-size: 0.72rem;
+    padding: 6px 10px;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .btn-wa-header {
+    font-size: 0.72rem;
+    padding: 6px 10px;
+    flex: 1;
+    justify-content: center;
+  }
+
+  .btn-wa-header span {
+    display: inline !important;
+  }
+
+  .nav-bar {
+    position: sticky;
+    top: auto;
+  }
+
+  .nav-tab-btn {
+    padding: 10px 12px;
+    font-size: 0.8rem;
+  }
+
+  .main-wrap {
+    padding: 14px 10px 80px 10px;
+  }
+
+  .welcome-box {
+    padding: 16px 14px;
+    border-radius: var(--radius-md);
+  }
+
+  .welcome-heading {
+    font-size: 1.12rem;
+  }
+
+  .welcome-desc {
+    font-size: 0.82rem;
+  }
+
+  .form-card {
+    border-radius: var(--radius-md);
+  }
+
+  .form-card-header {
+    padding: 14px 16px;
+  }
+
+  .form-card-title {
+    font-size: 1.05rem;
+  }
+
+  .aduan-form {
+    padding: 16px 14px;
+  }
+
+  .form-section-title {
+    font-size: 0.92rem;
+    margin: 14px 0 10px 0;
+  }
+
+  .category-chips {
+    grid-template-columns: 1fr;
+    gap: 8px;
+  }
+
+  .chip-item {
+    padding: 10px 12px;
+    font-size: 0.82rem;
+  }
+
+  .input-text, .input-select, .input-textarea {
+    font-size: 0.88rem;
+    padding: 9px 12px;
+  }
+
+  .btn-submit-main {
+    font-size: 0.95rem;
+    padding: 12px 16px;
+  }
+
+  .track-card {
+    padding: 18px 14px;
+    border-radius: var(--radius-md);
+  }
+
+  .track-title {
+    font-size: 1.15rem;
+  }
+
+  .track-input-group {
+    flex-direction: column;
+  }
+
+  .btn-track-action {
+    width: 100%;
+    padding: 12px;
+  }
+
+  .map-render-container {
+    height: 440px;
+  }
+
+  .map-stats-strip {
+    grid-template-columns: 1fr 1fr;
+    padding: 10px 14px;
+    gap: 8px;
+  }
+
+  .map-toolbar {
+    padding: 12px 14px;
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .map-filter-group {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .map-filter-group select {
+    width: 100%;
+  }
+
+  .map-region-pills {
+    padding: 8px 14px;
+  }
+
+  .map-cards-section {
+    padding: 16px 14px;
+  }
+
+  .map-legend-box {
+    left: 10px;
+    right: 10px;
+    bottom: 10px;
+    max-width: none;
+    padding: 8px 12px;
+  }
+
+  .kpi-grid {
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+  }
+
+  .kpi-box {
+    padding: 10px 12px;
+  }
+
+  .kpi-num {
+    font-size: 1.3rem;
+  }
+
+  .floating-wa-btn {
+    bottom: 16px;
+    right: 16px;
+    padding: 10px;
+  }
+}
+
+/* ===================================================================
+   UPLOAD ZONE STYLES
+   =================================================================== */
+.upload-zone {
+  border: 2px dashed #cbd5e1;
+  border-radius: var(--radius-md);
+  padding: 18px;
+  text-align: center;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+}
+
+.upload-zone:hover,
+.upload-zone.dragover {
+  border-color: var(--primary);
+  background: #f0fdf4;
+}
+
+.btn-upload-trigger {
+  background: white;
+  border: 1px solid #cbd5e1;
+  padding: 9px 18px;
+  border-radius: var(--radius-sm);
+  color: #334155;
+  font-weight: 600;
+  font-size: 0.88rem;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-upload-trigger:hover {
+  background: #f1f5f9;
+  border-color: #94a3b8;
+  color: #0f172a;
+}
+
+.upload-hint {
+  font-size: 0.78rem;
+  color: #64748b;
+  margin-top: 8px;
+  margin-bottom: 0;
+}
+
+.upload-preview-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+  margin-top: 14px;
+  justify-content: center;
+}
+
+.upload-preview-item {
+  position: relative;
+  width: 72px;
+  height: 72px;
+  border-radius: 8px;
+  overflow: hidden;
+  border: 1px solid #cbd5e1;
+  background: #ffffff;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.upload-preview-item img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.upload-preview-item .file-icon {
+  font-size: 24px;
+}
+
+.upload-preview-item .btn-remove-preview {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  background: rgba(0,0,0,0.65);
+  color: white;
+  border: none;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  font-size: 11px;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+/* ===================================================================
+   CAMERA CAPTURE STYLES
+   =================================================================== */
+.upload-actions-group {
+  display: flex;
+  gap: 10px;
+  justify-content: center;
+  flex-wrap: wrap;
+  margin-bottom: 6px;
+}
+
+.btn-camera-trigger {
+  background: #059669;
+  color: white;
+  border: 1px solid #047857;
+  padding: 10px 18px;
+  border-radius: var(--radius-sm);
+  font-weight: 700;
+  font-size: 0.88rem;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
+  transition: all 0.2s ease;
+}
+
+.btn-camera-trigger:hover {
+  background: #047857;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(5, 150, 105, 0.35);
+}
+
+.modal-camera-dialog {
+  max-width: 480px;
+  width: 95%;
+}
+
+.camera-viewport-wrap {
+  position: relative;
+  width: 100%;
+  height: 320px;
+  background: #090d16;
+  border-radius: 12px;
+  overflow: hidden;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+#cameraVideoView {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.camera-target-grid {
+  position: absolute;
+  top: 12%;
+  left: 12%;
+  right: 12%;
+  bottom: 12%;
+  border: 2px dashed rgba(255, 255, 255, 0.45);
+  border-radius: 8px;
+  pointer-events: none;
+  box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.25);
+}
+
+.camera-footer-controls {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-shutter {
+  background: #dc2626 !important;
+  border-color: #b91c1c !important;
+  font-size: 0.95rem !important;
+  padding: 10px 22px !important;
+  font-weight: 800 !important;
+  border-radius: 999px !important;
+  box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4) !important;
+  transition: all 0.15s ease !important;
+}
+
+.btn-shutter:hover {
+  background: #b91c1c !important;
+  transform: scale(1.04);
+}
+
+
+
+  </style>
 </head>
 <body>
 
@@ -692,9 +2593,2423 @@
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
-  <!-- Application Logic -->
+  <!-- Application Logic (Embedded directly for 100% fail-proof execution on Netlify & GitHub) -->
   <script src="js/data.js"></script>
   <script src="js/map.js"></script>
   <script src="js/app.js"></script>
+  <script>
+/* === DATA.JS === */
+/**
+ * SISTEM PENDATAAN DIGITAL ADUAN PENCEMARAN LINGKUNGAN
+ * DINAS LINGKUNGAN HIDUP KABUPATEN LEMBATA
+ * Data Store, Default Dataset & LocalStorage Management
+ */
+
+const STORAGE_KEY = 'dlh_lembata_aduan_v1';
+
+// Daftar 9 Kecamatan di Kabupaten Lembata beserta titik pusat koordinat dan daftar desa/kelurahan
+const KECAMATAN_LEMBATA = {
+  'Nubatukan': {
+    lat: -8.3682,
+    lng: 123.5583,
+    ibukota: 'Lewoleba',
+    desa: [
+      'Bakalerek',
+      'Baolangu',
+      'Belobatang',
+      'Bour',
+      'Lewoleba (Kelurahan)',
+      'Lewoleba Barat (Kelurahan)',
+      'Lewoleba Selatan (Kelurahan)',
+      'Lewoleba Tengah (Kelurahan)',
+      'Lewoleba Timur (Kelurahan)',
+      'Lewoleba Utara (Kelurahan)',
+      'Lite Ulumado',
+      'Nubamado',
+      'Nubatukan',
+      'Pada',
+      'Paubokol',
+      'Selandoro (Kelurahan)',
+      'Udak Melomata',
+      'Waijarang'
+    ]
+  },
+  'Ile Ape': {
+    lat: -8.2831,
+    lng: 123.5412,
+    ibukota: 'Waipukang',
+    desa: [
+      'Amakaka',
+      'Beutaran',
+      'Bungamuda',
+      'Dulitukan',
+      'Kolipadan',
+      'Kolontobo',
+      'Lamawara',
+      'Laranwuntun',
+      'Muruona',
+      'Napasabok',
+      'Palilolon',
+      'Petuntawa',
+      'Riangbao',
+      'Tagawiti',
+      'Tanjung Batu',
+      'Waowala',
+      'Watodiri'
+    ]
+  },
+  'Ile Ape Timur': {
+    lat: -8.2915,
+    lng: 123.6128,
+    ibukota: 'Lamagute',
+    desa: [
+      'Aulesa',
+      'Bao Lai Duli',
+      'Jontona',
+      'Lamaau',
+      'Lamagute',
+      'Lamatokan',
+      'Lamawolo',
+      'Todanara',
+      'Waimatan'
+    ]
+  },
+  'Lebatukan': {
+    lat: -8.3584,
+    lng: 123.6652,
+    ibukota: 'Hadakewa',
+    desa: [
+      'Atakore',
+      'Balurebong',
+      'Baopana',
+      'Belobao',
+      'Dikesare',
+      'Hadakewa',
+      'Lamalela',
+      'Lamatuka',
+      'Lerahinga',
+      'Lewoeleng',
+      'Lodoblolong',
+      'Merdeka',
+      'Seranggorang',
+      'Tapobaran',
+      'Tapolangu',
+      'Waienga',
+      'Wangatoa'
+    ]
+  },
+  'Nagawutung': {
+    lat: -8.4902,
+    lng: 123.3854,
+    ibukota: 'Loang',
+    desa: [
+      'Babokerong',
+      'Bauraja',
+      'Belabaja',
+      'Duawutun',
+      'Idalolong',
+      'Ilape',
+      'Ile Kimok',
+      'Labalimut',
+      'Liwulagang',
+      'Loang',
+      'Lusilame',
+      'Pasir Putih',
+      'Penikene',
+      'Riangbao',
+      'Sinunaleng',
+      'Tewaowutung',
+      'Warawatung',
+      'Wuakerong'
+    ]
+  },
+  'Wulandoni': {
+    lat: -8.5412,
+    lng: 123.4915,
+    ibukota: 'Wulandoni',
+    desa: [
+      'Alap Atadei',
+      'Atakera',
+      'Belobao',
+      'Imulolong',
+      'Lamalera A',
+      'Lamalera B',
+      'Leworaja',
+      'Mulankera',
+      'Pantai Harapan',
+      'Pora',
+      'Posiwatu',
+      'Puor',
+      'Puor B',
+      'Tapobali',
+      'Wulandoni'
+    ]
+  },
+  'Atadei': {
+    lat: -8.4550,
+    lng: 123.5681,
+    ibukota: 'Kalikasa',
+    desa: [
+      'Atakore',
+      'Atanila',
+      'Dulir',
+      'Kalikasa',
+      'Karangora',
+      'Katakeja',
+      'Lebomatan',
+      'Lewogroma',
+      'Lewokukung',
+      'Lusilame',
+      'Nogo Doni',
+      'Nubahaeraka',
+      'Tubuk Rajan',
+      'Wadun',
+      'Watuwawer'
+    ]
+  },
+  'Omesuri': {
+    lat: -8.2351,
+    lng: 123.8224,
+    ibukota: 'Balauring',
+    desa: [
+      'Aramaba',
+      'Balauring',
+      'Dolulolong',
+      'Hingalamamengi',
+      'Hoelea',
+      'Hoelea II',
+      'Leubatang',
+      'Leudanung',
+      'Leuwayang',
+      'Mahal',
+      'Mahal II',
+      'Meluwiting',
+      'Meluwiting I',
+      'Nilanapo',
+      'Normal',
+      'Normal I',
+      'Peusawa',
+      'Roma',
+      'Unleurn',
+      'Usun Manu',
+      'Walangsawa',
+      'Wowong'
+    ]
+  },
+  'Buyasuri': {
+    lat: -8.1925,
+    lng: 123.9450,
+    ibukota: 'Wairiang',
+    desa: [
+      'Atulaleng',
+      'Atuwalupang',
+      'Bareng',
+      'Bean',
+      'Benikoor',
+      'Boli Bean',
+      'Buriwutung',
+      'Kalikur',
+      'Kalikur WL',
+      'Kaohua',
+      'Leuburi',
+      'Loyobohor',
+      'Mampir',
+      'Panama',
+      'Roho',
+      'Rumang',
+      'Tobotani',
+      'Tuwago',
+      'Umaleu',
+      'Wairiang'
+    ]
+  }
+};
+
+// Data Awal Aduan Realistis Kabupaten Lembata
+const INITIAL_ADUAN_DATA = [
+  {
+    id: 'ADU-LMB-2026-001',
+    timestamp: '2026-09-12 09:15',
+    namaPelapor: 'Fransiskus Kedang',
+    noHp: '081234567890',
+    alamatPelapor: 'Kel. Selandoro, Nubatukan',
+    kecamatan: 'Nubatukan',
+    desa: 'Lewoleba Tengah',
+    lokasiDetail: 'Pesisir Dermaga Jeti Rakyat Lewoleba',
+    lat: -8.3615,
+    lng: 123.5512,
+    jenisPencemaran: 'Laut & Pesisir',
+    uraian: 'Terdapat ceceran oli bekas dan limbah bahan bakar kapal motor yang mengapung di air laut sekitar dermaga rakyat. Air laut berwarna kehitaman dan berbau menyengat.',
+    sumberDugaan: 'Aktivitas bengkel perahu & kapal motor nelayan',
+    tanggalKejadian: '2026-09-11',
+    status: 'Selesai',
+    petugasVerifikasi: 'Yohanes B. (Pengendali Dampak Lingkungan)',
+    tanggalVerifikasi: '2026-09-13',
+    hasilVerifikasi: 'Terbukti ada ceceran oli sekitar 15 m² dekat tambatan kapal.',
+    tindakanDLH: 'Pembersihan tumpahan oli dengan absorbent pad, serta pembinaan dan surat teguran kepada pengelola kapal tambat.',
+    tanggalSelesai: '2026-09-16'
+  },
+  {
+    id: 'ADU-LMB-2026-002',
+    timestamp: '2026-09-18 14:30',
+    namaPelapor: 'Theresia Purek',
+    noHp: '082198765432',
+    alamatPelapor: 'Desa Hadakewa, Lebatukan',
+    kecamatan: 'Lebatukan',
+    desa: 'Hadakewa',
+    lokasiDetail: 'Jalan poros dekat area pantai belakang pasar ikan',
+    lat: -8.3580,
+    lng: 123.6650,
+    jenisPencemaran: 'Sampah Ilegal & Bau',
+    uraian: 'Penumpukan sampah sisa ikan dan limbah plastik yang dibuang liar di semak pinggir pantai, menimbulkan bau busuk dan lalat banyak hingga ke permukiman warga.',
+    sumberDugaan: 'Pedagang liar & oknum warga sekitar pasar',
+    tanggalKejadian: '2026-09-17',
+    status: 'Selesai',
+    petugasVerifikasi: 'Agustinus L. (Staf Kebersihan DLH)',
+    tanggalVerifikasi: '2026-09-19',
+    hasilVerifikasi: 'Timbunan sampah liar volume ~2 m³ membusuk.',
+    tindakanDLH: 'Pengangkutan seluruh sampah dengan armada truk sampah DLH dan pemasangan plang larangan buang sampah berkoordinasi dengan Pemdes Hadakewa.',
+    tanggalSelesai: '2026-09-21'
+  },
+  {
+    id: 'ADU-LMB-2026-003',
+    timestamp: '2026-09-25 11:20',
+    namaPelapor: 'Petrus Laba',
+    noHp: '085233445566',
+    alamatPelapor: 'Desa Waipukang, Ile Ape',
+    kecamatan: 'Ile Ape',
+    desa: 'Waipukang',
+    lokasiDetail: 'Lembah lereng dekat jalan usaha tani',
+    lat: -8.2830,
+    lng: 123.5410,
+    jenisPencemaran: 'Udara & Asap',
+    uraian: 'Pembakaran ban bekas dan tumpukan material kabel setiap sore hari untuk mengambil kawat tembaga. Asap hitam pekat mengganggu pernapasan warga dan anak sekolah.',
+    sumberDugaan: 'Aktivitas pengumpul rongsokan / besi tua liar',
+    tanggalKejadian: '2026-09-24',
+    status: 'Dalam Penanganan',
+    petugasVerifikasi: 'Maria E. Karangora (PPNS Lingkungan Hidup)',
+    tanggalVerifikasi: '2026-09-27',
+    hasilVerifikasi: 'Ditemukan sisa abu pembakaran ban dan kabel tembaga.',
+    tindakanDLH: 'Pemberian Surat Peringatan ke-1 kepada pelaku usaha rongsokan dan pelarangan aktivitas pembakaran terbuka (open burning). Sedang dalam masa pengawasan 14 hari.',
+    tanggalSelesai: '-'
+  },
+  {
+    id: 'ADU-LMB-2026-004',
+    timestamp: '2026-10-01 08:45',
+    namaPelapor: 'Kornelis Making',
+    noHp: '081377889900',
+    alamatPelapor: 'Desa Kalikasa, Atadei',
+    kecamatan: 'Atadei',
+    desa: 'Kalikasa',
+    lokasiDetail: 'Aliran anak sungai Wai Henga',
+    lat: -8.4555,
+    lng: 123.5685,
+    jenisPencemaran: 'Pencemaran Air',
+    uraian: 'Air sungai yang biasa dipakai warga untuk cuci dan ternak terlihat keruh pekat berwarna keputihan dan berbau belerang tak wajar sejak pekerjaan saluran air.',
+    sumberDugaan: 'Material proyek galian yang dibuang langsung ke sungai',
+    tanggalKejadian: '2026-09-30',
+    status: 'Sedang Diverifikasi',
+    petugasVerifikasi: 'Ir. Damianus T. (Kabid Penataan DLH)',
+    tanggalVerifikasi: '2026-10-03',
+    hasilVerifikasi: 'Sampel air telah diambil untuk uji parameter kekeruhan (TDS & TSS). Terindikasi sedimentasi akibat erosi galian.',
+    tindakanDLH: 'Menyusun rekomendasi teknis pembuatan settling pond (kolam endap) kepada pihak pelaksana proyek.',
+    tanggalSelesai: '-'
+  },
+  {
+    id: 'ADU-LMB-2026-005',
+    timestamp: '2026-10-03 16:10',
+    namaPelapor: 'Siti Aminah',
+    noHp: '082233441122',
+    alamatPelapor: 'Desa Balauring, Omesuri',
+    kecamatan: 'Omesuri',
+    desa: 'Balauring',
+    lokasiDetail: 'Kawasan mangrove muara teluk Balauring',
+    lat: -8.2355,
+    lng: 123.8220,
+    jenisPencemaran: 'Limbah B3 & Plastik',
+    uraian: 'Ditemukan drum bekas cairan kimia/aki bekas dan tumpukan oli yang dibuang sembarangan di antara vegetasi bakau tepi muara.',
+    sumberDugaan: 'Bengkel aki liar / penampung limbah tanpa izin',
+    tanggalKejadian: '2026-10-02',
+    status: 'Aduan Diterima',
+    petugasVerifikasi: '-',
+    tanggalVerifikasi: '-',
+    hasilVerifikasi: 'Menunggu penugasan tim verifikasi lapangan ke Omesuri',
+    tindakanDLH: 'Jadwal verifikasi lapangan direncanakan minggu ini bersama Babinsa setempat.',
+    tanggalSelesai: '-'
+  },
+  {
+    id: 'ADU-LMB-2026-006',
+    timestamp: '2026-10-04 10:00',
+    namaPelapor: 'Yosefina Lipat',
+    noHp: '081266778899',
+    alamatPelapor: 'Desa Wairiang, Buyasuri',
+    kecamatan: 'Buyasuri',
+    desa: 'Wairiang',
+    lokasiDetail: 'Pesisir pantai desa Wairiang',
+    lat: -8.1920,
+    lng: 123.9455,
+    jenisPencemaran: 'Laut & Pesisir',
+    uraian: 'Sampah kiriman plastik kemasan dan tali jaring hanyut memenuhi garis pantai hingga 200 meter, mengancam lokasi penjemuran rumput laut.',
+    sumberDugaan: 'Arus laut sampah musiman & perahu nelayan melintas',
+    tanggalKejadian: '2026-10-03',
+    status: 'Aduan Diterima',
+    petugasVerifikasi: '-',
+    tanggalVerifikasi: '-',
+    hasilVerifikasi: 'Aduan masuk, koordinasi awal dengan perangkat desa Buyasuri',
+    tindakanDLH: 'Rencana aksi bersih pantai (coastal clean up) bersama warga & karang taruna desa.',
+    tanggalSelesai: '-'
+  },
+  {
+    id: 'ADU-LMB-2026-007',
+    timestamp: '2026-10-05 13:25',
+    namaPelapor: 'Markus Belang',
+    noHp: '081355443322',
+    alamatPelapor: 'Desa Loang, Nagawutung',
+    kecamatan: 'Nagawutung',
+    desa: 'Loang',
+    lokasiDetail: 'Kawasan pantai pasir putih Loang',
+    lat: -8.4900,
+    lng: 123.3850,
+    jenisPencemaran: 'Kerusakan Lingkungan & Tanah',
+    uraian: 'Pengambilan pasir laut secara masif menggunakan truk tanpa izin konservasi, menyebabkan abrasi tebing pantai dan pohon kelapa tumbang.',
+    sumberDugaan: 'Oknum penambang pasir liar',
+    tanggalKejadian: '2026-10-04',
+    status: 'Sedang Diverifikasi',
+    petugasVerifikasi: 'Petrus S. (Bidang Pengawasan LH)',
+    tanggalVerifikasi: '2026-10-06',
+    hasilVerifikasi: 'Terbukti terjadi lubang galian pasir pada sempadan pantai seluas ~100 m².',
+    tindakanDLH: 'Koordinasi bersama Satpol PP Lembata untuk penertiban dan pemasangan plang larangan penambangan pasir sempadan pantai.',
+    tanggalSelesai: '-'
+  },
+  {
+    id: 'ADU-LMB-2026-008',
+    timestamp: '2026-09-05 08:30',
+    namaPelapor: 'Antonius Boli',
+    noHp: '081244556677',
+    alamatPelapor: 'Desa Wulandoni, Wulandoni',
+    kecamatan: 'Wulandoni',
+    desa: 'Wulandoni',
+    lokasiDetail: 'Area pasar barter tradisional Wulandoni',
+    lat: -8.5410,
+    lng: 123.4910,
+    jenisPencemaran: 'Pencemaran Air',
+    uraian: 'Diduga air sumur warga tercemar rembesan limbah pengolahan daging paus/ikan dari tempat pemotongan tradisional.',
+    sumberDugaan: 'Saluran pembuangan tradisional yang mampet',
+    tanggalKejadian: '2026-09-04',
+    status: 'Ditolak',
+    petugasVerifikasi: 'Tim Gabungan DLH & Dinkes Lembata',
+    tanggalVerifikasi: '2026-09-07',
+    hasilVerifikasi: 'Uji air sumur menunjukkan parameter bakteriologis normal, bau berasal dari saluran drainase umum yang tersumbat daun dan lumpur, bukan pencemaran limbah B3/berbahaya.',
+    tindakanDLH: 'Diserahkan penanganannya kepada pengelola pasar dan pemdes Wulandoni untuk pembersihan got bersama warga.',
+    tanggalSelesai: '2026-09-08'
+  }
+];
+
+// Helper: Parse Google Sheets CSV Export menjadi array data aduan
+function parseCsvToAduan(csvText) {
+  if (!csvText || typeof csvText !== 'string') return [];
+  const lines = [];
+  let row = [];
+  let inQuotes = false;
+  let current = '';
+
+  for (let i = 0; i < csvText.length; i++) {
+    const c = csvText[i];
+    const next = csvText[i + 1];
+    if (c === '"') {
+      if (inQuotes && next === '"') {
+        current += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+    } else if (c === ',' && !inQuotes) {
+      row.push(current);
+      current = '';
+    } else if ((c === '\r' || c === '\n') && !inQuotes) {
+      if (c === '\r' && next === '\n') i++;
+      row.push(current);
+      lines.push(row);
+      row = [];
+      current = '';
+    } else {
+      current += c;
+    }
+  }
+  if (current || row.length > 0) {
+    row.push(current);
+    lines.push(row);
+  }
+
+  if (lines.length < 2) return [];
+  const headers = lines[0].map(h => (h || '').trim().replace(/^"|"$/g, ''));
+  const result = [];
+
+  for (let i = 1; i < lines.length; i++) {
+    const r = lines[i];
+    if (!r || r.length < 2) continue;
+    const item = {};
+    headers.forEach((h, idx) => {
+      item[h] = (r[idx] || '').trim().replace(/^"|"$/g, '');
+    });
+
+    const id = item.ID_Aduan || item.id || `ADU-LMB-2026-${String(i).padStart(3, '0')}`;
+    result.push({
+      id: id,
+      timestamp: item.Timestamp || item.timestamp || '-',
+      namaPelapor: item.Nama_Pelapor || item.namaPelapor || 'Masyarakat',
+      noHp: item.No_HP || item.noHp || '-',
+      alamatPelapor: item.Alamat_Pelapor || item.alamatPelapor || '-',
+      kecamatan: item.Kecamatan || item.kecamatan || 'Nubatukan',
+      desa: item.Desa_Kelurahan || item.desa || '-',
+      lokasiDetail: item.Lokasi_Detail || item.lokasiDetail || '-',
+      lat: parseFloat(item.Latitude || item.lat || -8.368),
+      lng: parseFloat(item.Longitude || item.lng || 123.558),
+      jenisPencemaran: item.Jenis_Pencemaran || item.jenisPencemaran || 'Lainnya',
+      uraian: item.Uraian_Aduan || item.uraian || '-',
+      sumberDugaan: item.Sumber_Dugaan || item.sumberDugaan || '-',
+      tanggalKejadian: item.Tanggal_Kejadian || item.tanggalKejadian || '-',
+      status: item.Status || item.status || 'Baru',
+      petugasVerifikasi: item.Petugas_Verifikasi || item.petugasVerifikasi || '-',
+      tanggalVerifikasi: item.Tanggal_Verifikasi || item.tanggalVerifikasi || '-',
+      hasilVerifikasi: item.Hasil_Verifikasi || item.hasilVerifikasi || '-',
+      tindakanDLH: item.Tindakan_DLH || item.tindakanDLH || '-',
+      tanggalSelesai: item.Tanggal_Selesai || item.tanggalSelesai || '-'
+    });
+  }
+  return result;
+}
+
+// Konfigurasi Kunci Penyimpanan & URL Web App Google Apps Script
+const GAS_CONFIG_KEY = 'dlh_gas_api_url';
+const DEFAULT_GAS_API_URL = 'https://script.google.com/macros/s/AKfycbxm4r8QU2dv0S6csTTpmewuuvMNNrqiD2NeF_ENzXi8z7E3qDALHz6HNiBWtiEpGMruIQ/exec';
+
+class AduanDataStore {
+  constructor() {
+    this.aduanList = [];
+    this.gasApiUrl = localStorage.getItem(GAS_CONFIG_KEY) || (window.GAS_API_URL || DEFAULT_GAS_API_URL);
+    this.isSyncing = false;
+    this.lastSyncTime = null;
+    this.init();
+  }
+
+  init() {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      try {
+        this.aduanList = JSON.parse(stored);
+      } catch (e) {
+        console.error('Error parsing stored aduan, fallback to default:', e);
+        this.aduanList = [...INITIAL_ADUAN_DATA];
+        this.save();
+      }
+    } else {
+      this.aduanList = [...INITIAL_ADUAN_DATA];
+      this.save();
+    }
+
+    // Jika URL Google Apps Script sudah disetel, coba sinkronisasi otomatis
+    if (this.hasGasConfigured()) {
+      setTimeout(() => this.syncFromGAS(), 800);
+    }
+  }
+
+  hasGasConfigured() {
+    return !!(this.gasApiUrl && this.gasApiUrl.trim().startsWith('http'));
+  }
+
+  getGasUrl() {
+    return this.gasApiUrl;
+  }
+
+  setGasUrl(url) {
+    this.gasApiUrl = (url || '').trim();
+    if (this.gasApiUrl) {
+      localStorage.setItem(GAS_CONFIG_KEY, this.gasApiUrl);
+    } else {
+      localStorage.removeItem(GAS_CONFIG_KEY);
+    }
+    return this.hasGasConfigured();
+  }
+
+  async syncFromGAS() {
+    if (!this.hasGasConfigured() || this.isSyncing) {
+      return { success: false, reason: 'URL belum diisi. Masukkan URL Web App Google Apps Script untuk menghubungkan data cloud.' };
+    }
+
+    this.isSyncing = true;
+    try {
+      let endpoint = this.gasApiUrl;
+
+      // Dukungan jika pengguna memasukkan link Google Spreadsheet langsung
+      if (endpoint.includes('docs.google.com/spreadsheets')) {
+        const match = endpoint.match(/\/d\/([a-zA-Z0-9-_]+)/);
+        if (match) {
+          const sheetId = match[1];
+          endpoint = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Data_Aduan`;
+          const response = await fetch(endpoint);
+          if (!response.ok) throw new Error(`Gagal membaca sheet (HTTP ${response.status})`);
+          const csvText = await response.text();
+          const parsedData = parseCsvToAduan(csvText);
+          if (parsedData.length > 0) {
+            this.aduanList = parsedData;
+            this.save();
+            this.lastSyncTime = new Date();
+            window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length } }));
+            return { success: true, count: this.aduanList.length };
+          } else {
+            throw new Error('Data di sheet kosong atau format kolom belum sesuai');
+          }
+        }
+      }
+
+      // Endpoint Google Apps Script Web App
+      endpoint = `${endpoint}${endpoint.includes('?') ? '&' : '?'}action=getAll&_t=${Date.now()}`;
+      const response = await fetch(endpoint, { method: 'GET', mode: 'cors' });
+      if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+      const json = await response.json();
+
+      if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {
+        // Normalisasi format data dari Google Spreadsheet
+        this.aduanList = json.data.map(item => ({
+          id: item.id || item.ID_Aduan,
+          timestamp: item.timestamp || item.Timestamp || '-',
+          namaPelapor: item.namaPelapor || item.Nama_Pelapor || 'Masyarakat',
+          noHp: item.noHp || item.No_HP || '-',
+          alamatPelapor: item.alamatPelapor || item.Alamat_Pelapor || '-',
+          kecamatan: item.kecamatan || item.Kecamatan || 'Nubatukan',
+          desa: item.desa || item.Desa_Kelurahan || '-',
+          lokasiDetail: item.lokasiDetail || item.Lokasi_Detail || '-',
+          lat: parseFloat(item.lat || item.Latitude || -8.368),
+          lng: parseFloat(item.lng || item.Longitude || 123.558),
+          jenisPencemaran: item.jenisPencemaran || item.Jenis_Pencemaran || 'Lainnya',
+          uraian: item.uraian || item.Uraian_Aduan || '-',
+          sumberDugaan: item.sumberDugaan || item.Sumber_Dugaan || '-',
+          tanggalKejadian: item.tanggalKejadian || item.Tanggal_Kejadian || '-',
+          status: item.status || item.Status || 'Baru',
+          petugasVerifikasi: item.petugasVerifikasi || item.Petugas_Verifikasi || '-',
+          tanggalVerifikasi: item.tanggalVerifikasi || item.Tanggal_Verifikasi || '-',
+          hasilVerifikasi: item.hasilVerifikasi || item.Hasil_Verifikasi || '-',
+          tindakanDLH: item.tindakanDLH || item.Tindakan_DLH || '-',
+          tanggalSelesai: item.tanggalSelesai || item.Tanggal_Selesai || '-'
+        }));
+
+        this.save();
+        this.lastSyncTime = new Date();
+        window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length } }));
+        return { success: true, count: this.aduanList.length };
+      }
+      return { success: false, reason: 'Format respons tidak valid atau data masih kosong' };
+    } catch (err) {
+      console.warn('Sinkronisasi Google Spreadsheet offline/gagal (menggunakan data lokal):', err);
+      let errMsg = err.message;
+      if (errMsg.includes('Failed to fetch') || errMsg.includes('NetworkError')) {
+        errMsg = 'Gagal terhubung. Pastikan Web App disetel "Who has access: Anyone" dan spreadsheet dapat diakses.';
+      }
+      return { success: false, error: errMsg };
+    } finally {
+      this.isSyncing = false;
+    }
+  }
+
+  async postToGAS(action, payload) {
+    if (!this.hasGasConfigured()) return { success: false, offline: true };
+
+    try {
+      const response = await fetch(this.gasApiUrl, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify({ action: action, data: payload })
+      });
+      const data = await response.json();
+      return { success: true, response: data };
+    } catch (err) {
+      console.warn(`Gagal kirim '${action}' ke Google Apps Script:`, err);
+      return { success: false, error: err.message };
+    }
+  }
+
+  save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.aduanList));
+  }
+
+  getAll() {
+    return this.aduanList;
+  }
+
+  getById(id) {
+    if (!id) return null;
+    return this.aduanList.find(item => item.id.trim().toLowerCase() === id.trim().toLowerCase()) || null;
+  }
+
+  generateNewId() {
+    const year = new Date().getFullYear();
+    const count = this.aduanList.length + 1;
+    const padded = String(count).padStart(3, '0');
+    return `ADU-LMB-${year}-${padded}`;
+  }
+
+  addAduan(formData) {
+    const newId = this.generateNewId();
+    const now = new Date();
+    const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+    // Lookup default lat lng from kecamatan if not provided
+    const kecMeta = KECAMATAN_LEMBATA[formData.kecamatan] || { lat: -8.375, lng: 123.55 };
+    const lat = formData.lat ? parseFloat(formData.lat) : (kecMeta.lat + (Math.random() - 0.5) * 0.02);
+    const lng = formData.lng ? parseFloat(formData.lng) : (kecMeta.lng + (Math.random() - 0.5) * 0.02);
+
+    const newRecord = {
+      id: newId,
+      timestamp: formattedDate,
+      namaPelapor: formData.namaPelapor || 'Masyarakat (Anonim)',
+      noHp: formData.noHp || '-',
+      alamatPelapor: formData.alamatPelapor || '-',
+      kecamatan: formData.kecamatan || 'Nubatukan',
+      desa: formData.desa || '-',
+      lokasiDetail: formData.lokasiDetail || '-',
+      lat: lat,
+      lng: lng,
+      jenisPencemaran: formData.jenisPencemaran || 'Lainnya',
+      uraian: formData.uraian || '-',
+      sumberDugaan: formData.sumberDugaan || '-',
+      tanggalKejadian: formData.tanggalKejadian || formattedDate.split(' ')[0],
+      status: 'Aduan Diterima',
+      petugasVerifikasi: '-',
+      tanggalVerifikasi: '-',
+      hasilVerifikasi: 'Menunggu penugasan verifikator lapangan.',
+      tindakanDLH: 'Aduan telah dicatat ke sistem dan siap dijadwalkan verifikasi.',
+      tanggalSelesai: '-'
+    };
+
+    this.aduanList.unshift(newRecord);
+    this.save();
+
+    // Kirim asinkron ke Google Apps Script jika terhubung
+    if (this.hasGasConfigured()) {
+      this.postToGAS('addAduan', newRecord);
+    }
+
+    return newRecord;
+  }
+
+  updateVerifikasi(id, updateData) {
+    const index = this.aduanList.findIndex(item => item.id === id);
+    if (index === -1) return false;
+
+    this.aduanList[index] = {
+      ...this.aduanList[index],
+      status: updateData.status || this.aduanList[index].status,
+      petugasVerifikasi: updateData.petugasVerifikasi || this.aduanList[index].petugasVerifikasi,
+      tanggalVerifikasi: updateData.tanggalVerifikasi || this.aduanList[index].tanggalVerifikasi,
+      hasilVerifikasi: updateData.hasilVerifikasi || this.aduanList[index].hasilVerifikasi,
+      tindakanDLH: updateData.tindakanDLH || this.aduanList[index].tindakanDLH,
+      tanggalSelesai: updateData.status === 'Selesai' ? (updateData.tanggalSelesai || new Date().toISOString().split('T')[0]) : this.aduanList[index].tanggalSelesai
+    };
+
+    this.save();
+
+    // Kirim asinkron ke Google Apps Script jika terhubung
+    if (this.hasGasConfigured()) {
+      this.postToGAS('updateVerifikasi', {
+        id: id,
+        ...updateData
+      });
+    }
+
+    return this.aduanList[index];
+  }
+
+  resetToDefault() {
+    this.aduanList = [...INITIAL_ADUAN_DATA];
+    this.save();
+  }
+
+  getStats() {
+    const total = this.aduanList.length;
+    let aduanDiterima = 0;
+    let verifAdmin = 0;
+    let menungguVerif = 0;
+    let sedangDiverif = 0;
+    let dalamPenanganan = 0;
+    let selesai = 0;
+    let ditolak = 0;
+
+    const perKecamatan = {};
+    const perJenis = {};
+
+    this.aduanList.forEach(item => {
+      // By Status
+      if (item.status === 'Aduan Diterima') aduanDiterima++;
+      else if (item.status === 'Verifikasi Administrasi') verifAdmin++;
+      else if (item.status === 'Menunggu Verifikasi Lapangan') menungguVerif++;
+      else if (item.status === 'Sedang Diverifikasi') sedangDiverif++;
+      else if (item.status === 'Dalam Penanganan') dalamPenanganan++;
+      else if (item.status === 'Selesai') selesai++;
+      else if (item.status === 'Ditolak') ditolak++;
+      // Backward compat: map old status names
+      else if (item.status === 'Baru') aduanDiterima++;
+      else if (item.status === 'Diverifikasi') sedangDiverif++;
+      else if (item.status === 'Ditindaklanjuti') dalamPenanganan++;
+
+      // By Kecamatan
+      perKecamatan[item.kecamatan] = (perKecamatan[item.kecamatan] || 0) + 1;
+
+      // By Jenis
+      perJenis[item.jenisPencemaran] = (perJenis[item.jenisPencemaran] || 0) + 1;
+    });
+
+    const baru = aduanDiterima; // alias for KPI
+    const dalamProses = verifAdmin + menungguVerif + sedangDiverif + dalamPenanganan;
+    const tingkatPenyelesaian = total > 0 ? Math.round(((selesai + ditolak) / total) * 100) : 0;
+
+    return {
+      total,
+      baru,
+      aduanDiterima,
+      verifAdmin,
+      menungguVerif,
+      sedangDiverif,
+      dalamPenanganan,
+      diverifikasi: sedangDiverif,
+      ditindak: dalamPenanganan,
+      selesai,
+      ditolak,
+      dalamProses,
+      tingkatPenyelesaian,
+      perKecamatan,
+      perJenis
+    };
+  }
+
+  exportToCSV() {
+    const headers = [
+      'ID Aduan',
+      'Waktu Lapor',
+      'Nama Pelapor',
+      'No HP',
+      'Kecamatan',
+      'Desa',
+      'Jenis Pencemaran',
+      'Lokasi Detail',
+      'Latitude',
+      'Longitude',
+      'Uraian Aduan',
+      'Status',
+      'Petugas Verifikasi',
+      'Hasil Verifikasi',
+      'Tindakan DLH',
+      'Tanggal Selesai'
+    ];
+
+    const rows = this.aduanList.map(item => [
+      `"${item.id}"`,
+      `"${item.timestamp}"`,
+      `"${item.namaPelapor}"`,
+      `"${item.noHp}"`,
+      `"${item.kecamatan}"`,
+      `"${item.desa}"`,
+      `"${item.jenisPencemaran}"`,
+      `"${(item.lokasiDetail || '').replace(/"/g, '""')}"`,
+      item.lat,
+      item.lng,
+      `"${(item.uraian || '').replace(/"/g, '""')}"`,
+      `"${item.status}"`,
+      `"${item.petugasVerifikasi || '-'}"`,
+      `"${(item.hasilVerifikasi || '-').replace(/"/g, '""')}"`,
+      `"${(item.tindakanDLH || '-').replace(/"/g, '""')}"`,
+      `"${item.tanggalSelesai || '-'}"`
+    ]);
+
+    const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+    const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.setAttribute('href', url);
+    link.setAttribute('download', `Rekap_Aduan_Lingkungan_DLH_Lembata_${new Date().toISOString().split('T')[0]}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  }
+}
+
+// Global instance
+window.aduanStore = new AduanDataStore();
+
+  </script>
+  <script>
+/* === MAP.JS === */
+/**
+ * SISTEM PENDATAAN DIGITAL ADUAN PENCEMARAN LINGKUNGAN
+ * DINAS LINGKUNGAN HIDUP KABUPATEN LEMBATA
+ * Enhanced Interactive Map Engine (Leaflet + Citra Satelit + Tooltips + Feed)
+ */
+
+class LembataMapEngine {
+  constructor(containerId = 'map') {
+    this.containerId = containerId;
+    this.map = null;
+    this.markersGroup = null;
+    this.landmarksGroup = null;
+    this.markerInstances = {}; // Menyimpan referensi marker per ID tiket
+    this.centerCoords = [-8.370, 123.560]; // Pusat Pulau Lembata
+    this.defaultZoom = 11;
+    this.activeFilter = {
+      status: 'all',
+      kecamatan: 'all',
+      jenis: 'all'
+    };
+    this.baseLayers = {};
+    this.currentBaseLayer = 'osm';
+  }
+
+  init() {
+    const container = document.getElementById(this.containerId);
+    if (!container) return;
+
+    if (typeof L !== 'undefined') {
+      this.initLeaflet();
+      this.setupBasemapButtons();
+      this.setupRegionPills();
+      this.setupLegendInteractions();
+    } else {
+      console.warn('Leaflet CDN tidak terdeteksi, mengaktifkan peta vektor SVG fallback');
+      this.initSvgFallback();
+    }
+  }
+
+  initLeaflet() {
+    try {
+      this.map = L.map(this.containerId, {
+        center: this.centerCoords,
+        zoom: this.defaultZoom,
+        zoomControl: true,
+        scrollWheelZoom: true
+      });
+
+      // 1. Layer Peta Standar OpenStreetMap
+      const osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19,
+        attribution: '&copy; OpenStreetMap kontributor | DLH Lembata'
+      });
+
+      // 2. Layer Citra Satelit Nyata (Esri World Imagery)
+      const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19,
+        attribution: 'Citra Satelit &copy; Esri, Maxar, Earthstar Geographics'
+      });
+
+      // 3. Layer Peta Topografi & Relief (Esri World Topo)
+      const topoLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19,
+        attribution: 'Topografi &copy; Esri, USGS'
+      });
+
+      // Default basemap
+      osmLayer.addTo(this.map);
+
+      this.baseLayers = {
+        'osm': osmLayer,
+        'sat': satLayer,
+        'topo': topoLayer
+      };
+
+      // Kontrol Layer Bawaan Leaflet di Pojok Kanan Atas
+      const layerControlLabels = {
+        '🗺️ Peta Jalan / Desa': osmLayer,
+        '🛰️ Citra Satelit Nyata': satLayer,
+        '⛰️ Relief Topografi': topoLayer
+      };
+      L.control.layers(layerControlLabels, null, { position: 'topright' }).addTo(this.map);
+
+      // Tambahkan skala jarak (metric)
+      L.control.scale({ imperial: false, position: 'bottomright' }).addTo(this.map);
+
+      // Inisialisasi layer penanda aduan
+      this.markersGroup = L.layerGroup().addTo(this.map);
+
+      // Tambahkan penanda landmark geografis penting Lembata
+      this.addGeographicLandmarks();
+
+      // Render pertama kali
+      this.renderMarkers();
+    } catch (err) {
+      console.error('Error saat inisialisasi Leaflet:', err);
+      this.initSvgFallback();
+    }
+  }
+
+  /* Landmark Geografis Pulau Lembata untuk memudahkan masyarakat mengenali wilayah */
+  addGeographicLandmarks() {
+    if (!this.map) return;
+    this.landmarksGroup = L.layerGroup().addTo(this.map);
+
+    const landmarks = [
+      { name: '🏛️ Kota Lewoleba (Ibukota)', coords: [-8.368, 123.558], desc: 'Pusat Pemerintahan & Pelabuhan Lewoleba' },
+      { name: '🌋 Gunung Ile Lewotolok', coords: [-8.272, 123.505], desc: 'Puncak Vulkanik Ile Ape' },
+      { name: '🌊 Teluk Lewoleba', coords: [-8.352, 123.535], desc: 'Kawasan Pesisir Nubatukan' },
+      { name: '🐟 Teluk Hadakewa', coords: [-8.355, 123.662], desc: 'Pesisir Lebatukan' },
+      { name: '🏝️ Tanjung Batu', coords: [-8.245, 123.520], desc: 'Ujung Utara Ile Ape' },
+      { name: '🏘️ Balauring (Kedang)', coords: [-8.235, 123.822], desc: 'Pusat Kecamatan Omesuri' },
+      { name: '🛶 Lamalera (Wulandoni)', coords: [-8.552, 123.492], desc: 'Desa Tradisional Pesisir Selatan' }
+    ];
+
+    landmarks.forEach(lm => {
+      const landmarkIcon = L.divIcon({
+        className: 'landmark-map-label',
+        html: `<div style="
+          background: rgba(15, 23, 42, 0.75);
+          color: #ffffff;
+          padding: 2px 7px;
+          border-radius: 999px;
+          font-size: 10px;
+          font-weight: 700;
+          white-space: nowrap;
+          border: 1px solid rgba(255, 255, 255, 0.4);
+          box-shadow: 0 2px 6px rgba(0,0,0,0.3);
+          pointer-events: none;
+        ">${lm.name}</div>`,
+        iconSize: [120, 20],
+        iconAnchor: [60, 10]
+      });
+
+      L.marker(lm.coords, { icon: landmarkIcon, interactive: false }).addTo(this.landmarksGroup);
+    });
+  }
+
+  /* Ikon Kategori Pencemaran */
+  getCategoryIcon(jenis) {
+    if (!jenis) return '⚠️';
+    const j = jenis.toLowerCase();
+    if (j.includes('laut') || j.includes('pesisir')) return '🌊';
+    if (j.includes('sampah') || j.includes('bau')) return '🗑️';
+    if (j.includes('air') || j.includes('sungai')) return '💧';
+    if (j.includes('udara') || j.includes('asap')) return '💨';
+    if (j.includes('b3') || j.includes('kimia') || j.includes('medis')) return '☣️';
+    if (j.includes('kerusakan') || j.includes('tanah') || j.includes('hutan')) return '🌳';
+    return '⚠️';
+  }
+
+  /* Warna Status Aduan */
+  getMarkerColor(status) {
+    switch (status) {
+      case 'Baru':
+      case 'Aduan Diterima': return '#f59e0b'; // Amber / Kuning Jingga
+      case 'Verifikasi Administrasi': return '#ca8a04'; // Emas
+      case 'Menunggu Verifikasi Lapangan': return '#ea580c'; // Oranye
+      case 'Sedang Diverifikasi':
+      case 'Diverifikasi': return '#8b5cf6'; // Ungu
+      case 'Dalam Penanganan':
+      case 'Ditindaklanjuti': return '#2563eb'; // Biru
+      case 'Selesai': return '#059669'; // Hijau
+      case 'Ditolak': return '#64748b'; // Abu-abu
+      default: return '#10b981';
+    }
+  }
+
+  /* Custom Leaflet Pin Icon dengan Ikon Kategori dan Animasi Halo Denyut */
+  createPinIcon(item) {
+    const color = this.getMarkerColor(item.status);
+    const catIcon = this.getCategoryIcon(item.jenisPencemaran);
+    const isActivelyHandled = item.status !== 'Selesai' && item.status !== 'Ditolak';
+
+    return L.divIcon({
+      className: 'custom-leaflet-marker-wrapper',
+      html: `
+        <div class="custom-leaflet-marker" style="--marker-color: ${color};">
+          ${isActivelyHandled ? `<div class="marker-pulse-ring" style="border-color: ${color};"></div>` : ''}
+          <div class="marker-pin" style="background: ${color};">
+            <span class="marker-icon">${catIcon}</span>
+          </div>
+        </div>
+      `,
+      iconSize: [32, 38],
+      iconAnchor: [16, 36],
+      popupAnchor: [0, -36]
+    });
+  }
+
+  /* Render Marker di Peta Sesuai Filter */
+  renderMarkers() {
+    if (!this.map || !this.markersGroup) return;
+
+    this.markersGroup.clearLayers();
+    this.markerInstances = {};
+
+    const data = window.aduanStore ? window.aduanStore.getAll() : [];
+
+    const filtered = data.filter(item => {
+      const matchStatus = this.activeFilter.status === 'all' || item.status === this.activeFilter.status;
+      const matchKec = this.activeFilter.kecamatan === 'all' || item.kecamatan === this.activeFilter.kecamatan;
+      const matchJenis = this.activeFilter.jenis === 'all' || item.jenisPencemaran === this.activeFilter.jenis;
+      return matchStatus && matchKec && matchJenis;
+    });
+
+    // Update Mini Statistik & Feed List di Bawah Peta
+    this.updateMapStats(filtered, data);
+    this.renderMapFeed(filtered);
+
+    const bounds = [];
+
+    filtered.forEach(item => {
+      if (item.lat && item.lng) {
+        bounds.push([item.lat, item.lng]);
+
+        const marker = L.marker([item.lat, item.lng], {
+          icon: this.createPinIcon(item)
+        });
+
+        const color = this.getMarkerColor(item.status);
+        const catIcon = this.getCategoryIcon(item.jenisPencemaran);
+        const badgeClass = (item.status || 'baru').toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+        // 1. Tooltip Instan Saat Kursor Diarahkan (Hover)
+        marker.bindTooltip(`
+          <div class="map-tooltip-content">
+            <div class="tt-header">
+              <span class="tt-id">${item.id}</span>
+              <span class="tt-status" style="background: ${color}25; color: ${color};">${item.status}</span>
+            </div>
+            <div class="tt-title">${catIcon} ${item.jenisPencemaran}</div>
+            <div class="tt-loc">📍 Desa ${item.desa}, Kec. ${item.kecamatan}</div>
+            <div class="tt-desc">${(item.uraian || '').substring(0, 80)}${item.uraian && item.uraian.length > 80 ? '...' : ''}</div>
+            <div class="tt-hint">👆 Klik pin untuk melihat detail & lacak</div>
+          </div>
+        `, {
+          direction: 'top',
+          offset: [0, -32],
+          opacity: 0.98,
+          className: 'custom-map-tooltip'
+        });
+
+        // 2. Popup Interaktif Saat Pin Diklik
+        const popupContent = `
+          <div class="map-popup-card">
+            <div class="popup-head">
+              <span class="popup-id">${item.id}</span>
+              <span class="badge badge-${badgeClass}">${item.status}</span>
+            </div>
+            
+            <div class="popup-cat">
+              <span class="cat-icon">${catIcon}</span>
+              <strong>${item.jenisPencemaran}</strong>
+            </div>
+
+            <div class="popup-location">
+              <strong>📍 Lokasi Kejadian:</strong><br>
+              Desa ${item.desa}, Kec. ${item.kecamatan}
+              <div class="popup-detail-loc">Patokan: ${item.lokasiDetail || '-'}</div>
+              <div class="popup-coords">🌐 Koordinat: ${item.lat}, ${item.lng}</div>
+            </div>
+
+            <div class="popup-chronology">
+              <strong>Uraian Aduan:</strong>
+              <p>${item.uraian}</p>
+            </div>
+
+            ${item.tindakanDLH && item.tindakanDLH !== '-' ? `
+              <div class="popup-dlh-status">
+                <strong>Tindakan DLH:</strong><br>
+                ${item.tindakanDLH}
+              </div>
+            ` : ''}
+
+            <div class="popup-actions">
+              <button class="btn btn-sm btn-primary" onclick="window.app.quickTrack('${item.id}')" style="flex: 1;">
+                🔍 Lacak Tiket
+              </button>
+              <button class="btn btn-sm btn-outline" onclick="window.app.showDetailModal('${item.id}')">
+                📄 Detail
+              </button>
+            </div>
+          </div>
+        `;
+
+        marker.bindPopup(popupContent, { maxWidth: 320 });
+        this.markersGroup.addLayer(marker);
+
+        // Simpan instance marker agar bisa dibuka dari daftar feed
+        this.markerInstances[item.id] = marker;
+      }
+    });
+
+    // Auto-fit jika difilter per kecamatan
+    if (bounds.length > 0 && this.activeFilter.kecamatan !== 'all') {
+      this.map.fitBounds(bounds, { padding: [40, 40], maxZoom: 14 });
+    }
+  }
+
+  /* Sorot & Pusatkan Titik Aduan Tertentu di Peta */
+  highlightAduan(id) {
+    const item = window.aduanStore ? window.aduanStore.getById(id) : null;
+    if (!item || !item.lat || !item.lng) return;
+
+    if (this.map) {
+      // Gulir halaman ke peta secara halus
+      const mapContainer = document.getElementById(this.containerId);
+      if (mapContainer) {
+        mapContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      }
+
+      this.map.flyTo([item.lat, item.lng], 14, {
+        animate: true,
+        duration: 1.2
+      });
+
+      setTimeout(() => {
+        const marker = this.markerInstances[id];
+        if (marker) {
+          marker.openPopup();
+        }
+      }, 1250);
+    }
+  }
+
+  /* Set Filter Peta */
+  setFilters(status = 'all', kecamatan = 'all', jenis = 'all') {
+    this.activeFilter = { status, kecamatan, jenis };
+    if (this.map) {
+      this.renderMarkers();
+    } else {
+      this.initSvgFallback();
+    }
+  }
+
+  /* Perbarui Mini KPI Bar di Atas Peta */
+  updateMapStats(filteredData, allData) {
+    const statTotal = document.getElementById('mapStatTotal');
+    const statBaru = document.getElementById('mapStatBaru');
+    const statProses = document.getElementById('mapStatProses');
+    const statSelesai = document.getElementById('mapStatSelesai');
+    const badgeCount = document.getElementById('mapFilteredCountBadge');
+
+    let baru = 0;
+    let proses = 0;
+    let selesai = 0;
+
+    filteredData.forEach(item => {
+      if (item.status === 'Aduan Diterima' || item.status === 'Baru') baru++;
+      else if (item.status === 'Selesai') selesai++;
+      else if (item.status !== 'Ditolak') proses++;
+    });
+
+    if (statTotal) statTotal.textContent = filteredData.length;
+    if (statBaru) statBaru.textContent = baru;
+    if (statProses) statProses.textContent = proses;
+    if (statSelesai) statSelesai.textContent = selesai;
+
+    if (badgeCount) {
+      const kecLabel = this.activeFilter.kecamatan === 'all' ? 'Seluruh Lembata' : `Kec. ${this.activeFilter.kecamatan}`;
+      badgeCount.textContent = `${filteredData.length} Titik Terpantau (${kecLabel})`;
+    }
+  }
+
+  /* Render Feed Kartu Aduan di Bawah Peta */
+  renderMapFeed(filteredData) {
+    const container = document.getElementById('mapAduanGrid');
+    if (!container) return;
+
+    if (filteredData.length === 0) {
+      container.innerHTML = `
+        <div style="grid-column: 1/-1; text-align: center; padding: 32px 16px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; color: #64748b;">
+          <div style="font-size: 28px; margin-bottom: 6px;">🔍</div>
+          <strong>Tidak ada titik aduan yang cocok dengan kriteria filter saat ini.</strong>
+          <p style="font-size: 0.82rem; margin-top: 4px;">Coba ubah pilihan kecamatan, status, atau jenis pencemaran.</p>
+        </div>
+      `;
+      return;
+    }
+
+    container.innerHTML = filteredData.map(item => {
+      const catIcon = this.getCategoryIcon(item.jenisPencemaran);
+      const badgeClass = (item.status || 'baru').toLowerCase().replace(/[^a-z0-9]/g, '-');
+
+      return `
+        <div class="map-aduan-card">
+          <div>
+            <div class="mac-top">
+              <span class="mac-id">${item.id}</span>
+              <span class="badge badge-${badgeClass}">${item.status}</span>
+            </div>
+            <div class="mac-title">${catIcon} ${item.jenisPencemaran}</div>
+            <div class="mac-loc">📍 Desa ${item.desa}, Kec. ${item.kecamatan}</div>
+            <div class="mac-desc">${item.uraian}</div>
+          </div>
+          <div class="mac-actions">
+            <button type="button" class="btn btn-outline btn-sm" onclick="window.lembataMap.highlightAduan('${item.id}')" style="flex: 1;" title="Pusatkan peta ke titik ini">
+              🎯 Sorot di Peta
+            </button>
+            <button type="button" class="btn btn-primary btn-sm" onclick="window.app.quickTrack('${item.id}')" title="Lacak progres tiket ini">
+              🔍 Lacak
+            </button>
+          </div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  /* Setup Switcher Basemap Buttons (Peta Standar, Satelit, Topografi) */
+  setupBasemapButtons() {
+    const btnOsm = document.getElementById('btnBaseOsm');
+    const btnSat = document.getElementById('btnBaseSat');
+    const btnTopo = document.getElementById('btnBaseTopo');
+
+    const switchBase = (type) => {
+      if (!this.map || !this.baseLayers[type]) return;
+
+      Object.values(this.baseLayers).forEach(layer => {
+        if (this.map.hasLayer(layer)) {
+          this.map.removeLayer(layer);
+        }
+      });
+
+      this.baseLayers[type].addTo(this.map);
+      this.currentBaseLayer = type;
+
+      // Update button active state
+      [btnOsm, btnSat, btnTopo].forEach(b => {
+        if (b) b.classList.remove('active');
+      });
+
+      if (type === 'osm' && btnOsm) btnOsm.classList.add('active');
+      if (type === 'sat' && btnSat) btnSat.classList.add('active');
+      if (type === 'topo' && btnTopo) btnTopo.classList.add('active');
+    };
+
+    if (btnOsm) btnOsm.addEventListener('click', () => switchBase('osm'));
+    if (btnSat) btnSat.addEventListener('click', () => switchBase('sat'));
+    if (btnTopo) btnTopo.addEventListener('click', () => switchBase('topo'));
+  }
+
+  /* Setup Tombol Cepat Wilayah Lembata */
+  setupRegionPills() {
+    const pills = document.querySelectorAll('.pill-region[data-region]');
+    pills.forEach(pill => {
+      pill.addEventListener('click', () => {
+        pills.forEach(p => p.classList.remove('active'));
+        pill.classList.add('active');
+
+        const region = pill.getAttribute('data-region');
+        this.focusToRegion(region);
+
+        // Sinkronkan juga dropdown kecamatan
+        const selectKec = document.getElementById('mapFilterKecamatan');
+        if (selectKec) {
+          if (region === 'all' || region === 'Kedang' || region === 'Selatan') {
+            selectKec.value = 'all';
+          } else {
+            selectKec.value = region;
+          }
+          this.activeFilter.kecamatan = selectKec.value;
+          this.renderMarkers();
+        }
+      });
+    });
+  }
+
+  /* Fokus Kamera Peta ke Wilayah */
+  focusToRegion(regionKey) {
+    if (!this.map) return;
+
+    switch (regionKey) {
+      case 'all':
+        this.map.setView(this.centerCoords, this.defaultZoom);
+        break;
+      case 'Nubatukan':
+        this.map.setView([-8.368, 123.558], 13);
+        break;
+      case 'Ile Ape':
+        this.map.setView([-8.283, 123.541], 13);
+        break;
+      case 'Ile Ape Timur':
+        this.map.setView([-8.291, 123.612], 13);
+        break;
+      case 'Lebatukan':
+        this.map.setView([-8.358, 123.665], 13);
+        break;
+      case 'Kedang':
+        this.map.setView([-8.220, 123.880], 12);
+        break;
+      case 'Selatan':
+        this.map.setView([-8.510, 123.530], 12);
+        break;
+      case 'Nagawutung':
+        this.map.setView([-8.490, 123.385], 13);
+        break;
+      default:
+        this.map.setView(this.centerCoords, this.defaultZoom);
+    }
+  }
+
+  /* Setup Interaksi Legenda Peta */
+  setupLegendInteractions() {
+    const toggleBtn = document.getElementById('btnToggleLegend');
+    const itemsList = document.getElementById('legendItemsList');
+
+    if (toggleBtn && itemsList) {
+      toggleBtn.addEventListener('click', () => {
+        const isHidden = itemsList.style.display === 'none';
+        itemsList.style.display = isHidden ? 'flex' : 'none';
+        toggleBtn.textContent = isHidden ? '▾' : '▸';
+      });
+    }
+
+    // Klik item legenda untuk langsung memfilter status
+    const legendItems = document.querySelectorAll('.legend-item[data-status-filter]');
+    legendItems.forEach(item => {
+      item.addEventListener('click', () => {
+        const st = item.getAttribute('data-status-filter');
+        const selectSt = document.getElementById('mapFilterStatus');
+        if (selectSt) {
+          selectSt.value = (selectSt.value === st) ? 'all' : st;
+          this.activeFilter.status = selectSt.value;
+          this.renderMarkers();
+        }
+      });
+    });
+  }
+
+  /* Fallback Vector SVG Map jika perangkat offline tanpa CDN Leaflet */
+  initSvgFallback() {
+    const container = document.getElementById(this.containerId);
+    if (!container) return;
+
+    const data = window.aduanStore ? window.aduanStore.getAll() : [];
+    const filtered = data.filter(item => {
+      const matchStatus = this.activeFilter.status === 'all' || item.status === this.activeFilter.status;
+      const matchKec = this.activeFilter.kecamatan === 'all' || item.kecamatan === this.activeFilter.kecamatan;
+      const matchJenis = this.activeFilter.jenis === 'all' || item.jenisPencemaran === this.activeFilter.jenis;
+      return matchStatus && matchKec && matchJenis;
+    });
+
+    this.updateMapStats(filtered, data);
+    this.renderMapFeed(filtered);
+
+    container.innerHTML = `
+      <div style="position: relative; width: 100%; height: 100%; background: #e0f2fe; overflow: hidden; display: flex; flex-direction: column;">
+        <div style="background: rgba(255,255,255,0.9); padding: 8px 16px; font-size: 12px; border-bottom: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center;">
+          <span>🗺️ <strong>Peta Digital Spasial Lembata (Mode Vektor Cadangan)</strong></span>
+          <span class="badge badge-selesai">${filtered.length} Titik Terpantau</span>
+        </div>
+        <div style="flex: 1; position: relative; padding: 20px;">
+          <svg viewBox="0 0 800 450" style="width: 100%; height: 100%; filter: drop-shadow(0 4px 8px rgba(0,0,0,0.1));">
+            <!-- Outline Pulau Lembata -->
+            <path d="M 220 280 C 180 260 150 200 190 140 C 230 110 320 90 400 110 C 470 120 540 100 620 90 C 690 90 730 120 740 160 C 740 210 680 240 600 240 C 530 250 490 280 430 310 C 370 340 330 380 270 370 C 230 360 210 320 220 280 Z" 
+                  fill="#d1fae5" stroke="#059669" stroke-width="3" />
+            
+            <!-- Kecamatan Labels -->
+            <text x="280" y="180" font-size="14" font-weight="bold" fill="#065f46">Nubatukan (Lewoleba)</text>
+            <text x="230" y="130" font-size="12" fill="#047857">Ile Ape</text>
+            <text x="360" y="140" font-size="12" fill="#047857">Ile Ape Timur</text>
+            <text x="420" y="190" font-size="13" font-weight="600" fill="#047857">Lebatukan</text>
+            <text x="210" y="320" font-size="12" fill="#047857">Nagawutung</text>
+            <text x="280" y="350" font-size="12" fill="#047857">Wulandoni</text>
+            <text x="360" y="270" font-size="12" fill="#047857">Atadei</text>
+            <text x="560" y="160" font-size="12" fill="#047857">Omesuri</text>
+            <text x="660" y="140" font-size="12" fill="#047857">Buyasuri</text>
+            
+            <!-- Titik-titik aduan -->
+            ${filtered.map((item) => {
+              const normX = ((item.lng - 123.3) / 0.7) * 580 + 160;
+              const normY = ((item.lat - (-8.1)) / (-0.5)) * 260 + 90;
+              const col = this.getMarkerColor(item.status);
+
+              return `
+                <g class="svg-pin" cursor="pointer" onclick="window.app.showDetailModal('${item.id}')">
+                  <circle cx="${normX}" cy="${normY}" r="12" fill="${col}" fill-opacity="0.3" />
+                  <circle cx="${normX}" cy="${normY}" r="6" fill="${col}" stroke="#ffffff" stroke-width="2" />
+                  <text x="${normX + 10}" y="${normY + 4}" font-size="10" font-weight="bold" fill="#0f172a">${item.id}</text>
+                </g>
+              `;
+            }).join('')}
+          </svg>
+        </div>
+      </div>
+    `;
+  }
+}
+
+// Global instance
+window.lembataMap = new LembataMapEngine();
+
+  </script>
+  <script>
+/* === APP.JS === */
+/**
+ * ===================================================================
+ * SILAPOR DLH KABUPATEN LEMBATA — MAIN JAVASCRIPT CONTROLLER
+ * Ringan, Cepat, Responsif & Siap Digunakan Masyarakat
+ * ===================================================================
+ */
+
+class DLHApp {
+  constructor() {
+    this.currentTab = 'lapor';
+    this.tableFilters = {
+      search: '',
+      kecamatan: 'all',
+      status: 'all'
+    };
+  }
+
+  init() {
+    this.setupNavigation();
+    this.setupCategoryChips();
+    this.setupKecamatanDesaSync();
+    this.setupFormSubmissions();
+    this.setupGPSDetection();
+    this.setupUploadPreview();
+    this.setupTrackingSearch();
+    this.setupTableAndFilters();
+    this.setupModals();
+    this.setupCloudSync();
+    this.updateKPIs();
+    this.renderTable();
+
+    // Set default date to today
+    const dateInput = document.getElementById('inputTanggalKejadian');
+    if (dateInput) {
+      dateInput.value = new Date().toISOString().split('T')[0];
+    }
+
+    // Init map with slight delay
+    setTimeout(() => {
+      if (window.lembataMap) window.lembataMap.init();
+    }, 150);
+  }
+
+  getStatusBadgeClass(status) {
+    if (!status) return 'badge-aduan-diterima';
+    return 'badge-' + status.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
+  }
+
+  /* ===================================================================
+     1. NAVIGATION TABS
+     =================================================================== */
+  setupNavigation() {
+    const tabs = document.querySelectorAll('.nav-tab-btn[data-tab]');
+    tabs.forEach(btn => {
+      btn.addEventListener('click', () => {
+        const target = btn.getAttribute('data-tab');
+        this.switchTab(target);
+      });
+    });
+  }
+
+  switchTab(tabName) {
+    this.currentTab = tabName;
+
+    // Update active nav buttons
+    document.querySelectorAll('.nav-tab-btn').forEach(btn => {
+      if (btn.getAttribute('data-tab') === tabName) {
+        btn.classList.add('active');
+      } else {
+        btn.classList.remove('active');
+      }
+    });
+
+    // Update active content panes
+    document.querySelectorAll('.tab-content').forEach(pane => {
+      pane.classList.remove('active');
+    });
+
+    const targetPane = document.getElementById(`pane-${tabName}`);
+    if (targetPane) {
+      targetPane.classList.add('active');
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Refresh map when entering peta tab
+    if (tabName === 'peta' && window.lembataMap) {
+      setTimeout(() => {
+        if (window.lembataMap.map) {
+          window.lembataMap.map.invalidateSize();
+          window.lembataMap.renderMarkers();
+        }
+      }, 100);
+    }
+  }
+
+  /* ===================================================================
+     2. CATEGORY CHIPS SELECTION
+     =================================================================== */
+  setupCategoryChips() {
+    const chips = document.querySelectorAll('.chip-item');
+    chips.forEach(chip => {
+      chip.addEventListener('click', () => {
+        chips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        const radio = chip.querySelector('input[type="radio"]');
+        if (radio) radio.checked = true;
+      });
+    });
+  }
+
+  /* ===================================================================
+     2B. KECAMATAN & DESA/KELURAHAN CASCADE SELECTOR
+     =================================================================== */
+  setupKecamatanDesaSync() {
+    const kecSelect = document.getElementById('inputKecamatan');
+    const desaSelect = document.getElementById('inputDesa');
+    if (!kecSelect || !desaSelect) return;
+
+    this.populateDesaDropdown = (kecamatanName, selectedDesa = '') => {
+      desaSelect.innerHTML = '<option value="">-- Pilih Desa / Kelurahan --</option>';
+      
+      const kecData = typeof KECAMATAN_LEMBATA !== 'undefined' ? KECAMATAN_LEMBATA[kecamatanName] : null;
+      if (kecData && Array.isArray(kecData.desa)) {
+        kecData.desa.forEach(namaDesa => {
+          const opt = document.createElement('option');
+          opt.value = namaDesa;
+          opt.textContent = namaDesa;
+          if (selectedDesa && namaDesa.toLowerCase() === selectedDesa.toLowerCase()) {
+            opt.selected = true;
+          }
+          desaSelect.appendChild(opt);
+        });
+      }
+    };
+
+    // Populasi awal berdasarkan nilai awal kecamatan
+    this.populateDesaDropdown(kecSelect.value);
+
+    // Event saat kecamatan diubah
+    kecSelect.addEventListener('change', (e) => {
+      this.populateDesaDropdown(e.target.value);
+    });
+  }
+
+  /* ===================================================================
+     3. GPS DETECTION
+     =================================================================== */
+  setupGPSDetection() {
+    const btnGps = document.getElementById('btnDetectGps');
+    const gpsMsg = document.getElementById('gpsStatusMessage');
+    if (!btnGps) return;
+
+    btnGps.addEventListener('click', () => {
+      if (!navigator.geolocation) {
+        if (gpsMsg) {
+          gpsMsg.style.display = 'block';
+          gpsMsg.style.color = '#e11d48';
+          gpsMsg.textContent = 'Perangkat Anda belum mendukung deteksi GPS.';
+        }
+        return;
+      }
+
+      btnGps.disabled = true;
+      btnGps.textContent = '⏳ Mengakses Titik Satelit GPS...';
+      if (gpsMsg) {
+        gpsMsg.style.display = 'block';
+        gpsMsg.style.color = '#0284c7';
+        gpsMsg.textContent = 'Sedang mencari koordinat akurat di lokasi Anda...';
+      }
+
+      navigator.geolocation.getCurrentPosition(
+        (pos) => {
+          const lat = Number(pos.coords.latitude.toFixed(6));
+          const lng = Number(pos.coords.longitude.toFixed(6));
+          
+          document.getElementById('inputLat').value = lat;
+          document.getElementById('inputLng').value = lng;
+
+          btnGps.disabled = false;
+          btnGps.textContent = '✅ Titik Lokasi GPS Terkunci';
+          btnGps.style.background = '#dcfce7';
+          btnGps.style.borderColor = '#16a34a';
+
+          if (gpsMsg) {
+            gpsMsg.style.color = '#15803d';
+            gpsMsg.textContent = `Akurat! Koordinat: ${lat}, ${lng} (Akurasi: ±${Math.round(pos.coords.accuracy)}m)`;
+          }
+        },
+        (err) => {
+          btnGps.disabled = false;
+          btnGps.textContent = '📍 Dapatkan Titik Lokasi GPS Saya Saat Ini';
+          if (gpsMsg) {
+            gpsMsg.style.color = '#d97706';
+            gpsMsg.textContent = 'Izin lokasi tidak diberikan atau offline. Titik default kecamatan akan digunakan.';
+          }
+        },
+        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+      );
+    });
+  }
+
+  /* ===================================================================
+     3.5 UPLOAD PREVIEW & LIVE CAMERA CAPTURE
+     =================================================================== */
+  setupUploadPreview() {
+    this.selectedMediaFiles = [];
+    this.cameraStream = null;
+    this.currentFacingMode = 'environment'; // Default kamera belakang
+
+    const fileInput = document.getElementById('inputBuktiFoto');
+    const cameraInput = document.getElementById('inputCameraCapture');
+    const btnUpload = document.getElementById('btnUploadFoto');
+    const btnOpenCam = document.getElementById('btnOpenLiveCamera');
+    const previewList = document.getElementById('uploadPreviewList');
+    const uploadZone = document.getElementById('uploadZone');
+    const modalCamera = document.getElementById('modalLiveCamera');
+    const videoView = document.getElementById('cameraVideoView');
+    const btnSnap = document.getElementById('btnSnapPhoto');
+    const btnSwitchCam = document.getElementById('btnSwitchCameraDirection');
+
+    const renderPreviews = () => {
+      if (!previewList) return;
+      previewList.innerHTML = '';
+
+      this.selectedMediaFiles.forEach((file, idx) => {
+        const item = document.createElement('div');
+        item.className = 'upload-preview-item';
+
+        if (file.type.startsWith('image/')) {
+          const img = document.createElement('img');
+          img.src = URL.createObjectURL(file);
+          item.appendChild(img);
+        } else {
+          item.innerHTML = '<span class="file-icon">🎥</span>';
+        }
+
+        const removeBtn = document.createElement('button');
+        removeBtn.className = 'btn-remove-preview';
+        removeBtn.innerHTML = '&times;';
+        removeBtn.title = 'Hapus';
+        removeBtn.onclick = (e) => {
+          e.stopPropagation();
+          this.selectedMediaFiles.splice(idx, 1);
+          renderPreviews();
+        };
+        item.appendChild(removeBtn);
+        previewList.appendChild(item);
+      });
+    };
+
+    const addFiles = (files) => {
+      Array.from(files).forEach(f => {
+        if (this.selectedMediaFiles.length < 3) {
+          this.selectedMediaFiles.push(f);
+        } else {
+          this.showToast('Batas maksimal 3 bukti foto/video tercapai.', 'warning');
+        }
+      });
+      renderPreviews();
+    };
+
+    // 1. Pilih dari Galeri / Dokumen
+    if (btnUpload && fileInput) {
+      btnUpload.addEventListener('click', () => fileInput.click());
+      fileInput.addEventListener('change', () => {
+        if (fileInput.files.length) {
+          addFiles(fileInput.files);
+          fileInput.value = '';
+        }
+      });
+    }
+
+    // 2. Native Camera Capture (Fallback HP)
+    if (cameraInput) {
+      cameraInput.addEventListener('change', () => {
+        if (cameraInput.files.length) {
+          addFiles(cameraInput.files);
+          cameraInput.value = '';
+          this.showToast('Foto dari kamera berhasil ditambahkan!', 'success');
+        }
+      });
+    }
+
+    // 3. Live Web Camera Handler
+    const stopCamera = () => {
+      if (this.cameraStream) {
+        this.cameraStream.getTracks().forEach(t => t.stop());
+        this.cameraStream = null;
+      }
+      if (modalCamera) modalCamera.classList.remove('show');
+    };
+
+    const startCamera = async () => {
+      if (this.selectedMediaFiles.length >= 3) {
+        this.showToast('Maksimal 3 foto/video sudah tercapai.', 'warning');
+        return;
+      }
+
+      if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        // Fallback langsung ke input kamera bawaan HP
+        if (cameraInput) cameraInput.click();
+        return;
+      }
+
+      try {
+        if (this.cameraStream) {
+          this.cameraStream.getTracks().forEach(t => t.stop());
+        }
+
+        modalCamera.classList.add('show');
+        const constraints = {
+          video: {
+            facingMode: { ideal: this.currentFacingMode },
+            width: { ideal: 1280 },
+            height: { ideal: 720 }
+          },
+          audio: false
+        };
+
+        this.cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
+        if (videoView) {
+          videoView.srcObject = this.cameraStream;
+          await videoView.play();
+        }
+      } catch (err) {
+        console.warn('Gagal membuka kamera via getUserMedia, beralih ke kamera native:', err);
+        stopCamera();
+        if (cameraInput) cameraInput.click();
+      }
+    };
+
+    if (btnOpenCam) {
+      btnOpenCam.addEventListener('click', startCamera);
+    }
+
+    if (btnSwitchCam) {
+      btnSwitchCam.addEventListener('click', () => {
+        this.currentFacingMode = (this.currentFacingMode === 'environment') ? 'user' : 'environment';
+        startCamera();
+      });
+    }
+
+    if (btnSnap) {
+      btnSnap.addEventListener('click', () => {
+        if (!videoView) return;
+        const canvas = document.getElementById('cameraCanvasSnap') || document.createElement('canvas');
+        canvas.width = videoView.videoWidth || 640;
+        canvas.height = videoView.videoHeight || 480;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(videoView, 0, 0, canvas.width, canvas.height);
+
+        canvas.toBlob((blob) => {
+          if (blob) {
+            const snapFile = new File([blob], `bukti_kamera_${Date.now()}.jpg`, { type: 'image/jpeg' });
+            addFiles([snapFile]);
+            this.showToast('Foto bukti berhasil diambil dari kamera!', 'success');
+          }
+          stopCamera();
+        }, 'image/jpeg', 0.88);
+      });
+    }
+
+    // Tutup kamera saat tombol close/batal diklik
+    document.querySelectorAll('.btn-close-camera').forEach(btn => {
+      btn.addEventListener('click', stopCamera);
+    });
+
+    // Drag and Drop
+    if (uploadZone) {
+      ['dragenter', 'dragover'].forEach(name => {
+        uploadZone.addEventListener(name, (e) => {
+          e.preventDefault();
+          uploadZone.classList.add('dragover');
+        });
+      });
+      ['dragleave', 'drop'].forEach(name => {
+        uploadZone.addEventListener(name, (e) => {
+          e.preventDefault();
+          uploadZone.classList.remove('dragover');
+        });
+      });
+      uploadZone.addEventListener('drop', (e) => {
+        if (e.dataTransfer && e.dataTransfer.files.length) {
+          addFiles(e.dataTransfer.files);
+        }
+      });
+    }
+  }
+
+  /* ===================================================================
+     4. FORM SUBMISSION
+     =================================================================== */
+  setupFormSubmissions() {
+    const form = document.getElementById('formAduanWarga');
+    if (!form) return;
+
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+
+      const btnSubmit = document.getElementById('btnSubmitAduan');
+      if (btnSubmit) {
+        btnSubmit.disabled = true;
+        btnSubmit.textContent = '⏳ Mengirim Laporan ke DLH...';
+      }
+
+      // Read selected category
+      const selectedRadio = document.querySelector('input[name="radioJenis"]:checked');
+      const jenisPencemaran = selectedRadio ? selectedRadio.value : 'Lainnya';
+
+      const formData = {
+        namaPelapor: document.getElementById('inputNama').value,
+        noHp: document.getElementById('inputNoHp').value,
+        alamatPelapor: document.getElementById('inputAlamat').value,
+        kecamatan: document.getElementById('inputKecamatan').value,
+        desa: document.getElementById('inputDesa').value,
+        lokasiDetail: document.getElementById('inputLokasiDetail').value,
+        jenisPencemaran: jenisPencemaran,
+        tanggalKejadian: document.getElementById('inputTanggalKejadian').value,
+        sumberDugaan: document.getElementById('inputSumberDugaan').value,
+        uraian: document.getElementById('inputUraian').value,
+        lat: document.getElementById('inputLat').value,
+        lng: document.getElementById('inputLng').value
+      };
+
+      // Add to store (and auto-post to Google Apps Script / Spreadsheet)
+      const newRecord = window.aduanStore.addAduan(formData);
+
+      // Reset form
+      form.reset();
+      this.selectedMediaFiles = [];
+      const previewList = document.getElementById('uploadPreviewList');
+      if (previewList) previewList.innerHTML = '';
+      const dateInput = document.getElementById('inputTanggalKejadian');
+      if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+      const kecVal = document.getElementById('inputKecamatan')?.value || 'Nubatukan';
+      if (this.populateDesaDropdown) this.populateDesaDropdown(kecVal);
+
+      // Update UI components
+      this.updateKPIs();
+      this.renderTable();
+      if (window.lembataMap) window.lembataMap.renderMarkers();
+
+      // Show Success Modal
+      const modalSuccess = document.getElementById('modalSuccessAduan');
+      const ticketDisplay = document.getElementById('successTicketId');
+      const btnWa = document.getElementById('btnWaConfirmation');
+
+      if (ticketDisplay) ticketDisplay.textContent = newRecord.id;
+      if (btnWa) {
+        const waText = encodeURIComponent(
+          `Halo DLH Kabupaten Lembata, saya telah mengirimkan aduan pencemaran lingkungan melalui portal resmi.\n\n` +
+          `📌 *KODE TIKET:* ${newRecord.id}\n` +
+          `👤 *Nama:* ${newRecord.namaPelapor}\n` +
+          `📍 *Lokasi:* ${newRecord.desa}, Kec. ${newRecord.kecamatan}\n` +
+          `⚠️ *Masalah:* ${newRecord.jenisPencemaran}\n` +
+          `📝 *Uraian:* ${newRecord.uraian}\n\n` +
+          `Mohon bantuannya untuk dapat ditindaklanjuti. Terima kasih!`
+        );
+        btnWa.href = `https://wa.me/6282234582769?text=${waText}`;
+      }
+
+      if (btnSubmit) {
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = '🚀 KIRIM LAPORAN SEKARANG';
+      }
+
+      if (modalSuccess) modalSuccess.classList.add('show');
+    });
+
+    // Form Update Verifikasi Petugas
+    const formVerif = document.getElementById('formVerifikasiDLH');
+    if (formVerif) {
+      formVerif.addEventListener('submit', (e) => {
+        e.preventDefault();
+
+        const id = document.getElementById('verifIdAduan').value;
+        const updateData = {
+          status: document.getElementById('verifStatus').value,
+          petugasVerifikasi: document.getElementById('verifPetugas').value || 'Petugas DLH Lembata',
+          tanggalVerifikasi: document.getElementById('verifTanggal').value || new Date().toISOString().split('T')[0],
+          hasilVerifikasi: document.getElementById('verifHasil').value || 'Telah diverifikasi tim di lapangan.',
+          tindakanDLH: document.getElementById('verifTindakan').value || 'Dalam penanganan DLH Kabupaten Lembata.'
+        };
+
+        window.aduanStore.updateVerifikasi(id, updateData);
+
+        document.getElementById('modalVerifikasi').classList.remove('show');
+        this.updateKPIs();
+        this.renderTable();
+        if (window.lembataMap) window.lembataMap.renderMarkers();
+
+        this.showToast(`Verifikasi untuk ${id} berhasil disimpan ke sistem!`, 'success');
+      });
+    }
+  }
+
+  /* ===================================================================
+     5. TRACKING SEARCH
+     =================================================================== */
+  setupTrackingSearch() {
+    const btnSearch = document.getElementById('btnTrackSearch');
+    const inputSearch = document.getElementById('inputTrackId');
+    if (!btnSearch || !inputSearch) return;
+
+    const doSearch = () => {
+      const query = inputSearch.value.trim().toUpperCase();
+      const container = document.getElementById('trackResultContainer');
+      if (!container) return;
+
+      if (!query) {
+        this.showToast('Masukkan nomor tiket aduan Anda.', 'warning');
+        return;
+      }
+
+      const item = window.aduanStore.getById(query);
+      container.style.display = 'block';
+
+      if (!item) {
+        container.innerHTML = `
+          <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 12px; padding: 20px; text-align: center;">
+            <div style="font-size: 32px; margin-bottom: 6px;">❌</div>
+            <strong style="color: #be123c;">Nomor Tiket "${query}" Tidak Ditemukan</strong>
+            <p style="font-size: 0.85rem; color: #9f1239; margin-top: 4px;">
+              Pastikan kode tiket yang Anda masukkan sesuai (Contoh format: <code>ADU-LMB-2026-001</code>).
+            </p>
+          </div>
+        `;
+        return;
+      }
+
+      const isSelesai = item.status === 'Selesai';
+      const isDitolak = item.status === 'Ditolak';
+      const isDalamPenanganan = item.status === 'Dalam Penanganan' || isSelesai;
+      const isSedangDiverif = item.status === 'Sedang Diverifikasi' || isDalamPenanganan;
+      const isMenungguVerif = item.status === 'Menunggu Verifikasi Lapangan' || isSedangDiverif;
+      const isVerifAdmin = item.status === 'Verifikasi Administrasi' || isMenungguVerif;
+      const isAduanDiterima = true; // Always completed if ticket exists
+
+      container.innerHTML = `
+        <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 16px; padding: 20px;">
+          
+          <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px;">
+            <div>
+              <div style="font-size: 0.75rem; color: #64748b; font-weight: 700;">STATUS TERKINI ADUAN</div>
+              <h3 style="font-size: 1.3rem; font-weight: 900; color: #065f46;">${item.id}</h3>
+            </div>
+            <span class="badge ${this.getStatusBadgeClass(item.status)}" style="font-size: 0.82rem; padding: 6px 12px;">
+              ${item.status}
+            </span>
+          </div>
+
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 18px; font-size: 0.85rem;">
+            <div style="background: #f8fafc; padding: 10px 14px; border-radius: 8px;">
+              <span style="color: #64748b;">Pelapor:</span> <strong>${item.namaPelapor}</strong>
+            </div>
+            <div style="background: #f8fafc; padding: 10px 14px; border-radius: 8px;">
+              <span style="color: #64748b;">Lokasi:</span> <strong>${item.desa}, Kec. ${item.kecamatan}</strong>
+            </div>
+          </div>
+
+          <div style="font-size: 0.88rem; color: #334155; background: #f0fdf4; padding: 12px; border-radius: 8px; margin-bottom: 20px; border-left: 4px solid #10b981;">
+            <strong>Uraian Kejadian:</strong> ${item.uraian}
+          </div>
+
+          <div style="font-weight: 800; font-size: 0.95rem; color: #0f172a; margin-bottom: 8px;">
+            📋 Garis Waktu Penanganan DLH Lembata:
+          </div>
+
+          <div class="timeline">
+            <div class="timeline-item completed">
+              <div class="timeline-dot"></div>
+              <div class="timeline-title">1. Aduan Diterima & Tercatat Sistem</div>
+              <div class="timeline-time">${item.timestamp}</div>
+              <div class="timeline-desc">Aduan masyarakat telah diterima dan dicatat dalam sistem pengaduan digital DLH Lembata.</div>
+            </div>
+
+            <div class="timeline-item ${isVerifAdmin ? 'completed' : ''}">
+              <div class="timeline-dot"></div>
+              <div class="timeline-title">2. Verifikasi Administrasi</div>
+              <div class="timeline-desc">Kelengkapan data aduan diperiksa dan divalidasi oleh petugas administrasi DLH.</div>
+            </div>
+
+            <div class="timeline-item ${isMenungguVerif ? 'completed' : ''}">
+              <div class="timeline-dot"></div>
+              <div class="timeline-title">3. Menunggu Verifikasi Lapangan</div>
+              <div class="timeline-desc">Aduan telah lulus verifikasi administrasi. Menunggu penjadwalan tim verifikasi ke lapangan.</div>
+            </div>
+
+            <div class="timeline-item ${isSedangDiverif ? 'completed' : ''}">
+              <div class="timeline-dot"></div>
+              <div class="timeline-title">4. Sedang Diverifikasi di Lapangan</div>
+              <div class="timeline-time">${item.tanggalVerifikasi !== '-' ? item.tanggalVerifikasi : 'Menunggu jadwal'}</div>
+              <div class="timeline-desc">
+                ${item.petugasVerifikasi !== '-' ? `Verifikator: <strong>${item.petugasVerifikasi}</strong><br>Hasil: ${item.hasilVerifikasi}` : 'Tim DLH sedang melakukan observasi dan pemeriksaan kondisi faktual di lokasi.'}
+              </div>
+            </div>
+
+            <div class="timeline-item ${isDalamPenanganan ? 'completed' : ''}">
+              <div class="timeline-dot"></div>
+              <div class="timeline-title">5. Dalam Penanganan DLH</div>
+              <div class="timeline-desc">
+                ${item.tindakanDLH !== '-' ? item.tindakanDLH : 'Menunggu tindakan rekomendasi dan penanganan.'}
+              </div>
+            </div>
+
+            <div class="timeline-item ${isSelesai ? 'completed' : (isDitolak ? 'completed' : '')}">
+              <div class="timeline-dot"></div>
+              <div class="timeline-title">6. ${isDitolak ? 'Aduan Ditolak / Tidak Terbukti' : 'Selesai Ditangani'}</div>
+              <div class="timeline-time">${item.tanggalSelesai !== '-' ? item.tanggalSelesai : '-'}</div>
+              <div class="timeline-desc">
+                ${isSelesai ? 'Pembersihan / pemulihan lingkungan dinyatakan tuntas oleh DLH Lembata.' : (isDitolak ? 'Hasil observasi menunjukkan tidak ada pencemaran berbahaya atau dialihkan ke instansi teknis terkait.' : 'Dalam proses penyelesaian.')}
+              </div>
+            </div>
+          </div>
+
+        </div>
+      `;
+    };
+
+    btnSearch.addEventListener('click', doSearch);
+    inputSearch.addEventListener('keypress', (e) => {
+      if (e.key === 'Enter') doSearch();
+    });
+  }
+
+  quickTrack(ticketId) {
+    this.switchTab('lacak');
+    const input = document.getElementById('inputTrackId');
+    const btn = document.getElementById('btnTrackSearch');
+    if (input && btn) {
+      input.value = ticketId;
+      btn.click();
+    }
+  }
+
+  /* ===================================================================
+     6. TABLE & RECAP
+     =================================================================== */
+  setupTableAndFilters() {
+    const searchInput = document.getElementById('tableSearch');
+    if (searchInput) {
+      searchInput.addEventListener('input', (e) => {
+        this.tableFilters.search = e.target.value.toLowerCase();
+        this.renderTable();
+      });
+    }
+
+    // Map filters
+    const mapFilterKec = document.getElementById('mapFilterKecamatan');
+    const mapFilterSt = document.getElementById('mapFilterStatus');
+    const mapFilterJenis = document.getElementById('mapFilterJenis');
+    const btnResetMap = document.getElementById('btnResetMapFilters');
+
+    const handleMapFilter = () => {
+      const kec = mapFilterKec ? mapFilterKec.value : 'all';
+      const st = mapFilterSt ? mapFilterSt.value : 'all';
+      const jenis = mapFilterJenis ? mapFilterJenis.value : 'all';
+      if (window.lembataMap) {
+        window.lembataMap.setFilters(st, kec, jenis);
+        if (kec !== 'all') window.lembataMap.focusToRegion(kec);
+      }
+    };
+
+    if (mapFilterKec) mapFilterKec.addEventListener('change', handleMapFilter);
+    if (mapFilterSt) mapFilterSt.addEventListener('change', handleMapFilter);
+    if (mapFilterJenis) mapFilterJenis.addEventListener('change', handleMapFilter);
+
+    if (btnResetMap) {
+      btnResetMap.addEventListener('click', () => {
+        if (mapFilterKec) mapFilterKec.value = 'all';
+        if (mapFilterSt) mapFilterSt.value = 'all';
+        if (mapFilterJenis) mapFilterJenis.value = 'all';
+        document.querySelectorAll('.pill-region').forEach(p => p.classList.remove('active'));
+        const allPill = document.querySelector('.pill-region[data-region="all"]');
+        if (allPill) allPill.classList.add('active');
+        if (window.lembataMap) {
+          window.lembataMap.setFilters('all', 'all', 'all');
+          window.lembataMap.focusToRegion('all');
+        }
+        this.showToast('Filter peta dikembalikan ke tampilan awal.', 'info');
+      });
+    }
+
+    // Export CSV
+    const btnExport = document.getElementById('btnExportCsv');
+    if (btnExport) {
+      btnExport.addEventListener('click', () => {
+        window.aduanStore.exportToCSV();
+        this.showToast('Data aduan berhasil diunduh dalam format CSV!', 'success');
+      });
+    }
+  }
+
+  renderTable() {
+    const tbody = document.getElementById('aduanTableBody');
+    if (!tbody) return;
+
+    const data = window.aduanStore ? window.aduanStore.getAll() : [];
+    const filtered = data.filter(item => {
+      const q = this.tableFilters.search;
+      const matchSearch = !q || 
+        item.id.toLowerCase().includes(q) ||
+        item.namaPelapor.toLowerCase().includes(q) ||
+        item.kecamatan.toLowerCase().includes(q) ||
+        item.desa.toLowerCase().includes(q) ||
+        item.jenisPencemaran.toLowerCase().includes(q) ||
+        item.uraian.toLowerCase().includes(q);
+
+      return matchSearch;
+    });
+
+    if (filtered.length === 0) {
+      tbody.innerHTML = `
+        <tr>
+          <td colspan="7" style="text-align: center; padding: 28px; color: #64748b;">
+            Tidak ada data aduan yang cocok dengan pencarian.
+          </td>
+        </tr>
+      `;
+      return;
+    }
+
+    tbody.innerHTML = filtered.map(item => `
+      <tr>
+        <td><strong style="color: #065f46; font-family: monospace;">${item.id}</strong></td>
+        <td style="color: #64748b; font-size: 0.8rem; white-space: nowrap;">${item.timestamp.split(' ')[0]}</td>
+        <td><strong>${item.namaPelapor}</strong></td>
+        <td>Kec. ${item.kecamatan}<br><small style="color: #64748b;">Desa: ${item.desa}</small></td>
+        <td><span style="font-weight: 600; color: #059669;">${item.jenisPencemaran}</span></td>
+        <td><span class="badge ${this.getStatusBadgeClass(item.status)}">${item.status}</span></td>
+        <td style="text-align: center; white-space: nowrap;">
+          <button class="btn btn-outline btn-sm" onclick="window.app.showDetailModal('${item.id}')">
+            Detail
+          </button>
+          <button class="btn btn-primary btn-sm" onclick="window.app.showVerifikasiModal('${item.id}')">
+            Verifikasi
+          </button>
+        </td>
+      </tr>
+    `).join('');
+
+    const footer = document.getElementById('tablePagination');
+    if (footer) {
+      footer.textContent = `Menampilkan ${filtered.length} dari total ${data.length} laporan aduan`;
+    }
+  }
+
+  updateKPIs() {
+    const stats = window.aduanStore ? window.aduanStore.getStats() : { total: 0, baru: 0, dalamProses: 0, selesai: 0 };
+    
+    const elTotal = document.getElementById('kpiTotal');
+    const elBaru = document.getElementById('kpiBaru');
+    const elProses = document.getElementById('kpiProses');
+    const elSelesai = document.getElementById('kpiSelesai');
+
+    if (elTotal) elTotal.textContent = stats.total;
+    if (elBaru) elBaru.textContent = stats.baru;
+    if (elProses) elProses.textContent = stats.dalamProses;
+    if (elSelesai) elSelesai.textContent = stats.selesai;
+  }
+
+  /* ===================================================================
+     7. MODALS
+     =================================================================== */
+  setupModals() {
+    document.querySelectorAll('.modal-close, .btn-close-modal').forEach(btn => {
+      btn.addEventListener('click', () => {
+        document.querySelectorAll('.modal-backdrop').forEach(modal => modal.classList.remove('show'));
+      });
+    });
+
+    document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
+      backdrop.addEventListener('click', (e) => {
+        if (e.target === backdrop) backdrop.classList.remove('show');
+      });
+    });
+  }
+
+  showDetailModal(id) {
+    const item = window.aduanStore.getById(id);
+    if (!item) return;
+
+    const modal = document.getElementById('modalDetailAduan');
+    const body = document.getElementById('detailModalContent');
+    if (!modal || !body) return;
+
+    body.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
+        <div>
+          <span style="font-size: 0.75rem; color: #64748b;">KODE REGISTER:</span>
+          <h2 style="font-size: 1.3rem; color: #059669; font-weight: 800;">${item.id}</h2>
+        </div>
+        <span class="badge ${this.getStatusBadgeClass(item.status)}">${item.status}</span>
+      </div>
+
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; font-size: 0.85rem;">
+        <div style="background: #f8fafc; padding: 10px; border-radius: 8px;">
+          <div style="color: #64748b; font-size: 0.75rem;">PELAPOR</div>
+          <strong>${item.namaPelapor}</strong> (${item.noHp})
+        </div>
+        <div style="background: #f8fafc; padding: 10px; border-radius: 8px;">
+          <div style="color: #64748b; font-size: 0.75rem;">LOKASI</div>
+          <strong>Kec. ${item.kecamatan}</strong> - Desa ${item.desa}
+        </div>
+      </div>
+
+      <div style="margin-bottom: 12px; font-size: 0.88rem;">
+        <strong>Jenis Pencemaran:</strong> <span style="color: #059669; font-weight: 700;">${item.jenisPencemaran}</span>
+      </div>
+
+      <div style="margin-bottom: 14px; font-size: 0.85rem; color: #475569;">
+        <strong>Patokan Lokasi:</strong> ${item.lokasiDetail}<br>
+        <span style="font-family: monospace; font-size: 0.78rem; color: #059669;">🌐 Koordinat: ${item.lat}, ${item.lng}</span>
+      </div>
+
+      <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px; border-radius: 8px; margin-bottom: 14px; font-size: 0.88rem; color: #14532d;">
+        <strong>Uraian Aduan:</strong><br>${item.uraian}
+      </div>
+
+      <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; font-size: 0.85rem;">
+        <div style="font-weight: 700; color: #064e3b; margin-bottom: 4px;">Pemeriksaan DLH Lembata:</div>
+        <div>Verifikator: <strong>${item.petugasVerifikasi}</strong> (${item.tanggalVerifikasi})</div>
+        <div style="margin-top: 4px;">Hasil: ${item.hasilVerifikasi}</div>
+        <div style="margin-top: 4px;">Tindakan DLH: ${item.tindakanDLH}</div>
+      </div>
+    `;
+
+    modal.classList.add('show');
+  }
+
+  showVerifikasiModal(id) {
+    const item = window.aduanStore.getById(id);
+    if (!item) return;
+
+    const modal = document.getElementById('modalVerifikasi');
+    if (!modal) return;
+
+    document.getElementById('verifIdAduan').value = item.id;
+    document.getElementById('verifDisplayId').textContent = item.id;
+    document.getElementById('verifDisplayPelapor').textContent = `${item.namaPelapor} (Kec. ${item.kecamatan})`;
+    document.getElementById('verifStatus').value = item.status;
+    document.getElementById('verifPetugas').value = item.petugasVerifikasi !== '-' ? item.petugasVerifikasi : '';
+    document.getElementById('verifTanggal').value = item.tanggalVerifikasi !== '-' ? item.tanggalVerifikasi : new Date().toISOString().split('T')[0];
+    document.getElementById('verifHasil').value = item.hasilVerifikasi !== '-' ? item.hasilVerifikasi : '';
+    document.getElementById('verifTindakan').value = item.tindakanDLH !== '-' ? item.tindakanDLH : '';
+
+    modal.classList.add('show');
+  }
+
+  /* ===================================================================
+     8. CLOUD SYNC SETTINGS
+     =================================================================== */
+  setupCloudSync() {
+    this.updateCloudUI();
+
+    window.addEventListener('aduanDataSynced', (e) => {
+      this.updateKPIs();
+      this.renderTable();
+      if (window.lembataMap) window.lembataMap.renderMarkers();
+      this.updateCloudUI();
+      const count = e.detail && e.detail.count ? e.detail.count : window.aduanStore.getAll().length;
+      this.showToast(`Berhasil sinkron ${count} data dari Google Spreadsheet!`, 'success');
+    });
+
+    const btnOpen = document.getElementById('btnOpenCloudModal');
+    const modal = document.getElementById('modalCloudSync');
+    const inputUrl = document.getElementById('inputGasUrl');
+
+    if (btnOpen && modal) {
+      btnOpen.addEventListener('click', () => {
+        if (inputUrl) inputUrl.value = window.aduanStore.getGasUrl();
+        this.updateCloudUI();
+        modal.classList.add('show');
+      });
+    }
+
+    const btnSave = document.getElementById('btnSaveGasUrl');
+    if (btnSave) {
+      btnSave.addEventListener('click', async () => {
+        const urlVal = inputUrl ? inputUrl.value.trim() : '';
+        window.aduanStore.setGasUrl(urlVal);
+        this.updateCloudUI();
+
+        if (urlVal) {
+          this.showToast('Menghubungkan ke Google Apps Script...', 'info');
+          const res = await window.aduanStore.syncFromGAS();
+          if (res.success) {
+            modal.classList.remove('show');
+          } else {
+            this.showToast(`Gagal: ${res.error || res.reason}`, 'warning');
+          }
+        } else {
+          modal.classList.remove('show');
+          this.showToast('URL dikosongkan. Menggunakan penyimpanan lokal.', 'info');
+        }
+      });
+    }
+
+    const btnSyncNow = document.getElementById('btnTriggerSyncNow');
+    if (btnSyncNow) {
+      btnSyncNow.addEventListener('click', async () => {
+        btnSyncNow.disabled = true;
+        btnSyncNow.textContent = '⏳ Mengambil...';
+        const res = await window.aduanStore.syncFromGAS();
+        btnSyncNow.disabled = false;
+        btnSyncNow.textContent = '🔄 Sinkronkan Data';
+        this.updateCloudUI();
+        if (!res.success) {
+          this.showToast(`Sinkronisasi: ${res.error || res.reason}`, 'warning');
+        }
+      });
+    }
+
+    const btnReset = document.getElementById('btnResetDefaultData');
+    if (btnReset) {
+      btnReset.addEventListener('click', () => {
+        if (confirm('Muat ulang dataset simulasi default Kabupaten Lembata?')) {
+          window.aduanStore.resetToDefault();
+          this.updateKPIs();
+          this.renderTable();
+          if (window.lembataMap) window.lembataMap.renderMarkers();
+          this.updateCloudUI();
+          this.showToast('Data dikembalikan ke standar awal Lembata.', 'info');
+        }
+      });
+    }
+  }
+
+  updateCloudUI() {
+    const isConfigured = window.aduanStore.hasGasConfigured();
+    const dot = document.getElementById('cloudStatusDot');
+    const text = document.getElementById('cloudStatusText');
+    const detail = document.getElementById('cloudStatusDetail');
+    const lastSync = document.getElementById('cloudLastSyncText');
+
+    if (dot) dot.style.background = isConfigured ? '#10b981' : '#94a3b8';
+    if (text) text.textContent = isConfigured ? 'Sheets Cloud' : 'Mode Lokal';
+    if (detail) {
+      detail.innerHTML = isConfigured 
+        ? '<span style="color: #059669;">🟢 Terhubung ke Google Spreadsheet API</span>'
+        : '⚪ Mode Lokal (LocalStorage)';
+    }
+    if (lastSync) {
+      lastSync.textContent = window.aduanStore.lastSyncTime 
+        ? `Sinkron terakhir: ${window.aduanStore.lastSyncTime.toLocaleTimeString('id-ID')}`
+        : (isConfigured ? 'Siap mengirim & menerima data' : 'Dataset lokal browser');
+    }
+  }
+
+  showToast(message, type = 'success') {
+    const container = document.getElementById('toastContainer');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    const icon = type === 'success' ? '✅' : (type === 'warning' ? '⚠️' : 'ℹ️');
+
+    toast.innerHTML = `<span>${icon}</span><div style="flex: 1;">${message}</div>`;
+    container.appendChild(toast);
+
+    setTimeout(() => {
+      toast.style.opacity = '0';
+      toast.style.transform = 'translateY(10px)';
+      toast.style.transition = 'all 0.3s ease';
+      setTimeout(() => toast.remove(), 300);
+    }, 4500);
+  }
+}
+
+// Inisialisasi Aplikasi saat Dokumen Siap
+document.addEventListener('DOMContentLoaded', () => {
+  window.app = new DLHApp();
+  window.app.init();
+});
+
+  </script>
 </body>
 </html>
