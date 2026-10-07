@@ -509,21 +509,30 @@
 
     .kpi-card {
       background: #ffffff;
-      border: 1px solid #e2e8f0;
+      border: 1.5px solid #e2e8f0;
       border-radius: var(--radius-md);
-      padding: 18px 20px;
+      padding: 16px 18px;
       box-shadow: var(--shadow-sm);
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       position: relative;
       overflow: hidden;
-      transition: transform 0.2s, box-shadow 0.2s;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      cursor: pointer;
+      user-select: none;
     }
 
     .kpi-card:hover {
-      transform: translateY(-2px);
+      transform: translateY(-3px);
       box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+    }
+
+    .kpi-card.active-kpi {
+      border-color: #059669;
+      background: #f0fdf4;
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.25), var(--shadow-md);
     }
 
     .kpi-card::before {
@@ -568,8 +577,18 @@
     }
 
     .kpi-desc {
-      font-size: 0.75rem;
+      font-size: 0.74rem;
       color: #64748b;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .kpi-hint-filter {
+      font-size: 0.68rem;
+      color: #059669;
+      font-weight: 700;
+      text-decoration: underline;
     }
 
     /* Grid Layout: Map & Dispatch Console */
@@ -681,14 +700,83 @@
       border-radius: 50%;
     }
 
+    /* SOP Workflow Guide Bar (Edukatif & Mudah Dipahami) */
+    .sop-workflow-bar {
+      background: #f0fdf4;
+      border-bottom: 1.5px solid #bbf7d0;
+      padding: 12px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .sop-bar-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .sop-bar-title {
+      font-size: 0.76rem;
+      font-weight: 800;
+      color: #065f46;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .sop-steps-chain {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .sop-step-node {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      border: 1px solid #a7f3d0;
+      padding: 4px 10px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #064e3b;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+    }
+
+    .sop-step-node .node-idx {
+      width: 16px;
+      height: 16px;
+      border-radius: 50%;
+      background: #059669;
+      color: #ffffff;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.65rem;
+      font-weight: 800;
+    }
+
+    .sop-chain-arrow {
+      color: #059669;
+      font-weight: 800;
+      font-size: 0.76rem;
+    }
+
     /* Right Panel: Work Order & Dispatch Desk */
     .filter-toolbar {
-      padding: 16px 20px;
+      padding: 14px 20px;
       background: #ffffff;
       border-bottom: 1px solid #e2e8f0;
       display: flex;
       flex-wrap: wrap;
-      gap: 12px;
+      gap: 10px;
       align-items: center;
       justify-content: space-between;
     }
@@ -696,23 +784,27 @@
     .search-input-wrap {
       position: relative;
       flex: 1;
-      min-width: 240px;
+      min-width: 260px;
+      display: flex;
+      align-items: center;
     }
 
     .search-input-wrap input {
       width: 100%;
-      padding: 9px 14px 9px 36px;
-      border: 1px solid #cbd5e1;
+      padding: 9px 36px 9px 36px;
+      border: 1.5px solid #cbd5e1;
       border-radius: var(--radius-md);
       font-size: 0.85rem;
       font-family: inherit;
       outline: none;
-      transition: border-color 0.2s;
+      transition: all 0.2s;
+      background: #f8fafc;
     }
 
     .search-input-wrap input:focus {
       border-color: #059669;
-      box-shadow: 0 0 0 3px rgba(5,150,105,0.1);
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(5,150,105,0.12);
     }
 
     .search-icon {
@@ -722,17 +814,37 @@
       transform: translateY(-50%);
       font-size: 0.95rem;
       color: #94a3b8;
+      pointer-events: none;
+    }
+
+    .btn-clear-search {
+      position: absolute;
+      right: 10px;
+      top: 50%;
+      transform: translateY(-50%);
+      background: none;
+      border: none;
+      color: #94a3b8;
+      cursor: pointer;
+      font-size: 0.9rem;
+      padding: 4px;
+      display: none;
+    }
+
+    .btn-clear-search:hover {
+      color: #dc2626;
     }
 
     .filter-selects {
       display: flex;
-      gap: 10px;
+      gap: 8px;
       flex-wrap: wrap;
+      align-items: center;
     }
 
     .filter-select {
       padding: 8px 12px;
-      border: 1px solid #cbd5e1;
+      border: 1.5px solid #cbd5e1;
       border-radius: var(--radius-md);
       font-size: 0.82rem;
       background: #ffffff;
@@ -740,60 +852,88 @@
       font-family: inherit;
       outline: none;
       cursor: pointer;
+      transition: border-color 0.2s;
     }
 
     .filter-select:focus {
       border-color: #059669;
     }
 
-    /* Status Filter Tabs */
-    .status-tab-bar {
-      display: flex;
-      gap: 6px;
-      padding: 12px 20px 0 20px;
-      background: #ffffff;
-      border-bottom: 1px solid #e2e8f0;
-      overflow-x: auto;
-      white-space: nowrap;
-    }
-
-    .status-tab-btn {
-      padding: 8px 14px;
+    .btn-reset-filters {
+      padding: 8px 12px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-md);
       font-size: 0.8rem;
-      font-weight: 600;
-      color: #64748b;
-      background: none;
-      border: none;
-      border-bottom: 2px solid transparent;
+      font-weight: 700;
+      color: #475569;
       cursor: pointer;
-      display: flex;
+      display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       transition: all 0.2s;
     }
 
+    .btn-reset-filters:hover {
+      background: #fee2e2;
+      border-color: #fca5a5;
+      color: #dc2626;
+    }
+
+    /* Status Filter Tabs - Modern Segmented Pills TANPA SCROLLBAR GLITCH */
+    .status-tab-bar {
+      display: flex;
+      flex-wrap: wrap; /* Menghilangkan scrollbar dengan wrapping rapi */
+      gap: 8px;
+      padding: 12px 20px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      align-items: center;
+    }
+
+    .status-tab-btn {
+      padding: 7px 14px;
+      font-size: 0.81rem;
+      font-weight: 600;
+      color: #475569;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      flex-shrink: 0;
+    }
+
     .status-tab-btn:hover {
-      color: #059669;
+      background: #f1f5f9;
+      color: #0f172a;
+      border-color: #94a3b8;
     }
 
     .status-tab-btn.active {
-      color: #064e3b;
-      border-bottom-color: #059669;
+      background: #064e3b;
+      color: #ffffff;
+      border-color: #064e3b;
       font-weight: 700;
+      box-shadow: 0 2px 8px rgba(6, 78, 59, 0.25);
     }
 
     .tab-badge {
-      background: #e2e8f0;
+      background: #f1f5f9;
       color: #475569;
-      font-size: 0.7rem;
-      font-weight: 700;
-      padding: 1px 6px;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 1px 7px;
       border-radius: 999px;
     }
 
     .status-tab-btn.active .tab-badge {
-      background: #d1fae5;
-      color: #065f46;
+      background: #10b981;
+      color: #ffffff;
     }
 
     /* Cases List & Cards */
@@ -801,179 +941,179 @@
       padding: 16px 20px;
       display: flex;
       flex-direction: column;
-      gap: 14px;
-      max-height: 800px;
+      gap: 16px;
+      max-height: 850px;
       overflow-y: auto;
     }
 
     .case-card {
       background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: var(--radius-md);
-      padding: 18px;
-      transition: all 0.2s;
+      border: 1.5px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      padding: 20px;
+      transition: all 0.2s ease;
       position: relative;
       display: flex;
       flex-direction: column;
-      gap: 12px;
+      gap: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04);
     }
 
     .case-card:hover {
-      border-color: #94a3b8;
-      box-shadow: var(--shadow-md);
+      border-color: #cbd5e1;
+      box-shadow: 0 8px 24px -4px rgba(0,0,0,0.09);
+      transform: translateY(-1px);
     }
 
     .case-card.urgent-border {
-      border-left: 4px solid #dc2626;
+      border-left: 5px solid #dc2626;
     }
 
     .case-card.investigasi-border {
-      border-left: 4px solid #f59e0b;
+      border-left: 5px solid #f59e0b;
     }
 
     .case-card.penanganan-border {
-      border-left: 4px solid #2563eb;
+      border-left: 5px solid #2563eb;
     }
 
     .case-card.selesai-border {
-      border-left: 4px solid #16a34a;
+      border-left: 5px solid #16a34a;
+    }
+
+    .case-card.ditolak-border {
+      border-left: 5px solid #94a3b8;
     }
 
     .case-header {
       display: flex;
       justify-content: space-between;
-      align-items: flex-start;
+      align-items: center;
       gap: 12px;
       flex-wrap: wrap;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
     }
 
     .case-id-group {
       display: flex;
       align-items: center;
       gap: 10px;
+      flex-wrap: wrap;
     }
 
-    .case-id {
-      font-family: 'Outfit', sans-serif;
-      font-weight: 700;
-      font-size: 1rem;
-      color: #0f172a;
-    }
-
-    .case-time {
-      font-size: 0.75rem;
-      color: #94a3b8;
-    }
-
-    .badge-status {
-      font-size: 0.72rem;
-      font-weight: 700;
+    .case-id-badge {
+      font-family: 'Outfit', monospace;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: #064e3b;
+      background: #ecfdf5;
       padding: 4px 10px;
-      border-radius: 999px;
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      text-transform: uppercase;
+      border-radius: 6px;
+      border: 1px solid #a7f3d0;
       letter-spacing: 0.5px;
     }
 
-    .badge-baru { background: #fee2e2; color: #991b1b; }
-    .badge-verif { background: #fef3c7; color: #92400e; }
-    .badge-tindak { background: #dbeafe; color: #1e40af; }
-    .badge-selesai { background: #dcfce7; color: #166534; }
-    .badge-ditolak { background: #f1f5f9; color: #475569; }
-
-    .case-location-row {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      font-size: 0.85rem;
-      font-weight: 600;
-      color: #334155;
-    }
-
-    .case-detail-desc {
-      font-size: 0.85rem;
-      color: #475569;
-      background: #f8fafc;
-      padding: 10px 14px;
-      border-radius: var(--radius-sm);
-      border-left: 3px solid #cbd5e1;
-    }
-
-    .case-reporter-info {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+    .case-time-tag {
       font-size: 0.8rem;
-      color: #64748b;
-      flex-wrap: wrap;
-      gap: 8px;
-    }
-
-    .case-actions-bar {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
-      padding-top: 8px;
-      border-top: 1px dashed #e2e8f0;
-      align-items: center;
-      justify-content: space-between;
-    }
-
-    .btn-action-primary {
-      background: #059669;
-      color: #ffffff;
-      border: none;
-      padding: 7px 14px;
-      border-radius: var(--radius-sm);
-      font-size: 0.82rem;
-      font-weight: 700;
-      cursor: pointer;
+      font-weight: 600;
+      color: #475569;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      transition: background 0.2s;
+      background: #f8fafc;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
     }
 
-    .btn-action-primary:hover {
-      background: #047857;
+    .badge-status {
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      border: 1px solid transparent;
     }
 
-    .btn-action-secondary {
-      background: #f1f5f9;
-      color: #334155;
-      border: 1px solid #cbd5e1;
-      padding: 7px 12px;
+    .badge-baru { background: #fee2e2; color: #991b1b; border-color: #fca5a5; }
+    .badge-verif { background: #fef3c7; color: #92400e; border-color: #fde68a; }
+    .badge-investigasi { background: #ffedd5; color: #c2410c; border-color: #fed7aa; }
+    .badge-tindak { background: #dbeafe; color: #1e40af; border-color: #bfdbfe; }
+    .badge-selesai { background: #dcfce7; color: #166534; border-color: #bbf7d0; }
+    .badge-ditolak { background: #f1f5f9; color: #475569; border-color: #e2e8f0; }
+
+    /* Visual Case Pipeline Progress Mini-Stepper */
+    .case-pipeline-stepper {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      padding: 8px 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
       border-radius: var(--radius-sm);
-      font-size: 0.8rem;
-      font-weight: 600;
-      cursor: pointer;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+
+    .pipeline-step-item {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      transition: all 0.2s;
-      text-decoration: none;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #94a3b8;
+      white-space: nowrap;
     }
 
-    .btn-action-secondary:hover {
+    .pipeline-step-item.step-passed {
+      color: #059669;
+    }
+
+    .pipeline-step-item.step-active {
+      color: #064e3b;
+      font-weight: 800;
+    }
+
+    .pipeline-circle {
+      width: 17px;
+      height: 17px;
+      border-radius: 50%;
       background: #e2e8f0;
+      color: #64748b;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.62rem;
+      font-weight: 800;
     }
 
-    .btn-wa-direct {
-      background: #25d366;
+    .pipeline-step-item.step-passed .pipeline-circle {
+      background: #10b981;
       color: #ffffff;
-      border: none;
     }
 
-    .btn-wa-direct:hover {
-      background: #20ba5a;
+    .pipeline-step-item.step-active .pipeline-circle {
+      background: #059669;
       color: #ffffff;
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.25);
     }
 
+    .pipeline-arrow {
+      color: #cbd5e1;
+      font-size: 0.72rem;
+      font-weight: 800;
+    }
+
+    .pipeline-arrow.passed {
+      color: #10b981;
+    }
     /* Empty State */
     .empty-state {
-      text-align: center;
       padding: 48px 20px;
       color: #64748b;
     }
@@ -1422,50 +1562,66 @@
     <main class="officer-main no-print">
 
       <!-- KPI STRIP -->
+      <!-- KPI STRIP (INTERAKTIF: KLIK UNTUK SARING DATA CEPAT) -->
       <section class="kpi-grid">
-        <div class="kpi-card kpi-total">
+        <div class="kpi-card kpi-total active-kpi" data-filter="ALL" title="Klik untuk menampilkan seluruh aduan masuk">
           <div class="kpi-label">
             <span>Total Aduan Masuk</span>
             <span class="kpi-icon">📋</span>
           </div>
           <div class="kpi-value" id="kpiTotal">0</div>
-          <div class="kpi-desc">Akumulasi seluruh laporan warga</div>
+          <div class="kpi-desc">
+            <span>Seluruh berkas laporan</span>
+            <span class="kpi-hint-filter">Tampilkan Semua ↗</span>
+          </div>
         </div>
 
-        <div class="kpi-card kpi-urgent">
+        <div class="kpi-card kpi-urgent" data-filter="Aduan Diterima" title="Klik untuk menyaring aduan baru yang perlu verifikasi">
           <div class="kpi-label">
             <span>Perlu Verifikasi</span>
             <span class="kpi-icon">🚨</span>
           </div>
           <div class="kpi-value" id="kpiBaru" style="color: #dc2626;">0</div>
-          <div class="kpi-desc">Aduan baru belum ditinjau tim</div>
+          <div class="kpi-desc">
+            <span>Aduan baru belum ditinjau</span>
+            <span class="kpi-hint-filter">Saring Kasus ↗</span>
+          </div>
         </div>
 
-        <div class="kpi-card kpi-investigasi">
+        <div class="kpi-card kpi-investigasi" data-filter="Sedang Diverifikasi" title="Klik untuk menyaring kasus dalam investigasi lapangan">
           <div class="kpi-label">
             <span>Investigasi Lapangan</span>
             <span class="kpi-icon">🔍</span>
           </div>
           <div class="kpi-value" id="kpiSedangVerif" style="color: #d97706;">0</div>
-          <div class="kpi-desc">Sedang dicek fisik oleh tim DLH</div>
+          <div class="kpi-desc">
+            <span>Pengecekan fisik di lokasi</span>
+            <span class="kpi-hint-filter">Saring Kasus ↗</span>
+          </div>
         </div>
 
-        <div class="kpi-card kpi-penanganan">
+        <div class="kpi-card kpi-penanganan" data-filter="Dalam Penanganan" title="Klik untuk menyaring kasus yang sedang ditangani fisik oleh tim DLH">
           <div class="kpi-label">
             <span>Dalam Penanganan</span>
             <span class="kpi-icon">🚜</span>
           </div>
           <div class="kpi-value" id="kpiPenanganan" style="color: #2563eb;">0</div>
-          <div class="kpi-desc">Armada/tindakan fisik diturunkan</div>
+          <div class="kpi-desc">
+            <span>Tindakan / armada diturunkan</span>
+            <span class="kpi-hint-filter">Saring Kasus ↗</span>
+          </div>
         </div>
 
-        <div class="kpi-card kpi-selesai">
+        <div class="kpi-card kpi-selesai" data-filter="Selesai" title="Klik untuk menyaring aduan yang sudah selesai teratasi">
           <div class="kpi-label">
             <span>Selesai / Teratasi</span>
             <span class="kpi-icon">✅</span>
           </div>
           <div class="kpi-value" id="kpiSelesai" style="color: #16a34a;">0</div>
-          <div class="kpi-desc" id="kpiPersenSelesai">Tingkat resolusi: 0%</div>
+          <div class="kpi-desc">
+            <span id="kpiPersenSelesai">Tingkat resolusi: 0%</span>
+            <span class="kpi-hint-filter">Saring Kasus ↗</span>
+          </div>
         </div>
       </section>
 
@@ -1519,15 +1675,53 @@
             <span style="font-size: 0.78rem; font-weight: 700; color: #059669;" id="txtCountFiltered">Menampilkan 0 aduan</span>
           </div>
 
+          <!-- SOP WORKFLOW GUIDE BAR (ALUR TAHAPAN KERJA DLH LEMBATA) -->
+          <div class="sop-workflow-bar">
+            <div class="sop-bar-top">
+              <div class="sop-bar-title">
+                <span>🧭</span>
+                <span>Standar Alur Tindak Lanjut Aduan DLH Lembata:</span>
+              </div>
+              <span style="font-size: 0.7rem; color: #047857; font-weight: 600;">5 Tahap Investigasi &amp; Eksekusi</span>
+            </div>
+            <div class="sop-steps-chain">
+              <div class="sop-step-node" title="Tahap 1: Laporan masyarakat masuk ke sistem">
+                <span class="node-idx">1</span>
+                <span>Aduan Masuk</span>
+              </div>
+              <span class="sop-chain-arrow">➔</span>
+              <div class="sop-step-node" title="Tahap 2: Petugas mengecek kelengkapan informasi &amp; lokasi">
+                <span class="node-idx">2</span>
+                <span>Verifikasi Berkas</span>
+              </div>
+              <span class="sop-chain-arrow">➔</span>
+              <div class="sop-step-node" title="Tahap 3: Tim pengawas LH turun ke titik koordinat lapangan">
+                <span class="node-idx">3</span>
+                <span>Investigasi Fisik</span>
+              </div>
+              <span class="sop-chain-arrow">➔</span>
+              <div class="sop-step-node" title="Tahap 4: Eksekusi penanganan teknis / armada DLH">
+                <span class="node-idx">4</span>
+                <span>Tindakan Lapangan</span>
+              </div>
+              <span class="sop-chain-arrow">➔</span>
+              <div class="sop-step-node" title="Tahap 5: Penerbitan Berita Acara &amp; Penutupan Kasus">
+                <span class="node-idx">5</span>
+                <span>Berita Acara &amp; Selesai</span>
+              </div>
+            </div>
+          </div>
+
           <!-- FILTER TOOLBAR -->
           <div class="filter-toolbar">
             <div class="search-input-wrap">
               <span class="search-icon">🔍</span>
               <input type="text" id="officerSearchInput" placeholder="Cari ID tiket, desa, nama pelapor, atau kata kunci...">
+              <button type="button" class="btn-clear-search" id="btnClearSearch" title="Hapus pencarian">&times;</button>
             </div>
 
             <div class="filter-selects">
-              <select id="filterKecamatan" class="filter-select">
+              <select id="filterKecamatan" class="filter-select" title="Saring berdasarkan wilayah kecamatan">
                 <option value="ALL">Semua Kecamatan</option>
                 <option value="Nubatukan">Nubatukan</option>
                 <option value="Ile Ape">Ile Ape</option>
@@ -1540,19 +1734,29 @@
                 <option value="Buyasuri">Buyasuri</option>
               </select>
 
-              <select id="filterJenis" class="filter-select">
+              <select id="filterJenis" class="filter-select" title="Saring berdasarkan jenis pencemaran">
                 <option value="ALL">Semua Kategori</option>
-                <option value="Sampah & TPS Liar">Sampah & TPS Liar</option>
-                <option value="Laut & Pesisir">Laut & Pesisir</option>
+                <option value="Sampah & TPS Liar">Sampah &amp; TPS Liar</option>
+                <option value="Laut & Pesisir">Laut &amp; Pesisir</option>
                 <option value="Pencemaran Air">Pencemaran Air</option>
-                <option value="Udara & Asap">Udara & Asap</option>
+                <option value="Udara & Asap">Udara &amp; Asap</option>
                 <option value="Kerusakan Lingkungan & Tanah">Kerusakan / Galian C</option>
                 <option value="Lainnya">Lainnya</option>
               </select>
+
+              <select id="filterSort" class="filter-select" title="Urutan daftar aduan">
+                <option value="newest">🕒 Aduan Terbaru</option>
+                <option value="oldest">⌛ Aduan Terlama</option>
+              </select>
+
+              <button type="button" id="btnResetFilters" class="btn-reset-filters" title="Reset filter dan tampilkan semua">
+                <span>🔄</span>
+                <span>Reset</span>
+              </button>
             </div>
           </div>
 
-          <!-- STATUS TABS -->
+          <!-- STATUS TABS (SEGMENTED PILLS RAPI TANPA SCROLLBAR HORIZONTAL) -->
           <div class="status-tab-bar">
             <button type="button" class="status-tab-btn active" data-status="ALL">
               Semua <span class="tab-badge" id="badgeCountAll">0</span>
@@ -2216,23 +2420,27 @@
       return '#64748b'; // Abu
     }
 
+    const markersMap = {};
+
     function renderMapMarkers(items) {
       if (!mapMarkersLayer || !officerMap) return;
       mapMarkersLayer.clearLayers();
+      Object.keys(markersMap).forEach(k => delete markersMap[k]);
 
       items.forEach(item => {
         if (!item.lat || !item.lng) return;
 
-        const pinColor = getPinColorByStatus(item.status);
+        const norm = normalizeStatus(item.status);
+        const pinColor = getPinColorByStatus(norm);
         const customIcon = L.divIcon({
           className: 'officer-marker-pin',
           html: `<div style="
-            width: 24px;
-            height: 24px;
+            width: 26px;
+            height: 26px;
             background: ${pinColor};
             border: 2px solid #ffffff;
             border-radius: 50%;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            box-shadow: 0 3px 10px rgba(0,0,0,0.35);
             display: flex;
             align-items: center;
             justify-content: center;
@@ -2240,30 +2448,30 @@
             font-size: 11px;
             font-weight: bold;
           ">!</div>`,
-          iconSize: [24, 24],
-          iconAnchor: [12, 12]
+          iconSize: [26, 26],
+          iconAnchor: [13, 13]
         });
 
         const gmapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.lng}`;
         const waUrl = item.noHp && item.noHp !== '-' ? `https://wa.me/62${item.noHp.replace(/^0/, '')}?text=Halo%20Bapak/Ibu%20${encodeURIComponent(item.namaPelapor)},%20kami%20dari%20Tim%20DLH%20Kabupaten%20Lembata%20terkait%20aduan%20${encodeURIComponent(item.id)}.` : '#';
 
         const popupHtml = `
-          <div style="font-family: inherit; font-size: 0.85rem; min-width: 210px;">
+          <div style="font-family: inherit; font-size: 0.85rem; min-width: 220px; padding: 2px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-              <strong style="color: #064e3b; font-size: 0.9rem;">${item.id}</strong>
-              <span style="font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #f1f5f9; color: ${pinColor}; border: 1px solid ${pinColor};">${item.status}</span>
+              <strong style="color: #064e3b; font-size: 0.95rem;">${item.id}</strong>
+              <span style="font-size: 0.7rem; font-weight: 700; padding: 2px 7px; border-radius: 999px; background: #f1f5f9; color: ${pinColor}; border: 1px solid ${pinColor};">${norm}</span>
             </div>
-            <div style="font-size: 0.8rem; font-weight: 600; color: #1e293b; margin-bottom: 4px;">${item.jenisPencemaran}</div>
-            <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 8px;">📍 ${item.desa}, Kec. ${item.kecamatan}</div>
-            <div style="font-size: 0.75rem; color: #475569; margin-bottom: 10px; background: #f8fafc; padding: 6px; border-radius: 4px;">
+            <div style="font-size: 0.82rem; font-weight: 700; color: #1e293b; margin-bottom: 3px;">🏷️ ${item.jenisPencemaran}</div>
+            <div style="font-size: 0.76rem; color: #64748b; margin-bottom: 8px;">📍 Desa ${item.desa}, Kec. ${item.kecamatan}</div>
+            <div style="font-size: 0.76rem; color: #334155; margin-bottom: 10px; background: #f8fafc; padding: 6px 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
               Pelapor: <strong>${item.namaPelapor}</strong> (${item.noHp || '-'})
             </div>
             <div style="display: flex; gap: 6px; flex-direction: column;">
-              <a href="${gmapsUrl}" target="_blank" style="display: block; text-align: center; background: #059669; color: #fff; text-decoration: none; padding: 5px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700;">
-                🧭 Rute Navigasi Google Maps
+              <a href="${gmapsUrl}" target="_blank" style="display: block; text-align: center; background: #059669; color: #fff; text-decoration: none; padding: 6px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700;">
+                🧭 Rute Google Maps ↗
               </a>
-              <button onclick="window.bukaModalTindakLanjut('${item.id}')" style="background: #0f172a; color: #fff; border: none; padding: 5px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
-                ⚡ Tindak Lanjuti Sekarang
+              <button onclick="window.bukaModalTindakLanjut('${item.id}')" style="background: #0f172a; color: #fff; border: none; padding: 6px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700; cursor: pointer;">
+                ⚡ Input Tindak Lanjut / BA
               </button>
             </div>
           </div>
@@ -2271,7 +2479,122 @@
 
         const marker = L.marker([item.lat, item.lng], { icon: customIcon }).bindPopup(popupHtml);
         mapMarkersLayer.addLayer(marker);
+        markersMap[item.id] = marker;
       });
+    }
+
+    // Helper: Normalisasi Status Kasus secara fleksibel & akurat
+    function normalizeStatus(raw) {
+      if (!raw) return 'Aduan Diterima';
+      const s = String(raw).trim().toLowerCase();
+      if (s === 'baru' || s === 'aduan diterima' || s.includes('diterima') || s === 'menunggu' || s === 'diajukan' || s === 'pending') return 'Aduan Diterima';
+      if (s.includes('administrasi') || s.includes('verifikasi berkas')) return 'Verifikasi Administrasi';
+      if (s.includes('sedang diverifikasi') || s.includes('investigasi') || s === 'diverifikasi' || s.includes('cek fisik')) return 'Sedang Diverifikasi';
+      if (s.includes('tindak') || s.includes('penanganan') || s.includes('proses') || s.includes('ditindaklanjuti') || s.includes('tindakan')) return 'Dalam Penanganan';
+      if (s.includes('selesai') || s.includes('teratasi') || s.includes('tuntas') || s.includes('selesai teratasi')) return 'Selesai';
+      if (s.includes('tolak') || s.includes('ditolak') || s.includes('gugur') || s.includes('batal')) return 'Ditolak';
+      return raw;
+    }
+
+    // Helper: Format Tanggal Manusiawi & Rapi
+    function formatHumanDate(raw) {
+      if (!raw || raw === '-') return '-';
+      const cleanRaw = String(raw).trim();
+      
+      // Jika format YYYY-MM-DD HH:MM
+      if (/^\d{4}-\d{2}-\d{2}\s+\d{2}:\d{2}/.test(cleanRaw)) {
+        const parts = cleanRaw.split(' ');
+        const dParts = parts[0].split('-');
+        const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        const mIdx = parseInt(dParts[1], 10) - 1;
+        const monthName = months[mIdx] || dParts[1];
+        return `${dParts[2]} ${monthName} ${dParts[0]} • ${parts[1]} WITA`;
+      }
+
+      // Coba parse ISO / Standar Date String (termasuk string panjang GMT)
+      try {
+        const sanitized = cleanRaw.replace(/\s*\([^)]*\)$/, '');
+        const d = new Date(sanitized);
+        if (!isNaN(d.getTime())) {
+          const day = String(d.getDate()).padStart(2, '0');
+          const months = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+          const month = months[d.getMonth()];
+          const year = d.getFullYear();
+          const hours = String(d.getHours()).padStart(2, '0');
+          const mins = String(d.getMinutes()).padStart(2, '0');
+          return `${day} ${month} ${year} • ${hours}:${mins} WITA`;
+        }
+      } catch (e) {}
+
+      return cleanRaw;
+    }
+
+    // Helper: Badge Status Detail
+    function getStatusBadgeMeta(rawStatus) {
+      const norm = normalizeStatus(rawStatus);
+      switch (norm) {
+        case 'Aduan Diterima':
+          return { label: 'Aduan Baru Masuk', cls: 'badge-baru', icon: '🚨', borderCls: 'urgent-border' };
+        case 'Verifikasi Administrasi':
+          return { label: 'Verifikasi Administrasi', cls: 'badge-verif', icon: '🟡', borderCls: 'investigasi-border' };
+        case 'Sedang Diverifikasi':
+          return { label: 'Investigasi Lapangan', cls: 'badge-investigasi', icon: '🔍', borderCls: 'investigasi-border' };
+        case 'Dalam Penanganan':
+          return { label: 'Dalam Penanganan Fisik', cls: 'badge-tindak', icon: '🚜', borderCls: 'penanganan-border' };
+        case 'Selesai':
+          return { label: 'Selesai Teratasi', cls: 'badge-selesai', icon: '✅', borderCls: 'selesai-border' };
+        case 'Ditolak':
+          return { label: 'Ditolak / Tidak Terbukti', cls: 'badge-ditolak', icon: '⚪', borderCls: 'ditolak-border' };
+        default:
+          return { label: rawStatus, cls: 'badge-tindak', icon: 'ℹ️', borderCls: 'penanganan-border' };
+      }
+    }
+
+    // Helper: Stepper Visual Tahapan Kasus
+    function getPipelineStepHtml(rawStatus) {
+      const norm = normalizeStatus(rawStatus);
+      if (norm === 'Ditolak') {
+        return `
+          <div class="case-pipeline-stepper" style="background: #f1f5f9; border-color: #cbd5e1;">
+            <span style="font-size: 0.72rem; font-weight: 700; color: #64748b;">⚪ Status: Aduan Ditolak / Tidak Memenuhi Syarat Penanganan</span>
+          </div>
+        `;
+      }
+
+      let step = 1;
+      if (norm === 'Verifikasi Administrasi') step = 2;
+      else if (norm === 'Sedang Diverifikasi') step = 3;
+      else if (norm === 'Dalam Penanganan') step = 4;
+      else if (norm === 'Selesai') step = 5;
+
+      return `
+        <div class="case-pipeline-stepper" title="Indikator tahap alur investigasi kasus">
+          <div class="pipeline-step-item ${step >= 1 ? (step === 1 ? 'step-active' : 'step-passed') : ''}">
+            <span class="pipeline-circle">${step > 1 ? '✓' : '1'}</span>
+            <span>1. Masuk</span>
+          </div>
+          <span class="pipeline-arrow ${step >= 2 ? 'passed' : ''}">➔</span>
+          <div class="pipeline-step-item ${step >= 2 ? (step === 2 ? 'step-active' : 'step-passed') : ''}">
+            <span class="pipeline-circle">${step > 2 ? '✓' : '2'}</span>
+            <span>2. Verifikasi</span>
+          </div>
+          <span class="pipeline-arrow ${step >= 3 ? 'passed' : ''}">➔</span>
+          <div class="pipeline-step-item ${step >= 3 ? (step === 3 ? 'step-active' : 'step-passed') : ''}">
+            <span class="pipeline-circle">${step > 3 ? '✓' : '3'}</span>
+            <span>3. Investigasi</span>
+          </div>
+          <span class="pipeline-arrow ${step >= 4 ? 'passed' : ''}">➔</span>
+          <div class="pipeline-step-item ${step >= 4 ? (step === 4 ? 'step-active' : 'step-passed') : ''}">
+            <span class="pipeline-circle">${step > 4 ? '✓' : '4'}</span>
+            <span>4. Penanganan</span>
+          </div>
+          <span class="pipeline-arrow ${step >= 5 ? 'passed' : ''}">➔</span>
+          <div class="pipeline-step-item ${step === 5 ? 'step-active step-passed' : ''}">
+            <span class="pipeline-circle">${step === 5 ? '✓' : '5'}</span>
+            <span>5. Selesai</span>
+          </div>
+        </div>
+      `;
     }
 
     // Render KPI Metrics
@@ -2284,12 +2607,12 @@
       let ditolak = 0;
 
       list.forEach(item => {
-        const s = item.status;
-        if (s === 'Aduan Diterima' || s === 'Baru' || s === 'Verifikasi Administrasi') baru++;
-        else if (s === 'Sedang Diverifikasi') investigasi++;
-        else if (s === 'Dalam Penanganan') penanganan++;
-        else if (s === 'Selesai') selesai++;
-        else if (s === 'Ditolak') ditolak++;
+        const norm = normalizeStatus(item.status);
+        if (norm === 'Aduan Diterima' || norm === 'Verifikasi Administrasi') baru++;
+        else if (norm === 'Sedang Diverifikasi') investigasi++;
+        else if (norm === 'Dalam Penanganan') penanganan++;
+        else if (norm === 'Selesai') selesai++;
+        else if (norm === 'Ditolak') ditolak++;
       });
 
       const pct = total > 0 ? Math.round(((selesai + ditolak) / total) * 100) : 0;
@@ -2309,7 +2632,7 @@
       document.getElementById('badgeCountDitolak').textContent = ditolak;
     }
 
-    // Case Desk Rendering with Filters
+    // Case Desk Rendering with Filters & Sorting
     let currentFilterStatus = 'ALL';
 
     function getFilteredList() {
@@ -2317,13 +2640,22 @@
       const searchVal = (document.getElementById('officerSearchInput').value || '').trim().toLowerCase();
       const kecVal = document.getElementById('filterKecamatan').value;
       const jenisVal = document.getElementById('filterJenis').value;
+      const sortVal = document.getElementById('filterSort') ? document.getElementById('filterSort').value : 'newest';
 
-      return list.filter(item => {
+      // Tombol silang di pencarian
+      const btnClear = document.getElementById('btnClearSearch');
+      if (btnClear) {
+        btnClear.style.display = searchVal ? 'block' : 'none';
+      }
+
+      const filtered = list.filter(item => {
+        const normStatus = normalizeStatus(item.status);
+
         // Status filter
         if (currentFilterStatus !== 'ALL') {
           if (currentFilterStatus === 'Aduan Diterima') {
-            if (item.status !== 'Aduan Diterima' && item.status !== 'Baru' && item.status !== 'Verifikasi Administrasi') return false;
-          } else if (item.status !== currentFilterStatus) {
+            if (normStatus !== 'Aduan Diterima' && normStatus !== 'Verifikasi Administrasi') return false;
+          } else if (normStatus !== currentFilterStatus) {
             return false;
           }
         }
@@ -2334,7 +2666,7 @@
         // Jenis Pencemaran filter
         if (jenisVal !== 'ALL' && item.jenisPencemaran !== jenisVal) return false;
 
-        // Search text
+        // Search text (multi-field)
         if (searchVal) {
           const matchId = (item.id || '').toLowerCase().includes(searchVal);
           const matchDesa = (item.desa || '').toLowerCase().includes(searchVal);
@@ -2342,27 +2674,21 @@
           const matchPelapor = (item.namaPelapor || '').toLowerCase().includes(searchVal);
           const matchUraian = (item.uraian || '').toLowerCase().includes(searchVal);
           const matchJenis = (item.jenisPencemaran || '').toLowerCase().includes(searchVal);
-          if (!matchId && !matchDesa && !matchKec && !matchPelapor && !matchUraian && !matchJenis) return false;
+          const matchPetugas = (item.petugasVerifikasi || '').toLowerCase().includes(searchVal);
+          if (!matchId && !matchDesa && !matchKec && !matchPelapor && !matchUraian && !matchJenis && !matchPetugas) return false;
         }
 
         return true;
       });
-    }
 
-    function getStatusBadgeClass(status) {
-      if (status === 'Aduan Diterima' || status === 'Baru') return 'badge-baru';
-      if (status === 'Verifikasi Administrasi' || status === 'Sedang Diverifikasi') return 'badge-verif';
-      if (status === 'Dalam Penanganan') return 'badge-tindak';
-      if (status === 'Selesai') return 'badge-selesai';
-      return 'badge-ditolak';
-    }
+      // Sorting
+      filtered.sort((a, b) => {
+        const dateA = new Date(String(a.timestamp || '').replace(/\s*\([^)]*\)$/, '')).getTime() || 0;
+        const dateB = new Date(String(b.timestamp || '').replace(/\s*\([^)]*\)$/, '')).getTime() || 0;
+        return sortVal === 'oldest' ? dateA - dateB : dateB - dateA;
+      });
 
-    function getCardBorderClass(status) {
-      if (status === 'Aduan Diterima' || status === 'Baru') return 'urgent-border';
-      if (status === 'Sedang Diverifikasi' || status === 'Verifikasi Administrasi') return 'investigasi-border';
-      if (status === 'Dalam Penanganan') return 'penanganan-border';
-      if (status === 'Selesai') return 'selesai-border';
-      return '';
+      return filtered;
     }
 
     function renderCaseList() {
@@ -2375,77 +2701,114 @@
         container.innerHTML = `
           <div class="empty-state">
             <div class="empty-state-icon">📭</div>
-            <h4 style="color: #334155; margin-bottom: 4px;">Tidak Ada Aduan Ditemukan</h4>
-            <p style="font-size: 0.85rem;">Coba sesuaikan kata kunci pencarian atau ganti filter status di atas.</p>
+            <h4 style="color: #334155; margin-bottom: 6px; font-weight: 800; font-size: 1.05rem;">Tidak Ada Aduan Ditemukan</h4>
+            <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 14px;">Coba sesuaikan kata kunci pencarian atau bersihkan filter status di atas.</p>
+            <button type="button" class="btn-reset-filters" onclick="window.resetSemuaFilter()" style="margin: 0 auto;">
+              🔄 Tampilkan Seluruh Aduan
+            </button>
           </div>
         `;
         return;
       }
 
       container.innerHTML = filtered.map(item => {
-        const badgeClass = getStatusBadgeClass(item.status);
-        const borderClass = getCardBorderClass(item.status);
+        const badgeMeta = getStatusBadgeMeta(item.status);
         const gmapsUrl = item.lat && item.lng ? `https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.lng}` : '#';
-        const waUrl = item.noHp && item.noHp !== '-' ? `https://wa.me/62${item.noHp.replace(/^0/, '')}?text=Halo%20Bapak/Ibu%20${encodeURIComponent(item.namaPelapor)},%20kami%20dari%20Tim%20DLH%20Lembata%20terkait%20aduan%20${encodeURIComponent(item.id)}.` : null;
+        const waClean = item.noHp && item.noHp !== '-' ? item.noHp.replace(/\D/g, '') : '';
+        const waUrl = waClean ? `https://wa.me/62${waClean.replace(/^0/, '')}?text=Halo%20Bapak/Ibu%20${encodeURIComponent(item.namaPelapor)},%20kami%20dari%20Tim%20DLH%20Lembata%20terkait%20aduan%20${encodeURIComponent(item.id)}.` : null;
+        const formattedDate = formatHumanDate(item.timestamp);
+        const stepperHtml = getPipelineStepHtml(item.status);
 
         return `
-          <div class="case-card ${borderClass}" id="card-${item.id}">
+          <div class="case-card ${badgeMeta.borderCls}" id="card-${item.id}">
+            <!-- 1. Header: ID Tiket, Badge Status, Waktu Masuk -->
             <div class="case-header">
               <div class="case-id-group">
-                <span class="case-id">${item.id}</span>
-                <span class="badge-status ${badgeClass}">${item.status}</span>
+                <span class="case-id-badge">${item.id}</span>
+                <span class="badge-status ${badgeMeta.cls}">${badgeMeta.icon} ${badgeMeta.label}</span>
               </div>
-              <span class="case-time">⏱️ ${item.timestamp}</span>
+              <span class="case-time-tag">⏱️ Masuk: ${formattedDate}</span>
             </div>
 
+            <!-- 2. Alur Visual Stepper Kasus -->
+            ${stepperHtml}
+
+            <!-- 3. Lokasi & Kategori -->
             <div class="case-location-row">
-              <span>📍 <strong>${item.desa}</strong>, Kec. ${item.kecamatan}</span>
-              <span style="color: #94a3b8;">&bull;</span>
-              <span style="color: #059669; font-weight: 700;">${item.jenisPencemaran}</span>
-            </div>
-
-            <div class="case-detail-desc">
-              "${item.uraian}"
-            </div>
-
-            <div class="case-reporter-info">
-              <div>
-                👤 Pelapor: <strong>${item.namaPelapor}</strong> | 📞 ${item.noHp || '-'}
+              <div class="case-loc-pill" title="Wilayah administratif">
+                <span>📍</span>
+                <span>Desa <strong>${item.desa || '-'}</strong>, Kec. <strong>${item.kecamatan || '-'}</strong></span>
+                ${item.lokasiDetail ? `<span style="color: #64748b; font-size: 0.8rem;">(${item.lokasiDetail})</span>` : ''}
               </div>
-              <div>
-                👮 Penanggung Jawab: <strong>${item.petugasVerifikasi || 'Belum Ditugaskan'}</strong>
+              <div class="case-cat-pill" title="Kategori pencemaran">
+                <span>🏷️</span>
+                <span>${item.jenisPencemaran || 'Lainnya'}</span>
               </div>
             </div>
 
-            ${item.hasilVerifikasi && item.hasilVerifikasi !== '-' ? `
-              <div style="font-size: 0.78rem; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 8px 12px; border-radius: 6px; color: #065f46;">
-                <strong>📋 Berita Acara Petugas:</strong> ${item.hasilVerifikasi}<br>
-                ${item.tindakanDLH && item.tindakanDLH !== '-' ? `<strong>🚜 Tindakan DLH:</strong> ${item.tindakanDLH}` : ''}
+            <!-- 4. Isi Aduan Warga (Quote Box) -->
+            <div class="case-report-box">
+              <div class="case-report-label">📝 Isi Laporan Masyarakat:</div>
+              <div style="font-style: italic; color: #1e293b; font-size: 0.9rem;">"${item.uraian || '-'}"</div>
+            </div>
+
+            <!-- 5. Dua Kolom Metadata: Data Pelapor & Petugas DLH -->
+            <div class="case-info-columns">
+              <div class="case-info-card">
+                <div class="info-card-header">👤 Data Pelapor</div>
+                <div style="font-weight: 700; color: #0f172a; font-size: 0.9rem;">${item.namaPelapor || 'Masyarakat (Anonim)'}</div>
+                <div style="color: #64748b; font-size: 0.8rem;">
+                  No. HP / WA: <strong>${item.noHp || '-'}</strong>
+                </div>
+              </div>
+              <div class="case-info-card">
+                <div class="info-card-header">🛡️ Penanggung Jawab DLH</div>
+                <div style="font-weight: 700; color: #064e3b; font-size: 0.9rem;">${item.petugasVerifikasi && item.petugasVerifikasi !== '-' ? item.petugasVerifikasi : 'Belum Ditugaskan'}</div>
+                <div style="color: #64748b; font-size: 0.8rem;">
+                  Tahap Verifikasi: <strong>${item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' ? item.tanggalVerifikasi : 'Menunggu Aksi'}</strong>
+                </div>
+              </div>
+            </div>
+
+            <!-- 6. Catatan Berita Acara & Tindakan Teknis DLH -->
+            ${(item.hasilVerifikasi && item.hasilVerifikasi !== '-') || (item.tindakanDLH && item.tindakanDLH !== '-') ? `
+              <div class="case-official-box">
+                ${item.hasilVerifikasi && item.hasilVerifikasi !== '-' ? `
+                  <div style="margin-bottom: 5px;">
+                    <strong>📋 Temuan Investigasi Lapangan:</strong> ${item.hasilVerifikasi}
+                  </div>
+                ` : ''}
+                ${item.tindakanDLH && item.tindakanDLH !== '-' ? `
+                  <div>
+                    <strong>🚜 Tindakan Teknis DLH:</strong> ${item.tindakanDLH}
+                  </div>
+                ` : ''}
               </div>
             ` : ''}
 
+            <!-- 7. Tombol Aksi Lapangan & Tindak Lanjut -->
             <div class="case-actions-bar">
-              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-                <button type="button" class="btn-action-primary" onclick="window.bukaModalTindakLanjut('${item.id}')">
+              <div class="actions-group-left">
+                <button type="button" class="btn-action-primary" onclick="window.bukaModalTindakLanjut('${item.id}')" title="Buka form update status dan investigasi">
                   ⚡ Tindak Lanjuti / Berita Acara
                 </button>
-                <button type="button" class="btn-action-secondary" onclick="window.cetakBeritaAcaraById('${item.id}')">
+                <button type="button" class="btn-action-secondary" onclick="window.cetakBeritaAcaraById('${item.id}')" title="Cetak lembar Berita Acara Resmi DLH">
                   📄 Cetak BA
                 </button>
               </div>
 
-              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <div class="actions-group-right">
                 ${waUrl ? `
                   <a href="${waUrl}" target="_blank" class="btn-action-secondary btn-wa-direct" title="Hubungi Pelapor via WhatsApp">
                     💬 Hubungi Pelapor
                   </a>
                 ` : ''}
                 ${item.lat && item.lng ? `
-                  <a href="${gmapsUrl}" target="_blank" class="btn-action-secondary" title="Navigasi ke Lokasi">
+                  <a href="${gmapsUrl}" target="_blank" class="btn-action-secondary" title="Buka rute navigasi Google Maps">
                     🧭 Rute GPS
                   </a>
-                  <button type="button" class="btn-action-secondary" onclick="window.sorotPeta('${item.id}')" title="Tampilkan Titik di Peta Samping">
-                    📍 Lihat di Peta
+                  <button type="button" class="btn-action-secondary" onclick="window.sorotPeta('${item.id}')" title="Tampilkan titik pin di peta sebelah kiri">
+                    📍 Sorot di Peta
                   </button>
                 ` : ''}
               </div>
@@ -2461,6 +2824,12 @@
       const item = list.find(x => x.id === id);
       if (item && item.lat && item.lng && officerMap) {
         officerMap.flyTo([item.lat, item.lng], 14, { duration: 0.8 });
+        
+        // Buka popup jika marker terdaftar
+        if (markersMap[id]) {
+          setTimeout(() => markersMap[id].openPopup(), 450);
+        }
+
         if (window.innerWidth < 1024) {
           document.getElementById('officerMap').scrollIntoView({ behavior: 'smooth' });
         }
@@ -2474,7 +2843,7 @@
 
       document.getElementById('editAduanId').value = item.id;
       document.getElementById('modalDetailId').textContent = item.id;
-      document.getElementById('modalDetailWaktu').textContent = item.timestamp;
+      document.getElementById('modalDetailWaktu').textContent = formatHumanDate(item.timestamp);
       document.getElementById('modalDetailWilayah').textContent = `${item.desa}, Kec. ${item.kecamatan}`;
       document.getElementById('modalDetailJenis').textContent = item.jenisPencemaran;
       document.getElementById('modalDetailUraian').textContent = item.uraian;
@@ -2510,7 +2879,7 @@
       document.getElementById('printRegNumber').textContent = item.id;
       document.getElementById('printNamaPelapor').textContent = item.namaPelapor;
       document.getElementById('printNoHp').textContent = item.noHp || '-';
-      document.getElementById('printWaktuMasuk').textContent = item.timestamp;
+      document.getElementById('printWaktuMasuk').textContent = formatHumanDate(item.timestamp);
       document.getElementById('printLokasi').textContent = `${item.lokasiDetail || '-'}, Desa ${item.desa}, Kecamatan ${item.kecamatan}`;
       document.getElementById('printKoordinat').textContent = item.lat && item.lng ? `Latitude: ${item.lat}, Longitude: ${item.lng}` : 'Tidak terdeteksi';
       document.getElementById('printJenisPencemaran').textContent = item.jenisPencemaran;
@@ -2526,6 +2895,29 @@
       document.getElementById('printSignOfficer').innerHTML = signer && signer.trim() ? `<u>${signer}</u>` : `<u>....................................................</u><br>NIP. ....................................................`;
 
       window.print();
+    };
+
+    // Helper: Reset Semua Filter
+    window.resetSemuaFilter = function() {
+      document.getElementById('officerSearchInput').value = '';
+      document.getElementById('filterKecamatan').value = 'ALL';
+      document.getElementById('filterJenis').value = 'ALL';
+      if (document.getElementById('filterSort')) document.getElementById('filterSort').value = 'newest';
+      
+      currentFilterStatus = 'ALL';
+      
+      // Sync tab buttons
+      document.querySelectorAll('.status-tab-btn').forEach(b => {
+        b.classList.toggle('active', b.getAttribute('data-status') === 'ALL');
+      });
+
+      // Sync KPI cards
+      document.querySelectorAll('.kpi-card').forEach(c => {
+        c.classList.toggle('active-kpi', c.getAttribute('data-filter') === 'ALL');
+      });
+
+      renderCaseList();
+      showToast('Seluruh filter telah direset ke tampilan default.');
     };
 
     // Form Update Submit Handler
@@ -2629,6 +3021,33 @@
         document.querySelectorAll('.status-tab-btn').forEach(b => b.classList.remove('active'));
         this.classList.add('active');
         currentFilterStatus = this.getAttribute('data-status');
+        
+        // Sync active state on KPI cards
+        document.querySelectorAll('.kpi-card').forEach(card => {
+          card.classList.toggle('active-kpi', card.getAttribute('data-filter') === currentFilterStatus);
+        });
+
+        renderCaseList();
+      });
+    });
+
+    // Interactive KPI Cards Click Handler (Filter Cepat)
+    document.querySelectorAll('.kpi-card').forEach(card => {
+      card.addEventListener('click', function() {
+        const filterVal = this.getAttribute('data-filter');
+        if (!filterVal) return;
+
+        currentFilterStatus = filterVal;
+
+        // Sync KPI active state
+        document.querySelectorAll('.kpi-card').forEach(c => c.classList.remove('active-kpi'));
+        this.classList.add('active-kpi');
+
+        // Sync Tab button
+        document.querySelectorAll('.status-tab-btn').forEach(btn => {
+          btn.classList.toggle('active', btn.getAttribute('data-status') === filterVal);
+        });
+
         renderCaseList();
       });
     });
@@ -2637,6 +3056,24 @@
     document.getElementById('officerSearchInput').addEventListener('input', renderCaseList);
     document.getElementById('filterKecamatan').addEventListener('change', renderCaseList);
     document.getElementById('filterJenis').addEventListener('change', renderCaseList);
+    if (document.getElementById('filterSort')) {
+      document.getElementById('filterSort').addEventListener('change', renderCaseList);
+    }
+
+    // Clear Search & Reset Filters Button
+    const btnClearSearch = document.getElementById('btnClearSearch');
+    if (btnClearSearch) {
+      btnClearSearch.addEventListener('click', () => {
+        document.getElementById('officerSearchInput').value = '';
+        renderCaseList();
+        document.getElementById('officerSearchInput').focus();
+      });
+    }
+
+    const btnResetFilters = document.getElementById('btnResetFilters');
+    if (btnResetFilters) {
+      btnResetFilters.addEventListener('click', window.resetSemuaFilter);
+    }
 
     // Export CSV Feature
     document.getElementById('btnExportCsv').addEventListener('click', () => {
