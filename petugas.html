@@ -1346,10 +1346,10 @@
         <form id="formOfficerLogin">
           
           <div class="auth-group">
-            <label for="authUserId">Nama Petugas / NIP / ID:</label>
+            <label for="authUserId">Nama Petugas / NIP <span style="color: red;">*</span>:</label>
             <div class="auth-input-wrap">
               <span class="auth-input-icon">👤</span>
-              <input type="text" id="authUserId" class="auth-input" value="Petrus Sinun, S.T. (Bidang Pengawasan LH)" required placeholder="Ketik nama atau ID petugas...">
+              <input type="text" id="authUserId" class="auth-input" value="" required placeholder="Ketik nama lengkap & NIP / jabatan petugas...">
             </div>
           </div>
 
@@ -1415,7 +1415,7 @@
         <div class="officer-nav-tools">
           <div class="officer-session-pill">
             <div class="pulse-dot"></div>
-            <span id="headerOfficerName">Petrus Sinun, S.T. (Verifikator Lapangan)</span>
+            <span id="headerOfficerName">Petugas Lapangan</span>
           </div>
 
           <button type="button" class="btn-header-tool" id="btnSyncGas" title="Sinkronkan data dengan Google Apps Script">
@@ -1443,8 +1443,8 @@
         <div class="active-officer-info">
           <span>📍 Posko: <strong>DLH Lembata - Jl. Trans Lembata, Lewoleba</strong></span>
           <span>•</span>
-          <span>Petugas Bertugas: <strong id="subOfficerTitle">Petrus Sinun, S.T.</strong></span>
-          <button type="button" class="btn-switch-officer" id="btnOpenSwitchModal">Ganti Profil Petugas</button>
+          <span>Petugas Bertugas: <strong id="subOfficerTitle">Belum diisi</strong></span>
+          <button type="button" class="btn-switch-officer" id="btnOpenSwitchModal">Ubah Nama Petugas</button>
         </div>
         <div>
           <a href="https://docs.google.com/spreadsheets/d/1yA_6oYQyZ3gK4wZp8n6jR2X5-Q_x7m1a/edit" target="_blank" class="btn-switch-officer" style="color: #2563eb;">
@@ -1727,46 +1727,23 @@
       <div class="modal-dialog" style="max-width: 480px;">
         <div class="modal-header">
           <h3 class="modal-title">
-            <span>👮</span> Pilih Profil Petugas Bertugas
+            <span>👮</span> Ubah Nama Petugas Bertugas
           </h3>
           <button type="button" class="btn-close-modal" id="btnCloseModalOfficer">&times;</button>
         </div>
         <div class="modal-body">
           <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 16px;">
-            Pilih atau ketik nama petugas penanggung jawab yang akan dicantumkan pada Berita Acara dan log verifikasi.
+            Ketik nama petugas penanggung jawab atau NIP yang akan dicantumkan pada Berita Acara dan log verifikasi.
           </p>
 
-          <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
-            <button type="button" class="btn-action-secondary select-preset-officer" data-name="Petrus Sinun, S.T. (Bidang Pengawasan LH)" style="justify-content: flex-start; text-align: left; padding: 12px;">
-              <div>
-                <strong>Petrus Sinun, S.T.</strong><br>
-                <span style="font-size: 0.75rem; color: #64748b;">Bidang Pengawasan LH &bull; NIP. 19850612 201001 1 005</span>
-              </div>
-            </button>
-
-            <button type="button" class="btn-action-secondary select-preset-officer" data-name="Ir. Damianus T. (Kabid Penataan DLH)" style="justify-content: flex-start; text-align: left; padding: 12px;">
-              <div>
-                <strong>Ir. Damianus T.</strong><br>
-                <span style="font-size: 0.75rem; color: #64748b;">Kepala Bidang Penataan LH &bull; NIP. 19780415 200501 1 008</span>
-              </div>
-            </button>
-
-            <button type="button" class="btn-action-secondary select-preset-officer" data-name="Tim Reaksi Cepat Kebersihan DLH" style="justify-content: flex-start; text-align: left; padding: 12px;">
-              <div>
-                <strong>Tim Reaksi Cepat Kebersihan DLH</strong><br>
-                <span style="font-size: 0.75rem; color: #64748b;">Armada Pengangkutan Sampah &amp; Patroli Kebersihan</span>
-              </div>
-            </button>
-          </div>
-
           <div class="form-group">
-            <label>Atau Ketik Nama Petugas Kustom:</label>
-            <input type="text" id="customOfficerInput" class="form-control" placeholder="Nama Petugas & Jabatan">
+            <label>Nama Lengkap Petugas / NIP / Bidang <span style="color: red;">*</span>:</label>
+            <input type="text" id="customOfficerInput" class="form-control" placeholder="Contoh: Nama Petugas, S.T. (Bidang Pengawasan LH)" autofocus>
           </div>
         </div>
         <div class="modal-footer">
           <button type="button" class="btn-action-secondary" id="btnCancelOfficerSwitch">Batal</button>
-          <button type="button" class="btn-action-primary" id="btnSaveCustomOfficer">Gunakan Profil Ini</button>
+          <button type="button" class="btn-action-primary" id="btnSaveCustomOfficer">💾 Simpan Nama Petugas</button>
         </div>
       </div>
     </div>
@@ -1860,8 +1837,7 @@
         Lewoleba, <span id="printSignDate">08 Oktober 2026</span><br>
         <strong>Petugas Verifikator Lapangan</strong>
         <div class="print-sign-space"></div>
-        <strong id="printSignOfficer"><u>Petrus Sinun, S.T.</u></strong><br>
-        NIP. 19850612 201001 1 005
+        <strong id="printSignOfficer"><u>....................................................</u><br>NIP. ....................................................</strong>
       </div>
     </div>
   </div>
@@ -1884,7 +1860,7 @@
     const STORAGE_KEY = 'dlh_lembata_aduan_v1';
     const OFFICER_PROFILE_KEY = 'dlh_active_officer';
     const AUTH_SESSION_KEY = 'dlh_officer_authenticated';
-    const DEFAULT_OFFICER = 'Petrus Sinun, S.T. (Bidang Pengawasan LH)';
+    const DEFAULT_OFFICER = '';
 
     // Valid Official Passwords
     const VALID_PASSWORDS = [
@@ -2094,11 +2070,15 @@
     }
 
     function getActiveOfficer() {
-      return localStorage.getItem(OFFICER_PROFILE_KEY) || DEFAULT_OFFICER;
+      return localStorage.getItem(OFFICER_PROFILE_KEY) || '';
     }
 
     function setActiveOfficer(name) {
-      localStorage.setItem(OFFICER_PROFILE_KEY, name);
+      if (name && name.trim()) {
+        localStorage.setItem(OFFICER_PROFILE_KEY, name.trim());
+      } else {
+        localStorage.removeItem(OFFICER_PROFILE_KEY);
+      }
       updateOfficerUi();
     }
 
@@ -2106,8 +2086,9 @@
       const name = getActiveOfficer();
       const elHead = document.getElementById('headerOfficerName');
       const elSub = document.getElementById('subOfficerTitle');
-      if (elHead) elHead.textContent = name;
-      if (elSub) elSub.textContent = name;
+      const displayName = name && name.trim() ? name : 'Petugas Lapangan';
+      if (elHead) elHead.textContent = displayName;
+      if (elSub) elSub.textContent = name && name.trim() ? name : 'Belum diisi (Klik untuk isi)';
     }
 
     function showToast(msg) {
@@ -2158,8 +2139,15 @@
     document.getElementById('formOfficerLogin').addEventListener('submit', function(e) {
       e.preventDefault();
       const enteredPass = (document.getElementById('authPassword').value || '').trim();
-      const enteredUser = (document.getElementById('authUserId').value || '').trim() || DEFAULT_OFFICER;
+      const enteredUser = (document.getElementById('authUserId').value || '').trim();
       const errorBox = document.getElementById('authErrorMsg');
+
+      if (!enteredUser) {
+        errorBox.style.display = 'flex';
+        document.getElementById('authErrorText').textContent = 'Silakan ketik nama petugas atau NIP Anda terlebih dahulu.';
+        document.getElementById('authUserId').focus();
+        return;
+      }
 
       if (VALID_PASSWORDS.includes(enteredPass.toLowerCase())) {
         errorBox.style.display = 'none';
@@ -2576,7 +2564,8 @@
       const dateStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
       document.getElementById('printTanggalSekarang').textContent = dateStr;
       document.getElementById('printSignDate').textContent = dateStr;
-      document.getElementById('printSignOfficer').innerHTML = `<u>${item.petugasVerifikasi || getActiveOfficer()}</u>`;
+      const signer = (item.petugasVerifikasi && item.petugasVerifikasi !== '-') ? item.petugasVerifikasi : getActiveOfficer();
+      document.getElementById('printSignOfficer').innerHTML = signer && signer.trim() ? `<u>${signer}</u>` : `<u>....................................................</u><br>NIP. ....................................................`;
 
       window.print();
     };
@@ -2653,7 +2642,9 @@
 
     // Officer Switch Modal Handlers
     document.getElementById('btnOpenSwitchModal').addEventListener('click', () => {
+      document.getElementById('customOfficerInput').value = getActiveOfficer() || '';
       document.getElementById('modalSwitchOfficer').classList.add('active');
+      setTimeout(() => document.getElementById('customOfficerInput').focus(), 150);
     });
     document.getElementById('btnCloseModalOfficer').addEventListener('click', () => {
       document.getElementById('modalSwitchOfficer').classList.remove('active');
@@ -2662,21 +2653,15 @@
       document.getElementById('modalSwitchOfficer').classList.remove('active');
     });
 
-    document.querySelectorAll('.select-preset-officer').forEach(btn => {
-      btn.addEventListener('click', function() {
-        const name = this.getAttribute('data-name');
-        setActiveOfficer(name);
-        document.getElementById('modalSwitchOfficer').classList.remove('active');
-        showToast(`Profil aktif beralih ke: ${name}`);
-      });
-    });
-
     document.getElementById('btnSaveCustomOfficer').addEventListener('click', () => {
       const val = document.getElementById('customOfficerInput').value.trim();
       if (val) {
         setActiveOfficer(val);
         document.getElementById('modalSwitchOfficer').classList.remove('active');
-        showToast(`Profil aktif beralih ke: ${val}`);
+        showToast(`Nama petugas diperbarui menjadi: ${val}`);
+      } else {
+        alert('Silakan ketik nama petugas terlebih dahulu.');
+        document.getElementById('customOfficerInput').focus();
       }
     });
 
