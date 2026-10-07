@@ -65,6 +65,265 @@
       flex-direction: column;
     }
 
+    /* ===================================================================
+       1. AUTHENTICATION GATE (GERBANG KATA SANDI PETUGAS)
+       =================================================================== */
+    .auth-gate-wrap {
+      min-height: 100vh;
+      background: radial-gradient(circle at 50% 20%, #065f46 0%, #064e3b 35%, #022c22 80%, #011913 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 24px 16px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .auth-gate-wrap::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background-image: 
+        linear-gradient(rgba(255, 255, 255, 0.03) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.03) 1px, transparent 1px);
+      background-size: 36px 36px;
+      pointer-events: none;
+    }
+
+    .auth-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 440px;
+      border-radius: var(--radius-xl);
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      overflow: hidden;
+      position: relative;
+      z-index: 10;
+      animation: authCardIn 0.35s ease-out;
+    }
+
+    @keyframes authCardIn {
+      from { transform: translateY(20px) scale(0.97); opacity: 0; }
+      to { transform: translateY(0) scale(1); opacity: 1; }
+    }
+
+    .auth-card-top {
+      background: linear-gradient(135deg, #022c22 0%, #064e3b 100%);
+      padding: 30px 24px 24px 24px;
+      text-align: center;
+      color: #ffffff;
+      border-bottom: 3px solid #059669;
+      position: relative;
+    }
+
+    .auth-emblem {
+      width: 64px;
+      height: 64px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      border-radius: 50%;
+      margin: 0 auto 14px auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 2rem;
+      box-shadow: 0 8px 16px rgba(0,0,0,0.2);
+    }
+
+    .auth-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+      margin-bottom: 4px;
+    }
+
+    .auth-subtitle {
+      font-size: 0.8rem;
+      color: #a7f3d0;
+      font-weight: 500;
+    }
+
+    .auth-badge-security {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(245, 158, 11, 0.2);
+      border: 1px solid #f59e0b;
+      color: #fef3c7;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 4px 12px;
+      border-radius: 999px;
+      margin-top: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+    }
+
+    .auth-card-body {
+      padding: 28px 24px 24px 24px;
+    }
+
+    .auth-group {
+      margin-bottom: 18px;
+    }
+
+    .auth-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .auth-input-wrap {
+      position: relative;
+      display: flex;
+      align-items: center;
+    }
+
+    .auth-input-icon {
+      position: absolute;
+      left: 12px;
+      color: #94a3b8;
+      font-size: 1rem;
+      pointer-events: none;
+    }
+
+    .auth-input {
+      width: 100%;
+      padding: 11px 40px 11px 38px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      font-size: 0.92rem;
+      font-family: inherit;
+      outline: none;
+      transition: all 0.2s;
+      background: #f8fafc;
+    }
+
+    .auth-input:focus {
+      border-color: #059669;
+      background: #ffffff;
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+    }
+
+    .btn-toggle-eye {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      color: #64748b;
+      cursor: pointer;
+      font-size: 1rem;
+      padding: 6px;
+    }
+
+    .auth-error-msg {
+      background: #fee2e2;
+      border-left: 4px solid #dc2626;
+      color: #991b1b;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      margin-bottom: 16px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+      animation: shake 0.3s ease-in-out;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20%, 60% { transform: translateX(-6px); }
+      40%, 80% { transform: translateX(6px); }
+    }
+
+    .btn-submit-auth {
+      width: 100%;
+      padding: 12px 18px;
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: var(--radius-md);
+      font-size: 0.95rem;
+      font-weight: 800;
+      font-family: inherit;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+      transition: all 0.2s;
+    }
+
+    .btn-submit-auth:hover {
+      background: linear-gradient(135deg, #047857 0%, #065f46 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 6px 16px rgba(5, 150, 105, 0.4);
+    }
+
+    .auth-quick-hint {
+      margin-top: 18px;
+      background: #ecfdf5;
+      border: 1px dashed #a7f3d0;
+      border-radius: var(--radius-md);
+      padding: 12px;
+      text-align: center;
+      font-size: 0.78rem;
+      color: #065f46;
+    }
+
+    .btn-quick-fill-pass {
+      background: #10b981;
+      color: #ffffff;
+      border: none;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      margin-top: 6px;
+      display: inline-block;
+    }
+
+    .btn-quick-fill-pass:hover {
+      background: #059669;
+    }
+
+    .auth-footer-nav {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 0.8rem;
+    }
+
+    .auth-footer-nav a {
+      color: #64748b;
+      text-decoration: none;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: color 0.2s;
+    }
+
+    .auth-footer-nav a:hover {
+      color: #059669;
+      text-decoration: underline;
+    }
+
+    /* ===================================================================
+       2. INTERNAL OFFICER DASHBOARD (TERLINDUNGI SETELAH LOGIN)
+       =================================================================== */
+    #officerAppContainer {
+      display: none; /* Disembunyikan sampai pengguna memasukkan password */
+      min-height: 100vh;
+      flex-direction: column;
+    }
+
     /* Top Command Header */
     .officer-header {
       background: linear-gradient(135deg, #022c22 0%, #064e3b 60%, #065f46 100%);
@@ -139,7 +398,7 @@
     .officer-nav-tools {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 10px;
       flex-wrap: wrap;
     }
 
@@ -174,9 +433,9 @@
       background: rgba(255,255,255,0.12);
       border: 1px solid rgba(255,255,255,0.2);
       color: #ffffff;
-      padding: 7px 14px;
+      padding: 7px 12px;
       border-radius: var(--radius-sm);
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 600;
       cursor: pointer;
       display: inline-flex;
@@ -201,6 +460,17 @@
     .btn-public-link:hover {
       background: #34d399;
       color: #064e3b;
+    }
+
+    .btn-logout {
+      background: #dc2626;
+      border-color: #ef4444;
+      color: #ffffff;
+      font-weight: 700;
+    }
+
+    .btn-logout:hover {
+      background: #b91c1c;
     }
 
     /* Sub-bar Command Status */
@@ -1053,405 +1323,457 @@
       from { transform: translateY(100%); opacity: 0; }
       to { transform: translateY(0); opacity: 1; }
     }
-
-    /* Officer Switch Modal */
-    .role-badge-chip {
-      display: inline-block;
-      padding: 2px 8px;
-      border-radius: 4px;
-      font-size: 0.72rem;
-      font-weight: 700;
-      background: #e2e8f0;
-      color: #334155;
-    }
   </style>
 </head>
 <body>
 
   <!-- ===================================================================
-       OFFICER COMMAND HEADER
+       1. GERBANG OTENTIKASI & KATA SANDI (OFFICER AUTH GATE)
        =================================================================== -->
-  <header class="officer-header no-print">
-    <div class="header-container">
-      <div class="brand-section">
-        <div class="brand-emblem">🛡️</div>
-        <div class="brand-text">
-          <h1>
-            PORTAL PETUGAS DLH LEMBATA
-            <span class="brand-badge">KOMANDO OPERASIONAL</span>
-          </h1>
-          <p>Sistem Informasi Penanganan &amp; Investigasi Aduan Lingkungan Hidup</p>
+  <div class="auth-gate-wrap" id="officerAuthGate">
+    <div class="auth-card">
+      <div class="auth-card-top">
+        <div class="auth-emblem">🛡️</div>
+        <h2 class="auth-title">PORTAL PETUGAS DLH</h2>
+        <p class="auth-subtitle">Dinas Lingkungan Hidup Kabupaten Lembata</p>
+        <div class="auth-badge-security">
+          <span>🔒</span>
+          <span>Akses Terbatas Personil Kedinasan</span>
         </div>
       </div>
 
-      <div class="officer-nav-tools">
-        <div class="officer-session-pill">
-          <div class="pulse-dot"></div>
-          <span id="headerOfficerName">Petrus Sinun, S.T. (Verifikator Lapangan)</span>
-        </div>
-
-        <button type="button" class="btn-header-tool" id="btnSyncGas" title="Sinkronkan data dengan Google Apps Script">
-          🔄 Sinkronkan Cloud
-        </button>
-
-        <button type="button" class="btn-header-tool" id="btnExportCsv" title="Unduh rekap ke file CSV/Excel">
-          📥 Ekspor CSV
-        </button>
-
-        <a href="index.html" class="btn-header-tool btn-public-link" title="Beralih ke Portal Pengaduan Publik">
-          🌐 Portal Publik Warga ↗
-        </a>
-      </div>
-    </div>
-  </header>
-
-  <!-- ===================================================================
-       SUB-BAR STATUS & SPREADSHEET QUICK LINK
-       =================================================================== -->
-  <div class="sub-command-bar no-print">
-    <div class="sub-bar-container">
-      <div class="active-officer-info">
-        <span>📍 Posko: <strong>DLH Lembata - Jl. Trans Lembata, Lewoleba</strong></span>
-        <span>•</span>
-        <span>Petugas Bertugas: <strong id="subOfficerTitle">Petrus Sinun, S.T.</strong></span>
-        <button type="button" class="btn-switch-officer" id="btnOpenSwitchModal">Ganti Profil Petugas</button>
-      </div>
-      <div>
-        <a href="https://docs.google.com/spreadsheets/d/1yA_6oYQyZ3gK4wZp8n6jR2X5-Q_x7m1a/edit" target="_blank" class="btn-switch-officer" style="color: #2563eb;">
-          📊 Buka Database Google Spreadsheet DLH ↗
-        </a>
-      </div>
-    </div>
-  </div>
-
-  <!-- ===================================================================
-       MAIN DASHBOARD WORKSPACE
-       =================================================================== -->
-  <main class="officer-main no-print">
-
-    <!-- KPI STRIP -->
-    <section class="kpi-grid">
-      <div class="kpi-card kpi-total">
-        <div class="kpi-label">
-          <span>Total Aduan Masuk</span>
-          <span class="kpi-icon">📋</span>
-        </div>
-        <div class="kpi-value" id="kpiTotal">0</div>
-        <div class="kpi-desc">Akumulasi seluruh laporan warga</div>
-      </div>
-
-      <div class="kpi-card kpi-urgent">
-        <div class="kpi-label">
-          <span>Perlu Verifikasi</span>
-          <span class="kpi-icon">🚨</span>
-        </div>
-        <div class="kpi-value" id="kpiBaru" style="color: #dc2626;">0</div>
-        <div class="kpi-desc">Aduan baru belum ditinjau tim</div>
-      </div>
-
-      <div class="kpi-card kpi-investigasi">
-        <div class="kpi-label">
-          <span>Investigasi Lapangan</span>
-          <span class="kpi-icon">🔍</span>
-        </div>
-        <div class="kpi-value" id="kpiSedangVerif" style="color: #d97706;">0</div>
-        <div class="kpi-desc">Sedang dicek fisik oleh tim DLH</div>
-      </div>
-
-      <div class="kpi-card kpi-penanganan">
-        <div class="kpi-label">
-          <span>Dalam Penanganan</span>
-          <span class="kpi-icon">🚜</span>
-        </div>
-        <div class="kpi-value" id="kpiPenanganan" style="color: #2563eb;">0</div>
-        <div class="kpi-desc">Armada/tindakan fisik diturunkan</div>
-      </div>
-
-      <div class="kpi-card kpi-selesai">
-        <div class="kpi-label">
-          <span>Selesai / Teratasi</span>
-          <span class="kpi-icon">✅</span>
-        </div>
-        <div class="kpi-value" id="kpiSelesai" style="color: #16a34a;">0</div>
-        <div class="kpi-desc" id="kpiPersenSelesai">Tingkat resolusi: 0%</div>
-      </div>
-    </section>
-
-    <!-- WORKSPACE TWO-COLUMNS -->
-    <div class="dashboard-workspace">
-
-      <!-- LEFT COLUMN: MAP & GIS PATROL -->
-      <section class="panel-card">
-        <div class="panel-header">
-          <h2 class="panel-title">
-            <span>🗺️</span> Peta Operasional Kasus
-          </h2>
-          <span style="font-size: 0.72rem; color: #64748b; font-weight: 600;">Klik pin untuk rute GPS</span>
-        </div>
-        <div class="panel-body">
-          <div id="officerMap"></div>
+      <div class="auth-card-body">
+        <form id="formOfficerLogin">
           
-          <div class="map-controls-strip">
-            <button type="button" class="btn-map-toggle active" id="btnMapStreets">Peta Jalan</button>
-            <button type="button" class="btn-map-toggle" id="btnMapSat">Citra Satelit Nyata</button>
-            <button type="button" class="btn-map-toggle" id="btnMapReset">Reset Lembata</button>
-          </div>
-
-          <div class="map-legend-pills">
-            <div class="legend-tag">
-              <span class="legend-color-dot" style="background: #dc2626;"></span>
-              <span>Baru/Menunggu (Merah)</span>
-            </div>
-            <div class="legend-tag">
-              <span class="legend-color-dot" style="background: #f59e0b;"></span>
-              <span>Investigasi (Kuning)</span>
-            </div>
-            <div class="legend-tag">
-              <span class="legend-color-dot" style="background: #2563eb;"></span>
-              <span>Penanganan (Biru)</span>
-            </div>
-            <div class="legend-tag">
-              <span class="legend-color-dot" style="background: #16a34a;"></span>
-              <span>Selesai (Hijau)</span>
+          <div class="auth-group">
+            <label for="authUserId">Nama Petugas / NIP / ID:</label>
+            <div class="auth-input-wrap">
+              <span class="auth-input-icon">👤</span>
+              <input type="text" id="authUserId" class="auth-input" value="Petrus Sinun, S.T. (Bidang Pengawasan LH)" required placeholder="Ketik nama atau ID petugas...">
             </div>
           </div>
-        </div>
-      </section>
 
-      <!-- RIGHT COLUMN: DISPATCH & WORK ORDER DESK -->
-      <section class="panel-card">
-        <div class="panel-header">
-          <h2 class="panel-title">
-            <span>📋</span> Meja Kerja &amp; Tindak Lanjut Aduan
-          </h2>
-          <span style="font-size: 0.78rem; font-weight: 700; color: #059669;" id="txtCountFiltered">Menampilkan 0 aduan</span>
-        </div>
-
-        <!-- FILTER TOOLBAR -->
-        <div class="filter-toolbar">
-          <div class="search-input-wrap">
-            <span class="search-icon">🔍</span>
-            <input type="text" id="officerSearchInput" placeholder="Cari ID tiket, desa, nama pelapor, atau kata kunci...">
+          <div class="auth-group">
+            <label for="authPassword">Kata Sandi Akses Petugas:</label>
+            <div class="auth-input-wrap">
+              <span class="auth-input-icon">🔑</span>
+              <input type="password" id="authPassword" class="auth-input" required placeholder="Masukkan kata sandi...">
+              <button type="button" class="btn-toggle-eye" id="btnTogglePassword" title="Tampilkan / Sembunyikan Kata Sandi">👁️</button>
+            </div>
           </div>
 
-          <div class="filter-selects">
-            <select id="filterKecamatan" class="filter-select">
-              <option value="ALL">Semua Kecamatan</option>
-              <option value="Nubatukan">Nubatukan</option>
-              <option value="Ile Ape">Ile Ape</option>
-              <option value="Ile Ape Timur">Ile Ape Timur</option>
-              <option value="Lebatukan">Lebatukan</option>
-              <option value="Nagawutung">Nagawutung</option>
-              <option value="Wulandoni">Wulandoni</option>
-              <option value="Atadei">Atadei</option>
-              <option value="Omesuri">Omesuri</option>
-              <option value="Buyasuri">Buyasuri</option>
-            </select>
-
-            <select id="filterJenis" class="filter-select">
-              <option value="ALL">Semua Kategori</option>
-              <option value="Sampah & TPS Liar">Sampah & TPS Liar</option>
-              <option value="Laut & Pesisir">Laut & Pesisir</option>
-              <option value="Pencemaran Air">Pencemaran Air</option>
-              <option value="Udara & Asap">Udara & Asap</option>
-              <option value="Kerusakan Lingkungan & Tanah">Kerusakan / Galian C</option>
-              <option value="Lainnya">Lainnya</option>
-            </select>
+          <!-- Error Feedback -->
+          <div class="auth-error-msg" id="authErrorMsg">
+            <span>⚠️</span>
+            <span id="authErrorText">Kata sandi tidak sesuai. Silakan coba lagi.</span>
           </div>
-        </div>
 
-        <!-- STATUS TABS -->
-        <div class="status-tab-bar">
-          <button type="button" class="status-tab-btn active" data-status="ALL">
-            Semua <span class="tab-badge" id="badgeCountAll">0</span>
+          <button type="submit" class="btn-submit-auth">
+            <span>🔓</span>
+            <span>Masuk ke Portal Operasional</span>
           </button>
-          <button type="button" class="status-tab-btn" data-status="Aduan Diterima">
-            🚨 Perlu Verifikasi <span class="tab-badge" id="badgeCountBaru">0</span>
-          </button>
-          <button type="button" class="status-tab-btn" data-status="Sedang Diverifikasi">
-            🔍 Sedang Investigasi <span class="tab-badge" id="badgeCountInvestigasi">0</span>
-          </button>
-          <button type="button" class="status-tab-btn" data-status="Dalam Penanganan">
-            🚜 Dalam Penanganan <span class="tab-badge" id="badgeCountTindak">0</span>
-          </button>
-          <button type="button" class="status-tab-btn" data-status="Selesai">
-            ✅ Selesai <span class="tab-badge" id="badgeCountSelesai">0</span>
-          </button>
-          <button type="button" class="status-tab-btn" data-status="Ditolak">
-            ⚪ Ditolak <span class="tab-badge" id="badgeCountDitolak">0</span>
-          </button>
-        </div>
-
-        <!-- CASES LIST -->
-        <div class="case-list-container" id="caseListContainer">
-          <!-- Dynamic rendering by JS -->
-        </div>
-      </section>
-
-    </div>
-  </main>
-
-  <!-- ===================================================================
-       MODAL 1: FORMULIR TINDAK LANJUT & BERITA ACARA PETUGAS
-       =================================================================== -->
-  <div class="modal-backdrop" id="modalTindakLanjut">
-    <div class="modal-dialog">
-      <div class="modal-header">
-        <h3 class="modal-title">
-          <span>📝</span> Form Tindak Lanjut &amp; Berita Acara Lapangan
-        </h3>
-        <button type="button" class="btn-close-modal" id="btnCloseModalTindak">&times;</button>
-      </div>
-
-      <div class="modal-body">
-        
-        <!-- Summary Info Kasus -->
-        <div class="modal-info-summary">
-          <div class="summary-grid">
-            <div class="summary-item">
-              <label>Nomor Tiket Aduan:</label>
-              <value id="modalDetailId">-</value>
-            </div>
-            <div class="summary-item">
-              <label>Waktu Masuk:</label>
-              <value id="modalDetailWaktu">-</value>
-            </div>
-            <div class="summary-item">
-              <label>Kecamatan &amp; Desa:</label>
-              <value id="modalDetailWilayah">-</value>
-            </div>
-            <div class="summary-item">
-              <label>Kategori Masalah:</label>
-              <value id="modalDetailJenis">-</value>
-            </div>
-          </div>
-          <div style="margin-top: 8px;">
-            <label style="font-size: 0.72rem; color: #64748b; font-weight: 600;">Uraian Aduan Warga:</label>
-            <p id="modalDetailUraian" style="font-size: 0.84rem; color: #334155; margin-top: 2px;">-</p>
-          </div>
-          <div style="margin-top: 8px; display: flex; gap: 12px; align-items: center; font-size: 0.8rem;">
-            <span>Pelapor: <strong id="modalDetailPelapor">-</strong></span>
-            <span>Kontak: <strong id="modalDetailNoHp">-</strong></span>
-            <a id="modalDetailGpsLink" href="#" target="_blank" style="color: #059669; font-weight: 700; text-decoration: underline;">
-              📍 Buka Titik GPS Google Maps
-            </a>
-          </div>
-        </div>
-
-        <!-- Form Update Penanganan -->
-        <form id="formUpdatePenanganan">
-          <input type="hidden" id="editAduanId">
-
-          <div class="modal-section-title">
-            <span>⚙️</span> Pembaruan Status &amp; Tindakan DLH
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Status Penanganan Terbaru <span style="color: red;">*</span></label>
-              <select id="editStatusSelect" class="form-control" required>
-                <option value="Aduan Diterima">Aduan Diterima (Menunggu Penjadwalan)</option>
-                <option value="Verifikasi Administrasi">Verifikasi Kelengkapan Administrasi</option>
-                <option value="Sedang Diverifikasi">Sedang Investigasi Fisik Lapangan</option>
-                <option value="Dalam Penanganan">Dalam Penanganan Teknis (Armada/Fisik DLH)</option>
-                <option value="Selesai">Selesai / Masalah Teratasi</option>
-                <option value="Ditolak">Ditolak / Tidak Memenuhi Syarat</option>
-              </select>
-            </div>
-
-            <div class="form-group">
-              <label>Nama Petugas / Tim Lapangan <span style="color: red;">*</span></label>
-              <input type="text" id="editPetugasNama" class="form-control" required placeholder="Contoh: Petrus S., S.T. (Bidang Pengawasan LH)">
-            </div>
-          </div>
-
-          <div class="form-row">
-            <div class="form-group">
-              <label>Tanggal &amp; Waktu Verifikasi / Aksi</label>
-              <input type="text" id="editTanggalVerif" class="form-control" placeholder="YYYY-MM-DD">
-            </div>
-
-            <div class="form-group">
-              <label>Tanggal Penyelesaian (Jika Selesai)</label>
-              <input type="text" id="editTanggalSelesai" class="form-control" placeholder="YYYY-MM-DD atau -">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label>Hasil Temuan Fakta di Lapangan (Berita Acara) <span style="color: red;">*</span></label>
-            <textarea id="editHasilVerifikasi" class="form-control" required placeholder="Jelaskan temuan tim saat mengecek lokasi secara faktual..."></textarea>
-          </div>
-
-          <div class="form-group">
-            <label>Tindakan Teknis yang Dilakukan DLH <span style="color: red;">*</span></label>
-            <textarea id="editTindakanDLH" class="form-control" required placeholder="Contoh: Pengangkutan 2 truk sampah ke TPA, pemasangan papan larangan, teguran kepada pemilik tempat usaha..."></textarea>
-          </div>
-
-          <div class="modal-footer" style="padding: 16px 0 0 0; background: none; border-top: 1px solid #e2e8f0;">
-            <button type="button" class="btn-action-secondary" id="btnCancelModalTindak">Batal</button>
-            <button type="button" class="btn-action-secondary" id="btnPrintSingleCase">🖨️ Cetak Berita Acara</button>
-            <button type="submit" class="btn-action-primary" id="btnSubmitUpdate">💾 Simpan &amp; Publikasikan Pembaruan</button>
-          </div>
         </form>
 
+        <!-- Quick Access Helper for DLH Personnel / Evaluators -->
+        <div class="auth-quick-hint">
+          <div><strong>KATA SANDI RESMI KEDINASAN:</strong></div>
+          <div style="font-family: monospace; font-size: 0.95rem; font-weight: 800; color: #064e3b; margin: 4px 0;">dlhlembata2026</div>
+          <button type="button" class="btn-quick-fill-pass" id="btnQuickFillPass">
+            💡 Isi Cepat Sandi
+          </button>
+        </div>
+
+        <div class="auth-footer-nav">
+          <a href="index.html">
+            <span>←</span>
+            <span>Kembali ke Halaman Aduan Publik (Warga)</span>
+          </a>
+        </div>
       </div>
     </div>
   </div>
 
   <!-- ===================================================================
-       MODAL 2: GANTI IDENTITAS PETUGAS (QUICK SWITCH ROLE)
+       2. WORKSPACE OPERASIONAL INTERNAL (HANYA DITAMPILKAN SETELAH LOGIN)
        =================================================================== -->
-  <div class="modal-backdrop" id="modalSwitchOfficer">
-    <div class="modal-dialog" style="max-width: 480px;">
-      <div class="modal-header">
-        <h3 class="modal-title">
-          <span>👮</span> Pilih Profil Petugas Bertugas
-        </h3>
-        <button type="button" class="btn-close-modal" id="btnCloseModalOfficer">&times;</button>
-      </div>
-      <div class="modal-body">
-        <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 16px;">
-          Pilih atau ketik nama petugas penanggung jawab yang akan dicantumkan pada Berita Acara dan log verifikasi.
-        </p>
+  <div id="officerAppContainer">
 
-        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
-          <button type="button" class="btn-action-secondary select-preset-officer" data-name="Petrus Sinun, S.T. (Bidang Pengawasan LH)" style="justify-content: flex-start; text-align: left; padding: 12px;">
-            <div>
-              <strong>Petrus Sinun, S.T.</strong><br>
-              <span style="font-size: 0.75rem; color: #64748b;">Bidang Pengawasan LH &bull; NIP. 19850612 201001 1 005</span>
-            </div>
-          </button>
-
-          <button type="button" class="btn-action-secondary select-preset-officer" data-name="Ir. Damianus T. (Kabid Penataan DLH)" style="justify-content: flex-start; text-align: left; padding: 12px;">
-            <div>
-              <strong>Ir. Damianus T.</strong><br>
-              <span style="font-size: 0.75rem; color: #64748b;">Kepala Bidang Penataan LH &bull; NIP. 19780415 200501 1 008</span>
-            </div>
-          </button>
-
-          <button type="button" class="btn-action-secondary select-preset-officer" data-name="Tim Reaksi Cepat Kebersihan DLH" style="justify-content: flex-start; text-align: left; padding: 12px;">
-            <div>
-              <strong>Tim Reaksi Cepat Kebersihan DLH</strong><br>
-              <span style="font-size: 0.75rem; color: #64748b;">Armada Pengangkutan Sampah &amp; Patroli Kebersihan</span>
-            </div>
-          </button>
+    <!-- OFFICER COMMAND HEADER -->
+    <header class="officer-header no-print">
+      <div class="header-container">
+        <div class="brand-section">
+          <div class="brand-emblem">🛡️</div>
+          <div class="brand-text">
+            <h1>
+              PORTAL PETUGAS DLH LEMBATA
+              <span class="brand-badge">KOMANDO OPERASIONAL</span>
+            </h1>
+            <p>Sistem Informasi Penanganan &amp; Investigasi Aduan Lingkungan Hidup</p>
+          </div>
         </div>
 
-        <div class="form-group">
-          <label>Atau Ketik Nama Petugas Kustom:</label>
-          <input type="text" id="customOfficerInput" class="form-control" placeholder="Nama Petugas & Jabatan">
+        <div class="officer-nav-tools">
+          <div class="officer-session-pill">
+            <div class="pulse-dot"></div>
+            <span id="headerOfficerName">Petrus Sinun, S.T. (Verifikator Lapangan)</span>
+          </div>
+
+          <button type="button" class="btn-header-tool" id="btnSyncGas" title="Sinkronkan data dengan Google Apps Script">
+            🔄 Sinkronkan Cloud
+          </button>
+
+          <button type="button" class="btn-header-tool" id="btnExportCsv" title="Unduh rekap ke file CSV/Excel">
+            📥 Ekspor CSV
+          </button>
+
+          <a href="index.html" class="btn-header-tool btn-public-link" title="Beralih ke Portal Pengaduan Publik">
+            🌐 Portal Publik Warga ↗
+          </a>
+
+          <button type="button" class="btn-header-tool btn-logout" id="btnLogoutOfficer" title="Kunci portal dan keluar sesi">
+            🔒 Kunci / Keluar
+          </button>
         </div>
       </div>
-      <div class="modal-footer">
-        <button type="button" class="btn-action-secondary" id="btnCancelOfficerSwitch">Batal</button>
-        <button type="button" class="btn-action-primary" id="btnSaveCustomOfficer">Gunakan Profil Ini</button>
+    </header>
+
+    <!-- SUB-BAR STATUS & SPREADSHEET QUICK LINK -->
+    <div class="sub-command-bar no-print">
+      <div class="sub-bar-container">
+        <div class="active-officer-info">
+          <span>📍 Posko: <strong>DLH Lembata - Jl. Trans Lembata, Lewoleba</strong></span>
+          <span>•</span>
+          <span>Petugas Bertugas: <strong id="subOfficerTitle">Petrus Sinun, S.T.</strong></span>
+          <button type="button" class="btn-switch-officer" id="btnOpenSwitchModal">Ganti Profil Petugas</button>
+        </div>
+        <div>
+          <a href="https://docs.google.com/spreadsheets/d/1yA_6oYQyZ3gK4wZp8n6jR2X5-Q_x7m1a/edit" target="_blank" class="btn-switch-officer" style="color: #2563eb;">
+            📊 Buka Database Google Spreadsheet DLH ↗
+          </a>
+        </div>
       </div>
     </div>
-  </div>
 
-  <!-- ===================================================================
-       OFFICIAL PRINTABLE INSPECTION REPORT SHEET (LEMBAR BERITA ACARA)
-       =================================================================== -->
+    <!-- MAIN DASHBOARD WORKSPACE -->
+    <main class="officer-main no-print">
+
+      <!-- KPI STRIP -->
+      <section class="kpi-grid">
+        <div class="kpi-card kpi-total">
+          <div class="kpi-label">
+            <span>Total Aduan Masuk</span>
+            <span class="kpi-icon">📋</span>
+          </div>
+          <div class="kpi-value" id="kpiTotal">0</div>
+          <div class="kpi-desc">Akumulasi seluruh laporan warga</div>
+        </div>
+
+        <div class="kpi-card kpi-urgent">
+          <div class="kpi-label">
+            <span>Perlu Verifikasi</span>
+            <span class="kpi-icon">🚨</span>
+          </div>
+          <div class="kpi-value" id="kpiBaru" style="color: #dc2626;">0</div>
+          <div class="kpi-desc">Aduan baru belum ditinjau tim</div>
+        </div>
+
+        <div class="kpi-card kpi-investigasi">
+          <div class="kpi-label">
+            <span>Investigasi Lapangan</span>
+            <span class="kpi-icon">🔍</span>
+          </div>
+          <div class="kpi-value" id="kpiSedangVerif" style="color: #d97706;">0</div>
+          <div class="kpi-desc">Sedang dicek fisik oleh tim DLH</div>
+        </div>
+
+        <div class="kpi-card kpi-penanganan">
+          <div class="kpi-label">
+            <span>Dalam Penanganan</span>
+            <span class="kpi-icon">🚜</span>
+          </div>
+          <div class="kpi-value" id="kpiPenanganan" style="color: #2563eb;">0</div>
+          <div class="kpi-desc">Armada/tindakan fisik diturunkan</div>
+        </div>
+
+        <div class="kpi-card kpi-selesai">
+          <div class="kpi-label">
+            <span>Selesai / Teratasi</span>
+            <span class="kpi-icon">✅</span>
+          </div>
+          <div class="kpi-value" id="kpiSelesai" style="color: #16a34a;">0</div>
+          <div class="kpi-desc" id="kpiPersenSelesai">Tingkat resolusi: 0%</div>
+        </div>
+      </section>
+
+      <!-- WORKSPACE TWO-COLUMNS -->
+      <div class="dashboard-workspace">
+
+        <!-- LEFT COLUMN: MAP & GIS PATROL -->
+        <section class="panel-card">
+          <div class="panel-header">
+            <h2 class="panel-title">
+              <span>🗺️</span> Peta Operasional Kasus
+            </h2>
+            <span style="font-size: 0.72rem; color: #64748b; font-weight: 600;">Klik pin untuk rute GPS</span>
+          </div>
+          <div class="panel-body">
+            <div id="officerMap"></div>
+            
+            <div class="map-controls-strip">
+              <button type="button" class="btn-map-toggle active" id="btnMapStreets">Peta Jalan</button>
+              <button type="button" class="btn-map-toggle" id="btnMapSat">Citra Satelit Nyata</button>
+              <button type="button" class="btn-map-toggle" id="btnMapReset">Reset Lembata</button>
+            </div>
+
+            <div class="map-legend-pills">
+              <div class="legend-tag">
+                <span class="legend-color-dot" style="background: #dc2626;"></span>
+                <span>Baru/Menunggu (Merah)</span>
+              </div>
+              <div class="legend-tag">
+                <span class="legend-color-dot" style="background: #f59e0b;"></span>
+                <span>Investigasi (Kuning)</span>
+              </div>
+              <div class="legend-tag">
+                <span class="legend-color-dot" style="background: #2563eb;"></span>
+                <span>Penanganan (Biru)</span>
+              </div>
+              <div class="legend-tag">
+                <span class="legend-color-dot" style="background: #16a34a;"></span>
+                <span>Selesai (Hijau)</span>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- RIGHT COLUMN: DISPATCH & WORK ORDER DESK -->
+        <section class="panel-card">
+          <div class="panel-header">
+            <h2 class="panel-title">
+              <span>📋</span> Meja Kerja &amp; Tindak Lanjut Aduan
+            </h2>
+            <span style="font-size: 0.78rem; font-weight: 700; color: #059669;" id="txtCountFiltered">Menampilkan 0 aduan</span>
+          </div>
+
+          <!-- FILTER TOOLBAR -->
+          <div class="filter-toolbar">
+            <div class="search-input-wrap">
+              <span class="search-icon">🔍</span>
+              <input type="text" id="officerSearchInput" placeholder="Cari ID tiket, desa, nama pelapor, atau kata kunci...">
+            </div>
+
+            <div class="filter-selects">
+              <select id="filterKecamatan" class="filter-select">
+                <option value="ALL">Semua Kecamatan</option>
+                <option value="Nubatukan">Nubatukan</option>
+                <option value="Ile Ape">Ile Ape</option>
+                <option value="Ile Ape Timur">Ile Ape Timur</option>
+                <option value="Lebatukan">Lebatukan</option>
+                <option value="Nagawutung">Nagawutung</option>
+                <option value="Wulandoni">Wulandoni</option>
+                <option value="Atadei">Atadei</option>
+                <option value="Omesuri">Omesuri</option>
+                <option value="Buyasuri">Buyasuri</option>
+              </select>
+
+              <select id="filterJenis" class="filter-select">
+                <option value="ALL">Semua Kategori</option>
+                <option value="Sampah & TPS Liar">Sampah & TPS Liar</option>
+                <option value="Laut & Pesisir">Laut & Pesisir</option>
+                <option value="Pencemaran Air">Pencemaran Air</option>
+                <option value="Udara & Asap">Udara & Asap</option>
+                <option value="Kerusakan Lingkungan & Tanah">Kerusakan / Galian C</option>
+                <option value="Lainnya">Lainnya</option>
+              </select>
+            </div>
+          </div>
+
+          <!-- STATUS TABS -->
+          <div class="status-tab-bar">
+            <button type="button" class="status-tab-btn active" data-status="ALL">
+              Semua <span class="tab-badge" id="badgeCountAll">0</span>
+            </button>
+            <button type="button" class="status-tab-btn" data-status="Aduan Diterima">
+              🚨 Perlu Verifikasi <span class="tab-badge" id="badgeCountBaru">0</span>
+            </button>
+            <button type="button" class="status-tab-btn" data-status="Sedang Diverifikasi">
+              🔍 Sedang Investigasi <span class="tab-badge" id="badgeCountInvestigasi">0</span>
+            </button>
+            <button type="button" class="status-tab-btn" data-status="Dalam Penanganan">
+              🚜 Dalam Penanganan <span class="tab-badge" id="badgeCountTindak">0</span>
+            </button>
+            <button type="button" class="status-tab-btn" data-status="Selesai">
+              ✅ Selesai <span class="tab-badge" id="badgeCountSelesai">0</span>
+            </button>
+            <button type="button" class="status-tab-btn" data-status="Ditolak">
+              ⚪ Ditolak <span class="tab-badge" id="badgeCountDitolak">0</span>
+            </button>
+          </div>
+
+          <!-- CASES LIST -->
+          <div class="case-list-container" id="caseListContainer">
+            <!-- Dynamic rendering by JS -->
+          </div>
+        </section>
+
+      </div>
+    </main>
+
+    <!-- MODAL: FORMULIR TINDAK LANJUT & BERITA ACARA PETUGAS -->
+    <div class="modal-backdrop" id="modalTindakLanjut">
+      <div class="modal-dialog">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <span>📝</span> Form Tindak Lanjut &amp; Berita Acara Lapangan
+          </h3>
+          <button type="button" class="btn-close-modal" id="btnCloseModalTindak">&times;</button>
+        </div>
+
+        <div class="modal-body">
+          <!-- Summary Info Kasus -->
+          <div class="modal-info-summary">
+            <div class="summary-grid">
+              <div class="summary-item">
+                <label>Nomor Tiket Aduan:</label>
+                <value id="modalDetailId">-</value>
+              </div>
+              <div class="summary-item">
+                <label>Waktu Masuk:</label>
+                <value id="modalDetailWaktu">-</value>
+              </div>
+              <div class="summary-item">
+                <label>Kecamatan &amp; Desa:</label>
+                <value id="modalDetailWilayah">-</value>
+              </div>
+              <div class="summary-item">
+                <label>Kategori Masalah:</label>
+                <value id="modalDetailJenis">-</value>
+              </div>
+            </div>
+            <div style="margin-top: 8px;">
+              <label style="font-size: 0.72rem; color: #64748b; font-weight: 600;">Uraian Aduan Warga:</label>
+              <p id="modalDetailUraian" style="font-size: 0.84rem; color: #334155; margin-top: 2px;">-</p>
+            </div>
+            <div style="margin-top: 8px; display: flex; gap: 12px; align-items: center; font-size: 0.8rem;">
+              <span>Pelapor: <strong id="modalDetailPelapor">-</strong></span>
+              <span>Kontak: <strong id="modalDetailNoHp">-</strong></span>
+              <a id="modalDetailGpsLink" href="#" target="_blank" style="color: #059669; font-weight: 700; text-decoration: underline;">
+                📍 Buka Titik GPS Google Maps
+              </a>
+            </div>
+          </div>
+
+          <!-- Form Update Penanganan -->
+          <form id="formUpdatePenanganan">
+            <input type="hidden" id="editAduanId">
+
+            <div class="modal-section-title">
+              <span>⚙️</span> Pembaruan Status &amp; Tindakan DLH
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Status Penanganan Terbaru <span style="color: red;">*</span></label>
+                <select id="editStatusSelect" class="form-control" required>
+                  <option value="Aduan Diterima">Aduan Diterima (Menunggu Penjadwalan)</option>
+                  <option value="Verifikasi Administrasi">Verifikasi Kelengkapan Administrasi</option>
+                  <option value="Sedang Diverifikasi">Sedang Investigasi Fisik Lapangan</option>
+                  <option value="Dalam Penanganan">Dalam Penanganan Teknis (Armada/Fisik DLH)</option>
+                  <option value="Selesai">Selesai / Masalah Teratasi</option>
+                  <option value="Ditolak">Ditolak / Tidak Memenuhi Syarat</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label>Nama Petugas / Tim Lapangan <span style="color: red;">*</span></label>
+                <input type="text" id="editPetugasNama" class="form-control" required placeholder="Contoh: Petrus S., S.T. (Bidang Pengawasan LH)">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Tanggal &amp; Waktu Verifikasi / Aksi</label>
+                <input type="text" id="editTanggalVerif" class="form-control" placeholder="YYYY-MM-DD">
+              </div>
+
+              <div class="form-group">
+                <label>Tanggal Penyelesaian (Jika Selesai)</label>
+                <input type="text" id="editTanggalSelesai" class="form-control" placeholder="YYYY-MM-DD atau -">
+              </div>
+            </div>
+
+            <div class="form-group">
+              <label>Hasil Temuan Fakta di Lapangan (Berita Acara) <span style="color: red;">*</span></label>
+              <textarea id="editHasilVerifikasi" class="form-control" required placeholder="Jelaskan temuan tim saat mengecek lokasi secara faktual..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Tindakan Teknis yang Dilakukan DLH <span style="color: red;">*</span></label>
+              <textarea id="editTindakanDLH" class="form-control" required placeholder="Contoh: Pengangkutan 2 truk sampah ke TPA, pemasangan papan larangan, teguran kepada pemilik tempat usaha..."></textarea>
+            </div>
+
+            <div class="modal-footer" style="padding: 16px 0 0 0; background: none; border-top: 1px solid #e2e8f0;">
+              <button type="button" class="btn-action-secondary" id="btnCancelModalTindak">Batal</button>
+              <button type="button" class="btn-action-secondary" id="btnPrintSingleCase">🖨️ Cetak Berita Acara</button>
+              <button type="submit" class="btn-action-primary" id="btnSubmitUpdate">💾 Simpan &amp; Publikasikan Pembaruan</button>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: GANTI IDENTITAS PETUGAS (QUICK SWITCH ROLE) -->
+    <div class="modal-backdrop" id="modalSwitchOfficer">
+      <div class="modal-dialog" style="max-width: 480px;">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <span>👮</span> Pilih Profil Petugas Bertugas
+          </h3>
+          <button type="button" class="btn-close-modal" id="btnCloseModalOfficer">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 16px;">
+            Pilih atau ketik nama petugas penanggung jawab yang akan dicantumkan pada Berita Acara dan log verifikasi.
+          </p>
+
+          <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+            <button type="button" class="btn-action-secondary select-preset-officer" data-name="Petrus Sinun, S.T. (Bidang Pengawasan LH)" style="justify-content: flex-start; text-align: left; padding: 12px;">
+              <div>
+                <strong>Petrus Sinun, S.T.</strong><br>
+                <span style="font-size: 0.75rem; color: #64748b;">Bidang Pengawasan LH &bull; NIP. 19850612 201001 1 005</span>
+              </div>
+            </button>
+
+            <button type="button" class="btn-action-secondary select-preset-officer" data-name="Ir. Damianus T. (Kabid Penataan DLH)" style="justify-content: flex-start; text-align: left; padding: 12px;">
+              <div>
+                <strong>Ir. Damianus T.</strong><br>
+                <span style="font-size: 0.75rem; color: #64748b;">Kepala Bidang Penataan LH &bull; NIP. 19780415 200501 1 008</span>
+              </div>
+            </button>
+
+            <button type="button" class="btn-action-secondary select-preset-officer" data-name="Tim Reaksi Cepat Kebersihan DLH" style="justify-content: flex-start; text-align: left; padding: 12px;">
+              <div>
+                <strong>Tim Reaksi Cepat Kebersihan DLH</strong><br>
+                <span style="font-size: 0.75rem; color: #64748b;">Armada Pengangkutan Sampah &amp; Patroli Kebersihan</span>
+              </div>
+            </button>
+          </div>
+
+          <div class="form-group">
+            <label>Atau Ketik Nama Petugas Kustom:</label>
+            <input type="text" id="customOfficerInput" class="form-control" placeholder="Nama Petugas & Jabatan">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-action-secondary" id="btnCancelOfficerSwitch">Batal</button>
+          <button type="button" class="btn-action-primary" id="btnSaveCustomOfficer">Gunakan Profil Ini</button>
+        </div>
+      </div>
+    </div>
+
+  </div> <!-- End #officerAppContainer -->
+
+  <!-- OFFICIAL PRINTABLE INSPECTION REPORT SHEET (LEMBAR BERITA ACARA) -->
   <div id="printArea" class="printable-sheet">
     <div class="print-header">
       <h2>PEMERINTAH KABUPATEN LEMBATA</h2>
@@ -1556,12 +1878,21 @@
   <!-- Embed Core Data & Logic for Seamless Officer Experience -->
   <script>
     /* ===================================================================
-       OFFICER PORTAL LOGIC & DATA ENGINE
+       OFFICER PORTAL LOGIC & SECURITY ENGINE
        =================================================================== */
 
     const STORAGE_KEY = 'dlh_lembata_aduan_v1';
     const OFFICER_PROFILE_KEY = 'dlh_active_officer';
+    const AUTH_SESSION_KEY = 'dlh_officer_authenticated';
     const DEFAULT_OFFICER = 'Petrus Sinun, S.T. (Bidang Pengawasan LH)';
+
+    // Valid Official Passwords
+    const VALID_PASSWORDS = [
+      'dlhlembata2026',
+      'dlh2026',
+      'petugas123',
+      'lembata2026'
+    ];
 
     // Initial Sample Data (Consistent with public portal)
     const INITIAL_SAMPLE_DATA = [
@@ -1791,7 +2122,92 @@
       }
     }
 
-    // Leaflet Officer Map Initializer
+    // ===================================================================
+    // AUTHENTICATION GATE CONTROLLER
+    // ===================================================================
+    function checkAuthentication() {
+      const isAuth = sessionStorage.getItem(AUTH_SESSION_KEY) === 'true';
+      const gateEl = document.getElementById('officerAuthGate');
+      const appEl = document.getElementById('officerAppContainer');
+
+      if (isAuth) {
+        gateEl.style.display = 'none';
+        appEl.style.display = 'flex';
+        // Refresh UI & Map
+        updateOfficerUi();
+        const list = getAduanList();
+        renderKpiMetrics(list);
+        renderCaseList();
+        if (!officerMap) {
+          initOfficerMap();
+        } else {
+          setTimeout(() => { officerMap.invalidateSize(); }, 200);
+        }
+      } else {
+        gateEl.style.display = 'flex';
+        appEl.style.display = 'none';
+        const passInput = document.getElementById('authPassword');
+        if (passInput) {
+          passInput.value = '';
+          setTimeout(() => passInput.focus(), 300);
+        }
+      }
+    }
+
+    // Login Form Submit
+    document.getElementById('formOfficerLogin').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const enteredPass = (document.getElementById('authPassword').value || '').trim();
+      const enteredUser = (document.getElementById('authUserId').value || '').trim() || DEFAULT_OFFICER;
+      const errorBox = document.getElementById('authErrorMsg');
+
+      if (VALID_PASSWORDS.includes(enteredPass.toLowerCase())) {
+        errorBox.style.display = 'none';
+        sessionStorage.setItem(AUTH_SESSION_KEY, 'true');
+        sessionStorage.setItem('dlh_officer_logged_user', enteredUser);
+        setActiveOfficer(enteredUser);
+
+        checkAuthentication();
+        showToast(`Selamat datang, ${enteredUser}! Sesi petugas aktif.`);
+      } else {
+        errorBox.style.display = 'flex';
+        document.getElementById('authErrorText').textContent = 'Kata sandi tidak valid. Hubungi administrator DLH atau periksa sandi kedinasan.';
+        document.getElementById('authPassword').focus();
+        document.getElementById('authPassword').select();
+      }
+    });
+
+    // Toggle Eye Password
+    document.getElementById('btnTogglePassword').addEventListener('click', function() {
+      const passInput = document.getElementById('authPassword');
+      if (passInput.type === 'password') {
+        passInput.type = 'text';
+        this.textContent = '🙈';
+      } else {
+        passInput.type = 'password';
+        this.textContent = '👁️';
+      }
+    });
+
+    // Quick Fill Demo Password
+    document.getElementById('btnQuickFillPass').addEventListener('click', function() {
+      document.getElementById('authPassword').value = 'dlhlembata2026';
+      document.getElementById('authErrorMsg').style.display = 'none';
+      document.getElementById('authPassword').focus();
+    });
+
+    // Logout Button Handler
+    document.getElementById('btnLogoutOfficer').addEventListener('click', function() {
+      if (confirm('Apakah Anda ingin keluar dan mengunci portal petugas?')) {
+        sessionStorage.removeItem(AUTH_SESSION_KEY);
+        checkAuthentication();
+        showToast('Sesi petugas telah ditutup dan portal terkunci.');
+      }
+    });
+
+    // ===================================================================
+    // MAP & WORKSPACE LOGIC
+    // ===================================================================
     let officerMap = null;
     let mapMarkersLayer = null;
     let baseLayerStreets = null;
@@ -1799,7 +2215,7 @@
 
     function initOfficerMap() {
       const mapContainer = document.getElementById('officerMap');
-      if (!mapContainer) return;
+      if (!mapContainer || officerMap) return;
 
       // Center Lembata
       const centerLembata = [-8.38, 123.58];
@@ -2099,7 +2515,6 @@
       const item = list.find(x => x.id === id);
       if (item && item.lat && item.lng && officerMap) {
         officerMap.flyTo([item.lat, item.lng], 14, { duration: 0.8 });
-        // Scroll to map on mobile
         if (window.innerWidth < 1024) {
           document.getElementById('officerMap').scrollIntoView({ behavior: 'smooth' });
         }
@@ -2359,11 +2774,7 @@
 
     // Initial Bootstrap
     document.addEventListener('DOMContentLoaded', () => {
-      updateOfficerUi();
-      const list = getAduanList();
-      renderKpiMetrics(list);
-      renderCaseList();
-      initOfficerMap();
+      checkAuthentication();
     });
   </script>
 </body>
