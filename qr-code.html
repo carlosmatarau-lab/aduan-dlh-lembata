@@ -1,0 +1,283 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>QR Code Layanan Aduan Lingkungan - DLH Kabupaten Lembata</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #059669;
+      --primary-dark: #064e3b;
+      --accent: #d97706;
+      --bg: #f8fafc;
+      --text: #0f172a;
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    .poster-card {
+      background: #ffffff;
+      width: 100%;
+      max-width: 520px;
+      border-radius: 24px;
+      box-shadow: 0 20px 40px -15px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(0, 0, 0, 0.05);
+      overflow: hidden;
+      text-align: center;
+      border: 2px solid #e2e8f0;
+    }
+
+    .poster-header {
+      background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
+      color: white;
+      padding: 28px 24px;
+      position: relative;
+    }
+
+    .emblem-badge {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 54px;
+      height: 54px;
+      background: rgba(255, 255, 255, 0.15);
+      border: 2px solid rgba(255, 255, 255, 0.3);
+      border-radius: 16px;
+      font-size: 28px;
+      margin-bottom: 12px;
+      backdrop-filter: blur(4px);
+    }
+
+    .gov-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 1.5px;
+      text-transform: uppercase;
+      color: #a7f3d0;
+      margin-bottom: 4px;
+    }
+
+    .main-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.45rem;
+      font-weight: 800;
+      line-height: 1.3;
+      margin-bottom: 6px;
+    }
+
+    .sub-title {
+      font-size: 0.85rem;
+      color: #d1fae5;
+      opacity: 0.9;
+    }
+
+    .poster-body {
+      padding: 32px 28px;
+    }
+
+    .qr-frame {
+      display: inline-block;
+      padding: 16px;
+      background: #ffffff;
+      border-radius: 20px;
+      box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.2);
+      border: 3px solid #10b981;
+      margin-bottom: 20px;
+    }
+
+    .qr-image {
+      display: block;
+      width: 240px;
+      height: 240px;
+      border-radius: 8px;
+    }
+
+    .url-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #065f46;
+      padding: 8px 18px;
+      border-radius: 999px;
+      font-family: monospace;
+      font-size: 0.95rem;
+      font-weight: 700;
+      margin-bottom: 20px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .url-pill:hover {
+      background: #d1fae5;
+      transform: translateY(-1px);
+    }
+
+    .instructions {
+      background: #f8fafc;
+      border: 1px dashed #cbd5e1;
+      border-radius: 14px;
+      padding: 16px 20px;
+      text-align: left;
+      font-size: 0.85rem;
+      color: #334155;
+      line-height: 1.6;
+      margin-bottom: 24px;
+    }
+
+    .instructions ol {
+      margin-left: 18px;
+      margin-top: 6px;
+    }
+
+    .instructions li {
+      margin-bottom: 4px;
+    }
+
+    .action-buttons {
+      display: flex;
+      gap: 12px;
+      justify-content: center;
+    }
+
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 12px 22px;
+      border-radius: 12px;
+      font-weight: 700;
+      font-size: 0.9rem;
+      cursor: pointer;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      border: none;
+    }
+
+    .btn-primary {
+      background: #059669;
+      color: white;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: #047857;
+    }
+
+    .btn-outline {
+      background: white;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+    }
+
+    .btn-outline:hover {
+      background: #f1f5f9;
+    }
+
+    .poster-footer {
+      background: #f1f5f9;
+      padding: 14px;
+      font-size: 0.75rem;
+      color: #64748b;
+      border-top: 1px solid #e2e8f0;
+    }
+
+    @media print {
+      body {
+        background: white;
+        padding: 0;
+      }
+      .poster-card {
+        box-shadow: none;
+        border: 2px solid #000;
+        max-width: 100%;
+      }
+      .action-buttons {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="poster-card">
+    
+    <!-- Header Instansi -->
+    <div class="poster-header">
+      <div class="emblem-badge">🌿</div>
+      <div class="gov-title">Pemerintah Kabupaten Lembata</div>
+      <h1 class="main-title">DINAS LINGKUNGAN HIDUP</h1>
+      <p class="sub-title">Sistem Pendataan Digital Aduan Pencemaran Lingkungan</p>
+    </div>
+
+    <!-- Konten QR Code -->
+    <div class="poster-body">
+      
+      <div class="qr-frame">
+        <!-- High Quality QR Code Generator API -->
+        <img 
+          src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&format=png&data=https%3A%2F%2Faduan-dlh-lembata.netlify.app%2F" 
+          alt="QR Code Aduan DLH Lembata" 
+          class="qr-image"
+          id="qrImage"
+        >
+      </div>
+
+      <div>
+        <a href="https://aduan-dlh-lembata.netlify.app/" target="_blank" class="url-pill">
+          🌐 aduan-dlh-lembata.netlify.app
+        </a>
+      </div>
+
+      <!-- Panduan Bagi Warga -->
+      <div class="instructions">
+        <strong>📱 CARA MELAPORKAN PENGADUAN:</strong>
+        <ol>
+          <li>Buka <strong>Kamera HP</strong> atau aplikasi pemindai QR Code / WhatsApp.</li>
+          <li>Arahkan kamera ke <strong>QR Code</strong> di atas.</li>
+          <li>Klik tautan yang muncul untuk membuka formulir aduan.</li>
+          <li>Isi uraian kejadian &amp; kirim laporan dengan mudah!</li>
+        </ol>
+      </div>
+
+      <!-- Tombol Aksi -->
+      <div class="action-buttons">
+        <button class="btn btn-primary" onclick="window.print()">
+          🖨️ Cetak / Simpan PDF
+        </button>
+        <a href="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&format=png&data=https%3A%2F%2Faduan-dlh-lembata.netlify.app%2F" download="QR_Code_Aduan_DLH_Lembata.png" target="_blank" class="btn btn-outline">
+          ⬇️ Unduh Gambar HD
+        </a>
+      </div>
+
+    </div>
+
+    <!-- Footer -->
+    <div class="poster-footer">
+      Dinas Lingkungan Hidup Kab. Lembata &bull; Layanan Cepat Tanggap Lingkungan Hidup
+    </div>
+
+  </div>
+
+</body>
+</html>

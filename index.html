@@ -1,0 +1,700 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SILAPOR DLH LEMBATA - Layanan Aduan Pencemaran Lingkungan</title>
+  <meta name="description" content="Layanan resmi pengaduan pencemaran lingkungan hidup Dinas Lingkungan Hidup Kabupaten Lembata. Cepat, mudah, dan transparan.">
+  
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+  
+  <!-- Main CSS -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+  <!-- ===================================================================
+       HEADER RESMI DLH LEMBATA
+       =================================================================== -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand-group">
+        <div class="brand-icon">🌿</div>
+        <div>
+          <h1 class="brand-name">SILAPOR DLH LEMBATA</h1>
+          <p class="brand-sub">Dinas Lingkungan Hidup Kabupaten Lembata</p>
+        </div>
+      </div>
+      
+      <div class="header-right">
+        <!-- WhatsApp Help -->
+        <a href="https://wa.me/6282234582769?text=Halo%20DLH%20Lembata,%20saya%20ingin%20berkonsultasi%20pengaduan%20lingkungan" target="_blank" class="btn-wa-header">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="currentColor"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/></svg>
+          <span>WA: 0822-3458-2769</span>
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================
+       NAVIGASI UTAMA RINGKAS
+       =================================================================== -->
+  <nav class="nav-bar">
+    <div class="nav-inner">
+      <button class="nav-tab-btn active" data-tab="lapor">
+        ✍️ Buat Aduan
+      </button>
+      <button class="nav-tab-btn" data-tab="lacak">
+        🔍 Lacak Status
+      </button>
+      <button class="nav-tab-btn" data-tab="peta">
+        🗺️ Peta Sebaran
+      </button>
+      <button class="nav-tab-btn" data-tab="data">
+        📋 Rekap &amp; Verifikasi DLH
+      </button>
+    </div>
+  </nav>
+
+  <!-- ===================================================================
+       MAIN CONTAINER
+       =================================================================== -->
+  <main class="main-wrap">
+
+    <!-- ===============================================================
+         TAB 1: FORMULIR ADUAN UTAMA (LANGSUNG SIAP DIPAKAI WARGA)
+         =============================================================== -->
+    <section class="tab-content active" id="pane-lapor">
+      
+      <!-- Welcome Card Ringkas -->
+      <div class="welcome-box">
+        <div class="welcome-tag">🌱 Pelayanan Publik Online &bull; Bebas Biaya (Gratis)</div>
+        <h2 class="welcome-heading">Sampaikan Laporan Dugaan Pencemaran Lingkungan</h2>
+        <p class="welcome-desc">
+          Melihat pencemaran air, tumpukan sampah liar, limbah laut/pesisir, atau asap tebal di wilayah Lembata? Isi formulir singkat di bawah. Tim DLH Lembata siap memverifikasi langsung ke lapangan.
+        </p>
+      </div>
+
+      <!-- Form Box Card -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <div class="form-card-badge">📝 FORMULIR PENGADUAN DIGITAL</div>
+          <h3 class="form-card-title">Data Laporan Kejadian</h3>
+          <p class="form-card-desc">Identitas pelapor dijamin kerahasiaannya oleh DLH Lembata.</p>
+        </div>
+
+        <form id="formAduanWarga" class="aduan-form">
+          
+          <!-- Bagian 1: Data Diri Pelapor -->
+          <div class="form-section-title">
+            <span>1</span> Identitas Pelapor
+          </div>
+          
+          <div class="form-row-2">
+            <div class="form-field">
+              <label class="field-label">Nama Lengkap Pelapor <span class="req">*</span></label>
+              <input type="text" id="inputNama" class="input-text" required placeholder="Contoh: Fransiskus Kedang">
+            </div>
+            <div class="form-field">
+              <label class="field-label">Nomor WhatsApp / HP Aktif <span class="req">*</span></label>
+              <input type="tel" id="inputNoHp" class="input-text" required placeholder="Contoh: 081234567890">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">Alamat Domisili Pelapor</label>
+            <input type="text" id="inputAlamat" class="input-text" placeholder="Contoh: Kelurahan Selandoro, Nubatukan">
+          </div>
+
+          <!-- Bagian 2: Lokasi Pencemaran di Lembata -->
+          <div class="form-section-title">
+            <span>2</span> Lokasi Kejadian (Kabupaten Lembata)
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-field">
+              <label class="field-label">Kecamatan <span class="req">*</span></label>
+              <select id="inputKecamatan" class="input-select" required>
+                <option value="Nubatukan">Nubatukan (Lewoleba)</option>
+                <option value="Ile Ape">Ile Ape (Waipukang)</option>
+                <option value="Ile Ape Timur">Ile Ape Timur (Lamagute)</option>
+                <option value="Lebatukan">Lebatukan (Hadakewa)</option>
+                <option value="Nagawutung">Nagawutung (Loang)</option>
+                <option value="Wulandoni">Wulandoni</option>
+                <option value="Atadei">Atadei (Kalikasa)</option>
+                <option value="Omesuri">Omesuri (Balauring)</option>
+                <option value="Buyasuri">Buyasuri (Wairiang)</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="field-label">Nama Desa / Kelurahan <span class="req">*</span></label>
+              <select id="inputDesa" class="input-select" required>
+                <option value="">-- Pilih Desa / Kelurahan --</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">Patokan / Keterangan Lokasi Spesifik <span class="req">*</span></label>
+            <input type="text" id="inputLokasiDetail" class="input-text" required placeholder="Contoh: Tepi pantai dekat dermaga jeti / samping pasar ikan / aliran kali">
+          </div>
+
+          <!-- GPS Detection Feature -->
+          <div class="gps-box">
+            <button type="button" class="btn-gps" id="btnDetectGps">
+              📍 Dapatkan Titik Lokasi GPS Saya Saat Ini
+            </button>
+            <div id="gpsStatusMessage" class="gps-status-msg"></div>
+          </div>
+
+          <div class="form-row-2" style="margin-bottom: 20px;">
+            <div class="form-field">
+              <label class="field-label" style="font-size: 0.8rem; color: #64748b;">Latitude (Otomatis)</label>
+              <input type="number" step="any" id="inputLat" class="input-text input-sm" placeholder="-8.368">
+            </div>
+            <div class="form-field">
+              <label class="field-label" style="font-size: 0.8rem; color: #64748b;">Longitude (Otomatis)</label>
+              <input type="number" step="any" id="inputLng" class="input-text input-sm" placeholder="123.558">
+            </div>
+          </div>
+
+          <!-- Bagian 3: Detail Dugaan Pencemaran -->
+          <div class="form-section-title">
+            <span>3</span> Detail Dugaan Pencemaran
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">Jenis Pencemaran Lingkungan <span class="req">*</span></label>
+            <div class="category-chips" id="categoryChips">
+              <label class="chip-item active">
+                <input type="radio" name="radioJenis" value="Laut & Pesisir" checked>
+                <span>🌊 Laut &amp; Pesisir</span>
+              </label>
+              <label class="chip-item">
+                <input type="radio" name="radioJenis" value="Sampah Ilegal & Bau">
+                <span>🗑️ Sampah Ilegal &amp; Bau</span>
+              </label>
+              <label class="chip-item">
+                <input type="radio" name="radioJenis" value="Pencemaran Air & Sungai">
+                <span>💧 Air &amp; Sungai</span>
+              </label>
+              <label class="chip-item">
+                <input type="radio" name="radioJenis" value="Udara & Asap">
+                <span>💨 Udara &amp; Asap</span>
+              </label>
+              <label class="chip-item">
+                <input type="radio" name="radioJenis" value="Limbah B3 & Kimia">
+                <span>☣️ Limbah B3 / Medis</span>
+              </label>
+              <label class="chip-item">
+                <input type="radio" name="radioJenis" value="Kerusakan Lingkungan & Tanah">
+                <span>🌳 Kerusakan Lingkungan</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-field">
+              <label class="field-label">Tanggal Pertama Kali Diketahui <span class="req">*</span></label>
+              <input type="date" id="inputTanggalKejadian" class="input-text" required>
+            </div>
+            <div class="form-field">
+              <label class="field-label">Dugaan Sumber / Pelaku Pencemaran (Opsional)</label>
+              <input type="text" id="inputSumberDugaan" class="input-text" placeholder="Usaha/oknum/pabrik/bengkel">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">Uraian / Kronologi Masalah Pencemaran <span class="req">*</span></label>
+            <textarea id="inputUraian" class="input-textarea" rows="4" required placeholder="Jelaskan kondisi pencemaran yang terjadi, dampaknya pada masyarakat/lingkungan sekitar, bau, perubahan warna air, dll..."></textarea>
+          </div>
+
+          <!-- Upload Bukti Foto/Video -->
+          <div class="form-field">
+            <label class="field-label">📷 Bukti Foto / Video Kejadian (Opsional)</label>
+            <div class="upload-zone" id="uploadZone">
+              
+              <!-- Hidden Inputs -->
+              <input type="file" id="inputBuktiFoto" accept="image/*,video/*" multiple style="display: none;">
+              <input type="file" id="inputCameraCapture" accept="image/*" capture="environment" style="display: none;">
+
+              <!-- Action Buttons -->
+              <div class="upload-actions-group">
+                <button type="button" class="btn-camera-trigger" id="btnOpenLiveCamera">
+                  📸 Ambil Foto Langsung (Kamera)
+                </button>
+                <button type="button" class="btn-upload-trigger" id="btnUploadFoto">
+                  📁 Pilih File dari Galeri / Dokumen
+                </button>
+              </div>
+
+              <p class="upload-hint">Maks. 3 foto/video (JPG, PNG, MP4). Mengambil foto langsung di lokasi kejadian sangat membantu ketepatan verifikasi tim DLH.</p>
+              
+              <!-- Preview Thumbnails -->
+              <div id="uploadPreviewList" class="upload-preview-list"></div>
+            </div>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn-submit-main" id="btnSubmitAduan">
+            🚀 KIRIM LAPORAN SEKARANG
+          </button>
+          <div class="submit-note">
+            🔒 Data Anda akan dicatat dalam sistem pengaduan digital DLH Kabupaten Lembata.
+          </div>
+
+        </form>
+      </div>
+
+    </section>
+
+    <!-- ===============================================================
+         TAB 2: LACAK STATUS LAPORAN (TRACKING TIKET)
+         =============================================================== -->
+    <section class="tab-content" id="pane-lacak">
+      
+      <div class="track-card">
+        <h2 class="track-title">🔍 Lacak Status Tindak Lanjut Aduan</h2>
+        <p class="track-sub">Masukkan Nomor Tiket Aduan Anda untuk melihat perkembangan verifikasi dan penanganan oleh petugas DLH Lembata.</p>
+
+        <div class="track-input-group">
+          <input type="text" id="inputTrackId" class="input-text input-track" placeholder="Contoh: ADU-LMB-2026-001">
+          <button type="button" class="btn-track-action" id="btnTrackSearch">
+            Cari Status
+          </button>
+        </div>
+
+        <div class="quick-sample-chips">
+          <span>Contoh Tiket:</span>
+          <button type="button" class="btn-sample-tag" onclick="window.app.quickTrack('ADU-LMB-2026-001')">ADU-LMB-2026-001</button>
+          <button type="button" class="btn-sample-tag" onclick="window.app.quickTrack('ADU-LMB-2026-003')">ADU-LMB-2026-003</button>
+          <button type="button" class="btn-sample-tag" onclick="window.app.quickTrack('ADU-LMB-2026-005')">ADU-LMB-2026-005</button>
+        </div>
+
+        <!-- Result Container -->
+        <div id="trackResultContainer" class="track-result-wrap" style="display: none;"></div>
+      </div>
+
+    </section>
+
+    <!-- ===============================================================
+         TAB 3: PETA SPASIAL SEBARAN
+         =============================================================== -->
+    <section class="tab-content" id="pane-peta">
+      
+      <div class="map-card-box">
+        
+        <!-- Header & Info Edukasi -->
+        <div class="map-header-bar">
+          <div class="map-header-info">
+            <div class="map-badge-live">🟢 PEMANTAUAN SPASIAL LIVE</div>
+            <h2 class="map-main-title">🗺️ Peta Sebaran Titik Aduan Lingkungan Lembata</h2>
+            <p class="map-sub-title">
+              Visualisasi terbuka dan transparan aduan masyarakat di 9 kecamatan. Gunakan tombol wilayah, filter, atau klik pin untuk melihat kondisi faktual dan tindakan DLH.
+            </p>
+          </div>
+
+          <!-- Quick Basemap Toggle Buttons -->
+          <div class="map-basemap-buttons">
+            <button type="button" class="btn-basemap active" id="btnBaseOsm" title="Tampilan Peta Standar">
+              🗺️ Peta Standar
+            </button>
+            <button type="button" class="btn-basemap" id="btnBaseSat" title="Tampilan Citra Satelit Nyata">
+              🛰️ Citra Satelit
+            </button>
+            <button type="button" class="btn-basemap" id="btnBaseTopo" title="Tampilan Relief Topografi">
+              ⛰️ Topografi
+            </button>
+          </div>
+        </div>
+
+        <!-- Mini KPI Bar Khusus Peta -->
+        <div class="map-stats-strip">
+          <div class="map-stat-chip">
+            <span class="mstat-icon">📍</span>
+            <div>
+              <div class="mstat-num" id="mapStatTotal">0</div>
+              <div class="mstat-lbl">Titik Terpantau</div>
+            </div>
+          </div>
+          <div class="map-stat-chip chip-amber">
+            <span class="mstat-icon">🟠</span>
+            <div>
+              <div class="mstat-num" id="mapStatBaru">0</div>
+              <div class="mstat-lbl">Aduan Masuk</div>
+            </div>
+          </div>
+          <div class="map-stat-chip chip-blue">
+            <span class="mstat-icon">🔷</span>
+            <div>
+              <div class="mstat-num" id="mapStatProses">0</div>
+              <div class="mstat-lbl">Dalam Penanganan</div>
+            </div>
+          </div>
+          <div class="map-stat-chip chip-green">
+            <span class="mstat-icon">🟢</span>
+            <div>
+              <div class="mstat-num" id="mapStatSelesai">0</div>
+              <div class="mstat-lbl">Tuntas Selesai</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Controls Bar -->
+        <div class="map-toolbar">
+          <div class="map-filter-group">
+            <label class="map-filter-label" for="mapFilterKecamatan">Kecamatan:</label>
+            <select id="mapFilterKecamatan" class="input-select select-sm">
+              <option value="all">Semua Kecamatan (9 Kecamatan)</option>
+              <option value="Nubatukan">Nubatukan (Lewoleba)</option>
+              <option value="Ile Ape">Ile Ape (Waipukang)</option>
+              <option value="Ile Ape Timur">Ile Ape Timur (Lamagute)</option>
+              <option value="Lebatukan">Lebatukan (Hadakewa)</option>
+              <option value="Nagawutung">Nagawutung (Loang)</option>
+              <option value="Wulandoni">Wulandoni</option>
+              <option value="Atadei">Atadei (Kalikasa)</option>
+              <option value="Omesuri">Omesuri (Balauring)</option>
+              <option value="Buyasuri">Buyasuri (Wairiang)</option>
+            </select>
+          </div>
+
+          <div class="map-filter-group">
+            <label class="map-filter-label" for="mapFilterStatus">Status Penanganan:</label>
+            <select id="mapFilterStatus" class="input-select select-sm">
+              <option value="all">Semua Status</option>
+              <option value="Aduan Diterima">🟠 Aduan Diterima</option>
+              <option value="Verifikasi Administrasi">🟡 Verifikasi Administrasi</option>
+              <option value="Menunggu Verifikasi Lapangan">🔵 Menunggu Verifikasi Lapangan</option>
+              <option value="Sedang Diverifikasi">🟣 Sedang Diverifikasi</option>
+              <option value="Dalam Penanganan">🔷 Dalam Penanganan</option>
+              <option value="Selesai">🟢 Selesai Ditangani</option>
+              <option value="Ditolak">⚪ Ditolak / Tidak Terbukti</option>
+            </select>
+          </div>
+
+          <div class="map-filter-group">
+            <label class="map-filter-label" for="mapFilterJenis">Jenis Pencemaran:</label>
+            <select id="mapFilterJenis" class="input-select select-sm">
+              <option value="all">Semua Jenis Pencemaran</option>
+              <option value="Laut & Pesisir">🌊 Laut &amp; Pesisir</option>
+              <option value="Sampah Ilegal & Bau">🗑️ Sampah Ilegal &amp; Bau</option>
+              <option value="Pencemaran Air">💧 Pencemaran Air &amp; Sungai</option>
+              <option value="Udara & Asap">💨 Udara &amp; Asap</option>
+              <option value="Limbah B3 & Kimia">☣️ Limbah B3 / Kimia</option>
+              <option value="Kerusakan Lingkungan & Tanah">🌳 Kerusakan Lingkungan</option>
+            </select>
+          </div>
+
+          <button type="button" class="btn btn-outline btn-sm" id="btnResetMapFilters" title="Kembalikan semua filter ke awal">
+            🔄 Reset Filter
+          </button>
+        </div>
+
+        <!-- Quick Region Navigator (Pills) -->
+        <div class="map-region-pills">
+          <span class="region-pills-label">Pusatkan Wilayah:</span>
+          <button type="button" class="pill-region active" data-region="all">🏝️ Seluruh Lembata</button>
+          <button type="button" class="pill-region" data-region="Nubatukan">🏢 Lewoleba</button>
+          <button type="button" class="pill-region" data-region="Ile Ape">🌋 Ile Ape</button>
+          <button type="button" class="pill-region" data-region="Ile Ape Timur">🌅 Ile Ape Timur</button>
+          <button type="button" class="pill-region" data-region="Lebatukan">🐟 Lebatukan</button>
+          <button type="button" class="pill-region" data-region="Kedang">🌿 Kedang (Omesuri/Buyasuri)</button>
+          <button type="button" class="pill-region" data-region="Selatan">🌊 Wulandoni &amp; Atadei</button>
+          <button type="button" class="pill-region" data-region="Nagawutung">🌾 Nagawutung</button>
+        </div>
+
+        <!-- Map Leaflet Render Area -->
+        <div class="map-container-relative">
+          <div id="map" class="map-render-container"></div>
+          
+          <!-- Floating Legend di Sudut Peta -->
+          <div class="map-legend-box" id="mapLegendBox">
+            <div class="legend-header">
+              <span>📌 <strong>Keterangan Warna Pin</strong></span>
+              <button type="button" class="legend-toggle" id="btnToggleLegend" title="Perkecil/Perbesar Legenda">▾</button>
+            </div>
+            <div class="legend-items" id="legendItemsList">
+              <div class="legend-item" data-status-filter="Aduan Diterima" title="Klik untuk saring status ini">
+                <span class="legend-dot" style="background: #f59e0b;"></span>
+                <span class="legend-text">Aduan Diterima / Menunggu</span>
+              </div>
+              <div class="legend-item" data-status-filter="Sedang Diverifikasi" title="Klik untuk saring status ini">
+                <span class="legend-dot" style="background: #8b5cf6;"></span>
+                <span class="legend-text">Sedang Diverifikasi Tim DLH</span>
+              </div>
+              <div class="legend-item" data-status-filter="Dalam Penanganan" title="Klik untuk saring status ini">
+                <span class="legend-dot" style="background: #2563eb;"></span>
+                <span class="legend-text">Dalam Tindakan Penanganan</span>
+              </div>
+              <div class="legend-item" data-status-filter="Selesai" title="Klik untuk saring status ini">
+                <span class="legend-dot" style="background: #059669;"></span>
+                <span class="legend-text">Selesai / Pulih Tuntas</span>
+              </div>
+              <div class="legend-item" data-status-filter="Ditolak" title="Klik untuk saring status ini">
+                <span class="legend-dot" style="background: #64748b;"></span>
+                <span class="legend-text">Ditolak / Tidak Terbukti</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daftar Kartu Titik Aduan Terpilih (Feed / List View di Bawah Peta) -->
+        <div class="map-cards-section">
+          <div class="map-cards-header">
+            <div>
+              <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a;">
+                📋 Daftar Titik Aduan di Wilayah Terpilih
+              </h3>
+              <p style="font-size: 0.8rem; color: #64748b; margin: 0;">
+                Klik tombol "🎯 Sorot di Peta" untuk memusatkan tampilan ke koordinat lokasi kejadian
+              </p>
+            </div>
+            <span class="badge badge-sedang-diverifikasi" id="mapFilteredCountBadge">Memuat data...</span>
+          </div>
+          
+          <div class="map-aduan-grid" id="mapAduanGrid">
+            <!-- Render dinamis kartu aduan -->
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ===============================================================
+         TAB 4: REKAP DATA & MODUL VERIFIKASI PETUGAS
+         =============================================================== -->
+    <section class="tab-content" id="pane-data">
+      
+      <!-- Stats KPI Bar -->
+      <div class="kpi-grid">
+        <div class="kpi-box">
+          <div class="kpi-label">TOTAL ADUAN</div>
+          <div class="kpi-num" id="kpiTotal">0</div>
+        </div>
+        <div class="kpi-box kpi-baru">
+          <div class="kpi-label">ADUAN BARU</div>
+          <div class="kpi-num" id="kpiBaru">0</div>
+        </div>
+        <div class="kpi-box kpi-proses">
+          <div class="kpi-label">DALAM PENANGANAN</div>
+          <div class="kpi-num" id="kpiProses">0</div>
+        </div>
+        <div class="kpi-box kpi-selesai">
+          <div class="kpi-label">SELESAI DITANGANI</div>
+          <div class="kpi-num" id="kpiSelesai">0</div>
+        </div>
+      </div>
+
+      <div class="table-card">
+        <div class="table-toolbar">
+          <div class="search-box">
+            <input type="text" id="tableSearch" class="input-text" placeholder="🔍 Cari nama pelapor, nomor ID, desa, masalah...">
+          </div>
+          <div class="table-actions-right">
+            <button type="button" class="btn btn-outline" id="btnExportCsv">
+              📥 Unduh CSV
+            </button>
+          </div>
+        </div>
+
+        <div class="table-responsive">
+          <table class="data-table">
+            <thead>
+              <tr>
+                <th>No Tiket</th>
+                <th>Waktu</th>
+                <th>Pelapor</th>
+                <th>Kecamatan</th>
+                <th>Jenis Masalah</th>
+                <th>Status</th>
+                <th style="text-align: center;">Aksi</th>
+              </tr>
+            </thead>
+            <tbody id="aduanTableBody">
+              <!-- Rendered via JS -->
+            </tbody>
+          </table>
+        </div>
+        <div id="tablePagination" class="table-footer-info"></div>
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ===================================================================
+       MODAL: SUKSES KIRIM ADUAN
+       =================================================================== -->
+  <div class="modal-backdrop" id="modalSuccessAduan">
+    <div class="modal-dialog" style="max-width: 500px; text-align: center;">
+      <div class="modal-body" style="padding: 32px 24px;">
+        <div style="font-size: 56px; margin-bottom: 12px;">🎉</div>
+        <h3 style="font-size: 1.4rem; font-weight: 800; color: #065f46; margin-bottom: 6px;">
+          Laporan Berhasil Diterima!
+        </h3>
+        <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">
+          Aduan Anda telah berhasil dicatat dalam sistem pengaduan digital DLH Kabupaten Lembata.
+        </p>
+
+        <div style="background: #f0fdf4; border: 2px dashed #86efac; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
+          <div style="font-size: 0.8rem; color: #166534; font-weight: 700;">KODE REGISTER / NOMOR TIKET:</div>
+          <div id="successTicketId" style="font-family: monospace; font-size: 1.6rem; font-weight: 900; color: #059669; margin: 4px 0;">
+            ADU-LMB-2026-001
+          </div>
+          <div style="font-size: 0.78rem; color: #15803d;">Simpan nomor tiket ini untuk melacak perkembangan laporan Anda.</div>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <a href="#" id="btnWaConfirmation" target="_blank" class="btn btn-primary" style="background: #16a34a; font-size: 0.95rem;">
+            📱 Konfirmasi via WhatsApp DLH (0822-3458-2769)
+          </a>
+          <button type="button" class="btn btn-outline btn-close-modal">
+            Tutup &amp; Selesai
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL: DETAIL LENGKAP ADUAN
+       =================================================================== -->
+  <div class="modal-backdrop" id="modalDetailAduan">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>📄 Rincian Lengkap Aduan Lingkungan</h3>
+        <button class="modal-close" aria-label="Tutup">&times;</button>
+      </div>
+      <div class="modal-body" id="detailModalContent"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-close-modal">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL: FORM VERIFIKASI PETUGAS DLH
+       =================================================================== -->
+  <div class="modal-backdrop" id="modalVerifikasi">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>✏️ Verifikasi &amp; Tindak Lanjut Lapangan DLH</h3>
+        <button class="modal-close" aria-label="Tutup">&times;</button>
+      </div>
+      <form id="formVerifikasiDLH">
+        <div class="modal-body">
+          <input type="hidden" id="verifIdAduan">
+          
+          <div style="background: #f1f5f9; padding: 12px 16px; border-radius: 8px; margin-bottom: 16px;">
+            <div style="font-size: 0.75rem; color: #64748b;">KODE ADUAN:</div>
+            <strong style="color: #059669; font-size: 1.15rem;" id="verifDisplayId">ADU-LMB-001</strong>
+            <div style="font-size: 0.85rem; color: #475569;" id="verifDisplayPelapor">Pelapor</div>
+          </div>
+
+          <div class="form-field" style="margin-bottom: 16px;">
+            <label class="field-label">Status Penanganan Terkini <span class="req">*</span></label>
+            <select id="verifStatus" class="input-select" required>
+              <option value="Aduan Diterima">🟠 Aduan Diterima</option>
+              <option value="Verifikasi Administrasi">🟡 Dalam Verifikasi Administrasi</option>
+              <option value="Menunggu Verifikasi Lapangan">🔵 Menunggu Verifikasi Lapangan</option>
+              <option value="Sedang Diverifikasi">🟣 Sedang Diverifikasi</option>
+              <option value="Dalam Penanganan">🔷 Dalam Penanganan</option>
+              <option value="Selesai">🟢 Selesai Ditangani</option>
+              <option value="Ditolak">⚪ Ditolak / Tidak Terbukti</option>
+            </select>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-field">
+              <label class="field-label">Nama Petugas Verifikator <span class="req">*</span></label>
+              <input type="text" id="verifPetugas" class="input-text" required placeholder="Contoh: Yohanes B. (PPNS DLH)">
+            </div>
+            <div class="form-field">
+              <label class="field-label">Tanggal Pelaksanaan Verifikasi <span class="req">*</span></label>
+              <input type="date" id="verifTanggal" class="input-text" required>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">Hasil Verifikasi Fisik di Lapangan <span class="req">*</span></label>
+            <textarea id="verifHasil" class="input-textarea" rows="3" required placeholder="Temuan kondisi faktual saat tim turun ke lokasi..."></textarea>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">Tindakan Nyata DLH / Rekomendasi <span class="req">*</span></label>
+            <textarea id="verifTindakan" class="input-textarea" rows="3" required placeholder="Langkah tindakan DLH: surat peringatan, pengangkutan limbah, uji sampel..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-secondary btn-close-modal">Batal</button>
+          <button type="submit" class="btn btn-primary">💾 Simpan Verifikasi</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- ===============================================================
+       MODAL: KAMERA LANGSUNG AMBIL BUKTI FOTO
+       =============================================================== -->
+  <div class="modal-backdrop" id="modalLiveCamera">
+    <div class="modal-dialog modal-camera-dialog">
+      <div class="modal-header">
+        <h3>📸 Ambil Bukti Foto Lapangan</h3>
+        <button class="modal-close btn-close-camera" aria-label="Tutup">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 16px; text-align: center;">
+        <div class="camera-viewport-wrap">
+          <video id="cameraVideoView" autoplay playsinline muted></video>
+          <canvas id="cameraCanvasSnap" style="display: none;"></canvas>
+          <div class="camera-target-grid"></div>
+        </div>
+        <div id="cameraStatusMsg" style="font-size: 0.8rem; color: #64748b; margin-top: 8px;">
+          Arahkan kamera ke objek atau lokasi pencemaran lingkungan.
+        </div>
+      </div>
+      <div class="modal-footer camera-footer-controls">
+        <button type="button" class="btn btn-outline btn-sm" id="btnSwitchCameraDirection">
+          🔄 Ganti Kamera
+        </button>
+        <button type="button" class="btn btn-primary btn-shutter" id="btnSnapPhoto">
+          📸 Jepret Foto
+        </button>
+        <button type="button" class="btn btn-secondary btn-close-camera">
+          Batal
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cloud Sync Modal dihapus dari tampilan publik.
+       Konfigurasi Google Spreadsheet API dikelola melalui panel admin DLH terpisah. -->
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Floating WhatsApp Helpline Warga -->
+  <a href="https://wa.me/6282234582769?text=Halo%20DLH%20Lembata,%20saya%20warga%20Lembata%20ingin%20berkonsultasi%20pengaduan" target="_blank" class="floating-wa-btn" title="Hubungi WhatsApp DLH Lembata (0822-3458-2769)">
+    <span class="floating-wa-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z"/>
+      </svg>
+    </span>
+    <span class="floating-wa-text">WhatsApp DLH</span>
+  </a>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Application Logic -->
+  <script src="js/data.js"></script>
+  <script src="js/map.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
