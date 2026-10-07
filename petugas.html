@@ -1112,6 +1112,231 @@
     .pipeline-arrow.passed {
       color: #10b981;
     }
+
+    /* 3. Baris Lokasi & Kategori Pencemaran */
+    .case-location-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+      font-size: 0.88rem;
+    }
+
+    .case-loc-pill {
+      background: #f8fafc;
+      color: #1e293b;
+      font-weight: 600;
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.02);
+    }
+
+    .case-cat-pill {
+      background: #ecfdf5;
+      color: #065f46;
+      font-weight: 700;
+      padding: 7px 14px;
+      border-radius: 8px;
+      border: 1.5px solid #a7f3d0;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 1px 2px rgba(6,78,59,0.05);
+    }
+
+    /* 4. Kotak Isi Laporan Masyarakat */
+    .case-report-box {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-left: 5px solid #059669;
+      border-radius: 10px;
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .case-report-label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #059669;
+      letter-spacing: 0.6px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .case-report-text {
+      font-size: 0.94rem;
+      color: #1e293b;
+      line-height: 1.6;
+      font-style: italic;
+      background: #ffffff;
+      padding: 10px 14px;
+      border-radius: 6px;
+      border: 1px solid #edf2f7;
+    }
+
+    /* 5. Dua Kolom Metadata: Data Pelapor & Petugas DLH */
+    .case-info-columns {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 14px;
+    }
+
+    .case-info-card {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+
+    .case-info-card:hover {
+      background: #f1f5f9;
+    }
+
+    .info-card-header {
+      font-size: 0.74rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      color: #64748b;
+      letter-spacing: 0.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding-bottom: 4px;
+      border-bottom: 1px dashed #cbd5e1;
+    }
+
+    .info-card-value {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+
+    .info-card-sub {
+      font-size: 0.82rem;
+      color: #475569;
+    }
+
+    /* 6. Catatan Berita Acara & Temuan DLH */
+    .case-official-box {
+      background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+      border: 1.5px solid #a7f3d0;
+      border-left: 5px solid #10b981;
+      border-radius: 10px;
+      padding: 14px 18px;
+      color: #064e3b;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 1px 3px rgba(6,78,59,0.05);
+    }
+
+    .official-box-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.88rem;
+      line-height: 1.55;
+    }
+
+    .official-box-title {
+      font-weight: 800;
+      color: #064e3b;
+      white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* 7. Bilah Tombol Aksi */
+    .case-actions-bar {
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      padding-top: 16px;
+      border-top: 1.5px solid #f1f5f9;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .actions-group-left, .actions-group-right {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      align-items: center;
+    }
+
+    .btn-action-primary {
+      background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
+      color: #ffffff;
+      border: none;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      box-shadow: 0 2px 6px rgba(5, 150, 105, 0.3);
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .btn-action-primary:hover {
+      background: linear-gradient(135deg, #047857 0%, #064e3b 100%);
+      transform: translateY(-1px);
+      box-shadow: 0 5px 14px rgba(5, 150, 105, 0.4);
+    }
+
+    .btn-action-secondary {
+      background: #ffffff;
+      color: #334155;
+      border: 1.5px solid #cbd5e1;
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.84rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      transition: all 0.2s;
+    }
+
+    .btn-action-secondary:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+      color: #0f172a;
+      transform: translateY(-1px);
+    }
+
+    .btn-wa-direct {
+      background: #25d366;
+      color: #ffffff !important;
+      border: 1.5px solid #20ba5a;
+      font-weight: 800;
+      box-shadow: 0 2px 6px rgba(37, 211, 102, 0.3);
+    }
+
+    .btn-wa-direct:hover {
+      background: #20ba5a;
+      color: #ffffff !important;
+      box-shadow: 0 4px 12px rgba(37, 211, 102, 0.4);
+    }
+
     /* Empty State */
     .empty-state {
       padding: 48px 20px;
@@ -2522,6 +2747,9 @@
           const year = d.getFullYear();
           const hours = String(d.getHours()).padStart(2, '0');
           const mins = String(d.getMinutes()).padStart(2, '0');
+          if (hours === '00' && mins === '00') {
+            return `${day} ${month} ${year}`;
+          }
           return `${day} ${month} ${year} • ${hours}:${mins} WITA`;
         }
       } catch (e) {}
@@ -2749,23 +2977,23 @@
             <!-- 4. Isi Aduan Warga (Quote Box) -->
             <div class="case-report-box">
               <div class="case-report-label">📝 Isi Laporan Masyarakat:</div>
-              <div style="font-style: italic; color: #1e293b; font-size: 0.9rem;">"${item.uraian || '-'}"</div>
+              <div class="case-report-text">"${item.uraian || '-'}"</div>
             </div>
 
             <!-- 5. Dua Kolom Metadata: Data Pelapor & Petugas DLH -->
             <div class="case-info-columns">
               <div class="case-info-card">
-                <div class="info-card-header">👤 Data Pelapor</div>
-                <div style="font-weight: 700; color: #0f172a; font-size: 0.9rem;">${item.namaPelapor || 'Masyarakat (Anonim)'}</div>
-                <div style="color: #64748b; font-size: 0.8rem;">
-                  No. HP / WA: <strong>${item.noHp || '-'}</strong>
+                <div class="info-card-header">👤 Identitas Pelapor</div>
+                <div class="info-card-value">${item.namaPelapor || 'Masyarakat (Anonim)'}</div>
+                <div class="info-card-sub">
+                  Kontak WhatsApp: <strong>${item.noHp || '-'}</strong>
                 </div>
               </div>
               <div class="case-info-card">
                 <div class="info-card-header">🛡️ Penanggung Jawab DLH</div>
-                <div style="font-weight: 700; color: #064e3b; font-size: 0.9rem;">${item.petugasVerifikasi && item.petugasVerifikasi !== '-' ? item.petugasVerifikasi : 'Belum Ditugaskan'}</div>
-                <div style="color: #64748b; font-size: 0.8rem;">
-                  Tahap Verifikasi: <strong>${item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' ? item.tanggalVerifikasi : 'Menunggu Aksi'}</strong>
+                <div class="info-card-value" style="color: #064e3b;">${item.petugasVerifikasi && item.petugasVerifikasi !== '-' ? item.petugasVerifikasi : 'Belum Ditugaskan'}</div>
+                <div class="info-card-sub">
+                  Tahap Verifikasi: <strong>${item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' ? formatHumanDate(item.tanggalVerifikasi) : 'Menunggu Aksi Lapangan'}</strong>
                 </div>
               </div>
             </div>
@@ -2774,13 +3002,15 @@
             ${(item.hasilVerifikasi && item.hasilVerifikasi !== '-') || (item.tindakanDLH && item.tindakanDLH !== '-') ? `
               <div class="case-official-box">
                 ${item.hasilVerifikasi && item.hasilVerifikasi !== '-' ? `
-                  <div style="margin-bottom: 5px;">
-                    <strong>📋 Temuan Investigasi Lapangan:</strong> ${item.hasilVerifikasi}
+                  <div class="official-box-row">
+                    <span class="official-box-title">📋 Temuan Lapangan:</span>
+                    <span>${item.hasilVerifikasi}</span>
                   </div>
                 ` : ''}
                 ${item.tindakanDLH && item.tindakanDLH !== '-' ? `
-                  <div>
-                    <strong>🚜 Tindakan Teknis DLH:</strong> ${item.tindakanDLH}
+                  <div class="official-box-row">
+                    <span class="official-box-title">🚜 Tindakan Teknis DLH:</span>
+                    <span>${item.tindakanDLH}</span>
                   </div>
                 ` : ''}
               </div>
