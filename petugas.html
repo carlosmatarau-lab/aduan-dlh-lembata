@@ -1,0 +1,2370 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portal Operasional & Tindak Lanjut Petugas - DLH Kabupaten Lembata</title>
+  <meta name="description" content="Dashboard khusus petugas Dinas Lingkungan Hidup Kabupaten Lembata untuk verifikasi lapangan, tindak lanjut penanganan, dan penerbitan berita acara pengaduan lingkungan.">
+
+  <!-- Google Fonts: Plus Jakarta Sans & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+  <!-- Leaflet GIS CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <style>
+    /* ===================================================================
+       PORTAL PETUGAS DLH KABUPATEN LEMBATA - DESIGN SYSTEM & TOKENS
+       =================================================================== */
+    :root {
+      --primary: #059669;
+      --primary-dark: #064e3b;
+      --primary-darker: #022c22;
+      --primary-light: #10b981;
+      --primary-soft: #ecfdf5;
+      --accent: #d97706;
+      --accent-light: #f59e0b;
+      --danger: #dc2626;
+      --danger-soft: #fef2f2;
+      --warning: #f59e0b;
+      --warning-soft: #fffbeb;
+      --info: #2563eb;
+      --info-soft: #eff6ff;
+      --success: #16a34a;
+      --success-soft: #f0fdf4;
+      --bg: #0f172a;
+      --bg-surface: #1e293b;
+      --bg-card: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --shadow-sm: 0 1px 3px rgba(0,0,0,0.06);
+      --shadow-md: 0 4px 14px -2px rgba(0,0,0,0.1);
+      --shadow-lg: 0 12px 28px -4px rgba(0,0,0,0.14);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background: #f1f5f9;
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+    }
+
+    /* Top Command Header */
+    .officer-header {
+      background: linear-gradient(135deg, #022c22 0%, #064e3b 60%, #065f46 100%);
+      color: #ffffff;
+      padding: 14px 24px;
+      box-shadow: 0 4px 20px rgba(2,44,34,0.3);
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      border-bottom: 2px solid #059669;
+    }
+
+    .header-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .brand-section {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .brand-emblem {
+      width: 44px;
+      height: 44px;
+      background: rgba(255,255,255,0.12);
+      border: 1.5px solid rgba(255,255,255,0.25);
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.5rem;
+      backdrop-filter: blur(8px);
+      box-shadow: inset 0 1px 2px rgba(255,255,255,0.2);
+    }
+
+    .brand-text h1 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .brand-badge {
+      background: #f59e0b;
+      color: #78350f;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .brand-text p {
+      font-size: 0.8rem;
+      color: #a7f3d0;
+      font-weight: 500;
+    }
+
+    /* Officer Profile & Quick Actions */
+    .officer-nav-tools {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .officer-session-pill {
+      background: rgba(255,255,255,0.1);
+      border: 1px solid rgba(255,255,255,0.2);
+      padding: 6px 14px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      color: #e2e8f0;
+    }
+
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 0 0 rgba(16,185,129,0.7);
+      animation: officerPulse 1.8s infinite;
+    }
+
+    @keyframes officerPulse {
+      0% { box-shadow: 0 0 0 0 rgba(16,185,129,0.7); }
+      70% { box-shadow: 0 0 0 8px rgba(16,185,129,0); }
+      100% { box-shadow: 0 0 0 0 rgba(16,185,129,0); }
+    }
+
+    .btn-header-tool {
+      background: rgba(255,255,255,0.12);
+      border: 1px solid rgba(255,255,255,0.2);
+      color: #ffffff;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+    }
+
+    .btn-header-tool:hover {
+      background: rgba(255,255,255,0.22);
+      transform: translateY(-1px);
+    }
+
+    .btn-public-link {
+      background: #10b981;
+      color: #064e3b;
+      font-weight: 700;
+      border: none;
+    }
+
+    .btn-public-link:hover {
+      background: #34d399;
+      color: #064e3b;
+    }
+
+    /* Sub-bar Command Status */
+    .sub-command-bar {
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      padding: 10px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.82rem;
+    }
+
+    .sub-bar-container {
+      max-width: 1400px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .active-officer-info {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      color: #334155;
+    }
+
+    .active-officer-info strong {
+      color: #064e3b;
+    }
+
+    .btn-switch-officer {
+      background: none;
+      border: none;
+      color: #059669;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: underline;
+    }
+
+    /* Main Officer Dashboard Layout */
+    .officer-main {
+      max-width: 1400px;
+      margin: 20px auto 40px auto;
+      padding: 0 20px;
+      width: 100%;
+      flex: 1;
+    }
+
+    /* KPI Summary Cards Grid */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 16px;
+      margin-bottom: 24px;
+    }
+
+    .kpi-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 18px 20px;
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      position: relative;
+      overflow: hidden;
+      transition: transform 0.2s, box-shadow 0.2s;
+    }
+
+    .kpi-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-md);
+    }
+
+    .kpi-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 4px;
+      background: #cbd5e1;
+    }
+
+    .kpi-card.kpi-total::before { background: #059669; }
+    .kpi-card.kpi-urgent::before { background: #dc2626; }
+    .kpi-card.kpi-investigasi::before { background: #f59e0b; }
+    .kpi-card.kpi-penanganan::before { background: #2563eb; }
+    .kpi-card.kpi-selesai::before { background: #16a34a; }
+
+    .kpi-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #64748b;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .kpi-icon {
+      font-size: 1.1rem;
+    }
+
+    .kpi-value {
+      font-family: 'Outfit', sans-serif;
+      font-size: 2.2rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1;
+      margin-bottom: 6px;
+    }
+
+    .kpi-desc {
+      font-size: 0.75rem;
+      color: #64748b;
+    }
+
+    /* Grid Layout: Map & Dispatch Console */
+    .dashboard-workspace {
+      display: grid;
+      grid-template-columns: 1fr;
+      gap: 24px;
+    }
+
+    @media (min-width: 1024px) {
+      .dashboard-workspace {
+        grid-template-columns: 420px 1fr;
+      }
+    }
+
+    /* Left Panel: Field GIS & Navigation */
+    .panel-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-sm);
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    .panel-header {
+      padding: 16px 20px;
+      border-bottom: 1px solid #e2e8f0;
+      background: #f8fafc;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .panel-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .panel-body {
+      padding: 16px;
+      flex: 1;
+    }
+
+    /* Leaflet Officer Map */
+    #officerMap {
+      width: 100%;
+      height: 380px;
+      border-radius: var(--radius-md);
+      border: 1px solid #cbd5e1;
+      background: #e2e8f0;
+      position: relative;
+    }
+
+    .map-controls-strip {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+      flex-wrap: wrap;
+    }
+
+    .btn-map-toggle {
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      padding: 6px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: #334155;
+      transition: all 0.2s;
+    }
+
+    .btn-map-toggle.active {
+      background: #059669;
+      color: #ffffff;
+      border-color: #059669;
+    }
+
+    .map-legend-pills {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 10px 12px;
+      background: #f8fafc;
+      border-radius: var(--radius-md);
+      border: 1px solid #e2e8f0;
+      font-size: 0.74rem;
+    }
+
+    .legend-tag {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      color: #475569;
+      font-weight: 600;
+    }
+
+    .legend-color-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+    }
+
+    /* Right Panel: Work Order & Dispatch Desk */
+    .filter-toolbar {
+      padding: 16px 20px;
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .search-input-wrap {
+      position: relative;
+      flex: 1;
+      min-width: 240px;
+    }
+
+    .search-input-wrap input {
+      width: 100%;
+      padding: 9px 14px 9px 36px;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .search-input-wrap input:focus {
+      border-color: #059669;
+      box-shadow: 0 0 0 3px rgba(5,150,105,0.1);
+    }
+
+    .search-icon {
+      position: absolute;
+      left: 12px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 0.95rem;
+      color: #94a3b8;
+    }
+
+    .filter-selects {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .filter-select {
+      padding: 8px 12px;
+      border: 1px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      font-size: 0.82rem;
+      background: #ffffff;
+      color: #334155;
+      font-family: inherit;
+      outline: none;
+      cursor: pointer;
+    }
+
+    .filter-select:focus {
+      border-color: #059669;
+    }
+
+    /* Status Filter Tabs */
+    .status-tab-bar {
+      display: flex;
+      gap: 6px;
+      padding: 12px 20px 0 20px;
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+      overflow-x: auto;
+      white-space: nowrap;
+    }
+
+    .status-tab-btn {
+      padding: 8px 14px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: #64748b;
+      background: none;
+      border: none;
+      border-bottom: 2px solid transparent;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s;
+    }
+
+    .status-tab-btn:hover {
+      color: #059669;
+    }
+
+    .status-tab-btn.active {
+      color: #064e3b;
+      border-bottom-color: #059669;
+      font-weight: 700;
+    }
+
+    .tab-badge {
+      background: #e2e8f0;
+      color: #475569;
+      font-size: 0.7rem;
+      font-weight: 700;
+      padding: 1px 6px;
+      border-radius: 999px;
+    }
+
+    .status-tab-btn.active .tab-badge {
+      background: #d1fae5;
+      color: #065f46;
+    }
+
+    /* Cases List & Cards */
+    .case-list-container {
+      padding: 16px 20px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-height: 800px;
+      overflow-y: auto;
+    }
+
+    .case-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 18px;
+      transition: all 0.2s;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+
+    .case-card:hover {
+      border-color: #94a3b8;
+      box-shadow: var(--shadow-md);
+    }
+
+    .case-card.urgent-border {
+      border-left: 4px solid #dc2626;
+    }
+
+    .case-card.investigasi-border {
+      border-left: 4px solid #f59e0b;
+    }
+
+    .case-card.penanganan-border {
+      border-left: 4px solid #2563eb;
+    }
+
+    .case-card.selesai-border {
+      border-left: 4px solid #16a34a;
+    }
+
+    .case-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .case-id-group {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .case-id {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 700;
+      font-size: 1rem;
+      color: #0f172a;
+    }
+
+    .case-time {
+      font-size: 0.75rem;
+      color: #94a3b8;
+    }
+
+    .badge-status {
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .badge-baru { background: #fee2e2; color: #991b1b; }
+    .badge-verif { background: #fef3c7; color: #92400e; }
+    .badge-tindak { background: #dbeafe; color: #1e40af; }
+    .badge-selesai { background: #dcfce7; color: #166534; }
+    .badge-ditolak { background: #f1f5f9; color: #475569; }
+
+    .case-location-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: #334155;
+    }
+
+    .case-detail-desc {
+      font-size: 0.85rem;
+      color: #475569;
+      background: #f8fafc;
+      padding: 10px 14px;
+      border-radius: var(--radius-sm);
+      border-left: 3px solid #cbd5e1;
+    }
+
+    .case-reporter-info {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.8rem;
+      color: #64748b;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .case-actions-bar {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding-top: 8px;
+      border-top: 1px dashed #e2e8f0;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .btn-action-primary {
+      background: #059669;
+      color: #ffffff;
+      border: none;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      font-size: 0.82rem;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: background 0.2s;
+    }
+
+    .btn-action-primary:hover {
+      background: #047857;
+    }
+
+    .btn-action-secondary {
+      background: #f1f5f9;
+      color: #334155;
+      border: 1px solid #cbd5e1;
+      padding: 7px 12px;
+      border-radius: var(--radius-sm);
+      font-size: 0.8rem;
+      font-weight: 600;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      transition: all 0.2s;
+      text-decoration: none;
+    }
+
+    .btn-action-secondary:hover {
+      background: #e2e8f0;
+    }
+
+    .btn-wa-direct {
+      background: #25d366;
+      color: #ffffff;
+      border: none;
+    }
+
+    .btn-wa-direct:hover {
+      background: #20ba5a;
+      color: #ffffff;
+    }
+
+    /* Empty State */
+    .empty-state {
+      text-align: center;
+      padding: 48px 20px;
+      color: #64748b;
+    }
+
+    .empty-state-icon {
+      font-size: 3rem;
+      margin-bottom: 12px;
+    }
+
+    /* MODAL: Tindak Lanjut & Berita Acara Petugas */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15,23,42,0.7);
+      backdrop-filter: blur(4px);
+      z-index: 2000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.active {
+      display: flex;
+    }
+
+    .modal-dialog {
+      background: #ffffff;
+      width: 100%;
+      max-width: 720px;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      max-height: 90vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      animation: modalFadeIn 0.2s ease-out;
+    }
+
+    @keyframes modalFadeIn {
+      from { transform: scale(0.95); opacity: 0; }
+      to { transform: scale(1); opacity: 1; }
+    }
+
+    .modal-header {
+      background: #064e3b;
+      color: #ffffff;
+      padding: 16px 20px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+
+    .modal-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.1rem;
+      font-weight: 700;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-close-modal {
+      background: rgba(255,255,255,0.15);
+      border: none;
+      color: #ffffff;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      cursor: pointer;
+      font-size: 1.2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .btn-close-modal:hover {
+      background: rgba(255,255,255,0.3);
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .modal-section-title {
+      font-size: 0.82rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.6px;
+      color: #059669;
+      margin-bottom: 12px;
+      padding-bottom: 4px;
+      border-bottom: 1.5px solid #ecfdf5;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .modal-info-summary {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 14px;
+      margin-bottom: 20px;
+      font-size: 0.85rem;
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 10px;
+      margin-bottom: 10px;
+    }
+
+    .summary-item label {
+      display: block;
+      font-size: 0.72rem;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .summary-item value {
+      display: block;
+      font-weight: 700;
+      color: #0f172a;
+    }
+
+    .form-group {
+      margin-bottom: 16px;
+    }
+
+    .form-group label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      font-size: 0.88rem;
+      font-family: inherit;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: #059669;
+      box-shadow: 0 0 0 3px rgba(5,150,105,0.1);
+    }
+
+    textarea.form-control {
+      resize: vertical;
+      min-height: 80px;
+    }
+
+    .form-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 600px) {
+      .form-row {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    .modal-footer {
+      padding: 14px 20px;
+      background: #f8fafc;
+      border-top: 1px solid #e2e8f0;
+      display: flex;
+      justify-content: flex-end;
+      gap: 10px;
+    }
+
+    /* Official Printable Report View */
+    @media print {
+      body * {
+        visibility: hidden;
+      }
+      #printArea, #printArea * {
+        visibility: visible;
+      }
+      #printArea {
+        position: absolute;
+        left: 0;
+        top: 0;
+        width: 100%;
+        background: #ffffff;
+        color: #000000;
+        padding: 20mm;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+
+    .printable-sheet {
+      display: none;
+      background: #ffffff;
+      color: #000000;
+      font-family: 'Times New Roman', Times, serif;
+      line-height: 1.4;
+    }
+
+    .print-header {
+      text-align: center;
+      border-bottom: 3px double #000;
+      padding-bottom: 12px;
+      margin-bottom: 20px;
+    }
+
+    .print-header h2 {
+      font-size: 15pt;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    .print-header h1 {
+      font-size: 17pt;
+      margin: 2px 0;
+      text-transform: uppercase;
+      font-weight: bold;
+    }
+
+    .print-header p {
+      font-size: 10pt;
+      margin: 0;
+      font-style: italic;
+    }
+
+    .print-title {
+      text-align: center;
+      margin: 16px 0;
+    }
+
+    .print-title h3 {
+      font-size: 13pt;
+      text-decoration: underline;
+      margin: 0;
+      text-transform: uppercase;
+    }
+
+    .print-title p {
+      font-size: 10pt;
+      margin: 4px 0 0 0;
+    }
+
+    .print-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 16px 0;
+      font-size: 11pt;
+    }
+
+    .print-table td, .print-table th {
+      padding: 6px 8px;
+      vertical-align: top;
+    }
+
+    .print-table td:first-child {
+      width: 32%;
+      font-weight: bold;
+    }
+
+    .print-table td:nth-child(2) {
+      width: 3%;
+    }
+
+    .print-signature-box {
+      margin-top: 40px;
+      display: flex;
+      justify-content: space-between;
+      page-break-inside: avoid;
+    }
+
+    .print-sign-col {
+      width: 45%;
+      text-align: center;
+      font-size: 11pt;
+    }
+
+    .print-sign-space {
+      height: 70px;
+    }
+
+    /* Toast Notification */
+    .toast-box {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      background: #064e3b;
+      color: #ffffff;
+      padding: 12px 20px;
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-lg);
+      font-size: 0.88rem;
+      font-weight: 600;
+      display: none;
+      align-items: center;
+      gap: 10px;
+      z-index: 3000;
+      border-left: 4px solid #10b981;
+      animation: toastSlide 0.3s ease;
+    }
+
+    @keyframes toastSlide {
+      from { transform: translateY(100%); opacity: 0; }
+      to { transform: translateY(0); opacity: 1; }
+    }
+
+    /* Officer Switch Modal */
+    .role-badge-chip {
+      display: inline-block;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      background: #e2e8f0;
+      color: #334155;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- ===================================================================
+       OFFICER COMMAND HEADER
+       =================================================================== -->
+  <header class="officer-header no-print">
+    <div class="header-container">
+      <div class="brand-section">
+        <div class="brand-emblem">🛡️</div>
+        <div class="brand-text">
+          <h1>
+            PORTAL PETUGAS DLH LEMBATA
+            <span class="brand-badge">KOMANDO OPERASIONAL</span>
+          </h1>
+          <p>Sistem Informasi Penanganan &amp; Investigasi Aduan Lingkungan Hidup</p>
+        </div>
+      </div>
+
+      <div class="officer-nav-tools">
+        <div class="officer-session-pill">
+          <div class="pulse-dot"></div>
+          <span id="headerOfficerName">Petrus Sinun, S.T. (Verifikator Lapangan)</span>
+        </div>
+
+        <button type="button" class="btn-header-tool" id="btnSyncGas" title="Sinkronkan data dengan Google Apps Script">
+          🔄 Sinkronkan Cloud
+        </button>
+
+        <button type="button" class="btn-header-tool" id="btnExportCsv" title="Unduh rekap ke file CSV/Excel">
+          📥 Ekspor CSV
+        </button>
+
+        <a href="index.html" class="btn-header-tool btn-public-link" title="Beralih ke Portal Pengaduan Publik">
+          🌐 Portal Publik Warga ↗
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================
+       SUB-BAR STATUS & SPREADSHEET QUICK LINK
+       =================================================================== -->
+  <div class="sub-command-bar no-print">
+    <div class="sub-bar-container">
+      <div class="active-officer-info">
+        <span>📍 Posko: <strong>DLH Lembata - Jl. Trans Lembata, Lewoleba</strong></span>
+        <span>•</span>
+        <span>Petugas Bertugas: <strong id="subOfficerTitle">Petrus Sinun, S.T.</strong></span>
+        <button type="button" class="btn-switch-officer" id="btnOpenSwitchModal">Ganti Profil Petugas</button>
+      </div>
+      <div>
+        <a href="https://docs.google.com/spreadsheets/d/1yA_6oYQyZ3gK4wZp8n6jR2X5-Q_x7m1a/edit" target="_blank" class="btn-switch-officer" style="color: #2563eb;">
+          📊 Buka Database Google Spreadsheet DLH ↗
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MAIN DASHBOARD WORKSPACE
+       =================================================================== -->
+  <main class="officer-main no-print">
+
+    <!-- KPI STRIP -->
+    <section class="kpi-grid">
+      <div class="kpi-card kpi-total">
+        <div class="kpi-label">
+          <span>Total Aduan Masuk</span>
+          <span class="kpi-icon">📋</span>
+        </div>
+        <div class="kpi-value" id="kpiTotal">0</div>
+        <div class="kpi-desc">Akumulasi seluruh laporan warga</div>
+      </div>
+
+      <div class="kpi-card kpi-urgent">
+        <div class="kpi-label">
+          <span>Perlu Verifikasi</span>
+          <span class="kpi-icon">🚨</span>
+        </div>
+        <div class="kpi-value" id="kpiBaru" style="color: #dc2626;">0</div>
+        <div class="kpi-desc">Aduan baru belum ditinjau tim</div>
+      </div>
+
+      <div class="kpi-card kpi-investigasi">
+        <div class="kpi-label">
+          <span>Investigasi Lapangan</span>
+          <span class="kpi-icon">🔍</span>
+        </div>
+        <div class="kpi-value" id="kpiSedangVerif" style="color: #d97706;">0</div>
+        <div class="kpi-desc">Sedang dicek fisik oleh tim DLH</div>
+      </div>
+
+      <div class="kpi-card kpi-penanganan">
+        <div class="kpi-label">
+          <span>Dalam Penanganan</span>
+          <span class="kpi-icon">🚜</span>
+        </div>
+        <div class="kpi-value" id="kpiPenanganan" style="color: #2563eb;">0</div>
+        <div class="kpi-desc">Armada/tindakan fisik diturunkan</div>
+      </div>
+
+      <div class="kpi-card kpi-selesai">
+        <div class="kpi-label">
+          <span>Selesai / Teratasi</span>
+          <span class="kpi-icon">✅</span>
+        </div>
+        <div class="kpi-value" id="kpiSelesai" style="color: #16a34a;">0</div>
+        <div class="kpi-desc" id="kpiPersenSelesai">Tingkat resolusi: 0%</div>
+      </div>
+    </section>
+
+    <!-- WORKSPACE TWO-COLUMNS -->
+    <div class="dashboard-workspace">
+
+      <!-- LEFT COLUMN: MAP & GIS PATROL -->
+      <section class="panel-card">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <span>🗺️</span> Peta Operasional Kasus
+          </h2>
+          <span style="font-size: 0.72rem; color: #64748b; font-weight: 600;">Klik pin untuk rute GPS</span>
+        </div>
+        <div class="panel-body">
+          <div id="officerMap"></div>
+          
+          <div class="map-controls-strip">
+            <button type="button" class="btn-map-toggle active" id="btnMapStreets">Peta Jalan</button>
+            <button type="button" class="btn-map-toggle" id="btnMapSat">Citra Satelit Nyata</button>
+            <button type="button" class="btn-map-toggle" id="btnMapReset">Reset Lembata</button>
+          </div>
+
+          <div class="map-legend-pills">
+            <div class="legend-tag">
+              <span class="legend-color-dot" style="background: #dc2626;"></span>
+              <span>Baru/Menunggu (Merah)</span>
+            </div>
+            <div class="legend-tag">
+              <span class="legend-color-dot" style="background: #f59e0b;"></span>
+              <span>Investigasi (Kuning)</span>
+            </div>
+            <div class="legend-tag">
+              <span class="legend-color-dot" style="background: #2563eb;"></span>
+              <span>Penanganan (Biru)</span>
+            </div>
+            <div class="legend-tag">
+              <span class="legend-color-dot" style="background: #16a34a;"></span>
+              <span>Selesai (Hijau)</span>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- RIGHT COLUMN: DISPATCH & WORK ORDER DESK -->
+      <section class="panel-card">
+        <div class="panel-header">
+          <h2 class="panel-title">
+            <span>📋</span> Meja Kerja &amp; Tindak Lanjut Aduan
+          </h2>
+          <span style="font-size: 0.78rem; font-weight: 700; color: #059669;" id="txtCountFiltered">Menampilkan 0 aduan</span>
+        </div>
+
+        <!-- FILTER TOOLBAR -->
+        <div class="filter-toolbar">
+          <div class="search-input-wrap">
+            <span class="search-icon">🔍</span>
+            <input type="text" id="officerSearchInput" placeholder="Cari ID tiket, desa, nama pelapor, atau kata kunci...">
+          </div>
+
+          <div class="filter-selects">
+            <select id="filterKecamatan" class="filter-select">
+              <option value="ALL">Semua Kecamatan</option>
+              <option value="Nubatukan">Nubatukan</option>
+              <option value="Ile Ape">Ile Ape</option>
+              <option value="Ile Ape Timur">Ile Ape Timur</option>
+              <option value="Lebatukan">Lebatukan</option>
+              <option value="Nagawutung">Nagawutung</option>
+              <option value="Wulandoni">Wulandoni</option>
+              <option value="Atadei">Atadei</option>
+              <option value="Omesuri">Omesuri</option>
+              <option value="Buyasuri">Buyasuri</option>
+            </select>
+
+            <select id="filterJenis" class="filter-select">
+              <option value="ALL">Semua Kategori</option>
+              <option value="Sampah & TPS Liar">Sampah & TPS Liar</option>
+              <option value="Laut & Pesisir">Laut & Pesisir</option>
+              <option value="Pencemaran Air">Pencemaran Air</option>
+              <option value="Udara & Asap">Udara & Asap</option>
+              <option value="Kerusakan Lingkungan & Tanah">Kerusakan / Galian C</option>
+              <option value="Lainnya">Lainnya</option>
+            </select>
+          </div>
+        </div>
+
+        <!-- STATUS TABS -->
+        <div class="status-tab-bar">
+          <button type="button" class="status-tab-btn active" data-status="ALL">
+            Semua <span class="tab-badge" id="badgeCountAll">0</span>
+          </button>
+          <button type="button" class="status-tab-btn" data-status="Aduan Diterima">
+            🚨 Perlu Verifikasi <span class="tab-badge" id="badgeCountBaru">0</span>
+          </button>
+          <button type="button" class="status-tab-btn" data-status="Sedang Diverifikasi">
+            🔍 Sedang Investigasi <span class="tab-badge" id="badgeCountInvestigasi">0</span>
+          </button>
+          <button type="button" class="status-tab-btn" data-status="Dalam Penanganan">
+            🚜 Dalam Penanganan <span class="tab-badge" id="badgeCountTindak">0</span>
+          </button>
+          <button type="button" class="status-tab-btn" data-status="Selesai">
+            ✅ Selesai <span class="tab-badge" id="badgeCountSelesai">0</span>
+          </button>
+          <button type="button" class="status-tab-btn" data-status="Ditolak">
+            ⚪ Ditolak <span class="tab-badge" id="badgeCountDitolak">0</span>
+          </button>
+        </div>
+
+        <!-- CASES LIST -->
+        <div class="case-list-container" id="caseListContainer">
+          <!-- Dynamic rendering by JS -->
+        </div>
+      </section>
+
+    </div>
+  </main>
+
+  <!-- ===================================================================
+       MODAL 1: FORMULIR TINDAK LANJUT & BERITA ACARA PETUGAS
+       =================================================================== -->
+  <div class="modal-backdrop" id="modalTindakLanjut">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <span>📝</span> Form Tindak Lanjut &amp; Berita Acara Lapangan
+        </h3>
+        <button type="button" class="btn-close-modal" id="btnCloseModalTindak">&times;</button>
+      </div>
+
+      <div class="modal-body">
+        
+        <!-- Summary Info Kasus -->
+        <div class="modal-info-summary">
+          <div class="summary-grid">
+            <div class="summary-item">
+              <label>Nomor Tiket Aduan:</label>
+              <value id="modalDetailId">-</value>
+            </div>
+            <div class="summary-item">
+              <label>Waktu Masuk:</label>
+              <value id="modalDetailWaktu">-</value>
+            </div>
+            <div class="summary-item">
+              <label>Kecamatan &amp; Desa:</label>
+              <value id="modalDetailWilayah">-</value>
+            </div>
+            <div class="summary-item">
+              <label>Kategori Masalah:</label>
+              <value id="modalDetailJenis">-</value>
+            </div>
+          </div>
+          <div style="margin-top: 8px;">
+            <label style="font-size: 0.72rem; color: #64748b; font-weight: 600;">Uraian Aduan Warga:</label>
+            <p id="modalDetailUraian" style="font-size: 0.84rem; color: #334155; margin-top: 2px;">-</p>
+          </div>
+          <div style="margin-top: 8px; display: flex; gap: 12px; align-items: center; font-size: 0.8rem;">
+            <span>Pelapor: <strong id="modalDetailPelapor">-</strong></span>
+            <span>Kontak: <strong id="modalDetailNoHp">-</strong></span>
+            <a id="modalDetailGpsLink" href="#" target="_blank" style="color: #059669; font-weight: 700; text-decoration: underline;">
+              📍 Buka Titik GPS Google Maps
+            </a>
+          </div>
+        </div>
+
+        <!-- Form Update Penanganan -->
+        <form id="formUpdatePenanganan">
+          <input type="hidden" id="editAduanId">
+
+          <div class="modal-section-title">
+            <span>⚙️</span> Pembaruan Status &amp; Tindakan DLH
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Status Penanganan Terbaru <span style="color: red;">*</span></label>
+              <select id="editStatusSelect" class="form-control" required>
+                <option value="Aduan Diterima">Aduan Diterima (Menunggu Penjadwalan)</option>
+                <option value="Verifikasi Administrasi">Verifikasi Kelengkapan Administrasi</option>
+                <option value="Sedang Diverifikasi">Sedang Investigasi Fisik Lapangan</option>
+                <option value="Dalam Penanganan">Dalam Penanganan Teknis (Armada/Fisik DLH)</option>
+                <option value="Selesai">Selesai / Masalah Teratasi</option>
+                <option value="Ditolak">Ditolak / Tidak Memenuhi Syarat</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label>Nama Petugas / Tim Lapangan <span style="color: red;">*</span></label>
+              <input type="text" id="editPetugasNama" class="form-control" required placeholder="Contoh: Petrus S., S.T. (Bidang Pengawasan LH)">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label>Tanggal &amp; Waktu Verifikasi / Aksi</label>
+              <input type="text" id="editTanggalVerif" class="form-control" placeholder="YYYY-MM-DD">
+            </div>
+
+            <div class="form-group">
+              <label>Tanggal Penyelesaian (Jika Selesai)</label>
+              <input type="text" id="editTanggalSelesai" class="form-control" placeholder="YYYY-MM-DD atau -">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label>Hasil Temuan Fakta di Lapangan (Berita Acara) <span style="color: red;">*</span></label>
+            <textarea id="editHasilVerifikasi" class="form-control" required placeholder="Jelaskan temuan tim saat mengecek lokasi secara faktual..."></textarea>
+          </div>
+
+          <div class="form-group">
+            <label>Tindakan Teknis yang Dilakukan DLH <span style="color: red;">*</span></label>
+            <textarea id="editTindakanDLH" class="form-control" required placeholder="Contoh: Pengangkutan 2 truk sampah ke TPA, pemasangan papan larangan, teguran kepada pemilik tempat usaha..."></textarea>
+          </div>
+
+          <div class="modal-footer" style="padding: 16px 0 0 0; background: none; border-top: 1px solid #e2e8f0;">
+            <button type="button" class="btn-action-secondary" id="btnCancelModalTindak">Batal</button>
+            <button type="button" class="btn-action-secondary" id="btnPrintSingleCase">🖨️ Cetak Berita Acara</button>
+            <button type="submit" class="btn-action-primary" id="btnSubmitUpdate">💾 Simpan &amp; Publikasikan Pembaruan</button>
+          </div>
+        </form>
+
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL 2: GANTI IDENTITAS PETUGAS (QUICK SWITCH ROLE)
+       =================================================================== -->
+  <div class="modal-backdrop" id="modalSwitchOfficer">
+    <div class="modal-dialog" style="max-width: 480px;">
+      <div class="modal-header">
+        <h3 class="modal-title">
+          <span>👮</span> Pilih Profil Petugas Bertugas
+        </h3>
+        <button type="button" class="btn-close-modal" id="btnCloseModalOfficer">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="font-size: 0.85rem; color: #64748b; margin-bottom: 16px;">
+          Pilih atau ketik nama petugas penanggung jawab yang akan dicantumkan pada Berita Acara dan log verifikasi.
+        </p>
+
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px;">
+          <button type="button" class="btn-action-secondary select-preset-officer" data-name="Petrus Sinun, S.T. (Bidang Pengawasan LH)" style="justify-content: flex-start; text-align: left; padding: 12px;">
+            <div>
+              <strong>Petrus Sinun, S.T.</strong><br>
+              <span style="font-size: 0.75rem; color: #64748b;">Bidang Pengawasan LH &bull; NIP. 19850612 201001 1 005</span>
+            </div>
+          </button>
+
+          <button type="button" class="btn-action-secondary select-preset-officer" data-name="Ir. Damianus T. (Kabid Penataan DLH)" style="justify-content: flex-start; text-align: left; padding: 12px;">
+            <div>
+              <strong>Ir. Damianus T.</strong><br>
+              <span style="font-size: 0.75rem; color: #64748b;">Kepala Bidang Penataan LH &bull; NIP. 19780415 200501 1 008</span>
+            </div>
+          </button>
+
+          <button type="button" class="btn-action-secondary select-preset-officer" data-name="Tim Reaksi Cepat Kebersihan DLH" style="justify-content: flex-start; text-align: left; padding: 12px;">
+            <div>
+              <strong>Tim Reaksi Cepat Kebersihan DLH</strong><br>
+              <span style="font-size: 0.75rem; color: #64748b;">Armada Pengangkutan Sampah &amp; Patroli Kebersihan</span>
+            </div>
+          </button>
+        </div>
+
+        <div class="form-group">
+          <label>Atau Ketik Nama Petugas Kustom:</label>
+          <input type="text" id="customOfficerInput" class="form-control" placeholder="Nama Petugas & Jabatan">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button type="button" class="btn-action-secondary" id="btnCancelOfficerSwitch">Batal</button>
+        <button type="button" class="btn-action-primary" id="btnSaveCustomOfficer">Gunakan Profil Ini</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       OFFICIAL PRINTABLE INSPECTION REPORT SHEET (LEMBAR BERITA ACARA)
+       =================================================================== -->
+  <div id="printArea" class="printable-sheet">
+    <div class="print-header">
+      <h2>PEMERINTAH KABUPATEN LEMBATA</h2>
+      <h1>DINAS LINGKUNGAN HIDUP</h1>
+      <p>Jalan Trans Lembata, Lewoleba - Kode Pos 86611 &bull; Kabupaten Lembata, Nusa Tenggara Timur</p>
+    </div>
+
+    <div class="print-title">
+      <h3>BERITA ACARA VERIFIKASI &amp; TINDAK LANJUT PENGADUAN</h3>
+      <p>Nomor Registrasi: <span id="printRegNumber">ADU-LMB-2026-001</span></p>
+    </div>
+
+    <p style="font-size: 11pt; text-align: justify; margin-bottom: 12px;">
+      Pada hari ini, tanggal <strong id="printTanggalSekarang">08 Oktober 2026</strong>, Tim Pengawas Lingkungan Hidup Dinas Lingkungan Hidup Kabupaten Lembata telah melaksanakan verifikasi dan koordinasi tindak lanjut lapangan terhadap laporan dugaan pencemaran lingkungan hidup dengan rincian sebagai berikut:
+    </p>
+
+    <table class="print-table">
+      <tr>
+        <td>1. Identitas Pelapor</td>
+        <td>:</td>
+        <td id="printNamaPelapor">Masyarakat</td>
+      </tr>
+      <tr>
+        <td>2. Nomor Telepon / WA</td>
+        <td>:</td>
+        <td id="printNoHp">-</td>
+      </tr>
+      <tr>
+        <td>3. Tanggal Laporan Masuk</td>
+        <td>:</td>
+        <td id="printWaktuMasuk">-</td>
+      </tr>
+      <tr>
+        <td>4. Lokasi Kejadian</td>
+        <td>:</td>
+        <td id="printLokasi">Desa ..., Kec. ...</td>
+      </tr>
+      <tr>
+        <td>5. Titik Koordinat GPS</td>
+        <td>:</td>
+        <td id="printKoordinat">Lat: -, Lng: -</td>
+      </tr>
+      <tr>
+        <td>6. Kategori Masalah</td>
+        <td>:</td>
+        <td id="printJenisPencemaran">-</td>
+      </tr>
+      <tr>
+        <td>7. Kronologi / Uraian Aduan</td>
+        <td>:</td>
+        <td id="printUraian">-</td>
+      </tr>
+      <tr>
+        <td>8. Hasil Pemeriksaan Lapangan</td>
+        <td>:</td>
+        <td id="printHasilVerif" style="font-weight: bold;">-</td>
+      </tr>
+      <tr>
+        <td>9. Tindakan DLH yang Diambil</td>
+        <td>:</td>
+        <td id="printTindakan">-</td>
+      </tr>
+      <tr>
+        <td>10. Status Akhir</td>
+        <td>:</td>
+        <td id="printStatusAkhir" style="font-weight: bold; text-transform: uppercase;">-</td>
+      </tr>
+    </table>
+
+    <p style="font-size: 11pt; text-align: justify; margin-top: 16px;">
+      Demikian Berita Acara Pemeriksaan dan Tindak Lanjut ini dibuat dengan sebenar-benarnya untuk dipergunakan sebagai bahan tindak lanjut administratif dan penanganan lingkungan hidup di Kabupaten Lembata.
+    </p>
+
+    <div class="print-signature-box">
+      <div class="print-sign-col">
+        Mengetahui,<br>
+        <strong>Kepala Bidang Penataan LH</strong>
+        <div class="print-sign-space"></div>
+        <strong><u>Ir. Damianus T.</u></strong><br>
+        NIP. 19780415 200501 1 008
+      </div>
+
+      <div class="print-sign-col">
+        Lewoleba, <span id="printSignDate">08 Oktober 2026</span><br>
+        <strong>Petugas Verifikator Lapangan</strong>
+        <div class="print-sign-space"></div>
+        <strong id="printSignOfficer"><u>Petrus Sinun, S.T.</u></strong><br>
+        NIP. 19850612 201001 1 005
+      </div>
+    </div>
+  </div>
+
+  <!-- TOAST NOTIFICATION -->
+  <div class="toast-box" id="toastBox">
+    <span>✅</span>
+    <span id="toastMsg">Data berhasil diperbarui</span>
+  </div>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Embed Core Data & Logic for Seamless Officer Experience -->
+  <script>
+    /* ===================================================================
+       OFFICER PORTAL LOGIC & DATA ENGINE
+       =================================================================== */
+
+    const STORAGE_KEY = 'dlh_lembata_aduan_v1';
+    const OFFICER_PROFILE_KEY = 'dlh_active_officer';
+    const DEFAULT_OFFICER = 'Petrus Sinun, S.T. (Bidang Pengawasan LH)';
+
+    // Initial Sample Data (Consistent with public portal)
+    const INITIAL_SAMPLE_DATA = [
+      {
+        id: 'ADU-LMB-2026-001',
+        timestamp: '2026-10-01 09:15',
+        namaPelapor: 'Yohanes Kedang',
+        noHp: '081234567890',
+        alamatPelapor: 'Kelurahan Lewoleba, Nubatukan',
+        kecamatan: 'Nubatukan',
+        desa: 'Lewoleba (Kelurahan)',
+        lokasiDetail: 'Pesisir Pantai Sembilang dekat TPI Lewoleba',
+        lat: -8.3685,
+        lng: 123.5580,
+        jenisPencemaran: 'Sampah & TPS Liar',
+        uraian: 'Tumpukan sampah plastik, botol oli bekas, dan sisa jaring ikan menumpuk liar di sempadan pantai dekat dermaga perahu nelayan sepanjang 50 meter. Mengeluarkan bau menyengat.',
+        sumberDugaan: 'Aktivitas buang sampah liar oknum pedagang dan limbah perahu',
+        tanggalKejadian: '2026-09-30',
+        status: 'Dalam Penanganan',
+        petugasVerifikasi: 'Petrus S. (Bidang Kebersihan DLH)',
+        tanggalVerifikasi: '2026-10-02',
+        hasilVerifikasi: 'Volume sampah teridentifikasi mencapai ~4 ton. Telah dikerahkan 2 armada dump truck DLH ke lokasi.',
+        tindakanDLH: 'Pembersihan pantai oleh tim oranye DLH bersama warga pesisir, serta pemasangan papan larangan buang sampah bertanda perda.',
+        tanggalSelesai: '-'
+      },
+      {
+        id: 'ADU-LMB-2026-002',
+        timestamp: '2026-10-02 11:30',
+        namaPelapor: 'Maria Goreti',
+        noHp: '085239112233',
+        alamatPelapor: 'Desa Bungamuda, Ile Ape',
+        kecamatan: 'Ile Ape',
+        desa: 'Bungamuda',
+        lokasiDetail: 'Jalan lereng kebun desa Bungamuda menuju lereng Ile Lewotolok',
+        lat: -8.2830,
+        lng: 123.5410,
+        jenisPencemaran: 'Udara & Asap',
+        uraian: 'Pembakaran sisa ranting dan ban bekas secara terbuka dalam skala besar di kebun dekat permukiman, asap tebal mengganggu pernapasan warga RT 03 terutama anak-anak.',
+        sumberDugaan: 'Pembersihan lahan secara membakar tanpa izin',
+        tanggalKejadian: '2026-10-02',
+        status: 'Sedang Diverifikasi',
+        petugasVerifikasi: 'Kornelis K. (Pengawas Lapangan LH)',
+        tanggalVerifikasi: '2026-10-03',
+        hasilVerifikasi: 'Lokasi pembakaran telah padam, terdapat sisa pembakaran ban seluas 15 m². Pemilik lahan telah diberi teguran lisan.',
+        tindakanDLH: 'Penyusunan Berita Acara Peringatan Lingkungan dan edukasi larangan pembakaran sampah sesuai UU No. 18/2008.',
+        tanggalSelesai: '-'
+      },
+      {
+        id: 'ADU-LMB-2026-003',
+        timestamp: '2026-09-28 14:00',
+        namaPelapor: 'Fransiskus Kedang',
+        noHp: '082145678901',
+        alamatPelapor: 'Desa Lamagute, Ile Ape Timur',
+        kecamatan: 'Ile Ape Timur',
+        desa: 'Lamagute',
+        lokasiDetail: 'Area pesisir desa Lamagute',
+        lat: -8.2910,
+        lng: 123.6120,
+        jenisPencemaran: 'Laut & Pesisir',
+        uraian: 'Genangan ceceran solar/oli hitam mencemari pasir pantai sepanjang 20 meter, diduga rembesan dari drum bahan bakar kapal motor.',
+        sumberDugaan: 'Tumpahan BBM perahu nelayan',
+        tanggalKejadian: '2026-09-27',
+        status: 'Selesai',
+        petugasVerifikasi: 'Petrus S. & Tim DLH',
+        tanggalVerifikasi: '2026-09-29',
+        hasilVerifikasi: 'Ceceran minyak telah disolasi dengan pasir absorben dan diangkat bersama pemerintah desa Lamagute.',
+        tindakanDLH: 'Sosialisasi penanganan bahan bakar ramah lingkungan bagi kelompok nelayan setempat.',
+        tanggalSelesai: '2026-09-30'
+      },
+      {
+        id: 'ADU-LMB-2026-004',
+        timestamp: '2026-10-01 15:45',
+        namaPelapor: 'Stefanus Leu',
+        noHp: '081339887766',
+        alamatPelapor: 'Desa Kalikasa, Atadei',
+        kecamatan: 'Atadei',
+        desa: 'Kalikasa',
+        lokasiDetail: 'Aliran anak sungai Wai Henga',
+        lat: -8.4555,
+        lng: 123.5685,
+        jenisPencemaran: 'Pencemaran Air',
+        uraian: 'Air sungai yang biasa dipakai warga untuk cuci dan ternak terlihat keruh pekat berwarna keputihan dan berbau belerang tak wajar sejak pekerjaan saluran air.',
+        sumberDugaan: 'Material proyek galian yang dibuang langsung ke sungai',
+        tanggalKejadian: '2026-09-30',
+        status: 'Sedang Diverifikasi',
+        petugasVerifikasi: 'Ir. Damianus T. (Kabid Penataan DLH)',
+        tanggalVerifikasi: '2026-10-03',
+        hasilVerifikasi: 'Sampel air telah diambil untuk uji parameter kekeruhan (TDS & TSS). Terindikasi sedimentasi akibat erosi galian.',
+        tindakanDLH: 'Menyusun rekomendasi teknis pembuatan settling pond (kolam endap) kepada pihak pelaksana proyek.',
+        tanggalSelesai: '-'
+      },
+      {
+        id: 'ADU-LMB-2026-005',
+        timestamp: '2026-10-03 16:10',
+        namaPelapor: 'Siti Aminah',
+        noHp: '082233441122',
+        alamatPelapor: 'Desa Balauring, Omesuri',
+        kecamatan: 'Omesuri',
+        desa: 'Balauring',
+        lokasiDetail: 'Kawasan mangrove muara teluk Balauring',
+        lat: -8.2355,
+        lng: 123.8220,
+        jenisPencemaran: 'Limbah B3 & Plastik',
+        uraian: 'Ditemukan drum bekas cairan kimia/aki bekas dan tumpukan oli yang dibuang sembarangan di antara vegetasi bakau tepi muara.',
+        sumberDugaan: 'Bengkel aki liar / penampung limbah tanpa izin',
+        tanggalKejadian: '2026-10-02',
+        status: 'Aduan Diterima',
+        petugasVerifikasi: '-',
+        tanggalVerifikasi: '-',
+        hasilVerifikasi: 'Menunggu penugasan tim verifikasi lapangan ke Omesuri',
+        tindakanDLH: 'Jadwal verifikasi lapangan direncanakan minggu ini bersama Babinsa setempat.',
+        tanggalSelesai: '-'
+      },
+      {
+        id: 'ADU-LMB-2026-006',
+        timestamp: '2026-10-04 10:00',
+        namaPelapor: 'Yosefina Lipat',
+        noHp: '081266778899',
+        alamatPelapor: 'Desa Wairiang, Buyasuri',
+        kecamatan: 'Buyasuri',
+        desa: 'Wairiang',
+        lokasiDetail: 'Pesisir pantai desa Wairiang',
+        lat: -8.1920,
+        lng: 123.9455,
+        jenisPencemaran: 'Laut & Pesisir',
+        uraian: 'Sampah kiriman plastik kemasan dan tali jaring hanyut memenuhi garis pantai hingga 200 meter, mengancam lokasi penjemuran rumput laut.',
+        sumberDugaan: 'Arus laut sampah musiman & perahu nelayan melintas',
+        tanggalKejadian: '2026-10-03',
+        status: 'Aduan Diterima',
+        petugasVerifikasi: '-',
+        tanggalVerifikasi: '-',
+        hasilVerifikasi: 'Aduan masuk, koordinasi awal dengan perangkat desa Buyasuri',
+        tindakanDLH: 'Rencana aksi bersih pantai (coastal clean up) bersama warga & karang taruna desa.',
+        tanggalSelesai: '-'
+      },
+      {
+        id: 'ADU-LMB-2026-007',
+        timestamp: '2026-10-05 13:25',
+        namaPelapor: 'Markus Belang',
+        noHp: '081355443322',
+        alamatPelapor: 'Desa Loang, Nagawutung',
+        kecamatan: 'Nagawutung',
+        desa: 'Loang',
+        lokasiDetail: 'Kawasan pantai pasir putih Loang',
+        lat: -8.4900,
+        lng: 123.3850,
+        jenisPencemaran: 'Kerusakan Lingkungan & Tanah',
+        uraian: 'Pengambilan pasir laut secara masif menggunakan truk tanpa izin konservasi, menyebabkan abrasi tebing pantai dan pohon kelapa tumbang.',
+        sumberDugaan: 'Oknum penambang pasir liar',
+        tanggalKejadian: '2026-10-04',
+        status: 'Sedang Diverifikasi',
+        petugasVerifikasi: 'Petrus S. (Bidang Pengawasan LH)',
+        tanggalVerifikasi: '2026-10-06',
+        hasilVerifikasi: 'Terbukti terjadi lubang galian pasir pada sempadan pantai seluas ~100 m².',
+        tindakanDLH: 'Koordinasi bersama Satpol PP Lembata untuk penertiban dan pemasangan plang larangan penambangan pasir sempadan pantai.',
+        tanggalSelesai: '-'
+      },
+      {
+        id: 'ADU-LMB-2026-008',
+        timestamp: '2026-09-05 08:30',
+        namaPelapor: 'Antonius Boli',
+        noHp: '081244556677',
+        alamatPelapor: 'Desa Wulandoni, Wulandoni',
+        kecamatan: 'Wulandoni',
+        desa: 'Wulandoni',
+        lokasiDetail: 'Area pasar barter tradisional Wulandoni',
+        lat: -8.5410,
+        lng: 123.4910,
+        jenisPencemaran: 'Pencemaran Air',
+        uraian: 'Diduga air sumur warga tercemar rembesan limbah pengolahan daging paus/ikan dari tempat pemotongan tradisional.',
+        sumberDugaan: 'Saluran pembuangan tradisional yang mampet',
+        tanggalKejadian: '2026-09-04',
+        status: 'Ditolak',
+        petugasVerifikasi: 'Tim Gabungan DLH & Dinkes Lembata',
+        tanggalVerifikasi: '2026-09-07',
+        hasilVerifikasi: 'Uji air sumur menunjukkan parameter bakteriologis normal, bau berasal dari saluran drainase umum yang tersumbat daun dan lumpur, bukan pencemaran limbah B3/berbahaya.',
+        tindakanDLH: 'Diserahkan penanganannya kepada pengelola pasar dan pemdes Wulandoni untuk pembersihan got bersama warga.',
+        tanggalSelesai: '2026-09-08'
+      }
+    ];
+
+    // Local Data Manager
+    function getAduanList() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (!raw) {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(INITIAL_SAMPLE_DATA));
+        return INITIAL_SAMPLE_DATA;
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        return Array.isArray(parsed) && parsed.length > 0 ? parsed : INITIAL_SAMPLE_DATA;
+      } catch (e) {
+        return INITIAL_SAMPLE_DATA;
+      }
+    }
+
+    function saveAduanList(list) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
+    }
+
+    function getActiveOfficer() {
+      return localStorage.getItem(OFFICER_PROFILE_KEY) || DEFAULT_OFFICER;
+    }
+
+    function setActiveOfficer(name) {
+      localStorage.setItem(OFFICER_PROFILE_KEY, name);
+      updateOfficerUi();
+    }
+
+    function updateOfficerUi() {
+      const name = getActiveOfficer();
+      const elHead = document.getElementById('headerOfficerName');
+      const elSub = document.getElementById('subOfficerTitle');
+      if (elHead) elHead.textContent = name;
+      if (elSub) elSub.textContent = name;
+    }
+
+    function showToast(msg) {
+      const box = document.getElementById('toastBox');
+      const msgEl = document.getElementById('toastMsg');
+      if (box && msgEl) {
+        msgEl.textContent = msg;
+        box.style.display = 'flex';
+        setTimeout(() => {
+          box.style.display = 'none';
+        }, 3200);
+      }
+    }
+
+    // Leaflet Officer Map Initializer
+    let officerMap = null;
+    let mapMarkersLayer = null;
+    let baseLayerStreets = null;
+    let baseLayerSatellite = null;
+
+    function initOfficerMap() {
+      const mapContainer = document.getElementById('officerMap');
+      if (!mapContainer) return;
+
+      // Center Lembata
+      const centerLembata = [-8.38, 123.58];
+      officerMap = L.map('officerMap', {
+        center: centerLembata,
+        zoom: 10,
+        zoomControl: true
+      });
+
+      // Basemaps
+      baseLayerStreets = L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        attribution: '&copy; OpenStreetMap'
+      }).addTo(officerMap);
+
+      baseLayerSatellite = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        attribution: 'Tiles &copy; Esri World Imagery'
+      });
+
+      mapMarkersLayer = L.layerGroup().addTo(officerMap);
+
+      // Map control buttons
+      document.getElementById('btnMapStreets').addEventListener('click', function() {
+        if (!officerMap.hasLayer(baseLayerStreets)) {
+          officerMap.removeLayer(baseLayerSatellite);
+          officerMap.addLayer(baseLayerStreets);
+          this.classList.add('active');
+          document.getElementById('btnMapSat').classList.remove('active');
+        }
+      });
+
+      document.getElementById('btnMapSat').addEventListener('click', function() {
+        if (!officerMap.hasLayer(baseLayerSatellite)) {
+          officerMap.removeLayer(baseLayerStreets);
+          officerMap.addLayer(baseLayerSatellite);
+          this.classList.add('active');
+          document.getElementById('btnMapStreets').classList.remove('active');
+        }
+      });
+
+      document.getElementById('btnMapReset').addEventListener('click', function() {
+        officerMap.flyTo(centerLembata, 10, { duration: 0.8 });
+      });
+
+      renderMapMarkers(getAduanList());
+    }
+
+    function getPinColorByStatus(status) {
+      if (status === 'Aduan Diterima' || status === 'Baru') return '#dc2626'; // Merah
+      if (status === 'Sedang Diverifikasi' || status === 'Verifikasi Administrasi') return '#f59e0b'; // Oranye
+      if (status === 'Dalam Penanganan') return '#2563eb'; // Biru
+      if (status === 'Selesai') return '#16a34a'; // Hijau
+      return '#64748b'; // Abu
+    }
+
+    function renderMapMarkers(items) {
+      if (!mapMarkersLayer || !officerMap) return;
+      mapMarkersLayer.clearLayers();
+
+      items.forEach(item => {
+        if (!item.lat || !item.lng) return;
+
+        const pinColor = getPinColorByStatus(item.status);
+        const customIcon = L.divIcon({
+          className: 'officer-marker-pin',
+          html: `<div style="
+            width: 24px;
+            height: 24px;
+            background: ${pinColor};
+            border: 2px solid #ffffff;
+            border-radius: 50%;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.4);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #ffffff;
+            font-size: 11px;
+            font-weight: bold;
+          ">!</div>`,
+          iconSize: [24, 24],
+          iconAnchor: [12, 12]
+        });
+
+        const gmapsUrl = `https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.lng}`;
+        const waUrl = item.noHp && item.noHp !== '-' ? `https://wa.me/62${item.noHp.replace(/^0/, '')}?text=Halo%20Bapak/Ibu%20${encodeURIComponent(item.namaPelapor)},%20kami%20dari%20Tim%20DLH%20Kabupaten%20Lembata%20terkait%20aduan%20${encodeURIComponent(item.id)}.` : '#';
+
+        const popupHtml = `
+          <div style="font-family: inherit; font-size: 0.85rem; min-width: 210px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <strong style="color: #064e3b; font-size: 0.9rem;">${item.id}</strong>
+              <span style="font-size: 0.7rem; font-weight: 700; padding: 2px 6px; border-radius: 4px; background: #f1f5f9; color: ${pinColor}; border: 1px solid ${pinColor};">${item.status}</span>
+            </div>
+            <div style="font-size: 0.8rem; font-weight: 600; color: #1e293b; margin-bottom: 4px;">${item.jenisPencemaran}</div>
+            <div style="font-size: 0.75rem; color: #64748b; margin-bottom: 8px;">📍 ${item.desa}, Kec. ${item.kecamatan}</div>
+            <div style="font-size: 0.75rem; color: #475569; margin-bottom: 10px; background: #f8fafc; padding: 6px; border-radius: 4px;">
+              Pelapor: <strong>${item.namaPelapor}</strong> (${item.noHp || '-'})
+            </div>
+            <div style="display: flex; gap: 6px; flex-direction: column;">
+              <a href="${gmapsUrl}" target="_blank" style="display: block; text-align: center; background: #059669; color: #fff; text-decoration: none; padding: 5px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700;">
+                🧭 Rute Navigasi Google Maps
+              </a>
+              <button onclick="window.bukaModalTindakLanjut('${item.id}')" style="background: #0f172a; color: #fff; border: none; padding: 5px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 600; cursor: pointer;">
+                ⚡ Tindak Lanjuti Sekarang
+              </button>
+            </div>
+          </div>
+        `;
+
+        const marker = L.marker([item.lat, item.lng], { icon: customIcon }).bindPopup(popupHtml);
+        mapMarkersLayer.addLayer(marker);
+      });
+    }
+
+    // Render KPI Metrics
+    function renderKpiMetrics(list) {
+      const total = list.length;
+      let baru = 0;
+      let investigasi = 0;
+      let penanganan = 0;
+      let selesai = 0;
+      let ditolak = 0;
+
+      list.forEach(item => {
+        const s = item.status;
+        if (s === 'Aduan Diterima' || s === 'Baru' || s === 'Verifikasi Administrasi') baru++;
+        else if (s === 'Sedang Diverifikasi') investigasi++;
+        else if (s === 'Dalam Penanganan') penanganan++;
+        else if (s === 'Selesai') selesai++;
+        else if (s === 'Ditolak') ditolak++;
+      });
+
+      const pct = total > 0 ? Math.round(((selesai + ditolak) / total) * 100) : 0;
+
+      document.getElementById('kpiTotal').textContent = total;
+      document.getElementById('kpiBaru').textContent = baru;
+      document.getElementById('kpiSedangVerif').textContent = investigasi;
+      document.getElementById('kpiPenanganan').textContent = penanganan;
+      document.getElementById('kpiSelesai').textContent = selesai;
+      document.getElementById('kpiPersenSelesai').textContent = `Tingkat resolusi: ${pct}%`;
+
+      document.getElementById('badgeCountAll').textContent = total;
+      document.getElementById('badgeCountBaru').textContent = baru;
+      document.getElementById('badgeCountInvestigasi').textContent = investigasi;
+      document.getElementById('badgeCountTindak').textContent = penanganan;
+      document.getElementById('badgeCountSelesai').textContent = selesai;
+      document.getElementById('badgeCountDitolak').textContent = ditolak;
+    }
+
+    // Case Desk Rendering with Filters
+    let currentFilterStatus = 'ALL';
+
+    function getFilteredList() {
+      const list = getAduanList();
+      const searchVal = (document.getElementById('officerSearchInput').value || '').trim().toLowerCase();
+      const kecVal = document.getElementById('filterKecamatan').value;
+      const jenisVal = document.getElementById('filterJenis').value;
+
+      return list.filter(item => {
+        // Status filter
+        if (currentFilterStatus !== 'ALL') {
+          if (currentFilterStatus === 'Aduan Diterima') {
+            if (item.status !== 'Aduan Diterima' && item.status !== 'Baru' && item.status !== 'Verifikasi Administrasi') return false;
+          } else if (item.status !== currentFilterStatus) {
+            return false;
+          }
+        }
+
+        // Kecamatan filter
+        if (kecVal !== 'ALL' && item.kecamatan !== kecVal) return false;
+
+        // Jenis Pencemaran filter
+        if (jenisVal !== 'ALL' && item.jenisPencemaran !== jenisVal) return false;
+
+        // Search text
+        if (searchVal) {
+          const matchId = (item.id || '').toLowerCase().includes(searchVal);
+          const matchDesa = (item.desa || '').toLowerCase().includes(searchVal);
+          const matchKec = (item.kecamatan || '').toLowerCase().includes(searchVal);
+          const matchPelapor = (item.namaPelapor || '').toLowerCase().includes(searchVal);
+          const matchUraian = (item.uraian || '').toLowerCase().includes(searchVal);
+          const matchJenis = (item.jenisPencemaran || '').toLowerCase().includes(searchVal);
+          if (!matchId && !matchDesa && !matchKec && !matchPelapor && !matchUraian && !matchJenis) return false;
+        }
+
+        return true;
+      });
+    }
+
+    function getStatusBadgeClass(status) {
+      if (status === 'Aduan Diterima' || status === 'Baru') return 'badge-baru';
+      if (status === 'Verifikasi Administrasi' || status === 'Sedang Diverifikasi') return 'badge-verif';
+      if (status === 'Dalam Penanganan') return 'badge-tindak';
+      if (status === 'Selesai') return 'badge-selesai';
+      return 'badge-ditolak';
+    }
+
+    function getCardBorderClass(status) {
+      if (status === 'Aduan Diterima' || status === 'Baru') return 'urgent-border';
+      if (status === 'Sedang Diverifikasi' || status === 'Verifikasi Administrasi') return 'investigasi-border';
+      if (status === 'Dalam Penanganan') return 'penanganan-border';
+      if (status === 'Selesai') return 'selesai-border';
+      return '';
+    }
+
+    function renderCaseList() {
+      const container = document.getElementById('caseListContainer');
+      const filtered = getFilteredList();
+
+      document.getElementById('txtCountFiltered').textContent = `Menampilkan ${filtered.length} dari ${getAduanList().length} aduan`;
+
+      if (filtered.length === 0) {
+        container.innerHTML = `
+          <div class="empty-state">
+            <div class="empty-state-icon">📭</div>
+            <h4 style="color: #334155; margin-bottom: 4px;">Tidak Ada Aduan Ditemukan</h4>
+            <p style="font-size: 0.85rem;">Coba sesuaikan kata kunci pencarian atau ganti filter status di atas.</p>
+          </div>
+        `;
+        return;
+      }
+
+      container.innerHTML = filtered.map(item => {
+        const badgeClass = getStatusBadgeClass(item.status);
+        const borderClass = getCardBorderClass(item.status);
+        const gmapsUrl = item.lat && item.lng ? `https://www.google.com/maps/dir/?api=1&destination=${item.lat},${item.lng}` : '#';
+        const waUrl = item.noHp && item.noHp !== '-' ? `https://wa.me/62${item.noHp.replace(/^0/, '')}?text=Halo%20Bapak/Ibu%20${encodeURIComponent(item.namaPelapor)},%20kami%20dari%20Tim%20DLH%20Lembata%20terkait%20aduan%20${encodeURIComponent(item.id)}.` : null;
+
+        return `
+          <div class="case-card ${borderClass}" id="card-${item.id}">
+            <div class="case-header">
+              <div class="case-id-group">
+                <span class="case-id">${item.id}</span>
+                <span class="badge-status ${badgeClass}">${item.status}</span>
+              </div>
+              <span class="case-time">⏱️ ${item.timestamp}</span>
+            </div>
+
+            <div class="case-location-row">
+              <span>📍 <strong>${item.desa}</strong>, Kec. ${item.kecamatan}</span>
+              <span style="color: #94a3b8;">&bull;</span>
+              <span style="color: #059669; font-weight: 700;">${item.jenisPencemaran}</span>
+            </div>
+
+            <div class="case-detail-desc">
+              "${item.uraian}"
+            </div>
+
+            <div class="case-reporter-info">
+              <div>
+                👤 Pelapor: <strong>${item.namaPelapor}</strong> | 📞 ${item.noHp || '-'}
+              </div>
+              <div>
+                👮 Penanggung Jawab: <strong>${item.petugasVerifikasi || 'Belum Ditugaskan'}</strong>
+              </div>
+            </div>
+
+            ${item.hasilVerifikasi && item.hasilVerifikasi !== '-' ? `
+              <div style="font-size: 0.78rem; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 8px 12px; border-radius: 6px; color: #065f46;">
+                <strong>📋 Berita Acara Petugas:</strong> ${item.hasilVerifikasi}<br>
+                ${item.tindakanDLH && item.tindakanDLH !== '-' ? `<strong>🚜 Tindakan DLH:</strong> ${item.tindakanDLH}` : ''}
+              </div>
+            ` : ''}
+
+            <div class="case-actions-bar">
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                <button type="button" class="btn-action-primary" onclick="window.bukaModalTindakLanjut('${item.id}')">
+                  ⚡ Tindak Lanjuti / Berita Acara
+                </button>
+                <button type="button" class="btn-action-secondary" onclick="window.cetakBeritaAcaraById('${item.id}')">
+                  📄 Cetak BA
+                </button>
+              </div>
+
+              <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                ${waUrl ? `
+                  <a href="${waUrl}" target="_blank" class="btn-action-secondary btn-wa-direct" title="Hubungi Pelapor via WhatsApp">
+                    💬 Hubungi Pelapor
+                  </a>
+                ` : ''}
+                ${item.lat && item.lng ? `
+                  <a href="${gmapsUrl}" target="_blank" class="btn-action-secondary" title="Navigasi ke Lokasi">
+                    🧭 Rute GPS
+                  </a>
+                  <button type="button" class="btn-action-secondary" onclick="window.sorotPeta('${item.id}')" title="Tampilkan Titik di Peta Samping">
+                    📍 Lihat di Peta
+                  </button>
+                ` : ''}
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    // Window global functions for inline buttons
+    window.sorotPeta = function(id) {
+      const list = getAduanList();
+      const item = list.find(x => x.id === id);
+      if (item && item.lat && item.lng && officerMap) {
+        officerMap.flyTo([item.lat, item.lng], 14, { duration: 0.8 });
+        // Scroll to map on mobile
+        if (window.innerWidth < 1024) {
+          document.getElementById('officerMap').scrollIntoView({ behavior: 'smooth' });
+        }
+      }
+    };
+
+    window.bukaModalTindakLanjut = function(id) {
+      const list = getAduanList();
+      const item = list.find(x => x.id === id);
+      if (!item) return;
+
+      document.getElementById('editAduanId').value = item.id;
+      document.getElementById('modalDetailId').textContent = item.id;
+      document.getElementById('modalDetailWaktu').textContent = item.timestamp;
+      document.getElementById('modalDetailWilayah').textContent = `${item.desa}, Kec. ${item.kecamatan}`;
+      document.getElementById('modalDetailJenis').textContent = item.jenisPencemaran;
+      document.getElementById('modalDetailUraian').textContent = item.uraian;
+      document.getElementById('modalDetailPelapor').textContent = item.namaPelapor;
+      document.getElementById('modalDetailNoHp').textContent = item.noHp || '-';
+
+      const gpsLink = document.getElementById('modalDetailGpsLink');
+      if (item.lat && item.lng) {
+        gpsLink.href = `https://www.google.com/maps?q=${item.lat},${item.lng}`;
+        gpsLink.style.display = 'inline-block';
+      } else {
+        gpsLink.style.display = 'none';
+      }
+
+      // Populate form
+      document.getElementById('editStatusSelect').value = item.status;
+      document.getElementById('editPetugasNama').value = item.petugasVerifikasi && item.petugasVerifikasi !== '-' ? item.petugasVerifikasi : getActiveOfficer();
+
+      const today = new Date().toISOString().split('T')[0];
+      document.getElementById('editTanggalVerif').value = item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' ? item.tanggalVerifikasi : today;
+      document.getElementById('editTanggalSelesai').value = item.tanggalSelesai && item.tanggalSelesai !== '-' ? item.tanggalSelesai : (item.status === 'Selesai' ? today : '-');
+      document.getElementById('editHasilVerifikasi').value = item.hasilVerifikasi && item.hasilVerifikasi !== '-' ? item.hasilVerifikasi : '';
+      document.getElementById('editTindakanDLH').value = item.tindakanDLH && item.tindakanDLH !== '-' ? item.tindakanDLH : '';
+
+      document.getElementById('modalTindakLanjut').classList.add('active');
+    };
+
+    window.cetakBeritaAcaraById = function(id) {
+      const list = getAduanList();
+      const item = list.find(x => x.id === id);
+      if (!item) return;
+
+      document.getElementById('printRegNumber').textContent = item.id;
+      document.getElementById('printNamaPelapor').textContent = item.namaPelapor;
+      document.getElementById('printNoHp').textContent = item.noHp || '-';
+      document.getElementById('printWaktuMasuk').textContent = item.timestamp;
+      document.getElementById('printLokasi').textContent = `${item.lokasiDetail || '-'}, Desa ${item.desa}, Kecamatan ${item.kecamatan}`;
+      document.getElementById('printKoordinat').textContent = item.lat && item.lng ? `Latitude: ${item.lat}, Longitude: ${item.lng}` : 'Tidak terdeteksi';
+      document.getElementById('printJenisPencemaran').textContent = item.jenisPencemaran;
+      document.getElementById('printUraian').textContent = item.uraian;
+      document.getElementById('printHasilVerif').textContent = item.hasilVerifikasi || 'Telah dilakukan peninjauan fisik di lokasi.';
+      document.getElementById('printTindakan').textContent = item.tindakanDLH || 'Penanganan dan koordinasi teknis bersama pihak terkait.';
+      document.getElementById('printStatusAkhir').textContent = item.status;
+
+      const dateStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+      document.getElementById('printTanggalSekarang').textContent = dateStr;
+      document.getElementById('printSignDate').textContent = dateStr;
+      document.getElementById('printSignOfficer').innerHTML = `<u>${item.petugasVerifikasi || getActiveOfficer()}</u>`;
+
+      window.print();
+    };
+
+    // Form Update Submit Handler
+    document.getElementById('formUpdatePenanganan').addEventListener('submit', function(e) {
+      e.preventDefault();
+
+      const id = document.getElementById('editAduanId').value;
+      const status = document.getElementById('editStatusSelect').value;
+      const petugas = document.getElementById('editPetugasNama').value.trim();
+      const tglVerif = document.getElementById('editTanggalVerif').value.trim();
+      const tglSelesai = document.getElementById('editTanggalSelesai').value.trim();
+      const hasil = document.getElementById('editHasilVerifikasi').value.trim();
+      const tindakan = document.getElementById('editTindakanDLH').value.trim();
+
+      const list = getAduanList();
+      const index = list.findIndex(x => x.id === id);
+      if (index === -1) return;
+
+      list[index].status = status;
+      list[index].petugasVerifikasi = petugas;
+      list[index].tanggalVerifikasi = tglVerif;
+      list[index].tanggalSelesai = status === 'Selesai' && (!tglSelesai || tglSelesai === '-') ? new Date().toISOString().split('T')[0] : tglSelesai;
+      list[index].hasilVerifikasi = hasil;
+      list[index].tindakanDLH = tindakan;
+
+      saveAduanList(list);
+
+      // Close modal
+      document.getElementById('modalTindakLanjut').classList.remove('active');
+
+      // Refresh UI
+      renderKpiMetrics(list);
+      renderCaseList();
+      renderMapMarkers(list);
+
+      showToast(`Aduan ${id} berhasil diperbarui statusnya menjadi "${status}"!`);
+
+      // Sync to Google Apps Script as background POST if API configured
+      const gasUrl = localStorage.getItem('dlh_gas_api_url') || (window.GAS_API_URL || '');
+      if (gasUrl && gasUrl.startsWith('http')) {
+        fetch(gasUrl, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify({
+            action: 'updateVerifikasi',
+            data: {
+              id: id,
+              status: status,
+              petugasVerifikasi: petugas,
+              tanggalVerifikasi: tglVerif,
+              hasilVerifikasi: hasil,
+              tindakanDLH: tindakan,
+              tanggalSelesai: list[index].tanggalSelesai
+            }
+          })
+        }).catch(err => console.warn('Sync POST to GAS failed:', err));
+      }
+    });
+
+    // Close Modals
+    document.getElementById('btnCloseModalTindak').addEventListener('click', () => {
+      document.getElementById('modalTindakLanjut').classList.remove('active');
+    });
+    document.getElementById('btnCancelModalTindak').addEventListener('click', () => {
+      document.getElementById('modalTindakLanjut').classList.remove('active');
+    });
+
+    document.getElementById('btnPrintSingleCase').addEventListener('click', () => {
+      const id = document.getElementById('editAduanId').value;
+      window.cetakBeritaAcaraById(id);
+    });
+
+    // Officer Switch Modal Handlers
+    document.getElementById('btnOpenSwitchModal').addEventListener('click', () => {
+      document.getElementById('modalSwitchOfficer').classList.add('active');
+    });
+    document.getElementById('btnCloseModalOfficer').addEventListener('click', () => {
+      document.getElementById('modalSwitchOfficer').classList.remove('active');
+    });
+    document.getElementById('btnCancelOfficerSwitch').addEventListener('click', () => {
+      document.getElementById('modalSwitchOfficer').classList.remove('active');
+    });
+
+    document.querySelectorAll('.select-preset-officer').forEach(btn => {
+      btn.addEventListener('click', function() {
+        const name = this.getAttribute('data-name');
+        setActiveOfficer(name);
+        document.getElementById('modalSwitchOfficer').classList.remove('active');
+        showToast(`Profil aktif beralih ke: ${name}`);
+      });
+    });
+
+    document.getElementById('btnSaveCustomOfficer').addEventListener('click', () => {
+      const val = document.getElementById('customOfficerInput').value.trim();
+      if (val) {
+        setActiveOfficer(val);
+        document.getElementById('modalSwitchOfficer').classList.remove('active');
+        showToast(`Profil aktif beralih ke: ${val}`);
+      }
+    });
+
+    // Status Tab Switcher
+    document.querySelectorAll('.status-tab-btn').forEach(btn => {
+      btn.addEventListener('click', function() {
+        document.querySelectorAll('.status-tab-btn').forEach(b => b.classList.remove('active'));
+        this.classList.add('active');
+        currentFilterStatus = this.getAttribute('data-status');
+        renderCaseList();
+      });
+    });
+
+    // Search and Dropdown Filter Event Listeners
+    document.getElementById('officerSearchInput').addEventListener('input', renderCaseList);
+    document.getElementById('filterKecamatan').addEventListener('change', renderCaseList);
+    document.getElementById('filterJenis').addEventListener('change', renderCaseList);
+
+    // Export CSV Feature
+    document.getElementById('btnExportCsv').addEventListener('click', () => {
+      const list = getAduanList();
+      const headers = [
+        'ID Aduan',
+        'Waktu Masuk',
+        'Nama Pelapor',
+        'Nomor WhatsApp',
+        'Kecamatan',
+        'Desa',
+        'Jenis Pencemaran',
+        'Lokasi Spesifik',
+        'Latitude',
+        'Longitude',
+        'Uraian Aduan',
+        'Status Penanganan',
+        'Petugas Lapangan',
+        'Hasil Verifikasi (Berita Acara)',
+        'Tindakan DLH',
+        'Tanggal Selesai'
+      ];
+
+      const rows = list.map(item => [
+        `"${item.id}"`,
+        `"${item.timestamp}"`,
+        `"${item.namaPelapor}"`,
+        `"${item.noHp}"`,
+        `"${item.kecamatan}"`,
+        `"${item.desa}"`,
+        `"${item.jenisPencemaran}"`,
+        `"${(item.lokasiDetail || '').replace(/"/g, '""')}"`,
+        item.lat || '-',
+        item.lng || '-',
+        `"${(item.uraian || '').replace(/"/g, '""')}"`,
+        `"${item.status}"`,
+        `"${item.petugasVerifikasi || '-'}"`,
+        `"${(item.hasilVerifikasi || '-').replace(/"/g, '""')}"`,
+        `"${(item.tindakanDLH || '-').replace(/"/g, '""')}"`,
+        `"${item.tanggalSelesai || '-'}"`
+      ]);
+
+      const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+      const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.setAttribute('href', url);
+      link.setAttribute('download', `Rekap_Tindak_Lanjut_Aduan_DLH_Lembata_${new Date().toISOString().split('T')[0]}.csv`);
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      showToast('File CSV Rekap Aduan berhasil diunduh.');
+    });
+
+    // Cloud Sync Button
+    document.getElementById('btnSyncGas').addEventListener('click', async () => {
+      showToast('Menghubungkan ke Cloud Google Apps Script...');
+      const gasUrl = localStorage.getItem('dlh_gas_api_url') || '';
+      if (!gasUrl) {
+        showToast('ℹ️ Data lokal aktif. Sistem siap disinkronkan saat URL Google Web App dihubungkan.');
+        return;
+      }
+      try {
+        const resp = await fetch(`${gasUrl}?action=getAll&_t=${Date.now()}`);
+        if (!resp.ok) throw new Error('HTTP Error');
+        const json = await resp.json();
+        if (json && json.success && Array.isArray(json.data)) {
+          saveAduanList(json.data);
+          renderKpiMetrics(json.data);
+          renderCaseList();
+          renderMapMarkers(json.data);
+          showToast(`✅ Berhasil disinkronkan! ${json.data.length} aduan termuat dari cloud.`);
+        }
+      } catch (e) {
+        showToast('⚠️ Gagal terhubung ke cloud. Menggunakan data tersimpan di browser.');
+      }
+    });
+
+    // Initial Bootstrap
+    document.addEventListener('DOMContentLoaded', () => {
+      updateOfficerUi();
+      const list = getAduanList();
+      renderKpiMetrics(list);
+      renderCaseList();
+      initOfficerMap();
+    });
+  </script>
+</body>
+</html>
