@@ -1525,7 +1525,9 @@
       gap: 10px;
     }
 
-    /* Official Printable Report View */
+    /* ===================================================================
+       OFFICIAL PRINTABLE INSPECTION REPORT VIEW (KOP RESMI DLH LEMBATA)
+       =================================================================== */
     @media print {
       body * {
         visibility: hidden;
@@ -1534,13 +1536,14 @@
         visibility: visible;
       }
       #printArea {
+        display: block !important;
         position: absolute;
         left: 0;
         top: 0;
         width: 100%;
         background: #ffffff;
         color: #000000;
-        padding: 20mm;
+        padding: 8mm 14mm 12mm 14mm;
       }
       .no-print {
         display: none !important;
@@ -1552,88 +1555,180 @@
       background: #ffffff;
       color: #000000;
       font-family: 'Times New Roman', Times, serif;
-      line-height: 1.4;
+      line-height: 1.45;
     }
 
-    .print-header {
+    /* KOP SURAT RESMI PEMERINTAH KABUPATEN LEMBATA */
+    .print-kop-wrapper {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      position: relative;
+      margin-bottom: 2px;
+    }
+
+    .print-kop-logo-box {
+      width: 82px;
+      height: 98px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .print-kop-text-box {
+      flex: 1;
       text-align: center;
-      border-bottom: 3px double #000;
-      padding-bottom: 12px;
-      margin-bottom: 20px;
+      padding-right: 15px;
     }
 
-    .print-header h2 {
-      font-size: 15pt;
+    .print-kop-text-box h2 {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 13.5pt;
+      font-weight: 800;
+      letter-spacing: 0.6px;
       margin: 0;
       text-transform: uppercase;
+      color: #000000;
+      line-height: 1.25;
     }
 
-    .print-header h1 {
-      font-size: 17pt;
-      margin: 2px 0;
+    .print-kop-text-box h1 {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 16pt;
+      font-weight: 900;
+      letter-spacing: 0.8px;
+      margin: 2px 0 3px 0;
       text-transform: uppercase;
-      font-weight: bold;
+      color: #000000;
+      line-height: 1.25;
     }
 
-    .print-header p {
-      font-size: 10pt;
+    .print-kop-text-box p.kop-address {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 9.5pt;
       margin: 0;
-      font-style: italic;
+      color: #000000;
+      line-height: 1.35;
+    }
+
+    .print-kop-text-box p.kop-contact {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 9.5pt;
+      margin: 0;
+      color: #000000;
+      line-height: 1.35;
+    }
+
+    /* GARIS TEBAL GANDA PEMISAH KOP SURAT RESMI KEDINASAN */
+    .print-kop-divider {
+      border: none;
+      border-top: 3.5px solid #000000;
+      border-bottom: 1.5px solid #000000;
+      height: 6px;
+      margin: 6px 0 16px 0;
     }
 
     .print-title {
       text-align: center;
-      margin: 16px 0;
+      margin: 12px 0 16px 0;
     }
 
     .print-title h3 {
+      font-family: Arial, Helvetica, sans-serif;
       font-size: 13pt;
+      font-weight: bold;
       text-decoration: underline;
       margin: 0;
       text-transform: uppercase;
+      letter-spacing: 0.8px;
+    }
+
+    .print-title h4 {
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 11pt;
+      font-weight: bold;
+      margin: 3px 0;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
     }
 
     .print-title p {
       font-size: 10pt;
-      margin: 4px 0 0 0;
+      margin: 2px 0 0 0;
+      font-family: 'Times New Roman', Times, serif;
+    }
+
+    .print-paragraph {
+      font-size: 11pt;
+      line-height: 1.5;
+      margin-bottom: 8px;
+    }
+
+    .print-parties-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin: 6px 0 10px 0;
+      font-size: 11pt;
+    }
+
+    .print-parties-table td {
+      padding: 2px 4px;
+      vertical-align: top;
     }
 
     .print-table {
       width: 100%;
       border-collapse: collapse;
-      margin: 16px 0;
-      font-size: 11pt;
+      margin: 10px 0 16px 0;
+      font-size: 10.5pt;
     }
 
     .print-table td, .print-table th {
-      padding: 6px 8px;
+      padding: 5px 8px;
       vertical-align: top;
+      border: 1px solid #000000;
     }
 
     .print-table td:first-child {
-      width: 32%;
+      width: 30%;
       font-weight: bold;
+      background: #f9f9f9;
     }
 
     .print-table td:nth-child(2) {
       width: 3%;
-    }
-
-    .print-signature-box {
-      margin-top: 40px;
-      display: flex;
-      justify-content: space-between;
-      page-break-inside: avoid;
-    }
-
-    .print-sign-col {
-      width: 45%;
       text-align: center;
+      background: #f9f9f9;
+    }
+
+    .print-signature-section {
+      margin-top: 24px;
+      page-break-inside: avoid;
       font-size: 11pt;
     }
 
+    .print-sign-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 24px;
+    }
+
+    .print-sign-col {
+      width: 44%;
+      text-align: center;
+    }
+
     .print-sign-space {
-      height: 70px;
+      height: 65px;
+    }
+
+    .print-sign-acknowledge {
+      width: 60%;
+      margin: 0 auto;
+      text-align: center;
+      page-break-inside: avoid;
     }
 
     /* Toast Notification */
@@ -2105,10 +2200,11 @@
               <textarea id="editTindakanDLH" class="form-control" required placeholder="Contoh: Pengangkutan 2 truk sampah ke TPA, pemasangan papan larangan, teguran kepada pemilik tempat usaha..."></textarea>
             </div>
 
-            <div class="modal-footer" style="padding: 16px 0 0 0; background: none; border-top: 1px solid #e2e8f0;">
+            <div class="modal-footer" style="padding: 16px 0 0 0; background: none; border-top: 1px solid #e2e8f0; display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-end;">
               <button type="button" class="btn-action-secondary" id="btnCancelModalTindak">Batal</button>
-              <button type="button" class="btn-action-secondary" id="btnPrintSingleCase">🖨️ Cetak Berita Acara</button>
-              <button type="submit" class="btn-action-primary" id="btnSubmitUpdate">💾 Simpan &amp; Publikasikan Pembaruan</button>
+              <button type="button" class="btn-action-secondary" id="btnPrintSingleCase" title="Cetak Berita Acara Verifikasi Pengaduan Resmi">📄 Cetak BA Aduan</button>
+              <button type="button" class="btn-action-secondary" id="btnPrintMalapariCase" title="Cetak Berita Acara Serah Terima Bibit / Barang Penghijauan Sesuai Format Lembata" style="color: #065f46; border-color: #a7f3d0; background: #ecfdf5;">🌱 Cetak BA Serah Terima</button>
+              <button type="submit" class="btn-action-primary" id="btnSubmitUpdate">💾 Simpan &amp; Publikasikan</button>
             </div>
           </form>
         </div>
@@ -2143,94 +2239,195 @@
 
   </div> <!-- End #officerAppContainer -->
 
-  <!-- OFFICIAL PRINTABLE INSPECTION REPORT SHEET (LEMBAR BERITA ACARA) -->
+  <!-- OFFICIAL PRINTABLE INSPECTION REPORT SHEET (LEMBAR BERITA ACARA RESMI DLH LEMBATA) -->
   <div id="printArea" class="printable-sheet">
-    <div class="print-header">
-      <h2>PEMERINTAH KABUPATEN LEMBATA</h2>
-      <h1>DINAS LINGKUNGAN HIDUP</h1>
-      <p>Jalan Trans Lembata, Lewoleba - Kode Pos 86611 &bull; Kabupaten Lembata, Nusa Tenggara Timur</p>
+    <!-- KOP SURAT DINAS RESMI PEMERINTAH KABUPATEN LEMBATA -->
+    <div class="print-kop-wrapper">
+      <div class="print-kop-logo-box">
+        <svg viewBox="0 0 100 120" width="76" height="92" style="display: block; margin: 0 auto;">
+          <!-- Perisai Kuning Emas Luar -->
+          <path d="M 50 3 L 94 20 L 88 86 C 84 105, 50 117, 50 117 C 50 117, 16 105, 12 86 L 6 20 Z" fill="#d97706" stroke="#000000" stroke-width="1.8" />
+          <!-- Perisai Dalam Putih -->
+          <path d="M 50 8 L 89 23 L 83 83 C 80 100, 50 111, 50 111 C 50 111, 20 100, 17 83 L 11 23 Z" fill="#ffffff" stroke="#b45309" stroke-width="1" />
+          <!-- Bagian Atas Merah -->
+          <path d="M 50 8 L 89 23 L 85 62 L 15 62 L 11 23 Z" fill="#dc2626" />
+          <!-- Pita Tulisan LEMBATA -->
+          <path d="M 22 22 Q 50 16 78 22 L 76 30 Q 50 24 24 30 Z" fill="#fef08a" stroke="#a16207" stroke-width="0.6" />
+          <text x="50" y="27.5" font-size="7.5" font-weight="900" font-family="Arial, sans-serif" fill="#7f1d1d" text-anchor="middle" letter-spacing="1.2">LEMBATA</text>
+          <!-- Siluet Gunung Ile Lewotolok -->
+          <polygon points="50,33 34,62 66,62" fill="#15803d" />
+          <polygon points="50,33 44,46 56,46" fill="#fef08a" opacity="0.85" />
+          <!-- Bagian Bawah Laut Biru -->
+          <path d="M 15 62 L 85 62 L 83 83 C 80 100, 50 111, 50 111 C 50 111, 20 100, 17 83 Z" fill="#0284c7" />
+          <!-- Gelombang Ombak Putih -->
+          <path d="M 18 73 Q 34 69 50 73 Q 66 77 82 73" fill="none" stroke="#ffffff" stroke-width="1.2" />
+          <path d="M 21 83 Q 36 79 50 83 Q 64 87 79 83" fill="none" stroke="#ffffff" stroke-width="1" />
+          <!-- Perahu Tradisional Lembata (Pledang / Solor) -->
+          <path d="M 33 68 Q 50 72 67 68 L 64 74 Q 50 76 36 74 Z" fill="#ffffff" stroke="#0f172a" stroke-width="0.8" />
+          <polygon points="50,47 51,66 62,56" fill="#fde047" stroke="#854d0e" stroke-width="0.5" />
+          <line x1="50" y1="45" x2="50" y2="67" stroke="#0f172a" stroke-width="1" />
+        </svg>
+      </div>
+
+      <div class="print-kop-text-box">
+        <h2>PEMERINTAH KABUPATEN LEMBATA</h2>
+        <h1>DINAS LINGKUNGAN HIDUP</h1>
+        <p class="kop-address">Jl. Trans Atadei Nomor : - Tlp. ( 0383 ) 2343016-</p>
+        <p class="kop-contact">Email : dlh.kab.lembata@gmail.com Lewoleba-Lembata</p>
+      </div>
     </div>
 
+    <!-- GARIS TEBAL GANDA RESMI KEDINASAN -->
+    <hr class="print-kop-divider">
+
+    <!-- JUDUL RESMI DOKUMEN -->
     <div class="print-title">
-      <h3>BERITA ACARA VERIFIKASI &amp; TINDAK LANJUT PENGADUAN</h3>
-      <p>Nomor Registrasi: <span id="printRegNumber">ADU-LMB-2026-001</span></p>
+      <h3 id="printJudulBA">BERITA ACARA</h3>
+      <h4 id="printSubJudulBA">VERIFIKASI &amp; PENANGANAN PENGADUAN LINGKUNGAN HIDUP</h4>
+      <p id="printNomorSurat">Nomor : 660 / <span id="printNoRegistrasi">ADU-LMB-2026-001</span> / DLH-LMB / <span id="printBulanRomawi">X</span> / <span id="printTahunBA">2026</span></p>
     </div>
 
-    <p style="font-size: 11pt; text-align: justify; margin-bottom: 12px;">
-      Pada hari ini, tanggal <strong id="printTanggalSekarang">08 Oktober 2026</strong>, Tim Pengawas Lingkungan Hidup Dinas Lingkungan Hidup Kabupaten Lembata telah melaksanakan verifikasi dan koordinasi tindak lanjut lapangan terhadap laporan dugaan pencemaran lingkungan hidup dengan rincian sebagai berikut:
-    </p>
+    <!-- PEMBUKA PARAGRAF -->
+    <p class="print-paragraph">Kami yang bertanda tangan dibawah ini:</p>
 
-    <table class="print-table">
+    <!-- TABEL PARA PIHAK (FORMAT RESMI FOTO) -->
+    <table class="print-parties-table">
       <tr>
-        <td>1. Identitas Pelapor</td>
-        <td>:</td>
-        <td id="printNamaPelapor">Masyarakat</td>
+        <td style="width: 14%;">Nama</td>
+        <td style="width: 2%;">:</td>
+        <td style="width: 84%; font-weight: bold;" id="printPihak1Nama">Christianus Rimbaraya, SE,MM</td>
       </tr>
       <tr>
-        <td>2. Nomor Telepon / WA</td>
+        <td>Jabatan</td>
         <td>:</td>
-        <td id="printNoHp">-</td>
+        <td id="printPihak1Jabatan">Petugas Pengawas &amp; Verifikator Lingkungan Hidup Kabupaten Lembata</td>
       </tr>
       <tr>
-        <td>3. Tanggal Laporan Masuk</td>
-        <td>:</td>
-        <td id="printWaktuMasuk">-</td>
+        <td colspan="3" style="padding-top: 3px; padding-bottom: 8px; font-style: italic;">
+          Sebagai pihak yang melaksanakan verifikasi dan penanganan, selanjutnya disebut <strong style="font-style: normal;">PIHAK PERTAMA</strong>.
+        </td>
       </tr>
       <tr>
-        <td>4. Lokasi Kejadian</td>
+        <td>Nama</td>
         <td>:</td>
-        <td id="printLokasi">Desa ..., Kec. ...</td>
+        <td style="font-weight: bold;" id="printPihak2Nama">-</td>
       </tr>
       <tr>
-        <td>5. Titik Koordinat GPS</td>
+        <td>Jabatan / Status</td>
         <td>:</td>
-        <td id="printKoordinat">Lat: -, Lng: -</td>
+        <td id="printPihak2Jabatan">Pelapor / Warga Masyarakat</td>
+      </tr>
+      <tr id="rowPihak2Kontak">
+        <td>Kontak / Alamat</td>
+        <td>:</td>
+        <td id="printPihak2Kontak">-</td>
       </tr>
       <tr>
-        <td>6. Kategori Masalah</td>
-        <td>:</td>
-        <td id="printJenisPencemaran">-</td>
-      </tr>
-      <tr>
-        <td>7. Kronologi / Uraian Aduan</td>
-        <td>:</td>
-        <td id="printUraian">-</td>
-      </tr>
-      <tr>
-        <td>8. Hasil Pemeriksaan Lapangan</td>
-        <td>:</td>
-        <td id="printHasilVerif" style="font-weight: bold;">-</td>
-      </tr>
-      <tr>
-        <td>9. Tindakan DLH yang Diambil</td>
-        <td>:</td>
-        <td id="printTindakan">-</td>
-      </tr>
-      <tr>
-        <td>10. Status Akhir</td>
-        <td>:</td>
-        <td id="printStatusAkhir" style="font-weight: bold; text-transform: uppercase;">-</td>
+        <td colspan="3" style="padding-top: 3px; padding-bottom: 6px; font-style: italic;">
+          Sebagai pihak yang menyampaikan pengaduan / saksi lapangan, selanjutnya disebut <strong style="font-style: normal;">PIHAK KEDUA</strong>.
+        </td>
       </tr>
     </table>
 
-    <p style="font-size: 11pt; text-align: justify; margin-top: 16px;">
-      Demikian Berita Acara Pemeriksaan dan Tindak Lanjut ini dibuat dengan sebenar-benarnya untuk dipergunakan sebagai bahan tindak lanjut administratif dan penanganan lingkungan hidup di Kabupaten Lembata.
+    <!-- NARASI TANGGAL TERTULIS SESUAI FOTO -->
+    <p class="print-paragraph" style="text-align: justify;" id="printNarasiWaktu">
+      Pada hari ini, <strong id="printHariTeks">Kamis</strong> Tanggal <strong id="printTanggalTeks">Delapan</strong> Bulan <strong id="printBulanTeks">Oktober</strong> Tahun <strong id="printTahunTeks">Dua Ribu Dua Puluh Enam</strong>, bertempat di <span id="printTempatKejadian">Kabupaten Lembata</span>, PIHAK PERTAMA bersama PIHAK KEDUA telah melaksanakan pemeriksaan lapangan dan verifikasi pengaduan lingkungan hidup dengan rincian sebagai berikut:
     </p>
 
-    <div class="print-signature-box">
-      <div class="print-sign-col">
-        Mengetahui,<br>
-        <strong>Kepala Bidang Penataan LH</strong>
-        <div class="print-sign-space"></div>
-        <strong><u>Ir. Damianus T.</u></strong><br>
-        NIP. 19780415 200501 1 008
+    <!-- RINCIAN TABEL ADUAN (8 POIN LENGKAP) -->
+    <table class="print-table" id="printTableAduan">
+      <tr>
+        <td>1. Nomor Registrasi</td>
+        <td>:</td>
+        <td id="printTableId" style="font-weight: bold;">-</td>
+      </tr>
+      <tr>
+        <td>2. Tanggal Aduan Masuk</td>
+        <td>:</td>
+        <td id="printTableWaktu">-</td>
+      </tr>
+      <tr>
+        <td>3. Lokasi &amp; Koordinat</td>
+        <td>:</td>
+        <td id="printTableLokasi">-</td>
+      </tr>
+      <tr>
+        <td>4. Jenis Pencemaran</td>
+        <td>:</td>
+        <td id="printTableKategori">-</td>
+      </tr>
+      <tr>
+        <td>5. Uraian Pokok Aduan</td>
+        <td>:</td>
+        <td id="printTableUraian">-</td>
+      </tr>
+      <tr>
+        <td>6. Fakta Hasil Verifikasi</td>
+        <td>:</td>
+        <td id="printTableHasil" style="font-weight: bold;">-</td>
+      </tr>
+      <tr>
+        <td>7. Tindakan Teknis DLH</td>
+        <td>:</td>
+        <td id="printTableTindakan">-</td>
+      </tr>
+      <tr>
+        <td>8. Status Akhir</td>
+        <td>:</td>
+        <td id="printTableStatus" style="font-weight: bold; text-transform: uppercase;">-</td>
+      </tr>
+    </table>
+
+    <!-- RINCIAN TABEL SERAH TERIMA BIBIT MALAPARI (JIKA MODE SERAH TERIMA DIAKTIFKAN) -->
+    <table class="print-table" id="printTableMalapari" style="display: none;">
+      <tr>
+        <td>1. Jenis Barang</td>
+        <td>:</td>
+        <td id="printMlpJenis">Anakan Malapari (Pongamia pinnata)</td>
+      </tr>
+      <tr>
+        <td>2. Jumlah</td>
+        <td>:</td>
+        <td id="printMlpJumlah" style="font-weight: bold;">311 anakan</td>
+      </tr>
+      <tr>
+        <td>3. Kondisi</td>
+        <td>:</td>
+        <td id="printMlpKondisi">Baik dan siap tanam</td>
+      </tr>
+    </table>
+
+    <p class="print-paragraph" style="text-align: justify; margin-top: 8px;" id="printPernyataanTutup">
+      PIHAK KEDUA telah menerima dan menyaksikan pelaksanaan verifikasi ini dalam kondisi baik dan menyetujui langkah-langkah yang diambil oleh Dinas Lingkungan Hidup Kabupaten Lembata.
+    </p>
+
+    <p class="print-paragraph" style="text-align: justify;">
+      Demikian Berita Acara ini dibuat dan ditandatangani oleh kedua belah pihak untuk dipergunakan sebagaimana mestinya.
+    </p>
+
+    <!-- BLOK TANDA TANGAN (KIRI: PIHAK PERTAMA, KANAN: PIHAK KEDUA, BAWAH: KEPALA DINAS) -->
+    <div class="print-signature-section">
+      <div class="print-sign-row">
+        <div class="print-sign-col">
+          <strong>PIHAK PERTAMA</strong>
+          <div class="print-sign-space"></div>
+          <strong id="printSignPihak1"><u>Christianus Rimbaraya, SE,MM</u></strong>
+        </div>
+
+        <div class="print-sign-col">
+          <strong>PIHAK KEDUA</strong>
+          <div class="print-sign-space"></div>
+          <strong id="printSignPihak2"><u>Stanislaus Palea</u></strong>
+        </div>
       </div>
 
-      <div class="print-sign-col">
-        Lewoleba, <span id="printSignDate">08 Oktober 2026</span><br>
-        <strong>Petugas Verifikator Lapangan</strong>
+      <div class="print-sign-acknowledge" id="printSignMengetahui">
+        Mengetahui,<br>
+        <strong>Kepala Dinas Lingkungan Hidup Kabupaten Lembata</strong>
         <div class="print-sign-space"></div>
-        <strong id="printSignOfficer"><u>....................................................</u><br>NIP. ....................................................</strong>
+        <strong><u>Christianus Rimbaraya, SE,MM</u></strong><br>
+        <span style="font-size: 10pt;">Pembina Tingkat I</span><br>
+        <span style="font-size: 9.5pt;">NIP. 19681125 199803 1 005</span>
       </div>
     </div>
   </div>
@@ -3022,8 +3219,11 @@
                 <button type="button" class="btn-action-primary" onclick="window.bukaModalTindakLanjut('${item.id}')" title="Buka form update status dan investigasi">
                   ⚡ Tindak Lanjuti / Berita Acara
                 </button>
-                <button type="button" class="btn-action-secondary" onclick="window.cetakBeritaAcaraById('${item.id}')" title="Cetak lembar Berita Acara Resmi DLH">
+                <button type="button" class="btn-action-secondary" onclick="window.cetakBeritaAcaraById('${item.id}', 'aduan')" title="Cetak Lembar Berita Acara Verifikasi Pengaduan DLH">
                   📄 Cetak BA
+                </button>
+                <button type="button" class="btn-action-secondary" onclick="window.cetakBeritaAcaraById('${item.id}', 'malapari')" title="Cetak Lembar Berita Acara Serah Terima Bibit Malapari / Penghijauan" style="color: #065f46; background: #ecfdf5; border-color: #a7f3d0;">
+                  🌱 BA Bibit
                 </button>
               </div>
 
@@ -3101,30 +3301,129 @@
       document.getElementById('modalTindakLanjut').classList.add('active');
     };
 
-    window.cetakBeritaAcaraById = function(id) {
+    // Helper Konversi Angka ke Kata Bahasa Indonesia untuk Lembar Berita Acara Formal
+    function konversiAngkaTeks(n) {
+      const satuan = ['', 'Satu', 'Dua', 'Tiga', 'Empat', 'Lima', 'Enam', 'Tujuh', 'Delapan', 'Sembilan', 'Sepuluh', 'Sebelas'];
+      n = parseInt(n, 10);
+      if (isNaN(n) || n === 0) return 'Nol';
+      if (n < 12) return satuan[n];
+      if (n < 20) return konversiAngkaTeks(n - 10) + ' Belas';
+      if (n < 100) return konversiAngkaTeks(Math.floor(n / 10)) + ' Puluh' + (n % 10 !== 0 ? ' ' + konversiAngkaTeks(n % 10) : '');
+      if (n < 200) return 'Seratus' + (n % 100 !== 0 ? ' ' + konversiAngkaTeks(n % 100) : '');
+      if (n < 1000) return konversiAngkaTeks(Math.floor(n / 100)) + ' Ratus' + (n % 100 !== 0 ? ' ' + konversiAngkaTeks(n % 100) : '');
+      if (n < 2000) return 'Seribu' + (n % 1000 !== 0 ? ' ' + konversiAngkaTeks(n % 1000) : '');
+      if (n < 1000000) return konversiAngkaTeks(Math.floor(n / 1000)) + ' Ribu' + (n % 1000 !== 0 ? ' ' + konversiAngkaTeks(n % 1000) : '');
+      return n.toString();
+    }
+
+    window.cetakBeritaAcaraById = function(id, mode = 'aduan') {
       const list = getAduanList();
       const item = list.find(x => x.id === id);
-      if (!item) return;
+      if (!item) {
+        alert('Data aduan tidak ditemukan.');
+        return;
+      }
 
-      document.getElementById('printRegNumber').textContent = item.id;
-      document.getElementById('printNamaPelapor').textContent = item.namaPelapor;
-      document.getElementById('printNoHp').textContent = item.noHp || '-';
-      document.getElementById('printWaktuMasuk').textContent = formatHumanDate(item.timestamp);
-      document.getElementById('printLokasi').textContent = `${item.lokasiDetail || '-'}, Desa ${item.desa}, Kecamatan ${item.kecamatan}`;
-      document.getElementById('printKoordinat').textContent = item.lat && item.lng ? `Latitude: ${item.lat}, Longitude: ${item.lng}` : 'Tidak terdeteksi';
-      document.getElementById('printJenisPencemaran').textContent = item.jenisPencemaran;
-      document.getElementById('printUraian').textContent = item.uraian;
-      document.getElementById('printHasilVerif').textContent = item.hasilVerifikasi || 'Telah dilakukan peninjauan fisik di lokasi.';
-      document.getElementById('printTindakan').textContent = item.tindakanDLH || 'Penanganan dan koordinasi teknis bersama pihak terkait.';
-      document.getElementById('printStatusAkhir').textContent = item.status;
+      const now = new Date();
+      const days = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+      const months = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+      const romanMonths = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
 
-      const dateStr = new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
-      document.getElementById('printTanggalSekarang').textContent = dateStr;
-      document.getElementById('printSignDate').textContent = dateStr;
-      const signer = (item.petugasVerifikasi && item.petugasVerifikasi !== '-') ? item.petugasVerifikasi : getActiveOfficer();
-      document.getElementById('printSignOfficer').innerHTML = signer && signer.trim() ? `<u>${signer}</u>` : `<u>....................................................</u><br>NIP. ....................................................`;
+      const dayName = days[now.getDay()];
+      const monthName = months[now.getMonth()];
+      const romanMonth = romanMonths[now.getMonth()];
+      const dayTeks = konversiAngkaTeks(now.getDate());
+      const yearTeks = konversiAngkaTeks(now.getFullYear());
 
-      window.print();
+      // Set Common Date Teks
+      document.getElementById('printHariTeks').textContent = dayName;
+      document.getElementById('printTanggalTeks').textContent = dayTeks;
+      document.getElementById('printBulanTeks').textContent = monthName;
+      document.getElementById('printTahunTeks').textContent = yearTeks;
+      document.getElementById('printBulanRomawi').textContent = romanMonth;
+      document.getElementById('printTahunBA').textContent = now.getFullYear();
+
+      const officer = (item.petugasVerifikasi && item.petugasVerifikasi !== '-') ? item.petugasVerifikasi : (getActiveOfficer() || 'Petugas Pengawas LH');
+
+      if (mode === 'malapari') {
+        // MODE: FORMAT RESMI SERAH TERIMA BIBIT MALAPARI PERSIS SEPERTI FOTO
+        document.getElementById('printJudulBA').textContent = 'BERITA ACARA';
+        document.getElementById('printSubJudulBA').textContent = 'SERAH TERIMA ANAKAN MALAPARI';
+        document.getElementById('printNomorSurat').innerHTML = `Nomor : 660 / BAST-MLP / DLH-LMB / ${romanMonth} / ${now.getFullYear()}`;
+
+        // Pihak Pertama: Kepala Dinas
+        document.getElementById('printPihak1Nama').textContent = 'Christianus Rimbaraya, SE,MM';
+        document.getElementById('printPihak1Jabatan').textContent = 'Kepala Dinas Lingkungan Hidup Kabupaten Lembata';
+
+        // Pihak Kedua: Kepala Desa / Penerima
+        const namaPenerima = item.namaPelapor || 'Stanislaus Palea';
+        const desaPenerima = item.desa || 'Lerek';
+        document.getElementById('printPihak2Nama').textContent = namaPenerima;
+        document.getElementById('printPihak2Jabatan').textContent = `Kepala Desa ${desaPenerima}`;
+        document.getElementById('rowPihak2Kontak').style.display = 'none';
+
+        // Narasi Waktu & Objek
+        document.getElementById('printNarasiWaktu').innerHTML = `Pada hari ini, <strong>${dayName}</strong> Tanggal <strong>${dayTeks}</strong> Bulan <strong>${monthName}</strong> Tahun <strong>${yearTeks}</strong>, bertempat di <strong>Desa ${desaPenerima}</strong>, PIHAK PERTAMA menyerahkan kepada PIHAK KEDUA barang berupa anakan tanaman malapari untuk kegiatan penghijauan dan rehabilitasi lingkungan di Desa ${desaPenerima}.<br>Adapun rincian barang yang diserahkan adalah sebagai berikut:`;
+
+        // Switch Table
+        document.getElementById('printTableAduan').style.display = 'none';
+        document.getElementById('printTableMalapari').style.display = 'table';
+
+        // Pernyataan Penutup
+        document.getElementById('printPernyataanTutup').textContent = 'PIHAK KEDUA telah menerima barang tersebut dalam kondisi baik dan lengkap sesuai jumlah yang ditetapkan.';
+
+        // Tanda Tangan: Pihak Pertama & Kedua (Tanpa Mengetahui Karena Sudah Ditandatangani Langsung Kepala Dinas)
+        document.getElementById('printSignPihak1').innerHTML = `<u>Christianus Rimbaraya, SE,MM</u><br><span style="font-size: 9pt; font-weight: normal;">Kepala Dinas Lingkungan Hidup</span>`;
+        document.getElementById('printSignPihak2').innerHTML = `<u>${namaPenerima}</u><br><span style="font-size: 9pt; font-weight: normal;">Kepala Desa ${desaPenerima}</span>`;
+        document.getElementById('printSignMengetahui').style.display = 'none';
+
+      } else {
+        // MODE: FORMAT RESMI BERITA ACARA VERIFIKASI & PENANGANAN PENGADUAN LINGKUNGAN
+        document.getElementById('printJudulBA').textContent = 'BERITA ACARA';
+        document.getElementById('printSubJudulBA').textContent = 'VERIFIKASI & PENANGANAN PENGADUAN LINGKUNGAN HIDUP';
+        document.getElementById('printNomorSurat').innerHTML = `Nomor : 660 / <span id="printNoRegistrasi">${item.id}</span> / DLH-LMB / ${romanMonth} / ${now.getFullYear()}`;
+
+        // Pihak Pertama: Petugas Lapangan DLH
+        document.getElementById('printPihak1Nama').textContent = officer;
+        document.getElementById('printPihak1Jabatan').textContent = 'Petugas Pengawas & Verifikator DLH Kabupaten Lembata';
+
+        // Pihak Kedua: Pelapor / Warga
+        document.getElementById('printPihak2Nama').textContent = item.namaPelapor || 'Masyarakat (Anonim)';
+        document.getElementById('printPihak2Jabatan').textContent = 'Pelapor / Perwakilan Warga Masyarakat';
+        document.getElementById('printPihak2Kontak').textContent = `${item.noHp || '-'} (Alamat: Desa ${item.desa}, Kec. ${item.kecamatan})`;
+        document.getElementById('rowPihak2Kontak').style.display = 'table-row';
+
+        // Narasi Waktu & Lokasi
+        const locDesc = `${item.lokasiDetail ? item.lokasiDetail + ', ' : ''}Desa ${item.desa}, Kecamatan ${item.kecamatan}`;
+        document.getElementById('printNarasiWaktu').innerHTML = `Pada hari ini, <strong>${dayName}</strong> Tanggal <strong>${dayTeks}</strong> Bulan <strong>${monthName}</strong> Tahun <strong>${yearTeks}</strong>, bertempat di <strong>${locDesc}</strong>, PIHAK PERTAMA bersama PIHAK KEDUA telah melaksanakan pemeriksaan lapangan dan verifikasi pengaduan lingkungan hidup dengan rincian sebagai berikut:`;
+
+        // Switch Table
+        document.getElementById('printTableAduan').style.display = 'table';
+        document.getElementById('printTableMalapari').style.display = 'none';
+
+        // Rincian 8 Poin
+        document.getElementById('printTableId').textContent = item.id;
+        document.getElementById('printTableWaktu').textContent = formatHumanDate(item.timestamp);
+        document.getElementById('printTableLokasi').textContent = `${locDesc}` + (item.lat && item.lng ? ` [GPS: ${item.lat}, ${item.lng}]` : '');
+        document.getElementById('printTableKategori').textContent = item.jenisPencemaran;
+        document.getElementById('printTableUraian').textContent = item.uraian;
+        document.getElementById('printTableHasil').textContent = item.hasilVerifikasi || 'Telah dilakukan verifikasi faktual dan investigasi langsung di lokasi kejadian.';
+        document.getElementById('printTableTindakan').textContent = item.tindakanDLH || 'Telah dilakukan koordinasi teknis serta langkah mitigasi penanganan pencemaran DLH.';
+        document.getElementById('printTableStatus').textContent = item.status;
+
+        // Pernyataan Penutup
+        document.getElementById('printPernyataanTutup').textContent = 'PIHAK KEDUA telah menyaksikan pemeriksaan lapangan dan menyepakati langkah penanganan yang diambil oleh Dinas Lingkungan Hidup Kabupaten Lembata.';
+
+        // Tanda Tangan: Pihak Pertama, Pihak Kedua, & Mengetahui Kepala Dinas
+        document.getElementById('printSignPihak1').innerHTML = `<u>${officer}</u><br><span style="font-size: 9pt; font-weight: normal;">Petugas Verifikator DLH</span>`;
+        document.getElementById('printSignPihak2').innerHTML = `<u>${item.namaPelapor || 'Masyarakat'}</u><br><span style="font-size: 9pt; font-weight: normal;">Pelapor / Saksi Lapangan</span>`;
+        document.getElementById('printSignMengetahui').style.display = 'block';
+      }
+
+      // Trigger Dialog Cetak / Simpan PDF
+      setTimeout(() => {
+        window.print();
+      }, 100);
     };
 
     // Helper: Reset Semua Filter
@@ -3217,8 +3516,16 @@
 
     document.getElementById('btnPrintSingleCase').addEventListener('click', () => {
       const id = document.getElementById('editAduanId').value;
-      window.cetakBeritaAcaraById(id);
+      window.cetakBeritaAcaraById(id, 'aduan');
     });
+
+    const btnPrintMlp = document.getElementById('btnPrintMalapariCase');
+    if (btnPrintMlp) {
+      btnPrintMlp.addEventListener('click', () => {
+        const id = document.getElementById('editAduanId').value;
+        window.cetakBeritaAcaraById(id, 'malapari');
+      });
+    }
 
     // Officer Switch Modal Handlers
     document.getElementById('btnOpenSwitchModal').addEventListener('click', () => {
