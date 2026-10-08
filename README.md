@@ -67,6 +67,7 @@ d:\app/
 ├── petugas.html                         # Portal khusus petugas & verifikator DLH
 ├── qr-code.html                         # Poster & generator QR Code publik
 ├── vercel.json                          # Konfigurasi deployment & security headers Vercel
+├── check-vercel.ps1                     # Script diagnostik & status health-check deployment Vercel
 ├── netlify.toml                         # Konfigurasi deployment Netlify (opsional)
 ├── perencanaan.md                       # Dokumen rencana aktualisasi lengkap
 ├── README.md                            # Petunjuk penggunaan aplikasi

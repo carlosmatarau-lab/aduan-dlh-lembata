@@ -232,7 +232,7 @@ class LembataMapEngine {
             <div class="tt-title">${catIcon} ${item.jenisPencemaran}</div>
             <div class="tt-loc">📍 Desa ${item.desa}, Kec. ${item.kecamatan}</div>
             <div class="tt-desc">${(item.uraian || '').substring(0, 80)}${item.uraian && item.uraian.length > 80 ? '...' : ''}</div>
-            <div class="tt-hint">👆 Klik pin untuk melihat detail & lacak</div>
+            <div class="tt-hint">👆 Klik pin untuk melihat detail aduan</div>
           </div>
         `, {
           direction: 'top',
@@ -274,11 +274,8 @@ class LembataMapEngine {
             ` : ''}
 
             <div class="popup-actions">
-              <button class="btn btn-sm btn-primary" onclick="window.app.quickTrack('${item.id}')" style="flex: 1;">
-                🔍 Lacak Tiket
-              </button>
-              <button class="btn btn-sm btn-outline" onclick="window.app.showDetailModal('${item.id}')">
-                📄 Detail
+              <button class="btn btn-sm btn-primary" onclick="window.app.showDetailModal('${item.id}')" style="flex: 1;">
+                📄 Lihat Detail Aduan &amp; Foto
               </button>
             </div>
           </div>
@@ -398,8 +395,8 @@ class LembataMapEngine {
             <button type="button" class="btn btn-outline btn-sm" onclick="window.lembataMap.highlightAduan('${item.id}')" style="flex: 1;" title="Pusatkan peta ke titik ini">
               🎯 Sorot di Peta
             </button>
-            <button type="button" class="btn btn-primary btn-sm" onclick="window.app.quickTrack('${item.id}')" title="Lacak progres tiket ini">
-              🔍 Lacak
+            <button type="button" class="btn btn-primary btn-sm" onclick="window.app.showDetailModal('${item.id}')" title="Lihat rincian aduan ini">
+              📄 Detail
             </button>
           </div>
         </div>

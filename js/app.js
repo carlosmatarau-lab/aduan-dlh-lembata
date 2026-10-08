@@ -13,8 +13,6 @@ class DLHApp {
       kecamatan: 'all',
       status: 'all'
     };
-    this.trackingPollTimer = null;
-    this.currentTrackedId = null;
   }
 
   init() {
@@ -24,7 +22,6 @@ class DLHApp {
     this.setupFormSubmissions();
     this.setupGPSDetection();
     this.setupUploadPreview();
-    this.setupTrackingSearch();
     this.setupTableAndFilters();
     this.setupModals();
     this.setupCloudSync();
@@ -64,16 +61,6 @@ class DLHApp {
 
   switchTab(tabName) {
     this.currentTab = tabName;
-
-    // Kelola live polling pelacakan tiket status lintas perangkat
-    if (tabName !== 'lacak') {
-      this.stopTrackingLivePoll();
-    } else {
-      const inputSearch = document.getElementById('inputTrackId');
-      if (inputSearch && inputSearch.value.trim()) {
-        this.renderTrackResult(inputSearch.value.trim().toUpperCase(), false);
-      }
-    }
 
     // Update active nav buttons
     document.querySelectorAll('.nav-tab-btn').forEach(btn => {
@@ -467,7 +454,7 @@ class DLHApp {
           `📍 *Lokasi:* ${newRecord.desa}, Kec. ${newRecord.kecamatan}\n` +
           `⚠️ *Masalah:* ${newRecord.jenisPencemaran}\n` +
           `📝 *Uraian:* ${newRecord.uraian}\n\n` +
-          `Mohon bantuannya untuk dapat ditindaklanjuti. Terima kasih!`
+          `Mohon bantuannya untuk dapat ditinjau oleh DLH. Terima kasih!`
         );
         btnWa.href = `https://wa.me/6282234582769?text=${waText}`;
       }
@@ -479,432 +466,10 @@ class DLHApp {
 
       if (modalSuccess) modalSuccess.classList.add('show');
     });
-
-    // Form Update Verifikasi Petugas
-    const formVerif = document.getElementById('formVerifikasiDLH');
-    if (formVerif) {
-      formVerif.addEventListener('submit', (e) => {
-        e.preventDefault();
-
-        const id = document.getElementById('verifIdAduan').value;
-        const updateData = {
-          status: document.getElementById('verifStatus').value,
-          petugasVerifikasi: document.getElementById('verifPetugas').value || 'Petugas DLH Lembata',
-          tanggalVerifikasi: document.getElementById('verifTanggal').value || new Date().toISOString().split('T')[0],
-          hasilVerifikasi: document.getElementById('verifHasil').value || 'Telah diverifikasi tim di lapangan.',
-          tindakanDLH: document.getElementById('verifTindakan').value || 'Dalam penanganan DLH Kabupaten Lembata.'
-        };
-
-        window.aduanStore.updateVerifikasi(id, updateData);
-
-        document.getElementById('modalVerifikasi').classList.remove('show');
-        this.updateKPIs();
-        this.renderTable();
-        if (window.lembataMap) window.lembataMap.renderMarkers();
-
-        this.showToast(`Verifikasi untuk ${id} berhasil disimpan ke sistem!`, 'success');
-      });
-    }
   }
 
   /* ===================================================================
-     5. TRACKING SEARCH
-     =================================================================== */
-  setupTrackingSearch() {
-    const btnSearch = document.getElementById('btnTrackSearch');
-    const inputSearch = document.getElementById('inputTrackId');
-    if (!btnSearch || !inputSearch) return;
-
-    btnSearch.addEventListener('click', () => {
-      const query = inputSearch.value.trim().toUpperCase();
-      this.renderTrackResult(query, false);
-    });
-
-    inputSearch.addEventListener('keypress', (e) => {
-      if (e.key === 'Enter') {
-        const query = inputSearch.value.trim().toUpperCase();
-        this.renderTrackResult(query, false);
-      }
-    });
-  }
-
-  renderTrackResult(query, isRealtime = false) {
-    const container = document.getElementById('trackResultContainer');
-    if (!container) return;
-
-    if (!query) {
-      this.showToast('Masukkan nomor tiket aduan Anda.', 'warning');
-      return;
-    }
-
-    this.currentTrackedId = query;
-    container.style.display = 'block';
-
-    let localItem = window.aduanStore ? window.aduanStore.getById(query) : null;
-
-    if (localItem) {
-      // Segera tampilkan data lokal terlebih dahulu untuk kecepatan akses
-      this.renderTrackDOM(localItem, isRealtime, true);
-    } else {
-      // Tampilkan animasi loading saat pertama kali mencari ke server cloud
-      container.innerHTML = `
-        <div style="background: #ffffff; border: 1.5px solid #a7f3d0; border-radius: 16px; padding: 36px 20px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
-          <div style="font-size: 38px; display: inline-block; animation: spin 1.2s linear infinite; margin-bottom: 12px;">🔄</div>
-          <h4 style="color: #065f46; font-weight: 800; font-size: 1.15rem; margin-bottom: 6px;">Menghubungkan ke Server Cloud DLH...</h4>
-          <p style="color: #64748b; font-size: 0.86rem; max-width: 440px; margin: 0 auto;">
-            Sedang mengambil status terkini dan rekam tindak lanjut resmi untuk tiket <strong>${query}</strong>
-          </p>
-        </div>
-      `;
-    }
-
-    // Ambil data resmi terkini langsung dari Cloud API Google Apps Script
-    const gasUrl = (window.aduanStore && window.aduanStore.getGasUrl) ? window.aduanStore.getGasUrl() : (typeof DEFAULT_GAS_API_URL !== 'undefined' ? DEFAULT_GAS_API_URL : 'https://script.google.com/macros/s/AKfycbxm4r8QU2dv0S6csTTpmewuuvMNNrqiD2NeF_ENzXi8z7E3qDALHz6HNiBWtiEpGMruIQ/exec');
-    if (gasUrl && gasUrl.startsWith('http')) {
-      fetch(`${gasUrl}${gasUrl.includes('?') ? '&' : '?'}action=getById&id=${encodeURIComponent(query)}&_t=${Date.now()}`)
-        .then(res => res.json())
-        .then(res => {
-          if (this.currentTrackedId !== query) return;
-
-          if (res && res.success && res.data) {
-            const merged = window.aduanStore.mergeRemoteRecord(res.data);
-            this.renderTrackDOM(merged, isRealtime, false);
-            this.updateKPIs();
-            this.renderTable();
-            if (window.lembataMap) window.lembataMap.renderMarkers();
-          } else if (!localItem) {
-            container.innerHTML = `
-              <div style="background: #fff1f2; border: 1.5px solid #fecdd3; border-radius: 14px; padding: 26px 20px; text-align: center;">
-                <div style="font-size: 34px; margin-bottom: 8px;">❌</div>
-                <strong style="color: #be123c; font-size: 1.05rem;">Nomor Tiket "${query}" Tidak Ditemukan di Server DLH</strong>
-                <p style="font-size: 0.85rem; color: #9f1239; margin-top: 6px;">
-                  Pastikan kode tiket yang Anda masukkan sesuai (Contoh format: <code>ADU-LMB-2026-001</code>).
-                </p>
-              </div>
-            `;
-          } else {
-            this.renderTrackDOM(localItem, false, false);
-          }
-        })
-        .catch(err => {
-          console.warn('Gagal fetch remote tiket dari GAS:', err);
-          if (this.currentTrackedId !== query) return;
-          if (localItem) {
-            this.renderTrackDOM(localItem, false, false);
-          } else {
-            container.innerHTML = `
-              <div style="background: #fff1f2; border: 1.5px solid #fecdd3; border-radius: 14px; padding: 26px 20px; text-align: center;">
-                <div style="font-size: 34px; margin-bottom: 8px;">⚠️</div>
-                <strong style="color: #be123c; font-size: 1.05rem;">Koneksi ke Server Cloud Terkendala</strong>
-                <p style="font-size: 0.85rem; color: #9f1239; margin-top: 6px;">
-                  Tidak dapat terhubung ke database cloud DLH. Periksa koneksi internet HP Anda lalu tekan tombol Cari Tiket kembali.
-                </p>
-              </div>
-            `;
-          }
-        });
-    }
-
-    // Jalankan auto-polling real-time setiap 4 detik untuk perangkat HP / Warga
-    this.startTrackingLivePoll(query);
-  }
-
-  startTrackingLivePoll(query) {
-    this.stopTrackingLivePoll();
-    this.currentTrackedId = query;
-
-    this.trackingPollTimer = setInterval(async () => {
-      if (this.currentTab !== 'lacak' || this.currentTrackedId !== query) {
-        this.stopTrackingLivePoll();
-        return;
-      }
-
-      const gasUrl = (window.aduanStore && window.aduanStore.getGasUrl) ? window.aduanStore.getGasUrl() : (typeof DEFAULT_GAS_API_URL !== 'undefined' ? DEFAULT_GAS_API_URL : 'https://script.google.com/macros/s/AKfycbxm4r8QU2dv0S6csTTpmewuuvMNNrqiD2NeF_ENzXi8z7E3qDALHz6HNiBWtiEpGMruIQ/exec');
-      if (!gasUrl || !gasUrl.startsWith('http')) return;
-
-      try {
-        const res = await fetch(`${gasUrl}${gasUrl.includes('?') ? '&' : '?'}action=getById&id=${encodeURIComponent(query)}&_t=${Date.now()}`);
-        const json = await res.json();
-
-        if (json && json.success && json.data) {
-          const currentLocal = window.aduanStore.getById(query);
-          const remoteData = json.data;
-
-          // Bandingkan apakah ada pembaruan status, petugas, atau tindakan lapangan
-          const hasChanged = !currentLocal ||
-            currentLocal.status !== remoteData.status ||
-            currentLocal.tindakanDLH !== remoteData.tindakanDLH ||
-            currentLocal.hasilVerifikasi !== remoteData.hasilVerifikasi ||
-            currentLocal.petugasVerifikasi !== remoteData.petugasVerifikasi ||
-            currentLocal.tanggalVerifikasi !== remoteData.tanggalVerifikasi ||
-            currentLocal.tanggalSelesai !== remoteData.tanggalSelesai;
-
-          if (hasChanged) {
-            const merged = window.aduanStore.mergeRemoteRecord(remoteData);
-            this.renderTrackDOM(merged, true, false);
-            this.showToast(`⚡ Pembaruan Real-Time: Tindak lanjut aduan ${query} baru saja diperbarui oleh petugas DLH! Status: ${remoteData.status}`, 'success');
-            this.updateKPIs();
-            this.renderTable();
-            if (window.lembataMap) window.lembataMap.renderMarkers();
-          } else {
-            const syncPill = document.getElementById('cloudSyncStatusPill');
-            if (syncPill) {
-              syncPill.innerHTML = `
-                <span style="width: 7px; height: 7px; background: #16a34a; border-radius: 50%; display: inline-block; box-shadow: 0 0 0 2px rgba(22,163,74,0.3);"></span>
-                <span>🟢 Terhubung Real-Time Server DLH &bull; Terakhir diperbarui ${new Date().toLocaleTimeString('id-ID')} WITA</span>
-              `;
-            }
-          }
-        }
-      } catch (e) {
-        // Abaikan kesalahan sementara jaringan saat background poll
-      }
-    }, 4000);
-  }
-
-  stopTrackingLivePoll() {
-    if (this.trackingPollTimer) {
-      clearInterval(this.trackingPollTimer);
-      this.trackingPollTimer = null;
-    }
-  }
-
-  renderTrackDOM(item, isRealtime = false, isSyncingCloud = false) {
-    const container = document.getElementById('trackResultContainer');
-    if (!container || !item) return;
-
-    if (isRealtime) {
-      this.showToast(`⚡ Pembaruan Real-Time: Tindak lanjut aduan ${item.id} baru saja diperbarui oleh petugas! Status: ${item.status}`, 'success');
-    }
-
-    const isSelesai = item.status === 'Selesai';
-    const isDitolak = item.status === 'Ditolak';
-    const isDitindaklanjuti = item.status === 'Ditindaklanjuti' || item.status === 'Dalam Penanganan' || isSelesai;
-    const isSedangDiverif = item.status === 'Sedang Diverifikasi' || isDitindaklanjuti;
-    const isMenungguVerif = item.status === 'Menunggu Verifikasi Lapangan' || isSedangDiverif;
-    const isVerifAdmin = item.status === 'Verifikasi Administrasi' || isMenungguVerif;
-
-    const formatWaktu = (str) => {
-      if (!str || str === '-') return '-';
-      if (str.includes('GMT') || str.length > 25) {
-        const d = new Date(str);
-        if (!isNaN(d.getTime())) {
-          return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
-        }
-      }
-      return str;
-    };
-
-    // Kumpulkan foto bukti dukung warga
-    const photoList = [];
-    if (Array.isArray(item.buktiFotoList)) {
-      item.buktiFotoList.forEach(p => { if (p && typeof p === 'string' && !photoList.includes(p)) photoList.push(p); });
-    }
-    if (item.fotoBukti && typeof item.fotoBukti === 'string' && !photoList.includes(item.fotoBukti)) {
-      photoList.unshift(item.fotoBukti);
-    }
-    if (item.linkFotoBukti && typeof item.linkFotoBukti === 'string' && !photoList.includes(item.linkFotoBukti)) {
-      photoList.push(item.linkFotoBukti);
-    }
-
-    container.innerHTML = `
-      <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 16px; padding: 22px; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
-        
-        ${isRealtime ? `
-          <div style="background: linear-gradient(135deg, #ecfdf5, #d1fae5); border: 1.5px solid #10b981; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; font-size: 0.8rem; color: #064e3b;">
-            <span style="display: flex; align-items: center; gap: 8px; font-weight: 800;">
-              <span style="display: inline-block; width: 8px; height: 8px; background: #10b981; border-radius: 50%; box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.4);"></span>
-              ⚡ Tindak Lanjut Baru Saja Diperbarui oleh Petugas DLH!
-            </span>
-            <span style="font-size: 0.73rem; color: #047857; font-weight: 700;">Update: ${new Date().toLocaleTimeString('id-ID')} WITA</span>
-          </div>
-        ` : `
-          <div id="cloudSyncStatusPill" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.74rem; color: #047857; background: #f0fdf4; padding: 3px 12px; border-radius: 999px; border: 1px solid #bbf7d0; margin-bottom: 12px;">
-            ${isSyncingCloud ? `
-              <span style="width: 7px; height: 7px; background: #f59e0b; border-radius: 50%; display: inline-block; animation: pulse 1s infinite;"></span>
-              <span>🔄 Menghubungkan ke Server Cloud DLH...</span>
-            ` : `
-              <span style="width: 7px; height: 7px; background: #16a34a; border-radius: 50%; display: inline-block;"></span>
-              <span>🟢 Terhubung Real-Time Server DLH &bull; Terakhir diperbarui ${new Date().toLocaleTimeString('id-ID')} WITA</span>
-            `}
-          </div>
-        `}
-
-        <div style="display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 16px; border-bottom: 1px solid #e2e8f0; padding-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-          <div>
-            <div style="font-size: 0.74rem; color: #64748b; font-weight: 700;">STATUS TERKINI TIKET ADUAN</div>
-            <h3 style="font-size: 1.35rem; font-weight: 900; color: #065f46;">${item.id}</h3>
-          </div>
-          <span class="badge ${this.getStatusBadgeClass(item.status)}" style="font-size: 0.85rem; padding: 6px 14px; font-weight: 800;">
-            ${item.status}
-          </span>
-        </div>
-
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px; margin-bottom: 16px; font-size: 0.84rem;">
-          <div style="background: #f8fafc; padding: 10px 14px; border-radius: 8px;">
-            <span style="color: #64748b; display: block; font-size: 0.74rem;">Nama Pelapor:</span>
-            <strong>${item.namaPelapor}</strong>
-          </div>
-          <div style="background: #f8fafc; padding: 10px 14px; border-radius: 8px;">
-            <span style="color: #64748b; display: block; font-size: 0.74rem;">Wilayah:</span>
-            <strong>${item.desa}, Kec. ${item.kecamatan}</strong>
-          </div>
-          <div style="background: #f8fafc; padding: 10px 14px; border-radius: 8px;">
-            <span style="color: #64748b; display: block; font-size: 0.74rem;">Kategori Dugaan:</span>
-            <strong>${item.jenisPencemaran}</strong>
-          </div>
-          <div style="background: #f8fafc; padding: 10px 14px; border-radius: 8px;">
-            <span style="color: #64748b; display: block; font-size: 0.74rem;">Waktu Lapor Masuk:</span>
-            <strong>${formatWaktu(item.timestamp)}</strong>
-          </div>
-        </div>
-
-        <div style="font-size: 0.88rem; color: #334155; background: #f0fdf4; padding: 12px 14px; border-radius: 8px; margin-bottom: 16px; border-left: 4px solid #10b981;">
-          <strong>📝 Uraian Laporan Masyarakat:</strong><br>
-          "${item.uraian}"
-        </div>
-
-        ${photoList.length > 0 ? `
-          <div style="margin-bottom: 16px; background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 12px 14px;">
-            <div style="font-size: 0.78rem; font-weight: 800; color: #064e3b; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
-              <span>📸 Bukti Dukung yang Diunggah / Kamera Warga:</span>
-              <span style="font-size: 0.72rem; color: #64748b; font-weight: 600;">(${photoList.length} Foto)</span>
-            </div>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-              ${photoList.map((p, pIdx) => `
-                <a href="${p}" target="_blank" style="display: inline-block; width: 80px; height: 80px; border-radius: 6px; overflow: hidden; border: 1.5px solid #cbd5e1; box-shadow: 0 2px 4px rgba(0,0,0,0.06); transition: transform 0.2s;" title="Lihat Foto Bukti #${pIdx + 1} ↗" onmouseover="this.style.transform='scale(1.05)'" onmouseout="this.style.transform='scale(1)'">
-                  <img src="${p}" alt="Bukti Foto ${pIdx + 1}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖼️</text></svg>'">
-                </a>
-              `).join('')}
-            </div>
-          </div>
-        ` : ''}
-
-        ${item.rekamTindakanTerakhir ? `
-          <div style="background: linear-gradient(135deg, #ecfdf5 0%, #f0fdf4 100%); border: 1.5px solid #a7f3d0; border-left: 4px solid #059669; border-radius: 10px; padding: 14px 16px; margin-bottom: 18px; font-size: 0.85rem;">
-            <div style="font-weight: 800; color: #064e3b; margin-bottom: 6px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
-              <span style="display: flex; align-items: center; gap: 6px;">
-                <span>⚡</span>
-                <span>Rekam Tindakan Terakhir Petugas DLH:</span>
-              </span>
-              <span style="font-size: 0.74rem; color: #047857; font-weight: 700; background: #ffffff; padding: 2px 8px; border-radius: 999px; border: 1px solid #a7f3d0;">⏱️ ${formatWaktu(item.rekamTindakanTerakhir.waktu)}</span>
-            </div>
-            <div style="color: #065f46; margin-bottom: 4px;">
-              <strong>🚜 Tindakan Lapangan:</strong> ${item.rekamTindakanTerakhir.tindakan}
-            </div>
-            ${item.rekamTindakanTerakhir.hasil ? `
-              <div style="font-size: 0.82rem; color: #047857; margin-bottom: 4px;">
-                <strong>📋 Fakta Temuan:</strong> ${item.rekamTindakanTerakhir.hasil}
-              </div>
-            ` : ''}
-            ${item.rekamTindakanTerakhir.catatan ? `
-              <div style="font-size: 0.8rem; color: #1e3a8a; font-style: italic; margin-bottom: 4px;">
-                <strong>💡 Catatan / Rekomendasi:</strong> ${item.rekamTindakanTerakhir.catatan}
-              </div>
-            ` : ''}
-            ${item.rekamTindakanTerakhir.petugas ? `
-              <div style="font-size: 0.76rem; color: #64748b; margin-top: 6px;">
-                Petugas Verifikator: <strong>${item.rekamTindakanTerakhir.petugas}</strong>
-              </div>
-            ` : ''}
-            ${item.rekamTindakanTerakhir.foto ? `
-              <div style="margin-top: 8px;">
-                <a href="${item.rekamTindakanTerakhir.foto}" target="_blank" style="display: inline-flex; align-items: center; gap: 6px; padding: 5px 12px; background: #ffffff; border: 1px solid #a7f3d0; border-radius: 6px; color: #047857; font-size: 0.76rem; font-weight: 700; text-decoration: none;">
-                  📸 Lihat Foto Bukti Tindakan Lapangan Petugas ↗
-                </a>
-              </div>
-            ` : ''}
-          </div>
-        ` : ''}
-
-        ${Array.isArray(item.riwayatTindakan) && item.riwayatTindakan.length > 1 ? `
-          <div style="margin-bottom: 18px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px;">
-            <div style="font-size: 0.82rem; font-weight: 800; color: #334155; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
-              <span>📜 Kronologi Seluruh Rekam Tindakan (${item.riwayatTindakan.length} Aksi Lapangan):</span>
-            </div>
-            <div style="display: flex; flex-direction: column; gap: 8px;">
-              ${item.riwayatTindakan.map((log, lIdx) => `
-                <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem;">
-                  <div style="display: flex; justify-content: space-between; font-weight: 700; color: #064e3b; margin-bottom: 3px;">
-                    <span>#${lIdx + 1}. ${log.kategori || 'Tindakan Lapangan'}</span>
-                    <span style="font-size: 0.72rem; color: #64748b;">⏱️ ${formatWaktu(log.waktu)}</span>
-                  </div>
-                  <div style="color: #334155;">${log.tindakan || '-'}</div>
-                  ${log.hasil ? `<div style="font-size: 0.76rem; color: #047857; margin-top: 2px;">Temuan: ${log.hasil}</div>` : ''}
-                  ${log.petugas ? `<div style="font-size: 0.72rem; color: #64748b; margin-top: 2px;">Petugas: ${log.petugas}</div>` : ''}
-                </div>
-              `).join('')}
-            </div>
-          </div>
-        ` : ''}
-
-        <div style="font-weight: 800; font-size: 0.95rem; color: #0f172a; margin-bottom: 8px;">
-          📋 Garis Waktu Penanganan DLH Lembata:
-        </div>
-
-        <div class="timeline">
-          <div class="timeline-item completed">
-            <div class="timeline-dot"></div>
-            <div class="timeline-title">1. Aduan Diterima & Tercatat Sistem</div>
-            <div class="timeline-time">${formatWaktu(item.timestamp)}</div>
-            <div class="timeline-desc">Aduan masyarakat telah diterima dan dicatat dalam sistem pengaduan digital DLH Lembata.</div>
-          </div>
-
-          <div class="timeline-item ${isVerifAdmin ? 'completed' : ''}">
-            <div class="timeline-dot"></div>
-            <div class="timeline-title">2. Verifikasi Administrasi</div>
-            <div class="timeline-desc">Kelengkapan data aduan diperiksa dan divalidasi oleh petugas administrasi DLH.</div>
-          </div>
-
-          <div class="timeline-item ${isMenungguVerif ? 'completed' : ''}">
-            <div class="timeline-dot"></div>
-            <div class="timeline-title">3. Menunggu Verifikasi Lapangan</div>
-            <div class="timeline-desc">Aduan telah lulus verifikasi administrasi. Menunggu penjadwalan tim verifikasi ke lapangan.</div>
-          </div>
-
-          <div class="timeline-item ${isSedangDiverif ? 'completed' : ''}">
-            <div class="timeline-dot"></div>
-            <div class="timeline-title">4. Sedang Diverifikasi di Lapangan</div>
-            <div class="timeline-time">${item.tanggalVerifikasi !== '-' ? formatWaktu(item.tanggalVerifikasi) : 'Menunggu jadwal'}</div>
-            <div class="timeline-desc">
-              ${item.petugasVerifikasi !== '-' ? `Verifikator: <strong>${item.petugasVerifikasi}</strong><br>Hasil: ${item.hasilVerifikasi}` : 'Tim DLH sedang melakukan observasi dan pemeriksaan kondisi faktual di lokasi.'}
-            </div>
-          </div>
-
-          <div class="timeline-item ${isDitindaklanjuti ? 'completed' : ''}">
-            <div class="timeline-dot"></div>
-            <div class="timeline-title">5. Ditindaklanjuti / Dalam Penanganan DLH</div>
-            <div class="timeline-desc">
-              ${item.tindakanDLH !== '-' ? item.tindakanDLH : 'Menunggu tindakan rekomendasi dan penanganan teknis.'}
-            </div>
-          </div>
-
-          <div class="timeline-item ${isSelesai ? 'completed' : (isDitolak ? 'completed' : '')}">
-            <div class="timeline-dot"></div>
-            <div class="timeline-title">6. ${isDitolak ? 'Aduan Ditolak / Tidak Terbukti' : 'Selesai Ditangani'}</div>
-            <div class="timeline-time">${item.tanggalSelesai !== '-' ? formatWaktu(item.tanggalSelesai) : '-'}</div>
-            <div class="timeline-desc">
-              ${isSelesai ? 'Pembersihan / pemulihan lingkungan dinyatakan tuntas oleh DLH Lembata.' : (isDitolak ? 'Hasil observasi menunjukkan tidak ada pencemaran berbahaya atau dialihkan ke instansi teknis terkait.' : 'Dalam proses penyelesaian.')}
-            </div>
-          </div>
-        </div>
-
-      </div>
-    `;
-  }
-
-  quickTrack(ticketId) {
-    this.switchTab('lacak');
-    const input = document.getElementById('inputTrackId');
-    const btn = document.getElementById('btnTrackSearch');
-    if (input && btn) {
-      input.value = ticketId;
-      btn.click();
-    }
-  }
-
-  /* ===================================================================
-     5B. REAL-TIME SYNCHRONIZATION LISTENER (PORTAL WARGA)
+     5. REAL-TIME SYNCHRONIZATION LISTENER (PORTAL WARGA)
      =================================================================== */
   setupRealtimeSync() {
     if (!window.dlhRealtime) return;
@@ -912,26 +477,7 @@ class DLHApp {
     window.dlhRealtime.listen((msg) => {
       if (!msg || !msg.type) return;
 
-      if (msg.type === 'TINDAK_LANJUT_UPDATED') {
-        if (window.aduanStore) {
-          window.aduanStore.init();
-        }
-        this.updateKPIs();
-        this.renderTable();
-        if (window.lembataMap) window.lembataMap.renderMarkers();
-
-        const updatedId = msg.payload?.aduanId || msg.payload?.id;
-        const inputTrack = document.getElementById('inputTrackId');
-        const currentQuery = inputTrack ? inputTrack.value.trim().toUpperCase() : '';
-        const trackContainer = document.getElementById('trackResultContainer');
-
-        if (updatedId && currentQuery === updatedId && trackContainer && trackContainer.style.display !== 'none') {
-          this.renderTrackResult(updatedId, true);
-        } else {
-          const statusName = msg.payload?.item?.status || msg.payload?.status || 'Tindakan Lapangan';
-          this.showToast(`⚡ Pembaruan Real-Time: Petugas DLH baru saja memperbarui tindakan untuk aduan ${updatedId} (Status: ${statusName})`, 'success');
-        }
-      } else if (msg.type === 'ADUAN_BARU' || msg.type === 'STORAGE_RAW_UPDATED') {
+      if (msg.type === 'ADUAN_BARU' || msg.type === 'STORAGE_RAW_UPDATED' || msg.type === 'TINDAK_LANJUT_UPDATED') {
         if (window.aduanStore) {
           window.aduanStore.init();
         }
@@ -1021,7 +567,7 @@ class DLHApp {
     if (filtered.length === 0) {
       tbody.innerHTML = `
         <tr>
-          <td colspan="7" style="text-align: center; padding: 28px; color: #64748b;">
+          <td colspan="6" style="text-align: center; padding: 28px; color: #64748b;">
             Tidak ada data aduan yang cocok dengan pencarian.
           </td>
         </tr>
@@ -1036,13 +582,9 @@ class DLHApp {
         <td><strong>${item.namaPelapor}</strong></td>
         <td>Kec. ${item.kecamatan}<br><small style="color: #64748b;">Desa: ${item.desa}</small></td>
         <td><span style="font-weight: 600; color: #059669;">${item.jenisPencemaran}</span></td>
-        <td><span class="badge ${this.getStatusBadgeClass(item.status)}">${item.status}</span></td>
         <td style="text-align: center; white-space: nowrap;">
           <button class="btn btn-outline btn-sm" onclick="window.app.showDetailModal('${item.id}')">
-            Detail
-          </button>
-          <button class="btn btn-primary btn-sm" onclick="window.app.showVerifikasiModal('${item.id}')">
-            Verifikasi
+            Lihat Detail
           </button>
         </td>
       </tr>
@@ -1093,13 +635,36 @@ class DLHApp {
     const body = document.getElementById('detailModalContent');
     if (!modal || !body) return;
 
+    // Foto bukti
+    const photoList = [];
+    if (Array.isArray(item.buktiFotoList)) {
+      item.buktiFotoList.forEach(p => {
+        if (typeof p === 'string' && p.trim() && !photoList.includes(p.trim())) photoList.push(p.trim());
+        else if (p && p.dataUrl && !photoList.includes(p.dataUrl)) photoList.push(p.dataUrl);
+      });
+    }
+    ['fotoBukti', 'linkFotoBukti', 'buktiFoto', 'linkFoto'].forEach(field => {
+      const val = item[field];
+      if (val && typeof val === 'string' && val.trim() && val !== '-' && !photoList.includes(val.trim())) {
+        const strVal = val.trim();
+        if (strVal.includes(',') && !strVal.startsWith('data:')) {
+          strVal.split(',').forEach(sub => {
+            const trimmed = sub.trim();
+            if (trimmed && !photoList.includes(trimmed)) photoList.push(trimmed);
+          });
+        } else {
+          photoList.push(strVal);
+        }
+      }
+    });
+
     body.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
         <div>
           <span style="font-size: 0.75rem; color: #64748b;">KODE REGISTER:</span>
           <h2 style="font-size: 1.3rem; color: #059669; font-weight: 800;">${item.id}</h2>
         </div>
-        <span class="badge ${this.getStatusBadgeClass(item.status)}">${item.status}</span>
+        <span class="badge ${this.getStatusBadgeClass(item.status)}">Aduan Masuk</span>
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; font-size: 0.85rem;">
@@ -1126,32 +691,19 @@ class DLHApp {
         <strong>Uraian Aduan:</strong><br>${item.uraian}
       </div>
 
-      <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; font-size: 0.85rem;">
-        <div style="font-weight: 700; color: #064e3b; margin-bottom: 4px;">Pemeriksaan DLH Lembata:</div>
-        <div>Verifikator: <strong>${item.petugasVerifikasi}</strong> (${item.tanggalVerifikasi})</div>
-        <div style="margin-top: 4px;">Hasil: ${item.hasilVerifikasi}</div>
-        <div style="margin-top: 4px;">Tindakan DLH: ${item.tindakanDLH}</div>
-      </div>
+      ${photoList.length > 0 ? `
+        <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 14px;">
+          <div style="font-size: 0.76rem; font-weight: 700; color: #64748b; margin-bottom: 8px;">📸 FOTO BUKTI PENDUKUNG:</div>
+          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+            ${photoList.map(src => `
+              <a href="${src}" target="_blank">
+                <img src="${src}" alt="Bukti" style="width: 75px; height: 75px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1;">
+              </a>
+            `).join('')}
+          </div>
+        </div>
+      ` : ''}
     `;
-
-    modal.classList.add('show');
-  }
-
-  showVerifikasiModal(id) {
-    const item = window.aduanStore.getById(id);
-    if (!item) return;
-
-    const modal = document.getElementById('modalVerifikasi');
-    if (!modal) return;
-
-    document.getElementById('verifIdAduan').value = item.id;
-    document.getElementById('verifDisplayId').textContent = item.id;
-    document.getElementById('verifDisplayPelapor').textContent = `${item.namaPelapor} (Kec. ${item.kecamatan})`;
-    document.getElementById('verifStatus').value = item.status;
-    document.getElementById('verifPetugas').value = item.petugasVerifikasi !== '-' ? item.petugasVerifikasi : '';
-    document.getElementById('verifTanggal').value = item.tanggalVerifikasi !== '-' ? item.tanggalVerifikasi : new Date().toISOString().split('T')[0];
-    document.getElementById('verifHasil').value = item.hasilVerifikasi !== '-' ? item.hasilVerifikasi : '';
-    document.getElementById('verifTindakan').value = item.tindakanDLH !== '-' ? item.tindakanDLH : '';
 
     modal.classList.add('show');
   }

@@ -85,6 +85,11 @@ function doGet(e) {
         result = handleGetStats();
         break;
 
+      case 'delete':
+      case 'deleteAduan':
+        result = handleDeleteAduan({ id: e.parameter.id || '' });
+        break;
+
       default:
         result = { success: false, error: 'Aksi tidak dikenali: ' + action };
     }
@@ -114,6 +119,10 @@ function doPost(e) {
 
       case 'updateVerifikasi':
         result = handleUpdateVerifikasi(body.data || {});
+        break;
+
+      case 'deleteAduan':
+        result = handleDeleteAduan(body.data || {});
         break;
 
       default:
@@ -340,8 +349,8 @@ function handleGetStats() {
 function handleAddAduan(formData) {
   const sheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
 
-  // Generate ID baru
-  const newId = generateNewId(sheet);
+  // Gunakan ID dari formulir jika ada, atau generate baru
+  const newId = (formData.id && String(formData.id).trim()) ? String(formData.id).trim() : generateNewId(sheet);
 
   // Generate timestamp saat ini
   const now = Utilities.formatDate(
@@ -367,6 +376,12 @@ function handleAddAduan(formData) {
   const lat = formData.lat ? parseFloat(formData.lat) : (kecCoord.lat + (Math.random() - 0.5) * 0.02);
   const lng = formData.lng ? parseFloat(formData.lng) : (kecCoord.lng + (Math.random() - 0.5) * 0.02);
 
+  // Ambil data foto bukti dan pastikan tidak melampaui limit sel Google Sheets (50.000 karakter)
+  let fotoData = formData.fotoBukti || formData.linkFotoBukti || formData.linkFoto || (Array.isArray(formData.buktiFotoList) ? formData.buktiFotoList[0] : '') || '';
+  if (typeof fotoData === 'string' && fotoData.length > 49000) {
+    fotoData = fotoData.substring(0, 49000);
+  }
+
   // Susun baris data baru sesuai urutan HEADERS_ADUAN
   const newRow = [
     newId,                                        // ID_Aduan
@@ -383,7 +398,7 @@ function handleAddAduan(formData) {
     formData.uraian || '-',                       // Uraian_Aduan
     formData.sumberDugaan || '-',                 // Sumber_Dugaan
     formData.tanggalKejadian || now.split(' ')[0],// Tanggal_Kejadian
-    formData.linkFoto || '',                      // Link_Foto_Bukti
+    fotoData,                                     // Link_Foto_Bukti
     'Baru',                                       // Status
     '-',                                          // Petugas_Verifikasi
     '-',                                          // Tanggal_Verifikasi
@@ -478,6 +493,46 @@ function handleUpdateVerifikasi(updateData) {
       id: targetId,
       status: updateData.status || '-'
     }
+  };
+}
+
+
+// ==================================================================================
+// HANDLER AKSI: HAPUS ADUAN (POST / GET)
+// ==================================================================================
+function handleDeleteAduan(data) {
+  const targetId = String(data.id || '').trim().toLowerCase();
+  if (!targetId) {
+    return { success: false, error: 'Parameter "id" wajib diisi untuk menghapus aduan.' };
+  }
+
+  const sheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
+  const rows = sheet.getDataRange().getValues();
+  if (rows.length <= 1) {
+    return { success: true, message: 'Sheet kosong atau hanya ada header.', deletedCount: 0 };
+  }
+
+  const headers = rows[0];
+  const colId = headers.indexOf('ID_Aduan');
+  if (colId === -1) {
+    return { success: false, error: 'Kolom ID_Aduan tidak ditemukan di spreadsheet.' };
+  }
+
+  let deletedCount = 0;
+  // Telusuri dari baris terbawah ke atas untuk menghapus dengan aman
+  for (let i = rows.length - 1; i >= 1; i--) {
+    if (String(rows[i][colId]).trim().toLowerCase() === targetId) {
+      sheet.deleteRow(i + 1);
+      deletedCount++;
+    }
+  }
+
+  writeLog('ADUAN_DIHAPUS', 'ID: ' + targetId + ' | Baris dihapus: ' + deletedCount);
+
+  return {
+    success: true,
+    message: 'Aduan ' + targetId + ' berhasil dihapus dari spreadsheet (' + deletedCount + ' baris dihapus).',
+    deletedCount: deletedCount
   };
 }
 

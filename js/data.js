@@ -311,6 +311,11 @@ const INITIAL_ADUAN_DATA = [
     uraian: 'Terdapat ceceran oli bekas dan limbah bahan bakar kapal motor yang mengapung di air laut sekitar dermaga rakyat. Air laut berwarna kehitaman dan berbau menyengat.',
     sumberDugaan: 'Aktivitas bengkel perahu & kapal motor nelayan',
     tanggalKejadian: '2026-09-11',
+    fotoBukti: 'https://images.unsplash.com/photo-1618477388954-7852f32655ec?auto=format&fit=crop&w=700&q=80',
+    linkFotoBukti: 'https://images.unsplash.com/photo-1618477388954-7852f32655ec?auto=format&fit=crop&w=700&q=80',
+    buktiFotoList: [
+      'https://images.unsplash.com/photo-1618477388954-7852f32655ec?auto=format&fit=crop&w=700&q=80'
+    ],
     status: 'Selesai',
     petugasVerifikasi: 'Yohanes B. (Pengendali Dampak Lingkungan)',
     tanggalVerifikasi: '2026-09-13',
@@ -333,6 +338,11 @@ const INITIAL_ADUAN_DATA = [
     uraian: 'Penumpukan sampah sisa ikan dan limbah plastik yang dibuang liar di semak pinggir pantai, menimbulkan bau busuk dan lalat banyak hingga ke permukiman warga.',
     sumberDugaan: 'Pedagang liar & oknum warga sekitar pasar',
     tanggalKejadian: '2026-09-17',
+    fotoBukti: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=700&q=80',
+    linkFotoBukti: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=700&q=80',
+    buktiFotoList: [
+      'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=700&q=80'
+    ],
     status: 'Selesai',
     petugasVerifikasi: 'Agustinus L. (Staf Kebersihan DLH)',
     tanggalVerifikasi: '2026-09-19',
@@ -348,13 +358,18 @@ const INITIAL_ADUAN_DATA = [
     alamatPelapor: 'Desa Waipukang, Ile Ape',
     kecamatan: 'Ile Ape',
     desa: 'Waipukang',
-    lokasiDetail: 'Lembah lereng dekat jalan usaha tani',
+    lokasiDetail: 'Lembah lereng dekat road usaha tani',
     lat: -8.2830,
     lng: 123.5410,
     jenisPencemaran: 'Udara & Asap',
     uraian: 'Pembakaran ban bekas dan tumpukan material kabel setiap sore hari untuk mengambil kawat tembaga. Asap hitam pekat mengganggu pernapasan warga dan anak sekolah.',
     sumberDugaan: 'Aktivitas pengumpul rongsokan / besi tua liar',
     tanggalKejadian: '2026-09-24',
+    fotoBukti: 'https://images.unsplash.com/photo-1569163139599-0f4517e36f51?auto=format&fit=crop&w=700&q=80',
+    linkFotoBukti: 'https://images.unsplash.com/photo-1569163139599-0f4517e36f51?auto=format&fit=crop&w=700&q=80',
+    buktiFotoList: [
+      'https://images.unsplash.com/photo-1569163139599-0f4517e36f51?auto=format&fit=crop&w=700&q=80'
+    ],
     status: 'Dalam Penanganan',
     petugasVerifikasi: 'Maria E. Karangora (PPNS Lingkungan Hidup)',
     tanggalVerifikasi: '2026-09-27',
@@ -377,6 +392,11 @@ const INITIAL_ADUAN_DATA = [
     uraian: 'Air sungai yang biasa dipakai warga untuk cuci dan ternak terlihat keruh pekat berwarna keputihan dan berbau belerang tak wajar sejak pekerjaan saluran air.',
     sumberDugaan: 'Material proyek galian yang dibuang langsung ke sungai',
     tanggalKejadian: '2026-09-30',
+    fotoBukti: 'https://images.unsplash.com/photo-1574482620826-40685ca5ebd2?auto=format&fit=crop&w=700&q=80',
+    linkFotoBukti: 'https://images.unsplash.com/photo-1574482620826-40685ca5ebd2?auto=format&fit=crop&w=700&q=80',
+    buktiFotoList: [
+      'https://images.unsplash.com/photo-1574482620826-40685ca5ebd2?auto=format&fit=crop&w=700&q=80'
+    ],
     status: 'Sedang Diverifikasi',
     petugasVerifikasi: 'Ir. Damianus T. (Kabid Penataan DLH)',
     tanggalVerifikasi: '2026-10-03',
@@ -399,6 +419,11 @@ const INITIAL_ADUAN_DATA = [
     uraian: 'Ditemukan drum bekas cairan kimia/aki bekas dan tumpukan oli yang dibuang sembarangan di antara vegetasi bakau tepi muara.',
     sumberDugaan: 'Bengkel aki liar / penampung limbah tanpa izin',
     tanggalKejadian: '2026-10-02',
+    fotoBukti: 'https://images.unsplash.com/photo-1621451537084-482c73073a0f?auto=format&fit=crop&w=700&q=80',
+    linkFotoBukti: 'https://images.unsplash.com/photo-1621451537084-482c73073a0f?auto=format&fit=crop&w=700&q=80',
+    buktiFotoList: [
+      'https://images.unsplash.com/photo-1621451537084-482c73073a0f?auto=format&fit=crop&w=700&q=80'
+    ],
     status: 'Aduan Diterima',
     petugasVerifikasi: '-',
     tanggalVerifikasi: '-',
@@ -421,6 +446,11 @@ const INITIAL_ADUAN_DATA = [
     uraian: 'Sampah kiriman plastik kemasan dan tali jaring hanyut memenuhi garis pantai hingga 200 meter, mengancam lokasi penjemuran rumput laut.',
     sumberDugaan: 'Arus laut sampah musiman & perahu nelayan melintas',
     tanggalKejadian: '2026-10-03',
+    fotoBukti: 'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&w=700&q=80',
+    linkFotoBukti: 'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&w=700&q=80',
+    buktiFotoList: [
+      'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&w=700&q=80'
+    ],
     status: 'Aduan Diterima',
     petugasVerifikasi: '-',
     tanggalVerifikasi: '-',
@@ -443,6 +473,11 @@ const INITIAL_ADUAN_DATA = [
     uraian: 'Pengambilan pasir laut secara masif menggunakan truk tanpa izin konservasi, menyebabkan abrasi tebing pantai dan pohon kelapa tumbang.',
     sumberDugaan: 'Oknum penambang pasir liar',
     tanggalKejadian: '2026-10-04',
+    fotoBukti: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=80',
+    linkFotoBukti: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=80',
+    buktiFotoList: [
+      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=80'
+    ],
     status: 'Sedang Diverifikasi',
     petugasVerifikasi: 'Petrus S. (Bidang Pengawasan LH)',
     tanggalVerifikasi: '2026-10-06',
@@ -465,6 +500,11 @@ const INITIAL_ADUAN_DATA = [
     uraian: 'Diduga air sumur warga tercemar rembesan limbah pengolahan daging paus/ikan dari tempat pemotongan tradisional.',
     sumberDugaan: 'Saluran pembuangan tradisional yang mampet',
     tanggalKejadian: '2026-09-04',
+    fotoBukti: 'https://images.unsplash.com/photo-1584555613497-9ecf9dd06f68?auto=format&fit=crop&w=700&q=80',
+    linkFotoBukti: 'https://images.unsplash.com/photo-1584555613497-9ecf9dd06f68?auto=format&fit=crop&w=700&q=80',
+    buktiFotoList: [
+      'https://images.unsplash.com/photo-1584555613497-9ecf9dd06f68?auto=format&fit=crop&w=700&q=80'
+    ],
     status: 'Ditolak',
     petugasVerifikasi: 'Tim Gabungan DLH & Dinkes Lembata',
     tanggalVerifikasi: '2026-09-07',
@@ -523,6 +563,7 @@ function parseCsvToAduan(csvText) {
     });
 
     const id = item.ID_Aduan || item.id || `ADU-LMB-2026-${String(i).padStart(3, '0')}`;
+    const foto = item.Link_Foto_Bukti || item.Foto_Bukti || item.fotoBukti || item.linkFoto || item.Link_Bukti || '';
     result.push({
       id: id,
       timestamp: item.Timestamp || item.timestamp || '-',
@@ -538,6 +579,9 @@ function parseCsvToAduan(csvText) {
       uraian: item.Uraian_Aduan || item.uraian || '-',
       sumberDugaan: item.Sumber_Dugaan || item.sumberDugaan || '-',
       tanggalKejadian: item.Tanggal_Kejadian || item.tanggalKejadian || '-',
+      fotoBukti: foto,
+      linkFotoBukti: foto,
+      buktiFotoList: foto ? (foto.includes(',') ? foto.split(',').map(s => s.trim()).filter(Boolean) : [foto]) : [],
       status: item.Status || item.status || 'Baru',
       petugasVerifikasi: item.Petugas_Verifikasi || item.petugasVerifikasi || '-',
       tanggalVerifikasi: item.Tanggal_Verifikasi || item.tanggalVerifikasi || '-',
@@ -551,6 +595,7 @@ function parseCsvToAduan(csvText) {
 
 // Konfigurasi Kunci Penyimpanan & URL Web App Google Apps Script
 const GAS_CONFIG_KEY = 'dlh_gas_api_url';
+const DELETED_STORAGE_KEY = 'dlh_deleted_aduan_ids';
 const DEFAULT_GAS_API_URL = 'https://script.google.com/macros/s/AKfycbxm4r8QU2dv0S6csTTpmewuuvMNNrqiD2NeF_ENzXi8z7E3qDALHz6HNiBWtiEpGMruIQ/exec';
 
 class AduanDataStore {
@@ -559,21 +604,45 @@ class AduanDataStore {
     this.gasApiUrl = localStorage.getItem(GAS_CONFIG_KEY) || (window.GAS_API_URL || DEFAULT_GAS_API_URL);
     this.isSyncing = false;
     this.lastSyncTime = null;
+    this.deletedIds = this.loadDeletedIds();
     this.init();
   }
 
+  loadDeletedIds() {
+    try {
+      const raw = localStorage.getItem(DELETED_STORAGE_KEY);
+      return raw ? new Set(JSON.parse(raw).map(id => String(id).trim().toUpperCase())) : new Set();
+    } catch (e) {
+      return new Set();
+    }
+  }
+
+  saveDeletedIds() {
+    try {
+      localStorage.setItem(DELETED_STORAGE_KEY, JSON.stringify([...this.deletedIds]));
+    } catch (e) {}
+  }
+
+  isDeleted(id) {
+    if (!id) return false;
+    return this.deletedIds.has(String(id).trim().toUpperCase());
+  }
+
   init() {
+    this.deletedIds = this.loadDeletedIds();
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       try {
-        this.aduanList = JSON.parse(stored);
+        const parsed = JSON.parse(stored);
+        // Pastikan tidak ada aduan yang ada dalam daftar blacklist terhapus
+        this.aduanList = parsed.filter(item => item && item.id && !this.isDeleted(item.id));
       } catch (e) {
         console.error('Error parsing stored aduan, fallback to default:', e);
-        this.aduanList = [...INITIAL_ADUAN_DATA];
+        this.aduanList = INITIAL_ADUAN_DATA.filter(item => !this.isDeleted(item.id));
         this.save();
       }
     } else {
-      this.aduanList = [...INITIAL_ADUAN_DATA];
+      this.aduanList = INITIAL_ADUAN_DATA.filter(item => !this.isDeleted(item.id));
       this.save();
     }
 
@@ -622,7 +691,7 @@ class AduanDataStore {
           const csvText = await response.text();
           const parsedData = parseCsvToAduan(csvText);
           if (parsedData.length > 0) {
-            parsedData.forEach(p => this.mergeRemoteRecord(p));
+            parsedData.filter(p => !this.isDeleted(p.id)).forEach(p => this.mergeRemoteRecord(p));
             this.lastSyncTime = new Date();
             window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent } }));
             return { success: true, count: this.aduanList.length };
@@ -639,8 +708,9 @@ class AduanDataStore {
       const json = await response.json();
 
       if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {
-        // Sinkronkan dan gabungkan langsung seluruh record dari Google Apps Script
-        json.data.forEach(item => {
+        // Sinkronkan dan gabungkan seluruh record dari Google Apps Script (abaikan yang sudah dihapus)
+        const validItems = json.data.filter(item => !this.isDeleted(item.id));
+        validItems.forEach(item => {
           this.mergeRemoteRecord(item);
         });
 
@@ -683,17 +753,21 @@ class AduanDataStore {
   }
 
   getAll() {
-    return this.aduanList;
+    return this.aduanList.filter(item => !this.isDeleted(item.id));
   }
 
   getById(id) {
-    if (!id) return null;
+    if (!id || this.isDeleted(id)) return null;
     return this.aduanList.find(item => item.id.trim().toLowerCase() === id.trim().toLowerCase()) || null;
   }
 
   mergeRemoteRecord(remoteItem) {
     if (!remoteItem || !remoteItem.id) return null;
     const cleanId = String(remoteItem.id).trim().toUpperCase();
+
+    // Jangan pernah mengembalikan aduan yang sudah dihapus oleh pengguna
+    if (this.isDeleted(cleanId)) return null;
+
     const index = this.aduanList.findIndex(x => x.id.trim().toUpperCase() === cleanId);
 
     const rekamTerakhir = remoteItem.rekamTindakanTerakhir || (
@@ -707,6 +781,23 @@ class AduanDataStore {
         catatan: remoteItem.catatan || ''
       } : null
     );
+
+    const existing = index !== -1 ? this.aduanList[index] : null;
+    const existingPhotos = existing ? (Array.isArray(existing.buktiFotoList) ? existing.buktiFotoList : (existing.fotoBukti ? [existing.fotoBukti] : [])) : [];
+    const remotePhotos = Array.isArray(remoteItem.buktiFotoList) && remoteItem.buktiFotoList.length > 0
+      ? remoteItem.buktiFotoList
+      : (remoteItem.linkFoto && remoteItem.linkFoto !== '-' ? [remoteItem.linkFoto] : (remoteItem.fotoBukti && remoteItem.fotoBukti !== '-' ? [remoteItem.fotoBukti] : []));
+
+    // Jika record lokal sudah memiliki foto valid (termasuk Data URL base64), jangan ditimpa dengan remote kosong
+    let finalPhotos = [];
+    if (existingPhotos.length > 0 && existingPhotos.some(p => typeof p === 'string' && (p.startsWith('data:image') || p.startsWith('http')))) {
+      finalPhotos = existingPhotos;
+    } else if (remotePhotos.length > 0 && remotePhotos.some(p => typeof p === 'string' && p.trim() && p !== '-')) {
+      finalPhotos = remotePhotos;
+    } else {
+      finalPhotos = existingPhotos;
+    }
+    const finalFoto = finalPhotos[0] || '';
 
     const mapped = {
       id: cleanId,
@@ -723,9 +814,9 @@ class AduanDataStore {
       uraian: remoteItem.uraian || '-',
       sumberDugaan: remoteItem.sumberDugaan || '-',
       tanggalKejadian: remoteItem.tanggalKejadian || '-',
-      fotoBukti: remoteItem.linkFoto || remoteItem.fotoBukti || '',
-      linkFotoBukti: remoteItem.linkFoto || remoteItem.linkFotoBukti || remoteItem.fotoBukti || '',
-      buktiFotoList: Array.isArray(remoteItem.buktiFotoList) ? remoteItem.buktiFotoList : (remoteItem.linkFoto ? [remoteItem.linkFoto] : (remoteItem.fotoBukti ? [remoteItem.fotoBukti] : [])),
+      fotoBukti: finalFoto,
+      linkFotoBukti: finalFoto,
+      buktiFotoList: finalPhotos,
       status: remoteItem.status || 'Aduan Diterima',
       petugasVerifikasi: remoteItem.petugasVerifikasi || '-',
       tanggalVerifikasi: remoteItem.tanggalVerifikasi || '-',
@@ -834,6 +925,40 @@ class AduanDataStore {
     }
 
     return this.aduanList[index];
+  }
+
+  deleteAduan(id) {
+    if (!id) return false;
+    const cleanId = String(id).trim().toUpperCase();
+
+    // 1. Catat ke blacklist permanen agar tidak pernah dipulihkan lagi oleh sync berkala
+    this.deletedIds.add(cleanId);
+    this.saveDeletedIds();
+
+    // 2. Hapus dari daftar memori lokal
+    const index = this.aduanList.findIndex(item => String(item.id).trim().toUpperCase() === cleanId);
+    let deleted = null;
+    if (index !== -1) {
+      deleted = this.aduanList.splice(index, 1)[0];
+    }
+    this.aduanList = this.aduanList.filter(item => String(item.id).trim().toUpperCase() !== cleanId);
+    this.save();
+
+    // 3. Broadcast Real-Time ke tab / jendela lain
+    if (window.dlhRealtime) {
+      window.dlhRealtime.broadcast('ADUAN_DELETED', { id: cleanId });
+    }
+
+    // 4. Kirim ke Google Apps Script (POST & GET fallback)
+    if (this.hasGasConfigured()) {
+      this.postToGAS('deleteAduan', { id: cleanId });
+      try {
+        const getUrl = `${this.gasApiUrl}${this.gasApiUrl.includes('?') ? '&' : '?'}action=deleteAduan&id=${encodeURIComponent(cleanId)}&_t=${Date.now()}`;
+        fetch(getUrl, { method: 'GET', mode: 'no-cors' }).catch(() => {});
+      } catch (e) {}
+    }
+
+    return deleted || true;
   }
 
   resetToDefault() {
