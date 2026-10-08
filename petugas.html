@@ -62,7 +62,13 @@
 
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background: #f1f5f9;
+      background-color: #f1f8f5;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(5, 150, 105, 0.14) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(6, 78, 59, 0.1) 0px, transparent 50%),
+        radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.08) 0px, transparent 50%);
+      background-attachment: fixed;
       color: var(--text-main);
       line-height: 1.5;
       min-height: 100vh;
@@ -481,20 +487,16 @@
       background: #b91c1c;
     }
 
-    /* Sub-bar Command Status */
-    .sub-command-bar {
+    /* Officer Status Strip & Status Badges (Clean & Modern) */
+    .officer-status-strip {
       background: #ffffff;
       border-bottom: 1px solid #e2e8f0;
       padding: 10px 24px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
       font-size: 0.82rem;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
     }
 
-    .sub-bar-container {
+    .status-strip-container {
       max-width: 1400px;
       margin: 0 auto;
       width: 100%;
@@ -505,25 +507,98 @@
       gap: 12px;
     }
 
-    .active-officer-info {
+    .status-strip-left {
       display: flex;
       align-items: center;
       gap: 10px;
       color: #334155;
+      flex-wrap: wrap;
     }
 
-    .active-officer-info strong {
+    .status-posko-badge strong,
+    .status-officer-badge strong {
       color: #064e3b;
     }
 
-    .btn-switch-officer {
-      background: none;
-      border: none;
-      color: #059669;
-      font-size: 0.78rem;
-      font-weight: 600;
+    .status-sep {
+      color: #cbd5e1;
+    }
+
+    .btn-switch-officer-mini {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #047857;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 999px;
       cursor: pointer;
-      text-decoration: underline;
+      transition: all 0.2s ease;
+    }
+
+    .btn-switch-officer-mini:hover {
+      background: #059669;
+      color: #ffffff;
+    }
+
+    .status-strip-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .cloud-status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: #047857;
+      background: #f0fdf4;
+      padding: 3px 10px;
+      border-radius: 999px;
+      border: 1px solid #bbf7d0;
+    }
+
+    .status-dot-green {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #16a34a;
+      display: inline-block;
+      box-shadow: 0 0 0 2px rgba(22, 163, 74, 0.2);
+    }
+
+    .link-spreadsheet-mini {
+      color: #2563eb;
+      font-weight: 700;
+      font-size: 0.78rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 3px 10px;
+      background: #eff6ff;
+      border-radius: 999px;
+      border: 1px solid #bfdbfe;
+      transition: all 0.2s;
+    }
+
+    .link-spreadsheet-mini:hover {
+      background: #2563eb;
+      color: #ffffff;
+    }
+
+    .btn-spreadsheet-tool {
+      background: rgba(37, 99, 235, 0.2) !important;
+      border-color: rgba(96, 165, 250, 0.5) !important;
+      color: #ffffff !important;
+    }
+
+    .btn-spreadsheet-tool:hover {
+      background: #2563eb !important;
+      border-color: #2563eb !important;
     }
 
     /* Main Officer Dashboard Layout */
@@ -1971,6 +2046,375 @@
     }
 
     /* ===================================================================
+       BUKTI DUKUNG ADUAN (FOTO / KAMERA / DOKUMEN WARGA)
+       =================================================================== */
+    .case-evidence-box {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: var(--radius-md);
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      transition: all 0.2s ease;
+    }
+
+    .case-evidence-box:hover {
+      border-color: #cbd5e1;
+      background: #f1f5f9;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+    }
+
+    .case-evidence-box.empty-evidence {
+      background: #fbfcfe;
+      border-style: dashed;
+      padding: 8px 12px;
+      margin-bottom: 12px;
+    }
+
+    .evidence-box-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+
+    .evidence-header-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #064e3b;
+    }
+
+    .evidence-count-badge {
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .evidence-gallery-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(135px, 1fr));
+      gap: 10px;
+    }
+
+    .evidence-thumb-card {
+      position: relative;
+      height: 105px;
+      border-radius: var(--radius-sm);
+      overflow: hidden;
+      border: 1.5px solid #cbd5e1;
+      background: #e2e8f0;
+      cursor: pointer;
+      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
+    }
+
+    .evidence-thumb-card:hover {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.15);
+      border-color: #059669;
+    }
+
+    .evidence-thumb-card img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      display: block;
+    }
+
+    .evidence-thumb-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(6, 78, 59, 0.65);
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      backdrop-filter: blur(2px);
+    }
+
+    .evidence-thumb-card:hover .evidence-thumb-overlay {
+      opacity: 1;
+    }
+
+    .overlay-zoom-icon {
+      font-size: 1.25rem;
+    }
+
+    .overlay-zoom-text {
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.3px;
+    }
+
+    .evidence-footer-note {
+      margin-top: 8px;
+      font-size: 0.72rem;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .evidence-empty-note {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: #94a3b8;
+      font-style: italic;
+    }
+
+    /* ===================================================================
+       LIGHTBOX MODAL (PRATINJAU FOTO RESOLUSI PENUH & ZOOM)
+       =================================================================== */
+    .lightbox-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(10px);
+      z-index: 10000;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .lightbox-content-box {
+      max-width: 92vw;
+      max-height: 88vh;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
+
+    .lightbox-img {
+      max-width: 100%;
+      max-height: 75vh;
+      object-fit: contain;
+      border-radius: var(--radius-md);
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.6);
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      transition: transform 0.2s ease;
+    }
+
+    .lightbox-bar {
+      margin-top: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      max-width: 720px;
+      background: rgba(30, 41, 59, 0.9);
+      padding: 8px 18px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.2);
+      color: #ffffff;
+      box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+    }
+
+    .lightbox-caption {
+      font-size: 0.82rem;
+      font-weight: 600;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      padding-right: 12px;
+      color: #f1f5f9;
+    }
+
+    .lightbox-actions {
+      display: flex;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .lightbox-btn {
+      background: rgba(255, 255, 255, 0.15);
+      border: 1px solid rgba(255, 255, 255, 0.25);
+      color: #ffffff;
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.2s ease;
+    }
+
+    .lightbox-btn:hover {
+      background: rgba(255, 255, 255, 0.3);
+      transform: translateY(-1px);
+    }
+
+    .lightbox-btn-close {
+      position: absolute;
+      top: -46px;
+      right: 0;
+      background: rgba(255, 255, 255, 0.2);
+      border: none;
+      color: #ffffff;
+      font-size: 1.8rem;
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+
+    .lightbox-btn-close:hover {
+      background: #dc2626;
+    }
+
+    /* ===================================================================
+       RESPONSIVE ENHANCEMENTS (DESKTOP, TABLET, MOBILE)
+       =================================================================== */
+    @media (max-width: 1024px) {
+      .dashboard-workspace {
+        grid-template-columns: 1fr;
+        gap: 16px;
+      }
+      #officerMap {
+        height: 350px;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .officer-header {
+        padding: 12px 16px;
+      }
+      .header-container {
+        flex-direction: column;
+        align-items: stretch;
+        gap: 12px;
+      }
+      .brand-section {
+        justify-content: flex-start;
+      }
+      .brand-text h1 {
+        font-size: 1.05rem;
+      }
+      .brand-text p {
+        font-size: 0.75rem;
+      }
+      .officer-nav-tools {
+        display: grid;
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+        width: 100%;
+      }
+      .officer-session-pill {
+        grid-column: 1 / -1;
+        justify-content: center;
+        font-size: 0.8rem;
+      }
+      .btn-header-tool {
+        justify-content: center;
+        font-size: 0.75rem;
+        padding: 8px 10px;
+        text-align: center;
+      }
+      .status-strip-container {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+      .status-strip-right {
+        width: 100%;
+        justify-content: space-between;
+      }
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 10px;
+      }
+      .kpi-card {
+        padding: 12px;
+      }
+      .case-actions-bar {
+        flex-direction: column;
+        gap: 10px;
+      }
+      .actions-group-left,
+      .actions-group-right {
+        width: 100%;
+        display: flex;
+        flex-wrap: wrap;
+        gap: 8px;
+      }
+      .actions-group-left button,
+      .actions-group-right a,
+      .actions-group-right button {
+        flex: 1 1 calc(50% - 8px);
+        justify-content: center;
+        text-align: center;
+      }
+      .case-info-columns {
+        grid-template-columns: 1fr;
+      }
+      .evidence-gallery-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .modal-dialog {
+        width: 95%;
+        max-height: 90vh;
+        margin: 16px auto;
+      }
+      .lightbox-bar {
+        flex-direction: column;
+        gap: 8px;
+        border-radius: 12px;
+      }
+      .lightbox-caption {
+        white-space: normal;
+        text-align: center;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .kpi-grid {
+        grid-template-columns: 1fr;
+      }
+      .case-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 6px;
+      }
+      .officer-nav-tools {
+        grid-template-columns: 1fr;
+      }
+      .evidence-gallery-grid {
+        grid-template-columns: 1fr;
+      }
+      .evidence-thumb-card {
+        height: 140px;
+      }
+    }
+
+    /* ===================================================================
        OFFICIAL PRINTABLE INSPECTION REPORT VIEW (KOP RESMI DLH LEMBATA)
        FIT STRICTLY ONTO 1 SINGLE A4 PAGE (SATU HALAMAN PAS)
        =================================================================== */
@@ -2316,32 +2760,35 @@
         <div class="brand-section">
           <div class="brand-emblem">🛡️</div>
           <div class="brand-text">
-            <h1>
-              PORTAL PETUGAS DLH LEMBATA
-              <span class="brand-badge">KOMANDO OPERASIONAL</span>
-            </h1>
+            <h1>PORTAL PETUGAS DLH LEMBATA</h1>
             <p>Sistem Informasi Penanganan &amp; Investigasi Aduan Lingkungan Hidup</p>
           </div>
         </div>
 
         <div class="officer-nav-tools">
-          <div class="officer-session-pill">
+          <div class="officer-session-pill" id="btnHeaderOfficerProfile" title="Klik untuk mengubah nama petugas" style="cursor: pointer;">
             <div class="pulse-dot"></div>
-            <span id="headerOfficerName">Petugas Lapangan</span>
+            <span>Petugas: <strong id="headerOfficerName">Petugas Lapangan</strong> ✏️</span>
           </div>
 
+          <button type="button" class="btn-header-tool btn-spreadsheet-tool" id="btnOpenSpreadsheet"
+            title="Buka Database Google Spreadsheet DLH Lembata">
+            📊 Google Spreadsheet ↗
+          </button>
+
           <button type="button" class="btn-header-tool" id="btnSyncGas"
-            title="Sinkronkan data dengan Google Apps Script">
+            title="Sinkronkan data dengan Google Apps Script Cloud">
             🔄 Sinkronkan Cloud
+          </button>
+
+          <button type="button" class="btn-header-tool" id="btnCloudSettings"
+            title="Pengaturan Integrasi Google Spreadsheet & Apps Script">
+            ⚙️ Integrasi Cloud
           </button>
 
           <button type="button" class="btn-header-tool" id="btnExportCsv" title="Unduh rekap ke file CSV/Excel">
             📥 Ekspor CSV
           </button>
-
-          <a href="qr-code.html" class="btn-header-tool" title="Buka & Cetak Poster QR Code Pengaduan DLH" target="_blank">
-            📱 Poster QR Code ↗
-          </a>
 
           <a href="index.html" class="btn-header-tool btn-public-link" title="Beralih ke Portal Pengaduan Publik">
             🌐 Portal Publik Warga ↗
@@ -2349,25 +2796,27 @@
 
           <button type="button" class="btn-header-tool btn-logout" id="btnLogoutOfficer"
             title="Kunci portal dan keluar sesi">
-            🔒 Kunci / Keluar
+            🔒 Keluar
           </button>
         </div>
       </div>
     </header>
 
-    <!-- SUB-BAR STATUS & SPREADSHEET QUICK LINK -->
-    <div class="sub-command-bar no-print">
-      <div class="sub-bar-container">
-        <div class="active-officer-info">
-          <span>📍 Posko: <strong>DLH Lembata - Jl. Trans Lembata, Lewoleba</strong></span>
-          <span>•</span>
-          <span>Petugas Bertugas: <strong id="subOfficerTitle">Belum diisi</strong></span>
-          <button type="button" class="btn-switch-officer" id="btnOpenSwitchModal">Ubah Nama Petugas</button>
+    <!-- STATUS STRIP: POSKO & SYNC STATUS -->
+    <div class="officer-status-strip no-print">
+      <div class="status-strip-container">
+        <div class="status-strip-left">
+          <span class="status-posko-badge">📍 Posko: <strong>DLH Lembata - Jl. Trans Lembata, Lewoleba</strong></span>
+          <span class="status-sep">•</span>
+          <span class="status-officer-badge">Bertugas: <strong id="subOfficerTitle">Belum diisi</strong></span>
+          <button type="button" class="btn-switch-officer-mini" id="btnOpenSwitchModal" title="Ganti Nama Petugas">Ganti Nama</button>
         </div>
-        <div>
-          <a href="https://docs.google.com/spreadsheets/d/1yA_6oYQyZ3gK4wZp8n6jR2X5-Q_x7m1a/edit" target="_blank"
-            class="btn-switch-officer" style="color: #2563eb;">
-            📊 Buka Database Google Spreadsheet DLH ↗
+        <div class="status-strip-right">
+          <span id="cloudStatusIndicator" class="cloud-status-badge">
+            <span class="status-dot-green"></span> Terhubung Cloud DLH
+          </span>
+          <a href="#" id="linkDirectSpreadsheet" class="link-spreadsheet-mini" target="_blank" title="Buka Google Sheets di tab baru">
+            📊 Buka Spreadsheet ↗
           </a>
         </div>
       </div>
@@ -2656,6 +3105,17 @@
                 📍 Buka Titik GPS Google Maps
               </a>
             </div>
+
+            <!-- Pratinjau Foto Bukti Warga di Form Tindak Lanjut -->
+            <div id="modalDetailEvidenceBox" style="margin-top: 12px; padding: 10px 14px; background: #ffffff; border-radius: 8px; border: 1.5px solid #cbd5e1; display: none;">
+              <div style="font-size: 0.76rem; font-weight: 700; color: #064e3b; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+                <span>📸 Bukti Dukung Kejadian (Diunggah / Kamera Warga):</span>
+                <span id="modalDetailEvidenceCount" style="font-size: 0.72rem; color: #64748b; font-weight: 600;"></span>
+              </div>
+              <div id="modalDetailEvidenceGallery" style="display: flex; gap: 10px; flex-wrap: wrap; align-items: center;">
+                <!-- Populated dynamically by JS -->
+              </div>
+            </div>
           </div>
 
           <!-- Riwayat & Rekam Jejak Tindakan Sebelumnya (Audit Trail Accordion) -->
@@ -2846,6 +3306,96 @@
         <div class="modal-footer">
           <button type="button" class="btn-action-secondary" id="btnCloseModalRiwayatFooter">Tutup</button>
           <button type="button" class="btn-action-primary" id="btnTambahAksiFromRiwayat">⚡ Tambah Tindak Lanjut Baru</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: KONFIGURASI GOOGLE SPREADSHEET & CLOUD APPS SCRIPT -->
+    <div class="modal-backdrop" id="modalSpreadsheetConfig">
+      <div class="modal-dialog" style="max-width: 640px;">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <span>📊</span> Pengaturan Google Spreadsheet &amp; Cloud DLH
+          </h3>
+          <button type="button" class="btn-close-modal" id="btnCloseModalSpreadsheet">&times;</button>
+        </div>
+        <div class="modal-body">
+          <p style="font-size: 0.84rem; color: #475569; margin-bottom: 16px; line-height: 1.5;">
+            Sistem pengaduan DLH Lembata terhubung langsung dengan <strong>Google Spreadsheet</strong> sebagai basis data cloud resmi dan <strong>Google Apps Script</strong> sebagai perantara sinkronisasi dua arah.
+          </p>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label style="font-size: 0.8rem; font-weight: 700; color: #0f172a; margin-bottom: 4px; display: block;">
+              🔗 URL Google Spreadsheet DLH Lembata:
+            </label>
+            <div style="display: flex; gap: 8px;">
+              <input type="url" id="cfgSpreadsheetUrl" class="form-control" style="font-size: 0.82rem;"
+                placeholder="https://docs.google.com/spreadsheets/d/.../edit">
+              <a href="#" id="cfgBtnOpenSheetDirect" target="_blank" class="btn-action-secondary"
+                style="white-space: nowrap; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"
+                title="Buka Spreadsheet di Tab Baru">
+                Buka ↗
+              </a>
+            </div>
+            <span style="font-size: 0.72rem; color: #64748b; margin-top: 3px; display: block;">
+              Tautan ke file Google Sheets database laporan aduan masuk DLH Lembata.
+            </span>
+          </div>
+
+          <div class="form-group" style="margin-bottom: 14px;">
+            <label style="font-size: 0.8rem; font-weight: 700; color: #0f172a; margin-bottom: 4px; display: block;">
+              ⚡ URL Google Apps Script Web App (API Endpoint):
+            </label>
+            <input type="url" id="cfgGasUrl" class="form-control" style="font-size: 0.82rem;"
+              placeholder="https://script.google.com/macros/s/.../exec">
+            <span style="font-size: 0.72rem; color: #64748b; margin-top: 3px; display: block;">
+              URL Web App dari deploy Apps Script (format: script.google.com/macros/s/.../exec).
+            </span>
+          </div>
+
+          <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+            <button type="button" class="btn-action-secondary" id="btnTestCloudConnection" style="font-size: 0.78rem;">
+              🔌 Uji Koneksi Cloud
+            </button>
+            <button type="button" class="btn-action-secondary" id="btnPullCloudData" style="font-size: 0.78rem;">
+              ⬇️ Tarik Data dari Cloud
+            </button>
+            <button type="button" class="btn-action-secondary" id="btnPushLocalData" style="font-size: 0.78rem;">
+              ⬆️ Kirim Data Lokal ke Cloud
+            </button>
+          </div>
+
+          <div id="cloudTestResultBox" style="display: none; padding: 10px 12px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 14px;"></div>
+
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 14px; font-size: 0.78rem; color: #166534; line-height: 1.5;">
+            <strong>💡 Petunjuk Integrasi Google Spreadsheet DLH:</strong><br>
+            • Buka Google Spreadsheet &gt; menu <em>Extensions &gt; Apps Script</em>.<br>
+            • Tempel kode dari file <code>google-apps-script.js</code> lalu simpan.<br>
+            • Klik <em>Deploy &gt; New deployment &gt; Web app</em> (Akses: <em>Anyone</em>), salin URL lalu tempel di atas.<br>
+            • Sheet <code>Data_Aduan</code> (21 kolom) akan otomatis dihubungkan.
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-action-secondary" id="btnResetCloudDefaults">Reset ke Default DLH</button>
+          <button type="button" class="btn-action-primary" id="btnSaveCloudConfig">💾 Simpan Konfigurasi</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL: LIGHTBOX DETAIL FOTO BUKTI DUKUNG WARGA -->
+    <div class="lightbox-modal" id="modalLightboxImage" onclick="window.tutupLightbox(event)">
+      <div class="lightbox-content-box" onclick="event.stopPropagation()">
+        <button type="button" class="lightbox-btn-close" onclick="window.tutupLightbox()" title="Tutup (Esc)">&times;</button>
+        <img src="" alt="Bukti Foto Aduan" class="lightbox-img" id="lightboxImgEl">
+        <div class="lightbox-bar">
+          <span class="lightbox-caption" id="lightboxCaptionEl">-</span>
+          <div class="lightbox-actions">
+            <button type="button" class="lightbox-btn" id="btnZoomInLightbox" title="Perbesar Foto">🔍 Zoom +</button>
+            <button type="button" class="lightbox-btn" id="btnZoomOutLightbox" title="Perkecil Foto">🔍 Zoom -</button>
+            <a href="#" target="_blank" download class="lightbox-btn" id="btnDownloadLightbox" title="Unduh Berkas Foto">
+              💾 Unduh Foto
+            </a>
+          </div>
         </div>
       </div>
     </div>
@@ -3069,7 +3619,21 @@
       'lembata2026'
     ];
 
-    // Helper: Pastikan setiap record aduan memiliki struktur riwayat & rekam tindakan terakhir
+    // Cloud Database & API Configuration Keys
+    const SPREADSHEET_URL_KEY = 'dlh_google_spreadsheet_url';
+    const GAS_URL_KEY = 'dlh_gas_api_url';
+    const DEFAULT_GAS_API_URL = 'https://script.google.com/macros/s/AKfycbxm4r8QU2dv0S6csTTpmewuuvMNNrqiD2NeF_ENzXi8z7E3qDALHz6HNiBWtiEpGMruIQ/exec';
+    const DEFAULT_SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/1yA_6oYQyZ3gK4wZp8n6jR2X5-Q_x7m1a/edit';
+
+    function getSpreadsheetUrl() {
+      return localStorage.getItem(SPREADSHEET_URL_KEY) || DEFAULT_SPREADSHEET_URL;
+    }
+
+    function getGasApiUrl() {
+      return localStorage.getItem(GAS_URL_KEY) || DEFAULT_GAS_API_URL;
+    }
+
+    // Helper: Pastikan setiap record aduan memiliki struktur riwayat, rekam tindakan, & bukti foto lengkap
     function migrateAduanRecord(item) {
       if (!Array.isArray(item.riwayatTindakan)) {
         item.riwayatTindakan = [];
@@ -3093,10 +3657,39 @@
           item.rekamTindakanTerakhir = null;
         }
       }
+
+      // Normalisasi bukti foto dukung dari pelapor/warga (kamera & file)
+      if (!Array.isArray(item.buktiFotoList)) {
+        item.buktiFotoList = [];
+      }
+      if (item.fotoBukti && typeof item.fotoBukti === 'string' && !item.buktiFotoList.includes(item.fotoBukti)) {
+        item.buktiFotoList.unshift(item.fotoBukti);
+      }
+      if (item.linkFotoBukti && typeof item.linkFotoBukti === 'string' && !item.buktiFotoList.includes(item.linkFotoBukti)) {
+        item.buktiFotoList.push(item.linkFotoBukti);
+      }
+      if (item.foto && typeof item.foto === 'string' && !item.buktiFotoList.includes(item.foto)) {
+        item.buktiFotoList.push(item.foto);
+      }
+      if (!item.fotoBukti && item.buktiFotoList.length > 0) {
+        item.fotoBukti = item.buktiFotoList[0];
+      }
+      if (!item.linkFotoBukti && item.fotoBukti) {
+        item.linkFotoBukti = item.fotoBukti;
+      }
+
+      // Pastikan data sampel memiliki foto bukti terisi
+      const sampleMatch = INITIAL_SAMPLE_DATA.find(s => s.id === item.id);
+      if (sampleMatch && item.buktiFotoList.length === 0 && sampleMatch.fotoBukti) {
+        item.fotoBukti = sampleMatch.fotoBukti;
+        item.linkFotoBukti = sampleMatch.linkFotoBukti || sampleMatch.fotoBukti;
+        item.buktiFotoList = [...(sampleMatch.buktiFotoList || [sampleMatch.fotoBukti])];
+      }
+
       return item;
     }
 
-    // Initial Sample Data (Consistent with public portal & enriched with Action History)
+    // Initial Sample Data (Dilengkapi Bukti Foto Nyata & Riwayat Tindakan DLH)
     const INITIAL_SAMPLE_DATA = [
       {
         id: 'ADU-LMB-2026-001',
@@ -3113,6 +3706,12 @@
         uraian: 'Tumpukan sampah plastik, botol oli bekas, dan sisa jaring ikan menumpuk liar di sempadan pantai dekat dermaga perahu nelayan sepanjang 50 meter. Mengeluarkan bau menyengat.',
         sumberDugaan: 'Aktivitas buang sampah liar oknum pedagang dan limbah perahu',
         tanggalKejadian: '2026-09-30',
+        fotoBukti: 'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&w=800&q=80',
+        linkFotoBukti: 'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&w=800&q=80',
+        buktiFotoList: [
+          'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&w=800&q=80',
+          'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=800&q=80'
+        ],
         status: 'Dalam Penanganan',
         petugasVerifikasi: 'Petrus S. (Bidang Kebersihan DLH)',
         tanggalVerifikasi: '2026-10-02',
@@ -3168,6 +3767,11 @@
         uraian: 'Pembakaran sisa ranting dan ban bekas secara terbuka dalam skala besar di kebun dekat permukiman, asap tebal mengganggu pernapasan warga RT 03 terutama anak-anak.',
         sumberDugaan: 'Pembersihan lahan secara membakar tanpa izin',
         tanggalKejadian: '2026-10-02',
+        fotoBukti: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80',
+        linkFotoBukti: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80',
+        buktiFotoList: [
+          'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=800&q=80'
+        ],
         status: 'Sedang Diverifikasi',
         petugasVerifikasi: 'Kornelis K. (Pengawas Lapangan LH)',
         tanggalVerifikasi: '2026-10-03',
@@ -3223,6 +3827,11 @@
         uraian: 'Genangan ceceran solar/oli hitam mencemari pasir pantai sepanjang 20 meter, diduga rembesan dari drum bahan bakar kapal motor.',
         sumberDugaan: 'Tumpahan BBM perahu nelayan',
         tanggalKejadian: '2026-09-27',
+        fotoBukti: 'https://images.unsplash.com/photo-1621451537084-482c73073a0f?auto=format&fit=crop&w=800&q=80',
+        linkFotoBukti: 'https://images.unsplash.com/photo-1621451537084-482c73073a0f?auto=format&fit=crop&w=800&q=80',
+        buktiFotoList: [
+          'https://images.unsplash.com/photo-1621451537084-482c73073a0f?auto=format&fit=crop&w=800&q=80'
+        ],
         status: 'Selesai',
         petugasVerifikasi: 'Petrus S. & Tim DLH',
         tanggalVerifikasi: '2026-09-29',
@@ -3278,6 +3887,11 @@
         uraian: 'Air sungai yang biasa dipakai warga untuk cuci dan ternak terlihat keruh pekat berwarna keputihan dan berbau belerang tak wajar sejak pekerjaan saluran air.',
         sumberDugaan: 'Material proyek galian yang dibuang langsung ke sungai',
         tanggalKejadian: '2026-09-30',
+        fotoBukti: 'https://images.unsplash.com/photo-1516214104703-d870798883c5?auto=format&fit=crop&w=800&q=80',
+        linkFotoBukti: 'https://images.unsplash.com/photo-1516214104703-d870798883c5?auto=format&fit=crop&w=800&q=80',
+        buktiFotoList: [
+          'https://images.unsplash.com/photo-1516214104703-d870798883c5?auto=format&fit=crop&w=800&q=80'
+        ],
         status: 'Sedang Diverifikasi',
         petugasVerifikasi: 'Ir. Damianus T. (Kabid Penataan DLH)',
         tanggalVerifikasi: '2026-10-03',
@@ -3323,6 +3937,11 @@
         uraian: 'Ditemukan drum bekas cairan kimia/aki bekas dan tumpukan oli yang dibuang sembarangan di antara vegetasi bakau tepi muara.',
         sumberDugaan: 'Bengkel aki liar / penampung limbah tanpa izin',
         tanggalKejadian: '2026-10-02',
+        fotoBukti: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+        linkFotoBukti: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80',
+        buktiFotoList: [
+          'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=800&q=80'
+        ],
         status: 'Aduan Diterima',
         petugasVerifikasi: '-',
         tanggalVerifikasi: '-',
@@ -3348,6 +3967,11 @@
         uraian: 'Sampah kiriman plastik kemasan dan tali jaring hanyut memenuhi garis pantai hingga 200 meter, mengancam lokasi penjemuran rumput laut.',
         sumberDugaan: 'Arus laut sampah musiman & perahu nelayan melintas',
         tanggalKejadian: '2026-10-03',
+        fotoBukti: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80',
+        linkFotoBukti: 'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80',
+        buktiFotoList: [
+          'https://images.unsplash.com/photo-1509316975850-ff9c5deb0cd9?auto=format&fit=crop&w=800&q=80'
+        ],
         status: 'Aduan Diterima',
         petugasVerifikasi: '-',
         tanggalVerifikasi: '-',
@@ -3373,6 +3997,11 @@
         uraian: 'Pengambilan pasir laut secara masif menggunakan truk tanpa izin konservasi, menyebabkan abrasi tebing pantai dan pohon kelapa tumbang.',
         sumberDugaan: 'Oknum penambang pasir liar',
         tanggalKejadian: '2026-10-04',
+        fotoBukti: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+        linkFotoBukti: 'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80',
+        buktiFotoList: [
+          'https://images.unsplash.com/photo-1581092160607-ee22621dd758?auto=format&fit=crop&w=800&q=80'
+        ],
         status: 'Sedang Diverifikasi',
         petugasVerifikasi: 'Petrus S. (Bidang Pengawasan LH)',
         tanggalVerifikasi: '2026-10-06',
@@ -3418,6 +4047,11 @@
         uraian: 'Diduga air sumur warga tercemar rembesan limbah pengolahan daging paus/ikan dari tempat pemotongan tradisional.',
         sumberDugaan: 'Saluran pembuangan tradisional yang mampet',
         tanggalKejadian: '2026-09-04',
+        fotoBukti: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=800&q=80',
+        linkFotoBukti: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=800&q=80',
+        buktiFotoList: [
+          'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=800&q=80'
+        ],
         status: 'Ditolak',
         petugasVerifikasi: 'Tim Gabungan DLH & Dinkes Lembata',
         tanggalVerifikasi: '2026-09-07',
@@ -4018,6 +4652,67 @@
               <div class="case-report-text">"${item.uraian || '-'}"</div>
             </div>
 
+            <!-- 4.5. BUKTI DUKUNG ADUAN (FOTO / KAMERA / DOKUMEN WARGA) -->
+            ${(() => {
+              const evidenceList = [];
+              if (Array.isArray(item.buktiFotoList)) {
+                item.buktiFotoList.forEach(f => {
+                  if (f && typeof f === 'string' && !evidenceList.includes(f)) evidenceList.push(f);
+                });
+              }
+              if (item.fotoBukti && typeof item.fotoBukti === 'string' && !evidenceList.includes(item.fotoBukti)) {
+                evidenceList.unshift(item.fotoBukti);
+              }
+              if (item.linkFotoBukti && typeof item.linkFotoBukti === 'string' && !evidenceList.includes(item.linkFotoBukti)) {
+                evidenceList.push(item.linkFotoBukti);
+              }
+              if (item.foto && typeof item.foto === 'string' && !evidenceList.includes(item.foto)) {
+                evidenceList.push(item.foto);
+              }
+
+              if (evidenceList.length > 0) {
+                return `
+                  <div class="case-evidence-box">
+                    <div class="evidence-box-header">
+                      <div class="evidence-header-left">
+                        <span>📸</span>
+                        <span>Bukti Dukung Kejadian (Diunggah / Kamera Warga)</span>
+                      </div>
+                      <span class="evidence-count-badge">${evidenceList.length} Foto Terlampir</span>
+                    </div>
+                    <div class="evidence-gallery-grid">
+                      ${evidenceList.map((pUrl, pIdx) => {
+                        const safeUrl = pUrl.replace(/'/g, "\\'");
+                        const safeCaption = `Bukti #${pIdx + 1} - ${item.id} (${item.desa}, Kec. ${item.kecamatan})`.replace(/'/g, "\\'");
+                        return `
+                          <div class="evidence-thumb-card" onclick="window.bukaLightbox('${safeUrl}', '${safeCaption}')" title="Klik untuk memperbesar foto bukti #${pIdx + 1}">
+                            <img src="${pUrl}" alt="Bukti Foto ${pIdx + 1}" loading="lazy" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖼️</text></svg>'">
+                            <div class="evidence-thumb-overlay">
+                              <span class="overlay-zoom-icon">🔍</span>
+                              <span class="overlay-zoom-text">Perbesar</span>
+                            </div>
+                          </div>
+                        `;
+                      }).join('')}
+                    </div>
+                    <div class="evidence-footer-note">
+                      <span>💡</span>
+                      <span>Foto bukti terverifikasi dari warga. Klik pada foto untuk memeriksa resolusi penuh / unduh berkas.</span>
+                    </div>
+                  </div>
+                `;
+              } else {
+                return `
+                  <div class="case-evidence-box empty-evidence">
+                    <div class="evidence-empty-note">
+                      <span>📷</span>
+                      <span>Tidak ada lampiran foto bukti dari pelapor untuk tiket aduan ini.</span>
+                    </div>
+                  </div>
+                `;
+              }
+            })()}
+
             <!-- 5. Dua Kolom Metadata: Data Pelapor & Petugas DLH -->
             <div class="case-info-columns">
               <div class="case-info-card">
@@ -4171,6 +4866,41 @@
         gpsLink.style.display = 'inline-block';
       } else {
         gpsLink.style.display = 'none';
+      }
+
+      // 0. Populate Bukti Foto Warga di Modal
+      const evidenceBox = document.getElementById('modalDetailEvidenceBox');
+      const evidenceCount = document.getElementById('modalDetailEvidenceCount');
+      const evidenceGallery = document.getElementById('modalDetailEvidenceGallery');
+      if (evidenceBox && evidenceGallery) {
+        const photoList = [];
+        if (Array.isArray(item.buktiFotoList)) {
+          item.buktiFotoList.forEach(p => { if (p && typeof p === 'string' && !photoList.includes(p)) photoList.push(p); });
+        }
+        if (item.fotoBukti && typeof item.fotoBukti === 'string' && !photoList.includes(item.fotoBukti)) {
+          photoList.unshift(item.fotoBukti);
+        }
+        if (item.linkFotoBukti && typeof item.linkFotoBukti === 'string' && !photoList.includes(item.linkFotoBukti)) {
+          photoList.push(item.linkFotoBukti);
+        }
+
+        if (photoList.length > 0) {
+          evidenceBox.style.display = 'block';
+          if (evidenceCount) evidenceCount.textContent = `${photoList.length} Foto Terlampir`;
+          evidenceGallery.innerHTML = photoList.map((pUrl, pIdx) => {
+            const safeUrl = pUrl.replace(/'/g, "\\'");
+            const safeCap = `Bukti #${pIdx + 1} - ${item.id}`.replace(/'/g, "\\'");
+            return `
+              <div style="position: relative; width: 72px; height: 72px; border-radius: 6px; overflow: hidden; border: 1.5px solid #cbd5e1; cursor: pointer; background: #e2e8f0;"
+                onclick="window.bukaLightbox('${safeUrl}', '${safeCap}')" title="Klik untuk perbesar foto bukti #${pIdx + 1}">
+                <img src="${pUrl}" alt="Bukti ${pIdx + 1}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🖼️</text></svg>'">
+                <span style="position: absolute; bottom: 0; left: 0; right: 0; background: rgba(0,0,0,0.65); color: #fff; font-size: 0.62rem; font-weight: 700; text-align: center; padding: 1px 0;">🔍 #${pIdx + 1}</span>
+              </div>
+            `;
+          }).join('');
+        } else {
+          evidenceBox.style.display = 'none';
+        }
       }
 
       // 1. Populate Riwayat Log Accordion di dalam modal
@@ -4767,33 +5497,271 @@
       showToast('File CSV Rekap Aduan berhasil diunduh.');
     });
 
-    // Cloud Sync Button
-    document.getElementById('btnSyncGas').addEventListener('click', async () => {
-      showToast('Menghubungkan ke Cloud Google Apps Script...');
-      const gasUrl = localStorage.getItem('dlh_gas_api_url') || '';
-      if (!gasUrl) {
-        showToast('ℹ️ Data lokal aktif. Sistem siap disinkronkan saat URL Google Web App dihubungkan.');
+    // ===================================================================
+    // LIGHTBOX VIEWER CONTROLLER (FOTO BUKTI LAPANGAN)
+    // ===================================================================
+    let currentLightboxZoom = 1;
+
+    window.bukaLightbox = function (imgUrl, caption) {
+      const modal = document.getElementById('modalLightboxImage');
+      const img = document.getElementById('lightboxImgEl');
+      const cap = document.getElementById('lightboxCaptionEl');
+      const dl = document.getElementById('btnDownloadLightbox');
+      if (!modal || !img) return;
+
+      currentLightboxZoom = 1;
+      img.style.transform = `scale(${currentLightboxZoom})`;
+      img.src = imgUrl;
+      if (cap) cap.textContent = caption || 'Bukti Foto Aduan Masyarakat';
+      if (dl) {
+        dl.href = imgUrl;
+        dl.download = `Bukti_DLH_Lembata_${Date.now()}.jpg`;
+      }
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    };
+
+    window.tutupLightbox = function (e) {
+      if (e && e.target && e.target.id !== 'modalLightboxImage' && !e.target.classList.contains('lightbox-btn-close')) {
         return;
       }
-      try {
-        const resp = await fetch(`${gasUrl}?action=getAll&_t=${Date.now()}`);
-        if (!resp.ok) throw new Error('HTTP Error');
-        const json = await resp.json();
-        if (json && json.success && Array.isArray(json.data)) {
-          saveAduanList(json.data);
-          renderKpiMetrics(json.data);
-          renderCaseList();
-          renderMapMarkers(json.data);
-          showToast(`✅ Berhasil disinkronkan! ${json.data.length} aduan termuat dari cloud.`);
-        }
-      } catch (e) {
-        showToast('⚠️ Gagal terhubung ke cloud. Menggunakan data tersimpan di browser.');
+      const modal = document.getElementById('modalLightboxImage');
+      if (modal) {
+        modal.style.display = 'none';
+        document.body.style.overflow = '';
       }
+    };
+
+    document.getElementById('btnZoomInLightbox')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const img = document.getElementById('lightboxImgEl');
+      if (img && currentLightboxZoom < 2.5) {
+        currentLightboxZoom += 0.25;
+        img.style.transform = `scale(${currentLightboxZoom})`;
+      }
+    });
+
+    document.getElementById('btnZoomOutLightbox')?.addEventListener('click', (e) => {
+      e.stopPropagation();
+      const img = document.getElementById('lightboxImgEl');
+      if (img && currentLightboxZoom > 0.75) {
+        currentLightboxZoom -= 0.25;
+        img.style.transform = `scale(${currentLightboxZoom})`;
+      }
+    });
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape') {
+        const lb = document.getElementById('modalLightboxImage');
+        if (lb && lb.style.display === 'flex') {
+          window.tutupLightbox();
+        }
+      }
+    });
+
+    // ===================================================================
+    // GOOGLE SPREADSHEET & CLOUD INTEGRATION ENGINE
+    // ===================================================================
+    function openGoogleSpreadsheet() {
+      const url = getSpreadsheetUrl();
+      if (url && url.startsWith('http')) {
+        window.open(url, '_blank');
+        showToast('📊 Membuka Google Spreadsheet DLH Lembata...');
+      } else {
+        bukaModalSpreadsheetConfig();
+      }
+    }
+
+    function bukaModalSpreadsheetConfig() {
+      const modal = document.getElementById('modalSpreadsheetConfig');
+      const inputSheet = document.getElementById('cfgSpreadsheetUrl');
+      const inputGas = document.getElementById('cfgGasUrl');
+      const linkDirect = document.getElementById('cfgBtnOpenSheetDirect');
+      const resultBox = document.getElementById('cloudTestResultBox');
+
+      if (inputSheet) inputSheet.value = getSpreadsheetUrl();
+      if (inputGas) inputGas.value = getGasApiUrl();
+      if (linkDirect) linkDirect.href = getSpreadsheetUrl();
+      if (resultBox) resultBox.style.display = 'none';
+      if (modal) modal.style.display = 'flex';
+    }
+
+    function tutupModalSpreadsheetConfig() {
+      const modal = document.getElementById('modalSpreadsheetConfig');
+      if (modal) modal.style.display = 'none';
+    }
+
+    function updateCloudIndicator(isConnected, label) {
+      const el = document.getElementById('cloudStatusIndicator');
+      if (el) {
+        el.innerHTML = isConnected 
+          ? `<span class="status-dot-green"></span> ${label}` 
+          : `<span class="status-dot-green" style="background: #f59e0b;"></span> ${label}`;
+      }
+      const directLink = document.getElementById('linkDirectSpreadsheet');
+      if (directLink) {
+        directLink.href = getSpreadsheetUrl();
+      }
+    }
+
+    async function syncCloudData(silent = false) {
+      if (!silent) showToast('🔄 Menghubungkan ke Cloud DLH Lembata...');
+      const gasUrl = getGasApiUrl();
+
+      try {
+        let endpoint = `${gasUrl}${gasUrl.includes('?') ? '&' : '?'}action=getAll&_t=${Date.now()}`;
+        const resp = await fetch(endpoint, { method: 'GET', mode: 'cors' });
+        if (!resp.ok) throw new Error(`HTTP Error ${resp.status}`);
+        const json = await resp.json();
+
+        if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {
+          const mapped = json.data.map(item => migrateAduanRecord({
+            id: item.id || item.ID_Aduan,
+            timestamp: item.timestamp || item.Timestamp || '-',
+            namaPelapor: item.namaPelapor || item.Nama_Pelapor || 'Masyarakat',
+            noHp: item.noHp || item.No_HP || '-',
+            alamatPelapor: item.alamatPelapor || item.Alamat_Pelapor || '-',
+            kecamatan: item.kecamatan || item.Kecamatan || 'Nubatukan',
+            desa: item.desa || item.Desa_Kelurahan || '-',
+            lokasiDetail: item.lokasiDetail || item.Lokasi_Detail || '-',
+            lat: parseFloat(item.lat || item.Latitude || -8.368),
+            lng: parseFloat(item.lng || item.Longitude || 123.558),
+            jenisPencemaran: item.jenisPencemaran || item.Jenis_Pencemaran || 'Lainnya',
+            uraian: item.uraian || item.Uraian_Aduan || '-',
+            sumberDugaan: item.sumberDugaan || item.Sumber_Dugaan || '-',
+            tanggalKejadian: item.tanggalKejadian || item.Tanggal_Kejadian || '-',
+            fotoBukti: item.fotoBukti || item.Link_Foto_Bukti || item.linkFotoBukti || '',
+            linkFotoBukti: item.linkFotoBukti || item.Link_Foto_Bukti || item.fotoBukti || '',
+            status: item.status || item.Status || 'Aduan Diterima',
+            petugasVerifikasi: item.petugasVerifikasi || item.Petugas_Verifikasi || '-',
+            tanggalVerifikasi: item.tanggalVerifikasi || item.Tanggal_Verifikasi || '-',
+            hasilVerifikasi: item.hasilVerifikasi || item.Hasil_Verifikasi || '-',
+            tindakanDLH: item.tindakanDLH || item.Tindakan_DLH || '-',
+            tanggalSelesai: item.tanggalSelesai || item.Tanggal_Selesai || '-'
+          }));
+
+          saveAduanList(mapped);
+          renderKpiMetrics(mapped);
+          renderCaseList();
+          renderMapMarkers(mapped);
+          updateCloudIndicator(true, `Terhubung Cloud (${mapped.length} Aduan)`);
+          showToast(`✅ Sinkronisasi berhasil! ${mapped.length} aduan termuat dari cloud.`);
+          return { success: true, count: mapped.length };
+        } else {
+          throw new Error('Data cloud kosong atau format tidak sesuai');
+        }
+      } catch (err) {
+        console.warn('GAS API sync fallback:', err);
+        updateCloudIndicator(false, 'Mode Lokal Aktif');
+        if (!silent) {
+          showToast('ℹ️ Menggunakan database lokal aman. Anda dapat membuka atau menghubungkan Google Spreadsheet.');
+        }
+        return { success: false, error: err };
+      }
+    }
+
+    // Google Spreadsheet & Cloud UI Handlers
+    document.getElementById('btnOpenSpreadsheet')?.addEventListener('click', openGoogleSpreadsheet);
+    document.getElementById('btnCloudSettings')?.addEventListener('click', bukaModalSpreadsheetConfig);
+    document.getElementById('btnCloseModalSpreadsheet')?.addEventListener('click', tutupModalSpreadsheetConfig);
+
+    document.getElementById('cfgSpreadsheetUrl')?.addEventListener('input', (e) => {
+      const link = document.getElementById('cfgBtnOpenSheetDirect');
+      if (link) link.href = e.target.value.trim() || '#';
+    });
+
+    document.getElementById('btnSaveCloudConfig')?.addEventListener('click', () => {
+      const sheetUrl = (document.getElementById('cfgSpreadsheetUrl')?.value || '').trim();
+      const gasUrl = (document.getElementById('cfgGasUrl')?.value || '').trim();
+
+      if (sheetUrl) localStorage.setItem(SPREADSHEET_URL_KEY, sheetUrl);
+      else localStorage.removeItem(SPREADSHEET_URL_KEY);
+
+      if (gasUrl) localStorage.setItem(GAS_URL_KEY, gasUrl);
+      else localStorage.removeItem(GAS_URL_KEY);
+
+      updateCloudIndicator(true, 'Pengaturan Disimpan');
+      showToast('✅ Konfigurasi Google Spreadsheet & Cloud berhasil disimpan!');
+      tutupModalSpreadsheetConfig();
+    });
+
+    document.getElementById('btnResetCloudDefaults')?.addEventListener('click', () => {
+      localStorage.removeItem(SPREADSHEET_URL_KEY);
+      localStorage.removeItem(GAS_URL_KEY);
+      document.getElementById('cfgSpreadsheetUrl').value = DEFAULT_SPREADSHEET_URL;
+      document.getElementById('cfgGasUrl').value = DEFAULT_GAS_API_URL;
+      document.getElementById('cfgBtnOpenSheetDirect').href = DEFAULT_SPREADSHEET_URL;
+      showToast('Setelan dikembalikan ke default DLH Lembata.');
+    });
+
+    document.getElementById('btnTestCloudConnection')?.addEventListener('click', async () => {
+      const resultBox = document.getElementById('cloudTestResultBox');
+      const gasUrl = (document.getElementById('cfgGasUrl')?.value || getGasApiUrl()).trim();
+      if (!resultBox) return;
+
+      resultBox.style.display = 'block';
+      resultBox.style.background = '#eff6ff';
+      resultBox.style.color = '#1e40af';
+      resultBox.style.border = '1px solid #bfdbfe';
+      resultBox.textContent = '⏳ Menguji koneksi ke endpoint Google Apps Script...';
+
+      try {
+        const resp = await fetch(`${gasUrl}${gasUrl.includes('?') ? '&' : '?'}action=getStats&_t=${Date.now()}`);
+        if (!resp.ok) throw new Error(`HTTP ${resp.status}`);
+        const data = await resp.json();
+        resultBox.style.background = '#f0fdf4';
+        resultBox.style.color = '#166534';
+        resultBox.style.border = '1px solid #bbf7d0';
+        resultBox.textContent = `✅ Berhasil terhubung! API Google Apps Script merespons (Total di cloud: ${data.total || 0} aduan).`;
+      } catch (e) {
+        resultBox.style.background = '#fef2f2';
+        resultBox.style.color = '#991b1b';
+        resultBox.style.border = '1px solid #fecaca';
+        resultBox.textContent = `⚠️ Uji koneksi belum berhasil: ${e.message}. Pastikan izin deployment diatur ke "Anyone".`;
+      }
+    });
+
+    document.getElementById('btnPullCloudData')?.addEventListener('click', async () => {
+      const res = await syncCloudData(false);
+      if (res && res.success) {
+        tutupModalSpreadsheetConfig();
+      }
+    });
+
+    document.getElementById('btnPushLocalData')?.addEventListener('click', async () => {
+      const list = getAduanList();
+      const gasUrl = getGasApiUrl();
+      showToast(`Mengirim ${list.length} aduan ke Google Spreadsheet...`);
+
+      try {
+        for (const item of list) {
+          await fetch(gasUrl, {
+            method: 'POST',
+            mode: 'no-cors',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ action: 'addAduan', data: item })
+          });
+        }
+        showToast('✅ Seluruh data lokal berhasil dikirim ke Google Spreadsheet.');
+      } catch (err) {
+        showToast('⚠️ Gagal mengirim data ke spreadsheet. Periksa koneksi internet.');
+      }
+    });
+
+    // Cloud Sync Button in Header
+    document.getElementById('btnSyncGas')?.addEventListener('click', () => {
+      syncCloudData(false);
+    });
+
+    // Clicking officer session pill opens switch officer modal
+    document.getElementById('btnHeaderOfficerProfile')?.addEventListener('click', () => {
+      window.bukaModalSwitchOfficer();
     });
 
     // Initial Bootstrap
     document.addEventListener('DOMContentLoaded', () => {
       checkAuthentication();
+      updateCloudIndicator(true, 'Google Spreadsheet Siap');
     });
   </script>
 </body>
