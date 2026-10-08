@@ -577,9 +577,10 @@ class AduanDataStore {
       this.save();
     }
 
-    // Jika URL Google Apps Script sudah disetel, coba sinkronisasi otomatis
+    // Jika URL Google Apps Script sudah disetel, lakukan sinkronisasi otomatis & polling berkala
     if (this.hasGasConfigured()) {
-      setTimeout(() => this.syncFromGAS(), 800);
+      setTimeout(() => this.syncFromGAS(true), 200);
+      setInterval(() => this.syncFromGAS(true), 8000);
     }
   }
 
@@ -588,7 +589,7 @@ class AduanDataStore {
   }
 
   getGasUrl() {
-    return this.gasApiUrl;
+    return this.gasApiUrl || DEFAULT_GAS_API_URL;
   }
 
   setGasUrl(url) {
@@ -601,7 +602,7 @@ class AduanDataStore {
     return this.hasGasConfigured();
   }
 
-  async syncFromGAS() {
+  async syncFromGAS(silent = false) {
     if (!this.hasGasConfigured() || this.isSyncing) {
       return { success: false, reason: 'URL belum diisi. Masukkan URL Web App Google Apps Script untuk menghubungkan data cloud.' };
     }
@@ -621,10 +622,9 @@ class AduanDataStore {
           const csvText = await response.text();
           const parsedData = parseCsvToAduan(csvText);
           if (parsedData.length > 0) {
-            this.aduanList = parsedData;
-            this.save();
+            parsedData.forEach(p => this.mergeRemoteRecord(p));
             this.lastSyncTime = new Date();
-            window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length } }));
+            window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent } }));
             return { success: true, count: this.aduanList.length };
           } else {
             throw new Error('Data di sheet kosong atau format kolom belum sesuai');
@@ -639,33 +639,13 @@ class AduanDataStore {
       const json = await response.json();
 
       if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {
-        // Normalisasi format data dari Google Spreadsheet
-        this.aduanList = json.data.map(item => ({
-          id: item.id || item.ID_Aduan,
-          timestamp: item.timestamp || item.Timestamp || '-',
-          namaPelapor: item.namaPelapor || item.Nama_Pelapor || 'Masyarakat',
-          noHp: item.noHp || item.No_HP || '-',
-          alamatPelapor: item.alamatPelapor || item.Alamat_Pelapor || '-',
-          kecamatan: item.kecamatan || item.Kecamatan || 'Nubatukan',
-          desa: item.desa || item.Desa_Kelurahan || '-',
-          lokasiDetail: item.lokasiDetail || item.Lokasi_Detail || '-',
-          lat: parseFloat(item.lat || item.Latitude || -8.368),
-          lng: parseFloat(item.lng || item.Longitude || 123.558),
-          jenisPencemaran: item.jenisPencemaran || item.Jenis_Pencemaran || 'Lainnya',
-          uraian: item.uraian || item.Uraian_Aduan || '-',
-          sumberDugaan: item.sumberDugaan || item.Sumber_Dugaan || '-',
-          tanggalKejadian: item.tanggalKejadian || item.Tanggal_Kejadian || '-',
-          status: item.status || item.Status || 'Baru',
-          petugasVerifikasi: item.petugasVerifikasi || item.Petugas_Verifikasi || '-',
-          tanggalVerifikasi: item.tanggalVerifikasi || item.Tanggal_Verifikasi || '-',
-          hasilVerifikasi: item.hasilVerifikasi || item.Hasil_Verifikasi || '-',
-          tindakanDLH: item.tindakanDLH || item.Tindakan_DLH || '-',
-          tanggalSelesai: item.tanggalSelesai || item.Tanggal_Selesai || '-'
-        }));
+        // Sinkronkan dan gabungkan langsung seluruh record dari Google Apps Script
+        json.data.forEach(item => {
+          this.mergeRemoteRecord(item);
+        });
 
-        this.save();
         this.lastSyncTime = new Date();
-        window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length } }));
+        window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent } }));
         return { success: true, count: this.aduanList.length };
       }
       return { success: false, reason: 'Format respons tidak valid atau data masih kosong' };
@@ -709,6 +689,60 @@ class AduanDataStore {
   getById(id) {
     if (!id) return null;
     return this.aduanList.find(item => item.id.trim().toLowerCase() === id.trim().toLowerCase()) || null;
+  }
+
+  mergeRemoteRecord(remoteItem) {
+    if (!remoteItem || !remoteItem.id) return null;
+    const cleanId = String(remoteItem.id).trim().toUpperCase();
+    const index = this.aduanList.findIndex(x => x.id.trim().toUpperCase() === cleanId);
+
+    const rekamTerakhir = remoteItem.rekamTindakanTerakhir || (
+      (remoteItem.tindakanDLH && remoteItem.tindakanDLH !== '-') ? {
+        waktu: remoteItem.tanggalVerifikasi && remoteItem.tanggalVerifikasi !== '-' ? `${remoteItem.tanggalVerifikasi} 10:00` : (remoteItem.timestamp || '-'),
+        petugas: remoteItem.petugasVerifikasi && remoteItem.petugasVerifikasi !== '-' ? remoteItem.petugasVerifikasi : 'Tim Lapangan DLH',
+        kategori: remoteItem.status === 'Selesai' ? 'Penyelesaian Kasus' : (remoteItem.status === 'Ditindaklanjuti' || remoteItem.status === 'Dalam Penanganan' ? 'Tindakan Lapangan' : 'Verifikasi Lapangan'),
+        status: remoteItem.status || 'Dalam Penanganan',
+        tindakan: remoteItem.tindakanDLH,
+        hasil: remoteItem.hasilVerifikasi !== '-' ? remoteItem.hasilVerifikasi : '',
+        catatan: remoteItem.catatan || ''
+      } : null
+    );
+
+    const mapped = {
+      id: cleanId,
+      timestamp: remoteItem.timestamp || '-',
+      namaPelapor: remoteItem.namaPelapor || 'Masyarakat',
+      noHp: remoteItem.noHp || '-',
+      alamatPelapor: remoteItem.alamatPelapor || '-',
+      kecamatan: remoteItem.kecamatan || 'Nubatukan',
+      desa: remoteItem.desa || '-',
+      lokasiDetail: remoteItem.lokasiDetail || '-',
+      lat: parseFloat(remoteItem.lat || -8.368),
+      lng: parseFloat(remoteItem.lng || 123.558),
+      jenisPencemaran: remoteItem.jenisPencemaran || 'Lainnya',
+      uraian: remoteItem.uraian || '-',
+      sumberDugaan: remoteItem.sumberDugaan || '-',
+      tanggalKejadian: remoteItem.tanggalKejadian || '-',
+      fotoBukti: remoteItem.linkFoto || remoteItem.fotoBukti || '',
+      linkFotoBukti: remoteItem.linkFoto || remoteItem.linkFotoBukti || remoteItem.fotoBukti || '',
+      buktiFotoList: Array.isArray(remoteItem.buktiFotoList) ? remoteItem.buktiFotoList : (remoteItem.linkFoto ? [remoteItem.linkFoto] : (remoteItem.fotoBukti ? [remoteItem.fotoBukti] : [])),
+      status: remoteItem.status || 'Aduan Diterima',
+      petugasVerifikasi: remoteItem.petugasVerifikasi || '-',
+      tanggalVerifikasi: remoteItem.tanggalVerifikasi || '-',
+      hasilVerifikasi: remoteItem.hasilVerifikasi || '-',
+      tindakanDLH: remoteItem.tindakanDLH || '-',
+      tanggalSelesai: remoteItem.tanggalSelesai || '-',
+      rekamTindakanTerakhir: rekamTerakhir,
+      riwayatTindakan: Array.isArray(remoteItem.riwayatTindakan) ? remoteItem.riwayatTindakan : (rekamTerakhir ? [rekamTerakhir] : [])
+    };
+
+    if (index !== -1) {
+      this.aduanList[index] = { ...this.aduanList[index], ...mapped };
+    } else {
+      this.aduanList.unshift(mapped);
+    }
+    this.save();
+    return mapped;
   }
 
   generateNewId() {

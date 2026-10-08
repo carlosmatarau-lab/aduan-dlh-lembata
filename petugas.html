@@ -5359,8 +5359,8 @@
 
       showToast(`⚡ Real-Time Berhasil! Rekam tindakan untuk aduan ${id} telah diperbarui & disinkronkan ke seluruh sistem.`);
 
-      // Sync to Google Apps Script as background POST if API configured
-      const gasUrl = localStorage.getItem('dlh_gas_api_url') || (window.GAS_API_URL || '');
+      // Sync to Google Apps Script as background POST (Cloud Database)
+      const gasUrl = getGasApiUrl();
       if (gasUrl && gasUrl.startsWith('http')) {
         fetch(gasUrl, {
           method: 'POST',
@@ -5379,6 +5379,8 @@
               riwayatTindakan: list[index].riwayatTindakan
             }
           })
+        }).then(r => r.json()).then(res => {
+          console.log('✅ Update verifikasi berhasil tersimpan di Google Cloud:', res);
         }).catch(err => console.warn('Sync POST to GAS failed:', err));
       }
     });
@@ -5768,7 +5770,9 @@
           renderCaseList();
           renderMapMarkers(mapped);
           updateCloudIndicator(true, `Terhubung Cloud (${mapped.length} Aduan)`);
-          showToast(`✅ Sinkronisasi berhasil! ${mapped.length} aduan termuat dari cloud.`);
+          if (!silent) {
+            showToast(`✅ Sinkronisasi berhasil! ${mapped.length} aduan termuat dari cloud.`);
+          }
           return { success: true, count: mapped.length };
         } else {
           throw new Error('Data cloud kosong atau format tidak sesuai');
@@ -5936,24 +5940,26 @@
     // Initial Bootstrap & Real-Time Sync Listener
     document.addEventListener('DOMContentLoaded', () => {
       checkAuthentication();
-      updateCloudIndicator(true, 'Google Spreadsheet Siap');
+      updateCloudIndicator(true, 'Menghubungkan Google Apps Script...');
+
+      // 1. Sinkronisasi Otomatis Seluruh Data dari Google Apps Script saat dibuka
+      syncCloudData(true);
+
+      // 2. Auto-polling pembaruan aduan dari Cloud Database Google Apps Script setiap 6 detik
+      setInterval(() => {
+        syncCloudData(true);
+      }, 6000);
 
       // Pasang Listener Real-Time Terpadu
       if (window.dlhRealtime) {
         window.dlhRealtime.listen((msg) => {
           if (msg.type === 'ADUAN_BARU') {
-            const list = getAduanList();
-            renderKpiMetrics(list);
-            renderCaseList();
-            renderMapMarkers(list);
+            syncCloudData(true);
             const nama = msg.payload?.item?.namaPelapor || 'Warga';
             const desa = msg.payload?.item?.desa || 'Lembata';
             showToast(`🔔 Aduan Baru Masuk Real-Time: ${msg.payload.aduanId} (${nama} - ${desa})`);
           } else if (msg.type === 'TINDAK_LANJUT_UPDATED' || msg.type === 'STORAGE_RAW_UPDATED') {
-            const list = getAduanList();
-            renderKpiMetrics(list);
-            renderCaseList();
-            renderMapMarkers(list);
+            syncCloudData(true);
           }
         });
       }

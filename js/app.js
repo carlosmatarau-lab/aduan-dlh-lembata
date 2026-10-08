@@ -13,6 +13,8 @@ class DLHApp {
       kecamatan: 'all',
       status: 'all'
     };
+    this.trackingPollTimer = null;
+    this.currentTrackedId = null;
   }
 
   init() {
@@ -62,6 +64,16 @@ class DLHApp {
 
   switchTab(tabName) {
     this.currentTab = tabName;
+
+    // Kelola live polling pelacakan tiket status lintas perangkat
+    if (tabName !== 'lacak') {
+      this.stopTrackingLivePoll();
+    } else {
+      const inputSearch = document.getElementById('inputTrackId');
+      if (inputSearch && inputSearch.value.trim()) {
+        this.renderTrackResult(inputSearch.value.trim().toUpperCase(), false);
+      }
+    }
 
     // Update active nav buttons
     document.querySelectorAll('.nav-tab-btn').forEach(btn => {
@@ -525,21 +537,141 @@ class DLHApp {
       return;
     }
 
-    const item = window.aduanStore.getById(query);
+    this.currentTrackedId = query;
     container.style.display = 'block';
 
-    if (!item) {
+    let localItem = window.aduanStore ? window.aduanStore.getById(query) : null;
+
+    if (localItem) {
+      // Segera tampilkan data lokal terlebih dahulu untuk kecepatan akses
+      this.renderTrackDOM(localItem, isRealtime, true);
+    } else {
+      // Tampilkan animasi loading saat pertama kali mencari ke server cloud
       container.innerHTML = `
-        <div style="background: #fff1f2; border: 1px solid #fecdd3; border-radius: 12px; padding: 20px; text-align: center;">
-          <div style="font-size: 32px; margin-bottom: 6px;">❌</div>
-          <strong style="color: #be123c;">Nomor Tiket "${query}" Tidak Ditemukan</strong>
-          <p style="font-size: 0.85rem; color: #9f1239; margin-top: 4px;">
-            Pastikan kode tiket yang Anda masukkan sesuai (Contoh format: <code>ADU-LMB-2026-001</code>).
+        <div style="background: #ffffff; border: 1.5px solid #a7f3d0; border-radius: 16px; padding: 36px 20px; text-align: center; box-shadow: 0 4px 20px rgba(0,0,0,0.06);">
+          <div style="font-size: 38px; display: inline-block; animation: spin 1.2s linear infinite; margin-bottom: 12px;">🔄</div>
+          <h4 style="color: #065f46; font-weight: 800; font-size: 1.15rem; margin-bottom: 6px;">Menghubungkan ke Server Cloud DLH...</h4>
+          <p style="color: #64748b; font-size: 0.86rem; max-width: 440px; margin: 0 auto;">
+            Sedang mengambil status terkini dan rekam tindak lanjut resmi untuk tiket <strong>${query}</strong>
           </p>
         </div>
       `;
-      return;
     }
+
+    // Ambil data resmi terkini langsung dari Cloud API Google Apps Script
+    const gasUrl = (window.aduanStore && window.aduanStore.getGasUrl) ? window.aduanStore.getGasUrl() : (typeof DEFAULT_GAS_API_URL !== 'undefined' ? DEFAULT_GAS_API_URL : 'https://script.google.com/macros/s/AKfycbxm4r8QU2dv0S6csTTpmewuuvMNNrqiD2NeF_ENzXi8z7E3qDALHz6HNiBWtiEpGMruIQ/exec');
+    if (gasUrl && gasUrl.startsWith('http')) {
+      fetch(`${gasUrl}${gasUrl.includes('?') ? '&' : '?'}action=getById&id=${encodeURIComponent(query)}&_t=${Date.now()}`)
+        .then(res => res.json())
+        .then(res => {
+          if (this.currentTrackedId !== query) return;
+
+          if (res && res.success && res.data) {
+            const merged = window.aduanStore.mergeRemoteRecord(res.data);
+            this.renderTrackDOM(merged, isRealtime, false);
+            this.updateKPIs();
+            this.renderTable();
+            if (window.lembataMap) window.lembataMap.renderMarkers();
+          } else if (!localItem) {
+            container.innerHTML = `
+              <div style="background: #fff1f2; border: 1.5px solid #fecdd3; border-radius: 14px; padding: 26px 20px; text-align: center;">
+                <div style="font-size: 34px; margin-bottom: 8px;">❌</div>
+                <strong style="color: #be123c; font-size: 1.05rem;">Nomor Tiket "${query}" Tidak Ditemukan di Server DLH</strong>
+                <p style="font-size: 0.85rem; color: #9f1239; margin-top: 6px;">
+                  Pastikan kode tiket yang Anda masukkan sesuai (Contoh format: <code>ADU-LMB-2026-001</code>).
+                </p>
+              </div>
+            `;
+          } else {
+            this.renderTrackDOM(localItem, false, false);
+          }
+        })
+        .catch(err => {
+          console.warn('Gagal fetch remote tiket dari GAS:', err);
+          if (this.currentTrackedId !== query) return;
+          if (localItem) {
+            this.renderTrackDOM(localItem, false, false);
+          } else {
+            container.innerHTML = `
+              <div style="background: #fff1f2; border: 1.5px solid #fecdd3; border-radius: 14px; padding: 26px 20px; text-align: center;">
+                <div style="font-size: 34px; margin-bottom: 8px;">⚠️</div>
+                <strong style="color: #be123c; font-size: 1.05rem;">Koneksi ke Server Cloud Terkendala</strong>
+                <p style="font-size: 0.85rem; color: #9f1239; margin-top: 6px;">
+                  Tidak dapat terhubung ke database cloud DLH. Periksa koneksi internet HP Anda lalu tekan tombol Cari Tiket kembali.
+                </p>
+              </div>
+            `;
+          }
+        });
+    }
+
+    // Jalankan auto-polling real-time setiap 4 detik untuk perangkat HP / Warga
+    this.startTrackingLivePoll(query);
+  }
+
+  startTrackingLivePoll(query) {
+    this.stopTrackingLivePoll();
+    this.currentTrackedId = query;
+
+    this.trackingPollTimer = setInterval(async () => {
+      if (this.currentTab !== 'lacak' || this.currentTrackedId !== query) {
+        this.stopTrackingLivePoll();
+        return;
+      }
+
+      const gasUrl = (window.aduanStore && window.aduanStore.getGasUrl) ? window.aduanStore.getGasUrl() : (typeof DEFAULT_GAS_API_URL !== 'undefined' ? DEFAULT_GAS_API_URL : 'https://script.google.com/macros/s/AKfycbxm4r8QU2dv0S6csTTpmewuuvMNNrqiD2NeF_ENzXi8z7E3qDALHz6HNiBWtiEpGMruIQ/exec');
+      if (!gasUrl || !gasUrl.startsWith('http')) return;
+
+      try {
+        const res = await fetch(`${gasUrl}${gasUrl.includes('?') ? '&' : '?'}action=getById&id=${encodeURIComponent(query)}&_t=${Date.now()}`);
+        const json = await res.json();
+
+        if (json && json.success && json.data) {
+          const currentLocal = window.aduanStore.getById(query);
+          const remoteData = json.data;
+
+          // Bandingkan apakah ada pembaruan status, petugas, atau tindakan lapangan
+          const hasChanged = !currentLocal ||
+            currentLocal.status !== remoteData.status ||
+            currentLocal.tindakanDLH !== remoteData.tindakanDLH ||
+            currentLocal.hasilVerifikasi !== remoteData.hasilVerifikasi ||
+            currentLocal.petugasVerifikasi !== remoteData.petugasVerifikasi ||
+            currentLocal.tanggalVerifikasi !== remoteData.tanggalVerifikasi ||
+            currentLocal.tanggalSelesai !== remoteData.tanggalSelesai;
+
+          if (hasChanged) {
+            const merged = window.aduanStore.mergeRemoteRecord(remoteData);
+            this.renderTrackDOM(merged, true, false);
+            this.showToast(`⚡ Pembaruan Real-Time: Tindak lanjut aduan ${query} baru saja diperbarui oleh petugas DLH! Status: ${remoteData.status}`, 'success');
+            this.updateKPIs();
+            this.renderTable();
+            if (window.lembataMap) window.lembataMap.renderMarkers();
+          } else {
+            const syncPill = document.getElementById('cloudSyncStatusPill');
+            if (syncPill) {
+              syncPill.innerHTML = `
+                <span style="width: 7px; height: 7px; background: #16a34a; border-radius: 50%; display: inline-block; box-shadow: 0 0 0 2px rgba(22,163,74,0.3);"></span>
+                <span>🟢 Terhubung Real-Time Server DLH &bull; Terakhir diperbarui ${new Date().toLocaleTimeString('id-ID')} WITA</span>
+              `;
+            }
+          }
+        }
+      } catch (e) {
+        // Abaikan kesalahan sementara jaringan saat background poll
+      }
+    }, 4000);
+  }
+
+  stopTrackingLivePoll() {
+    if (this.trackingPollTimer) {
+      clearInterval(this.trackingPollTimer);
+      this.trackingPollTimer = null;
+    }
+  }
+
+  renderTrackDOM(item, isRealtime = false, isSyncingCloud = false) {
+    const container = document.getElementById('trackResultContainer');
+    if (!container || !item) return;
 
     if (isRealtime) {
       this.showToast(`⚡ Pembaruan Real-Time: Tindak lanjut aduan ${item.id} baru saja diperbarui oleh petugas! Status: ${item.status}`, 'success');
@@ -547,10 +679,21 @@ class DLHApp {
 
     const isSelesai = item.status === 'Selesai';
     const isDitolak = item.status === 'Ditolak';
-    const isDalamPenanganan = item.status === 'Dalam Penanganan' || isSelesai;
-    const isSedangDiverif = item.status === 'Sedang Diverifikasi' || isDalamPenanganan;
+    const isDitindaklanjuti = item.status === 'Ditindaklanjuti' || item.status === 'Dalam Penanganan' || isSelesai;
+    const isSedangDiverif = item.status === 'Sedang Diverifikasi' || isDitindaklanjuti;
     const isMenungguVerif = item.status === 'Menunggu Verifikasi Lapangan' || isSedangDiverif;
     const isVerifAdmin = item.status === 'Verifikasi Administrasi' || isMenungguVerif;
+
+    const formatWaktu = (str) => {
+      if (!str || str === '-') return '-';
+      if (str.includes('GMT') || str.length > 25) {
+        const d = new Date(str);
+        if (!isNaN(d.getTime())) {
+          return d.toLocaleDateString('id-ID', { day: 'numeric', month: 'short', year: 'numeric' });
+        }
+      }
+      return str;
+    };
 
     // Kumpulkan foto bukti dukung warga
     const photoList = [];
@@ -576,9 +719,14 @@ class DLHApp {
             <span style="font-size: 0.73rem; color: #047857; font-weight: 700;">Update: ${new Date().toLocaleTimeString('id-ID')} WITA</span>
           </div>
         ` : `
-          <div style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.74rem; color: #047857; background: #f0fdf4; padding: 3px 12px; border-radius: 999px; border: 1px solid #bbf7d0; margin-bottom: 12px;">
-            <span style="width: 7px; height: 7px; background: #16a34a; border-radius: 50%; display: inline-block;"></span>
-            <span>🟢 Terhubung Real-Time &bull; Perkembangan Lapangan Diperbarui Otomatis</span>
+          <div id="cloudSyncStatusPill" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.74rem; color: #047857; background: #f0fdf4; padding: 3px 12px; border-radius: 999px; border: 1px solid #bbf7d0; margin-bottom: 12px;">
+            ${isSyncingCloud ? `
+              <span style="width: 7px; height: 7px; background: #f59e0b; border-radius: 50%; display: inline-block; animation: pulse 1s infinite;"></span>
+              <span>🔄 Menghubungkan ke Server Cloud DLH...</span>
+            ` : `
+              <span style="width: 7px; height: 7px; background: #16a34a; border-radius: 50%; display: inline-block;"></span>
+              <span>🟢 Terhubung Real-Time Server DLH &bull; Terakhir diperbarui ${new Date().toLocaleTimeString('id-ID')} WITA</span>
+            `}
           </div>
         `}
 
@@ -607,7 +755,7 @@ class DLHApp {
           </div>
           <div style="background: #f8fafc; padding: 10px 14px; border-radius: 8px;">
             <span style="color: #64748b; display: block; font-size: 0.74rem;">Waktu Lapor Masuk:</span>
-            <strong>${item.timestamp}</strong>
+            <strong>${formatWaktu(item.timestamp)}</strong>
           </div>
         </div>
 
@@ -639,7 +787,7 @@ class DLHApp {
                 <span>⚡</span>
                 <span>Rekam Tindakan Terakhir Petugas DLH:</span>
               </span>
-              <span style="font-size: 0.74rem; color: #047857; font-weight: 700; background: #ffffff; padding: 2px 8px; border-radius: 999px; border: 1px solid #a7f3d0;">⏱️ ${item.rekamTindakanTerakhir.waktu || '-'}</span>
+              <span style="font-size: 0.74rem; color: #047857; font-weight: 700; background: #ffffff; padding: 2px 8px; border-radius: 999px; border: 1px solid #a7f3d0;">⏱️ ${formatWaktu(item.rekamTindakanTerakhir.waktu)}</span>
             </div>
             <div style="color: #065f46; margin-bottom: 4px;">
               <strong>🚜 Tindakan Lapangan:</strong> ${item.rekamTindakanTerakhir.tindakan}
@@ -679,7 +827,7 @@ class DLHApp {
                 <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 8px; padding: 8px 12px; font-size: 0.8rem;">
                   <div style="display: flex; justify-content: space-between; font-weight: 700; color: #064e3b; margin-bottom: 3px;">
                     <span>#${lIdx + 1}. ${log.kategori || 'Tindakan Lapangan'}</span>
-                    <span style="font-size: 0.72rem; color: #64748b;">⏱️ ${log.waktu || '-'}</span>
+                    <span style="font-size: 0.72rem; color: #64748b;">⏱️ ${formatWaktu(log.waktu)}</span>
                   </div>
                   <div style="color: #334155;">${log.tindakan || '-'}</div>
                   ${log.hasil ? `<div style="font-size: 0.76rem; color: #047857; margin-top: 2px;">Temuan: ${log.hasil}</div>` : ''}
@@ -698,7 +846,7 @@ class DLHApp {
           <div class="timeline-item completed">
             <div class="timeline-dot"></div>
             <div class="timeline-title">1. Aduan Diterima & Tercatat Sistem</div>
-            <div class="timeline-time">${item.timestamp}</div>
+            <div class="timeline-time">${formatWaktu(item.timestamp)}</div>
             <div class="timeline-desc">Aduan masyarakat telah diterima dan dicatat dalam sistem pengaduan digital DLH Lembata.</div>
           </div>
 
@@ -717,24 +865,24 @@ class DLHApp {
           <div class="timeline-item ${isSedangDiverif ? 'completed' : ''}">
             <div class="timeline-dot"></div>
             <div class="timeline-title">4. Sedang Diverifikasi di Lapangan</div>
-            <div class="timeline-time">${item.tanggalVerifikasi !== '-' ? item.tanggalVerifikasi : 'Menunggu jadwal'}</div>
+            <div class="timeline-time">${item.tanggalVerifikasi !== '-' ? formatWaktu(item.tanggalVerifikasi) : 'Menunggu jadwal'}</div>
             <div class="timeline-desc">
               ${item.petugasVerifikasi !== '-' ? `Verifikator: <strong>${item.petugasVerifikasi}</strong><br>Hasil: ${item.hasilVerifikasi}` : 'Tim DLH sedang melakukan observasi dan pemeriksaan kondisi faktual di lokasi.'}
             </div>
           </div>
 
-          <div class="timeline-item ${isDalamPenanganan ? 'completed' : ''}">
+          <div class="timeline-item ${isDitindaklanjuti ? 'completed' : ''}">
             <div class="timeline-dot"></div>
-            <div class="timeline-title">5. Dalam Penanganan DLH</div>
+            <div class="timeline-title">5. Ditindaklanjuti / Dalam Penanganan DLH</div>
             <div class="timeline-desc">
-              ${item.tindakanDLH !== '-' ? item.tindakanDLH : 'Menunggu tindakan rekomendasi dan penanganan.'}
+              ${item.tindakanDLH !== '-' ? item.tindakanDLH : 'Menunggu tindakan rekomendasi dan penanganan teknis.'}
             </div>
           </div>
 
           <div class="timeline-item ${isSelesai ? 'completed' : (isDitolak ? 'completed' : '')}">
             <div class="timeline-dot"></div>
             <div class="timeline-title">6. ${isDitolak ? 'Aduan Ditolak / Tidak Terbukti' : 'Selesai Ditangani'}</div>
-            <div class="timeline-time">${item.tanggalSelesai !== '-' ? item.tanggalSelesai : '-'}</div>
+            <div class="timeline-time">${item.tanggalSelesai !== '-' ? formatWaktu(item.tanggalSelesai) : '-'}</div>
             <div class="timeline-desc">
               ${isSelesai ? 'Pembersihan / pemulihan lingkungan dinyatakan tuntas oleh DLH Lembata.' : (isDitolak ? 'Hasil observasi menunjukkan tidak ada pencemaran berbahaya atau dialihkan ke instansi teknis terkait.' : 'Dalam proses penyelesaian.')}
             </div>
@@ -1019,8 +1167,10 @@ class DLHApp {
       this.renderTable();
       if (window.lembataMap) window.lembataMap.renderMarkers();
       this.updateCloudUI();
-      const count = e.detail && e.detail.count ? e.detail.count : window.aduanStore.getAll().length;
-      this.showToast(`Berhasil sinkron ${count} data dari Google Spreadsheet!`, 'success');
+      if (!e.detail?.silent) {
+        const count = e.detail && e.detail.count ? e.detail.count : window.aduanStore.getAll().length;
+        this.showToast(`Berhasil sinkron ${count} data dari Google Apps Script!`, 'success');
+      }
     });
 
     const btnOpen = document.getElementById('btnOpenCloudModal');
