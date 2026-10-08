@@ -7,13 +7,21 @@ Aplikasi ini dikembangkan untuk mendukung rancangan aktualisasi ASN:
 
 ---
 
-## 🚀 Cara Menjalankan Aplikasi
+## 🌐 Akses Aplikasi Online (Production Vercel)
+
+- **Portal Pengaduan Publik:** [https://aduan-dlh-lembata.vercel.app](https://aduan-dlh-lembata.vercel.app)
+- **Portal Khusus Petugas DLH:** [https://aduan-dlh-lembata.vercel.app/petugas](https://aduan-dlh-lembata.vercel.app/petugas)
+- **Poster & Generator QR Code:** [https://aduan-dlh-lembata.vercel.app/qr-code](https://aduan-dlh-lembata.vercel.app/qr-code)
+
+---
+
+## 🚀 Cara Menjalankan Aplikasi Secara Lokal (Offline)
 
 Aplikasi ini dibangun murni menggunakan **HTML5, CSS3 Modern, dan Vanilla JavaScript**.
 **Tidak memerlukan instalasi server atau dependensi tambahan apa pun.**
 
 1. Cukup buka folder `d:\app\`.
-2. Klik ganda (double click) pada file **`index.html`**.
+2. Klik ganda (double click) pada file **`index.html`** atau **`petugas.html`**.
 3. Aplikasi akan langsung terbuka di browser Anda (Google Chrome, Microsoft Edge, Mozilla Firefox, dll.) dengan tampilan responsif dan interaktif.
 
 ---
@@ -55,7 +63,11 @@ Aplikasi ini dibangun murni menggunakan **HTML5, CSS3 Modern, dan Vanilla JavaSc
 
 ```
 d:\app/
-├── index.html                           # File utama aplikasi web dashboard portal
+├── index.html                           # File utama aplikasi portal aduan publik
+├── petugas.html                         # Portal khusus petugas & verifikator DLH
+├── qr-code.html                         # Poster & generator QR Code publik
+├── vercel.json                          # Konfigurasi deployment & security headers Vercel
+├── netlify.toml                         # Konfigurasi deployment Netlify (opsional)
 ├── perencanaan.md                       # Dokumen rencana aktualisasi lengkap
 ├── README.md                            # Petunjuk penggunaan aplikasi
 ├── google-apps-script.js                # Web API Serverless (Google Apps Script)

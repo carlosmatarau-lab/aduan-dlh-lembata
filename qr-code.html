@@ -24,7 +24,11 @@
 
     body {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      background-color: var(--bg);
+      background-color: #f0fdf4;
+      background-image: 
+        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.15) 0px, transparent 50%),
+        radial-gradient(at 100% 100%, rgba(5, 150, 105, 0.15) 0px, transparent 50%);
+      background-attachment: fixed;
       color: var(--text);
       min-height: 100vh;
       display: flex;
@@ -236,17 +240,32 @@
       <div class="qr-frame">
         <!-- High Quality QR Code Generator API -->
         <img 
-          src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&format=png&data=https%3A%2F%2Faduan-dlh-lembata.netlify.app%2F" 
+          src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&format=png&data=https%3A%2F%2Faduan-dlh-lembata.vercel.app%2F" 
           alt="QR Code Aduan DLH Lembata" 
           class="qr-image"
           id="qrImage"
         >
       </div>
 
-      <div>
-        <a href="https://aduan-dlh-lembata.netlify.app/" target="_blank" class="url-pill">
-          🌐 aduan-dlh-lembata.netlify.app
+      <div style="margin-bottom: 20px;">
+        <a href="https://aduan-dlh-lembata.vercel.app/" target="_blank" class="url-pill" id="urlDisplayLink">
+          🌐 <span id="urlDisplayText">aduan-dlh-lembata.vercel.app</span>
         </a>
+        <div style="margin-top: 6px; display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <input 
+            type="text" 
+            id="inputCustomUrl" 
+            placeholder="Atur URL (contoh: https://portal-dlh.vercel.app)"
+            value="https://aduan-dlh-lembata.vercel.app"
+            style="padding: 6px 12px; border-radius: 8px; border: 1px solid #cbd5e1; font-size: 0.8rem; width: 280px; text-align: center; font-family: monospace;"
+          >
+          <button 
+            type="button" 
+            id="btnUpdateUrl" 
+            style="padding: 6px 12px; border-radius: 8px; border: none; background: #059669; color: white; font-size: 0.8rem; font-weight: 600; cursor: pointer;">
+            Perbarui QR
+          </button>
+        </div>
       </div>
 
       <!-- Panduan Bagi Warga -->
@@ -265,7 +284,7 @@
         <button class="btn btn-primary" onclick="window.print()">
           🖨️ Cetak / Simpan PDF
         </button>
-        <a href="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&format=png&data=https%3A%2F%2Faduan-dlh-lembata.netlify.app%2F" download="QR_Code_Aduan_DLH_Lembata.png" target="_blank" class="btn btn-outline">
+        <a id="btnDownloadHd" href="https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&format=png&data=https%3A%2F%2Faduan-dlh-lembata.vercel.app%2F" download="QR_Code_Aduan_DLH_Lembata.png" target="_blank" class="btn btn-outline">
           ⬇️ Unduh Gambar HD
         </a>
       </div>
@@ -279,5 +298,49 @@
 
   </div>
 
+  <script>
+    (function() {
+      const qrImage = document.getElementById('qrImage');
+      const urlDisplayLink = document.getElementById('urlDisplayLink');
+      const urlDisplayText = document.getElementById('urlDisplayText');
+      const inputCustomUrl = document.getElementById('inputCustomUrl');
+      const btnUpdateUrl = document.getElementById('btnUpdateUrl');
+      const btnDownloadHd = document.getElementById('btnDownloadHd');
+
+      function applyUrl(targetUrl) {
+        if (!targetUrl) return;
+        let cleanUrl = targetUrl.trim();
+        if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+          cleanUrl = 'https://' + cleanUrl;
+        }
+
+        const encoded = encodeURIComponent(cleanUrl);
+        qrImage.src = `https://api.qrserver.com/v1/create-qr-code/?size=400x400&format=png&data=${encoded}`;
+        btnDownloadHd.href = `https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&format=png&data=${encoded}`;
+        urlDisplayLink.href = cleanUrl;
+        
+        let label = cleanUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+        urlDisplayText.textContent = label;
+        inputCustomUrl.value = cleanUrl;
+      }
+
+      // Auto-detect domain if hosted online (e.g. vercel.app)
+      if (window.location.protocol.startsWith('http') && !window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1')) {
+        const detected = window.location.origin;
+        applyUrl(detected);
+      }
+
+      btnUpdateUrl.addEventListener('click', () => {
+        applyUrl(inputCustomUrl.value);
+      });
+
+      inputCustomUrl.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') {
+          e.preventDefault();
+          applyUrl(inputCustomUrl.value);
+        }
+      });
+    })();
+  </script>
 </body>
 </html>

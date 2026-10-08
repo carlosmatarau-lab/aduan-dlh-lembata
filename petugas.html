@@ -3607,6 +3607,75 @@
        =================================================================== */
 
     const STORAGE_KEY = 'dlh_lembata_aduan_v1';
+
+    /* ===================================================================
+       DLH LEMBATA REAL-TIME SYNC ENGINE (BROADCASTCHANNEL + STORAGE FALLBACK)
+       Sinkronisasi pembaruan real-time seketika antar portal warga & petugas
+       =================================================================== */
+    (function() {
+      const CHANNEL_NAME = 'dlh_lembata_realtime_channel';
+      const STORAGE_PING_KEY = 'dlh_lembata_realtime_ping';
+      let bc = null;
+
+      try {
+        if (typeof BroadcastChannel !== 'undefined') {
+          bc = new BroadcastChannel(CHANNEL_NAME);
+        }
+      } catch (err) {
+        console.warn('BroadcastChannel fallback:', err);
+      }
+
+      const listeners = [];
+
+      function broadcast(type, payload = {}) {
+        const msg = {
+          type: type,
+          payload: payload,
+          timestamp: Date.now(),
+          sender: Math.random().toString(36).substring(2, 9)
+        };
+
+        if (bc) {
+          try { bc.postMessage(msg); } catch (e) {}
+        }
+
+        try {
+          localStorage.setItem(STORAGE_PING_KEY, JSON.stringify(msg));
+        } catch (e) {}
+
+        window.dispatchEvent(new CustomEvent('dlhRealtimeLocalMsg', { detail: msg }));
+      }
+
+      function notify(msg) {
+        if (!msg || !msg.type) return;
+        listeners.forEach(fn => {
+          try { fn(msg); } catch (e) { console.error('Realtime callback error:', e); }
+        });
+      }
+
+      if (bc) {
+        bc.onmessage = (ev) => notify(ev.data);
+      }
+
+      window.addEventListener('storage', (ev) => {
+        if (ev.key === STORAGE_PING_KEY && ev.newValue) {
+          try {
+            const parsed = JSON.parse(ev.newValue);
+            notify(parsed);
+          } catch (e) {}
+        } else if (ev.key === STORAGE_KEY) {
+          notify({ type: 'STORAGE_RAW_UPDATED', timestamp: Date.now() });
+        }
+      });
+
+      window.dlhRealtime = {
+        broadcast: broadcast,
+        listen: function(fn) {
+          if (typeof fn === 'function') listeners.push(fn);
+        }
+      };
+    })();
+
     const OFFICER_PROFILE_KEY = 'dlh_active_officer';
     const AUTH_SESSION_KEY = 'dlh_officer_authenticated';
     const DEFAULT_OFFICER = '';
@@ -5236,6 +5305,16 @@
 
       saveAduanList(list);
 
+      // Siarkan update tindakan secara real-time ke portal warga & tab petugas lainnya
+      if (window.dlhRealtime) {
+        window.dlhRealtime.broadcast('TINDAK_LANJUT_UPDATED', {
+          aduanId: id,
+          status: status,
+          item: list[index],
+          action: newActionRecord
+        });
+      }
+
       // Close modal
       document.getElementById('modalTindakLanjut').classList.remove('active');
 
@@ -5244,7 +5323,7 @@
       renderCaseList();
       renderMapMarkers(list);
 
-      showToast(`✅ Berhasil! Rekam tindakan terakhir untuk aduan ${id} berhasil dicatat.`);
+      showToast(`⚡ Real-Time Berhasil! Rekam tindakan untuk aduan ${id} telah diperbarui & disinkronkan ke seluruh sistem.`);
 
       // Sync to Google Apps Script as background POST if API configured
       const gasUrl = localStorage.getItem('dlh_gas_api_url') || (window.GAS_API_URL || '');
@@ -5758,10 +5837,30 @@
       window.bukaModalSwitchOfficer();
     });
 
-    // Initial Bootstrap
+    // Initial Bootstrap & Real-Time Sync Listener
     document.addEventListener('DOMContentLoaded', () => {
       checkAuthentication();
       updateCloudIndicator(true, 'Google Spreadsheet Siap');
+
+      // Pasang Listener Real-Time Terpadu
+      if (window.dlhRealtime) {
+        window.dlhRealtime.listen((msg) => {
+          if (msg.type === 'ADUAN_BARU') {
+            const list = getAduanList();
+            renderKpiMetrics(list);
+            renderCaseList();
+            renderMapMarkers(list);
+            const nama = msg.payload?.item?.namaPelapor || 'Warga';
+            const desa = msg.payload?.item?.desa || 'Lembata';
+            showToast(`🔔 Aduan Baru Masuk Real-Time: ${msg.payload.aduanId} (${nama} - ${desa})`);
+          } else if (msg.type === 'TINDAK_LANJUT_UPDATED' || msg.type === 'STORAGE_RAW_UPDATED') {
+            const list = getAduanList();
+            renderKpiMetrics(list);
+            renderCaseList();
+            renderMapMarkers(list);
+          }
+        });
+      }
     });
   </script>
 </body>
