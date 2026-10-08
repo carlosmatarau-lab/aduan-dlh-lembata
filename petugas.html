@@ -3312,44 +3312,69 @@
 
     <!-- MODAL: KONFIGURASI GOOGLE SPREADSHEET & CLOUD APPS SCRIPT -->
     <div class="modal-backdrop" id="modalSpreadsheetConfig">
-      <div class="modal-dialog" style="max-width: 640px;">
+      <div class="modal-dialog" style="max-width: 660px;">
         <div class="modal-header">
           <h3 class="modal-title">
-            <span>📊</span> Pengaturan Google Spreadsheet &amp; Cloud DLH
+            <span>📊</span> Hubungkan Google Spreadsheet &amp; Cloud DLH
           </h3>
           <button type="button" class="btn-close-modal" id="btnCloseModalSpreadsheet">&times;</button>
         </div>
         <div class="modal-body">
-          <p style="font-size: 0.84rem; color: #475569; margin-bottom: 16px; line-height: 1.5;">
-            Sistem pengaduan DLH Lembata terhubung langsung dengan <strong>Google Spreadsheet</strong> sebagai basis data cloud resmi dan <strong>Google Apps Script</strong> sebagai perantara sinkronisasi dua arah.
-          </p>
+          <div id="cfgNoticeBox" style="background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 14px 16px; margin-bottom: 16px;">
+            <div style="font-weight: 800; color: #065f46; font-size: 0.88rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+              <span>🌱</span> Basis Data Resmi Dinas Lingkungan Hidup Kab. Lembata
+            </div>
+            <p style="font-size: 0.8rem; color: #047857; line-height: 1.5; margin: 0;">
+              Google Spreadsheet digunakan sebagai database utama untuk menyimpan seluruh riwayat aduan masyarakat dan tindak lanjut petugas. Silakan buat dokumen spreadsheet baru di akun Google Anda atau tempel tautan spreadsheet dinas yang sudah ada.
+            </p>
+          </div>
+
+          <!-- Quick Action Buttons: Create New Sheet & Copy Template -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 18px;">
+            <div style="font-size: 0.78rem; font-weight: 800; color: #334155; margin-bottom: 8px;">
+              ⚡ LANGKAH CEPAT (1 MENIT SIAP):
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+              <a href="https://sheets.new" target="_blank" class="btn-action-primary"
+                style="text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.82rem; padding: 10px; background: #0f9d58; text-align: center;">
+                ➕ Buat Google Sheets Baru ↗
+              </a>
+              <button type="button" class="btn-action-secondary" id="btnSalinHeadersSheet"
+                style="display: flex; align-items: center; justify-content: center; gap: 6px; font-size: 0.82rem; padding: 10px;">
+                📋 Salin 21 Kolom Header
+              </button>
+            </div>
+            <div style="font-size: 0.73rem; color: #64748b; margin-top: 8px; line-height: 1.4;">
+              Klik <strong>Buat Google Sheets Baru</strong>, lalu klik <strong>Salin 21 Kolom Header</strong> dan tempel di baris pertama spreadsheet Anda. Terakhir, salin tautan browser Google Sheets Anda ke kotak di bawah.
+            </div>
+          </div>
 
           <div class="form-group" style="margin-bottom: 14px;">
-            <label style="font-size: 0.8rem; font-weight: 700; color: #0f172a; margin-bottom: 4px; display: block;">
-              🔗 URL Google Spreadsheet DLH Lembata:
+            <label style="font-size: 0.82rem; font-weight: 800; color: #0f172a; margin-bottom: 4px; display: block;">
+              🔗 Tautan (URL) Google Spreadsheet Anda:
             </label>
             <div style="display: flex; gap: 8px;">
-              <input type="url" id="cfgSpreadsheetUrl" class="form-control" style="font-size: 0.82rem;"
-                placeholder="https://docs.google.com/spreadsheets/d/.../edit">
+              <input type="url" id="cfgSpreadsheetUrl" class="form-control" style="font-size: 0.84rem;"
+                placeholder="https://docs.google.com/spreadsheets/d/ID_SPREADSHEET_ANDA/edit">
               <a href="#" id="cfgBtnOpenSheetDirect" target="_blank" class="btn-action-secondary"
-                style="white-space: nowrap; padding: 8px 12px; font-size: 0.8rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"
+                style="white-space: nowrap; padding: 8px 14px; font-size: 0.82rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;"
                 title="Buka Spreadsheet di Tab Baru">
                 Buka ↗
               </a>
             </div>
             <span style="font-size: 0.72rem; color: #64748b; margin-top: 3px; display: block;">
-              Tautan ke file Google Sheets database laporan aduan masuk DLH Lembata.
+              Contoh format: <code>https://docs.google.com/spreadsheets/d/.../edit</code>
             </span>
           </div>
 
           <div class="form-group" style="margin-bottom: 14px;">
-            <label style="font-size: 0.8rem; font-weight: 700; color: #0f172a; margin-bottom: 4px; display: block;">
-              ⚡ URL Google Apps Script Web App (API Endpoint):
+            <label style="font-size: 0.82rem; font-weight: 800; color: #0f172a; margin-bottom: 4px; display: block;">
+              ⚡ Tautan Web App Google Apps Script (Opsional / API Cloud):
             </label>
-            <input type="url" id="cfgGasUrl" class="form-control" style="font-size: 0.82rem;"
+            <input type="url" id="cfgGasUrl" class="form-control" style="font-size: 0.84rem;"
               placeholder="https://script.google.com/macros/s/.../exec">
             <span style="font-size: 0.72rem; color: #64748b; margin-top: 3px; display: block;">
-              URL Web App dari deploy Apps Script (format: script.google.com/macros/s/.../exec).
+              Diperlukan untuk sinkronisasi otomatis dua arah (format: <code>script.google.com/macros/s/.../exec</code>).
             </span>
           </div>
 
@@ -3363,20 +3388,23 @@
             <button type="button" class="btn-action-secondary" id="btnPushLocalData" style="font-size: 0.78rem;">
               ⬆️ Kirim Data Lokal ke Cloud
             </button>
+            <button type="button" class="btn-action-secondary" id="btnSalinScriptGas" style="font-size: 0.78rem;">
+              📄 Salin Kode Apps Script
+            </button>
           </div>
 
           <div id="cloudTestResultBox" style="display: none; padding: 10px 12px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 14px;"></div>
 
-          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px 14px; font-size: 0.78rem; color: #166534; line-height: 1.5;">
-            <strong>💡 Petunjuk Integrasi Google Spreadsheet DLH:</strong><br>
-            • Buka Google Spreadsheet &gt; menu <em>Extensions &gt; Apps Script</em>.<br>
-            • Tempel kode dari file <code>google-apps-script.js</code> lalu simpan.<br>
-            • Klik <em>Deploy &gt; New deployment &gt; Web app</em> (Akses: <em>Anyone</em>), salin URL lalu tempel di atas.<br>
-            • Sheet <code>Data_Aduan</code> (21 kolom) akan otomatis dihubungkan.
+          <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px 14px; font-size: 0.78rem; color: #334155; line-height: 1.5;">
+            <strong>📖 Cara Memasang Backend Otomatis (Google Apps Script):</strong><br>
+            1. Pada Google Spreadsheet Anda, buka menu <strong>Ekstensi &gt; Apps Script</strong>.<br>
+            2. Tempel kode dari file <code>google-apps-script.js</code> (klik tombol 'Salin Kode Apps Script' di atas).<br>
+            3. Klik <strong>Deploy &gt; New deployment &gt; Web app</strong> (Setel <em>Who has access: Anyone</em>).<br>
+            4. Salin URL Web App yang diberikan Google, lalu tempel di kotak input kedua di atas dan simpan.
           </div>
         </div>
         <div class="modal-footer">
-          <button type="button" class="btn-action-secondary" id="btnResetCloudDefaults">Reset ke Default DLH</button>
+          <button type="button" class="btn-action-secondary" id="btnCloseModalSpreadsheetFooter">Tutup</button>
           <button type="button" class="btn-action-primary" id="btnSaveCloudConfig">💾 Simpan Konfigurasi</button>
         </div>
       </div>
@@ -3692,10 +3720,16 @@
     const SPREADSHEET_URL_KEY = 'dlh_google_spreadsheet_url';
     const GAS_URL_KEY = 'dlh_gas_api_url';
     const DEFAULT_GAS_API_URL = 'https://script.google.com/macros/s/AKfycbxm4r8QU2dv0S6csTTpmewuuvMNNrqiD2NeF_ENzXi8z7E3qDALHz6HNiBWtiEpGMruIQ/exec';
-    const DEFAULT_SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/1yA_6oYQyZ3gK4wZp8n6jR2X5-Q_x7m1a/edit';
+    const DEFAULT_SPREADSHEET_URL = '';
 
     function getSpreadsheetUrl() {
-      return localStorage.getItem(SPREADSHEET_URL_KEY) || DEFAULT_SPREADSHEET_URL;
+      const url = localStorage.getItem(SPREADSHEET_URL_KEY) || '';
+      // Jika masih tersimpan dummy URL yang tidak ada, bersihkan otomatis
+      if (url.includes('1yA_6oYQyZ3gK4wZp8n6jR2X5-Q_x7m1a')) {
+        localStorage.removeItem(SPREADSHEET_URL_KEY);
+        return '';
+      }
+      return url;
     }
 
     function getGasApiUrl() {
@@ -5648,6 +5682,7 @@
         showToast('📊 Membuka Google Spreadsheet DLH Lembata...');
       } else {
         bukaModalSpreadsheetConfig();
+        showToast('ℹ️ Dokumen Google Spreadsheet belum dihubungkan. Klik "Buat Google Sheets Baru" atau tempel tautan spreadsheet Anda.');
       }
     }
 
@@ -5657,10 +5692,18 @@
       const inputGas = document.getElementById('cfgGasUrl');
       const linkDirect = document.getElementById('cfgBtnOpenSheetDirect');
       const resultBox = document.getElementById('cloudTestResultBox');
+      const currentSheet = getSpreadsheetUrl();
 
-      if (inputSheet) inputSheet.value = getSpreadsheetUrl();
+      if (inputSheet) inputSheet.value = currentSheet;
       if (inputGas) inputGas.value = getGasApiUrl();
-      if (linkDirect) linkDirect.href = getSpreadsheetUrl();
+      if (linkDirect) {
+        if (currentSheet && currentSheet.startsWith('http')) {
+          linkDirect.style.display = 'inline-flex';
+          linkDirect.href = currentSheet;
+        } else {
+          linkDirect.style.display = 'none';
+        }
+      }
       if (resultBox) resultBox.style.display = 'none';
       if (modal) modal.style.display = 'flex';
     }
@@ -5679,7 +5722,8 @@
       }
       const directLink = document.getElementById('linkDirectSpreadsheet');
       if (directLink) {
-        directLink.href = getSpreadsheetUrl();
+        const url = getSpreadsheetUrl();
+        directLink.href = (url && url.startsWith('http')) ? url : '#';
       }
     }
 
@@ -5743,34 +5787,86 @@
     document.getElementById('btnOpenSpreadsheet')?.addEventListener('click', openGoogleSpreadsheet);
     document.getElementById('btnCloudSettings')?.addEventListener('click', bukaModalSpreadsheetConfig);
     document.getElementById('btnCloseModalSpreadsheet')?.addEventListener('click', tutupModalSpreadsheetConfig);
+    document.getElementById('btnCloseModalSpreadsheetFooter')?.addEventListener('click', tutupModalSpreadsheetConfig);
+
+    // Salin 21 Kolom Header Database ke Clipboard
+    document.getElementById('btnSalinHeadersSheet')?.addEventListener('click', () => {
+      const headers = [
+        'ID_Aduan', 'Timestamp', 'Nama_Pelapor', 'No_HP', 'Alamat_Pelapor',
+        'Kecamatan', 'Desa_Kelurahan', 'Lokasi_Detail', 'Latitude', 'Longitude',
+        'Jenis_Pencemaran', 'Uraian_Aduan', 'Sumber_Dugaan', 'Tanggal_Kejadian',
+        'Link_Foto_Bukti', 'Status', 'Petugas_Verifikasi', 'Tanggal_Verifikasi',
+        'Hasil_Verifikasi', 'Tindakan_DLH', 'Tanggal_Selesai'
+      ].join('\t');
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(headers).then(() => {
+          showToast('📋 21 Nama Kolom Header berhasil disalin! Buka Google Sheets & tekan Ctrl+V di sel A1.');
+        }).catch(() => {
+          prompt('Salin nama-nama kolom header di bawah ini:', headers);
+        });
+      } else {
+        prompt('Salin nama-nama kolom header di bawah ini:', headers);
+      }
+    });
+
+    // Salin Informasi / Panduan Kode Apps Script Backend
+    document.getElementById('btnSalinScriptGas')?.addEventListener('click', () => {
+      fetch('google-apps-script.js').then(r => r.text()).then(code => {
+        if (navigator.clipboard && navigator.clipboard.writeText) {
+          navigator.clipboard.writeText(code).then(() => {
+            showToast('📄 Seluruh kode google-apps-script.js berhasil disalin ke clipboard!');
+          });
+        } else {
+          showToast('ℹ️ File google-apps-script.js tersedia di folder proyek untuk Anda salin.');
+        }
+      }).catch(() => {
+        showToast('ℹ️ Buka file google-apps-script.js di folder aplikasi untuk disalin ke Apps Script.');
+      });
+    });
 
     document.getElementById('cfgSpreadsheetUrl')?.addEventListener('input', (e) => {
+      const val = e.target.value.trim();
       const link = document.getElementById('cfgBtnOpenSheetDirect');
-      if (link) link.href = e.target.value.trim() || '#';
+      if (link) {
+        if (val && val.startsWith('http')) {
+          link.style.display = 'inline-flex';
+          link.href = val;
+        } else {
+          link.style.display = 'none';
+        }
+      }
     });
 
     document.getElementById('btnSaveCloudConfig')?.addEventListener('click', () => {
       const sheetUrl = (document.getElementById('cfgSpreadsheetUrl')?.value || '').trim();
       const gasUrl = (document.getElementById('cfgGasUrl')?.value || '').trim();
 
-      if (sheetUrl) localStorage.setItem(SPREADSHEET_URL_KEY, sheetUrl);
-      else localStorage.removeItem(SPREADSHEET_URL_KEY);
+      if (sheetUrl) {
+        localStorage.setItem(SPREADSHEET_URL_KEY, sheetUrl);
+      } else {
+        localStorage.removeItem(SPREADSHEET_URL_KEY);
+      }
 
-      if (gasUrl) localStorage.setItem(GAS_URL_KEY, gasUrl);
-      else localStorage.removeItem(GAS_URL_KEY);
+      if (gasUrl) {
+        localStorage.setItem(GAS_URL_KEY, gasUrl);
+      } else {
+        localStorage.removeItem(GAS_URL_KEY);
+      }
 
-      updateCloudIndicator(true, 'Pengaturan Disimpan');
-      showToast('✅ Konfigurasi Google Spreadsheet & Cloud berhasil disimpan!');
+      updateCloudIndicator(true, sheetUrl ? 'Spreadsheet Terhubung' : 'Data Lokal Aman');
+      showToast('✅ Pengaturan Google Spreadsheet & Cloud berhasil disimpan!');
       tutupModalSpreadsheetConfig();
     });
 
     document.getElementById('btnResetCloudDefaults')?.addEventListener('click', () => {
       localStorage.removeItem(SPREADSHEET_URL_KEY);
       localStorage.removeItem(GAS_URL_KEY);
-      document.getElementById('cfgSpreadsheetUrl').value = DEFAULT_SPREADSHEET_URL;
+      document.getElementById('cfgSpreadsheetUrl').value = '';
       document.getElementById('cfgGasUrl').value = DEFAULT_GAS_API_URL;
-      document.getElementById('cfgBtnOpenSheetDirect').href = DEFAULT_SPREADSHEET_URL;
-      showToast('Setelan dikembalikan ke default DLH Lembata.');
+      const linkDirect = document.getElementById('cfgBtnOpenSheetDirect');
+      if (linkDirect) linkDirect.style.display = 'none';
+      showToast('Pengaturan Google Spreadsheet direset.');
     });
 
     document.getElementById('btnTestCloudConnection')?.addEventListener('click', async () => {
