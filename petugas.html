@@ -1339,6 +1339,363 @@
       gap: 5px;
     }
 
+    /* ===================================================================
+       6B. REKAM TINDAKAN TERAKHIR (DISTINCT AUDIT BOX & ACTION LOGGING)
+       =================================================================== */
+    .case-last-action-box {
+      background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+      border: 1.5px solid #6ee7b7;
+      border-left: 5px solid #059669;
+      border-radius: 12px;
+      padding: 14px 18px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      box-shadow: 0 2px 8px rgba(5, 150, 105, 0.08);
+      position: relative;
+    }
+
+    .last-action-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      flex-wrap: wrap;
+      padding-bottom: 8px;
+      border-bottom: 1px dashed #a7f3d0;
+    }
+
+    .last-action-meta-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .badge-last-action-tag {
+      background: #064e3b;
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: 999px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      letter-spacing: 0.3px;
+    }
+
+    .badge-last-action-time {
+      font-size: 0.78rem;
+      color: #047857;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .last-action-officer-pill {
+      font-size: 0.78rem;
+      color: #064e3b;
+      font-weight: 700;
+      background: #ffffff;
+      padding: 3px 10px;
+      border-radius: 6px;
+      border: 1px solid #a7f3d0;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .last-action-category-badge {
+      font-size: 0.74rem;
+      color: #065f46;
+      background: #d1fae5;
+      padding: 3px 8px;
+      border-radius: 6px;
+      font-weight: 700;
+      border: 1px solid #a7f3d0;
+    }
+
+    .last-action-body {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 0.88rem;
+      color: #064e3b;
+      line-height: 1.55;
+    }
+
+    .last-action-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+    }
+
+    .last-action-row-title {
+      font-weight: 800;
+      color: #064e3b;
+      white-space: nowrap;
+      min-width: 145px;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .last-action-footer {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+      padding-top: 8px;
+      border-top: 1px dashed #a7f3d0;
+    }
+
+    .btn-view-history-log {
+      background: #ffffff;
+      color: #064e3b;
+      border: 1.5px solid #059669;
+      padding: 6px 14px;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      font-weight: 800;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 1px 2px rgba(5, 150, 105, 0.1);
+    }
+
+    .btn-view-history-log:hover {
+      background: #059669;
+      color: #ffffff;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(5, 150, 105, 0.25);
+    }
+
+    /* Kasus Belum Ada Rekam Tindakan */
+    .case-no-action-box {
+      background: #fffbeb;
+      border: 1.5px dashed #f59e0b;
+      border-radius: 10px;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      color: #92400e;
+      font-size: 0.84rem;
+    }
+
+    .case-no-action-box .no-action-text {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-weight: 600;
+    }
+
+    /* Modal History Accordion & Timeline */
+    .modal-history-section {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      margin-bottom: 20px;
+      overflow: hidden;
+    }
+
+    .modal-history-header {
+      background: #f1f5f9;
+      padding: 12px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      cursor: pointer;
+      user-select: none;
+      transition: background 0.2s;
+    }
+
+    .modal-history-header:hover {
+      background: #e2e8f0;
+    }
+
+    .badge-history-count {
+      background: #059669;
+      color: #ffffff;
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 999px;
+    }
+
+    .modal-history-timeline {
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 14px;
+      max-height: 260px;
+      overflow-y: auto;
+    }
+
+    .timeline-log-card {
+      position: relative;
+      padding-left: 24px;
+      border-left: 2.5px solid #059669;
+    }
+
+    .timeline-log-card::before {
+      content: '';
+      position: absolute;
+      left: -6px;
+      top: 4px;
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #059669;
+      border: 2px solid #ffffff;
+      box-shadow: 0 0 0 2px #059669;
+    }
+
+    .timeline-log-card.latest::before {
+      background: #10b981;
+      animation: pulseDot 2s infinite;
+    }
+
+    .timeline-log-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 4px;
+      flex-wrap: wrap;
+    }
+
+    .timeline-log-title {
+      font-weight: 800;
+      font-size: 0.84rem;
+      color: #0f172a;
+    }
+
+    .timeline-log-time {
+      font-size: 0.74rem;
+      color: #64748b;
+      font-weight: 600;
+    }
+
+    .timeline-log-desc {
+      font-size: 0.82rem;
+      color: #334155;
+      line-height: 1.5;
+      background: #ffffff;
+      padding: 8px 12px;
+      border-radius: 6px;
+      border: 1px solid #e2e8f0;
+      margin-top: 4px;
+    }
+
+    /* Modal Riwayat Log Full Screen Dialog */
+    .timeline-full-flow {
+      display: flex;
+      flex-direction: column;
+      gap: 16px;
+      position: relative;
+      padding: 8px 4px;
+    }
+
+    .flow-item {
+      display: flex;
+      gap: 14px;
+      position: relative;
+    }
+
+    .flow-item:not(:last-child)::after {
+      content: '';
+      position: absolute;
+      left: 17px;
+      top: 36px;
+      bottom: -16px;
+      width: 2px;
+      background: #cbd5e1;
+    }
+
+    .flow-badge-step {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background: #059669;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+      z-index: 2;
+      box-shadow: 0 2px 6px rgba(5, 150, 105, 0.3);
+    }
+
+    .flow-card-content {
+      flex: 1;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .photo-upload-zone {
+      border: 2px dashed #cbd5e1;
+      border-radius: var(--radius-md);
+      padding: 14px;
+      text-align: center;
+      background: #f8fafc;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .photo-upload-zone:hover {
+      border-color: #059669;
+      background: #f0fdf4;
+    }
+
+    .photo-preview-grid {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-top: 10px;
+    }
+
+    .photo-preview-item {
+      position: relative;
+      width: 100px;
+      height: 75px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #cbd5e1;
+    }
+
+    .photo-preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .btn-remove-photo {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: rgba(220, 38, 38, 0.85);
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 20px;
+      height: 20px;
+      font-size: 11px;
+      cursor: pointer;
+    }
+
     /* 7. Bilah Tombol Aksi */
     .case-actions-bar {
       display: flex;
@@ -2209,6 +2566,8 @@
               <select id="filterSort" class="filter-select" title="Urutan daftar aduan">
                 <option value="newest">🕒 Aduan Terbaru</option>
                 <option value="oldest">⌛ Aduan Terlama</option>
+                <option value="latest_action">⚡ Terakhir Ditindaklanjuti</option>
+                <option value="no_action">⏳ Belum Ditindaklanjuti</option>
               </select>
 
               <button type="button" id="btnResetFilters" class="btn-reset-filters"
@@ -2285,7 +2644,7 @@
               <label style="font-size: 0.72rem; color: #64748b; font-weight: 600;">Uraian Aduan Warga:</label>
               <p id="modalDetailUraian" style="font-size: 0.84rem; color: #334155; margin-top: 2px;">-</p>
             </div>
-            <div style="margin-top: 8px; display: flex; gap: 12px; align-items: center; font-size: 0.8rem;">
+            <div style="margin-top: 8px; display: flex; gap: 12px; align-items: center; font-size: 0.8rem; flex-wrap: wrap;">
               <span>Pelapor: <strong id="modalDetailPelapor">-</strong></span>
               <span>Kontak: <strong id="modalDetailNoHp">-</strong></span>
               <a id="modalDetailGpsLink" href="#" target="_blank"
@@ -2295,12 +2654,27 @@
             </div>
           </div>
 
+          <!-- Riwayat & Rekam Jejak Tindakan Sebelumnya (Audit Trail Accordion) -->
+          <div class="modal-history-section" id="modalHistorySection">
+            <div class="modal-history-header" id="btnToggleModalHistory">
+              <div style="display: flex; align-items: center; gap: 8px;">
+                <span>📜</span>
+                <span style="font-weight: 800; font-size: 0.88rem; color: #064e3b;">Rekam Jejak Tindakan Sebelumnya</span>
+                <span class="badge-history-count" id="modalHistoryBadgeCount">0 Tindakan</span>
+              </div>
+              <span id="modalHistoryChevron" style="font-size: 0.8rem; color: #64748b; font-weight: bold;">▾ Buka Log</span>
+            </div>
+            <div class="modal-history-timeline" id="modalHistoryTimelineList" style="display: none;">
+              <!-- Dynamic timeline logs rendered by JS -->
+            </div>
+          </div>
+
           <!-- Form Update Penanganan -->
           <form id="formUpdatePenanganan">
             <input type="hidden" id="editAduanId">
 
             <div class="modal-section-title">
-              <span>⚙️</span> Pembaruan Status &amp; Tindakan DLH
+              <span>⚡</span> Catat Tindak Lanjut Baru (Akan Disimpan ke Rekam Tindakan Terakhir)
             </div>
 
             <div class="form-row">
@@ -2317,20 +2691,43 @@
               </div>
 
               <div class="form-group">
-                <label>Nama Petugas / Tim Lapangan <span style="color: red;">*</span></label>
-                <input type="text" id="editPetugasNama" class="form-control" required
-                  placeholder="Contoh: Petrus S., S.T. (Bidang Pengawasan LH)">
+                <label>Kategori / Jenis Tindakan DLH <span style="color: red;">*</span></label>
+                <select id="editKategoriTindakan" class="form-control" required>
+                  <option value="Inspeksi & Verifikasi Lapangan">🔍 Inspeksi &amp; Verifikasi Lapangan</option>
+                  <option value="Pengangkutan Sampah & Armada DLH">🚜 Pengangkutan Sampah &amp; Pengerahan Armada</option>
+                  <option value="Pembersihan & Mitigasi Lingkungan">🧹 Pembersihan &amp; Mitigasi Pencemaran</option>
+                  <option value="Pemasangan Papan Larangan & Rambu">🚫 Pemasangan Papan Larangan / Rambu Perda</option>
+                  <option value="Pemberian Surat Peringatan / Teguran">⚠️ Pemberian Surat Peringatan / Teguran</option>
+                  <option value="Pengambilan Sampel Uji Laboratorium">🧪 Pengambilan Sampel Uji Laboratorium</option>
+                  <option value="Mediasi & Edukasi Warga / Pelaku">🤝 Mediasi &amp; Edukasi Warga / Pelaku</option>
+                  <option value="Monitoring Pasca Penanganan">📊 Monitoring Pasca Penanganan</option>
+                  <option value="Lainnya">📌 Tindakan Lainnya</option>
+                </select>
               </div>
             </div>
 
             <div class="form-row">
               <div class="form-group">
-                <label>Tanggal &amp; Waktu Verifikasi / Aksi</label>
+                <label>Nama Petugas / Tim Lapangan <span style="color: red;">*</span></label>
+                <input type="text" id="editPetugasNama" class="form-control" required
+                  placeholder="Contoh: Petrus S., S.T. (Bidang Pengawasan LH)">
+              </div>
+
+              <div class="form-group">
+                <label>Tanggal &amp; Waktu Tindakan Lapangan <span style="color: red;">*</span></label>
+                <input type="text" id="editWaktuTindakan" class="form-control" required
+                  placeholder="YYYY-MM-DD HH:mm (WITA)">
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="form-group">
+                <label>Tanggal Verifikasi Awal</label>
                 <input type="text" id="editTanggalVerif" class="form-control" placeholder="YYYY-MM-DD">
               </div>
 
               <div class="form-group">
-                <label>Tanggal Penyelesaian (Jika Selesai)</label>
+                <label>Tanggal Penyelesaian (Jika Kasus Selesai)</label>
                 <input type="text" id="editTanggalSelesai" class="form-control" placeholder="YYYY-MM-DD atau -">
               </div>
             </div>
@@ -2344,7 +2741,32 @@
             <div class="form-group">
               <label>Tindakan Teknis yang Dilakukan DLH <span style="color: red;">*</span></label>
               <textarea id="editTindakanDLH" class="form-control" required
-                placeholder="Contoh: Pengangkutan 2 truk sampah ke TPA, pemasangan papan larangan, teguran kepada pemilik tempat usaha..."></textarea>
+                placeholder="Contoh: Pengerahan 2 truk sampah, pembersihan sempadan pantai bersama warga, pemasangan patok tanda batas..."></textarea>
+            </div>
+
+            <div class="form-group">
+              <label>Catatan Tambahan &amp; Rekomendasi Tindak Lanjut</label>
+              <textarea id="editCatatanTambahan" class="form-control" style="min-height: 60px;"
+                placeholder="Catatan rekomendasi berikutnya, jadwal evaluasi, atau koordinasi lintas instansi..."></textarea>
+            </div>
+
+            <!-- Dokumentasi Foto Lapangan -->
+            <div class="form-group">
+              <label>📸 Dokumentasi Foto Bukti Tindak Lanjut Lapangan (Opsional):</label>
+              <div class="photo-upload-zone" id="dropPhotoZone">
+                <input type="file" id="inputFotoTindak" accept="image/*" style="display: none;">
+                <button type="button" class="btn-action-secondary" id="btnPilihFoto" style="margin-bottom: 6px;">
+                  📁 Pilih Foto dari Perangkat / Kamera
+                </button>
+                <div style="font-size: 0.75rem; color: #64748b;">Mendukung format JPG, PNG, WebP</div>
+                <div id="previewFotoBox" class="photo-preview-grid" style="display: none;">
+                  <div class="photo-preview-item">
+                    <img id="imgPreviewTindak" src="" alt="Preview Bukti">
+                    <button type="button" class="btn-remove-photo" id="btnHapusFoto" title="Hapus foto">&times;</button>
+                  </div>
+                  <span id="labelNamaFoto" style="font-size: 0.76rem; color: #047857; font-weight: 600; align-self: center;"></span>
+                </div>
+              </div>
             </div>
 
             <div class="modal-footer"
@@ -2387,6 +2809,43 @@
       </div>
     </div>
 
+    <!-- MODAL: RIWAYAT & REKAM JEJAK AUDIT LENGKAP -->
+    <div class="modal-backdrop" id="modalRiwayatLog">
+      <div class="modal-dialog" style="max-width: 780px;">
+        <div class="modal-header">
+          <h3 class="modal-title">
+            <span>📜</span> Rekam Jejak &amp; Riwayat Tindakan Kasus
+          </h3>
+          <button type="button" class="btn-close-modal" id="btnCloseModalRiwayat">&times;</button>
+        </div>
+        <div class="modal-body">
+          <div class="modal-info-summary" style="margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+              <span id="logSummaryId" style="font-weight: 900; font-size: 1.15rem; color: #064e3b;">ADU-LMB-2026-001</span>
+              <span id="logSummaryStatus" class="badge-status badge-tindak">Dalam Penanganan</span>
+            </div>
+            <div style="font-size: 0.82rem; color: #334155; line-height: 1.5;">
+              <div>📍 Lokasi: <strong id="logSummaryLokasi">-</strong></div>
+              <div>👤 Pelapor: <strong id="logSummaryPelapor">-</strong> | Kategori: <strong id="logSummaryKategori">-</strong></div>
+              <div style="margin-top: 4px; font-style: italic; color: #475569;" id="logSummaryUraian">-</div>
+            </div>
+          </div>
+
+          <div class="modal-section-title">
+            <span>⏱️</span> Kronologi Rekam Tindakan Lapangan DLH
+          </div>
+
+          <div class="timeline-full-flow" id="logFlowContainer">
+            <!-- Dynamic flow items rendered by JS -->
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn-action-secondary" id="btnCloseModalRiwayatFooter">Tutup</button>
+          <button type="button" class="btn-action-primary" id="btnTambahAksiFromRiwayat">⚡ Tambah Tindak Lanjut Baru</button>
+        </div>
+      </div>
+    </div>
+
   </div> <!-- End #officerAppContainer -->
 
   <!-- OFFICIAL PRINTABLE INSPECTION REPORT SHEET (LEMBAR BERITA ACARA RESMI DLH LEMBATA - 1 HALAMAN PAS) -->
@@ -2396,14 +2855,17 @@
       <div class="print-kop-logo-box">
         <svg viewBox="0 0 100 120" width="62" height="76" style="display: block; margin: 0 auto;">
           <!-- Perisai Kuning Emas Luar -->
-          <path d="M 50 3 L 94 20 L 88 86 C 84 105, 50 117, 50 117 C 50 117, 16 105, 12 86 L 6 20 Z" fill="#d97706" stroke="#000000" stroke-width="1.8" />
+          <path d="M 50 3 L 94 20 L 88 86 C 84 105, 50 117, 50 117 C 50 117, 16 105, 12 86 L 6 20 Z" fill="#d97706"
+            stroke="#000000" stroke-width="1.8" />
           <!-- Perisai Dalam Putih -->
-          <path d="M 50 8 L 89 23 L 83 83 C 80 100, 50 111, 50 111 C 50 111, 20 100, 17 83 L 11 23 Z" fill="#ffffff" stroke="#b45309" stroke-width="1" />
+          <path d="M 50 8 L 89 23 L 83 83 C 80 100, 50 111, 50 111 C 50 111, 20 100, 17 83 L 11 23 Z" fill="#ffffff"
+            stroke="#b45309" stroke-width="1" />
           <!-- Bagian Atas Merah -->
           <path d="M 50 8 L 89 23 L 85 62 L 15 62 L 11 23 Z" fill="#dc2626" />
           <!-- Pita Tulisan LEMBATA -->
           <path d="M 22 22 Q 50 16 78 22 L 76 30 Q 50 24 24 30 Z" fill="#fef08a" stroke="#a16207" stroke-width="0.6" />
-          <text x="50" y="27.5" font-size="7.5" font-weight="900" font-family="Arial, sans-serif" fill="#7f1d1d" text-anchor="middle" letter-spacing="1.2">LEMBATA</text>
+          <text x="50" y="27.5" font-size="7.5" font-weight="900" font-family="Arial, sans-serif" fill="#7f1d1d"
+            text-anchor="middle" letter-spacing="1.2">LEMBATA</text>
           <!-- Siluet Gunung Ile Lewotolok -->
           <polygon points="50,33 34,62 66,62" fill="#15803d" />
           <polygon points="50,33 44,46 56,46" fill="#fef08a" opacity="0.85" />
@@ -2434,7 +2896,8 @@
     <div class="print-title">
       <h3 id="printJudulBA">BERITA ACARA</h3>
       <h4 id="printSubJudulBA">VERIFIKASI &amp; PENANGANAN PENGADUAN LINGKUNGAN HIDUP</h4>
-      <p id="printNomorSurat">Nomor : 660 / <span id="printNoRegistrasi">ADU-LMB-2026-001</span> / DLH-LMB / <span id="printBulanRomawi">X</span> / <span id="printTahunBA">2026</span></p>
+      <p id="printNomorSurat">Nomor : 660 / <span id="printNoRegistrasi">ADU-LMB-2026-001</span> / DLH-LMB / <span
+          id="printBulanRomawi">X</span> / <span id="printTahunBA">2026</span></p>
     </div>
 
     <!-- PEMBUKA PARAGRAF -->
@@ -2454,7 +2917,8 @@
       </tr>
       <tr>
         <td colspan="3" style="padding-top: 1px; padding-bottom: 4px; font-style: italic;">
-          Sebagai pihak yang melaksanakan verifikasi dan penanganan, selanjutnya disebut <strong style="font-style: normal;">PIHAK PERTAMA</strong>.
+          Sebagai pihak yang melaksanakan verifikasi dan penanganan, selanjutnya disebut <strong
+            style="font-style: normal;">PIHAK PERTAMA</strong>.
         </td>
       </tr>
       <tr>
@@ -2474,14 +2938,19 @@
       </tr>
       <tr>
         <td colspan="3" style="padding-top: 1px; padding-bottom: 3px; font-style: italic;">
-          Sebagai pihak yang menyampaikan pengaduan / saksi lapangan, selanjutnya disebut <strong style="font-style: normal;">PIHAK KEDUA</strong>.
+          Sebagai pihak yang menyampaikan pengaduan / saksi lapangan, selanjutnya disebut <strong
+            style="font-style: normal;">PIHAK KEDUA</strong>.
         </td>
       </tr>
     </table>
 
     <!-- NARASI TANGGAL TERTULIS SESUAI FOTO -->
     <p class="print-paragraph" style="text-align: justify;" id="printNarasiWaktu">
-      Pada hari ini, <strong id="printHariTeks">Kamis</strong> Tanggal <strong id="printTanggalTeks">Delapan</strong> Bulan <strong id="printBulanTeks">Oktober</strong> Tahun <strong id="printTahunTeks">Dua Ribu Dua Puluh Enam</strong>, bertempat di <span id="printTempatKejadian">Kabupaten Lembata</span>, PIHAK PERTAMA bersama PIHAK KEDUA telah melaksanakan pemeriksaan lapangan dan verifikasi pengaduan lingkungan hidup dengan rincian sebagai berikut:
+      Pada hari ini, <strong id="printHariTeks">Kamis</strong> Tanggal <strong id="printTanggalTeks">Delapan</strong>
+      Bulan <strong id="printBulanTeks">Oktober</strong> Tahun <strong id="printTahunTeks">Dua Ribu Dua Puluh
+        Enam</strong>, bertempat di <span id="printTempatKejadian">Kabupaten Lembata</span>, PIHAK PERTAMA bersama PIHAK
+      KEDUA telah melaksanakan pemeriksaan lapangan dan verifikasi pengaduan lingkungan hidup dengan rincian sebagai
+      berikut:
     </p>
 
     <!-- RINCIAN TABEL ADUAN (8 POIN LENGKAP & PADAT) -->
@@ -2526,10 +2995,17 @@
         <td>:</td>
         <td id="printTableStatus" style="font-weight: bold; text-transform: uppercase;">-</td>
       </tr>
+      <tr>
+        <td>9. Rekam Tindakan Terakhir</td>
+        <td>:</td>
+        <td id="printTableTindakanTerakhir" style="font-style: italic;">-</td>
+      </tr>
     </table>
 
     <p class="print-paragraph" style="text-align: justify; margin-top: 4px;" id="printPernyataanTutup">
-      PIHAK KEDUA telah menyaksikan pemeriksaan lapangan dan menyepakati langkah penanganan yang diambil oleh Dinas Lingkungan Hidup Kabupaten Lembata. Demikian Berita Acara ini dibuat dan ditandatangani oleh kedua belah pihak untuk dipergunakan sebagaimana mestinya.
+      PIHAK KEDUA telah menyaksikan pemeriksaan lapangan dan menyepakati langkah penanganan yang diambil oleh Dinas
+      Lingkungan Hidup Kabupaten Lembata. Demikian Berita Acara ini dibuat dan ditandatangani oleh kedua belah pihak
+      untuk dipergunakan sebagaimana mestinya.
     </p>
 
     <!-- BLOK TANDA TANGAN (KIRI: PIHAK PERTAMA, KANAN: PIHAK KEDUA, BAWAH: KEPALA DINAS) -->
@@ -2589,7 +3065,34 @@
       'lembata2026'
     ];
 
-    // Initial Sample Data (Consistent with public portal)
+    // Helper: Pastikan setiap record aduan memiliki struktur riwayat & rekam tindakan terakhir
+    function migrateAduanRecord(item) {
+      if (!Array.isArray(item.riwayatTindakan)) {
+        item.riwayatTindakan = [];
+      }
+      if (!item.rekamTindakanTerakhir) {
+        if ((item.tindakanDLH && item.tindakanDLH !== '-') || (item.hasilVerifikasi && item.hasilVerifikasi !== '-')) {
+          item.rekamTindakanTerakhir = {
+            id: 'LOG-INIT-' + (item.id || '0'),
+            waktu: item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' ? `${item.tanggalVerifikasi} 09:30` : (item.timestamp || '-'),
+            petugas: item.petugasVerifikasi && item.petugasVerifikasi !== '-' ? item.petugasVerifikasi : 'Tim Verifikasi DLH',
+            kategori: item.status === 'Selesai' ? 'Penyelesaian & Evaluasi Kasus' : (item.status === 'Dalam Penanganan' ? 'Pengangkutan Sampah & Armada DLH' : 'Inspeksi & Verifikasi Lapangan'),
+            status: item.status,
+            tindakan: item.tindakanDLH && item.tindakanDLH !== '-' ? item.tindakanDLH : 'Telah diverifikasi dan dikoordinasikan oleh DLH.',
+            hasil: item.hasilVerifikasi && item.hasilVerifikasi !== '-' ? item.hasilVerifikasi : 'Hasil verifikasi lapangan telah dicatat.',
+            catatan: item.status === 'Selesai' ? 'Kasus telah terselesaikan secara tuntas.' : 'Dalam tindak lanjut operasional DLH Lembata.'
+          };
+          if (item.riwayatTindakan.length === 0) {
+            item.riwayatTindakan.push(item.rekamTindakanTerakhir);
+          }
+        } else {
+          item.rekamTindakanTerakhir = null;
+        }
+      }
+      return item;
+    }
+
+    // Initial Sample Data (Consistent with public portal & enriched with Action History)
     const INITIAL_SAMPLE_DATA = [
       {
         id: 'ADU-LMB-2026-001',
@@ -2611,7 +3114,40 @@
         tanggalVerifikasi: '2026-10-02',
         hasilVerifikasi: 'Volume sampah teridentifikasi mencapai ~4 ton. Telah dikerahkan 2 armada dump truck DLH ke lokasi.',
         tindakanDLH: 'Pembersihan pantai oleh tim oranye DLH bersama warga pesisir, serta pemasangan papan larangan buang sampah bertanda perda.',
-        tanggalSelesai: '-'
+        tanggalSelesai: '-',
+        terakhirDiperbarui: '2026-10-03 11:30',
+        rekamTindakanTerakhir: {
+          id: 'LOG-001-02',
+          waktu: '2026-10-03 11:30',
+          petugas: 'Petrus S. (Bidang Kebersihan DLH)',
+          kategori: 'Pengangkutan Sampah & Armada DLH',
+          status: 'Dalam Penanganan',
+          tindakan: 'Pengerahan 2 unit armada dump truck DLH dan tim oranye untuk pembersihan bertahap sempadan pantai.',
+          hasil: 'Sekitar 2,5 ton sampah plastik dan jaring berhasil diangkut ke TPA Waijarang pada tahap pertama.',
+          catatan: 'Pembersihan sisa material dilanjutkan besok pagi bersama karang taruna dan pengurus TPI.'
+        },
+        riwayatTindakan: [
+          {
+            id: 'LOG-001-01',
+            waktu: '2026-10-02 09:00',
+            petugas: 'Petrus S. (Bidang Kebersihan DLH)',
+            kategori: 'Inspeksi & Verifikasi Lapangan',
+            status: 'Sedang Diverifikasi',
+            tindakan: 'Pengukuran dimensi timbulan sampah dan identifikasi titik koordinat sempadan pantai Sembilang.',
+            hasil: 'Ditemukan timbunan sampah liar memanjang 50m dengan perkiraan volume total ~4 ton.',
+            catatan: 'Dibutuhkan minimal 2 ritase dump truck dan bantuan tenaga angkut lapangan.'
+          },
+          {
+            id: 'LOG-001-02',
+            waktu: '2026-10-03 11:30',
+            petugas: 'Petrus S. (Bidang Kebersihan DLH)',
+            kategori: 'Pengangkutan Sampah & Armada DLH',
+            status: 'Dalam Penanganan',
+            tindakan: 'Pengerahan 2 unit armada dump truck DLH dan tim oranye untuk pembersihan bertahap sempadan pantai.',
+            hasil: 'Sekitar 2,5 ton sampah plastik dan jaring berhasil diangkut ke TPA Waijarang pada tahap pertama.',
+            catatan: 'Pembersihan sisa material dilanjutkan besok pagi bersama karang taruna dan pengurus TPI.'
+          }
+        ]
       },
       {
         id: 'ADU-LMB-2026-002',
@@ -2633,7 +3169,40 @@
         tanggalVerifikasi: '2026-10-03',
         hasilVerifikasi: 'Lokasi pembakaran telah padam, terdapat sisa pembakaran ban seluas 15 m². Pemilik lahan telah diberi teguran lisan.',
         tindakanDLH: 'Penyusunan Berita Acara Peringatan Lingkungan dan edukasi larangan pembakaran sampah sesuai UU No. 18/2008.',
-        tanggalSelesai: '-'
+        tanggalSelesai: '-',
+        terakhirDiperbarui: '2026-10-04 14:15',
+        rekamTindakanTerakhir: {
+          id: 'LOG-002-02',
+          waktu: '2026-10-04 14:15',
+          petugas: 'Kornelis K. (Pengawas Lapangan LH)',
+          kategori: 'Pemberian Surat Peringatan / Teguran',
+          status: 'Sedang Diverifikasi',
+          tindakan: 'Penyerahan Surat Peringatan Tertulis ke-1 dan penandatanganan Berita Acara Peringatan oleh pemilik kebun.',
+          hasil: 'Pemilik lahan bersedia menandatangani pernyataan tidak mengulangi pembakaran terbuka.',
+          catatan: 'Diberikan masa pengawasan evaluasi selama 7 hari kalender.'
+        },
+        riwayatTindakan: [
+          {
+            id: 'LOG-002-01',
+            waktu: '2026-10-03 10:20',
+            petugas: 'Kornelis K. (Pengawas Lapangan LH)',
+            kategori: 'Inspeksi & Verifikasi Lapangan',
+            status: 'Sedang Diverifikasi',
+            tindakan: 'Pemeriksaan lokasi pembakaran bersama aparat desa Bungamuda dan pengukuran luas area terdampak.',
+            hasil: 'Ditemukan sisa abu pembakaran ban bekas pada luasan ~15 m², api sudah padam.',
+            catatan: 'Akan dilanjutkan pemanggilan pemilik kebun ke kantor desa untuk berita acara resmi.'
+          },
+          {
+            id: 'LOG-002-02',
+            waktu: '2026-10-04 14:15',
+            petugas: 'Kornelis K. (Pengawas Lapangan LH)',
+            kategori: 'Pemberian Surat Peringatan / Teguran',
+            status: 'Sedang Diverifikasi',
+            tindakan: 'Penyerahan Surat Peringatan Tertulis ke-1 dan penandatanganan Berita Acara Peringatan oleh pemilik kebun.',
+            hasil: 'Pemilik lahan bersedia menandatangani pernyataan tidak mengulangi pembakaran terbuka.',
+            catatan: 'Diberikan masa pengawasan evaluasi selama 7 hari kalender.'
+          }
+        ]
       },
       {
         id: 'ADU-LMB-2026-003',
@@ -2655,7 +3224,40 @@
         tanggalVerifikasi: '2026-09-29',
         hasilVerifikasi: 'Ceceran minyak telah disolasi dengan pasir absorben dan diangkat bersama pemerintah desa Lamagute.',
         tindakanDLH: 'Sosialisasi penanganan bahan bakar ramah lingkungan bagi kelompok nelayan setempat.',
-        tanggalSelesai: '2026-09-30'
+        tanggalSelesai: '2026-09-30',
+        terakhirDiperbarui: '2026-09-30 16:00',
+        rekamTindakanTerakhir: {
+          id: 'LOG-003-02',
+          waktu: '2026-09-30 16:00',
+          petugas: 'Petrus S. & Tim DLH',
+          kategori: 'Penyelesaian & Evaluasi Kasus',
+          status: 'Selesai',
+          tindakan: 'Penerbitan Berita Acara Penyelesaian Penanganan Tumpahan Oli dan edukasi SOP penanganan BBM ramah lingkungan.',
+          hasil: 'Garis pantai sepanjang 20m telah bersih bebas ceceran minyak, sisa pasir terkontaminasi telah diamankan.',
+          catatan: 'Kasus dinyatakan tuntas dan ditutup.'
+        },
+        riwayatTindakan: [
+          {
+            id: 'LOG-003-01',
+            waktu: '2026-09-29 09:30',
+            petugas: 'Petrus S. & Tim DLH',
+            kategori: 'Pembersihan & Mitigasi Lingkungan',
+            status: 'Dalam Penanganan',
+            tindakan: 'Penyebaran pasir absorben khusus dan pengangkatan lapisan pasir berminyak bersama pemdes Lamagute.',
+            hasil: 'Area tumpahan solar/oli berhasil diisolasi dan dicegah meluas ke arah laut lepas.',
+            catatan: 'Pasir berminyak dikemas dalam karung terisolasi untuk diproses lebih lanjut.'
+          },
+          {
+            id: 'LOG-003-02',
+            waktu: '2026-09-30 16:00',
+            petugas: 'Petrus S. & Tim DLH',
+            kategori: 'Penyelesaian & Evaluasi Kasus',
+            status: 'Selesai',
+            tindakan: 'Penerbitan Berita Acara Penyelesaian Penanganan Tumpahan Oli dan edukasi SOP penanganan BBM ramah lingkungan.',
+            hasil: 'Garis pantai sepanjang 20m telah bersih bebas ceceran minyak, sisa pasir terkontaminasi telah diamankan.',
+            catatan: 'Kasus dinyatakan tuntas dan ditutup.'
+          }
+        ]
       },
       {
         id: 'ADU-LMB-2026-004',
@@ -2677,7 +3279,30 @@
         tanggalVerifikasi: '2026-10-03',
         hasilVerifikasi: 'Sampel air telah diambil untuk uji parameter kekeruhan (TDS & TSS). Terindikasi sedimentasi akibat erosi galian.',
         tindakanDLH: 'Menyusun rekomendasi teknis pembuatan settling pond (kolam endap) kepada pihak pelaksana proyek.',
-        tanggalSelesai: '-'
+        tanggalSelesai: '-',
+        terakhirDiperbarui: '2026-10-03 15:00',
+        rekamTindakanTerakhir: {
+          id: 'LOG-004-01',
+          waktu: '2026-10-03 15:00',
+          petugas: 'Ir. Damianus T. (Kabid Penataan DLH)',
+          kategori: 'Pengambilan Sampel Uji Laboratorium',
+          status: 'Sedang Diverifikasi',
+          tindakan: 'Pengambilan 3 botol sampel air di hulu, titik keruh, dan hilir anak sungai Wai Henga untuk uji lab lingkungan.',
+          hasil: 'Secara fisik kekeruhan mencapai >120 NTU, bau belerang diduga bercampur lumpur sedimen galian proyek.',
+          catatan: 'Hasil uji lab dijadwalkan keluar dalam 4 hari kerja. Rekomendasi kolam endap disiapkan.'
+        },
+        riwayatTindakan: [
+          {
+            id: 'LOG-004-01',
+            waktu: '2026-10-03 15:00',
+            petugas: 'Ir. Damianus T. (Kabid Penataan DLH)',
+            kategori: 'Pengambilan Sampel Uji Laboratorium',
+            status: 'Sedang Diverifikasi',
+            tindakan: 'Pengambilan 3 botol sampel air di hulu, titik keruh, dan hilir anak sungai Wai Henga untuk uji lab lingkungan.',
+            hasil: 'Secara fisik kekeruhan mencapai >120 NTU, bau belerang diduga bercampur lumpur sedimen galian proyek.',
+            catatan: 'Hasil uji lab dijadwalkan keluar dalam 4 hari kerja. Rekomendasi kolam endap disiapkan.'
+          }
+        ]
       },
       {
         id: 'ADU-LMB-2026-005',
@@ -2699,7 +3324,10 @@
         tanggalVerifikasi: '-',
         hasilVerifikasi: 'Menunggu penugasan tim verifikasi lapangan ke Omesuri',
         tindakanDLH: 'Jadwal verifikasi lapangan direncanakan minggu ini bersama Babinsa setempat.',
-        tanggalSelesai: '-'
+        tanggalSelesai: '-',
+        terakhirDiperbarui: '-',
+        rekamTindakanTerakhir: null,
+        riwayatTindakan: []
       },
       {
         id: 'ADU-LMB-2026-006',
@@ -2721,7 +3349,10 @@
         tanggalVerifikasi: '-',
         hasilVerifikasi: 'Aduan masuk, koordinasi awal dengan perangkat desa Buyasuri',
         tindakanDLH: 'Rencana aksi bersih pantai (coastal clean up) bersama warga & karang taruna desa.',
-        tanggalSelesai: '-'
+        tanggalSelesai: '-',
+        terakhirDiperbarui: '-',
+        rekamTindakanTerakhir: null,
+        riwayatTindakan: []
       },
       {
         id: 'ADU-LMB-2026-007',
@@ -2743,7 +3374,30 @@
         tanggalVerifikasi: '2026-10-06',
         hasilVerifikasi: 'Terbukti terjadi lubang galian pasir pada sempadan pantai seluas ~100 m².',
         tindakanDLH: 'Koordinasi bersama Satpol PP Lembata untuk penertiban dan pemasangan plang larangan penambangan pasir sempadan pantai.',
-        tanggalSelesai: '-'
+        tanggalSelesai: '-',
+        terakhirDiperbarui: '2026-10-06 14:30',
+        rekamTindakanTerakhir: {
+          id: 'LOG-007-01',
+          waktu: '2026-10-06 14:30',
+          petugas: 'Petrus S. (Bidang Pengawasan LH)',
+          kategori: 'Pemasangan Papan Larangan & Rambu',
+          status: 'Sedang Diverifikasi',
+          tindakan: 'Pemasangan papan peringatan larangan penambangan pasir sempadan pantai bertanda Perda Kabupaten Lembata.',
+          hasil: 'Titik galian pasir liar telah dipasangi plang segel peringatan DLH dan dikoordinasikan dengan Kades Loang.',
+          catatan: 'Patroli berkala bersama Satpol PP Lembata dijadwalkan setiap 3 hari.'
+        },
+        riwayatTindakan: [
+          {
+            id: 'LOG-007-01',
+            waktu: '2026-10-06 14:30',
+            petugas: 'Petrus S. (Bidang Pengawasan LH)',
+            kategori: 'Pemasangan Papan Larangan & Rambu',
+            status: 'Sedang Diverifikasi',
+            tindakan: 'Pemasangan papan peringatan larangan penambangan pasir sempadan pantai bertanda Perda Kabupaten Lembata.',
+            hasil: 'Titik galian pasir liar telah dipasangi plang segel peringatan DLH dan dikoordinasikan dengan Kades Loang.',
+            catatan: 'Patroli berkala bersama Satpol PP Lembata dijadwalkan setiap 3 hari.'
+          }
+        ]
       },
       {
         id: 'ADU-LMB-2026-008',
@@ -2765,7 +3419,30 @@
         tanggalVerifikasi: '2026-09-07',
         hasilVerifikasi: 'Uji air sumur menunjukkan parameter bakteriologis normal, bau berasal dari saluran drainase umum yang tersumbat daun dan lumpur, bukan pencemaran limbah B3/berbahaya.',
         tindakanDLH: 'Diserahkan penanganannya kepada pengelola pasar dan pemdes Wulandoni untuk pembersihan got bersama warga.',
-        tanggalSelesai: '2026-09-08'
+        tanggalSelesai: '2026-09-08',
+        terakhirDiperbarui: '2026-09-08 10:00',
+        rekamTindakanTerakhir: {
+          id: 'LOG-008-01',
+          waktu: '2026-09-08 10:00',
+          petugas: 'Tim Gabungan DLH & Dinkes Lembata',
+          kategori: 'Penyelesaian & Evaluasi Kasus',
+          status: 'Ditolak',
+          tindakan: 'Penyerahan berita acara hasil uji klinis air sumur kepada warga dan musyawarah bersama pengurus pasar.',
+          hasil: 'Parameter kualitas air sumur memenuhi baku mutu layak pakai. Aduan ditutup sebagai non-pencemaran B3.',
+          catatan: 'Dialihkan penanganan kebersihan got ke perangkat desa Wulandoni.'
+        },
+        riwayatTindakan: [
+          {
+            id: 'LOG-008-01',
+            waktu: '2026-09-08 10:00',
+            petugas: 'Tim Gabungan DLH & Dinkes Lembata',
+            kategori: 'Penyelesaian & Evaluasi Kasus',
+            status: 'Ditolak',
+            tindakan: 'Penyerahan berita acara hasil uji klinis air sumur kepada warga dan musyawarah bersama pengurus pasar.',
+            hasil: 'Parameter kualitas air sumur memenuhi baku mutu layak pakai. Aduan ditutup sebagai non-pencemaran B3.',
+            catatan: 'Dialihkan penanganan kebersihan got ke perangkat desa Wulandoni.'
+          }
+        ]
       }
     ];
 
@@ -2778,7 +3455,10 @@
       }
       try {
         const parsed = JSON.parse(raw);
-        return Array.isArray(parsed) && parsed.length > 0 ? parsed : INITIAL_SAMPLE_DATA;
+        if (Array.isArray(parsed) && parsed.length > 0) {
+          return parsed.map(migrateAduanRecord);
+        }
+        return INITIAL_SAMPLE_DATA;
       } catch (e) {
         return INITIAL_SAMPLE_DATA;
       }
@@ -3014,9 +3694,15 @@
             </div>
             <div style="font-size: 0.82rem; font-weight: 700; color: #1e293b; margin-bottom: 3px;">🏷️ ${item.jenisPencemaran}</div>
             <div style="font-size: 0.76rem; color: #64748b; margin-bottom: 8px;">📍 Desa ${item.desa}, Kec. ${item.kecamatan}</div>
-            <div style="font-size: 0.76rem; color: #334155; margin-bottom: 10px; background: #f8fafc; padding: 6px 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
+            <div style="font-size: 0.76rem; color: #334155; margin-bottom: 8px; background: #f8fafc; padding: 6px 8px; border-radius: 4px; border: 1px solid #e2e8f0;">
               Pelapor: <strong>${item.namaPelapor}</strong> (${item.noHp || '-'})
             </div>
+            ${item.rekamTindakanTerakhir ? `
+              <div style="font-size: 0.74rem; color: #047857; margin-bottom: 8px; background: #ecfdf5; padding: 5px 7px; border-radius: 4px; border: 1px solid #a7f3d0; line-height: 1.4;">
+                ⚡ <strong>Aksi Terakhir (${formatHumanDate(item.rekamTindakanTerakhir.waktu)}):</strong><br>
+                ${item.rekamTindakanTerakhir.tindakan}
+              </div>
+            ` : ''}
             <div style="display: flex; gap: 6px; flex-direction: column;">
               <a href="${gmapsUrl}" target="_blank" style="display: block; text-align: center; background: #059669; color: #fff; text-decoration: none; padding: 6px 8px; border-radius: 4px; font-size: 0.75rem; font-weight: 700;">
                 🧭 Rute Google Maps ↗
@@ -3236,11 +3922,25 @@
       });
 
       // Sorting
-      filtered.sort((a, b) => {
-        const dateA = new Date(String(a.timestamp || '').replace(/\s*\([^)]*\)$/, '')).getTime() || 0;
-        const dateB = new Date(String(b.timestamp || '').replace(/\s*\([^)]*\)$/, '')).getTime() || 0;
-        return sortVal === 'oldest' ? dateA - dateB : dateB - dateA;
-      });
+      if (sortVal === 'latest_action') {
+        filtered.sort((a, b) => {
+          const timeA = a.rekamTindakanTerakhir && a.rekamTindakanTerakhir.waktu ? new Date(a.rekamTindakanTerakhir.waktu).getTime() || 1 : 0;
+          const timeB = b.rekamTindakanTerakhir && b.rekamTindakanTerakhir.waktu ? new Date(b.rekamTindakanTerakhir.waktu).getTime() || 1 : 0;
+          return timeB - timeA;
+        });
+      } else if (sortVal === 'no_action') {
+        filtered.sort((a, b) => {
+          const hasA = a.rekamTindakanTerakhir ? 1 : 0;
+          const hasB = b.rekamTindakanTerakhir ? 1 : 0;
+          return hasA - hasB;
+        });
+      } else {
+        filtered.sort((a, b) => {
+          const dateA = new Date(String(a.timestamp || '').replace(/\s*\([^)]*\)$/, '')).getTime() || 0;
+          const dateB = new Date(String(b.timestamp || '').replace(/\s*\([^)]*\)$/, '')).getTime() || 0;
+          return sortVal === 'oldest' ? dateA - dateB : dateB - dateA;
+        });
+      }
 
       return filtered;
     }
@@ -3272,6 +3972,7 @@
         const waUrl = waClean ? `https://wa.me/62${waClean.replace(/^0/, '')}?text=Halo%20Bapak/Ibu%20${encodeURIComponent(item.namaPelapor)},%20kami%20dari%20Tim%20DLH%20Lembata%20terkait%20aduan%20${encodeURIComponent(item.id)}.` : null;
         const formattedDate = formatHumanDate(item.timestamp);
         const stepperHtml = getPipelineStepHtml(item.status);
+        const riwayatCount = Array.isArray(item.riwayatTindakan) ? item.riwayatTindakan.length : (item.rekamTindakanTerakhir ? 1 : 0);
 
         return `
           <div class="case-card ${badgeMeta.borderCls}" id="card-${item.id}">
@@ -3281,7 +3982,14 @@
                 <span class="case-id-badge">${item.id}</span>
                 <span class="badge-status ${badgeMeta.cls}">${badgeMeta.icon} ${badgeMeta.label}</span>
               </div>
-              <span class="case-time-tag">⏱️ Masuk: ${formattedDate}</span>
+              <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                ${item.terakhirDiperbarui && item.terakhirDiperbarui !== '-' ? `
+                  <span style="font-size: 0.73rem; background: #ecfdf5; color: #047857; padding: 2px 8px; border-radius: 999px; border: 1px solid #a7f3d0; font-weight: 700;">
+                    🔄 Diperbarui: ${formatHumanDate(item.terakhirDiperbarui)}
+                  </span>
+                ` : ''}
+                <span class="case-time-tag">⏱️ Masuk: ${formattedDate}</span>
+              </div>
             </div>
 
             <!-- 2. Alur Visual Stepper Kasus -->
@@ -3324,28 +4032,73 @@
               </div>
             </div>
 
-            <!-- 6. Catatan Berita Acara & Tindakan Teknis DLH -->
-            ${(item.hasilVerifikasi && item.hasilVerifikasi !== '-') || (item.tindakanDLH && item.tindakanDLH !== '-') ? `
-              <div class="case-official-box">
-                ${item.hasilVerifikasi && item.hasilVerifikasi !== '-' ? `
-                  <div class="official-box-row">
-                    <span class="official-box-title">📋 Temuan Lapangan:</span>
-                    <span>${item.hasilVerifikasi}</span>
+            <!-- 6. REKAM TINDAKAN TERAKHIR (FITUR REKAM JEJAK AUDIT & TINDAKAN) -->
+            ${item.rekamTindakanTerakhir ? `
+              <div class="case-last-action-box">
+                <div class="last-action-header">
+                  <div class="last-action-meta-group">
+                    <span class="badge-last-action-tag">⚡ Rekam Tindakan Terakhir</span>
+                    <span class="badge-last-action-time">⏱️ ${formatHumanDate(item.rekamTindakanTerakhir.waktu)}</span>
+                    <span class="last-action-category-badge">🏷️ ${item.rekamTindakanTerakhir.kategori || 'Tindakan Lapangan'}</span>
                   </div>
-                ` : ''}
-                ${item.tindakanDLH && item.tindakanDLH !== '-' ? `
-                  <div class="official-box-row">
-                    <span class="official-box-title">🚜 Tindakan Teknis DLH:</span>
-                    <span>${item.tindakanDLH}</span>
+                  <div class="last-action-officer-pill">
+                    <span>🛡️</span> <span>Petugas: <strong>${item.rekamTindakanTerakhir.petugas || item.petugasVerifikasi || 'Tim DLH'}</strong></span>
                   </div>
-                ` : ''}
+                </div>
+
+                <div class="last-action-body">
+                  <div class="last-action-row">
+                    <span class="last-action-row-title">🚜 Tindakan Teknis:</span>
+                    <span><strong>${item.rekamTindakanTerakhir.tindakan || item.tindakanDLH || '-'}</strong></span>
+                  </div>
+                  ${item.rekamTindakanTerakhir.hasil ? `
+                    <div class="last-action-row">
+                      <span class="last-action-row-title">📋 Fakta Temuan:</span>
+                      <span>${item.rekamTindakanTerakhir.hasil}</span>
+                    </div>
+                  ` : ''}
+                  ${item.rekamTindakanTerakhir.catatan ? `
+                    <div class="last-action-row">
+                      <span class="last-action-row-title">💡 Catatan / Rekomendasi:</span>
+                      <span style="font-style: italic; color: #1e3a8a;">${item.rekamTindakanTerakhir.catatan}</span>
+                    </div>
+                  ` : ''}
+                  ${item.rekamTindakanTerakhir.foto ? `
+                    <div style="margin-top: 6px; padding: 6px 10px; background: #ffffff; border-radius: 8px; border: 1px solid #a7f3d0; display: inline-flex; align-items: center; gap: 10px;">
+                      <img src="${item.rekamTindakanTerakhir.foto}" alt="Bukti Foto" style="width: 50px; height: 50px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1; cursor: pointer;" onclick="window.open(this.src)">
+                      <div>
+                        <span style="font-size: 0.75rem; font-weight: 700; color: #064e3b; display: block;">📸 Foto Bukti Lapangan</span>
+                        <a href="${item.rekamTindakanTerakhir.foto}" target="_blank" style="font-size: 0.72rem; color: #059669; font-weight: 600; text-decoration: underline;">Lihat Ukuran Penuh ↗</a>
+                      </div>
+                    </div>
+                  ` : ''}
+                </div>
+
+                <div class="last-action-footer">
+                  <span style="font-size: 0.74rem; color: #047857;">
+                    Status saat aksi: <strong style="text-transform: uppercase;">${item.rekamTindakanTerakhir.status || item.status}</strong>
+                  </span>
+                  <button type="button" class="btn-view-history-log" onclick="window.lihatRiwayatTindakan('${item.id}')" title="Buka seluruh kronologi riwayat tindakan kasus ini">
+                    📜 Rekam Jejak Riwayat (${riwayatCount} Tindakan) ▾
+                  </button>
+                </div>
               </div>
-            ` : ''}
+            ` : `
+              <div class="case-no-action-box">
+                <div class="no-action-text">
+                  <span>⏳</span>
+                  <span><strong>Belum Ada Rekam Tindakan Lapangan</strong> — Kasus ini belum memiliki rekam jejak aksi verifikasi/eksekusi fisik.</span>
+                </div>
+                <button type="button" class="btn-action-primary" style="padding: 6px 14px; font-size: 0.78rem;" onclick="window.bukaModalTindakLanjut('${item.id}')">
+                  ⚡ Catat Tindak Lanjut Awal
+                </button>
+              </div>
+            `}
 
             <!-- 7. Tombol Aksi Lapangan & Tindak Lanjut -->
             <div class="case-actions-bar">
               <div class="actions-group-left">
-                <button type="button" class="btn-action-primary" onclick="window.bukaModalTindakLanjut('${item.id}')" title="Buka form update status dan investigasi">
+                <button type="button" class="btn-action-primary" onclick="window.bukaModalTindakLanjut('${item.id}')" title="Buka form tindak lanjut dan rekam tindakan">
                   ⚡ Tindak Lanjuti
                 </button>
                 <button type="button" class="btn-action-secondary" onclick="window.cetakBeritaAcaraById('${item.id}')" title="Cetak Lembar Berita Acara Resmi DLH Lembata (1 Halaman Pas)">
@@ -3392,6 +4145,8 @@
       }
     };
 
+    let currentPhotoBase64 = null;
+
     window.bukaModalTindakLanjut = function (id) {
       const list = getAduanList();
       const item = list.find(x => x.id === id);
@@ -3414,17 +4169,178 @@
         gpsLink.style.display = 'none';
       }
 
-      // Populate form
-      document.getElementById('editStatusSelect').value = item.status;
-      document.getElementById('editPetugasNama').value = item.petugasVerifikasi && item.petugasVerifikasi !== '-' ? item.petugasVerifikasi : getActiveOfficer();
+      // 1. Populate Riwayat Log Accordion di dalam modal
+      const historyList = Array.isArray(item.riwayatTindakan) ? item.riwayatTindakan : (item.rekamTindakanTerakhir ? [item.rekamTindakanTerakhir] : []);
+      const countBadge = document.getElementById('modalHistoryBadgeCount');
+      const timelineBox = document.getElementById('modalHistoryTimelineList');
+      if (countBadge) countBadge.textContent = `${historyList.length} Tindakan Tercatat`;
 
-      const today = new Date().toISOString().split('T')[0];
+      if (timelineBox) {
+        if (historyList.length === 0) {
+          timelineBox.innerHTML = `
+            <div style="font-size: 0.8rem; color: #64748b; font-style: italic; padding: 6px 0;">
+              Belum ada riwayat tindakan lapangan sebelumnya. Aksi pertama yang Anda simpan akan menjadi rekam tindakan awal.
+            </div>
+          `;
+        } else {
+          timelineBox.innerHTML = historyList.map((log, idx) => {
+            const isLatest = idx === historyList.length - 1;
+            return `
+              <div class="timeline-log-card ${isLatest ? 'latest' : ''}">
+                <div class="timeline-log-head">
+                  <span class="timeline-log-title">
+                    #${idx + 1}. ${log.kategori || 'Tindakan Lapangan'} 
+                    <span style="font-size: 0.7rem; font-weight: 700; color: #047857; background: #ecfdf5; padding: 1px 6px; border-radius: 4px; border: 1px solid #a7f3d0;">
+                      ${log.status || '-'}
+                    </span>
+                  </span>
+                  <span class="timeline-log-time">⏱️ ${formatHumanDate(log.waktu)}</span>
+                </div>
+                <div style="font-size: 0.78rem; color: #064e3b; font-weight: 600;">
+                  🛡️ Petugas: ${log.petugas || '-'}
+                </div>
+                <div class="timeline-log-desc">
+                  <div><strong>Tindakan:</strong> ${log.tindakan || '-'}</div>
+                  ${log.hasil ? `<div><strong>Temuan:</strong> ${log.hasil}</div>` : ''}
+                  ${log.catatan ? `<div style="color: #64748b; font-style: italic; margin-top: 3px;">Catatan: ${log.catatan}</div>` : ''}
+                  ${log.foto ? `<div style="margin-top: 6px;"><a href="${log.foto}" target="_blank" style="color: #059669; font-weight: 700; font-size: 0.74rem;">📸 Lihat Foto Bukti Tindakan ↗</a></div>` : ''}
+                </div>
+              </div>
+            `;
+          }).join('');
+        }
+      }
+
+      // Reset Accordion state (tutup default)
+      const listEl = document.getElementById('modalHistoryTimelineList');
+      const chevron = document.getElementById('modalHistoryChevron');
+      if (listEl) listEl.style.display = 'none';
+      if (chevron) chevron.textContent = '▾ Buka Log';
+
+      // 2. Populate form fields
+      document.getElementById('editStatusSelect').value = item.status;
+      
+      const selKategori = document.getElementById('editKategoriTindakan');
+      if (selKategori) {
+        selKategori.value = item.rekamTindakanTerakhir?.kategori || 'Inspeksi & Verifikasi Lapangan';
+      }
+
+      document.getElementById('editPetugasNama').value = item.petugasVerifikasi && item.petugasVerifikasi !== '-' ? item.petugasVerifikasi : (getActiveOfficer() || 'Petugas Pengawas LH');
+
+      // Auto-set waktu tindakan ke saat ini (WITA)
+      const now = new Date();
+      const yyyy = now.getFullYear();
+      const mm = String(now.getMonth() + 1).padStart(2, '0');
+      const dd = String(now.getDate()).padStart(2, '0');
+      const hh = String(now.getHours()).padStart(2, '0');
+      const min = String(now.getMinutes()).padStart(2, '0');
+      const formattedNow = `${yyyy}-${mm}-${dd} ${hh}:${min}`;
+      
+      const inputWaktu = document.getElementById('editWaktuTindakan');
+      if (inputWaktu) inputWaktu.value = formattedNow;
+
+      const today = `${yyyy}-${mm}-${dd}`;
       document.getElementById('editTanggalVerif').value = item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' ? item.tanggalVerifikasi : today;
       document.getElementById('editTanggalSelesai').value = item.tanggalSelesai && item.tanggalSelesai !== '-' ? item.tanggalSelesai : (item.status === 'Selesai' ? today : '-');
       document.getElementById('editHasilVerifikasi').value = item.hasilVerifikasi && item.hasilVerifikasi !== '-' ? item.hasilVerifikasi : '';
       document.getElementById('editTindakanDLH').value = item.tindakanDLH && item.tindakanDLH !== '-' ? item.tindakanDLH : '';
+      
+      const inputCatatan = document.getElementById('editCatatanTambahan');
+      if (inputCatatan) inputCatatan.value = item.rekamTindakanTerakhir?.catatan || '';
+
+      // Reset photo upload
+      currentPhotoBase64 = null;
+      const previewFotoBox = document.getElementById('previewFotoBox');
+      const inputFotoTindak = document.getElementById('inputFotoTindak');
+      if (previewFotoBox) previewFotoBox.style.display = 'none';
+      if (inputFotoTindak) inputFotoTindak.value = '';
 
       document.getElementById('modalTindakLanjut').classList.add('active');
+    };
+
+    // Modal Riwayat Log Audit Interaktif
+    window.lihatRiwayatTindakan = function (id) {
+      const list = getAduanList();
+      const item = list.find(x => x.id === id);
+      if (!item) return;
+
+      document.getElementById('logSummaryId').textContent = item.id;
+      document.getElementById('logSummaryStatus').textContent = item.status;
+      document.getElementById('logSummaryLokasi').textContent = `Desa ${item.desa}, Kec. ${item.kecamatan}`;
+      document.getElementById('logSummaryPelapor').textContent = item.namaPelapor || 'Masyarakat';
+      document.getElementById('logSummaryKategori').textContent = item.jenisPencemaran;
+      document.getElementById('logSummaryUraian').textContent = `"${item.uraian}"`;
+
+      const flowContainer = document.getElementById('logFlowContainer');
+      const historyList = Array.isArray(item.riwayatTindakan) && item.riwayatTindakan.length > 0 
+        ? item.riwayatTindakan 
+        : (item.rekamTindakanTerakhir ? [item.rekamTindakanTerakhir] : []);
+
+      if (historyList.length === 0) {
+        flowContainer.innerHTML = `
+          <div class="empty-state" style="padding: 24px; text-align: center;">
+            <div style="font-size: 2.2rem; margin-bottom: 6px;">⏳</div>
+            <h4 style="color: #334155; font-weight: 800; font-size: 0.95rem;">Belum Ada Rekam Tindakan Lapangan</h4>
+            <p style="font-size: 0.82rem; color: #64748b; margin-top: 4px;">Kasus ini belum memiliki catatan rekam tindakan operasional. Klik tombol di bawah untuk mencatat aksi pertama.</p>
+          </div>
+        `;
+      } else {
+        flowContainer.innerHTML = historyList.map((log, index) => {
+          return `
+            <div class="flow-item">
+              <div class="flow-badge-step">#${index + 1}</div>
+              <div class="flow-card-content">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; flex-wrap: wrap; gap: 6px;">
+                  <span style="font-weight: 800; font-size: 0.92rem; color: #064e3b;">
+                    ${log.kategori || 'Tindakan Lapangan DLH'}
+                  </span>
+                  <span style="font-size: 0.76rem; background: #f1f5f9; color: #059669; font-weight: 700; padding: 2px 8px; border-radius: 999px; border: 1px solid #cbd5e1;">
+                    ⏱️ ${formatHumanDate(log.waktu)}
+                  </span>
+                </div>
+
+                <div style="font-size: 0.8rem; color: #475569; margin-bottom: 8px;">
+                  🛡️ Petugas Bertanggung Jawab: <strong>${log.petugas || item.petugasVerifikasi || '-'}</strong>
+                  &bull; Status Kasus: <strong style="color: #064e3b;">${log.status || item.status}</strong>
+                </div>
+
+                <div style="font-size: 0.85rem; color: #1e293b; line-height: 1.55; background: #f8fafc; padding: 10px 12px; border-radius: 8px; border: 1px solid #e2e8f0;">
+                  <div style="margin-bottom: 4px;">
+                    <strong style="color: #064e3b;">🚜 Tindakan Teknis:</strong> ${log.tindakan || '-'}
+                  </div>
+                  ${log.hasil ? `
+                    <div style="margin-bottom: 4px;">
+                      <strong style="color: #064e3b;">📋 Temuan Lapangan:</strong> ${log.hasil}
+                    </div>
+                  ` : ''}
+                  ${log.catatan ? `
+                    <div style="color: #64748b; font-style: italic; border-top: 1px dashed #e2e8f0; padding-top: 4px; margin-top: 4px;">
+                      💡 <strong>Catatan / Rekomendasi:</strong> ${log.catatan}
+                    </div>
+                  ` : ''}
+                  ${log.foto ? `
+                    <div style="margin-top: 8px;">
+                      <span style="font-size: 0.74rem; font-weight: 700; color: #064e3b; display: block; margin-bottom: 4px;">📸 Bukti Dokumentasi Lapangan:</span>
+                      <img src="${log.foto}" alt="Bukti Foto" style="max-height: 140px; border-radius: 8px; border: 1.5px solid #cbd5e1; cursor: pointer;" onclick="window.open(this.src)">
+                    </div>
+                  ` : ''}
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
+      // Pasang tombol tambah aksi dari dalam riwayat modal
+      const btnTambah = document.getElementById('btnTambahAksiFromRiwayat');
+      if (btnTambah) {
+        btnTambah.onclick = () => {
+          document.getElementById('modalRiwayatLog').classList.remove('active');
+          window.bukaModalTindakLanjut(item.id);
+        };
+      }
+
+      document.getElementById('modalRiwayatLog').classList.add('active');
     };
 
     // Helper Konversi Angka ke Kata Bahasa Indonesia untuk Lembar Berita Acara Formal
@@ -3437,8 +4353,8 @@
       if (n < 100) return konversiAngkaTeks(Math.floor(n / 10)) + ' Puluh' + (n % 10 !== 0 ? ' ' + konversiAngkaTeks(n % 10) : '');
       if (n < 200) return 'Seratus' + (n % 100 !== 0 ? ' ' + konversiAngkaTeks(n % 100) : '');
       if (n < 1000) return konversiAngkaTeks(Math.floor(n / 100)) + ' Ratus' + (n % 100 !== 0 ? ' ' + konversiAngkaTeks(n % 100) : '');
-      if (n < 2000) return 'Seribu' + (n % 1000 !== 0 ? ' ' + konversiAngkaTeks(n % 1000) : '');
-      if (n < 1000000) return konversiAngkaTeks(Math.floor(n / 1000)) + ' Ribu' + (n % 1000 !== 0 ? ' ' + konversiAngkaTeks(n % 1000) : '');
+      if (n < 2000) return 'Seribu' + (n % 1000 !== 0 ? ' ' + konversiAngkaTeks(n % 100) : '');
+      if (n < 1000000) return konversiAngkaTeks(Math.floor(n / 1000)) + ' Ribu' + (n % 100 !== 0 ? ' ' + konversiAngkaTeks(n % 100) : '');
       return n.toString();
     }
 
@@ -3481,7 +4397,7 @@
       const locDesc = `${item.lokasiDetail ? item.lokasiDetail + ', ' : ''}Desa ${item.desa}, Kecamatan ${item.kecamatan}`;
       document.getElementById('printNarasiWaktu').innerHTML = `Pada hari ini, <strong>${dayName}</strong> Tanggal <strong>${dayTeks}</strong> Bulan <strong>${monthName}</strong> Tahun <strong>${yearTeks}</strong>, bertempat di <strong>${locDesc}</strong>, PIHAK PERTAMA bersama PIHAK KEDUA telah melaksanakan pemeriksaan lapangan dan verifikasi pengaduan lingkungan hidup dengan rincian sebagai berikut:`;
 
-      // Rincian 8 Poin Pemeriksaan Kasus
+      // Rincian 9 Poin Pemeriksaan Kasus
       document.getElementById('printTableId').textContent = item.id;
       document.getElementById('printTableWaktu').textContent = formatHumanDate(item.timestamp);
       document.getElementById('printTableLokasi').textContent = `${locDesc}` + (item.lat && item.lng ? ` [GPS: ${item.lat}, ${item.lng}]` : '');
@@ -3490,6 +4406,12 @@
       document.getElementById('printTableHasil').textContent = item.hasilVerifikasi || 'Telah dilakukan verifikasi faktual dan investigasi langsung di lokasi kejadian.';
       document.getElementById('printTableTindakan').textContent = item.tindakanDLH || 'Telah dilakukan koordinasi teknis serta langkah mitigasi penanganan pencemaran DLH.';
       document.getElementById('printTableStatus').textContent = item.status;
+      
+      const lastActionDesc = item.rekamTindakanTerakhir 
+        ? `${item.rekamTindakanTerakhir.kategori || 'Tindakan'} (${formatHumanDate(item.rekamTindakanTerakhir.waktu)}) - ${item.rekamTindakanTerakhir.tindakan}` 
+        : (item.tindakanDLH || '-');
+      const elPrintTindakanTerakhir = document.getElementById('printTableTindakanTerakhir');
+      if (elPrintTindakanTerakhir) elPrintTindakanTerakhir.textContent = lastActionDesc;
 
       // Penutup
       document.getElementById('printPernyataanTutup').textContent = 'PIHAK KEDUA telah menyaksikan pemeriksaan lapangan dan menyepakati langkah penanganan yang diambil oleh Dinas Lingkungan Hidup Kabupaten Lembata. Demikian Berita Acara ini dibuat dan ditandatangani oleh kedua belah pihak untuk dipergunakan sebagaimana mestinya.';
@@ -3528,22 +4450,49 @@
       showToast('Seluruh filter telah direset ke tampilan default.');
     };
 
-    // Form Update Submit Handler
+    // Form Update Submit Handler (MENYIMPAN REKAM TINDAKAN TERAKHIR & AUDIT LOG LENGKAP)
     document.getElementById('formUpdatePenanganan').addEventListener('submit', function (e) {
       e.preventDefault();
 
       const id = document.getElementById('editAduanId').value;
       const status = document.getElementById('editStatusSelect').value;
+      const kategori = document.getElementById('editKategoriTindakan') ? document.getElementById('editKategoriTindakan').value : 'Tindakan Lapangan';
       const petugas = document.getElementById('editPetugasNama').value.trim();
+      const waktuTindakan = document.getElementById('editWaktuTindakan') ? document.getElementById('editWaktuTindakan').value.trim() : new Date().toISOString().replace('T', ' ').slice(0, 16);
       const tglVerif = document.getElementById('editTanggalVerif').value.trim();
       const tglSelesai = document.getElementById('editTanggalSelesai').value.trim();
       const hasil = document.getElementById('editHasilVerifikasi').value.trim();
       const tindakan = document.getElementById('editTindakanDLH').value.trim();
+      const catatan = document.getElementById('editCatatanTambahan') ? document.getElementById('editCatatanTambahan').value.trim() : '';
 
       const list = getAduanList();
       const index = list.findIndex(x => x.id === id);
       if (index === -1) return;
 
+      // 1. Buat Record Log Tindakan Baru
+      const newActionRecord = {
+        id: 'LOG-' + Date.now(),
+        waktu: waktuTindakan || new Date().toISOString().replace('T', ' ').slice(0, 16),
+        petugas: petugas,
+        kategori: kategori,
+        status: status,
+        tindakan: tindakan,
+        hasil: hasil,
+        catatan: catatan,
+        foto: currentPhotoBase64 || null
+      };
+
+      // 2. Inisialisasi dan simpan ke riwayat array
+      if (!Array.isArray(list[index].riwayatTindakan)) {
+        list[index].riwayatTindakan = [];
+      }
+      list[index].riwayatTindakan.push(newActionRecord);
+
+      // 3. Simpan sebagai Rekam Tindakan Terakhir & Waktu Terakhir Diperbarui
+      list[index].rekamTindakanTerakhir = newActionRecord;
+      list[index].terakhirDiperbarui = newActionRecord.waktu;
+
+      // 4. Update data pokok tiket
       list[index].status = status;
       list[index].petugasVerifikasi = petugas;
       list[index].tanggalVerifikasi = tglVerif;
@@ -3561,7 +4510,7 @@
       renderCaseList();
       renderMapMarkers(list);
 
-      showToast(`Aduan ${id} berhasil diperbarui statusnya menjadi "${status}"!`);
+      showToast(`✅ Berhasil! Rekam tindakan terakhir untuk aduan ${id} berhasil dicatat.`);
 
       // Sync to Google Apps Script as background POST if API configured
       const gasUrl = localStorage.getItem('dlh_gas_api_url') || (window.GAS_API_URL || '');
@@ -3578,12 +4527,75 @@
               tanggalVerifikasi: tglVerif,
               hasilVerifikasi: hasil,
               tindakanDLH: tindakan,
-              tanggalSelesai: list[index].tanggalSelesai
+              tanggalSelesai: list[index].tanggalSelesai,
+              rekamTindakanTerakhir: newActionRecord,
+              riwayatTindakan: list[index].riwayatTindakan
             }
           })
         }).catch(err => console.warn('Sync POST to GAS failed:', err));
       }
     });
+
+    // Toggle Modal History Accordion
+    const btnToggleModalHist = document.getElementById('btnToggleModalHistory');
+    if (btnToggleModalHist) {
+      btnToggleModalHist.addEventListener('click', () => {
+        const listEl = document.getElementById('modalHistoryTimelineList');
+        const chevron = document.getElementById('modalHistoryChevron');
+        if (listEl) {
+          const isHidden = listEl.style.display === 'none';
+          listEl.style.display = isHidden ? 'flex' : 'none';
+          if (chevron) chevron.textContent = isHidden ? '▴ Tutup Log' : '▾ Buka Log';
+        }
+      });
+    }
+
+    // Photo Upload & Preview Logic
+    const inputFoto = document.getElementById('inputFotoTindak');
+    const btnPilihFoto = document.getElementById('btnPilihFoto');
+    const previewFotoBox = document.getElementById('previewFotoBox');
+    const imgPreview = document.getElementById('imgPreviewTindak');
+    const labelNamaFoto = document.getElementById('labelNamaFoto');
+    const btnHapusFoto = document.getElementById('btnHapusFoto');
+
+    if (btnPilihFoto && inputFoto) {
+      btnPilihFoto.addEventListener('click', () => inputFoto.click());
+      inputFoto.addEventListener('change', function () {
+        if (this.files && this.files[0]) {
+          const file = this.files[0];
+          const reader = new FileReader();
+          reader.onload = function (e) {
+            currentPhotoBase64 = e.target.result;
+            if (imgPreview) imgPreview.src = currentPhotoBase64;
+            if (labelNamaFoto) labelNamaFoto.textContent = file.name;
+            if (previewFotoBox) previewFotoBox.style.display = 'flex';
+          };
+          reader.readAsDataURL(file);
+        }
+      });
+    }
+
+    if (btnHapusFoto) {
+      btnHapusFoto.addEventListener('click', () => {
+        currentPhotoBase64 = null;
+        if (inputFoto) inputFoto.value = '';
+        if (previewFotoBox) previewFotoBox.style.display = 'none';
+      });
+    }
+
+    // Close Riwayat Log Modal
+    const btnCloseModalRiwayat = document.getElementById('btnCloseModalRiwayat');
+    if (btnCloseModalRiwayat) {
+      btnCloseModalRiwayat.addEventListener('click', () => {
+        document.getElementById('modalRiwayatLog').classList.remove('active');
+      });
+    }
+    const btnCloseModalRiwayatFooter = document.getElementById('btnCloseModalRiwayatFooter');
+    if (btnCloseModalRiwayatFooter) {
+      btnCloseModalRiwayatFooter.addEventListener('click', () => {
+        document.getElementById('modalRiwayatLog').classList.remove('active');
+      });
+    }
 
     // Close Modals
     document.getElementById('btnCloseModalTindak').addEventListener('click', () => {
@@ -3683,7 +4695,7 @@
       btnResetFilters.addEventListener('click', window.resetSemuaFilter);
     }
 
-    // Export CSV Feature
+    // Export CSV Feature (Lengkap dengan Rekam Tindakan Terakhir & Riwayat Log)
     document.getElementById('btnExportCsv').addEventListener('click', () => {
       const list = getAduanList();
       const headers = [
@@ -3702,27 +4714,42 @@
         'Petugas Lapangan',
         'Hasil Verifikasi (Berita Acara)',
         'Tindakan DLH',
+        'Kategori Tindakan Terakhir',
+        'Rekam Tindakan Terakhir',
+        'Waktu Tindakan Terakhir',
+        'Petugas Penindak Terakhir',
+        'Jumlah Riwayat Tindakan',
         'Tanggal Selesai'
       ];
 
-      const rows = list.map(item => [
-        `"${item.id}"`,
-        `"${item.timestamp}"`,
-        `"${item.namaPelapor}"`,
-        `"${item.noHp}"`,
-        `"${item.kecamatan}"`,
-        `"${item.desa}"`,
-        `"${item.jenisPencemaran}"`,
-        `"${(item.lokasiDetail || '').replace(/"/g, '""')}"`,
-        item.lat || '-',
-        item.lng || '-',
-        `"${(item.uraian || '').replace(/"/g, '""')}"`,
-        `"${item.status}"`,
-        `"${item.petugasVerifikasi || '-'}"`,
-        `"${(item.hasilVerifikasi || '-').replace(/"/g, '""')}"`,
-        `"${(item.tindakanDLH || '-').replace(/"/g, '""')}"`,
-        `"${item.tanggalSelesai || '-'}"`
-      ]);
+      const rows = list.map(item => {
+        const lastAction = item.rekamTindakanTerakhir;
+        const riwayatCount = Array.isArray(item.riwayatTindakan) ? item.riwayatTindakan.length : (lastAction ? 1 : 0);
+
+        return [
+          `"${item.id}"`,
+          `"${item.timestamp}"`,
+          `"${item.namaPelapor}"`,
+          `"${item.noHp}"`,
+          `"${item.kecamatan}"`,
+          `"${item.desa}"`,
+          `"${item.jenisPencemaran}"`,
+          `"${(item.lokasiDetail || '').replace(/"/g, '""')}"`,
+          item.lat || '-',
+          item.lng || '-',
+          `"${(item.uraian || '').replace(/"/g, '""')}"`,
+          `"${item.status}"`,
+          `"${item.petugasVerifikasi || '-'}"`,
+          `"${(item.hasilVerifikasi || '-').replace(/"/g, '""')}"`,
+          `"${(item.tindakanDLH || '-').replace(/"/g, '""')}"`,
+          `"${lastAction ? (lastAction.kategori || '').replace(/"/g, '""') : '-'}"`,
+          `"${lastAction ? (lastAction.tindakan || '').replace(/"/g, '""') : '-'}"`,
+          `"${lastAction ? lastAction.waktu || '-' : '-'}"`,
+          `"${lastAction ? (lastAction.petugas || '').replace(/"/g, '""') : '-'}"`,
+          riwayatCount,
+          `"${item.tanggalSelesai || '-'}"`
+        ];
+      });
 
       const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
       const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
