@@ -2290,11 +2290,11 @@
           </div>
 
           <!-- Submit Button -->
-          <button type="submit" class="btn-submit-main" id="btnSubmitAduan">
-            🚀 KIRIM LAPORAN SEKARANG
+          <button type="submit" class="btn-submit-main" id="btnSubmitAduan" style="background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%); font-size: 1.05rem; padding: 16px 24px; box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.4); display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;">
+            <span>📲</span> KIRIM LAPORAN SEKARANG VIA WHATSAPP (DLH LEMBATA)
           </button>
-          <div class="submit-note">
-            🔒 Data Anda akan dicatat dalam sistem pengaduan digital DLH Kabupaten Lembata.
+          <div class="submit-note" style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; font-weight: 600; color: #065f46;">
+            <span>💬</span> Laporan kejadian &amp; bukti foto Anda akan langsung diteruskan ke WhatsApp resmi Pengaduan DLH Kabupaten Lembata (+62 822-3458-2769).
           </div>
 
         </form>
@@ -2497,33 +2497,55 @@
        MODAL: SUKSES KIRIM ADUAN
        =================================================================== -->
   <div class="modal-backdrop" id="modalSuccessAduan">
-    <div class="modal-dialog" style="max-width: 500px; text-align: center;">
-      <div class="modal-body" style="padding: 32px 24px;">
-        <div style="font-size: 56px; margin-bottom: 12px;">🎉</div>
-        <h3 style="font-size: 1.4rem; font-weight: 800; color: #065f46; margin-bottom: 6px;">
-          Laporan Berhasil Diterima!
-        </h3>
-        <p style="font-size: 0.9rem; color: #64748b; margin-bottom: 20px;">
-          Aduan Anda telah berhasil dicatat dalam sistem pengaduan digital DLH Kabupaten Lembata.
+    <div class="modal-dialog" style="max-width: 520px; text-align: center; border-radius: 20px; overflow: hidden; border: 2px solid #86efac; box-shadow: 0 20px 45px -10px rgba(6, 78, 59, 0.3);">
+      <div style="background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #059669 100%); color: white; padding: 22px 20px; text-align: center; position: relative;">
+        <span style="font-size: 40px; display: block; margin-bottom: 4px;">📲</span>
+        <h3 style="color: white; font-size: 1.35rem; font-weight: 800; margin: 0;">Laporan Dikirim ke WhatsApp DLH</h3>
+        <p style="color: #a7f3d0; font-size: 0.85rem; margin-top: 4px; margin-bottom: 0;">Layanan Aduan Cepat Dinas Lingkungan Hidup Kab. Lembata</p>
+      </div>
+
+      <div class="modal-body" style="padding: 24px 22px;">
+        <p style="font-size: 0.92rem; color: #334155; margin-bottom: 16px; line-height: 1.5;">
+          Data laporan kejadian Anda telah disusun rapi dan sedang dibuka di aplikasi WhatsApp ke nomor resmi DLH Lembata: <strong>+62 822-3458-2769</strong>.
         </p>
 
-        <div
-          style="background: #f0fdf4; border: 2px dashed #86efac; border-radius: 12px; padding: 16px; margin-bottom: 20px;">
-          <div style="font-size: 0.8rem; color: #166534; font-weight: 700;">KODE REGISTER / NOMOR TIKET:</div>
-          <div id="successTicketId"
-            style="font-family: monospace; font-size: 1.6rem; font-weight: 900; color: #059669; margin: 4px 0;">
+        <!-- Nomor Tiket -->
+        <div style="background: #f0fdf4; border: 2px dashed #86efac; border-radius: 14px; padding: 14px; margin-bottom: 16px;">
+          <div style="font-size: 0.75rem; color: #166534; font-weight: 800; letter-spacing: 0.5px;">NOMOR REGISTER TIKET ADUAN:</div>
+          <div id="successTicketId" style="font-family: monospace; font-size: 1.65rem; font-weight: 900; color: #059669; margin: 3px 0;">
             ADU-LMB-2026-001
           </div>
-          <div style="font-size: 0.78rem; color: #15803d;">Simpan nomor tiket ini sebagai bukti pengaduan Anda.</div>
+          <div style="font-size: 0.78rem; color: #15803d;">Simpan nomor tiket ini untuk bukti pengaduan Anda.</div>
         </div>
 
+        <!-- Bukti Foto Preview & Aksi Lampiran -->
+        <div id="waPhotoAttachmentBox" style="display: none; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 16px; text-align: left;">
+          <div style="font-size: 0.82rem; font-weight: 800; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+            <span>📸 Bukti Foto Terlampir (<span id="waPhotoCount">0</span> foto):</span>
+            <span style="font-size: 0.72rem; color: #059669; font-weight: 700; background: #ecfdf5; padding: 2px 8px; border-radius: 6px;">Siap Dikirim</span>
+          </div>
+          <div id="waPhotoThumbContainer" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px;"></div>
+          <div style="font-size: 0.76rem; color: #64748b; margin-top: 6px; line-height: 1.4;">
+            💡 <em>Petunjuk: Teks laporan otomatis terisi. Jika foto belum otomatis terlampir, klik tombol <strong>Salin Foto</strong> di bawah lalu tekan <strong>Ctrl + V (Paste)</strong> di chat WhatsApp, atau kirim foto langsung via galeri.</em>
+          </div>
+          <div style="display: flex; gap: 8px; margin-top: 10px;">
+            <button type="button" id="btnCopyWaPhoto" class="btn btn-outline btn-sm" style="flex: 1; font-size: 0.78rem; font-weight: 600;">
+              📋 Salin Foto ke Clipboard
+            </button>
+            <button type="button" id="btnDownloadWaPhoto" class="btn btn-outline btn-sm" style="flex: 1; font-size: 0.78rem; font-weight: 600;">
+              📥 Unduh Foto
+            </button>
+          </div>
+        </div>
+
+        <!-- Aksi Utama -->
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <a href="#" id="btnWaConfirmation" target="_blank" class="btn btn-primary"
-            style="background: #16a34a; font-size: 0.95rem;">
-            📱 Konfirmasi via WhatsApp DLH (0822-3458-2769)
+            style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); font-size: 1rem; font-weight: 700; padding: 14px; border-radius: 12px; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.4); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
+            <span>💬</span> Buka Chat WhatsApp DLH Sekarang
           </a>
-          <button type="button" class="btn btn-outline btn-close-modal">
-            Tutup &amp; Selesai
+          <button type="button" class="btn btn-outline btn-close-modal" style="font-size: 0.88rem; padding: 10px;">
+            Tutup &amp; Buat Aduan Baru
           </button>
         </div>
       </div>
@@ -2600,7 +2622,7 @@
 
           <a href="#pane-peta" onclick="window.app && window.app.switchTab('peta')" class="footer-link-btn">🗺️ Peta Sebaran</a>
           <a href="qr-code.html" class="footer-link-btn">📱 Poster QR Code</a>
-          <a href="petugas.html" class="footer-link-btn" style="background: rgba(16, 185, 129, 0.2); border-color: #34d399;">🛡️ Portal Petugas DLH ↗</a>
+          <a href="https://wa.me/6282234582769" target="_blank" class="footer-link-btn" style="background: rgba(16, 185, 129, 0.2); border-color: #34d399; color: #a7f3d0;">💬 WhatsApp Helpline DLH ↗</a>
         </div>
       </div>
 
@@ -4708,6 +4730,9 @@
       /* ===================================================================
          4. FORM SUBMISSION
          =================================================================== */
+      /* ===================================================================
+         4. FORM SUBMISSION (LANGSUNG TERHUBUNG KE WHATSAPP RESMI DLH LEMBATA)
+         =================================================================== */
       setupFormSubmissions() {
         const form = document.getElementById('formAduanWarga');
         if (!form) return;
@@ -4718,10 +4743,10 @@
           const btnSubmit = document.getElementById('btnSubmitAduan');
           if (btnSubmit) {
             btnSubmit.disabled = true;
-            btnSubmit.textContent = '⏳ Memproses & Mengirim Bukti ke DLH...';
+            btnSubmit.textContent = '⏳ Menyusun Aduan & Menyiapkan WhatsApp...';
           }
 
-          // Kumpulkan semua file yang dipilih (baik dari selectedMediaFiles maupun input file)
+          // Kumpulkan semua file foto yang dipilih (baik dari selectedMediaFiles maupun input file/kamera)
           const allMedia = [...(this.selectedMediaFiles || [])];
           const fileInput = document.getElementById('inputBuktiFoto');
           if (fileInput && fileInput.files && fileInput.files.length) {
@@ -4736,7 +4761,7 @@
             });
           }
 
-          // Konversi dan optimasi bukti foto (skala aman agar pas disimpan di Spreadsheet & LocalStorage)
+          // Konversi dan optimasi bukti foto
           const mediaPromises = allMedia.map(file => {
             return new Promise((resolve) => {
               if (typeof file === 'string') {
@@ -4755,7 +4780,7 @@
                     const canvas = document.createElement('canvas');
                     let width = img.width || 640;
                     let height = img.height || 480;
-                    const maxDim = 640;
+                    const maxDim = 800;
                     if (width > maxDim || height > maxDim) {
                       if (width > height) {
                         height = Math.round((height * maxDim) / width);
@@ -4769,7 +4794,7 @@
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.65));
+                    resolve(canvas.toDataURL('image/jpeg', 0.75));
                   } catch (err) {
                     resolve(dataUrl);
                   }
@@ -4784,32 +4809,71 @@
 
           const buktiList = (await Promise.all(mediaPromises)).filter(Boolean);
 
-          // Read selected category
+          // Kategori pencemaran terpilih
           const selectedRadio = document.querySelector('input[name="radioJenis"]:checked');
           const jenisPencemaran = selectedRadio ? selectedRadio.value : 'Lainnya';
 
           const formData = {
-            namaPelapor: document.getElementById('inputNama').value,
-            noHp: document.getElementById('inputNoHp').value,
-            alamatPelapor: document.getElementById('inputAlamat').value,
-            kecamatan: document.getElementById('inputKecamatan').value,
-            desa: document.getElementById('inputDesa').value,
-            lokasiDetail: document.getElementById('inputLokasiDetail').value,
+            namaPelapor: (document.getElementById('inputNama')?.value || '').trim(),
+            noHp: (document.getElementById('inputNoHp')?.value || '').trim(),
+            alamatPelapor: (document.getElementById('inputAlamat')?.value || '').trim(),
+            kecamatan: document.getElementById('inputKecamatan')?.value || 'Nubatukan',
+            desa: (document.getElementById('inputDesa')?.value || '').trim(),
+            lokasiDetail: (document.getElementById('inputLokasiDetail')?.value || '').trim(),
             jenisPencemaran: jenisPencemaran,
-            tanggalKejadian: document.getElementById('inputTanggalKejadian').value,
-            sumberDugaan: document.getElementById('inputSumberDugaan').value,
-            uraian: document.getElementById('inputUraian').value,
-            lat: document.getElementById('inputLat').value,
-            lng: document.getElementById('inputLng').value,
+            tanggalKejadian: document.getElementById('inputTanggalKejadian')?.value || new Date().toISOString().split('T')[0],
+            sumberDugaan: (document.getElementById('inputSumberDugaan')?.value || '').trim(),
+            uraian: (document.getElementById('inputUraian')?.value || '').trim(),
+            lat: (document.getElementById('inputLat')?.value || '').trim(),
+            lng: (document.getElementById('inputLng')?.value || '').trim(),
             fotoBukti: buktiList[0] || '',
             linkFotoBukti: buktiList[0] || '',
             buktiFotoList: buktiList
           };
 
-          // Add to store (and auto-post to Google Apps Script / Spreadsheet)
+          // Simpan ke database lokal & cloud store
           const newRecord = window.aduanStore.addAduan(formData);
 
-          // Reset form
+          // Siapkan Teks Pengaduan Resmi untuk WhatsApp DLH Kabupaten Lembata
+          const mapsLink = (formData.lat && formData.lng)
+            ? `https://maps.google.com/?q=${formData.lat},${formData.lng}`
+            : 'Belum diisi';
+
+          const waMessage = 
+`*PENGADUAN LINGKUNGAN HIDUP KABUPATEN LEMBATA*
+--------------------------------------------------
+📌 *NOMOR REGISTER:* ${newRecord.id}
+📅 *WAKTU LAPOR:* ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+
+👤 *DATA PELAPOR:*
+• *Nama Pelapor:* ${formData.namaPelapor}
+• *Nomor WhatsApp / HP:* ${formData.noHp}
+• *Alamat Domisili:* ${formData.alamatPelapor || '-'}
+
+📍 *LOKASI PENCEMARAN:*
+• *Kecamatan:* ${formData.kecamatan}
+• *Desa / Kelurahan:* ${formData.desa}
+• *Patokan Lokasi:* ${formData.lokasiDetail}
+• *Koordinat GPS:* ${formData.lat || '-'}, ${formData.lng || '-'}
+• *Tautan Google Maps:* ${mapsLink}
+
+⚠️ *RINCIAN MASALAH:*
+• *Jenis Pencemaran:* *${formData.jenisPencemaran}*
+• *Tanggal Kejadian:* ${formData.tanggalKejadian}
+• *Dugaan Sumber:* ${formData.sumberDugaan || '-'}
+
+📝 *URAIAN KRONOLOGI:*
+${formData.uraian}
+
+📸 *BUKTI FOTO:*
+${buktiList.length > 0 ? `Tersedia ${buktiList.length} berkas foto bukti kejadian.` : 'Tidak melampirkan foto.'}
+--------------------------------------------------
+_Laporan resmi dikirim melalui formulir pengaduan masyarakat DLH Lembata._
+_Mohon tindak lanjut dari Petugas Dinas Lingkungan Hidup Kab. Lembata._`;
+
+          const waUrl = `https://wa.me/6282234582769?text=${encodeURIComponent(waMessage)}`;
+
+          // Reset Form Input
           form.reset();
           this.selectedMediaFiles = [];
           if (fileInput) fileInput.value = '';
@@ -4818,65 +4882,147 @@
           if (previewList) previewList.innerHTML = '';
           const dateInput = document.getElementById('inputTanggalKejadian');
           if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
-          const kecVal = document.getElementById('inputKecamatan')?.value || 'Nubatukan';
-          // Update UI components
+
+          // Perbarui Tampilan Dashboard & Peta
           this.updateKPIs();
           this.renderTable();
           if (window.lembataMap) window.lembataMap.renderMarkers();
 
-          // Show Success Modal
+          // Konfigurasi Modal WhatsApp
           const modalSuccess = document.getElementById('modalSuccessAduan');
           const ticketDisplay = document.getElementById('successTicketId');
           const btnWa = document.getElementById('btnWaConfirmation');
+          const photoBox = document.getElementById('waPhotoAttachmentBox');
+          const photoThumbContainer = document.getElementById('waPhotoThumbContainer');
+          const photoCountBadge = document.getElementById('waPhotoCount');
+          const btnCopyPhoto = document.getElementById('btnCopyWaPhoto');
+          const btnDownloadPhoto = document.getElementById('btnDownloadWaPhoto');
 
           if (ticketDisplay) ticketDisplay.textContent = newRecord.id;
           if (btnWa) {
-            const waText = encodeURIComponent(
-              `Halo DLH Kabupaten Lembata, saya telah mengirimkan aduan pencemaran lingkungan melalui portal resmi.\n\n` +
-              `📌 *KODE TIKET:* ${newRecord.id}\n` +
-              `👤 *Nama:* ${newRecord.namaPelapor}\n` +
-              `📍 *Lokasi:* ${newRecord.desa}, Kec. ${newRecord.kecamatan}\n` +
-              `⚠️ *Masalah:* ${newRecord.jenisPencemaran}\n` +
-              `📝 *Uraian:* ${newRecord.uraian}\n\n` +
-              `Mohon bantuannya untuk dapat ditindaklanjuti. Terima kasih!`
-            );
-            btnWa.href = `https://wa.me/6282234582769?text=${waText}`;
+            btnWa.href = waUrl;
           }
 
+          // Tangani bukti foto untuk pengiriman WhatsApp
+          if (photoBox && photoThumbContainer) {
+            if (buktiList.length > 0) {
+              photoBox.style.display = 'block';
+              if (photoCountBadge) photoCountBadge.textContent = buktiList.length;
+
+              photoThumbContainer.innerHTML = buktiList.map((foto, idx) => `
+                <div style="position: relative; flex-shrink: 0; width: 68px; height: 68px; border-radius: 8px; overflow: hidden; border: 2px solid #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                  <img src="${foto}" alt="Bukti ${idx + 1}" style="width: 100%; height: 100%; object-fit: cover;">
+                </div>
+              `).join('');
+
+              // Tombol Salin Foto ke Clipboard untuk langsung Paste (Ctrl+V) di WA Web
+              if (btnCopyPhoto) {
+                btnCopyPhoto.onclick = async () => {
+                  try {
+                    const firstPhoto = buktiList[0];
+                    const blobRes = await fetch(firstPhoto);
+                    const blob = await blobRes.blob();
+
+                    // Konversi ke format PNG blob untuk clipboard standard
+                    const img = new Image();
+                    img.crossOrigin = 'anonymous';
+                    img.src = firstPhoto;
+                    await new Promise(r => { img.onload = r; });
+
+                    const c = document.createElement('canvas');
+                    c.width = img.width;
+                    c.height = img.height;
+                    const ctx = c.getContext('2d');
+                    ctx.drawImage(img, 0, 0);
+
+                    c.toBlob(async (pngBlob) => {
+                      if (pngBlob && navigator.clipboard && window.ClipboardItem) {
+                        await navigator.clipboard.write([
+                          new ClipboardItem({ 'image/png': pngBlob })
+                        ]);
+                        this.showToast('Foto bukti disalin! Tekan Ctrl+V di chat WhatsApp DLH.', 'success');
+                      } else {
+                        this.showToast('Gunakan tombol Unduh Foto untuk melampirkan ke WA.', 'info');
+                      }
+                    }, 'image/png');
+                  } catch (err) {
+                    console.warn('Clipboard copy fallback:', err);
+                    this.showToast('Silakan gunakan tombol Unduh Foto untuk kirim ke WhatsApp.', 'info');
+                  }
+                };
+              }
+
+              // Tombol Unduh Foto jika warga ingin melampirkan dari berkas
+              if (btnDownloadPhoto) {
+                btnDownloadPhoto.onclick = () => {
+                  buktiList.forEach((foto, idx) => {
+                    const a = document.createElement('a');
+                    a.href = foto;
+                    a.download = `bukti_aduan_${newRecord.id}_${idx + 1}.jpg`;
+                    document.body.appendChild(a);
+                    a.click();
+                    document.body.removeChild(a);
+                  });
+                  this.showToast(`Mengunduh ${buktiList.length} foto bukti aduan.`, 'success');
+                };
+              }
+
+              // Otomatis salin foto pertama ke clipboard jika didukung
+              try {
+                const img = new Image();
+                img.src = buktiList[0];
+                img.onload = () => {
+                  const c = document.createElement('canvas');
+                  c.width = img.width;
+                  c.height = img.height;
+                  c.getContext('2d').drawImage(img, 0, 0);
+                  c.toBlob(blob => {
+                    if (blob && navigator.clipboard && window.ClipboardItem) {
+                      navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).catch(() => {});
+                    }
+                  }, 'image/png');
+                };
+              } catch (e) {}
+
+            } else {
+              photoBox.style.display = 'none';
+            }
+          }
+
+          // Kembalikan status tombol
           if (btnSubmit) {
             btnSubmit.disabled = false;
-            btnSubmit.textContent = '🚀 KIRIM LAPORAN SEKARANG';
+            btnSubmit.innerHTML = '📲 KIRIM LAPORAN SEKARANG VIA WHATSAPP (DLH LEMBATA)';
           }
 
+          // Tampilkan Modal Notifikasi Sukses & Siap Chat WhatsApp
           if (modalSuccess) modalSuccess.classList.add('show');
+
+          // Coba fitur Web Share API jika dibuka di smartphone (langsung attach teks & foto ke WhatsApp)
+          if (navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) && buktiList.length > 0) {
+            try {
+              const shareFiles = [];
+              for (let i = 0; i < Math.min(buktiList.length, 3); i++) {
+                const bRes = await fetch(buktiList[i]);
+                const bBlob = await bRes.blob();
+                shareFiles.push(new File([bBlob], `bukti_${newRecord.id}_${i+1}.jpg`, { type: 'image/jpeg' }));
+              }
+
+              if (navigator.canShare && navigator.canShare({ files: shareFiles })) {
+                // Tampilkan konfirmasi share langsung
+                setTimeout(() => {
+                  navigator.share({
+                    title: `Pengaduan DLH Lembata ${newRecord.id}`,
+                    text: waMessage,
+                    files: shareFiles
+                  }).catch(() => {});
+                }, 400);
+              }
+            } catch (shareErr) {
+              console.log('Mobile share fallback to WA URL link');
+            }
+          }
         });
-
-        // Form Update Verifikasi Petugas
-        const formVerif = document.getElementById('formVerifikasiDLH');
-        if (formVerif) {
-          formVerif.addEventListener('submit', (e) => {
-            e.preventDefault();
-
-            const id = document.getElementById('verifIdAduan').value;
-            const updateData = {
-              status: document.getElementById('verifStatus').value,
-              petugasVerifikasi: document.getElementById('verifPetugas').value || 'Petugas DLH Lembata',
-              tanggalVerifikasi: document.getElementById('verifTanggal').value || new Date().toISOString().split('T')[0],
-              hasilVerifikasi: document.getElementById('verifHasil').value || 'Telah diverifikasi tim di lapangan.',
-              tindakanDLH: document.getElementById('verifTindakan').value || 'Dalam penanganan DLH Kabupaten Lembata.'
-            };
-
-            window.aduanStore.updateVerifikasi(id, updateData);
-
-            document.getElementById('modalVerifikasi').classList.remove('show');
-            this.updateKPIs();
-            this.renderTable();
-            if (window.lembataMap) window.lembataMap.renderMarkers();
-
-            this.showToast(`Verifikasi untuk ${id} berhasil disimpan ke sistem!`, 'success');
-          });
-        }
-      }
 
       /* ===================================================================
          5. REAL-TIME SYNCHRONIZATION LISTENER (PORTAL WARGA)
@@ -4994,12 +5140,12 @@
         <td><span style="font-weight: 600; color: #059669;">${item.jenisPencemaran}</span></td>
         <td><span class="badge ${this.getStatusBadgeClass(item.status)}">${item.status}</span></td>
         <td style="text-align: center; white-space: nowrap;">
-          <button class="btn btn-outline btn-sm" onclick="window.app.showDetailModal('${item.id}')">
-            Detail
+          <button class="btn btn-outline btn-sm" onclick="window.app.showDetailModal('${item.id}')" title="Lihat rincian aduan">
+            Lihat Rincian
           </button>
-          <button class="btn btn-primary btn-sm" onclick="window.app.showVerifikasiModal('${item.id}')">
-            Verifikasi
-          </button>
+          <a class="btn btn-sm" style="background: #16a34a; color: white; text-decoration: none; border-radius: 6px; padding: 5px 10px; font-weight: 600; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;" href="https://wa.me/6282234582769?text=${encodeURIComponent('Halo DLH Kabupaten Lembata, saya ingin menanyakan tindak lanjut pengaduan lingkungan nomor tiket: ' + item.id + ' (Lokasi: Desa ' + item.desa + ', Kec. ' + item.kecamatan + ')')}" target="_blank" title="Hubungi Petugas DLH via WhatsApp">
+            💬 Chat WA
+          </a>
         </td>
       </tr>
     `).join('');
@@ -5119,32 +5265,12 @@
         </div>
       ` : ''}
 
-      <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 8px; font-size: 0.85rem;">
-        <div style="font-weight: 700; color: #064e3b; margin-bottom: 4px;">Pemeriksaan DLH Lembata:</div>
-        <div>Verifikator: <strong>${item.petugasVerifikasi}</strong> (${item.tanggalVerifikasi})</div>
-        <div style="margin-top: 4px;">Hasil: ${item.hasilVerifikasi}</div>
-        <div style="margin-top: 4px;">Tindakan DLH: ${item.tindakanDLH}</div>
+      <div style="margin-top: 14px; text-align: right;">
+        <a href="https://wa.me/6282234582769?text=${encodeURIComponent('Halo DLH Kabupaten Lembata, saya ingin menanyakan tindak lanjut aduan dengan nomor register: ' + item.id)}" target="_blank" class="btn btn-primary btn-sm" style="background: #16a34a; border-color: #16a34a; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+          <span>💬</span> Chat WhatsApp Petugas DLH
+        </a>
       </div>
     `;
-
-        modal.classList.add('show');
-      }
-
-      showVerifikasiModal(id) {
-        const item = window.aduanStore.getById(id);
-        if (!item) return;
-
-        const modal = document.getElementById('modalVerifikasi');
-        if (!modal) return;
-
-        document.getElementById('verifIdAduan').value = item.id;
-        document.getElementById('verifDisplayId').textContent = item.id;
-        document.getElementById('verifDisplayPelapor').textContent = `${item.namaPelapor} (Kec. ${item.kecamatan})`;
-        document.getElementById('verifStatus').value = item.status;
-        document.getElementById('verifPetugas').value = item.petugasVerifikasi !== '-' ? item.petugasVerifikasi : '';
-        document.getElementById('verifTanggal').value = item.tanggalVerifikasi !== '-' ? item.tanggalVerifikasi : new Date().toISOString().split('T')[0];
-        document.getElementById('verifHasil').value = item.hasilVerifikasi !== '-' ? item.hasilVerifikasi : '';
-        document.getElementById('verifTindakan').value = item.tindakanDLH !== '-' ? item.tindakanDLH : '';
 
         modal.classList.add('show');
       }
