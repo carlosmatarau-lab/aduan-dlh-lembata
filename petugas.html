@@ -59,7 +59,7 @@
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background-color: #f1f8f5;
-      background-image: 
+      background-image:
         radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
         radial-gradient(at 100% 0%, rgba(5, 150, 105, 0.14) 0px, transparent 50%),
         radial-gradient(at 100% 100%, rgba(6, 78, 59, 0.1) 0px, transparent 50%),
@@ -395,9 +395,11 @@
       0% {
         box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
       }
+
       70% {
         box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
       }
+
       100% {
         box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
       }
@@ -559,9 +561,17 @@
       background: var(--primary);
     }
 
-    .kpi-card.kpi-total::before { background: var(--primary); }
-    .kpi-card.kpi-recent::before { background: var(--info); }
-    .kpi-card.kpi-region::before { background: var(--warning); }
+    .kpi-card.kpi-total::before {
+      background: var(--primary);
+    }
+
+    .kpi-card.kpi-recent::before {
+      background: var(--info);
+    }
+
+    .kpi-card.kpi-region::before {
+      background: var(--warning);
+    }
 
     .kpi-label {
       display: flex;
@@ -1106,6 +1116,7 @@
         opacity: 0;
         transform: translateY(12px) scale(0.98);
       }
+
       to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -1213,17 +1224,21 @@
       .officer-header {
         padding: 14px 16px;
       }
+
       .officer-main {
         padding: 16px 12px;
       }
+
       .filter-toolbar {
         flex-direction: column;
         align-items: stretch;
       }
+
       .filter-selects {
         flex-direction: column;
         align-items: stretch;
       }
+
       .filter-select {
         width: 100%;
       }
@@ -1309,7 +1324,8 @@
         </div>
 
         <div class="officer-nav-tools">
-          <div class="officer-session-pill" id="btnHeaderOfficerProfile" title="Klik untuk mengubah nama petugas" style="cursor: pointer;">
+          <div class="officer-session-pill" id="btnHeaderOfficerProfile" title="Klik untuk mengubah nama petugas"
+            style="cursor: pointer;">
             <div class="pulse-dot"></div>
             <span>Petugas: <strong id="headerOfficerName">Petugas Lapangan</strong> ✏️</span>
           </div>
@@ -1358,7 +1374,8 @@
           <span id="cloudStatusIndicator" class="cloud-status-badge">
             <span class="status-dot-green"></span> Terhubung Cloud DLH
           </span>
-          <a href="#" id="linkDirectSpreadsheet" class="link-spreadsheet-mini" target="_blank" title="Buka Google Sheets di tab baru">
+          <a href="#" id="linkDirectSpreadsheet" class="link-spreadsheet-mini" target="_blank"
+            title="Buka Google Sheets di tab baru">
             📊 Buka Spreadsheet ↗
           </a>
         </div>
@@ -1393,7 +1410,8 @@
             <span>Kategori Masalah Terbanyak</span>
             <span class="kpi-icon">⚠️</span>
           </div>
-          <div class="kpi-value" id="kpiKategoriTop" style="font-size: 1.25rem; line-height: 1.2; padding-top: 6px;">-</div>
+          <div class="kpi-value" id="kpiKategoriTop" style="font-size: 1.25rem; line-height: 1.2; padding-top: 6px;">-
+          </div>
           <div class="kpi-desc" id="kpiKategoriTopCount">0 aduan terdaftar</div>
         </div>
       </section>
@@ -1510,13 +1528,15 @@
         <p style="font-size: 0.9rem; color: #1e293b; margin-bottom: 14px; line-height: 1.5;">
           Apakah Anda yakin ingin menghapus laporan aduan ini dari daftar masuk?
         </p>
-        
-        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.84rem;">
-          <div>Nomor Tiket: <strong id="delDisplayTicket" style="font-family: monospace; color: #064e3b;">-</strong></div>
+
+        <div
+          style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.84rem;">
+          <div>Nomor Tiket: <strong id="delDisplayTicket" style="font-family: monospace; color: #064e3b;">-</strong>
+          </div>
           <div style="margin-top: 4px;">Pelapor: <strong id="delDisplayPelapor">-</strong></div>
           <div style="margin-top: 4px;">Kategori: <strong id="delDisplayKategori">-</strong></div>
         </div>
-        
+
         <p style="font-size: 0.78rem; color: #dc2626; font-weight: 600; margin: 0;">
           ⚠️ Data yang dihapus akan dibersihkan dari penyimpanan lokal dan sinkronisasi sistem.
         </p>
@@ -1546,7 +1566,8 @@
           style="max-width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px;">
       </div>
       <div class="modal-footer">
-        <a id="btnDownloadPhoto" href="#" download="bukti_aduan.jpg" class="btn-action-primary" style="text-decoration: none;">
+        <a id="btnDownloadPhoto" href="#" download="bukti_aduan.jpg" class="btn-action-primary"
+          style="text-decoration: none;">
           📥 Unduh File Foto
         </a>
         <button type="button" class="btn-action-secondary" id="btnCloseModalPhotoFooter">Tutup</button>
@@ -1566,12 +1587,15 @@
         <button type="button" class="btn-close-modal" id="btnCloseModalSpreadsheet">&times;</button>
       </div>
       <div class="modal-body">
-        <div style="background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 14px 16px; margin-bottom: 16px;">
-          <div style="font-weight: 800; color: #065f46; font-size: 0.88rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+        <div
+          style="background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 14px 16px; margin-bottom: 16px;">
+          <div
+            style="font-weight: 800; color: #065f46; font-size: 0.88rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
             <span>🌱</span> Basis Data Resmi Dinas Lingkungan Hidup Kab. Lembata
           </div>
           <p style="font-size: 0.8rem; color: #047857; line-height: 1.5; margin: 0;">
-            Google Spreadsheet digunakan sebagai database utama untuk mencatat seluruh daftar aduan masuk dari masyarakat secara permanen.
+            Google Spreadsheet digunakan sebagai database utama untuk mencatat seluruh daftar aduan masuk dari
+            masyarakat secara permanen.
           </p>
         </div>
 
@@ -1581,8 +1605,9 @@
           </label>
           <div style="display: flex; gap: 8px;">
             <input type="url" id="cfgSpreadsheetUrl" class="auth-input" style="padding-left: 14px; font-size: 0.84rem;"
-              placeholder="https://docs.google.com/spreadsheets/d/ID_SPREADSHEET/edit">
-            <a href="#" id="cfgBtnOpenSheetDirect" target="_blank" class="btn-action-secondary"
+              placeholder="https://docs.google.com/spreadsheets/d/1lDsKvNdyEW_xugTTR2Va4HY8vEtxVsgTP-u1g_I_4O0/edit?gid=1323614970#gid=1323614970">
+            <a href="https://docs.google.com/spreadsheets/d/1lDsKvNdyEW_xugTTR2Va4HY8vEtxVsgTP-u1g_I_4O0/edit?gid=1323614970#gid=1323614970"
+              id="cfgBtnOpenSheetDirect" target="_blank" class="btn-action-secondary"
               style="white-space: nowrap; padding: 8px 14px; font-size: 0.82rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
               Buka ↗
             </a>
@@ -1609,7 +1634,8 @@
           </button>
         </div>
 
-        <div id="cloudTestResultBox" style="display: none; padding: 10px 12px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 14px;"></div>
+        <div id="cloudTestResultBox"
+          style="display: none; padding: 10px 12px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 14px;"></div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn-action-secondary" id="btnCancelSpreadsheetConfig">Tutup</button>
@@ -1630,6 +1656,18 @@
     /* ===================================================================
        PORTAL PETUGAS - DAFTAR ADUAN MASUK CONTROLLER
        =================================================================== */
+
+    const formatPhotoUrl = window.formatPhotoUrl || function(url) {
+      if (!url || typeof url !== 'string') return '';
+      const trimmed = url.trim();
+      if (!trimmed || trimmed === '-') return '';
+      if (trimmed.startsWith('data:image')) return trimmed;
+      const driveMatch = trimmed.match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([a-zA-Z0-9_-]+)/);
+      if (driveMatch && driveMatch[1]) {
+        return `https://lh3.googleusercontent.com/d/${driveMatch[1]}`;
+      }
+      return trimmed;
+    };
 
     class OfficerPortal {
       constructor() {
@@ -1671,7 +1709,7 @@
               this.showAppWorkspace();
               return;
             }
-          } catch (e) {}
+          } catch (e) { }
         }
         this.showAuthGate();
       }
@@ -1905,9 +1943,9 @@
         // Direct Spreadsheet Open
         const btnOpenSheet = document.getElementById('btnOpenSpreadsheet');
         const linkDirect = document.getElementById('linkDirectSpreadsheet');
-        const sheetUrl = (window.aduanStore && window.aduanStore.getSpreadsheetUrl) 
-          ? window.aduanStore.getSpreadsheetUrl() 
-          : 'https://docs.google.com/spreadsheets/d/1Zt9jO6_145T23fM_b8bF-s_w6L0_e4Z_qR3tG3s7g8/edit';
+        const sheetUrl = (window.aduanStore && window.aduanStore.getSpreadsheetUrl)
+          ? window.aduanStore.getSpreadsheetUrl()
+          : 'https://docs.google.com/spreadsheets/d/1lDsKvNdyEW_xugTTR2Va4HY8vEtxVsgTP-u1g_I_4O0/edit?gid=1323614970#gid=1323614970';
 
         if (btnOpenSheet) {
           btnOpenSheet.addEventListener('click', () => window.open(sheetUrl, '_blank'));
@@ -2118,31 +2156,43 @@
         if (!item) return [];
         const photoList = [];
 
-        if (Array.isArray(item.buktiFotoList)) {
-          item.buktiFotoList.forEach(p => {
-            if (typeof p === 'string' && p.trim() && p !== '-' && !photoList.includes(p.trim())) {
-              photoList.push(p.trim());
-            } else if (p && p.dataUrl && !photoList.includes(p.dataUrl)) {
-              photoList.push(p.dataUrl);
-            } else if (p && p.url && !photoList.includes(p.url)) {
-              photoList.push(p.url);
+        const addCandidate = (val) => {
+          if (!val) return;
+          if (typeof val === 'string') {
+            const trimmed = val.trim();
+            if (!trimmed || trimmed === '-') return;
+            // Handle JSON string array
+            if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+              try {
+                const arr = JSON.parse(trimmed);
+                if (Array.isArray(arr)) {
+                  arr.forEach(a => addCandidate(a));
+                  return;
+                }
+              } catch (e) {}
             }
-          });
+            // Handle comma separated
+            if (trimmed.includes(',') && !trimmed.startsWith('data:')) {
+              trimmed.split(',').forEach(sub => addCandidate(sub));
+              return;
+            }
+            const clean = (typeof formatPhotoUrl === 'function') ? formatPhotoUrl(trimmed) : trimmed;
+            if (clean && !photoList.includes(clean)) {
+              photoList.push(clean);
+            }
+          } else if (val && typeof val === 'object') {
+            if (val.dataUrl) addCandidate(val.dataUrl);
+            else if (val.url) addCandidate(val.url);
+            else if (val.src) addCandidate(val.src);
+          }
+        };
+
+        if (Array.isArray(item.buktiFotoList)) {
+          item.buktiFotoList.forEach(p => addCandidate(p));
         }
 
-        ['fotoBukti', 'linkFotoBukti', 'buktiFoto', 'linkFoto'].forEach(field => {
-          const val = item[field];
-          if (val && typeof val === 'string' && val.trim() && val !== '-' && !photoList.includes(val.trim())) {
-            const strVal = val.trim();
-            if (strVal.includes(',') && !strVal.startsWith('data:')) {
-              strVal.split(',').forEach(sub => {
-                const trimmed = sub.trim();
-                if (trimmed && !photoList.includes(trimmed)) photoList.push(trimmed);
-              });
-            } else {
-              photoList.push(strVal);
-            }
-          }
+        ['fotoBukti', 'linkFotoBukti', 'buktiFoto', 'linkFoto', 'Link_Foto_Bukti'].forEach(field => {
+          addCandidate(item[field]);
         });
 
         return photoList;
@@ -2214,7 +2264,7 @@
           const deletedSet = new Set(deletedRaw ? JSON.parse(deletedRaw) : []);
           deletedSet.add(targetId);
           localStorage.setItem('dlh_deleted_aduan_ids', JSON.stringify([...deletedSet]));
-        } catch (e) {}
+        } catch (e) { }
 
         // 5. Tutup modal konfirmasi
         const modal = document.getElementById('modalConfirmDelete');
@@ -2363,7 +2413,16 @@
         const btnDownload = document.getElementById('btnDownloadPhoto');
 
         if (img) img.src = src;
-        if (btnDownload) btnDownload.href = src;
+        if (btnDownload) {
+          btnDownload.href = src;
+          if (typeof src === 'string' && src.startsWith('data:')) {
+            btnDownload.setAttribute('download', 'bukti_aduan_dlh.jpg');
+            btnDownload.removeAttribute('target');
+          } else {
+            btnDownload.removeAttribute('download');
+            btnDownload.setAttribute('target', '_blank');
+          }
+        }
         if (modal) modal.classList.add('show');
       }
 

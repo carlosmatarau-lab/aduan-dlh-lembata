@@ -226,19 +226,22 @@ class DLHApp {
         const item = document.createElement('div');
         item.className = 'upload-preview-item';
 
-        if (file.type.startsWith('image/')) {
+        if (file instanceof Blob || (typeof file === 'string' && (file.startsWith('data:') || file.startsWith('http')))) {
           const img = document.createElement('img');
-          img.src = URL.createObjectURL(file);
+          img.src = typeof file === 'string' ? file : URL.createObjectURL(file);
+          img.alt = `Bukti ${idx + 1}`;
           item.appendChild(img);
         } else {
-          item.innerHTML = '<span class="file-icon">🎥</span>';
+          item.innerHTML = '<span class="file-icon">📷</span>';
         }
 
         const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
         removeBtn.className = 'btn-remove-preview';
         removeBtn.innerHTML = '&times;';
-        removeBtn.title = 'Hapus';
+        removeBtn.title = 'Hapus foto ini';
         removeBtn.onclick = (e) => {
+          e.preventDefault();
           e.stopPropagation();
           this.selectedMediaFiles.splice(idx, 1);
           renderPreviews();
@@ -249,6 +252,7 @@ class DLHApp {
     };
 
     const addFiles = (files) => {
+      if (!files || !files.length) return;
       Array.from(files).forEach(f => {
         if (this.selectedMediaFiles.length < 3) {
           this.selectedMediaFiles.push(f);
@@ -263,9 +267,9 @@ class DLHApp {
     if (btnUpload && fileInput) {
       btnUpload.addEventListener('click', () => fileInput.click());
       fileInput.addEventListener('change', () => {
-        if (fileInput.files.length) {
+        if (fileInput.files && fileInput.files.length) {
           addFiles(fileInput.files);
-          fileInput.value = '';
+          fileInput.value = ''; // Reset agar bisa pilih file yang sama jika dihapus
         }
       });
     }
@@ -273,7 +277,7 @@ class DLHApp {
     // 2. Native Camera Capture (Fallback HP)
     if (cameraInput) {
       cameraInput.addEventListener('change', () => {
-        if (cameraInput.files.length) {
+        if (cameraInput.files && cameraInput.files.length) {
           addFiles(cameraInput.files);
           cameraInput.value = '';
           this.showToast('Foto dari kamera berhasil ditambahkan!', 'success');
@@ -297,7 +301,6 @@ class DLHApp {
       }
 
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        // Fallback langsung ke input kamera bawaan HP
         if (cameraInput) cameraInput.click();
         return;
       }
@@ -343,29 +346,36 @@ class DLHApp {
     if (btnSnap) {
       btnSnap.addEventListener('click', () => {
         if (!videoView) return;
-        const canvas = document.getElementById('cameraCanvasSnap') || document.createElement('canvas');
-        canvas.width = videoView.videoWidth || 640;
-        canvas.height = videoView.videoHeight || 480;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(videoView, 0, 0, canvas.width, canvas.height);
-
-        canvas.toBlob((blob) => {
-          if (blob) {
-            const snapFile = new File([blob], `bukti_kamera_${Date.now()}.jpg`, { type: 'image/jpeg' });
-            addFiles([snapFile]);
-            this.showToast('Foto bukti berhasil diambil dari kamera!', 'success');
+        const canvas = document.createElement('canvas');
+        let width = videoView.videoWidth || 640;
+        let height = videoView.videoHeight || 480;
+        const maxDim = 800;
+        if (width > maxDim || height > maxDim) {
+          if (width > height) {
+            height = Math.round((height * maxDim) / width);
+            width = maxDim;
+          } else {
+            width = Math.round((width * maxDim) / height);
+            height = maxDim;
           }
-          stopCamera();
-        }, 'image/jpeg', 0.88);
+        }
+        canvas.width = width;
+        canvas.height = height;
+        const ctx = canvas.getContext('2d');
+        ctx.drawImage(videoView, 0, 0, width, height);
+
+        const snapDataUrl = canvas.toDataURL('image/jpeg', 0.65);
+        addFiles([snapDataUrl]);
+        this.showToast('Foto bukti berhasil diambil dari kamera!', 'success');
+        stopCamera();
       });
     }
 
-    // Tutup kamera saat tombol close/batal diklik
     document.querySelectorAll('.btn-close-camera').forEach(btn => {
       btn.addEventListener('click', stopCamera);
     });
 
-    // Drag and Drop
+    // Drag and Drop & Zone click
     if (uploadZone) {
       ['dragenter', 'dragover'].forEach(name => {
         uploadZone.addEventListener(name, (e) => {
@@ -380,9 +390,15 @@ class DLHApp {
         });
       });
       uploadZone.addEventListener('drop', (e) => {
+        e.preventDefault();
+        uploadZone.classList.remove('dragover');
         if (e.dataTransfer && e.dataTransfer.files.length) {
           addFiles(e.dataTransfer.files);
         }
+      });
+      uploadZone.addEventListener('click', (e) => {
+        if (e.target.closest('button') || e.target.closest('.upload-preview-item')) return;
+        if (fileInput) fileInput.click();
       });
     }
   }
@@ -394,14 +410,74 @@ class DLHApp {
     const form = document.getElementById('formAduanWarga');
     if (!form) return;
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const btnSubmit = document.getElementById('btnSubmitAduan');
       if (btnSubmit) {
         btnSubmit.disabled = true;
-        btnSubmit.textContent = '⏳ Mengirim Laporan ke DLH...';
+        btnSubmit.textContent = '⏳ Mengoptimalkan Foto & Mengirim Bukti...';
       }
+
+      // Kumpulkan file dari selectedMediaFiles
+      const filesToProcess = [...(this.selectedMediaFiles || [])];
+      // Jika kosong, cek input file sebagai fallback
+      const fileInput = document.getElementById('inputBuktiFoto');
+      if (filesToProcess.length === 0 && fileInput && fileInput.files && fileInput.files.length) {
+        Array.from(fileInput.files).forEach(f => filesToProcess.push(f));
+      }
+      const cameraInput = document.getElementById('inputCameraCapture');
+      if (filesToProcess.length === 0 && cameraInput && cameraInput.files && cameraInput.files.length) {
+        Array.from(cameraInput.files).forEach(f => filesToProcess.push(f));
+      }
+
+      // Konversi dan optimasi bukti foto ke resolusi web optimal (max 800px, 0.65 JPEG ~25-40KB)
+      const mediaPromises = filesToProcess.map(file => {
+        return new Promise((resolve) => {
+          if (typeof file === 'string') {
+            return resolve(file);
+          }
+          if (!(file instanceof Blob)) {
+            return resolve(null);
+          }
+
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            const dataUrl = ev.target.result;
+            const img = new Image();
+            img.onload = () => {
+              try {
+                const canvas = document.createElement('canvas');
+                let width = img.width || 640;
+                let height = img.height || 480;
+                const maxDim = 800;
+                if (width > maxDim || height > maxDim) {
+                  if (width > height) {
+                    height = Math.round((height * maxDim) / width);
+                    width = maxDim;
+                  } else {
+                    width = Math.round((width * maxDim) / height);
+                    height = maxDim;
+                  }
+                }
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL('image/jpeg', 0.65));
+              } catch (err) {
+                resolve(dataUrl);
+              }
+            };
+            img.onerror = () => resolve(dataUrl);
+            img.src = dataUrl;
+          };
+          reader.onerror = () => resolve(null);
+          reader.readAsDataURL(file);
+        });
+      });
+
+      const buktiList = (await Promise.all(mediaPromises)).filter(Boolean);
 
       // Read selected category
       const selectedRadio = document.querySelector('input[name="radioJenis"]:checked');
@@ -419,7 +495,10 @@ class DLHApp {
         sumberDugaan: document.getElementById('inputSumberDugaan').value,
         uraian: document.getElementById('inputUraian').value,
         lat: document.getElementById('inputLat').value,
-        lng: document.getElementById('inputLng').value
+        lng: document.getElementById('inputLng').value,
+        fotoBukti: buktiList[0] || '',
+        linkFotoBukti: buktiList.join(', ') || (buktiList[0] || ''),
+        buktiFotoList: buktiList
       };
 
       // Add to store (and auto-post to Google Apps Script / Spreadsheet)
@@ -428,6 +507,8 @@ class DLHApp {
       // Reset form
       form.reset();
       this.selectedMediaFiles = [];
+      if (fileInput) fileInput.value = '';
+      if (cameraInput) cameraInput.value = '';
       const previewList = document.getElementById('uploadPreviewList');
       if (previewList) previewList.innerHTML = '';
       const dateInput = document.getElementById('inputTanggalKejadian');
@@ -453,8 +534,9 @@ class DLHApp {
           `👤 *Nama:* ${newRecord.namaPelapor}\n` +
           `📍 *Lokasi:* ${newRecord.desa}, Kec. ${newRecord.kecamatan}\n` +
           `⚠️ *Masalah:* ${newRecord.jenisPencemaran}\n` +
-          `📝 *Uraian:* ${newRecord.uraian}\n\n` +
-          `Mohon bantuannya untuk dapat ditinjau oleh DLH. Terima kasih!`
+          `📝 *Uraian:* ${newRecord.uraian}\n` +
+          `📸 *Lampiran:* ${buktiList.length} Foto Terlampir\n\n` +
+          `Mohon bantuannya untuk dapat ditindaklanjuti. Terima kasih!`
         );
         btnWa.href = `https://wa.me/6282234582769?text=${waText}`;
       }
@@ -693,12 +775,15 @@ class DLHApp {
 
       ${photoList.length > 0 ? `
         <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 14px;">
-          <div style="font-size: 0.76rem; font-weight: 700; color: #64748b; margin-bottom: 8px;">📸 FOTO BUKTI PENDUKUNG:</div>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            ${photoList.map(src => `
-              <a href="${src}" target="_blank">
-                <img src="${src}" alt="Bukti" style="width: 75px; height: 75px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1;">
-              </a>
+          <div style="font-size: 0.78rem; font-weight: 700; color: #047857; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+            <span>📸 LAMPIRAN BUKTI PENDUKUNG (${photoList.length} FOTO):</span>
+            <span style="font-size: 0.72rem; color: #64748b; font-weight: normal;">Klik foto untuk memperbesar</span>
+          </div>
+          <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+            ${photoList.map((src, idx) => `
+              <div class="evidence-thumb-wrap" onclick="window.app.openPhotoLightbox('${item.id}', ${idx})" title="Perbesar Foto Bukti ${idx + 1}" style="cursor: pointer; width: 85px; height: 85px; border-radius: 8px; overflow: hidden; border: 2px solid #e2e8f0; position: relative;">
+                <img src="${src}" alt="Bukti ${idx + 1}" style="width: 100%; height: 100%; object-fit: cover;" onerror="this.src='data:image/svg+xml;utf8,<svg xmlns=\\'http://www.w3.org/2000/svg\\' width=\\'100\\' height=\\'100\\' fill=\\'%2364748b\\' viewBox=\\'0 0 16 16\\'><text x=\\'50%\\' y=\\'50%\\' dominant-baseline=\\'middle\\' text-anchor=\\'middle\\' fill=\\'%2394a3b8\\'>Foto</text></svg>'">
+              </div>
             `).join('')}
           </div>
         </div>
@@ -706,6 +791,80 @@ class DLHApp {
     `;
 
     modal.classList.add('show');
+  }
+
+  quickTrack(id) {
+    this.showDetailModal(id);
+  }
+
+  openPhotoLightbox(ticketId, idx = 0) {
+    const item = window.aduanStore.getById(ticketId);
+    if (!item) return;
+
+    const photoList = [];
+    if (Array.isArray(item.buktiFotoList)) {
+      item.buktiFotoList.forEach(p => {
+        const u = typeof p === 'string' ? p : (p?.dataUrl || p?.url);
+        if (u && !photoList.includes(u)) photoList.push(u);
+      });
+    }
+    ['fotoBukti', 'linkFotoBukti', 'linkFoto', 'buktiFoto'].forEach(field => {
+      const u = item[field];
+      if (u && typeof u === 'string' && u !== '-' && !photoList.includes(u)) {
+        if (u.includes(',') && !u.startsWith('data:')) {
+          u.split(',').forEach(sub => {
+            const tr = sub.trim();
+            if (tr && !photoList.includes(tr)) photoList.push(tr);
+          });
+        } else {
+          photoList.push(u.trim());
+        }
+      }
+    });
+
+    const targetSrc = photoList[idx] || photoList[0];
+    if (!targetSrc) return;
+
+    let lightbox = document.getElementById('modalPublicPhotoLightbox');
+    if (!lightbox) {
+      lightbox = document.createElement('div');
+      lightbox.id = 'modalPublicPhotoLightbox';
+      lightbox.className = 'modal-backdrop';
+      lightbox.innerHTML = `
+        <div class="modal-dialog" style="max-width: 760px; text-align: center;">
+          <div class="modal-header">
+            <h3 class="modal-title">📸 Bukti Foto Pengaduan (${ticketId})</h3>
+            <button type="button" class="modal-close" onclick="document.getElementById('modalPublicPhotoLightbox').classList.remove('show')">&times;</button>
+          </div>
+          <div class="modal-body" style="background: #0f172a; padding: 16px;">
+            <img id="lightboxImgPreview" src="" alt="Bukti Aduan" style="max-width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px;">
+          </div>
+          <div class="modal-footer" style="display: flex; justify-content: space-between;">
+            <a id="lightboxBtnDownload" href="#" class="btn btn-primary btn-sm" download="bukti_aduan.jpg">📥 Unduh Foto</a>
+            <button type="button" class="btn btn-secondary btn-sm" onclick="document.getElementById('modalPublicPhotoLightbox').classList.remove('show')">Tutup</button>
+          </div>
+        </div>
+      `;
+      document.body.appendChild(lightbox);
+      lightbox.addEventListener('click', (e) => {
+        if (e.target === lightbox) lightbox.classList.remove('show');
+      });
+    }
+
+    const img = document.getElementById('lightboxImgPreview');
+    const dl = document.getElementById('lightboxBtnDownload');
+    if (img) img.src = targetSrc;
+    if (dl) {
+      dl.href = targetSrc;
+      if (targetSrc.startsWith('data:')) {
+        dl.setAttribute('download', `bukti_${ticketId}.jpg`);
+        dl.removeAttribute('target');
+      } else {
+        dl.removeAttribute('download');
+        dl.setAttribute('target', '_blank');
+      }
+    }
+    lightbox.classList.add('show');
   }
 
   /* ===================================================================
@@ -832,6 +991,8 @@ class DLHApp {
 
 // Inisialisasi Aplikasi saat Dokumen Siap
 document.addEventListener('DOMContentLoaded', () => {
+  if (window.__dlhAppInitialized) return;
+  window.__dlhAppInitialized = true;
   window.app = new DLHApp();
   window.app.init();
 });

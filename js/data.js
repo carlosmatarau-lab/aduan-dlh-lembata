@@ -514,6 +514,25 @@ const INITIAL_ADUAN_DATA = [
   }
 ];
 
+// Helper: Memastikan URL foto valid dan mengubah URL Google Drive menjadi tautan gambar langsung (direct render)
+function formatPhotoUrl(url) {
+  if (!url || typeof url !== 'string') return '';
+  url = url.trim();
+  if (url === '-' || url.length < 5) return '';
+
+  // Jika URL Google Drive mode preview / view, konversi ke direct content Googleusercontent
+  const matchFile = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
+  if (matchFile && matchFile[1]) {
+    return `https://lh3.googleusercontent.com/d/${matchFile[1]}`;
+  }
+  const matchId = url.match(/drive\.google\.com\/(?:open|uc)\?(?:[a-zA-Z0-9_=&]*&)?id=([a-zA-Z0-9_-]+)/);
+  if (matchId && matchId[1]) {
+    return `https://lh3.googleusercontent.com/d/${matchId[1]}`;
+  }
+
+  return url;
+}
+
 // Helper: Parse Google Sheets CSV Export menjadi array data aduan
 function parseCsvToAduan(csvText) {
   if (!csvText || typeof csvText !== 'string') return [];
@@ -563,7 +582,25 @@ function parseCsvToAduan(csvText) {
     });
 
     const id = item.ID_Aduan || item.id || `ADU-LMB-2026-${String(i).padStart(3, '0')}`;
-    const foto = item.Link_Foto_Bukti || item.Foto_Bukti || item.fotoBukti || item.linkFoto || item.Link_Bukti || '';
+    const rawFoto = item.Link_Foto_Bukti || item.Foto_Bukti || item.fotoBukti || item.linkFoto || item.Link_Bukti || '';
+    let parsedPhotos = [];
+    if (rawFoto && rawFoto !== '-') {
+      if (rawFoto.startsWith('[') && rawFoto.endsWith(']')) {
+        try {
+          const arr = JSON.parse(rawFoto);
+          if (Array.isArray(arr)) parsedPhotos = arr.map(formatPhotoUrl).filter(Boolean);
+        } catch (e) {}
+      }
+      if (parsedPhotos.length === 0) {
+        if (rawFoto.includes(',') && !rawFoto.startsWith('data:')) {
+          parsedPhotos = rawFoto.split(',').map(s => formatPhotoUrl(s.trim())).filter(Boolean);
+        } else {
+          parsedPhotos = [formatPhotoUrl(rawFoto)].filter(Boolean);
+        }
+      }
+    }
+    const primaryFoto = parsedPhotos[0] || '';
+
     result.push({
       id: id,
       timestamp: item.Timestamp || item.timestamp || '-',
@@ -579,9 +616,9 @@ function parseCsvToAduan(csvText) {
       uraian: item.Uraian_Aduan || item.uraian || '-',
       sumberDugaan: item.Sumber_Dugaan || item.sumberDugaan || '-',
       tanggalKejadian: item.Tanggal_Kejadian || item.tanggalKejadian || '-',
-      fotoBukti: foto,
-      linkFotoBukti: foto,
-      buktiFotoList: foto ? (foto.includes(',') ? foto.split(',').map(s => s.trim()).filter(Boolean) : [foto]) : [],
+      fotoBukti: primaryFoto,
+      linkFotoBukti: parsedPhotos.join(', ') || primaryFoto,
+      buktiFotoList: parsedPhotos,
       status: item.Status || item.status || 'Baru',
       petugasVerifikasi: item.Petugas_Verifikasi || item.petugasVerifikasi || '-',
       tanggalVerifikasi: item.Tanggal_Verifikasi || item.tanggalVerifikasi || '-',
@@ -593,9 +630,11 @@ function parseCsvToAduan(csvText) {
   return result;
 }
 
-// Konfigurasi Kunci Penyimpanan & URL Web App Google Apps Script
+// Konfigurasi Kunci Penyimpanan & URL Web App Google Apps Script / Spreadsheet
 const GAS_CONFIG_KEY = 'dlh_gas_api_url';
+const SPREADSHEET_CONFIG_KEY = 'dlh_spreadsheet_url';
 const DELETED_STORAGE_KEY = 'dlh_deleted_aduan_ids';
+const DEFAULT_SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/1lDsKvNdyEW_xugTTR2Va4HY8vEtxVsgTP-u1g_I_4O0/edit?gid=1323614970#gid=1323614970';
 const DEFAULT_GAS_API_URL = 'https://script.google.com/macros/s/AKfycbxm4r8QU2dv0S6csTTpmewuuvMNNrqiD2NeF_ENzXi8z7E3qDALHz6HNiBWtiEpGMruIQ/exec';
 
 class AduanDataStore {
@@ -671,6 +710,20 @@ class AduanDataStore {
     return this.hasGasConfigured();
   }
 
+  getSpreadsheetUrl() {
+    return localStorage.getItem(SPREADSHEET_CONFIG_KEY) || DEFAULT_SPREADSHEET_URL;
+  }
+
+  setSpreadsheetUrl(url) {
+    const clean = (url || '').trim();
+    if (clean) {
+      localStorage.setItem(SPREADSHEET_CONFIG_KEY, clean);
+    } else {
+      localStorage.removeItem(SPREADSHEET_CONFIG_KEY);
+    }
+    return this.getSpreadsheetUrl();
+  }
+
   async syncFromGAS(silent = false) {
     if (!this.hasGasConfigured() || this.isSyncing) {
       return { success: false, reason: 'URL belum diisi. Masukkan URL Web App Google Apps Script untuk menghubungkan data cloud.' };
@@ -683,9 +736,11 @@ class AduanDataStore {
       // Dukungan jika pengguna memasukkan link Google Spreadsheet langsung
       if (endpoint.includes('docs.google.com/spreadsheets')) {
         const match = endpoint.match(/\/d\/([a-zA-Z0-9-_]+)/);
+        const gidMatch = endpoint.match(/[?#&]gid=([0-9]+)/);
         if (match) {
           const sheetId = match[1];
-          endpoint = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Data_Aduan`;
+          const gidParam = gidMatch ? `&gid=${gidMatch[1]}` : '&sheet=Data_Aduan';
+          endpoint = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv${gidParam}`;
           const response = await fetch(endpoint);
           if (!response.ok) throw new Error(`Gagal membaca sheet (HTTP ${response.status})`);
           const csvText = await response.text();
@@ -749,7 +804,19 @@ class AduanDataStore {
   }
 
   save() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.aduanList));
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.aduanList));
+    } catch (err) {
+      console.warn('LocalStorage save quota exceeded, attempting storage cleanup:', err);
+      try {
+        if (this.aduanList.length > 15) {
+          const trimmed = this.aduanList.slice(0, 15);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed));
+        }
+      } catch (e) {
+        console.error('LocalStorage write failed:', e);
+      }
+    }
   }
 
   getAll() {
@@ -784,9 +851,28 @@ class AduanDataStore {
 
     const existing = index !== -1 ? this.aduanList[index] : null;
     const existingPhotos = existing ? (Array.isArray(existing.buktiFotoList) ? existing.buktiFotoList : (existing.fotoBukti ? [existing.fotoBukti] : [])) : [];
-    const remotePhotos = Array.isArray(remoteItem.buktiFotoList) && remoteItem.buktiFotoList.length > 0
-      ? remoteItem.buktiFotoList
-      : (remoteItem.linkFoto && remoteItem.linkFoto !== '-' ? [remoteItem.linkFoto] : (remoteItem.fotoBukti && remoteItem.fotoBukti !== '-' ? [remoteItem.fotoBukti] : []));
+    
+    let remotePhotos = [];
+    if (Array.isArray(remoteItem.buktiFotoList) && remoteItem.buktiFotoList.length > 0) {
+      remotePhotos = remoteItem.buktiFotoList.map(formatPhotoUrl).filter(Boolean);
+    } else {
+      const candidate = remoteItem.linkFoto || remoteItem.Link_Foto_Bukti || remoteItem.linkFotoBukti || remoteItem.fotoBukti || '';
+      if (candidate && candidate !== '-') {
+        if (candidate.startsWith('[') && candidate.endsWith(']')) {
+          try {
+            const arr = JSON.parse(candidate);
+            if (Array.isArray(arr)) remotePhotos = arr.map(formatPhotoUrl).filter(Boolean);
+          } catch (e) {}
+        }
+        if (remotePhotos.length === 0) {
+          if (candidate.includes(',') && !candidate.startsWith('data:')) {
+            remotePhotos = candidate.split(',').map(s => formatPhotoUrl(s.trim())).filter(Boolean);
+          } else {
+            remotePhotos = [formatPhotoUrl(candidate)].filter(Boolean);
+          }
+        }
+      }
+    }
 
     // Jika record lokal sudah memiliki foto valid (termasuk Data URL base64), jangan ditimpa dengan remote kosong
     let finalPhotos = [];
@@ -815,7 +901,7 @@ class AduanDataStore {
       sumberDugaan: remoteItem.sumberDugaan || '-',
       tanggalKejadian: remoteItem.tanggalKejadian || '-',
       fotoBukti: finalFoto,
-      linkFotoBukti: finalFoto,
+      linkFotoBukti: finalPhotos.join(', ') || finalFoto,
       buktiFotoList: finalPhotos,
       status: remoteItem.status || 'Aduan Diterima',
       petugasVerifikasi: remoteItem.petugasVerifikasi || '-',
@@ -853,6 +939,12 @@ class AduanDataStore {
     const lat = formData.lat ? parseFloat(formData.lat) : (kecMeta.lat + (Math.random() - 0.5) * 0.02);
     const lng = formData.lng ? parseFloat(formData.lng) : (kecMeta.lng + (Math.random() - 0.5) * 0.02);
 
+    const rawPhotoList = Array.isArray(formData.buktiFotoList) 
+      ? formData.buktiFotoList.filter(Boolean) 
+      : (formData.fotoBukti ? [formData.fotoBukti] : []);
+    const photoList = rawPhotoList.map(formatPhotoUrl).filter(Boolean);
+    const primaryPhoto = photoList[0] || formatPhotoUrl(formData.fotoBukti) || formatPhotoUrl(formData.linkFotoBukti) || '';
+
     const newRecord = {
       id: newId,
       timestamp: formattedDate,
@@ -869,9 +961,9 @@ class AduanDataStore {
       sumberDugaan: formData.sumberDugaan || '-',
       tanggalKejadian: formData.tanggalKejadian || formattedDate.split(' ')[0],
       status: 'Aduan Diterima',
-      fotoBukti: formData.fotoBukti || '',
-      linkFotoBukti: formData.linkFotoBukti || formData.fotoBukti || '',
-      buktiFotoList: Array.isArray(formData.buktiFotoList) ? formData.buktiFotoList : (formData.fotoBukti ? [formData.fotoBukti] : []),
+      fotoBukti: primaryPhoto,
+      linkFotoBukti: photoList.join(', ') || primaryPhoto,
+      buktiFotoList: photoList.length > 0 ? photoList : (primaryPhoto ? [primaryPhoto] : []),
       petugasVerifikasi: '-',
       tanggalVerifikasi: '-',
       hasilVerifikasi: 'Menunggu penugasan verifikator lapangan.',
