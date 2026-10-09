@@ -21,41 +21,27 @@ Aplikasi ini dibangun murni menggunakan **HTML5, CSS3 Modern, dan Vanilla JavaSc
 **Tidak memerlukan instalasi server atau dependensi tambahan apa pun.**
 
 1. Cukup buka folder `d:\app\`.
-2. Klik ganda (double click) pada file **`index.html`** atau **`petugas.html`**.
+2. Klik ganda (double click) pada file **`index.html`**.
 3. Aplikasi akan langsung terbuka di browser Anda (Google Chrome, Microsoft Edge, Mozilla Firefox, dll.) dengan tampilan responsif dan interaktif.
 
 ---
 
 ## 🌟 Fitur Utama Aplikasi
 
-1. **🏠 Beranda & Ringkasan KPI Real-Time**
-   - Menampilkan total aduan masuk, aduan baru (menunggu verifikasi), aduan dalam proses, dan tingkat penyelesaian perkara.
-   - Banner sambutan dengan visualisasi branding instansi pemerintah DLH Lembata.
+1. **📲 Pengiriman Pengaduan Langsung ke WhatsApp DLH (+62 822-3458-2769)**
+   - Aduan warga secara otomatis diformat rapi dan diteruskan langsung ke WhatsApp resmi DLH Lembata.
+   - Dilengkapi dukungan lampiran bukti foto via Web Share API native (di HP) dan clipboard copy / download di desktop.
+   - Menyertakan titik GPS otomatis dan tautan navigasi Google Maps akurat.
 
-2. **🗺️ Peta Spasial Sebaran Titik Aduan (GIS Mini)**
-   - Peta interaktif berbasis koordinat geografis wilayah 9 kecamatan di Kabupaten Lembata (*Nubatukan/Lewoleba, Ile Ape, Ile Ape Timur, Lebatukan, Nagawutung, Wulandoni, Atadei, Omesuri, Buyasuri*).
-   - Marker penanda lokasi dengan warna berdasar status penanganan (🔴 Baru, 🟡 Diverifikasi, 🔵 Ditindaklanjuti, 🟢 Selesai, ⚪ Ditolak).
-   - Filter peta dinamis berdasar status dan kecamatan.
-   - Dilengkapi *fallback vector engine* jika perangkat dibuka saat offline tanpa jaringan internet.
+2. **🗺️ Peta Spasial Sebaran Titik Aduan (GIS Interaktif)**
+   - Peta interaktif berbasis Leaflet dengan pilihan layer Peta Standar, Citra Satelit Nyata, dan Topografi.
+   - Mencakup seluruh 9 kecamatan di Kabupaten Lembata (*Nubatukan/Lewoleba, Ile Ape, Ile Ape Timur, Lebatukan, Nagawutung, Wulandoni, Atadei, Omesuri, Buyasuri*).
+   - Filter dinamis berdasarkan kecamatan, jenis pencemaran, dan status.
 
-3. **📋 Tabel Data & Modul Verifikasi Petugas DLH**
-   - Pencarian instan (search) berdasarkan nama pelapor, desa, nomor ID, dan uraian masalah.
-   - Filter multi-kategori (Status, Kecamatan, Jenis Pencemaran).
-   - **Fitur Verifikasi Petugas:** Petugas DLH dapat memperbarui status aduan, menginput tanggal pemeriksaan lapangan, nama verifikator, temuan fisik, serta tindakan nyata DLH. Perubahan otomatis tersimpan (*persistent storage*).
-   - **Fitur Ekspor CSV:** Unduh rekapitulasi data pengaduan ke format spreadsheet Excel/CSV dalam satu klik.
-
-4. **📊 Dashboard Statistik & Grafik KPI Lingkungan**
-   - Grafik Donut: Komposisi status penanganan aduan.
-   - Grafik Batang: Klasifikasi kategori pencemaran (Air, Udara, Sampah, B3, Laut & Pesisir, Kerusakan Lingkungan).
-   - Grafik Horizontal: Sebaran intensitas aduan per kecamatan di Lembata.
-
-5. **🔍 Portal Pelacakan Status Aduan (Tracking Publik)**
-   - Warga pelapor dapat memasukkan nomor tiket aduan (contoh: `ADU-LMB-2026-001`).
-   - Menampilkan garis waktu (*timeline*) proses mulai dari penerimaan form, verifikasi lapangan, tindak lanjut, hingga tuntas.
-
-6. **📝 Formulir Aduan Daring**
-   - Formulir pengaduan dengan 12 parameter terstandar sesuai SOP DLH.
-   - Otomatis menerbitkan Nomor Register ID unik dan menempatkan titik koordinat di peta.
+3. **📝 Formulir Pengaduan Digital Cepat & Akurat**
+   - Mendukung deteksi GPS otomatis satu klik untuk koordinat akurat di lapangan.
+   - Upload bukti foto langsung dari kamera HP atau galeri file (maks. 3 berkas).
+   - Pilihan kategori pencemaran: Laut & Pesisir, Sampah Ilegal, Air & Sungai, Udara & Asap, Limbah B3, dan Kerusakan Lingkungan.
 
 ---
 
@@ -63,12 +49,11 @@ Aplikasi ini dibangun murni menggunakan **HTML5, CSS3 Modern, dan Vanilla JavaSc
 
 ```
 d:\app/
-├── index.html                           # File utama aplikasi portal aduan publik
-├── petugas.html                         # Portal khusus petugas & verifikator DLH
-├── qr-code.html                         # Poster & generator QR Code publik
+├── index.html                           # File utama aplikasi portal aduan & peta publik
+├── qr-code.html                         # Poster cetak & generator QR Code publik
+├── petugas.html                         # Pengalihan resmi ke WhatsApp Helpline DLH
 ├── vercel.json                          # Konfigurasi deployment & security headers Vercel
-├── check-vercel.ps1                     # Script diagnostik & status health-check deployment Vercel
-├── netlify.toml                         # Konfigurasi deployment Netlify (opsional)
+├── check-vercel.ps1                     # Script diagnostik deployment Vercel
 ├── perencanaan.md                       # Dokumen rencana aktualisasi lengkap
 ├── README.md                            # Petunjuk penggunaan aplikasi
 ├── google-apps-script.js                # Web API Serverless (Google Apps Script)

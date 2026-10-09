@@ -45,8 +45,18 @@ class DLHApp {
       const urlParams = new URLSearchParams(window.location.search);
       const targetFoto = urlParams.get('lihatFoto') || urlParams.get('foto') || urlParams.get('tiket');
       if (targetFoto) {
-        setTimeout(() => {
-          this.showDetailModal(targetFoto);
+        setTimeout(async () => {
+          let item = window.aduanStore.getById(targetFoto);
+          if (!item && window.aduanStore && window.aduanStore.hasGasConfigured()) {
+            this.showToast(`Mengambil data aduan ${targetFoto} dari server DLH...`, 'info');
+            await window.aduanStore.syncFromGAS(true);
+            item = window.aduanStore.getById(targetFoto);
+          }
+          if (item) {
+            this.showDetailModal(targetFoto);
+          } else {
+            this.showToast(`Nomor aduan ${targetFoto} sedang diproses di sistem DLH.`, 'info');
+          }
         }, 350);
       }
     } catch (e) {}
@@ -593,6 +603,11 @@ _Mohon bantuan tindak lanjut dari Petugas Dinas Lingkungan Hidup Kab. Lembata. T
       const photoCountBadge = document.getElementById('waPhotoCount');
       const btnCopyPhoto = document.getElementById('btnCopyWaPhoto');
       const btnDownloadPhoto = document.getElementById('btnDownloadWaPhoto');
+
+      const btnWaDirectLink = document.getElementById('btnWaDirectLink');
+      if (btnWaDirectLink) {
+        btnWaDirectLink.href = waUrl;
+      }
 
       if (ticketDisplay) ticketDisplay.textContent = newRecord.id;
 
