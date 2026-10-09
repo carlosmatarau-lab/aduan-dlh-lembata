@@ -556,76 +556,14 @@ ${uraian}
 
 📸 *BUKTI FOTO KEJADIAN:*
 ${buktiList.length > 0 
-  ? `• Status: Terlampir ${buktiList.length} Foto Bukti Kejadian (dikirim langsung bersama pesan ini)` 
+  ? `• Status: ${buktiList.length} Foto Bukti Terlampir Resmi di Sistem DLH` 
   : '• Status: Pelapor tidak melampirkan foto bukti.'}
 --------------------------------------------------
 _Laporan resmi dikirim melalui formulir pengaduan masyarakat DLH Lembata._
 _Mohon bantuan tindak lanjut dari Petugas Dinas Lingkungan Hidup Kab. Lembata. Terima kasih!_`;
 
-      const waUrl = `https://wa.me/6282234582769?text=${encodeURIComponent(waMessage)}`;
-
-      // Helper konversi Base64 DataURL menjadi File objek JPEG standar
-      const dataUrlToJpegFile = (dataUrl, fileName) => {
-        try {
-          const parts = dataUrl.split(',');
-          const bstr = atob(parts[1]);
-          let n = bstr.length;
-          const u8arr = new Uint8Array(n);
-          while (n--) {
-            u8arr[n] = bstr.charCodeAt(n);
-          }
-          const safeName = (fileName && fileName.endsWith('.jpg')) ? fileName : `${fileName || 'bukti'}.jpg`;
-          return new File([u8arr], safeName, { type: 'image/jpeg', lastModified: Date.now() });
-        } catch (e) {
-          console.error('Gagal konversi DataURL ke File:', e);
-          return null;
-        }
-      };
-
-      // Siapkan 1 berkas foto bukti JPEG siap kirim langsung ke WhatsApp
-      let shareFile = null;
-      if (buktiList.length === 1) {
-        shareFile = dataUrlToJpegFile(buktiList[0], `bukti_${newRecord.id}.jpg`);
-      } else if (buktiList.length > 1) {
-        // Gabungkan seluruh foto ke satu frame kolase agar WhatsApp di HP warga
-        // dapat mengirimkan seluruh foto sekaligus teks keterangan dalam 1 pesan tunggal
-        try {
-          const loadedImages = await Promise.all(
-            buktiList.map(src => new Promise((resolve) => {
-              const img = new Image();
-              img.onload = () => resolve(img);
-              img.onerror = () => resolve(null);
-              img.src = src;
-            }))
-          );
-          const validImgs = loadedImages.filter(Boolean);
-          if (validImgs.length > 0) {
-            const targetW = 900;
-            const pad = 12;
-            let totalH = pad;
-            const heights = validImgs.map(img => {
-              const h = Math.round((img.height * targetW) / (img.width || targetW));
-              totalH += h + pad;
-              return h;
-            });
-            const c = document.createElement('canvas');
-            c.width = targetW;
-            c.height = totalH;
-            const ctx = c.getContext('2d');
-            ctx.fillStyle = '#0f172a';
-            ctx.fillRect(0, 0, c.width, c.height);
-            let curY = pad;
-            validImgs.forEach((img, i) => {
-              ctx.drawImage(img, pad, curY, targetW - (pad * 2), heights[i]);
-              curY += heights[i] + pad;
-            });
-            shareFile = dataUrlToJpegFile(c.toDataURL('image/jpeg', 0.85), `bukti_${newRecord.id}.jpg`);
-          }
-        } catch (colErr) {
-          console.warn('Gagal buat kolase foto:', colErr);
-          shareFile = dataUrlToJpegFile(buktiList[0], `bukti_${newRecord.id}.jpg`);
-        }
-      }
+      // Tautan langsung ke room chat WhatsApp resmi DLH Lembata (+62 822-3458-2769)
+      const waUrl = `https://api.whatsapp.com/send?phone=6282234582769&text=${encodeURIComponent(waMessage)}`;
 
       // Reset form
       form.reset();
@@ -643,29 +581,6 @@ _Mohon bantuan tindak lanjut dari Petugas Dinas Lingkungan Hidup Kab. Lembata. T
       this.renderTable();
       if (window.lembataMap) window.lembataMap.renderMarkers();
 
-      // Langsung eksekusi Web Share API dengan File di HP (mengirim foto + teks sebagai caption 1 pesan)
-      let autoShareTriggered = false;
-      if (shareFile && navigator.share) {
-        try {
-          if (navigator.canShare && navigator.canShare({ files: [shareFile] })) {
-            autoShareTriggered = true;
-            await navigator.share({
-              title: `Pengaduan Lingkungan ${newRecord.id}`,
-              text: waMessage,
-              files: [shareFile]
-            });
-            this.showToast('Laporan & foto bukti berhasil diteruskan ke WhatsApp DLH!', 'success');
-          }
-        } catch (shareErr) {
-          if (shareErr.name === 'AbortError') {
-            autoShareTriggered = true;
-          } else {
-            console.warn('Auto share dilewati, tampilkan modal:', shareErr);
-            autoShareTriggered = false;
-          }
-        }
-      }
-
       // Tampilkan Modal Sukses Aduan
       const modalSuccess = document.getElementById('modalSuccessAduan');
       const ticketDisplay = document.getElementById('successTicketId');
@@ -676,31 +591,12 @@ _Mohon bantuan tindak lanjut dari Petugas Dinas Lingkungan Hidup Kab. Lembata. T
 
       if (ticketDisplay) ticketDisplay.textContent = newRecord.id;
 
-      // Konfigurasi Tombol Kirim WhatsApp: Menjamin pengiriman foto dalam satu kesatuan pesan tanpa copy-paste
+      // Konfigurasi Tombol: Langsung diarahkan ke room chat nomor WA DLH Lembata (+62 822-3458-2769)
       if (btnWa) {
-        btnWa.onclick = async (evt) => {
+        btnWa.onclick = (evt) => {
           if (evt) evt.preventDefault();
-
-          // 1. Prioritaskan Native Share dengan File (Foto + Keterangan dalam 1 pesan WhatsApp di HP)
-          if (shareFile && navigator.share) {
-            try {
-              if (navigator.canShare && navigator.canShare({ files: [shareFile] })) {
-                await navigator.share({
-                  title: `Pengaduan Lingkungan ${newRecord.id}`,
-                  text: waMessage,
-                  files: [shareFile]
-                });
-                this.showToast('Laporan & foto bukti berhasil dibagikan ke WhatsApp!', 'success');
-                return;
-              }
-            } catch (shareErr) {
-              if (shareErr.name === 'AbortError') return;
-              console.warn('Native share gagal, dialihkan:', shareErr);
-            }
-          }
-
-          // 2. Fallback untuk Desktop PC / WhatsApp Web (Teks dikirim rapi tanpa link palsu, foto sudah tersimpan di database DLH)
-          window.open(waUrl, '_blank');
+          // Langsung buka chat room ke nomor DLH tanpa dialog berbagi & tanpa mencari kontak
+          window.location.href = waUrl;
         };
       }
 
