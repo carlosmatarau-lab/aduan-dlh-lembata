@@ -607,6 +607,55 @@
       background: #f8fafc;
     }
 
+    /* Validation Styles & Loading Spinner */
+    .input-text.input-invalid {
+      border-color: #ef4444 !important;
+      background-color: #fef2f2 !important;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+    }
+
+    .input-text.input-valid {
+      border-color: #10b981 !important;
+      background-color: #f0fdf4 !important;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+    }
+
+    .input-validation-msg {
+      font-size: 0.78rem;
+      margin-top: 5px;
+      font-weight: 600;
+      line-height: 1.4;
+      transition: all 0.2s ease;
+    }
+
+    .input-validation-msg.msg-error {
+      color: #dc2626;
+      display: block;
+    }
+
+    .input-validation-msg.msg-success {
+      color: #059669;
+      display: block;
+    }
+
+    .btn-spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255, 255, 255, 0.35);
+      border-radius: 50%;
+      border-top-color: #ffffff;
+      animation: spinLoading 0.75s linear infinite;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    @keyframes spinLoading {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
     /* Category Selection Chips */
     .category-chips {
       display: grid;
@@ -2150,8 +2199,9 @@
               <input type="text" id="inputNama" class="input-text" required placeholder="Contoh: Fransiskus Kedang">
             </div>
             <div class="form-field">
-              <label class="field-label">Nomor WhatsApp / HP Aktif <span class="req">*</span></label>
-              <input type="tel" id="inputNoHp" class="input-text" required placeholder="Contoh: 081234567890">
+              <label class="field-label" for="inputNoHp">Nomor WhatsApp / HP Aktif <span class="req">*</span></label>
+              <input type="tel" id="inputNoHp" class="input-text" required placeholder="Contoh: 081234567890" maxlength="16" autocomplete="tel">
+              <div id="noHpValidationMsg" class="input-validation-msg" style="display: none;"></div>
             </div>
           </div>
 
@@ -2543,6 +2593,18 @@
           </div>
         </div>
 
+        <!-- Konfirmasi Arsip Database Sistem DLH -->
+        <div
+          style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; font-size: 0.82rem; color: #334155; display: flex; align-items: flex-start; gap: 10px; text-align: left;">
+          <span style="font-size: 1.3rem; line-height: 1;">💾</span>
+          <div>
+            <strong style="color: #065f46;">Arsip Resmi Terdata di Database:</strong>
+            <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px; line-height: 1.4;">
+              Laporan otomatis tersimpan di database sistem DLH Lembata (Bidang Pengendalian Pencemaran &amp; Kerusakan LH) &amp; siap diverifikasi petugas lapangan.
+            </div>
+          </div>
+        </div>
+
         <!-- Aksi Utama -->
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <button type="button" id="btnWaConfirmation" class="btn btn-primary"
@@ -2556,6 +2618,13 @@
           <button type="button" class="btn btn-outline btn-close-modal" style="font-size: 0.9rem; padding: 11px; border-radius: 10px; font-weight: 600; color: #64748b; border-color: #e2e8f0;">
             Tutup &amp; Buat Aduan Baru
           </button>
+        </div>
+
+        <!-- Notifikasi Loading Pengalihan WhatsApp -->
+        <div id="waRedirectLoadingNotice"
+          style="display: none; background: #ecfdf5; border: 1.5px solid #6ee7b7; border-radius: 12px; padding: 12px 14px; margin-top: 12px; text-align: center; color: #065f46; font-size: 0.85rem; font-weight: 700;">
+          <span class="btn-spinner" style="border-top-color: #059669; border-color: rgba(5,150,105,0.25); margin-right: 8px;"></span>
+          <span id="waRedirectNoticeText">Mengarahkan Anda ke Room Chat WhatsApp Layanan Pengaduan...</span>
         </div>
       </div>
     </div>

@@ -19,6 +19,7 @@ class DLHApp {
     this.setupNavigation();
     this.setupCategoryChips();
     this.setupKecamatanDesaSync();
+    this.setupPhoneValidation();
     this.setupFormSubmissions();
     this.setupGPSDetection();
     this.setupUploadPreview();
@@ -161,6 +162,95 @@ class DLHApp {
     kecSelect.addEventListener('change', (e) => {
       this.populateDesaDropdown(e.target.value);
     });
+  }
+
+  /* ===================================================================
+     2C. VALIDASI INPUT NOMOR WHATSAPP / HP
+     =================================================================== */
+  validatePhoneNumber(phoneStr) {
+    if (!phoneStr) {
+      return { valid: false, message: 'Nomor WhatsApp wajib diisi.' };
+    }
+
+    // Bersihkan spasi, tanda strip, titik, dan kurung
+    const clean = phoneStr.trim().replace(/[\s\-\.\(\)]/g, '');
+
+    // Cek apakah diawali 08, +628, atau 628
+    const startsWith08 = /^08\d+$/.test(clean);
+    const startsWithPlus62 = /^\+628\d+$/.test(clean);
+    const startsWith62 = /^628\d+$/.test(clean);
+
+    if (!startsWith08 && !startsWithPlus62 && !startsWith62) {
+      return {
+        valid: false,
+        message: 'Nomor wajib diawali angka 08 atau +62 (contoh: 081234567890)'
+      };
+    }
+
+    // Hitung total digit angka murni
+    const digitsOnly = clean.replace(/\D/g, '');
+    if (digitsOnly.length < 10) {
+      return {
+        valid: false,
+        message: `Nomor terlalu pendek (${digitsOnly.length} digit). Minimal 10 digit angka.`
+      };
+    }
+
+    if (digitsOnly.length > 15) {
+      return {
+        valid: false,
+        message: `Nomor terlalu panjang (${digitsOnly.length} digit). Maksimal 15 digit angka.`
+      };
+    }
+
+    return {
+      valid: true,
+      message: '✓ Nomor WhatsApp valid dan siap digunakan.',
+      cleanNumber: clean
+    };
+  }
+
+  setupPhoneValidation() {
+    const inputNoHp = document.getElementById('inputNoHp');
+    const msgEl = document.getElementById('noHpValidationMsg');
+    if (!inputNoHp) return;
+
+    const runValidation = (isBlur = false) => {
+      const val = inputNoHp.value.trim();
+      if (!val) {
+        inputNoHp.classList.remove('input-invalid', 'input-valid');
+        if (msgEl) {
+          msgEl.style.display = isBlur ? 'block' : 'none';
+          msgEl.className = 'input-validation-msg msg-error';
+          msgEl.textContent = isBlur ? 'Nomor WhatsApp wajib diisi agar petugas dapat menghubungi Anda.' : '';
+        }
+        return false;
+      }
+
+      const res = this.validatePhoneNumber(val);
+      if (res.valid) {
+        inputNoHp.classList.remove('input-invalid');
+        inputNoHp.classList.add('input-valid');
+        if (msgEl) {
+          msgEl.style.display = 'block';
+          msgEl.className = 'input-validation-msg msg-success';
+          msgEl.textContent = res.message;
+        }
+        return true;
+      } else {
+        inputNoHp.classList.remove('input-valid');
+        inputNoHp.classList.add('input-invalid');
+        if (msgEl) {
+          msgEl.style.display = 'block';
+          msgEl.className = 'input-validation-msg msg-error';
+          msgEl.textContent = res.message;
+        }
+        return false;
+      }
+    };
+
+    inputNoHp.addEventListener('input', () => runValidation(false));
+    inputNoHp.addEventListener('blur', () => runValidation(true));
   }
 
   /* ===================================================================
@@ -418,11 +508,35 @@ class DLHApp {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      // 1. Validasi Input Nomor WhatsApp
+      const inputNoHp = document.getElementById('inputNoHp');
+      const noHpRaw = (inputNoHp?.value || '').trim();
+      const phoneValidation = this.validatePhoneNumber(noHpRaw);
+
+      if (!phoneValidation.valid) {
+        if (inputNoHp) {
+          inputNoHp.classList.add('input-invalid');
+          inputNoHp.focus();
+          inputNoHp.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        const msgEl = document.getElementById('noHpValidationMsg');
+        if (msgEl) {
+          msgEl.style.display = 'block';
+          msgEl.className = 'input-validation-msg msg-error';
+          msgEl.textContent = phoneValidation.message;
+        }
+        this.showToast('Periksa Nomor WhatsApp: ' + phoneValidation.message, 'warning');
+        return;
+      }
+
+      // 2. Indikator Proses Pengiriman (Loading State)
       const btnSubmit = document.getElementById('btnSubmitAduan');
       if (btnSubmit) {
         btnSubmit.disabled = true;
-        btnSubmit.textContent = '⏳ Menyusun Aduan & Menyiapkan WhatsApp...';
+        btnSubmit.innerHTML = '<span class="btn-spinner"></span> <span>Menyusun Laporan &amp; Mengarahkan ke WhatsApp...</span>';
       }
+
+      this.showToast('⏳ Menyusun rekapan aduan & mengamankan data ke sistem DLH Lembata...', 'info');
 
       // Kumpulkan semua file bukti foto (dari selectedMediaFiles, input file, atau kamera)
       const allMedia = [...(this.selectedMediaFiles || [])];
@@ -517,8 +631,10 @@ class DLHApp {
         buktiFotoList: buktiList
       };
 
-      // Simpan ke database lokal
+      // Simpan ke database lokal (dan otomatis disinkronkan ke Google Spreadsheet via GAS)
       const newRecord = window.aduanStore.addAduan(formData);
+
+      this.showToast(`💾 Laporan ${newRecord.id} tersimpan di arsip database DLH Lembata!`, 'success');
 
       // Link Google Maps koordinat presisi
       const finalLat = newRecord.lat || lat;
@@ -637,6 +753,9 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       const dateInput = document.getElementById('inputTanggalKejadian');
       if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
       if (this.populateDesaDropdown) this.populateDesaDropdown('Nubatukan');
+      const msgNoHp = document.getElementById('noHpValidationMsg');
+      if (msgNoHp) msgNoHp.style.display = 'none';
+      if (inputNoHp) inputNoHp.classList.remove('input-valid', 'input-invalid');
 
       // Update UI components
       this.updateKPIs();
@@ -651,6 +770,8 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       const photoBox = document.getElementById('waPhotoAttachmentBox');
       const photoThumbContainer = document.getElementById('waPhotoThumbContainer');
       const photoCountBadge = document.getElementById('waPhotoCount');
+      const redirectNotice = document.getElementById('waRedirectLoadingNotice');
+      if (redirectNotice) redirectNotice.style.display = 'none';
 
       if (ticketDisplay) ticketDisplay.textContent = newRecord.id;
 
@@ -658,22 +779,45 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       if (btnWa) {
         btnWa.onclick = async (evt) => {
           if (evt) evt.preventDefault();
-          if (shareFile && navigator.share && navigator.canShare && navigator.canShare({ files: [shareFile] })) {
-            try {
-              await navigator.share({
-                title: `Pengaduan Lingkungan ${newRecord.id}`,
-                text: waMessage,
-                files: [shareFile]
-              });
-              this.showToast('Laporan & foto bukti berhasil dibagikan ke WhatsApp!', 'success');
-              return;
-            } catch (shareErr) {
-              if (shareErr.name === 'AbortError') return;
-              console.warn('Native share dilewati, buka room chat:', shareErr);
-            }
+          
+          btnWa.disabled = true;
+          const origText = btnWa.innerHTML;
+          btnWa.innerHTML = '<span class="btn-spinner"></span> <span>Membuka WhatsApp...</span>';
+          if (redirectNotice) {
+            redirectNotice.style.display = 'block';
+            const noticeText = document.getElementById('waRedirectNoticeText');
+            if (noticeText) noticeText.textContent = 'Mengarahkan Anda ke Room Chat WhatsApp Layanan Pengaduan...';
           }
-          // Fallback langsung ke chat room nomor DLH
-          window.location.href = waUrl;
+
+          setTimeout(async () => {
+            if (shareFile && navigator.share && navigator.canShare && navigator.canShare({ files: [shareFile] })) {
+              try {
+                await navigator.share({
+                  title: `Pengaduan Lingkungan ${newRecord.id}`,
+                  text: waMessage,
+                  files: [shareFile]
+                });
+                this.showToast('Laporan & foto bukti berhasil dibagikan ke WhatsApp!', 'success');
+                btnWa.disabled = false;
+                btnWa.innerHTML = origText;
+                return;
+              } catch (shareErr) {
+                if (shareErr.name === 'AbortError') {
+                  btnWa.disabled = false;
+                  btnWa.innerHTML = origText;
+                  if (redirectNotice) redirectNotice.style.display = 'none';
+                  return;
+                }
+                console.warn('Native share dilewati, buka room chat:', shareErr);
+              }
+            }
+            // Fallback langsung ke chat room nomor kontak layanan pengaduan DLH
+            window.location.href = waUrl;
+            setTimeout(() => {
+              btnWa.disabled = false;
+              btnWa.innerHTML = origText;
+            }, 3000);
+          }, 350);
         };
       }
 
@@ -681,7 +825,21 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       if (btnDirectRoom) {
         btnDirectRoom.onclick = (evt) => {
           if (evt) evt.preventDefault();
-          window.location.href = waUrl;
+          btnDirectRoom.disabled = true;
+          const origDirect = btnDirectRoom.innerHTML;
+          btnDirectRoom.innerHTML = '<span class="btn-spinner" style="border-top-color: #059669; border-color: rgba(5,150,105,0.25);"></span> <span>Membuka Chat Room WhatsApp...</span>';
+          if (redirectNotice) {
+            redirectNotice.style.display = 'block';
+            const noticeText = document.getElementById('waRedirectNoticeText');
+            if (noticeText) noticeText.textContent = 'Membuka room chat WhatsApp nomor +62 822-3458-2769...';
+          }
+          setTimeout(() => {
+            window.location.href = waUrl;
+            setTimeout(() => {
+              btnDirectRoom.disabled = false;
+              btnDirectRoom.innerHTML = origDirect;
+            }, 3000);
+          }, 300);
         };
       }
 
@@ -703,7 +861,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
 
       if (btnSubmit) {
         btnSubmit.disabled = false;
-        btnSubmit.innerHTML = '📲 KIRIM LAPORAN KE KONTAK LAYANAN PENGADUAN';
+        btnSubmit.innerHTML = '<span>📲</span> KIRIM LAPORAN KE KONTAK LAYANAN PENGADUAN';
       }
 
       if (modalSuccess) modalSuccess.classList.add('show');
