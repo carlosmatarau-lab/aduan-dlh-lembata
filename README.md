@@ -51,7 +51,7 @@ Aplikasi ini dibangun murni menggunakan **HTML5, CSS3 Modern, dan Vanilla JavaSc
 d:\app/
 ├── index.html                           # File utama aplikasi portal aduan & peta publik
 ├── qr-code.html                         # Poster cetak & generator QR Code publik
-├── petugas.html                         # Pengalihan resmi ke WhatsApp Helpline DLH
+├── petugas.html                         # Portal Khusus Petugas & Verifikasi Aduan DLH
 ├── vercel.json                          # Konfigurasi deployment & security headers Vercel
 ├── check-vercel.ps1                     # Script diagnostik deployment Vercel
 ├── perencanaan.md                       # Dokumen rencana aktualisasi lengkap
