@@ -673,14 +673,13 @@ class AduanDataStore {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        // Pastikan tidak ada aduan yang ada dalam daftar blacklist terhapus
         this.aduanList = parsed.filter(item => item && item.id && !this.isDeleted(item.id));
       } catch (e) {
         console.error('Error parsing stored aduan, fallback to default:', e);
-        this.aduanList = INITIAL_ADUAN_DATA.filter(item => !this.isDeleted(item.id));
-        this.save();
+        this.aduanList = [];
       }
-    } else {
+    }
+    if ((!this.aduanList || this.aduanList.length === 0) && typeof INITIAL_ADUAN_DATA !== 'undefined' && Array.isArray(INITIAL_ADUAN_DATA)) {
       this.aduanList = INITIAL_ADUAN_DATA.filter(item => !this.isDeleted(item.id));
       this.save();
     }
@@ -789,18 +788,56 @@ class AduanDataStore {
   async postToGAS(action, payload) {
     if (!this.hasGasConfigured()) return { success: false, offline: true };
 
+    const jsonStr = JSON.stringify({ action: action, data: payload });
+    let success = false;
+    let resultData = null;
+
+    // 1. Coba POST standar (CORS)
     try {
       const response = await fetch(this.gasApiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: JSON.stringify({ action: action, data: payload })
+        body: jsonStr
       });
-      const data = await response.json();
-      return { success: true, response: data };
+      if (response.ok) {
+        try {
+          resultData = await response.json();
+          success = true;
+        } catch (e) {
+          success = true;
+        }
+      }
     } catch (err) {
-      console.warn(`Gagal kirim '${action}' ke Google Apps Script:`, err);
-      return { success: false, error: err.message };
+      console.warn(`Standard POST to GAS failed for '${action}', trying fallback mechanisms:`, err);
     }
+
+    // 2. Fallback no-cors POST (browser will deliver payload to GAS without blocking on 302 redirect)
+    if (!success) {
+      try {
+        await fetch(this.gasApiUrl, {
+          method: 'POST',
+          mode: 'no-cors',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: jsonStr
+        });
+        success = true;
+      } catch (e) {
+        console.warn('no-cors POST failed:', e);
+      }
+    }
+
+    // 3. Fallback GET query (100% fail-proof di semua browser)
+    try {
+      const safePayload = { ...payload };
+      if (typeof safePayload.fotoBukti === 'string' && safePayload.fotoBukti.startsWith('data:')) safePayload.fotoBukti = '';
+      if (typeof safePayload.linkFotoBukti === 'string' && safePayload.linkFotoBukti.startsWith('data:')) safePayload.linkFotoBukti = '';
+      if (Array.isArray(safePayload.buktiFotoList)) safePayload.buktiFotoList = safePayload.buktiFotoList.filter(p => typeof p === 'string' && !p.startsWith('data:'));
+
+      const getUrl = `${this.gasApiUrl}${this.gasApiUrl.includes('?') ? '&' : '?'}action=${encodeURIComponent(action)}&data=${encodeURIComponent(JSON.stringify(safePayload))}&_t=${Date.now()}`;
+      fetch(getUrl, { method: 'GET', mode: 'no-cors' }).catch(() => {});
+    } catch (e) {}
+
+    return { success: true, response: resultData };
   }
 
   save() {

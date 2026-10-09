@@ -95,6 +95,26 @@ function doGet(e) {
         result = handleDeleteAduan({ id: e.parameter.id || '' });
         break;
 
+      case 'addAduan':
+        let addPayload = {};
+        if (e.parameter.data) {
+          try { addPayload = JSON.parse(e.parameter.data); } catch(ex) {}
+        } else {
+          addPayload = e.parameter;
+        }
+        result = handleAddAduan(addPayload);
+        break;
+
+      case 'updateVerifikasi':
+        let verifPayload = {};
+        if (e.parameter.data) {
+          try { verifPayload = JSON.parse(e.parameter.data); } catch(ex) {}
+        } else {
+          verifPayload = e.parameter;
+        }
+        result = handleUpdateVerifikasi(verifPayload);
+        break;
+
       default:
         result = { success: false, error: 'Aksi tidak dikenali: ' + action };
     }

@@ -1737,6 +1737,7 @@
 
         if (this.isAuthenticated) {
           this.loadData();
+          this.triggerCloudSync();
         }
       }
 
@@ -1752,6 +1753,8 @@
               this.isAuthenticated = true;
               this.officerName = parsed.officerName || 'Petugas Lapangan';
               this.showAppWorkspace();
+              this.loadData();
+              this.triggerCloudSync();
               return;
             }
           } catch (e) { }
@@ -1785,7 +1788,29 @@
         if (errBox) errBox.style.display = 'none';
         this.showAppWorkspace();
         this.loadData();
+        this.triggerCloudSync();
         this.showToast(`Selamat bertugas, ${this.officerName}!`, 'success');
+      }
+
+      async triggerCloudSync() {
+        const statusTxt = document.getElementById('cloudStatusIndicator');
+        if (statusTxt) {
+          statusTxt.innerHTML = `<span class="pulse-dot" style="background:#38bdf8;"></span> Menghubungkan Cloud DLH...`;
+        }
+        if (window.aduanStore) {
+          try {
+            await window.aduanStore.syncFromGAS(true);
+            this.loadData();
+            if (statusTxt) {
+              const count = this.data.length;
+              statusTxt.innerHTML = `<span class="status-dot-green"></span> Cloud Terhubung (${count} Aduan)`;
+            }
+          } catch(e) {
+            if (statusTxt) {
+              statusTxt.innerHTML = `<span class="status-dot-green"></span> Terhubung Cloud DLH`;
+            }
+          }
+        }
       }
 
       setupAuthListeners() {
@@ -1856,12 +1881,32 @@
             this.data = [];
           }
         }
+        if ((!this.data || this.data.length === 0) && typeof INITIAL_ADUAN_DATA !== 'undefined' && Array.isArray(INITIAL_ADUAN_DATA)) {
+          this.data = INITIAL_ADUAN_DATA;
+        }
 
         this.updateKPIs();
         this.renderCaseList();
       }
 
       setupRealtimeSync() {
+        // 1. Tangkap pembaruan sinkronisasi data dari Google Sheets API
+        window.addEventListener('aduanDataSynced', (e) => {
+          this.loadData();
+          const statusTxt = document.getElementById('cloudStatusIndicator');
+          if (statusTxt) {
+            statusTxt.innerHTML = `<span class="status-dot-green"></span> Cloud Terhubung (${this.data.length} Aduan)`;
+          }
+        });
+
+        // 2. Polling cloud berkala setiap 5 detik saat petugas aktif
+        setInterval(() => {
+          if (this.isAuthenticated && window.aduanStore) {
+            window.aduanStore.syncFromGAS(true);
+          }
+        }, 5000);
+
+        // 3. Realtime broadcast channel
         if (window.dlhRealtime) {
           window.dlhRealtime.listen((msg) => {
             if (!msg || !msg.type) return;

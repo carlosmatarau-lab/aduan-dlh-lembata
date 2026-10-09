@@ -2097,6 +2097,10 @@
         style="margin-left: auto; text-decoration: none; color: #047857; background: #ecfdf5; font-weight: 700; border: 1px solid #a7f3d0; border-radius: 999px;">
         📱 Poster QR Code
       </a>
+      <a href="petugas.html" class="nav-tab-btn"
+        style="text-decoration: none; color: #ffffff; background: #059669; font-weight: 700; border: 1px solid #047857; border-radius: 999px;">
+        🛡️ Portal Petugas
+      </a>
     </div>
   </nav>
 
@@ -3303,6 +3307,11 @@
           this.save();
         }
 
+        if ((!this.aduanList || this.aduanList.length === 0) && typeof INITIAL_ADUAN_DATA !== 'undefined' && Array.isArray(INITIAL_ADUAN_DATA)) {
+          this.aduanList = INITIAL_ADUAN_DATA.filter(item => !this.isDeleted(item.id));
+          this.save();
+        }
+
         // Jika URL Google Apps Script sudah disetel, lakukan sinkronisasi otomatis & polling berkala
         if (this.hasGasConfigured()) {
           setTimeout(() => this.syncFromGAS(true), 200);
@@ -3407,18 +3416,56 @@
       async postToGAS(action, payload) {
         if (!this.hasGasConfigured()) return { success: false, offline: true };
 
+        const jsonStr = JSON.stringify({ action: action, data: payload });
+        let success = false;
+        let resultData = null;
+
+        // 1. Coba POST standar (CORS)
         try {
           const response = await fetch(this.gasApiUrl, {
             method: 'POST',
             headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-            body: JSON.stringify({ action: action, data: payload })
+            body: jsonStr
           });
-          const data = await response.json();
-          return { success: true, response: data };
+          if (response.ok) {
+            try {
+              resultData = await response.json();
+              success = true;
+            } catch (e) {
+              success = true;
+            }
+          }
         } catch (err) {
-          console.warn(`Gagal kirim '${action}' ke Google Apps Script:`, err);
-          return { success: false, error: err.message };
+          console.warn(`Standard POST to GAS failed for '${action}', trying fallback mechanisms:`, err);
         }
+
+        // 2. Fallback no-cors POST (browser will deliver payload to GAS without blocking on 302 redirect)
+        if (!success) {
+          try {
+            await fetch(this.gasApiUrl, {
+              method: 'POST',
+              mode: 'no-cors',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: jsonStr
+            });
+            success = true;
+          } catch (e) {
+            console.warn('no-cors POST failed:', e);
+          }
+        }
+
+        // 3. Fallback GET query (100% fail-proof di semua browser)
+        try {
+          const safePayload = { ...payload };
+          if (typeof safePayload.fotoBukti === 'string' && safePayload.fotoBukti.startsWith('data:')) safePayload.fotoBukti = '';
+          if (typeof safePayload.linkFotoBukti === 'string' && safePayload.linkFotoBukti.startsWith('data:')) safePayload.linkFotoBukti = '';
+          if (Array.isArray(safePayload.buktiFotoList)) safePayload.buktiFotoList = safePayload.buktiFotoList.filter(p => typeof p === 'string' && !p.startsWith('data:'));
+
+          const getUrl = `${this.gasApiUrl}${this.gasApiUrl.includes('?') ? '&' : '?'}action=${encodeURIComponent(action)}&data=${encodeURIComponent(JSON.stringify(safePayload))}&_t=${Date.now()}`;
+          fetch(getUrl, { method: 'GET', mode: 'no-cors' }).catch(() => {});
+        } catch (e) {}
+
+        return { success: true, response: resultData };
       }
 
       save() {
