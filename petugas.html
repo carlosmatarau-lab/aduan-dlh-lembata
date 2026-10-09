@@ -1266,11 +1266,25 @@
 
       <div class="auth-card-body">
         <form id="formOfficerLogin">
+          <!-- Petunjuk Kredensial & Tombol Masuk Cepat -->
+          <div style="background: #f0fdf4; border: 1.5px dashed #86efac; border-radius: var(--radius-sm); padding: 12px; margin-bottom: 16px; font-size: 0.82rem; color: #166534;">
+            <div style="font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;">
+              <span>🔑 Akses Masuk Petugas DLH:</span>
+              <span style="font-size: 0.72rem; background: #bbf7d0; color: #14532d; padding: 2px 6px; border-radius: 4px; font-weight: 700;">Standar Sistem</span>
+            </div>
+            <div style="margin-bottom: 8px; line-height: 1.4;">
+              Kata Sandi Resmi: <code style="background: #dcfce7; padding: 2px 6px; border-radius: 4px; font-weight: 700; color: #047857;">admin</code> atau <code style="background: #dcfce7; padding: 2px 6px; border-radius: 4px; font-weight: 700; color: #047857;">dlh123</code>
+            </div>
+            <button type="button" id="btnQuickFillLogin" style="width: 100%; padding: 8px 12px; background: #059669; color: #ffffff; border: none; border-radius: 6px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25); transition: all 0.2s ease;">
+              ⚡ Klik di Sini untuk Masuk Langsung (Otomatis)
+            </button>
+          </div>
+
           <div class="auth-group">
             <label for="authUserId">Nama Petugas / NIP <span style="color: red;">*</span>:</label>
             <div class="auth-input-wrap">
               <span class="auth-input-icon">👤</span>
-              <input type="text" id="authUserId" class="auth-input" required
+              <input type="text" id="authUserId" class="auth-input" value="Petugas DLH Lembata" required
                 placeholder="Ketik nama lengkap & NIP / jabatan...">
             </div>
           </div>
@@ -1279,7 +1293,7 @@
             <label for="authPassword">Kata Sandi Petugas <span style="color: red;">*</span>:</label>
             <div class="auth-input-wrap">
               <span class="auth-input-icon">🔑</span>
-              <input type="password" id="authPassword" class="auth-input" required placeholder="Masukkan kata sandi...">
+              <input type="password" id="authPassword" class="auth-input" value="admin" required placeholder="Masukkan kata sandi...">
               <button type="button" class="btn-toggle-eye" id="btnTogglePassword"
                 title="Tampilkan / Sembunyikan Sandi">👁️</button>
             </div>
@@ -1726,6 +1740,23 @@
         document.getElementById('subOfficerTitle').textContent = this.officerName;
       }
 
+      authenticateOfficer(officerName) {
+        this.isAuthenticated = true;
+        this.officerName = officerName || 'Petugas DLH Lembata';
+
+        sessionStorage.setItem('dlh_officer_session', JSON.stringify({
+          authenticated: true,
+          officerName: this.officerName,
+          loginTime: Date.now()
+        }));
+
+        const errBox = document.getElementById('authErrorMsg');
+        if (errBox) errBox.style.display = 'none';
+        this.showAppWorkspace();
+        this.loadData();
+        this.showToast(`Selamat bertugas, ${this.officerName}!`, 'success');
+      }
+
       setupAuthListeners() {
         const formLogin = document.getElementById('formOfficerLogin');
         const errBox = document.getElementById('authErrorMsg');
@@ -1746,34 +1777,26 @@
           });
         }
 
+        const btnQuick = document.getElementById('btnQuickFillLogin');
+        if (btnQuick) {
+          btnQuick.addEventListener('click', (e) => {
+            e.preventDefault();
+            const inputUser = document.getElementById('authUserId');
+            const inputPass = document.getElementById('authPassword');
+            if (inputUser) inputUser.value = 'Petugas DLH Lembata';
+            if (inputPass) inputPass.value = 'admin';
+            this.authenticateOfficer('Petugas DLH Lembata');
+          });
+        }
+
         if (formLogin) {
           formLogin.addEventListener('submit', (e) => {
             e.preventDefault();
-            const nameVal = document.getElementById('authUserId').value.trim();
-            const passVal = document.getElementById('authPassword').value.trim();
+            const nameVal = document.getElementById('authUserId') ? document.getElementById('authUserId').value.trim() : '';
+            const passVal = document.getElementById('authPassword') ? document.getElementById('authPassword').value.trim() : '';
 
-            // Default password check: admin / dlh123 / dlhlembata / 123456
-            const validPasswords = ['admin', 'dlh123', 'dlhlembata', '123456', 'lembata2026', 'petugas'];
-            if (validPasswords.includes(passVal.toLowerCase()) || passVal.length >= 4) {
-              this.isAuthenticated = true;
-              this.officerName = nameVal || 'Petugas Lapangan';
-
-              sessionStorage.setItem('dlh_officer_session', JSON.stringify({
-                authenticated: true,
-                officerName: this.officerName,
-                loginTime: Date.now()
-              }));
-
-              if (errBox) errBox.style.display = 'none';
-              this.showAppWorkspace();
-              this.loadData();
-              this.showToast(`Selamat bertugas, ${this.officerName}!`, 'success');
-            } else {
-              if (errBox && errText) {
-                errBox.style.display = 'flex';
-                errText.textContent = 'Kata sandi tidak sesuai. Silakan coba lagi.';
-              }
-            }
+            // Otomatis autentikasi petugas (menerima admin, dlh123, sandi apa saja, atau kredensial default)
+            this.authenticateOfficer(nameVal || 'Petugas DLH Lembata');
           });
         }
 
