@@ -33,11 +33,6 @@
  */
 
 // ===== KONFIGURASI =====
-// ID dan URL Google Spreadsheet database pengaduan DLH Lembata
-const SPREADSHEET_ID = '1lDsKvNdyEW_xugTTR2Va4HY8vEtxVsgTP-u1g_I_4O0';
-const SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/1lDsKvNdyEW_xugTTR2Va4HY8vEtxVsgTP-u1g_I_4O0/edit?gid=1323614970#gid=1323614970';
-const SHEET_GID = '1323614970';
-
 const SHEET_NAME_ADUAN = 'Data_Aduan';
 const SHEET_NAME_LOG = 'Log_Aktivitas';
 
@@ -93,26 +88,6 @@ function doGet(e) {
       case 'delete':
       case 'deleteAduan':
         result = handleDeleteAduan({ id: e.parameter.id || '' });
-        break;
-
-      case 'addAduan':
-        let addPayload = {};
-        if (e.parameter.data) {
-          try { addPayload = JSON.parse(e.parameter.data); } catch(ex) {}
-        } else {
-          addPayload = e.parameter;
-        }
-        result = handleAddAduan(addPayload);
-        break;
-
-      case 'updateVerifikasi':
-        let verifPayload = {};
-        if (e.parameter.data) {
-          try { verifPayload = JSON.parse(e.parameter.data); } catch(ex) {}
-        } else {
-          verifPayload = e.parameter;
-        }
-        result = handleUpdateVerifikasi(verifPayload);
         break;
 
       default:
@@ -176,38 +151,12 @@ function createJsonResponse(data) {
 }
 
 /**
- * Mendapatkan referensi Google Spreadsheet.
- * Mengutamakan SPREADSHEET_ID yang telah ditentukan, dengan fallback ke getActiveSpreadsheet.
- */
-function getSpreadsheet() {
-  try {
-    if (typeof SPREADSHEET_ID === 'string' && SPREADSHEET_ID.trim().length > 0) {
-      return SpreadsheetApp.openById(SPREADSHEET_ID.trim());
-    }
-  } catch (err) {
-    Logger.log('Gagal openById: ' + err.message + ', beralih ke getActiveSpreadsheet()');
-  }
-  return SpreadsheetApp.getActiveSpreadsheet();
-}
-
-/**
- * Mendapatkan atau membuat sheet berdasarkan nama atau GID.
+ * Mendapatkan atau membuat sheet berdasarkan nama.
  * Jika sheet belum ada, akan dibuatkan baru secara otomatis beserta header.
  */
 function getOrCreateSheet(sheetName, headers) {
-  const ss = getSpreadsheet();
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
   let sheet = ss.getSheetByName(sheetName);
-
-  // Jika belum ditemukan dan ini adalah sheet aduan, coba cari berdasarkan SHEET_GID
-  if (!sheet && sheetName === SHEET_NAME_ADUAN && typeof SHEET_GID !== 'undefined' && SHEET_GID) {
-    const allSheets = ss.getSheets();
-    for (let i = 0; i < allSheets.length; i++) {
-      if (String(allSheets[i].getSheetId()) === String(SHEET_GID)) {
-        sheet = allSheets[i];
-        break;
-      }
-    }
-  }
 
   if (!sheet) {
     sheet = ss.insertSheet(sheetName);
@@ -257,13 +206,6 @@ function getSheetDataAsObjects(sheet) {
  * Konversi object dari sheet menjadi format yang sesuai dengan frontend (camelCase)
  */
 function mapSheetRowToFrontend(row) {
-  const linkFoto = String(row['Link_Foto_Bukti'] || '');
-  let photos = [];
-  if (linkFoto && linkFoto !== '-') {
-    photos = (linkFoto.includes(',') && !linkFoto.startsWith('data:'))
-      ? linkFoto.split(',').map(s => s.trim()).filter(Boolean)
-      : [linkFoto];
-  }
   return {
     id: String(row['ID_Aduan'] || ''),
     timestamp: String(row['Timestamp'] || ''),
@@ -279,10 +221,7 @@ function mapSheetRowToFrontend(row) {
     uraian: String(row['Uraian_Aduan'] || ''),
     sumberDugaan: String(row['Sumber_Dugaan'] || '-'),
     tanggalKejadian: String(row['Tanggal_Kejadian'] || ''),
-    linkFoto: linkFoto,
-    fotoBukti: photos[0] || '',
-    linkFotoBukti: linkFoto,
-    buktiFotoList: photos,
+    linkFoto: String(row['Link_Foto_Bukti'] || ''),
     status: String(row['Status'] || 'Baru'),
     petugasVerifikasi: String(row['Petugas_Verifikasi'] || '-'),
     tanggalVerifikasi: String(row['Tanggal_Verifikasi'] || '-'),
@@ -404,57 +343,6 @@ function handleGetStats() {
 }
 
 
-/**
- * Menyimpan gambar Base64 ke folder Google Drive "DLH_Lembata_Bukti_Aduan"
- * dan mengembalikan direct link gambar jika DriveApp aktif.
- */
-function saveBase64ToDrive(base64Data, fileName, aduanId) {
-  try {
-    if (!base64Data || typeof base64Data !== 'string') return '';
-    if (base64Data.startsWith('http://') || base64Data.startsWith('https://')) {
-      return base64Data;
-    }
-
-    let mimeType = 'image/jpeg';
-    let rawBase64 = base64Data;
-    const match = base64Data.match(/^data:([^;]+);base64,(.*)$/);
-    if (match) {
-      mimeType = match[1];
-      rawBase64 = match[2];
-    }
-
-    const folderName = 'DLH_Lembata_Bukti_Aduan';
-    let folder;
-    const folders = DriveApp.getFoldersByName(folderName);
-    if (folders.hasNext()) {
-      folder = folders.next();
-    } else {
-      folder = DriveApp.createFolder(folderName);
-    }
-
-    try {
-      folder.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    } catch (e) {}
-
-    const bytes = Utilities.base64Decode(rawBase64);
-    const safeName = (aduanId || 'ADU') + '_' + (fileName || 'foto') + '_' + Date.now() + '.jpg';
-    const blob = Utilities.newBlob(bytes, mimeType, safeName);
-    const file = folder.createFile(blob);
-
-    try {
-      file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    } catch (e) {}
-
-    return 'https://lh3.googleusercontent.com/d/' + file.getId();
-  } catch (err) {
-    Logger.log('DriveApp upload fallback: ' + err.toString());
-    if (base64Data.length <= 49000) {
-      return base64Data;
-    }
-    return '';
-  }
-}
-
 // ==================================================================================
 // HANDLER AKSI: TAMBAH ADUAN BARU (POST)
 // ==================================================================================
@@ -488,31 +376,10 @@ function handleAddAduan(formData) {
   const lat = formData.lat ? parseFloat(formData.lat) : (kecCoord.lat + (Math.random() - 0.5) * 0.02);
   const lng = formData.lng ? parseFloat(formData.lng) : (kecCoord.lng + (Math.random() - 0.5) * 0.02);
 
-  // Kumpulkan semua foto bukti pendukung (1 s.d. 3 foto)
-  let rawPhotos = [];
-  if (Array.isArray(formData.buktiFotoList) && formData.buktiFotoList.length > 0) {
-    rawPhotos = formData.buktiFotoList.filter(Boolean);
-  } else if (formData.fotoBukti || formData.linkFotoBukti || formData.linkFoto) {
-    const single = formData.fotoBukti || formData.linkFotoBukti || formData.linkFoto;
-    rawPhotos = (typeof single === 'string' && single.includes(',') && !single.startsWith('data:'))
-      ? single.split(',').map(s => s.trim()).filter(Boolean)
-      : [single];
-  }
-
-  // Simpan foto base64 ke Google Drive bila memungkinkan, atau gunakan link langsung
-  const processedPhotos = rawPhotos.map((p, idx) => {
-    if (typeof p === 'string' && p.startsWith('data:image/')) {
-      return saveBase64ToDrive(p, 'bukti_' + (idx + 1), newId);
-    }
-    return p;
-  }).filter(Boolean);
-
-  let finalFotoString = processedPhotos.join(', ');
-  if (finalFotoString.length > 49000) {
-    finalFotoString = processedPhotos[0] || '';
-    if (finalFotoString.length > 49000) {
-      finalFotoString = '';
-    }
+  // Ambil data foto bukti dan pastikan tidak melampaui limit sel Google Sheets (50.000 karakter)
+  let fotoData = formData.fotoBukti || formData.linkFotoBukti || formData.linkFoto || (Array.isArray(formData.buktiFotoList) ? formData.buktiFotoList[0] : '') || '';
+  if (typeof fotoData === 'string' && fotoData.length > 49000) {
+    fotoData = fotoData.substring(0, 49000);
   }
 
   // Susun baris data baru sesuai urutan HEADERS_ADUAN
@@ -531,7 +398,7 @@ function handleAddAduan(formData) {
     formData.uraian || '-',                       // Uraian_Aduan
     formData.sumberDugaan || '-',                 // Sumber_Dugaan
     formData.tanggalKejadian || now.split(' ')[0],// Tanggal_Kejadian
-    finalFotoString,                              // Link_Foto_Bukti
+    fotoData,                                     // Link_Foto_Bukti
     'Baru',                                       // Status
     '-',                                          // Petugas_Verifikasi
     '-',                                          // Tanggal_Verifikasi
@@ -544,7 +411,7 @@ function handleAddAduan(formData) {
   sheet.appendRow(newRow);
 
   // Tulis log
-  writeLog('ADUAN_BARU', 'ID: ' + newId + ' | Pelapor: ' + (formData.namaPelapor || 'Anonim') + ' | Kec: ' + (formData.kecamatan || '-') + ' | Bukti Foto: ' + processedPhotos.length);
+  writeLog('ADUAN_BARU', 'ID: ' + newId + ' | Pelapor: ' + (formData.namaPelapor || 'Anonim') + ' | Kec: ' + (formData.kecamatan || '-'));
 
   return {
     success: true,
@@ -552,10 +419,7 @@ function handleAddAduan(formData) {
     data: {
       id: newId,
       timestamp: now,
-      status: 'Baru',
-      fotoBukti: processedPhotos[0] || '',
-      linkFotoBukti: finalFotoString,
-      buktiFotoList: processedPhotos
+      status: 'Baru'
     }
   };
 }
@@ -717,15 +581,11 @@ function setupSpreadsheet() {
   writeLog('SETUP', 'Spreadsheet berhasil diinisialisasi. Sheet: Data_Aduan, Log_Aktivitas');
 
   // Feedback ke user
-  try {
-    SpreadsheetApp.getUi().alert(
-      '✅ Setup Berhasil!\n\n' +
-      'Sheet "Data_Aduan" dan "Log_Aktivitas" telah siap.\n' +
-      'Silakan lanjutkan dengan Deploy > New deployment > Web app.'
-    );
-  } catch (uiErr) {
-    Logger.log('Setup selesai. Sheet siap.');
-  }
+  SpreadsheetApp.getUi().alert(
+    '✅ Setup Berhasil!\n\n' +
+    'Sheet "Data_Aduan" dan "Log_Aktivitas" telah siap.\n' +
+    'Silakan lanjutkan dengan Deploy > New deployment > Web app.'
+  );
 }
 
 
@@ -781,12 +641,8 @@ function insertSampleData() {
 
   writeLog('SAMPLE_DATA', 'Data sampel sebanyak ' + samples.length + ' baris berhasil ditambahkan.');
 
-  try {
-    SpreadsheetApp.getUi().alert(
-      '✅ Data Sampel Berhasil Ditambahkan!\n\n' +
-      samples.length + ' baris data aduan contoh telah disisipkan ke sheet "Data_Aduan".'
-    );
-  } catch (uiErr) {
-    Logger.log('Sample data inserted: ' + samples.length + ' rows.');
-  }
+  SpreadsheetApp.getUi().alert(
+    '✅ Data Sampel Berhasil Ditambahkan!\n\n' +
+    samples.length + ' baris data aduan contoh telah disisipkan ke sheet "Data_Aduan".'
+  );
 }

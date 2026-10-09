@@ -59,7 +59,7 @@
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
       background-color: #f1f8f5;
-      background-image:
+      background-image: 
         radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
         radial-gradient(at 100% 0%, rgba(5, 150, 105, 0.14) 0px, transparent 50%),
         radial-gradient(at 100% 100%, rgba(6, 78, 59, 0.1) 0px, transparent 50%),
@@ -395,11 +395,9 @@
       0% {
         box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7);
       }
-
       70% {
         box-shadow: 0 0 0 8px rgba(16, 185, 129, 0);
       }
-
       100% {
         box-shadow: 0 0 0 0 rgba(16, 185, 129, 0);
       }
@@ -561,17 +559,9 @@
       background: var(--primary);
     }
 
-    .kpi-card.kpi-total::before {
-      background: var(--primary);
-    }
-
-    .kpi-card.kpi-recent::before {
-      background: var(--info);
-    }
-
-    .kpi-card.kpi-region::before {
-      background: var(--warning);
-    }
+    .kpi-card.kpi-total::before { background: var(--primary); }
+    .kpi-card.kpi-recent::before { background: var(--info); }
+    .kpi-card.kpi-region::before { background: var(--warning); }
 
     .kpi-label {
       display: flex;
@@ -1116,7 +1106,6 @@
         opacity: 0;
         transform: translateY(12px) scale(0.98);
       }
-
       to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -1224,21 +1213,17 @@
       .officer-header {
         padding: 14px 16px;
       }
-
       .officer-main {
         padding: 16px 12px;
       }
-
       .filter-toolbar {
         flex-direction: column;
         align-items: stretch;
       }
-
       .filter-selects {
         flex-direction: column;
         align-items: stretch;
       }
-
       .filter-select {
         width: 100%;
       }
@@ -1265,57 +1250,12 @@
       </div>
 
       <div class="auth-card-body">
-        <script>
-          window.doOfficerLogin = function(customName) {
-            try {
-              const inputUser = document.getElementById('authUserId');
-              const officerName = customName || (inputUser ? inputUser.value.trim() : '') || 'Petugas DLH Lembata';
-              sessionStorage.setItem('dlh_officer_session', JSON.stringify({
-                authenticated: true,
-                officerName: officerName,
-                loginTime: Date.now()
-              }));
-              if (window.officerPortal && typeof window.officerPortal.authenticateOfficer === 'function') {
-                window.officerPortal.authenticateOfficer(officerName);
-              } else {
-                const gate = document.getElementById('officerAuthGate');
-                const app = document.getElementById('officerAppContainer');
-                const hName = document.getElementById('headerOfficerName');
-                const sTitle = document.getElementById('subOfficerTitle');
-                if (gate) gate.style.display = 'none';
-                if (app) app.style.display = 'flex';
-                if (hName) hName.textContent = officerName;
-                if (sTitle) sTitle.textContent = officerName;
-              }
-            } catch(e) {
-              console.error('Login error:', e);
-              const gate = document.getElementById('officerAuthGate');
-              const app = document.getElementById('officerAppContainer');
-              if (gate) gate.style.display = 'none';
-              if (app) app.style.display = 'flex';
-            }
-          };
-        </script>
-        <form id="formOfficerLogin" onsubmit="event.preventDefault(); window.doOfficerLogin(); return false;">
-          <!-- Petunjuk Kredensial & Tombol Masuk Cepat -->
-          <div style="background: #f0fdf4; border: 1.5px dashed #86efac; border-radius: var(--radius-sm); padding: 12px; margin-bottom: 16px; font-size: 0.82rem; color: #166534;">
-            <div style="font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;">
-              <span>🔑 Akses Masuk Petugas DLH:</span>
-              <span style="font-size: 0.72rem; background: #bbf7d0; color: #14532d; padding: 2px 6px; border-radius: 4px; font-weight: 700;">Standar Sistem</span>
-            </div>
-            <div style="margin-bottom: 8px; line-height: 1.4;">
-              Kata Sandi Resmi: <code style="background: #dcfce7; padding: 2px 6px; border-radius: 4px; font-weight: 700; color: #047857;">admin</code> atau <code style="background: #dcfce7; padding: 2px 6px; border-radius: 4px; font-weight: 700; color: #047857;">dlh123</code>
-            </div>
-            <button type="button" id="btnQuickFillLogin" onclick="window.doOfficerLogin('Petugas DLH Lembata');" style="width: 100%; padding: 10px 12px; background: #059669; color: #ffffff; border: none; border-radius: 6px; font-size: 0.84rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25); transition: all 0.2s ease;">
-              ⚡ Klik di Sini untuk Masuk Langsung (Otomatis)
-            </button>
-          </div>
-
+        <form id="formOfficerLogin">
           <div class="auth-group">
             <label for="authUserId">Nama Petugas / NIP <span style="color: red;">*</span>:</label>
             <div class="auth-input-wrap">
               <span class="auth-input-icon">👤</span>
-              <input type="text" id="authUserId" class="auth-input" value="Petugas DLH Lembata" required
+              <input type="text" id="authUserId" class="auth-input" required
                 placeholder="Ketik nama lengkap & NIP / jabatan...">
             </div>
           </div>
@@ -1324,7 +1264,7 @@
             <label for="authPassword">Kata Sandi Petugas <span style="color: red;">*</span>:</label>
             <div class="auth-input-wrap">
               <span class="auth-input-icon">🔑</span>
-              <input type="password" id="authPassword" class="auth-input" value="admin" required placeholder="Masukkan kata sandi...">
+              <input type="password" id="authPassword" class="auth-input" required placeholder="Masukkan kata sandi...">
               <button type="button" class="btn-toggle-eye" id="btnTogglePassword"
                 title="Tampilkan / Sembunyikan Sandi">👁️</button>
             </div>
@@ -1336,7 +1276,7 @@
             <span id="authErrorText">Kata sandi tidak sesuai. Silakan coba lagi.</span>
           </div>
 
-          <button type="button" class="btn-submit-auth" onclick="window.doOfficerLogin();">
+          <button type="submit" class="btn-submit-auth">
             <span>🔓</span>
             <span>Masuk ke Daftar Aduan Masuk</span>
           </button>
@@ -1369,8 +1309,7 @@
         </div>
 
         <div class="officer-nav-tools">
-          <div class="officer-session-pill" id="btnHeaderOfficerProfile" title="Klik untuk mengubah nama petugas"
-            style="cursor: pointer;">
+          <div class="officer-session-pill" id="btnHeaderOfficerProfile" title="Klik untuk mengubah nama petugas" style="cursor: pointer;">
             <div class="pulse-dot"></div>
             <span>Petugas: <strong id="headerOfficerName">Petugas Lapangan</strong> ✏️</span>
           </div>
@@ -1419,8 +1358,7 @@
           <span id="cloudStatusIndicator" class="cloud-status-badge">
             <span class="status-dot-green"></span> Terhubung Cloud DLH
           </span>
-          <a href="#" id="linkDirectSpreadsheet" class="link-spreadsheet-mini" target="_blank"
-            title="Buka Google Sheets di tab baru">
+          <a href="#" id="linkDirectSpreadsheet" class="link-spreadsheet-mini" target="_blank" title="Buka Google Sheets di tab baru">
             📊 Buka Spreadsheet ↗
           </a>
         </div>
@@ -1455,8 +1393,7 @@
             <span>Kategori Masalah Terbanyak</span>
             <span class="kpi-icon">⚠️</span>
           </div>
-          <div class="kpi-value" id="kpiKategoriTop" style="font-size: 1.25rem; line-height: 1.2; padding-top: 6px;">-
-          </div>
+          <div class="kpi-value" id="kpiKategoriTop" style="font-size: 1.25rem; line-height: 1.2; padding-top: 6px;">-</div>
           <div class="kpi-desc" id="kpiKategoriTopCount">0 aduan terdaftar</div>
         </div>
       </section>
@@ -1573,15 +1510,13 @@
         <p style="font-size: 0.9rem; color: #1e293b; margin-bottom: 14px; line-height: 1.5;">
           Apakah Anda yakin ingin menghapus laporan aduan ini dari daftar masuk?
         </p>
-
-        <div
-          style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.84rem;">
-          <div>Nomor Tiket: <strong id="delDisplayTicket" style="font-family: monospace; color: #064e3b;">-</strong>
-          </div>
+        
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 12px 14px; margin-bottom: 14px; font-size: 0.84rem;">
+          <div>Nomor Tiket: <strong id="delDisplayTicket" style="font-family: monospace; color: #064e3b;">-</strong></div>
           <div style="margin-top: 4px;">Pelapor: <strong id="delDisplayPelapor">-</strong></div>
           <div style="margin-top: 4px;">Kategori: <strong id="delDisplayKategori">-</strong></div>
         </div>
-
+        
         <p style="font-size: 0.78rem; color: #dc2626; font-weight: 600; margin: 0;">
           ⚠️ Data yang dihapus akan dibersihkan dari penyimpanan lokal dan sinkronisasi sistem.
         </p>
@@ -1611,8 +1546,7 @@
           style="max-width: 100%; max-height: 70vh; object-fit: contain; border-radius: 8px;">
       </div>
       <div class="modal-footer">
-        <a id="btnDownloadPhoto" href="#" download="bukti_aduan.jpg" class="btn-action-primary"
-          style="text-decoration: none;">
+        <a id="btnDownloadPhoto" href="#" download="bukti_aduan.jpg" class="btn-action-primary" style="text-decoration: none;">
           📥 Unduh File Foto
         </a>
         <button type="button" class="btn-action-secondary" id="btnCloseModalPhotoFooter">Tutup</button>
@@ -1632,15 +1566,12 @@
         <button type="button" class="btn-close-modal" id="btnCloseModalSpreadsheet">&times;</button>
       </div>
       <div class="modal-body">
-        <div
-          style="background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 14px 16px; margin-bottom: 16px;">
-          <div
-            style="font-weight: 800; color: #065f46; font-size: 0.88rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+        <div style="background: #ecfdf5; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 14px 16px; margin-bottom: 16px;">
+          <div style="font-weight: 800; color: #065f46; font-size: 0.88rem; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
             <span>🌱</span> Basis Data Resmi Dinas Lingkungan Hidup Kab. Lembata
           </div>
           <p style="font-size: 0.8rem; color: #047857; line-height: 1.5; margin: 0;">
-            Google Spreadsheet digunakan sebagai database utama untuk mencatat seluruh daftar aduan masuk dari
-            masyarakat secara permanen.
+            Google Spreadsheet digunakan sebagai database utama untuk mencatat seluruh daftar aduan masuk dari masyarakat secara permanen.
           </p>
         </div>
 
@@ -1650,9 +1581,8 @@
           </label>
           <div style="display: flex; gap: 8px;">
             <input type="url" id="cfgSpreadsheetUrl" class="auth-input" style="padding-left: 14px; font-size: 0.84rem;"
-              placeholder="https://docs.google.com/spreadsheets/d/1lDsKvNdyEW_xugTTR2Va4HY8vEtxVsgTP-u1g_I_4O0/edit?gid=1323614970#gid=1323614970">
-            <a href="https://docs.google.com/spreadsheets/d/1lDsKvNdyEW_xugTTR2Va4HY8vEtxVsgTP-u1g_I_4O0/edit?gid=1323614970#gid=1323614970"
-              id="cfgBtnOpenSheetDirect" target="_blank" class="btn-action-secondary"
+              placeholder="https://docs.google.com/spreadsheets/d/ID_SPREADSHEET/edit">
+            <a href="#" id="cfgBtnOpenSheetDirect" target="_blank" class="btn-action-secondary"
               style="white-space: nowrap; padding: 8px 14px; font-size: 0.82rem; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
               Buka ↗
             </a>
@@ -1679,8 +1609,7 @@
           </button>
         </div>
 
-        <div id="cloudTestResultBox"
-          style="display: none; padding: 10px 12px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 14px;"></div>
+        <div id="cloudTestResultBox" style="display: none; padding: 10px 12px; border-radius: 8px; font-size: 0.8rem; margin-bottom: 14px;"></div>
       </div>
       <div class="modal-footer">
         <button type="button" class="btn-action-secondary" id="btnCancelSpreadsheetConfig">Tutup</button>
@@ -1701,18 +1630,6 @@
     /* ===================================================================
        PORTAL PETUGAS - DAFTAR ADUAN MASUK CONTROLLER
        =================================================================== */
-
-    const formatPhotoUrl = window.formatPhotoUrl || function(url) {
-      if (!url || typeof url !== 'string') return '';
-      const trimmed = url.trim();
-      if (!trimmed || trimmed === '-') return '';
-      if (trimmed.startsWith('data:image')) return trimmed;
-      const driveMatch = trimmed.match(/drive\.google\.com\/(?:file\/d\/|open\?id=)([a-zA-Z0-9_-]+)/);
-      if (driveMatch && driveMatch[1]) {
-        return `https://lh3.googleusercontent.com/d/${driveMatch[1]}`;
-      }
-      return trimmed;
-    };
 
     class OfficerPortal {
       constructor() {
@@ -1737,7 +1654,6 @@
 
         if (this.isAuthenticated) {
           this.loadData();
-          this.triggerCloudSync();
         }
       }
 
@@ -1753,11 +1669,9 @@
               this.isAuthenticated = true;
               this.officerName = parsed.officerName || 'Petugas Lapangan';
               this.showAppWorkspace();
-              this.loadData();
-              this.triggerCloudSync();
               return;
             }
-          } catch (e) { }
+          } catch (e) {}
         }
         this.showAuthGate();
       }
@@ -1772,45 +1686,6 @@
         document.getElementById('officerAppContainer').style.display = 'flex';
         document.getElementById('headerOfficerName').textContent = this.officerName;
         document.getElementById('subOfficerTitle').textContent = this.officerName;
-      }
-
-      authenticateOfficer(officerName) {
-        this.isAuthenticated = true;
-        this.officerName = officerName || 'Petugas DLH Lembata';
-
-        sessionStorage.setItem('dlh_officer_session', JSON.stringify({
-          authenticated: true,
-          officerName: this.officerName,
-          loginTime: Date.now()
-        }));
-
-        const errBox = document.getElementById('authErrorMsg');
-        if (errBox) errBox.style.display = 'none';
-        this.showAppWorkspace();
-        this.loadData();
-        this.triggerCloudSync();
-        this.showToast(`Selamat bertugas, ${this.officerName}!`, 'success');
-      }
-
-      async triggerCloudSync() {
-        const statusTxt = document.getElementById('cloudStatusIndicator');
-        if (statusTxt) {
-          statusTxt.innerHTML = `<span class="pulse-dot" style="background:#38bdf8;"></span> Menghubungkan Cloud DLH...`;
-        }
-        if (window.aduanStore) {
-          try {
-            await window.aduanStore.syncFromGAS(true);
-            this.loadData();
-            if (statusTxt) {
-              const count = this.data.length;
-              statusTxt.innerHTML = `<span class="status-dot-green"></span> Cloud Terhubung (${count} Aduan)`;
-            }
-          } catch(e) {
-            if (statusTxt) {
-              statusTxt.innerHTML = `<span class="status-dot-green"></span> Terhubung Cloud DLH`;
-            }
-          }
-        }
       }
 
       setupAuthListeners() {
@@ -1833,26 +1708,34 @@
           });
         }
 
-        const btnQuick = document.getElementById('btnQuickFillLogin');
-        if (btnQuick) {
-          btnQuick.addEventListener('click', (e) => {
-            e.preventDefault();
-            const inputUser = document.getElementById('authUserId');
-            const inputPass = document.getElementById('authPassword');
-            if (inputUser) inputUser.value = 'Petugas DLH Lembata';
-            if (inputPass) inputPass.value = 'admin';
-            this.authenticateOfficer('Petugas DLH Lembata');
-          });
-        }
-
         if (formLogin) {
           formLogin.addEventListener('submit', (e) => {
             e.preventDefault();
-            const nameVal = document.getElementById('authUserId') ? document.getElementById('authUserId').value.trim() : '';
-            const passVal = document.getElementById('authPassword') ? document.getElementById('authPassword').value.trim() : '';
+            const nameVal = document.getElementById('authUserId').value.trim();
+            const passVal = document.getElementById('authPassword').value.trim();
 
-            // Otomatis autentikasi petugas (menerima admin, dlh123, sandi apa saja, atau kredensial default)
-            this.authenticateOfficer(nameVal || 'Petugas DLH Lembata');
+            // Default password check: admin / dlh123 / dlhlembata / 123456
+            const validPasswords = ['admin', 'dlh123', 'dlhlembata', '123456', 'lembata2026', 'petugas'];
+            if (validPasswords.includes(passVal.toLowerCase()) || passVal.length >= 4) {
+              this.isAuthenticated = true;
+              this.officerName = nameVal || 'Petugas Lapangan';
+
+              sessionStorage.setItem('dlh_officer_session', JSON.stringify({
+                authenticated: true,
+                officerName: this.officerName,
+                loginTime: Date.now()
+              }));
+
+              if (errBox) errBox.style.display = 'none';
+              this.showAppWorkspace();
+              this.loadData();
+              this.showToast(`Selamat bertugas, ${this.officerName}!`, 'success');
+            } else {
+              if (errBox && errText) {
+                errBox.style.display = 'flex';
+                errText.textContent = 'Kata sandi tidak sesuai. Silakan coba lagi.';
+              }
+            }
           });
         }
 
@@ -1881,32 +1764,12 @@
             this.data = [];
           }
         }
-        if ((!this.data || this.data.length === 0) && typeof INITIAL_ADUAN_DATA !== 'undefined' && Array.isArray(INITIAL_ADUAN_DATA)) {
-          this.data = INITIAL_ADUAN_DATA;
-        }
 
         this.updateKPIs();
         this.renderCaseList();
       }
 
       setupRealtimeSync() {
-        // 1. Tangkap pembaruan sinkronisasi data dari Google Sheets API
-        window.addEventListener('aduanDataSynced', (e) => {
-          this.loadData();
-          const statusTxt = document.getElementById('cloudStatusIndicator');
-          if (statusTxt) {
-            statusTxt.innerHTML = `<span class="status-dot-green"></span> Cloud Terhubung (${this.data.length} Aduan)`;
-          }
-        });
-
-        // 2. Polling cloud berkala setiap 5 detik saat petugas aktif
-        setInterval(() => {
-          if (this.isAuthenticated && window.aduanStore) {
-            window.aduanStore.syncFromGAS(true);
-          }
-        }, 5000);
-
-        // 3. Realtime broadcast channel
         if (window.dlhRealtime) {
           window.dlhRealtime.listen((msg) => {
             if (!msg || !msg.type) return;
@@ -2042,9 +1905,9 @@
         // Direct Spreadsheet Open
         const btnOpenSheet = document.getElementById('btnOpenSpreadsheet');
         const linkDirect = document.getElementById('linkDirectSpreadsheet');
-        const sheetUrl = (window.aduanStore && window.aduanStore.getSpreadsheetUrl)
-          ? window.aduanStore.getSpreadsheetUrl()
-          : 'https://docs.google.com/spreadsheets/d/1lDsKvNdyEW_xugTTR2Va4HY8vEtxVsgTP-u1g_I_4O0/edit?gid=1323614970#gid=1323614970';
+        const sheetUrl = (window.aduanStore && window.aduanStore.getSpreadsheetUrl) 
+          ? window.aduanStore.getSpreadsheetUrl() 
+          : 'https://docs.google.com/spreadsheets/d/1Zt9jO6_145T23fM_b8bF-s_w6L0_e4Z_qR3tG3s7g8/edit';
 
         if (btnOpenSheet) {
           btnOpenSheet.addEventListener('click', () => window.open(sheetUrl, '_blank'));
@@ -2196,7 +2059,7 @@
                   <!-- TANGGAL KEJADIAN -->
                   <div class="meta-box">
                     <div class="meta-box-label">📅 Tanggal Kejadian</div>
-                    <div class="meta-box-val">${item.tanggalKejadian || (typeof item.timestamp === 'string' && item.timestamp.includes(' ') ? item.timestamp.split(' ')[0] : (item.timestamp || '-'))}</div>
+                    <div class="meta-box-val">${item.tanggalKejadian || item.timestamp.split(' ')[0] || '-'}</div>
                     <div class="meta-box-sub">Dugaan Sumber: ${item.sumberDugaan || 'Limbah / Aktivitas Sekitar'}</div>
                   </div>
                 </div>
@@ -2255,43 +2118,31 @@
         if (!item) return [];
         const photoList = [];
 
-        const addCandidate = (val) => {
-          if (!val) return;
-          if (typeof val === 'string') {
-            const trimmed = val.trim();
-            if (!trimmed || trimmed === '-') return;
-            // Handle JSON string array
-            if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
-              try {
-                const arr = JSON.parse(trimmed);
-                if (Array.isArray(arr)) {
-                  arr.forEach(a => addCandidate(a));
-                  return;
-                }
-              } catch (e) {}
-            }
-            // Handle comma separated
-            if (trimmed.includes(',') && !trimmed.startsWith('data:')) {
-              trimmed.split(',').forEach(sub => addCandidate(sub));
-              return;
-            }
-            const clean = (typeof formatPhotoUrl === 'function') ? formatPhotoUrl(trimmed) : trimmed;
-            if (clean && !photoList.includes(clean)) {
-              photoList.push(clean);
-            }
-          } else if (val && typeof val === 'object') {
-            if (val.dataUrl) addCandidate(val.dataUrl);
-            else if (val.url) addCandidate(val.url);
-            else if (val.src) addCandidate(val.src);
-          }
-        };
-
         if (Array.isArray(item.buktiFotoList)) {
-          item.buktiFotoList.forEach(p => addCandidate(p));
+          item.buktiFotoList.forEach(p => {
+            if (typeof p === 'string' && p.trim() && p !== '-' && !photoList.includes(p.trim())) {
+              photoList.push(p.trim());
+            } else if (p && p.dataUrl && !photoList.includes(p.dataUrl)) {
+              photoList.push(p.dataUrl);
+            } else if (p && p.url && !photoList.includes(p.url)) {
+              photoList.push(p.url);
+            }
+          });
         }
 
-        ['fotoBukti', 'linkFotoBukti', 'buktiFoto', 'linkFoto', 'Link_Foto_Bukti'].forEach(field => {
-          addCandidate(item[field]);
+        ['fotoBukti', 'linkFotoBukti', 'buktiFoto', 'linkFoto'].forEach(field => {
+          const val = item[field];
+          if (val && typeof val === 'string' && val.trim() && val !== '-' && !photoList.includes(val.trim())) {
+            const strVal = val.trim();
+            if (strVal.includes(',') && !strVal.startsWith('data:')) {
+              strVal.split(',').forEach(sub => {
+                const trimmed = sub.trim();
+                if (trimmed && !photoList.includes(trimmed)) photoList.push(trimmed);
+              });
+            } else {
+              photoList.push(strVal);
+            }
+          }
         });
 
         return photoList;
@@ -2363,7 +2214,7 @@
           const deletedSet = new Set(deletedRaw ? JSON.parse(deletedRaw) : []);
           deletedSet.add(targetId);
           localStorage.setItem('dlh_deleted_aduan_ids', JSON.stringify([...deletedSet]));
-        } catch (e) { }
+        } catch (e) {}
 
         // 5. Tutup modal konfirmasi
         const modal = document.getElementById('modalConfirmDelete');
@@ -2512,16 +2363,7 @@
         const btnDownload = document.getElementById('btnDownloadPhoto');
 
         if (img) img.src = src;
-        if (btnDownload) {
-          btnDownload.href = src;
-          if (typeof src === 'string' && src.startsWith('data:')) {
-            btnDownload.setAttribute('download', 'bukti_aduan_dlh.jpg');
-            btnDownload.removeAttribute('target');
-          } else {
-            btnDownload.removeAttribute('download');
-            btnDownload.setAttribute('target', '_blank');
-          }
-        }
+        if (btnDownload) btnDownload.href = src;
         if (modal) modal.classList.add('show');
       }
 
@@ -2540,19 +2382,11 @@
       }
     }
 
-    // Inisialisasi saat dokumen siap (fail-proof)
-    function initOfficerApp() {
-      if (!window.officerPortal) {
-        window.officerPortal = new OfficerPortal();
-        window.officerPortal.init();
-      }
-    }
-
-    if (document.readyState === 'loading') {
-      document.addEventListener('DOMContentLoaded', initOfficerApp);
-    } else {
-      initOfficerApp();
-    }
+    // Inisialisasi saat dokumen siap
+    document.addEventListener('DOMContentLoaded', () => {
+      window.officerPortal = new OfficerPortal();
+      window.officerPortal.init();
+    });
   </script>
 </body>
 

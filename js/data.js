@@ -514,25 +514,6 @@ const INITIAL_ADUAN_DATA = [
   }
 ];
 
-// Helper: Memastikan URL foto valid dan mengubah URL Google Drive menjadi tautan gambar langsung (direct render)
-function formatPhotoUrl(url) {
-  if (!url || typeof url !== 'string') return '';
-  url = url.trim();
-  if (url === '-' || url.length < 5) return '';
-
-  // Jika URL Google Drive mode preview / view, konversi ke direct content Googleusercontent
-  const matchFile = url.match(/drive\.google\.com\/file\/d\/([a-zA-Z0-9_-]+)/);
-  if (matchFile && matchFile[1]) {
-    return `https://lh3.googleusercontent.com/d/${matchFile[1]}`;
-  }
-  const matchId = url.match(/drive\.google\.com\/(?:open|uc)\?(?:[a-zA-Z0-9_=&]*&)?id=([a-zA-Z0-9_-]+)/);
-  if (matchId && matchId[1]) {
-    return `https://lh3.googleusercontent.com/d/${matchId[1]}`;
-  }
-
-  return url;
-}
-
 // Helper: Parse Google Sheets CSV Export menjadi array data aduan
 function parseCsvToAduan(csvText) {
   if (!csvText || typeof csvText !== 'string') return [];
@@ -582,25 +563,7 @@ function parseCsvToAduan(csvText) {
     });
 
     const id = item.ID_Aduan || item.id || `ADU-LMB-2026-${String(i).padStart(3, '0')}`;
-    const rawFoto = item.Link_Foto_Bukti || item.Foto_Bukti || item.fotoBukti || item.linkFoto || item.Link_Bukti || '';
-    let parsedPhotos = [];
-    if (rawFoto && rawFoto !== '-') {
-      if (rawFoto.startsWith('[') && rawFoto.endsWith(']')) {
-        try {
-          const arr = JSON.parse(rawFoto);
-          if (Array.isArray(arr)) parsedPhotos = arr.map(formatPhotoUrl).filter(Boolean);
-        } catch (e) {}
-      }
-      if (parsedPhotos.length === 0) {
-        if (rawFoto.includes(',') && !rawFoto.startsWith('data:')) {
-          parsedPhotos = rawFoto.split(',').map(s => formatPhotoUrl(s.trim())).filter(Boolean);
-        } else {
-          parsedPhotos = [formatPhotoUrl(rawFoto)].filter(Boolean);
-        }
-      }
-    }
-    const primaryFoto = parsedPhotos[0] || '';
-
+    const foto = item.Link_Foto_Bukti || item.Foto_Bukti || item.fotoBukti || item.linkFoto || item.Link_Bukti || '';
     result.push({
       id: id,
       timestamp: item.Timestamp || item.timestamp || '-',
@@ -616,9 +579,9 @@ function parseCsvToAduan(csvText) {
       uraian: item.Uraian_Aduan || item.uraian || '-',
       sumberDugaan: item.Sumber_Dugaan || item.sumberDugaan || '-',
       tanggalKejadian: item.Tanggal_Kejadian || item.tanggalKejadian || '-',
-      fotoBukti: primaryFoto,
-      linkFotoBukti: parsedPhotos.join(', ') || primaryFoto,
-      buktiFotoList: parsedPhotos,
+      fotoBukti: foto,
+      linkFotoBukti: foto,
+      buktiFotoList: foto ? (foto.includes(',') ? foto.split(',').map(s => s.trim()).filter(Boolean) : [foto]) : [],
       status: item.Status || item.status || 'Baru',
       petugasVerifikasi: item.Petugas_Verifikasi || item.petugasVerifikasi || '-',
       tanggalVerifikasi: item.Tanggal_Verifikasi || item.tanggalVerifikasi || '-',
@@ -630,11 +593,9 @@ function parseCsvToAduan(csvText) {
   return result;
 }
 
-// Konfigurasi Kunci Penyimpanan & URL Web App Google Apps Script / Spreadsheet
+// Konfigurasi Kunci Penyimpanan & URL Web App Google Apps Script
 const GAS_CONFIG_KEY = 'dlh_gas_api_url';
-const SPREADSHEET_CONFIG_KEY = 'dlh_spreadsheet_url';
 const DELETED_STORAGE_KEY = 'dlh_deleted_aduan_ids';
-const DEFAULT_SPREADSHEET_URL = 'https://docs.google.com/spreadsheets/d/1lDsKvNdyEW_xugTTR2Va4HY8vEtxVsgTP-u1g_I_4O0/edit?gid=1323614970#gid=1323614970';
 const DEFAULT_GAS_API_URL = 'https://script.google.com/macros/s/AKfycbxm4r8QU2dv0S6csTTpmewuuvMNNrqiD2NeF_ENzXi8z7E3qDALHz6HNiBWtiEpGMruIQ/exec';
 
 class AduanDataStore {
@@ -673,13 +634,14 @@ class AduanDataStore {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
+        // Pastikan tidak ada aduan yang ada dalam daftar blacklist terhapus
         this.aduanList = parsed.filter(item => item && item.id && !this.isDeleted(item.id));
       } catch (e) {
         console.error('Error parsing stored aduan, fallback to default:', e);
-        this.aduanList = [];
+        this.aduanList = INITIAL_ADUAN_DATA.filter(item => !this.isDeleted(item.id));
+        this.save();
       }
-    }
-    if ((!this.aduanList || this.aduanList.length === 0) && typeof INITIAL_ADUAN_DATA !== 'undefined' && Array.isArray(INITIAL_ADUAN_DATA)) {
+    } else {
       this.aduanList = INITIAL_ADUAN_DATA.filter(item => !this.isDeleted(item.id));
       this.save();
     }
@@ -709,20 +671,6 @@ class AduanDataStore {
     return this.hasGasConfigured();
   }
 
-  getSpreadsheetUrl() {
-    return localStorage.getItem(SPREADSHEET_CONFIG_KEY) || DEFAULT_SPREADSHEET_URL;
-  }
-
-  setSpreadsheetUrl(url) {
-    const clean = (url || '').trim();
-    if (clean) {
-      localStorage.setItem(SPREADSHEET_CONFIG_KEY, clean);
-    } else {
-      localStorage.removeItem(SPREADSHEET_CONFIG_KEY);
-    }
-    return this.getSpreadsheetUrl();
-  }
-
   async syncFromGAS(silent = false) {
     if (!this.hasGasConfigured() || this.isSyncing) {
       return { success: false, reason: 'URL belum diisi. Masukkan URL Web App Google Apps Script untuk menghubungkan data cloud.' };
@@ -735,11 +683,9 @@ class AduanDataStore {
       // Dukungan jika pengguna memasukkan link Google Spreadsheet langsung
       if (endpoint.includes('docs.google.com/spreadsheets')) {
         const match = endpoint.match(/\/d\/([a-zA-Z0-9-_]+)/);
-        const gidMatch = endpoint.match(/[?#&]gid=([0-9]+)/);
         if (match) {
           const sheetId = match[1];
-          const gidParam = gidMatch ? `&gid=${gidMatch[1]}` : '&sheet=Data_Aduan';
-          endpoint = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv${gidParam}`;
+          endpoint = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Data_Aduan`;
           const response = await fetch(endpoint);
           if (!response.ok) throw new Error(`Gagal membaca sheet (HTTP ${response.status})`);
           const csvText = await response.text();
@@ -788,72 +734,22 @@ class AduanDataStore {
   async postToGAS(action, payload) {
     if (!this.hasGasConfigured()) return { success: false, offline: true };
 
-    const jsonStr = JSON.stringify({ action: action, data: payload });
-    let success = false;
-    let resultData = null;
-
-    // 1. Coba POST standar (CORS)
     try {
       const response = await fetch(this.gasApiUrl, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: jsonStr
+        body: JSON.stringify({ action: action, data: payload })
       });
-      if (response.ok) {
-        try {
-          resultData = await response.json();
-          success = true;
-        } catch (e) {
-          success = true;
-        }
-      }
+      const data = await response.json();
+      return { success: true, response: data };
     } catch (err) {
-      console.warn(`Standard POST to GAS failed for '${action}', trying fallback mechanisms:`, err);
+      console.warn(`Gagal kirim '${action}' ke Google Apps Script:`, err);
+      return { success: false, error: err.message };
     }
-
-    // 2. Fallback no-cors POST (browser will deliver payload to GAS without blocking on 302 redirect)
-    if (!success) {
-      try {
-        await fetch(this.gasApiUrl, {
-          method: 'POST',
-          mode: 'no-cors',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-          body: jsonStr
-        });
-        success = true;
-      } catch (e) {
-        console.warn('no-cors POST failed:', e);
-      }
-    }
-
-    // 3. Fallback GET query (100% fail-proof di semua browser)
-    try {
-      const safePayload = { ...payload };
-      if (typeof safePayload.fotoBukti === 'string' && safePayload.fotoBukti.startsWith('data:')) safePayload.fotoBukti = '';
-      if (typeof safePayload.linkFotoBukti === 'string' && safePayload.linkFotoBukti.startsWith('data:')) safePayload.linkFotoBukti = '';
-      if (Array.isArray(safePayload.buktiFotoList)) safePayload.buktiFotoList = safePayload.buktiFotoList.filter(p => typeof p === 'string' && !p.startsWith('data:'));
-
-      const getUrl = `${this.gasApiUrl}${this.gasApiUrl.includes('?') ? '&' : '?'}action=${encodeURIComponent(action)}&data=${encodeURIComponent(JSON.stringify(safePayload))}&_t=${Date.now()}`;
-      fetch(getUrl, { method: 'GET', mode: 'no-cors' }).catch(() => {});
-    } catch (e) {}
-
-    return { success: true, response: resultData };
   }
 
   save() {
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.aduanList));
-    } catch (err) {
-      console.warn('LocalStorage save quota exceeded, attempting storage cleanup:', err);
-      try {
-        if (this.aduanList.length > 15) {
-          const trimmed = this.aduanList.slice(0, 15);
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(trimmed));
-        }
-      } catch (e) {
-        console.error('LocalStorage write failed:', e);
-      }
-    }
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(this.aduanList));
   }
 
   getAll() {
@@ -888,28 +784,9 @@ class AduanDataStore {
 
     const existing = index !== -1 ? this.aduanList[index] : null;
     const existingPhotos = existing ? (Array.isArray(existing.buktiFotoList) ? existing.buktiFotoList : (existing.fotoBukti ? [existing.fotoBukti] : [])) : [];
-    
-    let remotePhotos = [];
-    if (Array.isArray(remoteItem.buktiFotoList) && remoteItem.buktiFotoList.length > 0) {
-      remotePhotos = remoteItem.buktiFotoList.map(formatPhotoUrl).filter(Boolean);
-    } else {
-      const candidate = remoteItem.linkFoto || remoteItem.Link_Foto_Bukti || remoteItem.linkFotoBukti || remoteItem.fotoBukti || '';
-      if (candidate && candidate !== '-') {
-        if (candidate.startsWith('[') && candidate.endsWith(']')) {
-          try {
-            const arr = JSON.parse(candidate);
-            if (Array.isArray(arr)) remotePhotos = arr.map(formatPhotoUrl).filter(Boolean);
-          } catch (e) {}
-        }
-        if (remotePhotos.length === 0) {
-          if (candidate.includes(',') && !candidate.startsWith('data:')) {
-            remotePhotos = candidate.split(',').map(s => formatPhotoUrl(s.trim())).filter(Boolean);
-          } else {
-            remotePhotos = [formatPhotoUrl(candidate)].filter(Boolean);
-          }
-        }
-      }
-    }
+    const remotePhotos = Array.isArray(remoteItem.buktiFotoList) && remoteItem.buktiFotoList.length > 0
+      ? remoteItem.buktiFotoList
+      : (remoteItem.linkFoto && remoteItem.linkFoto !== '-' ? [remoteItem.linkFoto] : (remoteItem.fotoBukti && remoteItem.fotoBukti !== '-' ? [remoteItem.fotoBukti] : []));
 
     // Jika record lokal sudah memiliki foto valid (termasuk Data URL base64), jangan ditimpa dengan remote kosong
     let finalPhotos = [];
@@ -938,7 +815,7 @@ class AduanDataStore {
       sumberDugaan: remoteItem.sumberDugaan || '-',
       tanggalKejadian: remoteItem.tanggalKejadian || '-',
       fotoBukti: finalFoto,
-      linkFotoBukti: finalPhotos.join(', ') || finalFoto,
+      linkFotoBukti: finalFoto,
       buktiFotoList: finalPhotos,
       status: remoteItem.status || 'Aduan Diterima',
       petugasVerifikasi: remoteItem.petugasVerifikasi || '-',
@@ -976,12 +853,6 @@ class AduanDataStore {
     const lat = formData.lat ? parseFloat(formData.lat) : (kecMeta.lat + (Math.random() - 0.5) * 0.02);
     const lng = formData.lng ? parseFloat(formData.lng) : (kecMeta.lng + (Math.random() - 0.5) * 0.02);
 
-    const rawPhotoList = Array.isArray(formData.buktiFotoList) 
-      ? formData.buktiFotoList.filter(Boolean) 
-      : (formData.fotoBukti ? [formData.fotoBukti] : []);
-    const photoList = rawPhotoList.map(formatPhotoUrl).filter(Boolean);
-    const primaryPhoto = photoList[0] || formatPhotoUrl(formData.fotoBukti) || formatPhotoUrl(formData.linkFotoBukti) || '';
-
     const newRecord = {
       id: newId,
       timestamp: formattedDate,
@@ -998,9 +869,9 @@ class AduanDataStore {
       sumberDugaan: formData.sumberDugaan || '-',
       tanggalKejadian: formData.tanggalKejadian || formattedDate.split(' ')[0],
       status: 'Aduan Diterima',
-      fotoBukti: primaryPhoto,
-      linkFotoBukti: photoList.join(', ') || primaryPhoto,
-      buktiFotoList: photoList.length > 0 ? photoList : (primaryPhoto ? [primaryPhoto] : []),
+      fotoBukti: formData.fotoBukti || '',
+      linkFotoBukti: formData.linkFotoBukti || formData.fotoBukti || '',
+      buktiFotoList: Array.isArray(formData.buktiFotoList) ? formData.buktiFotoList : (formData.fotoBukti ? [formData.fotoBukti] : []),
       petugasVerifikasi: '-',
       tanggalVerifikasi: '-',
       hasilVerifikasi: 'Menunggu penugasan verifikator lapangan.',
