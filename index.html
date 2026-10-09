@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -2540,10 +2540,13 @@
 
         <!-- Aksi Utama -->
         <div style="display: flex; flex-direction: column; gap: 10px;">
-          <a href="#" id="btnWaConfirmation" target="_blank" class="btn btn-primary"
-            style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); font-size: 1rem; font-weight: 700; padding: 14px; border-radius: 12px; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.4); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px;">
-            <span>💬</span> Buka Chat WhatsApp DLH Sekarang
-          </a>
+          <button type="button" id="btnWaConfirmation" class="btn btn-primary"
+            style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); font-size: 1.05rem; font-weight: 800; padding: 15px; border-radius: 12px; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.4); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; color: white; cursor: pointer;">
+            <span>📲</span> Kirim Laporan &amp; Lampirkan Foto ke WhatsApp
+          </button>
+          <div id="waPhotoPasteTip" style="display: none; background: #fefce8; border: 1px solid #fef08a; border-radius: 10px; padding: 10px 12px; font-size: 0.8rem; color: #854d0e; text-align: left; line-height: 1.4;">
+            📸 <strong>Tips WhatsApp Web:</strong> Foto otomatis disalin ke clipboard! Di jendela chat WhatsApp, cukup tekan <strong>Ctrl + V</strong> lalu tekan <strong>Enter</strong> untuk mengirim foto bukti.
+          </div>
           <button type="button" class="btn btn-outline btn-close-modal" style="font-size: 0.88rem; padding: 10px;">
             Tutup &amp; Buat Aduan Baru
           </button>

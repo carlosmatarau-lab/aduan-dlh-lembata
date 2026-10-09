@@ -39,6 +39,17 @@ class DLHApp {
     setTimeout(() => {
       if (window.lembataMap) window.lembataMap.init();
     }, 150);
+
+    // Buka otomatis detail/foto aduan jika dibuka dari tautan WhatsApp (?lihatFoto=ADU-LMB-...)
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetFoto = urlParams.get('lihatFoto') || urlParams.get('foto') || urlParams.get('tiket');
+      if (targetFoto) {
+        setTimeout(() => {
+          this.showDetailModal(targetFoto);
+        }, 350);
+      }
+    } catch (e) {}
   }
 
   getStatusBadgeClass(status) {
@@ -506,6 +517,10 @@ class DLHApp {
         ? `https://maps.google.com/?q=${finalLat},${finalLng}`
         : 'Koordinat belum disetel';
 
+      // Buat tautan akses foto online langsung untuk petugas DLH di WhatsApp
+      const baseUrl = window.location.href.split('?')[0].split('#')[0];
+      const linkFotoViewer = `${baseUrl}?lihatFoto=${newRecord.id}`;
+
       // Susun Format Pesan WhatsApp Resmi yang Lengkap untuk DLH Lembata
       const waMessage = 
 `*PENGADUAN LINGKUNGAN HIDUP KABUPATEN LEMBATA*
@@ -534,12 +549,24 @@ class DLHApp {
 ${uraian}
 
 📸 *BUKTI FOTO KEJADIAN:*
-${buktiList.length > 0 ? `Tersedia ${buktiList.length} berkas foto bukti kejadian.` : 'Tidak melampirkan foto.'}
+${buktiList.length > 0 
+  ? `• Status: ${buktiList.length} Berkas Foto Dilampirkan\n• 🖼️ *Buka Foto Bukti Online:* ${linkFotoViewer}` 
+  : 'Tidak melampirkan foto.'}
 --------------------------------------------------
 _Laporan resmi dikirim melalui formulir pengaduan masyarakat DLH Lembata._
 _Mohon bantuan tindak lanjut dari Petugas Dinas Lingkungan Hidup Kab. Lembata. Terima kasih!_`;
 
       const waUrl = `https://wa.me/6282234582769?text=${encodeURIComponent(waMessage)}`;
+
+      // Siapkan berkas File mentah untuk native share WhatsApp
+      const rawFiles = [];
+      allMedia.forEach((f, idx) => {
+        if (f instanceof File) {
+          rawFiles.push(f);
+        } else if (f instanceof Blob) {
+          rawFiles.push(new File([f], `bukti_${newRecord.id}_${idx + 1}.jpg`, { type: f.type || 'image/jpeg' }));
+        }
+      });
 
       // Reset form
       form.reset();
@@ -568,8 +595,60 @@ _Mohon bantuan tindak lanjut dari Petugas Dinas Lingkungan Hidup Kab. Lembata. T
       const btnDownloadPhoto = document.getElementById('btnDownloadWaPhoto');
 
       if (ticketDisplay) ticketDisplay.textContent = newRecord.id;
+
+      // Konfigurasi Tombol WhatsApp: Langsung kirim foto via native share di HP atau buka chat dengan clipboard copy
       if (btnWa) {
-        btnWa.href = waUrl;
+        btnWa.onclick = async (evt) => {
+          if (evt) evt.preventDefault();
+
+          // 1. Coba Web Share API langsung pada saat klik pengguna (100% User Gesture Valid)
+          if (navigator.share && rawFiles.length > 0) {
+            try {
+              if (navigator.canShare && navigator.canShare({ files: rawFiles })) {
+                await navigator.share({
+                  title: `Pengaduan Lingkungan ${newRecord.id}`,
+                  text: waMessage,
+                  files: rawFiles
+                });
+                this.showToast('Laporan & foto bukti berhasil dibagikan ke WhatsApp!', 'success');
+                return;
+              }
+            } catch (shareErr) {
+              if (shareErr.name === 'AbortError') return; // User membatalkan dialog
+              console.warn('Native share fallback ke wa.me:', shareErr);
+            }
+          }
+
+          // 2. Fallback untuk Desktop / PC / WhatsApp Web:
+          if (buktiList.length > 0) {
+            try {
+              const firstPhoto = buktiList[0];
+              const img = new Image();
+              img.crossOrigin = 'anonymous';
+              img.src = firstPhoto;
+              await new Promise(r => { img.onload = r; });
+
+              const c = document.createElement('canvas');
+              c.width = img.width;
+              c.height = img.height;
+              const ctx = c.getContext('2d');
+              ctx.drawImage(img, 0, 0);
+
+              c.toBlob(async (pngBlob) => {
+                if (pngBlob && navigator.clipboard && window.ClipboardItem) {
+                  await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })]);
+                  this.showToast('Foto bukti disalin! Tekan Ctrl+V di chat WhatsApp DLH.', 'success');
+                }
+              }, 'image/png');
+            } catch (e) {}
+
+            const tipEl = document.getElementById('waPhotoPasteTip');
+            if (tipEl) tipEl.style.display = 'block';
+          }
+
+          // Buka link WhatsApp resmi DLH Lembata
+          window.open(waUrl, '_blank');
+        };
       }
 
       // Tampilkan Bukti Foto di Modal WhatsApp
@@ -632,7 +711,7 @@ _Mohon bantuan tindak lanjut dari Petugas Dinas Lingkungan Hidup Kab. Lembata. T
             };
           }
 
-          // Otomatis salin foto pertama ke clipboard
+          // Otomatis salin foto pertama ke clipboard saat modal tampil
           try {
             const img = new Image();
             img.src = buktiList[0];
@@ -660,30 +739,6 @@ _Mohon bantuan tindak lanjut dari Petugas Dinas Lingkungan Hidup Kab. Lembata. T
       }
 
       if (modalSuccess) modalSuccess.classList.add('show');
-
-      // Dukungan Native Share (HP Android / iOS: langsung melampirkan foto ke WhatsApp)
-      if (navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) && buktiList.length > 0) {
-        try {
-          const shareFiles = [];
-          for (let i = 0; i < Math.min(buktiList.length, 3); i++) {
-            const bRes = await fetch(buktiList[i]);
-            const bBlob = await bRes.blob();
-            shareFiles.push(new File([bBlob], `bukti_${newRecord.id}_${i+1}.jpg`, { type: 'image/jpeg' }));
-          }
-
-          if (navigator.canShare && navigator.canShare({ files: shareFiles })) {
-            setTimeout(() => {
-              navigator.share({
-                title: `Pengaduan DLH Lembata ${newRecord.id}`,
-                text: waMessage,
-                files: shareFiles
-              }).catch(() => {});
-            }, 300);
-          }
-        } catch (shareErr) {
-          console.log('Mobile share fallback');
-        }
-      }
     });
   }
 
