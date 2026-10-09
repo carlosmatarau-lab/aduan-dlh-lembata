@@ -527,9 +527,10 @@ class DLHApp {
         ? `https://maps.google.com/?q=${finalLat},${finalLng}`
         : 'Koordinat belum disetel';
 
-      // Susun Format Pesan WhatsApp Resmi yang Lengkap untuk DLH Lembata (Tanpa Link Foto terpisah)
+      // Susun Format Pesan WhatsApp: LAYANAN PENGADUAN MASYARAKAT (KABUPATEN LEMBATA)
       const waMessage = 
-`*PENGADUAN LINGKUNGAN HIDUP KABUPATEN LEMBATA*
+`*LAYANAN PENGADUAN MASYARAKAT*
+*KABUPATEN LEMBATA*
 --------------------------------------------------
 📌 *NOMOR REGISTER:* ${newRecord.id}
 📅 *WAKTU LAPOR:* ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
@@ -556,13 +557,13 @@ ${uraian}
 
 📸 *BUKTI FOTO KEJADIAN:*
 ${buktiList.length > 0 
-  ? `• Status: ${buktiList.length} Foto Bukti Terlampir Resmi di Sistem DLH` 
+  ? `• Status: ${buktiList.length} Foto Bukti Terlampir Bersama Laporan Ini` 
   : '• Status: Pelapor tidak melampirkan foto bukti.'}
 --------------------------------------------------
-_Laporan resmi dikirim melalui formulir pengaduan masyarakat DLH Lembata._
-_Mohon bantuan tindak lanjut dari Petugas Dinas Lingkungan Hidup Kab. Lembata. Terima kasih!_`;
+_Laporan resmi dikirim melalui formulir Layanan Pengaduan Masyarakat._
+_Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
 
-      // Tautan langsung ke room chat WhatsApp resmi DLH Lembata (+62 822-3458-2769)
+      // Tautan langsung ke room chat nomor kontak layanan pengaduan (+62 822-3458-2769)
       const waUrl = `https://api.whatsapp.com/send?phone=6282234582769&text=${encodeURIComponent(waMessage)}`;
 
       // Helper konversi Base64 DataURL menjadi File objek JPEG standar untuk lampiran visual WhatsApp
@@ -702,7 +703,7 @@ _Mohon bantuan tindak lanjut dari Petugas Dinas Lingkungan Hidup Kab. Lembata. T
 
       if (btnSubmit) {
         btnSubmit.disabled = false;
-        btnSubmit.innerHTML = '📲 KIRIM LAPORAN SEKARANG VIA WHATSAPP (DLH LEMBATA)';
+        btnSubmit.innerHTML = '📲 KIRIM LAPORAN KE KONTAK LAYANAN PENGADUAN';
       }
 
       if (modalSuccess) modalSuccess.classList.add('show');
