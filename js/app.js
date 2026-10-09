@@ -388,83 +388,302 @@ class DLHApp {
   }
 
   /* ===================================================================
-     4. FORM SUBMISSION
+     4. FORM SUBMISSION (LANGSUNG TERHUBUNG KE WHATSAPP RESMI DLH LEMBATA)
      =================================================================== */
   setupFormSubmissions() {
     const form = document.getElementById('formAduanWarga');
     if (!form) return;
 
-    form.addEventListener('submit', (e) => {
+    form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       const btnSubmit = document.getElementById('btnSubmitAduan');
       if (btnSubmit) {
         btnSubmit.disabled = true;
-        btnSubmit.textContent = '⏳ Mengirim Laporan ke DLH...';
+        btnSubmit.textContent = '⏳ Menyusun Aduan & Menyiapkan WhatsApp...';
       }
 
-      // Read selected category
+      // Kumpulkan semua file bukti foto (dari selectedMediaFiles, input file, atau kamera)
+      const allMedia = [...(this.selectedMediaFiles || [])];
+      const fileInput = document.getElementById('inputBuktiFoto');
+      if (fileInput && fileInput.files && fileInput.files.length) {
+        Array.from(fileInput.files).forEach(f => {
+          if (!allMedia.includes(f)) allMedia.push(f);
+        });
+      }
+      const cameraInput = document.getElementById('inputCameraCapture');
+      if (cameraInput && cameraInput.files && cameraInput.files.length) {
+        Array.from(cameraInput.files).forEach(f => {
+          if (!allMedia.includes(f)) allMedia.push(f);
+        });
+      }
+
+      // Konversi dan optimasi bukti foto ke Base64 Data URL
+      const mediaPromises = allMedia.map(file => {
+        return new Promise((resolve) => {
+          if (typeof file === 'string') return resolve(file);
+          if (!(file instanceof Blob)) return resolve(null);
+
+          const reader = new FileReader();
+          reader.onload = (ev) => {
+            const dataUrl = ev.target.result;
+            const img = new Image();
+            img.onload = () => {
+              try {
+                const canvas = document.createElement('canvas');
+                let width = img.width || 640;
+                let height = img.height || 480;
+                const maxDim = 800;
+                if (width > maxDim || height > maxDim) {
+                  if (width > height) {
+                    height = Math.round((height * maxDim) / width);
+                    width = maxDim;
+                  } else {
+                    width = Math.round((width * maxDim) / height);
+                    height = maxDim;
+                  }
+                }
+                canvas.width = width;
+                canvas.height = height;
+                const ctx = canvas.getContext('2d');
+                ctx.drawImage(img, 0, 0, width, height);
+                resolve(canvas.toDataURL('image/jpeg', 0.75));
+              } catch (err) {
+                resolve(dataUrl);
+              }
+            };
+            img.onerror = () => resolve(dataUrl);
+            img.src = dataUrl;
+          };
+          reader.onerror = () => resolve(null);
+          reader.readAsDataURL(file);
+        });
+      });
+
+      const buktiList = (await Promise.all(mediaPromises)).filter(Boolean);
+
+      // Kategori pencemaran
       const selectedRadio = document.querySelector('input[name="radioJenis"]:checked');
       const jenisPencemaran = selectedRadio ? selectedRadio.value : 'Lainnya';
 
+      const namaPelapor = (document.getElementById('inputNama')?.value || '').trim();
+      const noHp = (document.getElementById('inputNoHp')?.value || '').trim();
+      const alamatPelapor = (document.getElementById('inputAlamat')?.value || '').trim();
+      const kecamatan = document.getElementById('inputKecamatan')?.value || 'Nubatukan';
+      const desa = (document.getElementById('inputDesa')?.value || '').trim();
+      const lokasiDetail = (document.getElementById('inputLokasiDetail')?.value || '').trim();
+      const tanggalKejadian = document.getElementById('inputTanggalKejadian')?.value || new Date().toISOString().split('T')[0];
+      const sumberDugaan = (document.getElementById('inputSumberDugaan')?.value || '').trim();
+      const uraian = (document.getElementById('inputUraian')?.value || '').trim();
+      const lat = (document.getElementById('inputLat')?.value || '').trim();
+      const lng = (document.getElementById('inputLng')?.value || '').trim();
+
       const formData = {
-        namaPelapor: document.getElementById('inputNama').value,
-        noHp: document.getElementById('inputNoHp').value,
-        alamatPelapor: document.getElementById('inputAlamat').value,
-        kecamatan: document.getElementById('inputKecamatan').value,
-        desa: document.getElementById('inputDesa').value,
-        lokasiDetail: document.getElementById('inputLokasiDetail').value,
+        namaPelapor: namaPelapor,
+        noHp: noHp,
+        alamatPelapor: alamatPelapor,
+        kecamatan: kecamatan,
+        desa: desa,
+        lokasiDetail: lokasiDetail,
         jenisPencemaran: jenisPencemaran,
-        tanggalKejadian: document.getElementById('inputTanggalKejadian').value,
-        sumberDugaan: document.getElementById('inputSumberDugaan').value,
-        uraian: document.getElementById('inputUraian').value,
-        lat: document.getElementById('inputLat').value,
-        lng: document.getElementById('inputLng').value
+        tanggalKejadian: tanggalKejadian,
+        sumberDugaan: sumberDugaan,
+        uraian: uraian,
+        lat: lat,
+        lng: lng,
+        fotoBukti: buktiList[0] || '',
+        linkFotoBukti: buktiList[0] || '',
+        buktiFotoList: buktiList
       };
 
-      // Add to store (and auto-post to Google Apps Script / Spreadsheet)
+      // Simpan ke database lokal
       const newRecord = window.aduanStore.addAduan(formData);
+
+      // Link Google Maps koordinat presisi
+      const finalLat = newRecord.lat || lat;
+      const finalLng = newRecord.lng || lng;
+      const mapsLink = (finalLat && finalLng)
+        ? `https://maps.google.com/?q=${finalLat},${finalLng}`
+        : 'Koordinat belum disetel';
+
+      // Susun Format Pesan WhatsApp Resmi yang Lengkap untuk DLH Lembata
+      const waMessage = 
+`*PENGADUAN LINGKUNGAN HIDUP KABUPATEN LEMBATA*
+--------------------------------------------------
+📌 *NOMOR REGISTER:* ${newRecord.id}
+📅 *WAKTU LAPOR:* ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+
+👤 *DATA PELAPOR:*
+• *Nama Pelapor:* ${namaPelapor}
+• *Nomor WhatsApp / HP:* ${noHp}
+• *Alamat Domisili:* ${alamatPelapor || '-'}
+
+📍 *LOKASI KEJADIAN PENCEMARAN:*
+• *Kecamatan:* ${kecamatan}
+• *Desa / Kelurahan:* ${desa}
+• *Patokan Lokasi Detail:* ${lokasiDetail || '-'}
+• *Titik Koordinat GPS:* ${finalLat}, ${finalLng}
+• *Tautan Peta Google Maps:* ${mapsLink}
+
+⚠️ *RINCIAN MASALAH:*
+• *Jenis Pencemaran:* *${jenisPencemaran}*
+• *Tanggal Kejadian:* ${tanggalKejadian}
+• *Dugaan Sumber:* ${sumberDugaan || '-'}
+
+📝 *URAIAN KRONOLOGI:*
+${uraian}
+
+📸 *BUKTI FOTO KEJADIAN:*
+${buktiList.length > 0 ? `Tersedia ${buktiList.length} berkas foto bukti kejadian.` : 'Tidak melampirkan foto.'}
+--------------------------------------------------
+_Laporan resmi dikirim melalui formulir pengaduan masyarakat DLH Lembata._
+_Mohon bantuan tindak lanjut dari Petugas Dinas Lingkungan Hidup Kab. Lembata. Terima kasih!_`;
+
+      const waUrl = `https://wa.me/6282234582769?text=${encodeURIComponent(waMessage)}`;
 
       // Reset form
       form.reset();
       this.selectedMediaFiles = [];
+      if (fileInput) fileInput.value = '';
+      if (cameraInput) cameraInput.value = '';
       const previewList = document.getElementById('uploadPreviewList');
       if (previewList) previewList.innerHTML = '';
       const dateInput = document.getElementById('inputTanggalKejadian');
       if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
-      const kecVal = document.getElementById('inputKecamatan')?.value || 'Nubatukan';
-      if (this.populateDesaDropdown) this.populateDesaDropdown(kecVal);
+      if (this.populateDesaDropdown) this.populateDesaDropdown('Nubatukan');
 
       // Update UI components
       this.updateKPIs();
       this.renderTable();
       if (window.lembataMap) window.lembataMap.renderMarkers();
 
-      // Show Success Modal
+      // Show Success Modal & Atur aksi WhatsApp
       const modalSuccess = document.getElementById('modalSuccessAduan');
       const ticketDisplay = document.getElementById('successTicketId');
       const btnWa = document.getElementById('btnWaConfirmation');
+      const photoBox = document.getElementById('waPhotoAttachmentBox');
+      const photoThumbContainer = document.getElementById('waPhotoThumbContainer');
+      const photoCountBadge = document.getElementById('waPhotoCount');
+      const btnCopyPhoto = document.getElementById('btnCopyWaPhoto');
+      const btnDownloadPhoto = document.getElementById('btnDownloadWaPhoto');
 
       if (ticketDisplay) ticketDisplay.textContent = newRecord.id;
       if (btnWa) {
-        const waText = encodeURIComponent(
-          `Halo DLH Kabupaten Lembata, saya telah mengirimkan aduan pencemaran lingkungan melalui portal resmi.\n\n` +
-          `📌 *KODE TIKET:* ${newRecord.id}\n` +
-          `👤 *Nama:* ${newRecord.namaPelapor}\n` +
-          `📍 *Lokasi:* ${newRecord.desa}, Kec. ${newRecord.kecamatan}\n` +
-          `⚠️ *Masalah:* ${newRecord.jenisPencemaran}\n` +
-          `📝 *Uraian:* ${newRecord.uraian}\n\n` +
-          `Mohon bantuannya untuk dapat ditinjau oleh DLH. Terima kasih!`
-        );
-        btnWa.href = `https://wa.me/6282234582769?text=${waText}`;
+        btnWa.href = waUrl;
+      }
+
+      // Tampilkan Bukti Foto di Modal WhatsApp
+      if (photoBox && photoThumbContainer) {
+        if (buktiList.length > 0) {
+          photoBox.style.display = 'block';
+          if (photoCountBadge) photoCountBadge.textContent = buktiList.length;
+
+          photoThumbContainer.innerHTML = buktiList.map((foto, idx) => `
+            <div style="position: relative; flex-shrink: 0; width: 68px; height: 68px; border-radius: 8px; overflow: hidden; border: 2px solid #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+              <img src="${foto}" alt="Bukti ${idx + 1}" style="width: 100%; height: 100%; object-fit: cover;">
+            </div>
+          `).join('');
+
+          // Salin Foto ke Clipboard untuk langsung Paste (Ctrl+V) di WA Web
+          if (btnCopyPhoto) {
+            btnCopyPhoto.onclick = async () => {
+              try {
+                const firstPhoto = buktiList[0];
+                const img = new Image();
+                img.crossOrigin = 'anonymous';
+                img.src = firstPhoto;
+                await new Promise(r => { img.onload = r; });
+
+                const c = document.createElement('canvas');
+                c.width = img.width;
+                c.height = img.height;
+                const ctx = c.getContext('2d');
+                ctx.drawImage(img, 0, 0);
+
+                c.toBlob(async (pngBlob) => {
+                  if (pngBlob && navigator.clipboard && window.ClipboardItem) {
+                    await navigator.clipboard.write([
+                      new ClipboardItem({ 'image/png': pngBlob })
+                    ]);
+                    this.showToast('Foto bukti disalin! Tekan Ctrl+V di chat WhatsApp DLH.', 'success');
+                  } else {
+                    this.showToast('Gunakan tombol Unduh Foto untuk melampirkan ke WA.', 'info');
+                  }
+                }, 'image/png');
+              } catch (err) {
+                console.warn('Clipboard copy fallback:', err);
+                this.showToast('Silakan gunakan tombol Unduh Foto untuk kirim ke WhatsApp.', 'info');
+              }
+            };
+          }
+
+          // Unduh Foto
+          if (btnDownloadPhoto) {
+            btnDownloadPhoto.onclick = () => {
+              buktiList.forEach((foto, idx) => {
+                const a = document.createElement('a');
+                a.href = foto;
+                a.download = `bukti_aduan_${newRecord.id}_${idx + 1}.jpg`;
+                document.body.appendChild(a);
+                a.click();
+                document.body.removeChild(a);
+              });
+              this.showToast(`Mengunduh ${buktiList.length} foto bukti aduan.`, 'success');
+            };
+          }
+
+          // Otomatis salin foto pertama ke clipboard
+          try {
+            const img = new Image();
+            img.src = buktiList[0];
+            img.onload = () => {
+              const c = document.createElement('canvas');
+              c.width = img.width;
+              c.height = img.height;
+              c.getContext('2d').drawImage(img, 0, 0);
+              c.toBlob(blob => {
+                if (blob && navigator.clipboard && window.ClipboardItem) {
+                  navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).catch(() => {});
+                }
+              }, 'image/png');
+            };
+          } catch (e) {}
+
+        } else {
+          photoBox.style.display = 'none';
+        }
       }
 
       if (btnSubmit) {
         btnSubmit.disabled = false;
-        btnSubmit.textContent = '🚀 KIRIM LAPORAN SEKARANG';
+        btnSubmit.innerHTML = '📲 KIRIM LAPORAN SEKARANG VIA WHATSAPP (DLH LEMBATA)';
       }
 
       if (modalSuccess) modalSuccess.classList.add('show');
+
+      // Dukungan Native Share (HP Android / iOS: langsung melampirkan foto ke WhatsApp)
+      if (navigator.share && /Android|iPhone|iPad|iPod/i.test(navigator.userAgent) && buktiList.length > 0) {
+        try {
+          const shareFiles = [];
+          for (let i = 0; i < Math.min(buktiList.length, 3); i++) {
+            const bRes = await fetch(buktiList[i]);
+            const bBlob = await bRes.blob();
+            shareFiles.push(new File([bBlob], `bukti_${newRecord.id}_${i+1}.jpg`, { type: 'image/jpeg' }));
+          }
+
+          if (navigator.canShare && navigator.canShare({ files: shareFiles })) {
+            setTimeout(() => {
+              navigator.share({
+                title: `Pengaduan DLH Lembata ${newRecord.id}`,
+                text: waMessage,
+                files: shareFiles
+              }).catch(() => {});
+            }, 300);
+          }
+        } catch (shareErr) {
+          console.log('Mobile share fallback');
+        }
+      }
     });
   }
 
@@ -583,9 +802,12 @@ class DLHApp {
         <td>Kec. ${item.kecamatan}<br><small style="color: #64748b;">Desa: ${item.desa}</small></td>
         <td><span style="font-weight: 600; color: #059669;">${item.jenisPencemaran}</span></td>
         <td style="text-align: center; white-space: nowrap;">
-          <button class="btn btn-outline btn-sm" onclick="window.app.showDetailModal('${item.id}')">
-            Lihat Detail
+          <button class="btn btn-outline btn-sm" onclick="window.app.showDetailModal('${item.id}')" title="Lihat Rincian Aduan">
+            Lihat Rincian
           </button>
+          <a class="btn btn-sm" style="background: #16a34a; color: white; text-decoration: none; border-radius: 6px; padding: 5px 10px; font-weight: 600; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 4px;" href="https://wa.me/6282234582769?text=${encodeURIComponent('Halo DLH Kabupaten Lembata, saya ingin menanyakan tindak lanjut pengaduan lingkungan nomor tiket: ' + item.id + ' (Lokasi: Desa ' + item.desa + ', Kec. ' + item.kecamatan + ')')}" target="_blank" title="Hubungi Petugas DLH via WhatsApp">
+            💬 Chat WA
+          </a>
         </td>
       </tr>
     `).join('');
@@ -658,13 +880,15 @@ class DLHApp {
       }
     });
 
+    const mapsUrl = (item.lat && item.lng) ? `https://maps.google.com/?q=${item.lat},${item.lng}` : '';
+
     body.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
         <div>
           <span style="font-size: 0.75rem; color: #64748b;">KODE REGISTER:</span>
           <h2 style="font-size: 1.3rem; color: #059669; font-weight: 800;">${item.id}</h2>
         </div>
-        <span class="badge ${this.getStatusBadgeClass(item.status)}">Aduan Masuk</span>
+        <span class="badge ${this.getStatusBadgeClass(item.status)}">${item.status || 'Aduan Masuk'}</span>
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; font-size: 0.85rem;">
@@ -683,8 +907,9 @@ class DLHApp {
       </div>
 
       <div style="margin-bottom: 14px; font-size: 0.85rem; color: #475569;">
-        <strong>Patokan Lokasi:</strong> ${item.lokasiDetail}<br>
+        <strong>Patokan Lokasi:</strong> ${item.lokasiDetail || '-'}<br>
         <span style="font-family: monospace; font-size: 0.78rem; color: #059669;">🌐 Koordinat: ${item.lat}, ${item.lng}</span>
+        ${mapsUrl ? `<br><a href="${mapsUrl}" target="_blank" style="color: #0284c7; text-decoration: underline; font-size: 0.8rem; font-weight: 600;">📍 Buka Titik Lokasi di Google Maps ↗</a>` : ''}
       </div>
 
       <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px; border-radius: 8px; margin-bottom: 14px; font-size: 0.88rem; color: #14532d;">
@@ -693,16 +918,22 @@ class DLHApp {
 
       ${photoList.length > 0 ? `
         <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 14px;">
-          <div style="font-size: 0.76rem; font-weight: 700; color: #64748b; margin-bottom: 8px;">📸 FOTO BUKTI PENDUKUNG:</div>
+          <div style="font-size: 0.76rem; font-weight: 700; color: #64748b; margin-bottom: 8px;">📸 FOTO BUKTI PENDUKUNG (${photoList.length} Foto):</div>
           <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            ${photoList.map(src => `
-              <a href="${src}" target="_blank">
-                <img src="${src}" alt="Bukti" style="width: 75px; height: 75px; object-fit: cover; border-radius: 6px; border: 1px solid #cbd5e1;">
+            ${photoList.map((src, i) => `
+              <a href="${src}" target="_blank" style="display: inline-block; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 1.5px solid #cbd5e1; box-shadow: 0 2px 4px rgba(0,0,0,0.06);" title="Lihat Foto Bukti ${i+1}">
+                <img src="${src}" alt="Bukti ${i+1}" style="width: 100%; height: 100%; object-fit: cover;">
               </a>
             `).join('')}
           </div>
         </div>
       ` : ''}
+
+      <div style="margin-top: 14px; text-align: right;">
+        <a href="https://wa.me/6282234582769?text=${encodeURIComponent('Halo DLH Kabupaten Lembata, saya ingin menanyakan tindak lanjut aduan dengan nomor register: ' + item.id)}" target="_blank" class="btn btn-primary btn-sm" style="background: #16a34a; border-color: #16a34a; text-decoration: none; display: inline-flex; align-items: center; gap: 6px;">
+          <span>💬</span> Chat WhatsApp Petugas DLH
+        </a>
+      </div>
     `;
 
     modal.classList.add('show');
