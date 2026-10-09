@@ -601,8 +601,10 @@ const DEFAULT_GAS_API_URL = 'https://script.google.com/macros/s/AKfycbxm4r8QU2dv
 class AduanDataStore {
   constructor() {
     this.aduanList = [];
-    this.gasApiUrl = localStorage.getItem(GAS_CONFIG_KEY) || (window.GAS_API_URL || DEFAULT_GAS_API_URL);
+    const saved = localStorage.getItem(GAS_CONFIG_KEY);
+    this.gasApiUrl = (saved && saved.trim().startsWith('http')) ? saved.trim() : DEFAULT_GAS_API_URL;
     this.isSyncing = false;
+    this.currentSyncPromise = null;
     this.lastSyncTime = null;
     this.deletedIds = this.loadDeletedIds();
     this.init();
@@ -648,37 +650,60 @@ class AduanDataStore {
 
     // Jika URL Google Apps Script sudah disetel, lakukan sinkronisasi otomatis & polling berkala
     if (this.hasGasConfigured()) {
-      setTimeout(() => this.syncFromGAS(true), 200);
-      setInterval(() => this.syncFromGAS(true), 8000);
+      setTimeout(() => this.syncFromGAS(true), 300);
+      setInterval(() => this.syncFromGAS(true), 12000);
     }
   }
 
   hasGasConfigured() {
-    return !!(this.gasApiUrl && this.gasApiUrl.trim().startsWith('http'));
+    const url = this.getGasUrl();
+    return !!(url && url.trim().startsWith('http'));
   }
 
   getGasUrl() {
-    return this.gasApiUrl || DEFAULT_GAS_API_URL;
+    if (this.gasApiUrl && this.gasApiUrl.trim().startsWith('http')) {
+      return this.gasApiUrl.trim();
+    }
+    const stored = (localStorage.getItem(GAS_CONFIG_KEY) || '').trim();
+    if (stored && stored.startsWith('http')) {
+      return stored;
+    }
+    if (window.GAS_API_URL && String(window.GAS_API_URL).trim().startsWith('http')) {
+      return String(window.GAS_API_URL).trim();
+    }
+    return DEFAULT_GAS_API_URL;
   }
 
   setGasUrl(url) {
-    this.gasApiUrl = (url || '').trim();
-    if (this.gasApiUrl) {
-      localStorage.setItem(GAS_CONFIG_KEY, this.gasApiUrl);
+    const cleanUrl = (url || '').trim();
+    if (cleanUrl && cleanUrl.startsWith('http')) {
+      this.gasApiUrl = cleanUrl;
+      localStorage.setItem(GAS_CONFIG_KEY, cleanUrl);
     } else {
+      // Kembalikan ke URL default resmi Google Apps Script
+      this.gasApiUrl = DEFAULT_GAS_API_URL;
       localStorage.removeItem(GAS_CONFIG_KEY);
     }
     return this.hasGasConfigured();
   }
 
   async syncFromGAS(silent = false) {
-    if (!this.hasGasConfigured() || this.isSyncing) {
-      return { success: false, reason: 'URL belum diisi. Masukkan URL Web App Google Apps Script untuk menghubungkan data cloud.' };
+    if (!this.hasGasConfigured()) {
+      return { success: false, reason: 'URL Web App Google Apps Script belum disetel.' };
+    }
+
+    // Jika sedang dalam proses sinkronisasi, tunggu promise yang sedang aktif daripada gagal
+    if (this.isSyncing) {
+      if (this.currentSyncPromise) {
+        return await this.currentSyncPromise;
+      }
+      return { success: true, silent: true, message: 'Sinkronisasi cloud sedang berjalan...' };
     }
 
     this.isSyncing = true;
-    try {
-      let endpoint = this.gasApiUrl;
+    this.currentSyncPromise = (async () => {
+      try {
+        let endpoint = this.getGasUrl();
 
       // Dukungan jika pengguna memasukkan link Google Spreadsheet langsung
       if (endpoint.includes('docs.google.com/spreadsheets')) {
@@ -728,14 +753,19 @@ class AduanDataStore {
       return { success: false, error: errMsg };
     } finally {
       this.isSyncing = false;
+      this.currentSyncPromise = null;
     }
-  }
+  })();
+
+  return await this.currentSyncPromise;
+}
 
   async postToGAS(action, payload) {
-    if (!this.hasGasConfigured()) return { success: false, offline: true };
+    const endpoint = this.getGasUrl();
+    if (!endpoint || !endpoint.startsWith('http')) return { success: false, offline: true };
 
     try {
-      const response = await fetch(this.gasApiUrl, {
+      const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify({ action: action, data: payload })

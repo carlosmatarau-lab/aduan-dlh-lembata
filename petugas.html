@@ -1815,16 +1815,16 @@
             if (syncIcon) syncIcon.style.animation = 'spin 1s linear infinite';
             btnManualSync.disabled = true;
 
-            if (window.aduanStore.hasGasConfigured()) {
-              this.showToast('Mengambil data terbaru dari Google Apps Script...', 'info');
-              const res = await window.aduanStore.syncFromGAS();
-              if (res.success) {
-                this.showToast(`Berhasil menyinkronkan data dari cloud Google Spreadsheet!`, 'success');
-              } else {
-                this.showToast(`Sinkronisasi cloud: ${res.error || res.reason}`, 'warning');
-              }
+            this.showToast('Mengambil data terbaru dari Google Apps Script...', 'info');
+            const res = await window.aduanStore.syncFromGAS();
+            if (res && res.success) {
+              const count = res.count || window.aduanStore.getAll().length;
+              this.showToast(`Berhasil menyinkronkan ${count} data dari cloud Google Spreadsheet!`, 'success');
+            } else if (res && res.error) {
+              this.showToast(`Koneksi cloud: ${res.error}`, 'warning');
+            } else if (res && res.reason) {
+              this.showToast(`Info sinkronisasi: ${res.reason}`, 'info');
             } else {
-              window.aduanStore.init();
               this.showToast('Data lokal berhasil disegarkan.', 'success');
             }
 
@@ -1903,22 +1903,19 @@
           btnSave.addEventListener('click', async () => {
             const urlVal = inputUrl ? inputUrl.value.trim() : '';
             window.aduanStore.setGasUrl(urlVal);
+            if (inputUrl) inputUrl.value = window.aduanStore.getGasUrl();
             updateStatusIndicator();
 
-            if (urlVal) {
-              this.showToast('Menghubungkan ke Google Apps Script...', 'info');
-              const res = await window.aduanStore.syncFromGAS();
-              if (res.success) {
-                modal.classList.remove('show');
-                this.updateKPIs();
-                this.renderTable();
-                this.showToast('Berhasil terhubung ke Google Apps Script!', 'success');
-              } else {
-                this.showToast(`Gagal: ${res.error || res.reason}`, 'warning');
-              }
+            this.showToast('Menghubungkan ke Google Apps Script...', 'info');
+            const res = await window.aduanStore.syncFromGAS();
+            if (res && res.success) {
+              modal.classList.remove('show');
+              this.updateKPIs();
+              this.renderTable();
+              this.showToast('Berhasil terhubung ke Google Apps Script DLH!', 'success');
             } else {
               modal.classList.remove('show');
-              this.showToast('URL dikosongkan. Kembali ke database lokal.', 'info');
+              this.showToast(`Pengaturan disimpan. ${res?.error || res?.reason || ''}`, 'info');
             }
           });
         }

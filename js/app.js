@@ -1154,19 +1154,16 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       btnSave.addEventListener('click', async () => {
         const urlVal = inputUrl ? inputUrl.value.trim() : '';
         window.aduanStore.setGasUrl(urlVal);
+        if (inputUrl) inputUrl.value = window.aduanStore.getGasUrl();
         this.updateCloudUI();
 
-        if (urlVal) {
-          this.showToast('Menghubungkan ke Google Apps Script...', 'info');
-          const res = await window.aduanStore.syncFromGAS();
-          if (res.success) {
-            modal.classList.remove('show');
-          } else {
-            this.showToast(`Gagal: ${res.error || res.reason}`, 'warning');
-          }
+        this.showToast('Menghubungkan ke Google Apps Script...', 'info');
+        const res = await window.aduanStore.syncFromGAS();
+        modal.classList.remove('show');
+        if (res && res.success) {
+          this.showToast('Berhasil terhubung ke Google Apps Script DLH!', 'success');
         } else {
-          modal.classList.remove('show');
-          this.showToast('URL dikosongkan. Menggunakan penyimpanan lokal.', 'info');
+          this.showToast(`Pengaturan disimpan. ${res?.error || res?.reason || ''}`, 'info');
         }
       });
     }
