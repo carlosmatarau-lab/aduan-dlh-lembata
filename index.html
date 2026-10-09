@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -2531,31 +2531,18 @@
           <div style="font-size: 0.78rem; color: #15803d;">Simpan nomor tiket ini untuk bukti pengaduan Anda.</div>
         </div>
 
-        <!-- Bukti Foto Preview & Aksi Lampiran -->
+        <!-- Bukti Foto Preview & Status Lampiran -->
         <div id="waPhotoAttachmentBox"
-          style="display: none; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 14px; margin-bottom: 16px; text-align: left;">
+          style="display: none; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 14px; padding: 14px; margin-bottom: 16px; text-align: left;">
           <div
-            style="font-size: 0.82rem; font-weight: 800; color: #0f172a; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+            style="font-size: 0.85rem; font-weight: 800; color: #065f46; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
             <span>📸 Bukti Foto Terlampir (<span id="waPhotoCount">0</span> foto):</span>
             <span
-              style="font-size: 0.72rem; color: #059669; font-weight: 700; background: #ecfdf5; padding: 2px 8px; border-radius: 6px;">Siap
-              Dikirim</span>
+              style="font-size: 0.72rem; color: #047857; font-weight: 800; background: #dcfce7; padding: 3px 8px; border-radius: 6px;">Siap Terkirim</span>
           </div>
           <div id="waPhotoThumbContainer" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px;"></div>
-          <div style="font-size: 0.76rem; color: #64748b; margin-top: 6px; line-height: 1.4;">
-            💡 <em>Petunjuk: Teks laporan otomatis terisi. Jika foto belum otomatis terlampir, klik tombol <strong>Salin
-                Foto</strong> di bawah lalu tekan <strong>Ctrl + V (Paste)</strong> di chat WhatsApp, atau kirim foto
-              langsung via galeri.</em>
-          </div>
-          <div style="display: flex; gap: 8px; margin-top: 10px;">
-            <button type="button" id="btnCopyWaPhoto" class="btn btn-outline btn-sm"
-              style="flex: 1; font-size: 0.78rem; font-weight: 600;">
-              📋 Salin Foto ke Clipboard
-            </button>
-            <button type="button" id="btnDownloadWaPhoto" class="btn btn-outline btn-sm"
-              style="flex: 1; font-size: 0.78rem; font-weight: 600;">
-              📥 Unduh Foto
-            </button>
+          <div style="font-size: 0.82rem; color: #166534; margin-top: 8px; line-height: 1.45; font-weight: 600; display: flex; align-items: center; gap: 6px;">
+            <span>✨</span> <span>Foto bukti dilampirkan langsung dalam 1 kesatuan pesan WhatsApp (tanpa link terpisah).</span>
           </div>
         </div>
 
@@ -2563,18 +2550,9 @@
         <div style="display: flex; flex-direction: column; gap: 10px;">
           <button type="button" id="btnWaConfirmation" class="btn btn-primary"
             style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); font-size: 1.05rem; font-weight: 800; padding: 15px; border-radius: 12px; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.4); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; color: white; cursor: pointer;">
-            <span>📲</span> Kirim Laporan &amp; Lampirkan Foto ke WhatsApp
+            <span>📲</span> Kirim ke WhatsApp DLH Sekarang (Bersama Foto)
           </button>
-          <a id="btnWaDirectLink" href="https://wa.me/6282234582769" target="_blank" class="btn btn-outline"
-            style="border-color: #10b981; color: #047857; font-weight: 700; font-size: 0.88rem; padding: 12px; border-radius: 12px; text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; background: #ecfdf5;">
-            <span>💬</span> Buka Chat Langsung ke WhatsApp DLH (0822-3458-2769) ↗
-          </a>
-          <div id="waPhotoPasteTip"
-            style="display: none; background: #fefce8; border: 1px solid #fef08a; border-radius: 10px; padding: 10px 12px; font-size: 0.8rem; color: #854d0e; text-align: left; line-height: 1.4;">
-            📸 <strong>Tips WhatsApp Web:</strong> Foto otomatis disalin ke clipboard! Di jendela chat WhatsApp, cukup
-            tekan <strong>Ctrl + V</strong> lalu tekan <strong>Enter</strong> untuk mengirim foto bukti.
-          </div>
-          <button type="button" class="btn btn-outline btn-close-modal" style="font-size: 0.88rem; padding: 10px;">
+          <button type="button" class="btn btn-outline btn-close-modal" style="font-size: 0.9rem; padding: 12px; border-radius: 10px; font-weight: 700; color: #475569;">
             Tutup &amp; Buat Aduan Baru
           </button>
         </div>

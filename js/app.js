@@ -527,11 +527,7 @@ class DLHApp {
         ? `https://maps.google.com/?q=${finalLat},${finalLng}`
         : 'Koordinat belum disetel';
 
-      // Buat tautan akses foto online langsung untuk petugas DLH di WhatsApp
-      const baseUrl = window.location.href.split('?')[0].split('#')[0];
-      const linkFotoViewer = `${baseUrl}?lihatFoto=${newRecord.id}`;
-
-      // Susun Format Pesan WhatsApp Resmi yang Lengkap untuk DLH Lembata
+      // Susun Format Pesan WhatsApp Resmi yang Lengkap untuk DLH Lembata (Tanpa Link Foto terpisah)
       const waMessage = 
 `*PENGADUAN LINGKUNGAN HIDUP KABUPATEN LEMBATA*
 --------------------------------------------------
@@ -560,23 +556,76 @@ ${uraian}
 
 📸 *BUKTI FOTO KEJADIAN:*
 ${buktiList.length > 0 
-  ? `• Status: ${buktiList.length} Berkas Foto Dilampirkan\n• 🖼️ *Buka Foto Bukti Online:* ${linkFotoViewer}` 
-  : 'Tidak melampirkan foto.'}
+  ? `• Status: Terlampir ${buktiList.length} Foto Bukti Kejadian (dikirim langsung bersama pesan ini)` 
+  : '• Status: Pelapor tidak melampirkan foto bukti.'}
 --------------------------------------------------
 _Laporan resmi dikirim melalui formulir pengaduan masyarakat DLH Lembata._
 _Mohon bantuan tindak lanjut dari Petugas Dinas Lingkungan Hidup Kab. Lembata. Terima kasih!_`;
 
       const waUrl = `https://wa.me/6282234582769?text=${encodeURIComponent(waMessage)}`;
 
-      // Siapkan berkas File mentah untuk native share WhatsApp
-      const rawFiles = [];
-      allMedia.forEach((f, idx) => {
-        if (f instanceof File) {
-          rawFiles.push(f);
-        } else if (f instanceof Blob) {
-          rawFiles.push(new File([f], `bukti_${newRecord.id}_${idx + 1}.jpg`, { type: f.type || 'image/jpeg' }));
+      // Helper konversi Base64 DataURL menjadi File objek JPEG standar
+      const dataUrlToJpegFile = (dataUrl, fileName) => {
+        try {
+          const parts = dataUrl.split(',');
+          const bstr = atob(parts[1]);
+          let n = bstr.length;
+          const u8arr = new Uint8Array(n);
+          while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+          }
+          const safeName = (fileName && fileName.endsWith('.jpg')) ? fileName : `${fileName || 'bukti'}.jpg`;
+          return new File([u8arr], safeName, { type: 'image/jpeg', lastModified: Date.now() });
+        } catch (e) {
+          console.error('Gagal konversi DataURL ke File:', e);
+          return null;
         }
-      });
+      };
+
+      // Siapkan 1 berkas foto bukti JPEG siap kirim langsung ke WhatsApp
+      let shareFile = null;
+      if (buktiList.length === 1) {
+        shareFile = dataUrlToJpegFile(buktiList[0], `bukti_${newRecord.id}.jpg`);
+      } else if (buktiList.length > 1) {
+        // Gabungkan seluruh foto ke satu frame kolase agar WhatsApp di HP warga
+        // dapat mengirimkan seluruh foto sekaligus teks keterangan dalam 1 pesan tunggal
+        try {
+          const loadedImages = await Promise.all(
+            buktiList.map(src => new Promise((resolve) => {
+              const img = new Image();
+              img.onload = () => resolve(img);
+              img.onerror = () => resolve(null);
+              img.src = src;
+            }))
+          );
+          const validImgs = loadedImages.filter(Boolean);
+          if (validImgs.length > 0) {
+            const targetW = 900;
+            const pad = 12;
+            let totalH = pad;
+            const heights = validImgs.map(img => {
+              const h = Math.round((img.height * targetW) / (img.width || targetW));
+              totalH += h + pad;
+              return h;
+            });
+            const c = document.createElement('canvas');
+            c.width = targetW;
+            c.height = totalH;
+            const ctx = c.getContext('2d');
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, c.width, c.height);
+            let curY = pad;
+            validImgs.forEach((img, i) => {
+              ctx.drawImage(img, pad, curY, targetW - (pad * 2), heights[i]);
+              curY += heights[i] + pad;
+            });
+            shareFile = dataUrlToJpegFile(c.toDataURL('image/jpeg', 0.85), `bukti_${newRecord.id}.jpg`);
+          }
+        } catch (colErr) {
+          console.warn('Gagal buat kolase foto:', colErr);
+          shareFile = dataUrlToJpegFile(buktiList[0], `bukti_${newRecord.id}.jpg`);
+        }
+      }
 
       // Reset form
       form.reset();
@@ -594,74 +643,63 @@ _Mohon bantuan tindak lanjut dari Petugas Dinas Lingkungan Hidup Kab. Lembata. T
       this.renderTable();
       if (window.lembataMap) window.lembataMap.renderMarkers();
 
-      // Show Success Modal & Atur aksi WhatsApp
+      // Langsung eksekusi Web Share API dengan File di HP (mengirim foto + teks sebagai caption 1 pesan)
+      let autoShareTriggered = false;
+      if (shareFile && navigator.share) {
+        try {
+          if (navigator.canShare && navigator.canShare({ files: [shareFile] })) {
+            autoShareTriggered = true;
+            await navigator.share({
+              title: `Pengaduan Lingkungan ${newRecord.id}`,
+              text: waMessage,
+              files: [shareFile]
+            });
+            this.showToast('Laporan & foto bukti berhasil diteruskan ke WhatsApp DLH!', 'success');
+          }
+        } catch (shareErr) {
+          if (shareErr.name === 'AbortError') {
+            autoShareTriggered = true;
+          } else {
+            console.warn('Auto share dilewati, tampilkan modal:', shareErr);
+            autoShareTriggered = false;
+          }
+        }
+      }
+
+      // Tampilkan Modal Sukses Aduan
       const modalSuccess = document.getElementById('modalSuccessAduan');
       const ticketDisplay = document.getElementById('successTicketId');
       const btnWa = document.getElementById('btnWaConfirmation');
       const photoBox = document.getElementById('waPhotoAttachmentBox');
       const photoThumbContainer = document.getElementById('waPhotoThumbContainer');
       const photoCountBadge = document.getElementById('waPhotoCount');
-      const btnCopyPhoto = document.getElementById('btnCopyWaPhoto');
-      const btnDownloadPhoto = document.getElementById('btnDownloadWaPhoto');
-
-      const btnWaDirectLink = document.getElementById('btnWaDirectLink');
-      if (btnWaDirectLink) {
-        btnWaDirectLink.href = waUrl;
-      }
 
       if (ticketDisplay) ticketDisplay.textContent = newRecord.id;
 
-      // Konfigurasi Tombol WhatsApp: Langsung kirim foto via native share di HP atau buka chat dengan clipboard copy
+      // Konfigurasi Tombol Kirim WhatsApp: Menjamin pengiriman foto dalam satu kesatuan pesan tanpa copy-paste
       if (btnWa) {
         btnWa.onclick = async (evt) => {
           if (evt) evt.preventDefault();
 
-          // 1. Coba Web Share API langsung pada saat klik pengguna (100% User Gesture Valid)
-          if (navigator.share && rawFiles.length > 0) {
+          // 1. Prioritaskan Native Share dengan File (Foto + Keterangan dalam 1 pesan WhatsApp di HP)
+          if (shareFile && navigator.share) {
             try {
-              if (navigator.canShare && navigator.canShare({ files: rawFiles })) {
+              if (navigator.canShare && navigator.canShare({ files: [shareFile] })) {
                 await navigator.share({
                   title: `Pengaduan Lingkungan ${newRecord.id}`,
                   text: waMessage,
-                  files: rawFiles
+                  files: [shareFile]
                 });
                 this.showToast('Laporan & foto bukti berhasil dibagikan ke WhatsApp!', 'success');
                 return;
               }
             } catch (shareErr) {
-              if (shareErr.name === 'AbortError') return; // User membatalkan dialog
-              console.warn('Native share fallback ke wa.me:', shareErr);
+              if (shareErr.name === 'AbortError') return;
+              console.warn('Native share gagal, dialihkan:', shareErr);
             }
           }
 
-          // 2. Fallback untuk Desktop / PC / WhatsApp Web:
-          if (buktiList.length > 0) {
-            try {
-              const firstPhoto = buktiList[0];
-              const img = new Image();
-              img.crossOrigin = 'anonymous';
-              img.src = firstPhoto;
-              await new Promise(r => { img.onload = r; });
-
-              const c = document.createElement('canvas');
-              c.width = img.width;
-              c.height = img.height;
-              const ctx = c.getContext('2d');
-              ctx.drawImage(img, 0, 0);
-
-              c.toBlob(async (pngBlob) => {
-                if (pngBlob && navigator.clipboard && window.ClipboardItem) {
-                  await navigator.clipboard.write([new ClipboardItem({ 'image/png': pngBlob })]);
-                  this.showToast('Foto bukti disalin! Tekan Ctrl+V di chat WhatsApp DLH.', 'success');
-                }
-              }, 'image/png');
-            } catch (e) {}
-
-            const tipEl = document.getElementById('waPhotoPasteTip');
-            if (tipEl) tipEl.style.display = 'block';
-          }
-
-          // Buka link WhatsApp resmi DLH Lembata
+          // 2. Fallback untuk Desktop PC / WhatsApp Web (Teks dikirim rapi tanpa link palsu, foto sudah tersimpan di database DLH)
           window.open(waUrl, '_blank');
         };
       }
@@ -677,72 +715,6 @@ _Mohon bantuan tindak lanjut dari Petugas Dinas Lingkungan Hidup Kab. Lembata. T
               <img src="${foto}" alt="Bukti ${idx + 1}" style="width: 100%; height: 100%; object-fit: cover;">
             </div>
           `).join('');
-
-          // Salin Foto ke Clipboard untuk langsung Paste (Ctrl+V) di WA Web
-          if (btnCopyPhoto) {
-            btnCopyPhoto.onclick = async () => {
-              try {
-                const firstPhoto = buktiList[0];
-                const img = new Image();
-                img.crossOrigin = 'anonymous';
-                img.src = firstPhoto;
-                await new Promise(r => { img.onload = r; });
-
-                const c = document.createElement('canvas');
-                c.width = img.width;
-                c.height = img.height;
-                const ctx = c.getContext('2d');
-                ctx.drawImage(img, 0, 0);
-
-                c.toBlob(async (pngBlob) => {
-                  if (pngBlob && navigator.clipboard && window.ClipboardItem) {
-                    await navigator.clipboard.write([
-                      new ClipboardItem({ 'image/png': pngBlob })
-                    ]);
-                    this.showToast('Foto bukti disalin! Tekan Ctrl+V di chat WhatsApp DLH.', 'success');
-                  } else {
-                    this.showToast('Gunakan tombol Unduh Foto untuk melampirkan ke WA.', 'info');
-                  }
-                }, 'image/png');
-              } catch (err) {
-                console.warn('Clipboard copy fallback:', err);
-                this.showToast('Silakan gunakan tombol Unduh Foto untuk kirim ke WhatsApp.', 'info');
-              }
-            };
-          }
-
-          // Unduh Foto
-          if (btnDownloadPhoto) {
-            btnDownloadPhoto.onclick = () => {
-              buktiList.forEach((foto, idx) => {
-                const a = document.createElement('a');
-                a.href = foto;
-                a.download = `bukti_aduan_${newRecord.id}_${idx + 1}.jpg`;
-                document.body.appendChild(a);
-                a.click();
-                document.body.removeChild(a);
-              });
-              this.showToast(`Mengunduh ${buktiList.length} foto bukti aduan.`, 'success');
-            };
-          }
-
-          // Otomatis salin foto pertama ke clipboard saat modal tampil
-          try {
-            const img = new Image();
-            img.src = buktiList[0];
-            img.onload = () => {
-              const c = document.createElement('canvas');
-              c.width = img.width;
-              c.height = img.height;
-              c.getContext('2d').drawImage(img, 0, 0);
-              c.toBlob(blob => {
-                if (blob && navigator.clipboard && window.ClipboardItem) {
-                  navigator.clipboard.write([new ClipboardItem({ 'image/png': blob })]).catch(() => {});
-                }
-              }, 'image/png');
-            };
-          } catch (e) {}
-
         } else {
           photoBox.style.display = 'none';
         }
