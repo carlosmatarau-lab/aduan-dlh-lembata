@@ -565,6 +565,67 @@ _Mohon bantuan tindak lanjut dari Petugas Dinas Lingkungan Hidup Kab. Lembata. T
       // Tautan langsung ke room chat WhatsApp resmi DLH Lembata (+62 822-3458-2769)
       const waUrl = `https://api.whatsapp.com/send?phone=6282234582769&text=${encodeURIComponent(waMessage)}`;
 
+      // Helper konversi Base64 DataURL menjadi File objek JPEG standar untuk lampiran visual WhatsApp
+      const dataUrlToJpegFile = (dataUrl, fileName) => {
+        try {
+          const parts = dataUrl.split(',');
+          const bstr = atob(parts[1]);
+          let n = bstr.length;
+          const u8arr = new Uint8Array(n);
+          while (n--) {
+            u8arr[n] = bstr.charCodeAt(n);
+          }
+          const safeName = (fileName && fileName.endsWith('.jpg')) ? fileName : `${fileName || 'bukti'}.jpg`;
+          return new File([u8arr], safeName, { type: 'image/jpeg', lastModified: Date.now() });
+        } catch (e) {
+          console.error('Gagal konversi DataURL ke File:', e);
+          return null;
+        }
+      };
+
+      // Siapkan 1 berkas foto bukti JPEG siap kirim agar foto tampil langsung di room chat
+      let shareFile = null;
+      if (buktiList.length === 1) {
+        shareFile = dataUrlToJpegFile(buktiList[0], `bukti_${newRecord.id}.jpg`);
+      } else if (buktiList.length > 1) {
+        try {
+          const loadedImages = await Promise.all(
+            buktiList.map(src => new Promise((resolve) => {
+              const img = new Image();
+              img.onload = () => resolve(img);
+              img.onerror = () => resolve(null);
+              img.src = src;
+            }))
+          );
+          const validImgs = loadedImages.filter(Boolean);
+          if (validImgs.length > 0) {
+            const targetW = 900;
+            const pad = 12;
+            let totalH = pad;
+            const heights = validImgs.map(img => {
+              const h = Math.round((img.height * targetW) / (img.width || targetW));
+              totalH += h + pad;
+              return h;
+            });
+            const c = document.createElement('canvas');
+            c.width = targetW;
+            c.height = totalH;
+            const ctx = c.getContext('2d');
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(0, 0, c.width, c.height);
+            let curY = pad;
+            validImgs.forEach((img, i) => {
+              ctx.drawImage(img, pad, curY, targetW - (pad * 2), heights[i]);
+              curY += heights[i] + pad;
+            });
+            shareFile = dataUrlToJpegFile(c.toDataURL('image/jpeg', 0.85), `bukti_${newRecord.id}.jpg`);
+          }
+        } catch (colErr) {
+          console.warn('Gagal buat kolase foto:', colErr);
+          shareFile = dataUrlToJpegFile(buktiList[0], `bukti_${newRecord.id}.jpg`);
+        }
+      }
+
       // Reset form
       form.reset();
       this.selectedMediaFiles = [];
@@ -585,17 +646,40 @@ _Mohon bantuan tindak lanjut dari Petugas Dinas Lingkungan Hidup Kab. Lembata. T
       const modalSuccess = document.getElementById('modalSuccessAduan');
       const ticketDisplay = document.getElementById('successTicketId');
       const btnWa = document.getElementById('btnWaConfirmation');
+      const btnDirectRoom = document.getElementById('btnWaDirectRoom');
       const photoBox = document.getElementById('waPhotoAttachmentBox');
       const photoThumbContainer = document.getElementById('waPhotoThumbContainer');
       const photoCountBadge = document.getElementById('waPhotoCount');
 
       if (ticketDisplay) ticketDisplay.textContent = newRecord.id;
 
-      // Konfigurasi Tombol: Langsung diarahkan ke room chat nomor WA DLH Lembata (+62 822-3458-2769)
+      // Tombol 1: Kirim Foto & Laporan ke WhatsApp (Foto Tampil Nyata di Room Chat bersama Caption)
       if (btnWa) {
-        btnWa.onclick = (evt) => {
+        btnWa.onclick = async (evt) => {
           if (evt) evt.preventDefault();
-          // Langsung buka chat room ke nomor DLH tanpa dialog berbagi & tanpa mencari kontak
+          if (shareFile && navigator.share && navigator.canShare && navigator.canShare({ files: [shareFile] })) {
+            try {
+              await navigator.share({
+                title: `Pengaduan Lingkungan ${newRecord.id}`,
+                text: waMessage,
+                files: [shareFile]
+              });
+              this.showToast('Laporan & foto bukti berhasil dibagikan ke WhatsApp!', 'success');
+              return;
+            } catch (shareErr) {
+              if (shareErr.name === 'AbortError') return;
+              console.warn('Native share dilewati, buka room chat:', shareErr);
+            }
+          }
+          // Fallback langsung ke chat room nomor DLH
+          window.location.href = waUrl;
+        };
+      }
+
+      // Tombol 2: Buka Langsung Room Chat DLH Lembata (+62 822-3458-2769)
+      if (btnDirectRoom) {
+        btnDirectRoom.onclick = (evt) => {
+          if (evt) evt.preventDefault();
           window.location.href = waUrl;
         };
       }
