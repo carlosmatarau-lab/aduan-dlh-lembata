@@ -962,7 +962,8 @@ class AduanDataStore {
     const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
     // Lookup default lat lng from kecamatan if not provided
-    const kecMeta = KECAMATAN_LEMBATA[formData.kecamatan] || { lat: -8.375, lng: 123.55 };
+    const kecDict = (typeof KECAMATAN_LEMBATA !== 'undefined' ? KECAMATAN_LEMBATA : (window.KECAMATAN_LEMBATA || {}));
+    const kecMeta = (formData.kecamatan && kecDict[formData.kecamatan]) ? kecDict[formData.kecamatan] : { lat: -8.375, lng: 123.55 };
     const lat = formData.lat ? parseFloat(formData.lat) : (kecMeta.lat + (Math.random() - 0.5) * 0.02);
     const lng = formData.lng ? parseFloat(formData.lng) : (kecMeta.lng + (Math.random() - 0.5) * 0.02);
 

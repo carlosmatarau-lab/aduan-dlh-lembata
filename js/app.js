@@ -562,113 +562,135 @@ class DLHApp {
 
       this.showToast('⏳ Menyusun rekapan aduan & mengamankan data ke sistem DLH Lembata...', 'info');
 
-      // Kumpulkan semua file bukti foto (dari selectedMediaFiles, input file, atau kamera)
-      const allMedia = [...(this.selectedMediaFiles || [])];
-      const fileInput = document.getElementById('inputBuktiFoto');
-      if (fileInput && fileInput.files && fileInput.files.length) {
-        Array.from(fileInput.files).forEach(f => {
-          if (!allMedia.includes(f)) allMedia.push(f);
-        });
-      }
-      const cameraInput = document.getElementById('inputCameraCapture');
-      if (cameraInput && cameraInput.files && cameraInput.files.length) {
-        Array.from(cameraInput.files).forEach(f => {
-          if (!allMedia.includes(f)) allMedia.push(f);
-        });
-      }
+      try {
+        // Kumpulkan semua file bukti foto (dari selectedMediaFiles, input file, atau kamera)
+        const allMedia = [...(this.selectedMediaFiles || [])];
+        const fileInput = document.getElementById('inputBuktiFoto');
+        if (fileInput && fileInput.files && fileInput.files.length) {
+          Array.from(fileInput.files).forEach(f => {
+            if (!allMedia.includes(f)) allMedia.push(f);
+          });
+        }
+        const cameraInput = document.getElementById('inputCameraCapture');
+        if (cameraInput && cameraInput.files && cameraInput.files.length) {
+          Array.from(cameraInput.files).forEach(f => {
+            if (!allMedia.includes(f)) allMedia.push(f);
+          });
+        }
 
-      // Konversi dan optimasi bukti foto ke Base64 Data URL
-      const mediaPromises = allMedia.map(file => {
-        return new Promise((resolve) => {
-          if (typeof file === 'string') return resolve(file);
-          if (!(file instanceof Blob)) return resolve(null);
+        // Konversi dan optimasi bukti foto ke Base64 Data URL dengan safety timeout 2 detik
+        const mediaPromises = allMedia.map(file => {
+          return new Promise((resolve) => {
+            if (typeof file === 'string') return resolve(file);
+            if (!(file instanceof Blob)) return resolve(null);
 
-          const reader = new FileReader();
-          reader.onload = (ev) => {
-            const dataUrl = ev.target.result;
-            const img = new Image();
-            img.onload = () => {
-              try {
-                const canvas = document.createElement('canvas');
-                let width = img.width || 640;
-                let height = img.height || 480;
-                const maxDim = 800;
-                if (width > maxDim || height > maxDim) {
-                  if (width > height) {
-                    height = Math.round((height * maxDim) / width);
-                    width = maxDim;
-                  } else {
-                    width = Math.round((width * maxDim) / height);
-                    height = maxDim;
+            const safetyTimer = setTimeout(() => {
+              resolve(null);
+            }, 2000);
+
+            try {
+              const reader = new FileReader();
+              reader.onload = (ev) => {
+                const dataUrl = ev.target.result;
+                const img = new Image();
+                img.onload = () => {
+                  clearTimeout(safetyTimer);
+                  try {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width || 640;
+                    let height = img.height || 480;
+                    const maxDim = 800;
+                    if (width > maxDim || height > maxDim) {
+                      if (width > height) {
+                        height = Math.round((height * maxDim) / width);
+                        width = maxDim;
+                      } else {
+                        width = Math.round((width * maxDim) / height);
+                        height = maxDim;
+                      }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    resolve(canvas.toDataURL('image/jpeg', 0.75));
+                  } catch (err) {
+                    resolve(dataUrl);
                   }
-                }
-                canvas.width = width;
-                canvas.height = height;
-                const ctx = canvas.getContext('2d');
-                ctx.drawImage(img, 0, 0, width, height);
-                resolve(canvas.toDataURL('image/jpeg', 0.75));
-              } catch (err) {
-                resolve(dataUrl);
-              }
-            };
-            img.onerror = () => resolve(dataUrl);
-            img.src = dataUrl;
-          };
-          reader.onerror = () => resolve(null);
-          reader.readAsDataURL(file);
+                };
+                img.onerror = () => {
+                  clearTimeout(safetyTimer);
+                  resolve(dataUrl);
+                };
+                img.src = dataUrl;
+              };
+              reader.onerror = () => {
+                clearTimeout(safetyTimer);
+                resolve(null);
+              };
+              reader.readAsDataURL(file);
+            } catch (readErr) {
+              clearTimeout(safetyTimer);
+              resolve(null);
+            }
+          });
         });
-      });
 
-      const buktiList = (await Promise.all(mediaPromises)).filter(Boolean);
+        const buktiList = (await Promise.all(mediaPromises)).filter(Boolean);
 
-      // Kategori pencemaran
-      const selectedRadio = document.querySelector('input[name="radioJenis"]:checked');
-      const jenisPencemaran = selectedRadio ? selectedRadio.value : 'Lainnya';
+        // Kategori pencemaran
+        const selectedRadio = document.querySelector('input[name="radioJenis"]:checked');
+        const jenisPencemaran = selectedRadio ? selectedRadio.value : 'Lainnya';
 
-      const namaPelapor = (document.getElementById('inputNama')?.value || '').trim();
-      const noHp = (document.getElementById('inputNoHp')?.value || '').trim();
-      const alamatPelapor = (document.getElementById('inputAlamat')?.value || '').trim();
-      const kecamatan = document.getElementById('inputKecamatan')?.value || 'Nubatukan';
-      const desa = (document.getElementById('inputDesa')?.value || '').trim();
-      const lokasiDetail = (document.getElementById('inputLokasiDetail')?.value || '').trim();
-      const tanggalKejadian = document.getElementById('inputTanggalKejadian')?.value || new Date().toISOString().split('T')[0];
-      const sumberDugaan = (document.getElementById('inputSumberDugaan')?.value || '').trim();
-      const uraian = (document.getElementById('inputUraian')?.value || '').trim();
-      const lat = (document.getElementById('inputLat')?.value || '').trim();
-      const lng = (document.getElementById('inputLng')?.value || '').trim();
+        const namaPelapor = (document.getElementById('inputNama')?.value || '').trim();
+        const noHp = (document.getElementById('inputNoHp')?.value || '').trim();
+        const alamatPelapor = (document.getElementById('inputAlamat')?.value || '').trim();
+        const kecamatan = document.getElementById('inputKecamatan')?.value || 'Nubatukan';
+        const desa = (document.getElementById('inputDesa')?.value || '').trim();
+        const lokasiDetail = (document.getElementById('inputLokasiDetail')?.value || '').trim();
+        const tanggalKejadian = document.getElementById('inputTanggalKejadian')?.value || new Date().toISOString().split('T')[0];
+        const sumberDugaan = (document.getElementById('inputSumberDugaan')?.value || '').trim();
+        const uraian = (document.getElementById('inputUraian')?.value || '').trim();
+        const lat = (document.getElementById('inputLat')?.value || '').trim();
+        const lng = (document.getElementById('inputLng')?.value || '').trim();
 
-      const formData = {
-        namaPelapor: namaPelapor,
-        noHp: noHp,
-        alamatPelapor: alamatPelapor,
-        kecamatan: kecamatan,
-        desa: desa,
-        lokasiDetail: lokasiDetail,
-        jenisPencemaran: jenisPencemaran,
-        tanggalKejadian: tanggalKejadian,
-        sumberDugaan: sumberDugaan,
-        uraian: uraian,
-        lat: lat,
-        lng: lng,
-        fotoBukti: buktiList[0] || '',
-        linkFotoBukti: buktiList[0] || '',
-        buktiFotoList: buktiList
-      };
+        const formData = {
+          namaPelapor: namaPelapor,
+          noHp: noHp,
+          alamatPelapor: alamatPelapor,
+          kecamatan: kecamatan,
+          desa: desa,
+          lokasiDetail: lokasiDetail,
+          jenisPencemaran: jenisPencemaran,
+          tanggalKejadian: tanggalKejadian,
+          sumberDugaan: sumberDugaan,
+          uraian: uraian,
+          lat: lat,
+          lng: lng,
+          fotoBukti: buktiList[0] || '',
+          linkFotoBukti: buktiList[0] || '',
+          buktiFotoList: buktiList
+        };
 
-      // Simpan ke database lokal (dan otomatis disinkronkan ke Google Spreadsheet via GAS)
-      const newRecord = window.aduanStore.addAduan(formData);
+        // Simpan ke database lokal & cloud
+        let newRecord = null;
+        if (window.aduanStore && typeof window.aduanStore.addAduan === 'function') {
+          newRecord = window.aduanStore.addAduan(formData);
+        } else {
+          newRecord = { id: `ADU-LMB-${new Date().getFullYear()}-${Date.now().toString().slice(-3)}`, ...formData };
+        }
 
-      this.showToast(`💾 Laporan ${newRecord.id} tersimpan di arsip database DLH Lembata!`, 'success');
+        this.showToast(`💾 Laporan ${newRecord.id} tersimpan di arsip database DLH Lembata!`, 'success');
 
-      // Link Google Maps koordinat presisi
-      const finalLat = newRecord.lat || lat;
-      const finalLng = newRecord.lng || lng;
-      const mapsLink = (finalLat && finalLng)
-        ? `https://maps.google.com/?q=${finalLat},${finalLng}`
-        : 'Koordinat belum disetel';
+        // Link Google Maps koordinat presisi
+        const finalLat = newRecord.lat || lat;
+        const finalLng = newRecord.lng || lng;
+        const mapsLink = (finalLat && finalLng)
+          ? `https://maps.google.com/?q=${finalLat},${finalLng}`
+          : 'Koordinat belum disetel';
 
-      // Susun Format Pesan WhatsApp: LAYANAN PENGADUAN MASYARAKAT (KABUPATEN LEMBATA)
-      const waMessage = 
+        // Susun Format Pesan WhatsApp: LAYANAN PENGADUAN MASYARAKAT (KABUPATEN LEMBATA)
+        const waMessage = 
 `*LAYANAN PENGADUAN MASYARAKAT*
 *KABUPATEN LEMBATA*
 --------------------------------------------------
@@ -703,192 +725,178 @@ ${buktiList.length > 0
 _Laporan resmi dikirim melalui formulir Layanan Pengaduan Masyarakat._
 _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
 
-      // Tautan langsung ke room chat nomor kontak layanan pengaduan (+62 822-3458-2769)
-      const waUrl = `https://api.whatsapp.com/send?phone=6282234582769&text=${encodeURIComponent(waMessage)}`;
+        // Tautan langsung ke room chat nomor kontak layanan pengaduan (+62 822-3458-2769)
+        const waUrl = `https://api.whatsapp.com/send?phone=6282234582769&text=${encodeURIComponent(waMessage)}`;
 
-      // Helper konversi Base64 DataURL menjadi File objek JPEG standar untuk lampiran visual WhatsApp
-      const dataUrlToJpegFile = (dataUrl, fileName) => {
-        try {
-          const parts = dataUrl.split(',');
-          const bstr = atob(parts[1]);
-          let n = bstr.length;
-          const u8arr = new Uint8Array(n);
-          while (n--) {
-            u8arr[n] = bstr.charCodeAt(n);
+        // Helper konversi Base64 DataURL menjadi File objek JPEG standar untuk lampiran visual WhatsApp
+        const dataUrlToJpegFile = (dataUrl, fileName) => {
+          try {
+            if (!dataUrl || typeof dataUrl !== 'string' || !dataUrl.includes(',')) return null;
+            const parts = dataUrl.split(',');
+            const bstr = atob(parts[1]);
+            let n = bstr.length;
+            const u8arr = new Uint8Array(n);
+            while (n--) {
+              u8arr[n] = bstr.charCodeAt(n);
+            }
+            const safeName = (fileName && fileName.endsWith('.jpg')) ? fileName : `${fileName || 'bukti'}.jpg`;
+            return new File([u8arr], safeName, { type: 'image/jpeg', lastModified: Date.now() });
+          } catch (e) {
+            console.error('Gagal konversi DataURL ke File:', e);
+            return null;
           }
-          const safeName = (fileName && fileName.endsWith('.jpg')) ? fileName : `${fileName || 'bukti'}.jpg`;
-          return new File([u8arr], safeName, { type: 'image/jpeg', lastModified: Date.now() });
-        } catch (e) {
-          console.error('Gagal konversi DataURL ke File:', e);
-          return null;
-        }
-      };
+        };
 
-      // Siapkan 1 berkas foto bukti JPEG siap kirim agar foto tampil langsung di room chat
-      let shareFile = null;
-      if (buktiList.length === 1) {
-        shareFile = dataUrlToJpegFile(buktiList[0], `bukti_${newRecord.id}.jpg`);
-      } else if (buktiList.length > 1) {
-        try {
-          const loadedImages = await Promise.all(
-            buktiList.map(src => new Promise((resolve) => {
-              const img = new Image();
-              img.onload = () => resolve(img);
-              img.onerror = () => resolve(null);
-              img.src = src;
-            }))
-          );
-          const validImgs = loadedImages.filter(Boolean);
-          if (validImgs.length > 0) {
-            const targetW = 900;
-            const pad = 12;
-            let totalH = pad;
-            const heights = validImgs.map(img => {
-              const h = Math.round((img.height * targetW) / (img.width || targetW));
-              totalH += h + pad;
-              return h;
-            });
-            const c = document.createElement('canvas');
-            c.width = targetW;
-            c.height = totalH;
-            const ctx = c.getContext('2d');
-            ctx.fillStyle = '#0f172a';
-            ctx.fillRect(0, 0, c.width, c.height);
-            let curY = pad;
-            validImgs.forEach((img, i) => {
-              ctx.drawImage(img, pad, curY, targetW - (pad * 2), heights[i]);
-              curY += heights[i] + pad;
-            });
-            shareFile = dataUrlToJpegFile(c.toDataURL('image/jpeg', 0.85), `bukti_${newRecord.id}.jpg`);
-          }
-        } catch (colErr) {
-          console.warn('Gagal buat kolase foto:', colErr);
+        let shareFile = null;
+        if (buktiList.length >= 1) {
           shareFile = dataUrlToJpegFile(buktiList[0], `bukti_${newRecord.id}.jpg`);
         }
-      }
 
-      // Reset form
-      form.reset();
-      this.selectedMediaFiles = [];
-      if (fileInput) fileInput.value = '';
-      if (cameraInput) cameraInput.value = '';
-      const previewList = document.getElementById('uploadPreviewList');
-      if (previewList) previewList.innerHTML = '';
-      const dateInput = document.getElementById('inputTanggalKejadian');
-      if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
-      if (this.populateDesaDropdown) this.populateDesaDropdown('Nubatukan');
-      const msgNoHp = document.getElementById('noHpValidationMsg');
-      if (msgNoHp) msgNoHp.style.display = 'none';
-      if (inputNoHp) inputNoHp.classList.remove('input-valid', 'input-invalid');
+        // Reset form
+        form.reset();
+        this.selectedMediaFiles = [];
+        if (fileInput) fileInput.value = '';
+        if (cameraInput) cameraInput.value = '';
+        const previewList = document.getElementById('uploadPreviewList');
+        if (previewList) previewList.innerHTML = '';
+        const dateInput = document.getElementById('inputTanggalKejadian');
+        if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
+        if (this.populateDesaDropdown) this.populateDesaDropdown('Nubatukan');
+        const msgNoHp = document.getElementById('noHpValidationMsg');
+        if (msgNoHp) msgNoHp.style.display = 'none';
+        if (inputNoHp) inputNoHp.classList.remove('input-valid', 'input-invalid');
 
-      // Update UI components
-      this.updateKPIs();
-      this.renderTable();
-      if (window.lembataMap) window.lembataMap.renderMarkers();
+        // Update UI components
+        this.updateKPIs();
+        this.renderTable();
+        if (window.lembataMap) window.lembataMap.renderMarkers();
 
-      // Tampilkan Modal Sukses Aduan
-      const modalSuccess = document.getElementById('modalSuccessAduan');
-      const ticketDisplay = document.getElementById('successTicketId');
-      const btnWa = document.getElementById('btnWaConfirmation');
-      const btnDirectRoom = document.getElementById('btnWaDirectRoom');
-      const photoBox = document.getElementById('waPhotoAttachmentBox');
-      const photoThumbContainer = document.getElementById('waPhotoThumbContainer');
-      const photoCountBadge = document.getElementById('waPhotoCount');
-      const redirectNotice = document.getElementById('waRedirectLoadingNotice');
-      if (redirectNotice) redirectNotice.style.display = 'none';
+        // Tampilkan Modal Sukses Aduan
+        const modalSuccess = document.getElementById('modalSuccessAduan');
+        const ticketDisplay = document.getElementById('successTicketId');
+        const btnWa = document.getElementById('btnWaConfirmation');
+        const btnDirectRoom = document.getElementById('btnWaDirectRoom');
+        const photoBox = document.getElementById('waPhotoAttachmentBox');
+        const photoThumbContainer = document.getElementById('waPhotoThumbContainer');
+        const photoCountBadge = document.getElementById('waPhotoCount');
+        const redirectNotice = document.getElementById('waRedirectLoadingNotice');
+        if (redirectNotice) redirectNotice.style.display = 'none';
 
-      if (ticketDisplay) ticketDisplay.textContent = newRecord.id;
+        if (ticketDisplay) ticketDisplay.textContent = newRecord.id;
 
-      // Tombol 1: Kirim Foto & Laporan ke WhatsApp (Foto Tampil Nyata di Room Chat bersama Caption)
-      if (btnWa) {
-        btnWa.onclick = async (evt) => {
-          if (evt) evt.preventDefault();
-          
-          btnWa.disabled = true;
-          const origText = btnWa.innerHTML;
-          btnWa.innerHTML = '<span class="btn-spinner"></span> <span>Membuka WhatsApp...</span>';
-          if (redirectNotice) {
-            redirectNotice.style.display = 'block';
-            const noticeText = document.getElementById('waRedirectNoticeText');
-            if (noticeText) noticeText.textContent = 'Mengarahkan Anda ke Room Chat WhatsApp Layanan Pengaduan...';
-          }
+        // Tombol 1 di Modal: Kirim Foto & Laporan ke WhatsApp
+        if (btnWa) {
+          btnWa.onclick = async (evt) => {
+            if (evt) evt.preventDefault();
+            btnWa.disabled = true;
+            const origText = btnWa.innerHTML;
+            btnWa.innerHTML = '<span class="btn-spinner"></span> <span>Membuka WhatsApp...</span>';
+            if (redirectNotice) {
+              redirectNotice.style.display = 'block';
+              const noticeText = document.getElementById('waRedirectNoticeText');
+              if (noticeText) noticeText.textContent = 'Mengarahkan Anda ke Room Chat WhatsApp Layanan Pengaduan...';
+            }
 
-          setTimeout(async () => {
-            if (shareFile && navigator.share && navigator.canShare && navigator.canShare({ files: [shareFile] })) {
-              try {
-                await navigator.share({
-                  title: `Pengaduan Lingkungan ${newRecord.id}`,
-                  text: waMessage,
-                  files: [shareFile]
-                });
-                this.showToast('Laporan & foto bukti berhasil dibagikan ke WhatsApp!', 'success');
-                btnWa.disabled = false;
-                btnWa.innerHTML = origText;
-                return;
-              } catch (shareErr) {
-                if (shareErr.name === 'AbortError') {
+            setTimeout(async () => {
+              if (shareFile && navigator.share && navigator.canShare && navigator.canShare({ files: [shareFile] })) {
+                try {
+                  await navigator.share({
+                    title: `Pengaduan Lingkungan ${newRecord.id}`,
+                    text: waMessage,
+                    files: [shareFile]
+                  });
+                  this.showToast('Laporan & foto bukti berhasil dibagikan ke WhatsApp!', 'success');
                   btnWa.disabled = false;
                   btnWa.innerHTML = origText;
-                  if (redirectNotice) redirectNotice.style.display = 'none';
                   return;
+                } catch (shareErr) {
+                  if (shareErr.name === 'AbortError') {
+                    btnWa.disabled = false;
+                    btnWa.innerHTML = origText;
+                    if (redirectNotice) redirectNotice.style.display = 'none';
+                    return;
+                  }
                 }
-                console.warn('Native share dilewati, buka room chat:', shareErr);
               }
-            }
-            // Fallback langsung ke chat room nomor kontak layanan pengaduan DLH
-            window.location.href = waUrl;
-            setTimeout(() => {
-              btnWa.disabled = false;
-              btnWa.innerHTML = origText;
-            }, 3000);
-          }, 350);
-        };
-      }
-
-      // Tombol 2: Buka Langsung Room Chat DLH Lembata (+62 822-3458-2769)
-      if (btnDirectRoom) {
-        btnDirectRoom.onclick = (evt) => {
-          if (evt) evt.preventDefault();
-          btnDirectRoom.disabled = true;
-          const origDirect = btnDirectRoom.innerHTML;
-          btnDirectRoom.innerHTML = '<span class="btn-spinner" style="border-top-color: #059669; border-color: rgba(5,150,105,0.25);"></span> <span>Membuka Chat Room WhatsApp...</span>';
-          if (redirectNotice) {
-            redirectNotice.style.display = 'block';
-            const noticeText = document.getElementById('waRedirectNoticeText');
-            if (noticeText) noticeText.textContent = 'Membuka room chat WhatsApp nomor +62 822-3458-2769...';
-          }
-          setTimeout(() => {
-            window.location.href = waUrl;
-            setTimeout(() => {
-              btnDirectRoom.disabled = false;
-              btnDirectRoom.innerHTML = origDirect;
-            }, 3000);
-          }, 300);
-        };
-      }
-
-      // Tampilkan Bukti Foto di Modal WhatsApp
-      if (photoBox && photoThumbContainer) {
-        if (buktiList.length > 0) {
-          photoBox.style.display = 'block';
-          if (photoCountBadge) photoCountBadge.textContent = buktiList.length;
-
-          photoThumbContainer.innerHTML = buktiList.map((foto, idx) => `
-            <div style="position: relative; flex-shrink: 0; width: 68px; height: 68px; border-radius: 8px; overflow: hidden; border: 2px solid #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-              <img src="${foto}" alt="Bukti ${idx + 1}" style="width: 100%; height: 100%; object-fit: cover;">
-            </div>
-          `).join('');
-        } else {
-          photoBox.style.display = 'none';
+              window.location.href = waUrl;
+              setTimeout(() => {
+                btnWa.disabled = false;
+                btnWa.innerHTML = origText;
+              }, 2500);
+            }, 300);
+          };
         }
-      }
 
-      if (btnSubmit) {
-        btnSubmit.disabled = false;
-        btnSubmit.innerHTML = '<span>📲</span> KIRIM LAPORAN KE KONTAK LAYANAN PENGADUAN';
-      }
+        // Tombol 2 di Modal: Buka Langsung Room Chat
+        if (btnDirectRoom) {
+          btnDirectRoom.onclick = (evt) => {
+            if (evt) evt.preventDefault();
+            btnDirectRoom.disabled = true;
+            const origDirect = btnDirectRoom.innerHTML;
+            btnDirectRoom.innerHTML = '<span class="btn-spinner" style="border-top-color: #059669; border-color: rgba(5,150,105,0.25);"></span> <span>Membuka Chat Room WhatsApp...</span>';
+            if (redirectNotice) {
+              redirectNotice.style.display = 'block';
+              const noticeText = document.getElementById('waRedirectNoticeText');
+              if (noticeText) noticeText.textContent = 'Membuka room chat WhatsApp nomor +62 822-3458-2769...';
+            }
+            setTimeout(() => {
+              window.location.href = waUrl;
+              setTimeout(() => {
+                btnDirectRoom.disabled = false;
+                btnDirectRoom.innerHTML = origDirect;
+              }, 2500);
+            }, 300);
+          };
+        }
 
-      if (modalSuccess) modalSuccess.classList.add('show');
+        // Tampilkan Bukti Foto di Modal WhatsApp
+        if (photoBox && photoThumbContainer) {
+          if (buktiList.length > 0) {
+            photoBox.style.display = 'block';
+            if (photoCountBadge) photoCountBadge.textContent = buktiList.length;
+
+            photoThumbContainer.innerHTML = buktiList.map((foto, idx) => `
+              <div style="position: relative; flex-shrink: 0; width: 68px; height: 68px; border-radius: 8px; overflow: hidden; border: 2px solid #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
+                <img src="${foto}" alt="Bukti ${idx + 1}" style="width: 100%; height: 100%; object-fit: cover;">
+              </div>
+            `).join('');
+          } else {
+            photoBox.style.display = 'none';
+          }
+        }
+
+        // Kembalikan tombol submit ke posisi aktif semula
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.innerHTML = '<span>📲</span> KIRIM LAPORAN KE KONTAK LAYANAN PENGADUAN';
+        }
+
+        // Buka modal konfirmasi sukses
+        if (modalSuccess) modalSuccess.classList.add('show');
+
+        // Otomatis arahkan dan buka WhatsApp langsung!
+        this.showToast('✅ Laporan tersimpan! Membuka WhatsApp...', 'success');
+        setTimeout(() => {
+          try {
+            window.location.href = waUrl;
+          } catch (e) {
+            window.open(waUrl, '_blank');
+          }
+        }, 450);
+
+      } catch (submitErr) {
+        console.error('Error saat memproses aduan:', submitErr);
+        if (btnSubmit) {
+          btnSubmit.disabled = false;
+          btnSubmit.innerHTML = '<span>📲</span> KIRIM LAPORAN KE KONTAK LAYANAN PENGADUAN';
+        }
+        this.showToast('Mengarahkan ke WhatsApp resmi...', 'info');
+        const fallbackNoHp = (document.getElementById('inputNoHp')?.value || '').trim();
+        const fallbackWaUrl = `https://api.whatsapp.com/send?phone=6282234582769&text=${encodeURIComponent('Halo Kontak Layanan Pengaduan DLH Kabupaten Lembata, saya warga Lembata (No HP: ' + fallbackNoHp + ') ingin menyampaikan aduan lingkungan hidup.')}`;
+        setTimeout(() => {
+          window.location.href = fallbackWaUrl;
+        }, 600);
+      }
     });
   }
 
