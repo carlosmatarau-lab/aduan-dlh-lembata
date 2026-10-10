@@ -2376,7 +2376,7 @@
         this.tempUploadedPhotos = [];
       }
 
-      init() {
+      async init() {
         try { this.checkAuth(); } catch (e) { console.error('checkAuth:', e); }
         try { this.bindEvents(); } catch (e) { console.error('bindEvents:', e); }
         try { this.setupPhotoUploadUI(); } catch (e) { console.error('setupPhotoUploadUI:', e); }
@@ -2385,6 +2385,20 @@
         try { this.updateKPIs(); } catch (e) { console.error('updateKPIs:', e); }
         try { this.renderTable(); } catch (e) { console.error('renderTable:', e); }
         try { this.initMap(); } catch (e) { console.error('initMap:', e); }
+
+        // SINKRONISASI OTOMATIS DARI GOOGLE SPREADSHEET SAAT DASHBOARD DIBUKA
+        if (window.aduanStore && window.aduanStore.hasGasConfigured()) {
+          try {
+            const syncRes = await window.aduanStore.syncFromGAS(true);
+            if (syncRes && syncRes.success) {
+              this.updateKPIs();
+              this.renderTable();
+              this.renderMapLayers();
+            }
+          } catch (e) {
+            console.warn('Initial cloud sync error:', e);
+          }
+        }
       }
 
       /* ===================================================================
@@ -3185,7 +3199,20 @@
         const tbody = document.getElementById('aduanTableBody');
         if (!tbody) return;
 
-        const data = window.aduanStore ? window.aduanStore.getAll() : [];
+        const data = window.aduanStore ? [...window.aduanStore.getAll()] : [];
+
+        // Urutkan laporan terbaru di paling atas
+        data.sort((a, b) => {
+          const parseTime = (str) => {
+            if (!str) return 0;
+            const t = new Date(str).getTime();
+            return isNaN(t) ? 0 : t;
+          };
+          const tA = parseTime(a.timestamp) || parseTime(a.tanggalKejadian);
+          const tB = parseTime(b.timestamp) || parseTime(b.tanggalKejadian);
+          return tB - tA;
+        });
+
         const filtered = data.filter(item => {
           // Filter Search
           const q = this.filters.search.toLowerCase();
@@ -3231,9 +3258,25 @@
           return;
         }
 
+        const formatAduanDate = (raw) => {
+          if (!raw || raw === '-') return { date: '-', time: '' };
+          try {
+            const d = new Date(raw);
+            if (!isNaN(d.getTime())) {
+              const pad = (n) => String(n).padStart(2, '0');
+              const dateStr = `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+              const timeStr = `${pad(d.getHours())}:${pad(d.getMinutes())}`;
+              return { date: dateStr, time: timeStr };
+            }
+          } catch(e) {}
+          const parts = String(raw).split(' ');
+          return { date: parts[0] || raw, time: parts[1] || '' };
+        };
+
         tbody.innerHTML = filtered.map(item => {
-          const dateOnly = item.timestamp ? item.timestamp.split(' ')[0] : (item.tanggalKejadian || '-');
-          const timeOnly = item.timestamp && item.timestamp.includes(' ') ? item.timestamp.split(' ')[1] : '';
+          const dt = formatAduanDate(item.timestamp || item.tanggalKejadian);
+          const dateOnly = dt.date;
+          const timeOnly = dt.time;
           const mapsUrl = (item.lat && item.lng) ? `https://maps.google.com/?q=${item.lat},${item.lng}` : '';
 
           const waTextPelapor = encodeURIComponent(
@@ -3384,41 +3427,10 @@
 
         // Manual Sync / Segarkan
         const btnManualSync = document.getElementById('btnManualSync');
-        const syncIcon = document.getElementById('syncIconSpin');
         if (btnManualSync) {
-          btnManualSync.addEventListener('click', async () => {
-            if (syncIcon) syncIcon.style.animation = 'spin 0.8s linear infinite';
-            btnManualSync.disabled = true;
-
-            // 1. Segarkan seketika dari penyimpanan lokal browser
-            if (window.aduanStore) {
-              window.aduanStore.init();
-            }
-            this.updateKPIs();
-            this.renderTable();
-            this.renderMapLayers();
-
-            // 2. Jika Google Apps Script terhubung, lakukan sinkronisasi cloud
-            if (window.aduanStore && window.aduanStore.hasGasConfigured()) {
-              this.showToast('Mengambil data terbaru dari Google Spreadsheet DLH...', 'info');
-              const res = await window.aduanStore.syncFromGAS();
-              if (res && res.success) {
-                const count = res.count || window.aduanStore.getAll().length;
-                this.showToast(`✅ Berhasil menyinkronkan ${count} data dari Google Spreadsheet!`, 'success');
-              } else if (res && res.error) {
-                this.showToast(`Koneksi cloud: ${res.error}`, 'warning');
-              } else {
-                this.showToast('Data lokal berhasil disegarkan.', 'success');
-              }
-              this.updateKPIs();
-              this.renderTable();
-              this.renderMapLayers();
-            } else {
-              this.showToast('✅ Data aduan lokal berhasil disegarkan!', 'success');
-            }
-
-            btnManualSync.disabled = false;
-            if (syncIcon) syncIcon.style.animation = 'none';
+          btnManualSync.addEventListener('click', (e) => {
+            e.preventDefault();
+            this.manualSync();
           });
         }
 
@@ -3573,18 +3585,39 @@
         }
       }
 
-      manualSync() {
-        if (window.aduanStore) {
-          window.aduanStore.init();
+      async manualSync() {
+        const btn = document.getElementById('btnManualSync');
+        const icon = document.getElementById('syncIconSpin');
+        if (icon) icon.style.animation = 'spin 0.8s linear infinite';
+        if (btn) btn.disabled = true;
+
+        this.showToast('🔄 Menghubungkan & mengambil data Google Spreadsheet...', 'info');
+
+        try {
+          if (window.aduanStore) {
+            const res = await window.aduanStore.syncFromGAS(false);
+            if (res && res.success) {
+              const remoteCount = res.remoteCount !== undefined ? res.remoteCount : (res.count || 0);
+              this.showToast(`✅ Berhasil menyinkronkan ${remoteCount} aduan dari Google Spreadsheet!`, 'success');
+            } else if (res && res.error) {
+              this.showToast(`Info Sinkronisasi: ${res.error}`, 'warning');
+            } else {
+              this.showToast('✅ Data aduan berhasil disegarkan.', 'success');
+            }
+          }
+        } catch (e) {
+          console.warn('Manual sync error:', e);
+        } finally {
+          this.updateKPIs();
+          this.renderTable();
+          this.renderMapLayers();
+          if (btn) btn.disabled = false;
+          if (icon) icon.style.animation = 'none';
         }
-        this.updateKPIs();
-        this.renderTable();
-        this.renderMapLayers();
       }
 
       setupRealtimeListener() {
         const reloadAll = () => {
-          if (window.aduanStore) window.aduanStore.init();
           this.updateKPIs();
           this.renderTable();
           this.renderMapLayers();

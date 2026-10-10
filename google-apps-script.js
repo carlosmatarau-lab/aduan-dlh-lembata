@@ -601,25 +601,25 @@ function insertSampleData() {
 
   const samples = [
     [
-      'ADU-LMB-2026-001', '2026-09-12 09:15', 'Fransiskus Kedang', '081234567890',
-      'Kel. Selandoro, Nubatukan', 'Nubatukan', 'Lewoleba Tengah',
-      'Pesisir Dermaga Jeti Rakyat Lewoleba', -8.3615, 123.5512,
-      'Laut & Pesisir', 'Ceceran oli bekas dan limbah bahan bakar kapal motor di air laut sekitar dermaga.',
-      'Aktivitas bengkel perahu & kapal motor nelayan', '2026-09-11', '',
-      'Selesai', 'Yohanes B. (Pengendali Dampak Lingkungan)', '2026-09-13',
-      'Terbukti ada ceceran oli sekitar 15 m².',
-      'Pembersihan tumpahan oli dengan absorbent pad, serta surat teguran kepada pengelola kapal.',
-      '2026-09-16'
+      'ADU-LMB-2026-001', '2026-10-11 02:18', 'Bahanna', '08555699888',
+      'B', 'Omesuri', 'Nualela',
+      'Bhbb', -8.329107, 123.475804,
+      'Pencemaran Air & Sungai', 'Laporan pengaduan warga via WhatsApp terkait pencemaran air & sungai di Nualela, Omesuri.',
+      '-', '2026-10-01', '',
+      'Baru', '-', '-',
+      'Menunggu penugasan verifikator lapangan.',
+      'Aduan telah dicatat ke sistem.',
+      '-'
     ],
     [
-      'ADU-LMB-2026-002', '2026-09-18 14:30', 'Theresia Purek', '082198765432',
-      'Desa Hadakewa, Lebatukan', 'Lebatukan', 'Hadakewa',
-      'Jalan poros dekat area pantai belakang pasar ikan', -8.3580, 123.6650,
-      'Sampah Ilegal & Bau', 'Penumpukan sampah sisa ikan dan plastik di semak pinggir pantai.',
-      'Pedagang liar & oknum warga sekitar pasar', '2026-09-17', '',
-      'Diverifikasi', 'Agustinus L. (Staf Kebersihan DLH)', '2026-09-19',
-      'Timbunan sampah liar volume ~2 m³ membusuk.',
-      'Pengangkutan seluruh sampah dengan armada truk DLH dan pemasangan plang larangan.',
+      'ADU-LMB-2026-002', '2026-10-11 02:26', 'Carlos Matarau', '08646499499',
+      'Muruona', 'Ile Ape', 'Muruona',
+      'Tepi jalan', -8.329107, 123.475803,
+      'Sampah Ilegal & Bau', 'Sampah sepanjang jalan',
+      'Oknum', '2026-10-02', '',
+      'Baru', '-', '-',
+      'Menunggu penugasan verifikator lapangan.',
+      'Aduan telah dicatat ke sistem.',
       '-'
     ],
     [
