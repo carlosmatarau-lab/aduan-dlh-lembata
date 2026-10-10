@@ -293,6 +293,9 @@ const KECAMATAN_LEMBATA = {
     ]
   }
 };
+if (typeof window !== 'undefined') {
+  window.KECAMATAN_LEMBATA = KECAMATAN_LEMBATA;
+}
 
 // Data Awal Aduan Realistis Kabupaten Lembata
 const INITIAL_ADUAN_DATA = [

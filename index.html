@@ -2223,7 +2223,7 @@
           <div class="form-row-2">
             <div class="form-field">
               <label class="field-label">Kecamatan <span class="req">*</span></label>
-              <select id="inputKecamatan" class="input-select" required>
+              <select id="inputKecamatan" class="input-select" required onchange="if(window.populateDesaDropdown) window.populateDesaDropdown(this.value);">
                 <option value="Nubatukan">Nubatukan (Lewoleba)</option>
                 <option value="Ile Ape">Ile Ape (Waipukang)</option>
                 <option value="Ile Ape Timur">Ile Ape Timur (Lamagute)</option>
@@ -2239,6 +2239,24 @@
               <label class="field-label">Nama Desa / Kelurahan <span class="req">*</span></label>
               <select id="inputDesa" class="input-select" required>
                 <option value="">-- Pilih Desa / Kelurahan --</option>
+                <option value="Lewoleba (Kelurahan)">Lewoleba (Kelurahan)</option>
+                <option value="Lewoleba Barat (Kelurahan)">Lewoleba Barat (Kelurahan)</option>
+                <option value="Lewoleba Selatan (Kelurahan)">Lewoleba Selatan (Kelurahan)</option>
+                <option value="Lewoleba Tengah (Kelurahan)">Lewoleba Tengah (Kelurahan)</option>
+                <option value="Lewoleba Timur (Kelurahan)">Lewoleba Timur (Kelurahan)</option>
+                <option value="Lewoleba Utara (Kelurahan)">Lewoleba Utara (Kelurahan)</option>
+                <option value="Selandoro (Kelurahan)">Selandoro (Kelurahan)</option>
+                <option value="Bakalerek">Bakalerek</option>
+                <option value="Baolangu">Baolangu</option>
+                <option value="Belobatang">Belobatang</option>
+                <option value="Bour">Bour</option>
+                <option value="Lite Ulumado">Lite Ulumado</option>
+                <option value="Nubamado">Nubamado</option>
+                <option value="Nubatukan">Nubatukan</option>
+                <option value="Pada">Pada</option>
+                <option value="Paubokol">Paubokol</option>
+                <option value="Udak Melomata">Udak Melomata</option>
+                <option value="Waijarang">Waijarang</option>
               </select>
             </div>
           </div>

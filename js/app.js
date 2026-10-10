@@ -138,12 +138,33 @@ class DLHApp {
     const desaSelect = document.getElementById('inputDesa');
     if (!kecSelect || !desaSelect) return;
 
+    // Sumber data wilayah komprehensif 9 Kecamatan Kabupaten Lembata (fail-safe)
+    const LEMBATA_VILLAGES_FALLBACK = {
+      'Nubatukan': ['Bakalerek', 'Baolangu', 'Belobatang', 'Bour', 'Lewoleba (Kelurahan)', 'Lewoleba Barat (Kelurahan)', 'Lewoleba Selatan (Kelurahan)', 'Lewoleba Tengah (Kelurahan)', 'Lewoleba Timur (Kelurahan)', 'Lewoleba Utara (Kelurahan)', 'Lite Ulumado', 'Nubamado', 'Nubatukan', 'Pada', 'Paubokol', 'Selandoro (Kelurahan)', 'Udak Melomata', 'Waijarang'],
+      'Ile Ape': ['Amakaka', 'Beutaran', 'Bungamuda', 'Dulitukan', 'Kolipadan', 'Kolontobo', 'Lamawara', 'Laranwuntun', 'Muruona', 'Napasabok', 'Palilolon', 'Petuntawa', 'Riangbao', 'Tagawiti', 'Tanjung Batu', 'Waowala', 'Watodiri'],
+      'Ile Ape Timur': ['Aulesa', 'Bao Lai Duli', 'Jontona', 'Lamaau', 'Lamagute', 'Lamatokan', 'Lamawolo', 'Todanara', 'Waimatan'],
+      'Lebatukan': ['Atakore', 'Balurebong', 'Baopana', 'Belobao', 'Dikesare', 'Hadakewa', 'Lamalela', 'Lamatuka', 'Lerahinga', 'Lewoeleng', 'Lodoblolong', 'Merdeka', 'Seranggorang', 'Tapobaran', 'Tapolangu', 'Waikomo', 'Wangatoa'],
+      'Nagawutung': ['Babokerong', 'Boba', 'Duablolong', 'Ile Bale', 'Labalimut', 'Liwulagang', 'Loang', 'Pasir Putih', 'Penikene', 'Sinunmang', 'Tewowutung', 'Warawatung'],
+      'Wulandoni': ['Alap Atadei', 'Atakera', 'Belobao', 'Imulolong', 'Lamalera A', 'Lamalera B', 'Lelata', 'Leworaja', 'Puuor A', 'Puuor B', 'South Puuor', 'Tapobali', 'Wulandoni'],
+      'Atadei': ['Atakore', 'Dulir', 'Ile Kimok', 'Katakeja', 'Lerek', 'Lusilame', 'Mogoteta', 'Nogodoni', 'Nubahaeraka', 'Tubuk Rajan', 'Watuwawer'],
+      'Omesuri': ['Balauring', 'Dolulolong', 'Hingalamamengi', 'Hoelea', 'Hoelea II', 'Leuwayang', 'Leubatang', 'Meluwiting', 'Nualela', 'Peusawa', 'Roma', 'Unleurn', 'Usun Manu', 'Walangsawa', 'Wowong'],
+      'Buyasuri': ['Atulaleng', 'Atuwalupang', 'Bareng', 'Bean', 'Benikoor', 'Boli Bean', 'Buriwutung', 'Kalikur', 'Kalikur WL', 'Kaohua', 'Leuburi', 'Loyobohor', 'Mampir', 'Panama', 'Roho', 'Rumang', 'Tobotani', 'Tuwago', 'Umaleu', 'Wairiang']
+    };
+
     this.populateDesaDropdown = (kecamatanName, selectedDesa = '') => {
       desaSelect.innerHTML = '<option value="">-- Pilih Desa / Kelurahan --</option>';
       
-      const kecData = typeof KECAMATAN_LEMBATA !== 'undefined' ? KECAMATAN_LEMBATA[kecamatanName] : null;
-      if (kecData && Array.isArray(kecData.desa)) {
-        kecData.desa.forEach(namaDesa => {
+      const kecMap = (typeof KECAMATAN_LEMBATA !== 'undefined' ? KECAMATAN_LEMBATA : (window.KECAMATAN_LEMBATA || null));
+      let desaList = [];
+
+      if (kecMap && kecMap[kecamatanName] && Array.isArray(kecMap[kecamatanName].desa)) {
+        desaList = kecMap[kecamatanName].desa;
+      } else if (LEMBATA_VILLAGES_FALLBACK[kecamatanName]) {
+        desaList = LEMBATA_VILLAGES_FALLBACK[kecamatanName];
+      }
+
+      if (Array.isArray(desaList) && desaList.length > 0) {
+        desaList.forEach(namaDesa => {
           const opt = document.createElement('option');
           opt.value = namaDesa;
           opt.textContent = namaDesa;
@@ -155,8 +176,11 @@ class DLHApp {
       }
     };
 
+    window.populateDesaDropdown = this.populateDesaDropdown.bind(this);
+
     // Populasi awal berdasarkan nilai awal kecamatan
-    this.populateDesaDropdown(kecSelect.value);
+    const initialKec = kecSelect.value || 'Nubatukan';
+    this.populateDesaDropdown(initialKec);
 
     // Event saat kecamatan diubah
     kecSelect.addEventListener('change', (e) => {
@@ -1245,8 +1269,16 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
   }
 }
 
-// Inisialisasi Aplikasi saat Dokumen Siap
-document.addEventListener('DOMContentLoaded', () => {
-  window.app = new DLHApp();
-  window.app.init();
-});
+// Inisialisasi Aplikasi secara Handal (Mendukung DOMContentLoaded & readyState Interactive/Complete)
+function startDLHApp() {
+  if (!window.app) {
+    window.app = new DLHApp();
+    window.app.init();
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', startDLHApp);
+} else {
+  startDLHApp();
+}
