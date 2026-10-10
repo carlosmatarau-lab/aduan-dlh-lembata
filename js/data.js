@@ -689,13 +689,18 @@ function parseCsvToAduan(csvText) {
 // Konfigurasi Kunci Penyimpanan & URL Web App Google Apps Script
 const GAS_CONFIG_KEY = 'dlh_gas_api_url';
 const DELETED_STORAGE_KEY = 'dlh_deleted_aduan_ids';
-const DEFAULT_GAS_API_URL = 'https://script.google.com/macros/s/AKfycbxm4r8QU2dv0S6csTTpmewuuvMNNrqiD2NeF_ENzXi8z7E3qDALHz6HNiBWtiEpGMruIQ/exec';
+const DEFAULT_GAS_API_URL = 'https://script.google.com/macros/s/AKfycbwuDJ9X5a27GnVuuiU1keHexKXzG3OITUxwOomwHGt-1S53DdqfAfguDInXwtbh9ljKMw/exec';
 
 class AduanDataStore {
   constructor() {
     this.aduanList = [];
     const saved = localStorage.getItem(GAS_CONFIG_KEY);
-    this.gasApiUrl = (saved && saved.trim().startsWith('http')) ? saved.trim() : DEFAULT_GAS_API_URL;
+    // Jika masih menyimpan URL lama yang sudah terhapus, otomatis migrasikan ke URL baru
+    const isOldUrl = saved && saved.includes('AKfycbxm4r8QU2dv0S6csTTpmewuuvMNNrqiD2NeF_ENzXi8z7E3qDALHz6HNiBWtiEpGMruIQ');
+    if (isOldUrl) {
+      localStorage.setItem(GAS_CONFIG_KEY, DEFAULT_GAS_API_URL);
+    }
+    this.gasApiUrl = (saved && !isOldUrl && saved.trim().startsWith('http')) ? saved.trim() : DEFAULT_GAS_API_URL;
     this.isSyncing = false;
     this.currentSyncPromise = null;
     this.lastSyncTime = null;

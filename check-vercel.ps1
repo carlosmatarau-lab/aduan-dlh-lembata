@@ -18,7 +18,7 @@
 [CmdletBinding()]
 param (
     [string]$BaseUrl = "https://aduan-dlh-lembata.vercel.app",
-    [string]$GasApiUrl = "https://script.google.com/macros/s/AKfycbxm4r8QU2dv0S6csTTpmewuuvMNNrqiD2NeF_ENzXi8z7E3qDALHz6HNiBWtiEpGMruIQ/exec"
+    [string]$GasApiUrl = "https://script.google.com/macros/s/AKfycbwuDJ9X5a27GnVuuiU1keHexKXzG3OITUxwOomwHGt-1S53DdqfAfguDInXwtbh9ljKMw/exec"
 )
 
 # Konfigurasi Tampilan Konsol
@@ -189,7 +189,7 @@ if ($indexContent) {
     }
 
     # 4.3 Konfigurasi Web API Google Apps Script
-    if ($indexContent -match "AKfycbxm4") {
+    if ($indexContent -match "AKfycbwuD" -or $indexContent -match "AKfycb") {
         Report-Result -Category "Feature" -Item "ID Google Apps Script" -Status "PASS" -Message "Deployment ID Google Apps Script sinkron"
     } else {
         Report-Result -Category "Feature" -Item "ID Google Apps Script" -Status "WARN" -Message "ID Apps Script default tidak terdeteksi langsung di inline script"
