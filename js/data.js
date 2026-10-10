@@ -321,7 +321,14 @@ const INITIAL_ADUAN_DATA = [
     tanggalVerifikasi: '2026-09-13',
     hasilVerifikasi: 'Terbukti ada ceceran oli sekitar 15 m² dekat tambatan kapal.',
     tindakanDLH: 'Pembersihan tumpahan oli dengan absorbent pad, serta pembinaan dan surat teguran kepada pengelola kapal tambat.',
-    tanggalSelesai: '2026-09-16'
+    tanggalSelesai: '2026-09-16',
+    nomorBeritaAcara: 'BA-01/DLH-LMB/IX/2026',
+    catatanBeritaAcara: 'Pemeriksaan bersama Syahbandar & Polairud Lewoleba. Pelaku kooperatif menandatangani Berita Acara dan bersedia membersihkan sisa ceceran dalam tempo 2x24 jam.',
+    fotoKondisiRiil: 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=700&q=80',
+    fotoVerifikasiList: ['https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=700&q=80'],
+    timestampVerifikasi: '2026-09-13 10:15',
+    timestampTindakLanjut: '2026-09-14 08:30',
+    timestampSelesai: '2026-09-16 16:45'
   },
   {
     id: 'ADU-LMB-2026-002',
@@ -348,7 +355,14 @@ const INITIAL_ADUAN_DATA = [
     tanggalVerifikasi: '2026-09-19',
     hasilVerifikasi: 'Timbunan sampah liar volume ~2 m³ membusuk.',
     tindakanDLH: 'Pengangkutan seluruh sampah dengan armada truk sampah DLH dan pemasangan plang larangan buang sampah berkoordinasi dengan Pemdes Hadakewa.',
-    tanggalSelesai: '2026-09-21'
+    tanggalSelesai: '2026-09-21',
+    nomorBeritaAcara: 'BA-02/DLH-LMB/IX/2026',
+    catatanBeritaAcara: 'Inspeksi fisik disaksikan Kepala Dusun Hadakewa. Sampah diangkut 1 rit truk DLH ke TPA Waijarang dan lokasi disemprot disinfektan ramah lingkungan.',
+    fotoKondisiRiil: 'https://images.unsplash.com/photo-1605600659908-0ef719419d41?auto=format&fit=crop&w=700&q=80',
+    fotoVerifikasiList: ['https://images.unsplash.com/photo-1605600659908-0ef719419d41?auto=format&fit=crop&w=700&q=80'],
+    timestampVerifikasi: '2026-09-19 09:00',
+    timestampTindakLanjut: '2026-09-20 11:15',
+    timestampSelesai: '2026-09-21 15:30'
   },
   {
     id: 'ADU-LMB-2026-003',
@@ -375,7 +389,14 @@ const INITIAL_ADUAN_DATA = [
     tanggalVerifikasi: '2026-09-27',
     hasilVerifikasi: 'Ditemukan sisa abu pembakaran ban dan kabel tembaga.',
     tindakanDLH: 'Pemberian Surat Peringatan ke-1 kepada pelaku usaha rongsokan dan pelarangan aktivitas pembakaran terbuka (open burning). Sedang dalam masa pengawasan 14 hari.',
-    tanggalSelesai: '-'
+    tanggalSelesai: '-',
+    nomorBeritaAcara: 'BA-03/DLH-LMB/IX/2026',
+    catatanBeritaAcara: 'Pemeriksaan lapangan bersama Babinsa Koramil Ile Ape. Pelaku usaha menandatangani surat pernyataan tidak mengulangi pembakaran kabel terbuka.',
+    fotoKondisiRiil: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=700&q=80',
+    fotoVerifikasiList: ['https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=700&q=80'],
+    timestampVerifikasi: '2026-09-27 10:30',
+    timestampTindakLanjut: '2026-09-28 14:00',
+    timestampSelesai: ''
   },
   {
     id: 'ADU-LMB-2026-004',
@@ -402,7 +423,14 @@ const INITIAL_ADUAN_DATA = [
     tanggalVerifikasi: '2026-10-03',
     hasilVerifikasi: 'Sampel air telah diambil untuk uji parameter kekeruhan (TDS & TSS). Terindikasi sedimentasi akibat erosi galian.',
     tindakanDLH: 'Menyusun rekomendasi teknis pembuatan settling pond (kolam endap) kepada pihak pelaksana proyek.',
-    tanggalSelesai: '-'
+    tanggalSelesai: '-',
+    nomorBeritaAcara: 'BA-04/DLH-LMB/X/2026',
+    catatanBeritaAcara: 'Pengambilan sampel air di 3 titik aliran sungai bersama Kepala Desa Kalikasa. Berita Acara pengambilan sampel ditandatangani bersama.',
+    fotoKondisiRiil: 'https://images.unsplash.com/photo-1527482797697-8795b05a13fe?auto=format&fit=crop&w=700&q=80',
+    fotoVerifikasiList: ['https://images.unsplash.com/photo-1527482797697-8795b05a13fe?auto=format&fit=crop&w=700&q=80'],
+    timestampVerifikasi: '2026-10-03 11:20',
+    timestampTindakLanjut: '',
+    timestampSelesai: ''
   },
   {
     id: 'ADU-LMB-2026-005',
@@ -638,6 +666,22 @@ class AduanDataStore {
         const parsed = JSON.parse(stored);
         // Pastikan tidak ada aduan yang ada dalam daftar blacklist terhapus
         this.aduanList = parsed.filter(item => item && item.id && !this.isDeleted(item.id));
+        // Backfill bidang baru jika belum ada di cache browser lokal
+        this.aduanList = this.aduanList.map(item => {
+          const matchInitial = INITIAL_ADUAN_DATA.find(x => x.id === item.id);
+          return {
+            ...item,
+            nomorBeritaAcara: item.nomorBeritaAcara || (matchInitial ? matchInitial.nomorBeritaAcara : '') || '',
+            catatanBeritaAcara: item.catatanBeritaAcara || (matchInitial ? matchInitial.catatanBeritaAcara : '') || '',
+            fotoKondisiRiil: item.fotoKondisiRiil || (matchInitial ? matchInitial.fotoKondisiRiil : '') || '',
+            fotoVerifikasiList: Array.isArray(item.fotoVerifikasiList) && item.fotoVerifikasiList.length > 0
+              ? item.fotoVerifikasiList
+              : (matchInitial && matchInitial.fotoVerifikasiList ? matchInitial.fotoVerifikasiList : (item.fotoKondisiRiil ? [item.fotoKondisiRiil] : [])),
+            timestampVerifikasi: item.timestampVerifikasi || (matchInitial ? matchInitial.timestampVerifikasi : '') || (item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' ? `${item.tanggalVerifikasi} 09:30` : ''),
+            timestampTindakLanjut: item.timestampTindakLanjut || (matchInitial ? matchInitial.timestampTindakLanjut : '') || ((item.status === 'Ditindaklanjuti' || item.status === 'Dalam Penanganan' || item.status === 'Selesai') && item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' ? `${item.tanggalVerifikasi} 14:00` : ''),
+            timestampSelesai: item.timestampSelesai || (matchInitial ? matchInitial.timestampSelesai : '') || (item.tanggalSelesai && item.tanggalSelesai !== '-' ? `${item.tanggalSelesai} 16:30` : '')
+          };
+        });
       } catch (e) {
         console.error('Error parsing stored aduan, fallback to default:', e);
         this.aduanList = INITIAL_ADUAN_DATA.filter(item => !this.isDeleted(item.id));
@@ -732,18 +776,31 @@ class AduanDataStore {
       if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
       const json = await response.json();
 
-      if (json && json.success && Array.isArray(json.data) && json.data.length > 0) {
-        // Sinkronkan dan gabungkan seluruh record dari Google Apps Script (abaikan yang sudah dihapus)
-        const validItems = json.data.filter(item => !this.isDeleted(item.id));
-        validItems.forEach(item => {
-          this.mergeRemoteRecord(item);
-        });
+      if (json && json.success && Array.isArray(json.data)) {
+        if (json.data.length > 0) {
+          // Sinkronkan dan gabungkan seluruh record dari Google Apps Script (abaikan yang sudah dihapus)
+          const validItems = json.data.filter(item => !this.isDeleted(item.id));
+          validItems.forEach(item => {
+            this.mergeRemoteRecord(item);
+          });
 
-        this.lastSyncTime = new Date();
-        window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent } }));
-        return { success: true, count: this.aduanList.length };
+          this.lastSyncTime = new Date();
+          window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent } }));
+          return { success: true, count: this.aduanList.length, remoteCount: validItems.length, message: `Berhasil sinkronisasi ${validItems.length} aduan dari Google Spreadsheet.` };
+        } else {
+          // Spreadsheet kosong (0 data baris), namun koneksi API terbukti SUKSES
+          this.lastSyncTime = new Date();
+          window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent, emptyRemote: true } }));
+          return {
+            success: true,
+            count: this.aduanList.length,
+            remoteCount: 0,
+            emptyRemote: true,
+            message: 'Terhubung ke Google Spreadsheet! Database spreadsheet saat ini masih kosong (0 data aduan).'
+          };
+        }
       }
-      return { success: false, reason: 'Format respons tidak valid atau data masih kosong' };
+      return { success: false, reason: 'Format respons tidak valid dari Google Apps Script' };
     } catch (err) {
       console.warn('Sinkronisasi Google Spreadsheet offline/gagal (menggunakan data lokal):', err);
       let errMsg = err.message;
@@ -760,6 +817,30 @@ class AduanDataStore {
   return await this.currentSyncPromise;
 }
 
+  async uploadAllLocalToGAS() {
+    if (!this.hasGasConfigured()) {
+      return { success: false, error: 'URL Google Apps Script belum disetel.' };
+    }
+    const list = this.getAll();
+    if (!list || list.length === 0) {
+      return { success: false, error: 'Tidak ada data aduan lokal untuk diunggah.' };
+    }
+
+    let successCount = 0;
+    for (const item of list) {
+      try {
+        const res = await this.postToGAS('addAduan', item);
+        if (res && res.success) successCount++;
+      } catch (e) {
+        console.warn('Gagal unggah baris aduan:', item.id, e);
+      }
+    }
+
+    // Refresh sync setelah unggah selesai
+    await this.syncFromGAS(true);
+    return { success: true, uploaded: successCount, total: list.length };
+  }
+
   async postToGAS(action, payload) {
     const endpoint = this.getGasUrl();
     if (!endpoint || !endpoint.startsWith('http')) return { success: false, offline: true };
@@ -775,7 +856,6 @@ class AduanDataStore {
     } catch (err) {
       console.warn(`Gagal kirim '${action}' ke Google Apps Script:`, err);
       return { success: false, error: err.message };
-    }
   }
 
   save() {
@@ -906,7 +986,14 @@ class AduanDataStore {
       tanggalVerifikasi: '-',
       hasilVerifikasi: 'Menunggu penugasan verifikator lapangan.',
       tindakanDLH: 'Aduan telah dicatat ke sistem dan siap dijadwalkan verifikasi.',
-      tanggalSelesai: '-'
+      tanggalSelesai: '-',
+      nomorBeritaAcara: '',
+      catatanBeritaAcara: '',
+      fotoKondisiRiil: '',
+      fotoVerifikasiList: [],
+      timestampVerifikasi: '',
+      timestampTindakLanjut: '',
+      timestampSelesai: ''
     };
 
     this.aduanList.unshift(newRecord);
@@ -929,14 +1016,52 @@ class AduanDataStore {
     const index = this.aduanList.findIndex(item => item.id === id);
     if (index === -1) return false;
 
+    const existing = this.aduanList[index];
+    const now = new Date();
+    const formattedNow = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+    // Perhitungan otomatis jejak timestamp akuntabilitas kinerja bulanan DLH
+    let timestampVerifikasi = existing.timestampVerifikasi || '';
+    if (!timestampVerifikasi && (updateData.tanggalVerifikasi || (updateData.status && updateData.status !== 'Baru' && updateData.status !== 'Aduan Diterima'))) {
+      timestampVerifikasi = updateData.tanggalVerifikasi ? `${updateData.tanggalVerifikasi} 09:30` : formattedNow;
+    }
+
+    let timestampTindakLanjut = existing.timestampTindakLanjut || '';
+    if (!timestampTindakLanjut && (updateData.status === 'Ditindaklanjuti' || updateData.status === 'Dalam Penanganan' || updateData.status === 'Selesai')) {
+      timestampTindakLanjut = formattedNow;
+    }
+
+    let timestampSelesai = existing.timestampSelesai || '';
+    if (updateData.status === 'Selesai' && !timestampSelesai) {
+      timestampSelesai = updateData.tanggalSelesai ? `${updateData.tanggalSelesai} 16:30` : formattedNow;
+    }
+
+    // Konsolidasi foto kondisi riil hasil verifikasi lapangan
+    let fotoList = Array.isArray(updateData.fotoVerifikasiList) && updateData.fotoVerifikasiList.length > 0
+      ? updateData.fotoVerifikasiList
+      : (existing.fotoVerifikasiList || []);
+    if (updateData.fotoKondisiRiil && !fotoList.includes(updateData.fotoKondisiRiil)) {
+      fotoList = [updateData.fotoKondisiRiil, ...fotoList];
+    }
+    const fotoUtama = updateData.fotoKondisiRiil || (fotoList[0] || existing.fotoKondisiRiil || '');
+
     this.aduanList[index] = {
-      ...this.aduanList[index],
-      status: updateData.status || this.aduanList[index].status,
-      petugasVerifikasi: updateData.petugasVerifikasi || this.aduanList[index].petugasVerifikasi,
-      tanggalVerifikasi: updateData.tanggalVerifikasi || this.aduanList[index].tanggalVerifikasi,
-      hasilVerifikasi: updateData.hasilVerifikasi || this.aduanList[index].hasilVerifikasi,
-      tindakanDLH: updateData.tindakanDLH || this.aduanList[index].tindakanDLH,
-      tanggalSelesai: updateData.status === 'Selesai' ? (updateData.tanggalSelesai || new Date().toISOString().split('T')[0]) : this.aduanList[index].tanggalSelesai
+      ...existing,
+      status: updateData.status || existing.status,
+      petugasVerifikasi: updateData.petugasVerifikasi || existing.petugasVerifikasi,
+      tanggalVerifikasi: updateData.tanggalVerifikasi || existing.tanggalVerifikasi,
+      hasilVerifikasi: updateData.hasilVerifikasi || existing.hasilVerifikasi,
+      tindakanDLH: updateData.tindakanDLH || existing.tindakanDLH,
+      tanggalSelesai: updateData.status === 'Selesai' ? (updateData.tanggalSelesai || new Date().toISOString().split('T')[0]) : existing.tanggalSelesai,
+      // Berita Acara & Bukti Foto Fisik Riil
+      nomorBeritaAcara: updateData.nomorBeritaAcara !== undefined ? updateData.nomorBeritaAcara : (existing.nomorBeritaAcara || ''),
+      catatanBeritaAcara: updateData.catatanBeritaAcara !== undefined ? updateData.catatanBeritaAcara : (existing.catatanBeritaAcara || ''),
+      fotoKondisiRiil: fotoUtama,
+      fotoVerifikasiList: fotoList,
+      // Timestamps akuntabilitas kinerja
+      timestampVerifikasi: timestampVerifikasi,
+      timestampTindakLanjut: timestampTindakLanjut,
+      timestampSelesai: timestampSelesai
     };
 
     this.save();
@@ -950,7 +1075,11 @@ class AduanDataStore {
     if (this.hasGasConfigured()) {
       this.postToGAS('updateVerifikasi', {
         id: id,
-        ...updateData
+        ...updateData,
+        nomorBeritaAcara: this.aduanList[index].nomorBeritaAcara,
+        catatanBeritaAcara: this.aduanList[index].catatanBeritaAcara,
+        timestampVerifikasi: this.aduanList[index].timestampVerifikasi,
+        timestampSelesai: this.aduanList[index].timestampSelesai
       });
     }
 
@@ -1070,7 +1199,13 @@ class AduanDataStore {
       'Petugas Verifikasi',
       'Hasil Verifikasi',
       'Tindakan DLH',
-      'Tanggal Selesai'
+      'Tanggal Selesai',
+      'Nomor Berita Acara',
+      'Catatan Berita Acara',
+      'Foto Fisik Lapangan',
+      'Timestamp Verifikasi',
+      'Timestamp Tindak Lanjut',
+      'Timestamp Selesai'
     ];
 
     const rows = this.aduanList.map(item => [
@@ -1089,7 +1224,13 @@ class AduanDataStore {
       `"${item.petugasVerifikasi || '-'}"`,
       `"${(item.hasilVerifikasi || '-').replace(/"/g, '""')}"`,
       `"${(item.tindakanDLH || '-').replace(/"/g, '""')}"`,
-      `"${item.tanggalSelesai || '-'}"`
+      `"${item.tanggalSelesai || '-'}"`,
+      `"${(item.nomorBeritaAcara || '-').replace(/"/g, '""')}"`,
+      `"${(item.catatanBeritaAcara || '-').replace(/"/g, '""')}"`,
+      `"${(item.fotoKondisiRiil || '-').replace(/"/g, '""')}"`,
+      `"${item.timestampVerifikasi || '-'}"`,
+      `"${item.timestampTindakLanjut || '-'}"`,
+      `"${item.timestampSelesai || '-'}"`
     ]);
 
     const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');

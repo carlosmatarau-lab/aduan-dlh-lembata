@@ -1177,7 +1177,13 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         btnSyncNow.disabled = false;
         btnSyncNow.textContent = '🔄 Sinkronkan Data';
         this.updateCloudUI();
-        if (!res.success) {
+        if (res.success) {
+          if (res.emptyRemote) {
+            this.showToast('✅ Terhubung ke Google Spreadsheet! Lembar kerja saat ini masih kosong (0 aduan).', 'info');
+          } else {
+            this.showToast(res.message || 'Data berhasil disinkronkan dari Google Spreadsheet!', 'success');
+          }
+        } else {
           this.showToast(`Sinkronisasi: ${res.error || res.reason}`, 'warning');
         }
       });

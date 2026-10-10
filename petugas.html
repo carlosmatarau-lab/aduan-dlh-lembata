@@ -28,6 +28,10 @@
   <!-- External Stylesheet -->
   <link rel="stylesheet" href="css/style.css">
 
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
   <style>
     /* ===================================================================
        PORTAL KHUSUS PETUGAS — STYLING PREMIERE
@@ -969,23 +973,665 @@
       }
     }
 
-    /* Responsiveness */
-    @media (max-width: 768px) {
-      .header-inner {
-        padding: 10px 14px;
-      }
-      .portal-container {
-        padding: 16px 12px 60px 12px;
-      }
-      .officer-banner {
-        padding: 18px 16px;
-      }
-      .table-card-header {
-        padding: 14px 16px;
-      }
-      .filter-toolbar {
-        padding: 12px 16px;
-      }
+    /* ===================================================================
+       PIN / LOGIN PROTECTION SHIELD
+       =================================================================== */
+    .auth-shield-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(15, 23, 42, 0.88);
+      backdrop-filter: blur(20px);
+      -webkit-backdrop-filter: blur(20px);
+      z-index: 99999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+
+    .auth-shield-overlay.hidden {
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+    }
+
+    .auth-card {
+      background: #ffffff;
+      border-radius: 24px;
+      padding: 32px 28px;
+      max-width: 440px;
+      width: 100%;
+      box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.45);
+      border: 1px solid rgba(255, 255, 255, 0.3);
+      text-align: center;
+      position: relative;
+      animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .auth-icon-badge {
+      width: 64px;
+      height: 64px;
+      margin: 0 auto 16px;
+      border-radius: 20px;
+      background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
+      color: white;
+      font-size: 2rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 24px rgba(5, 150, 105, 0.35);
+    }
+
+    .auth-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #064e3b;
+      margin-bottom: 6px;
+    }
+
+    .auth-subtitle {
+      font-size: 0.84rem;
+      color: #64748b;
+      margin-bottom: 20px;
+      line-height: 1.45;
+    }
+
+    .pin-display-wrap {
+      display: flex;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .pin-dot {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      border: 2px solid #cbd5e1;
+      background: #f8fafc;
+      transition: all 0.2s ease;
+    }
+
+    .pin-dot.filled {
+      background: #059669;
+      border-color: #047857;
+      transform: scale(1.15);
+      box-shadow: 0 2px 8px rgba(5, 150, 105, 0.4);
+    }
+
+    .pin-input-field {
+      width: 100%;
+      font-size: 1.6rem;
+      letter-spacing: 14px;
+      font-family: monospace;
+      text-align: center;
+      padding: 10px 14px;
+      border-radius: 12px;
+      border: 2px solid #cbd5e1;
+      margin-bottom: 16px;
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .pin-input-field:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.15);
+    }
+
+    .pin-keypad {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 18px;
+    }
+
+    .btn-keypad {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 14px 0;
+      font-size: 1.25rem;
+      font-weight: 700;
+      color: #1e293b;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      font-family: 'Outfit', sans-serif;
+    }
+
+    .btn-keypad:hover {
+      background: #e2e8f0;
+      border-color: #cbd5e1;
+      transform: translateY(-2px);
+    }
+
+    .btn-keypad:active {
+      transform: translateY(1px);
+      background: #cbd5e1;
+    }
+
+    .btn-keypad.btn-keypad-action {
+      background: #ecfdf5;
+      color: #047857;
+      border-color: #a7f3d0;
+    }
+
+    .btn-keypad.btn-keypad-clear {
+      background: #fff1f2;
+      color: #e11d48;
+      border-color: #fecdd3;
+    }
+
+    .auth-hint-banner {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      border-radius: 10px;
+      padding: 8px 12px;
+      font-size: 0.78rem;
+      color: #065f46;
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .auth-error-msg {
+      color: #e11d48;
+      font-size: 0.8rem;
+      font-weight: 700;
+      margin-bottom: 12px;
+      min-height: 20px;
+    }
+
+    .btn-lock-portal {
+      background: rgba(225, 29, 72, 0.1);
+      color: #e11d48;
+      border-color: rgba(225, 29, 72, 0.2);
+    }
+
+    .btn-lock-portal:hover {
+      background: #e11d48;
+      color: white;
+    }
+
+    /* ===================================================================
+       MAP & HEATMAP SECTION STYLING
+       =================================================================== */
+    .officer-map-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: 0 4px 20px -2px rgba(6, 78, 59, 0.05);
+      margin-bottom: 24px;
+      overflow: hidden;
+    }
+
+    .map-card-header {
+      padding: 18px 24px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+    }
+
+    .map-title-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ecfdf5;
+      color: #047857;
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 10px;
+      border-radius: 999px;
+      border: 1px solid #a7f3d0;
+      margin-bottom: 6px;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+    }
+
+    .map-card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #064e3b;
+      margin: 0;
+    }
+
+    .map-card-sub {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    .map-header-controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .map-mode-pill-group {
+      display: flex;
+      background: #e2e8f0;
+      padding: 3px;
+      border-radius: 999px;
+      gap: 2px;
+    }
+
+    .btn-map-mode {
+      border: none;
+      background: transparent;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .btn-map-mode.active {
+      background: #059669;
+      color: white;
+      box-shadow: 0 2px 6px rgba(5, 150, 105, 0.35);
+    }
+
+    .map-filter-strip {
+      padding: 10px 24px;
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .map-stat-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    .stat-indicator-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+      animation: pulseDot 2s infinite;
+    }
+
+    .map-filter-group {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .map-mini-select {
+      padding: 6px 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      background: white;
+      color: #334155;
+      outline: none;
+    }
+
+    .petugas-map-canvas {
+      height: 480px;
+      width: 100%;
+      background: #e2e8f0;
+      position: relative;
+      z-index: 10;
+    }
+
+    .map-legend-footer {
+      padding: 12px 24px;
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 16px;
+      flex-wrap: wrap;
+      font-size: 0.78rem;
+    }
+
+    .heatmap-legend-gradient {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .gradient-bar {
+      width: 140px;
+      height: 10px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #3b82f6 0%, #06b6d4 25%, #10b981 50%, #f59e0b 75%, #ef4444 100%);
+      border: 1px solid #cbd5e1;
+    }
+
+    .legend-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 600;
+      color: #475569;
+    }
+
+    .chip-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .dot-red { background: #e11d48; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-blue { background: #2563eb; }
+    .dot-green { background: #10b981; }
+
+    /* Custom Leaflet Marker Styling */
+    .custom-marker-pin-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+    }
+
+    .custom-marker-pin {
+      width: 28px;
+      height: 28px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      background: var(--pin-bg, #059669);
+      border: 2px solid #ffffff;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.35);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+    }
+
+    .custom-marker-pin:hover {
+      transform: rotate(-45deg) scale(1.15);
+    }
+
+    .custom-marker-icon-inner {
+      transform: rotate(45deg);
+      font-size: 12px;
+      color: white;
+    }
+
+    .marker-pulse-ring {
+      position: absolute;
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: var(--pin-bg, #059669);
+      opacity: 0.35;
+      animation: pinPulse 2s infinite ease-out;
+      pointer-events: none;
+    }
+
+    @keyframes pinPulse {
+      0% { transform: scale(0.5); opacity: 0.8; }
+      100% { transform: scale(1.6); opacity: 0; }
+    }
+
+    /* ===================================================================
+       DELETE CONFIRMATION MODAL STYLING
+       =================================================================== */
+    .modal-header-danger {
+      background: #fef2f2;
+      border-bottom: 1px solid #fee2e2;
+    }
+
+    .delete-info-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 14px;
+      font-size: 0.85rem;
+    }
+
+    .delete-info-row {
+      display: flex;
+      justify-content: space-between;
+      margin-bottom: 6px;
+    }
+
+    .delete-info-row:last-child {
+      margin-bottom: 0;
+    }
+
+    .delete-warning-banner {
+      background: #fff1f2;
+      border: 1px solid #fecdd3;
+      border-radius: 10px;
+      padding: 12px;
+      display: flex;
+      gap: 10px;
+      font-size: 0.82rem;
+      color: #9f1239;
+      line-height: 1.45;
+    }
+
+    .btn-danger-confirm {
+      background: #dc2626;
+      color: white;
+      border: 1px solid #b91c1c;
+      padding: 9px 18px;
+      border-radius: 8px;
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .btn-danger-confirm:hover {
+      background: #b91c1c;
+      box-shadow: 0 4px 12px rgba(220, 38, 38, 0.35);
+    }
+
+    /* ===================================================================
+       VERIFIKASI MODAL: UPLOAD ZONE & BERITA ACARA
+       =================================================================== */
+    .upload-zone-verifikasi {
+      border: 2px dashed #cbd5e1;
+      border-radius: 12px;
+      padding: 16px;
+      background: #f8fafc;
+      text-align: center;
+      transition: all 0.2s ease;
+      cursor: pointer;
+    }
+
+    .upload-zone-verifikasi:hover {
+      border-color: #059669;
+      background: #f0fdf4;
+    }
+
+    .upload-preview-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 12px;
+    }
+
+    .preview-thumb-box {
+      width: 76px;
+      height: 76px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+      overflow: hidden;
+      position: relative;
+      background: white;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    .preview-thumb-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .btn-remove-thumb {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: rgba(0, 0, 0, 0.7);
+      color: white;
+      border: none;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 12px;
+      cursor: pointer;
+    }
+
+    .btn-remove-thumb:hover {
+      background: #dc2626;
+    }
+
+    .auto-ba-btn {
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #047857;
+      padding: 4px 10px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.15s;
+    }
+
+    .auto-ba-btn:hover {
+      background: #059669;
+      color: white;
+    }
+
+    /* ===================================================================
+       TIMELINE AKUNTABILITAS KINERJA BULANAN DLH (DETAIL MODAL)
+       =================================================================== */
+    .timeline-accountability {
+      position: relative;
+      padding: 14px 0 14px 28px;
+      margin-bottom: 16px;
+    }
+
+    .timeline-accountability::before {
+      content: '';
+      position: absolute;
+      top: 20px;
+      bottom: 20px;
+      left: 11px;
+      width: 2px;
+      background: #cbd5e1;
+    }
+
+    .timeline-node {
+      position: relative;
+      margin-bottom: 18px;
+    }
+
+    .timeline-node:last-child {
+      margin-bottom: 0;
+    }
+
+    .timeline-dot {
+      position: absolute;
+      left: -28px;
+      top: 2px;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: white;
+      border: 2px solid #94a3b8;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 10px;
+      color: #64748b;
+      font-weight: 800;
+      z-index: 2;
+    }
+
+    .timeline-node.active .timeline-dot {
+      background: #10b981;
+      border-color: #047857;
+      color: white;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
+    }
+
+    .timeline-node.done .timeline-dot {
+      background: #059669;
+      border-color: #064e3b;
+      color: white;
+    }
+
+    .timeline-content-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 14px;
+      font-size: 0.84rem;
+    }
+
+    .timeline-time-badge {
+      font-family: monospace;
+      font-size: 0.74rem;
+      color: #047857;
+      font-weight: 700;
+      background: #ecfdf5;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #a7f3d0;
+      display: inline-block;
+      margin-bottom: 4px;
+    }
+
+    .sla-metric-box {
+      background: #eff6ff;
+      border: 1px solid #bfdbfe;
+      border-radius: 10px;
+      padding: 12px;
+      margin-top: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+    }
+
+    .berita-acara-card {
+      background: #fefce8;
+      border: 1px solid #fef08a;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin-bottom: 16px;
+      font-size: 0.86rem;
+      color: #713f12;
     }
   </style>
 </head>
@@ -994,6 +1640,62 @@
 
   <!-- Top Nature Accent Ribbon -->
   <div class="nature-top-ribbon"></div>
+
+  <!-- ===================================================================
+       LOGIN / PIN SECURITY SHIELD (PROTEKSI AKSES PETUGAS)
+       =================================================================== -->
+  <div class="auth-shield-overlay" id="petugasAuthShield">
+    <div class="auth-card">
+      <div class="auth-icon-badge">🔐</div>
+      <h2 class="auth-title">Akses Khusus Petugas DLH</h2>
+      <p class="auth-subtitle">
+        Portal Pengawasan &amp; Verifikasi Aduan Pencemaran Lingkungan<br>
+        <strong>Dinas Lingkungan Hidup Kabupaten Lembata</strong>
+      </p>
+
+      <div class="auth-hint-banner">
+        💡 <strong>Petunjuk Keamanan:</strong> Masukkan PIN Petugas (Standar: <strong>1234</strong> atau <strong>dlh2026</strong>) untuk membuka akses data dan verifikasi.
+      </div>
+
+      <div id="authErrorMsg" class="auth-error-msg"></div>
+
+      <!-- PIN Input -->
+      <form id="formPetugasPin" onsubmit="event.preventDefault(); window.portal && window.portal.submitPin();">
+        <input type="password" id="inputPetugasPin" class="pin-input-field" maxlength="8" placeholder="••••" autocomplete="off" autofocus>
+
+        <!-- Touch / Quick Keypad -->
+        <div class="pin-keypad">
+          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('1')">1</button>
+          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('2')">2</button>
+          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('3')">3</button>
+          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('4')">4</button>
+          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('5')">5</button>
+          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('6')">6</button>
+          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('7')">7</button>
+          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('8')">8</button>
+          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('9')">9</button>
+          <button type="button" class="btn-keypad btn-keypad-clear" onclick="window.portal.clearPinKey()">⌫ C</button>
+          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('0')">0</button>
+          <button type="button" class="btn-keypad btn-keypad-action" onclick="window.portal.submitPin()">OK ⏎</button>
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px; font-size: 0.82rem; color: #475569;">
+          <input type="checkbox" id="checkRememberPin" style="accent-color: #059669; cursor: pointer;">
+          <label for="checkRememberPin" style="cursor: pointer;">Ingat sesi masuk di perangkat ini</label>
+        </div>
+
+        <button type="submit" class="btn-modal-submit" style="width: 100%; padding: 12px; font-size: 0.95rem;">
+          🔓 Buka Portal Petugas
+        </button>
+      </form>
+
+      <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e2e8f0;">
+        <a href="index.html" style="font-size: 0.8rem; color: #64748b; text-decoration: none; font-weight: 600;">
+          ← Kembali ke Formulir Warga
+        </a>
+      </div>
+    </div>
+  </div>
 
   <!-- ===================================================================
        HEADER RESMI PORTAL PETUGAS
@@ -1026,6 +1728,11 @@
         <a href="https://wa.me/6282234582769" target="_blank" class="btn-header-link btn-wa" title="Nomor Kontak Layanan Pengaduan">
           <span>💬</span> WA Pengaduan
         </a>
+
+        <!-- Kunci Portal (Logout) -->
+        <button type="button" class="btn-header-link btn-lock-portal" id="btnLockPortal" title="Kunci Sesi Portal Petugas">
+          <span>🔒</span> Kunci Portal
+        </button>
       </nav>
     </div>
   </header>
@@ -1094,6 +1801,99 @@
         <div class="kpi-info">
           <div class="kpi-val" id="kpiSelesai">0</div>
           <div class="kpi-title">Tuntas &amp; Selesai</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ===================================================================
+         MAP & HEATMAP SECTION (PETA SPASIAL & PETA PANAS KOORDINAT ADUAN)
+         =================================================================== -->
+    <section class="officer-map-card">
+      <div class="map-card-header">
+        <div>
+          <div class="map-title-badge">🗺️ GIS PENGAWASAN LINGKUNGAN KABUPATEN LEMBATA</div>
+          <h2 class="map-card-title">Peta Sebaran &amp; Heatmap Titik Rawan Pencemaran</h2>
+          <p class="map-card-sub">Visualisasi spasial titik koordinat GPS aduan masyarakat, pemetaan konsentrasi pencemaran (peta panas), dan filter wilayah 9 kecamatan.</p>
+        </div>
+
+        <div class="map-header-controls">
+          <!-- Toggle Mode: Marker GPS vs Heatmap vs Hybrid -->
+          <div class="map-mode-pill-group">
+            <button type="button" class="btn-map-mode active" id="btnModeMarkers" onclick="window.portal.setMapMode('markers')">
+              📍 Marker GPS
+            </button>
+            <button type="button" class="btn-map-mode" id="btnModeHeatmap" onclick="window.portal.setMapMode('heatmap')">
+              🔥 Heatmap (Peta Panas)
+            </button>
+            <button type="button" class="btn-map-mode" id="btnModeHybrid" onclick="window.portal.setMapMode('hybrid')">
+              🎯 Gabungan
+            </button>
+          </div>
+
+          <!-- Basemap Selector -->
+          <select id="mapBasemapSelect" class="filter-select" style="min-width: 170px;" onchange="window.portal.changeBasemap(this.value)">
+            <option value="osm">🗺️ Peta Jalan (OSM)</option>
+            <option value="sat">🛰️ Citra Satelit Nyata</option>
+            <option value="topo">⛰️ Relief Topografi</option>
+          </select>
+
+          <!-- Reset Zoom ke Lembata -->
+          <button type="button" id="btnResetMapCenter" class="btn-action-tool" onclick="window.portal.resetMapView()" title="Pusatkan kembali ke Pulau Lembata">
+            🎯 Fokus Lembata
+          </button>
+        </div>
+      </div>
+
+      <!-- Quick Filter Bar -->
+      <div class="map-filter-strip">
+        <div class="map-stat-indicator">
+          <span class="stat-indicator-dot"></span>
+          <span id="mapPointsSummary">Memuat titik koordinat GPS...</span>
+        </div>
+
+        <div class="map-filter-group">
+          <!-- Filter Kecamatan Peta -->
+          <select id="mapFilterKecamatan" class="map-mini-select" onchange="window.portal.onMapFilterChange()">
+            <option value="all">Semua Kecamatan (9)</option>
+            <option value="Nubatukan">Nubatukan</option>
+            <option value="Ile Ape">Ile Ape</option>
+            <option value="Ile Ape Timur">Ile Ape Timur</option>
+            <option value="Lebatukan">Lebatukan</option>
+            <option value="Nagawutung">Nagawutung</option>
+            <option value="Wulandoni">Wulandoni</option>
+            <option value="Atadei">Atadei</option>
+            <option value="Omesuri">Omesuri</option>
+            <option value="Buyasuri">Buyasuri</option>
+          </select>
+
+          <!-- Filter Status Peta -->
+          <select id="mapFilterStatus" class="map-mini-select" onchange="window.portal.onMapFilterChange()">
+            <option value="all">Semua Status</option>
+            <option value="Baru">Aduan Masuk / Baru</option>
+            <option value="Diverifikasi">Diverifikasi Lapangan</option>
+            <option value="Ditindaklanjuti">Dalam Penanganan</option>
+            <option value="Selesai">Tuntas / Selesai</option>
+          </select>
+        </div>
+      </div>
+
+      <!-- Canvas Peta Leaflet -->
+      <div id="petugasMap" class="petugas-map-canvas"></div>
+
+      <!-- Legend & Heatmap Scale Bar -->
+      <div class="map-legend-footer">
+        <div class="heatmap-legend-gradient">
+          <span style="font-weight: 700; color: #475569;">Intensitas Heatmap:</span>
+          <span>Rendah</span>
+          <div class="gradient-bar"></div>
+          <span style="font-weight: 700; color: #dc2626;">Tinggi (Konsentrasi Titik Rawan)</span>
+        </div>
+
+        <div class="map-legend-items">
+          <span class="legend-chip"><span class="chip-dot dot-red"></span> Baru</span>
+          <span class="legend-chip"><span class="chip-dot dot-yellow"></span> Sedang Diverifikasi</span>
+          <span class="legend-chip"><span class="chip-dot dot-blue"></span> Ditindaklanjuti</span>
+          <span class="legend-chip"><span class="chip-dot dot-green"></span> Tuntas</span>
         </div>
       </div>
     </section>
@@ -1281,6 +2081,63 @@
               placeholder="Tindakan nyata yang diambil DLH (misal: pengangkutan sampah ke TPA, teguran tertulis ke pemilik usaha, sosialisasi ke warga desa, uji lab sampel air)..."></textarea>
           </div>
 
+          <!-- Unggah Foto Kondisi Riil Pengecekan Fisik -->
+          <div class="form-group-modal">
+            <label class="form-label-modal" for="vFotoRiilInput">
+              📸 Foto Kondisi Riil Lapangan (Hasil Pengecekan Fisik Petugas)
+            </label>
+            <div class="upload-zone-verifikasi" id="vUploadZone">
+              <div style="font-size: 1.6rem; margin-bottom: 4px;">📷</div>
+              <div style="font-size: 0.86rem; font-weight: 700; color: #1e293b;">
+                Pilih atau Ambil Foto Kondisi Faktual Lapangan
+              </div>
+              <p style="font-size: 0.76rem; color: #64748b; margin-top: 2px;">
+                Dapat mengambil langsung dari kamera HP atau memilih dari galeri perangkat.
+              </p>
+              <div style="display: flex; justify-content: center; gap: 8px; margin-top: 10px;">
+                <label class="btn-action-tool" style="cursor: pointer; background: #059669; color: white; border-color: #047857; margin: 0;">
+                  📁 Pilih File Foto
+                  <input type="file" id="vFotoRiilInput" accept="image/*" multiple style="display: none;">
+                </label>
+                <label class="btn-action-tool" style="cursor: pointer; background: #0284c7; color: white; border-color: #0369a1; margin: 0;">
+                  📸 Kamera HP
+                  <input type="file" id="vFotoKameraInput" accept="image/*" capture="environment" style="display: none;">
+                </label>
+              </div>
+            </div>
+
+            <!-- Preview List Foto Fisik Riil -->
+            <div class="upload-preview-grid" id="vFotoPreviewGrid"></div>
+            <div id="vFotoCountHint" style="font-size: 0.74rem; color: #64748b; margin-top: 6px; font-weight: 600;"></div>
+          </div>
+
+          <!-- Berita Acara Pemeriksaan Fisik Lapangan (BAST) -->
+          <div style="background: #fefce8; border: 1px solid #fef08a; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+              <div style="font-weight: 800; color: #854d0e; font-size: 0.88rem; display: flex; align-items: center; gap: 6px;">
+                <span>📜</span> Berita Acara Pemeriksaan Fisik Lapangan (BA / BAST)
+              </div>
+              <button type="button" class="auto-ba-btn" id="btnGenerateNoBA" onclick="window.portal.generateNoBA()">
+                ⚡ No. BA Otomatis
+              </button>
+            </div>
+
+            <div class="form-group-modal" style="margin-bottom: 10px;">
+              <label class="form-label-modal" for="vNomorBA" style="color: #713f12; font-size: 0.8rem;">
+                Nomor Register Berita Acara Fisik
+              </label>
+              <input type="text" id="vNomorBA" class="form-control-modal" placeholder="Contoh: BA-05/DLH-LMB/X/2026">
+            </div>
+
+            <div class="form-group-modal" style="margin-bottom: 0;">
+              <label class="form-label-modal" for="vCatatanBA" style="color: #713f12; font-size: 0.8rem;">
+                Catatan Singkat Berita Acara
+              </label>
+              <textarea id="vCatatanBA" class="form-control-modal" rows="2"
+                placeholder="Tuliskan intisari Berita Acara: saksi/aparat desa pendamping, fakta fisik yang disepakati, serta komitmen tindak lanjut..."></textarea>
+            </div>
+          </div>
+
           <!-- Tanggal Selesai -->
           <div class="form-group-modal">
             <label class="form-label-modal" for="vTanggalSelesai">
@@ -1346,6 +2203,16 @@
         <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-top: 14px; font-size: 0.8rem; color: #64748b;">
           💡 <strong>Tips:</strong> Jika URL dikosongkan, aplikasi akan beroperasi secara mandiri menggunakan penyimpanan lokal browser (Local Storage) dengan dataset Kabupaten Lembata.
         </div>
+
+        <div style="margin-top: 14px; padding: 12px 14px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+          <div>
+            <div style="font-size: 0.82rem; font-weight: 600; color: #065f46;">Spreadsheet Baru Masih Kosong?</div>
+            <div style="font-size: 0.76rem; color: #047857; margin-top: 2px;">Unggah seluruh data aduan lokal saat ini ke Google Spreadsheet agar langsung terisi.</div>
+          </div>
+          <button type="button" class="btn-action-tool" id="btnUploadLocalToGas" style="background: #059669; color: white; border-color: #047857; font-size: 0.78rem; padding: 7px 12px; white-space: nowrap;">
+            📤 Unggah ke Sheets
+          </button>
+        </div>
       </div>
 
       <div class="modal-footer" style="justify-content: space-between;">
@@ -1366,8 +2233,51 @@
     </div>
   </div>
 
+  <!-- ===================================================================
+       MODAL 4: DIALOG KONFIRMASI HAPUS DATA ADUAN
+       =================================================================== -->
+  <div class="modal-backdrop" id="modalConfirmDelete">
+    <div class="modal-dialog" style="max-width: 480px;">
+      <div class="modal-header modal-header-danger">
+        <h3 class="modal-title" style="color: #991b1b; display: flex; align-items: center; gap: 8px;">
+          <span>🗑️</span> Konfirmasi Hapus Data Aduan
+        </h3>
+        <button type="button" class="modal-close" data-close-modal>&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p style="font-size: 0.9rem; color: #334155; margin-bottom: 12px; line-height: 1.5;">
+          Apakah Anda yakin ingin menghapus laporan aduan masyarakat berikut dari sistem?
+        </p>
+
+        <div class="delete-info-card" id="deletePreviewCard">
+          <!-- Diisi dinamis -->
+        </div>
+
+        <div class="delete-warning-banner">
+          <span style="font-size: 1.25rem;">⚠️</span>
+          <div>
+            <strong>Perhatian:</strong> Tindakan ini bersifat permanen. Data akan dihapus dari sistem pengawasan DLH dan dicatat ke blacklist log agar tidak dipulihkan.
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="background: #fef2f2; border-top: 1px solid #fee2e2;">
+        <button type="button" class="btn-modal-cancel" data-close-modal>Batal</button>
+        <button type="button" class="btn-danger-confirm" id="btnExecuteDelete">
+          🗑️ Ya, Hapus Permanen
+        </button>
+      </div>
+    </div>
+  </div>
+
   <!-- Toast Container -->
   <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Leaflet JS & Leaflet Heatmap Plugin -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+  <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 
   <!-- Scripts: Data Engine & Portal Controller -->
   <script src="js/data.js"></script>
@@ -1384,36 +2294,770 @@
           status: 'all',
           kecamatan: 'all'
         };
+        this.mapFilters = {
+          status: 'all',
+          kecamatan: 'all'
+        };
+        this.map = null;
+        this.mapMode = 'markers'; // 'markers' | 'heatmap' | 'hybrid'
+        this.markersGroup = null;
+        this.heatmapLayer = null;
+        this.baseLayers = {};
+        this.currentBaseLayer = 'osm';
+        this.centerCoords = [-8.370, 123.560]; // Pusat Lembata
+        this.pendingDeleteId = null;
+        this.tempUploadedPhotos = [];
       }
 
       init() {
+        this.checkAuth();
         this.bindEvents();
+        this.setupPhotoUploadUI();
         this.setupCloudSyncUI();
         this.setupRealtimeListener();
         this.updateKPIs();
         this.renderTable();
+        this.initMap();
       }
 
-      showToast(message, type = 'info') {
-        const container = document.getElementById('toastContainer');
-        if (!container) return;
+      /* ===================================================================
+         1. PROTEKSI AKSES (LOGIN / PIN SEDERHANA)
+         =================================================================== */
+      checkAuth() {
+        const shield = document.getElementById('petugasAuthShield');
+        const isAuthSession = sessionStorage.getItem('dlh_petugas_auth') === 'true';
+        const isAuthRemember = localStorage.getItem('dlh_petugas_remember') === 'true';
 
-        const toast = document.createElement('div');
-        toast.className = `toast-item ${type}`;
-        
-        let icon = 'ℹ️';
-        if (type === 'success') icon = '✅';
-        if (type === 'warning') icon = '⚠️';
+        if (isAuthSession || isAuthRemember) {
+          if (shield) shield.classList.add('hidden');
+        } else {
+          if (shield) shield.classList.remove('hidden');
+          const input = document.getElementById('inputPetugasPin');
+          if (input) {
+            input.value = '';
+            setTimeout(() => input.focus(), 300);
+          }
+        }
+      }
 
-        toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
-        container.appendChild(toast);
+      pressPinKey(key) {
+        const input = document.getElementById('inputPetugasPin');
+        if (!input) return;
+        if (input.value.length < 8) {
+          input.value += key;
+        }
+        const err = document.getElementById('authErrorMsg');
+        if (err) err.textContent = '';
+      }
 
-        setTimeout(() => {
-          toast.style.opacity = '0';
-          toast.style.transform = 'translateY(10px)';
-          toast.style.transition = 'all 0.3s ease';
-          setTimeout(() => toast.remove(), 300);
-        }, 3500);
+      clearPinKey() {
+        const input = document.getElementById('inputPetugasPin');
+        if (!input) return;
+        input.value = input.value.slice(0, -1);
+        const err = document.getElementById('authErrorMsg');
+        if (err) err.textContent = '';
+      }
+
+      submitPin() {
+        const input = document.getElementById('inputPetugasPin');
+        const shield = document.getElementById('petugasAuthShield');
+        const errorEl = document.getElementById('authErrorMsg');
+        const rememberCheck = document.getElementById('checkRememberPin');
+
+        if (!input) return;
+        const enteredPin = input.value.trim().toLowerCase();
+
+        // Validasi PIN default sistem DLH Lembata (1234 atau dlh2026) atau pin kustom
+        const validPins = ['1234', 'dlh2026', 'dlhlembata'];
+        const customPin = localStorage.getItem('dlh_custom_pin');
+        if (customPin) validPins.push(customPin.toLowerCase());
+
+        if (validPins.includes(enteredPin)) {
+          sessionStorage.setItem('dlh_petugas_auth', 'true');
+          if (rememberCheck && rememberCheck.checked) {
+            localStorage.setItem('dlh_petugas_remember', 'true');
+          }
+          if (errorEl) errorEl.textContent = '';
+          if (shield) shield.classList.add('hidden');
+          this.showToast('🔓 Akses Berhasil: Selamat bertugas di Portal Pengawasan DLH!', 'success');
+
+          // Refresh map container sizing setelah unlock
+          if (this.map) {
+            setTimeout(() => this.map.invalidateSize(), 300);
+          }
+        } else {
+          if (errorEl) {
+            errorEl.textContent = '❌ PIN Petugas salah! Gunakan PIN standar (1234 atau dlh2026).';
+          }
+          input.value = '';
+          const card = shield.querySelector('.auth-card');
+          if (card) {
+            card.style.animation = 'none';
+            setTimeout(() => { card.style.animation = 'modalFadeIn 0.25s ease'; }, 10);
+          }
+        }
+      }
+
+      lockPortal() {
+        sessionStorage.removeItem('dlh_petugas_auth');
+        localStorage.removeItem('dlh_petugas_remember');
+        const shield = document.getElementById('petugasAuthShield');
+        if (shield) shield.classList.remove('hidden');
+        const input = document.getElementById('inputPetugasPin');
+        if (input) {
+          input.value = '';
+          setTimeout(() => input.focus(), 200);
+        }
+        this.showToast('🔒 Sesi portal berhasil dikunci.', 'info');
+      }
+
+      /* ===================================================================
+         2. PETA INTERAKTIF & HEATMAP SEBARAN SPASIAL
+         =================================================================== */
+      initMap() {
+        const container = document.getElementById('petugasMap');
+        if (!container || typeof L === 'undefined') return;
+
+        try {
+          this.map = L.map('petugasMap', {
+            center: this.centerCoords,
+            zoom: 11,
+            zoomControl: true,
+            scrollWheelZoom: true
+          });
+
+          // Layer Basemap
+          const osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            maxZoom: 19,
+            attribution: '&copy; OpenStreetMap &bull; DLH Kab. Lembata'
+          });
+
+          const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19,
+            attribution: 'Citra Satelit &copy; Esri, Maxar'
+          });
+
+          const topoLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19,
+            attribution: 'Topografi &copy; Esri, USGS'
+          });
+
+          osmLayer.addTo(this.map);
+          this.baseLayers = { osm: osmLayer, sat: satLayer, topo: topoLayer };
+          this.currentBaseLayer = 'osm';
+
+          L.control.scale({ imperial: false, position: 'bottomright' }).addTo(this.map);
+
+          this.markersGroup = L.layerGroup().addTo(this.map);
+          this.renderMapLayers();
+
+          setTimeout(() => {
+            if (this.map) this.map.invalidateSize();
+          }, 400);
+        } catch (err) {
+          console.error('Error inisialisasi Peta Petugas:', err);
+        }
+      }
+
+      renderMapLayers() {
+        if (!this.map) return;
+
+        const data = window.aduanStore ? window.aduanStore.getAll() : [];
+        const filtered = data.filter(item => {
+          let matchKec = true;
+          if (this.mapFilters.kecamatan !== 'all') {
+            matchKec = (item.kecamatan || '').toLowerCase() === this.mapFilters.kecamatan.toLowerCase();
+          }
+
+          let matchSt = true;
+          if (this.mapFilters.status !== 'all') {
+            const itemSt = (item.status || 'Baru').toLowerCase();
+            matchSt = itemSt.includes(this.mapFilters.status.toLowerCase());
+          }
+
+          return matchKec && matchSt && item.lat && item.lng;
+        });
+
+        const summaryEl = document.getElementById('mapPointsSummary');
+        if (summaryEl) {
+          summaryEl.textContent = `Menampilkan ${filtered.length} titik koordinat GPS aktif di Kabupaten Lembata`;
+        }
+
+        // 1. Render Penanda Titik (Markers)
+        if (this.markersGroup) {
+          this.markersGroup.clearLayers();
+
+          if (this.mapMode === 'markers' || this.mapMode === 'hybrid') {
+            filtered.forEach(item => {
+              const statusClean = (item.status || 'Baru').toLowerCase();
+              let pinBg = '#e11d48'; // Baru
+              let iconChar = '⚠️';
+
+              if (statusClean.includes('verif')) {
+                pinBg = '#f59e0b';
+                iconChar = '📋';
+              } else if (statusClean.includes('tindak') || statusClean.includes('proses') || statusClean.includes('penanganan')) {
+                pinBg = '#2563eb';
+                iconChar = '🛠️';
+              } else if (statusClean.includes('selesai') || statusClean.includes('tuntas')) {
+                pinBg = '#10b981';
+                iconChar = '✅';
+              } else if (statusClean.includes('tolak')) {
+                pinBg = '#64748b';
+                iconChar = '✕';
+              }
+
+              const customIcon = L.divIcon({
+                className: 'custom-marker-icon-wrapper',
+                html: `
+                  <div class="custom-marker-pin-wrap">
+                    <div class="marker-pulse-ring" style="--pin-bg: ${pinBg};"></div>
+                    <div class="custom-marker-pin" style="--pin-bg: ${pinBg};">
+                      <span class="custom-marker-icon-inner">${iconChar}</span>
+                    </div>
+                  </div>
+                `,
+                iconSize: [28, 28],
+                iconAnchor: [14, 28],
+                popupAnchor: [0, -28]
+              });
+
+              const marker = L.marker([item.lat, item.lng], { icon: customIcon });
+
+              const popupHtml = `
+                <div style="font-family: inherit; font-size: 0.82rem; min-width: 220px; line-height: 1.45;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">
+                    <strong style="color: #065f46; font-family: monospace;">${item.id}</strong>
+                    ${this.getStatusBadgeHtml(item.status)}
+                  </div>
+                  <div style="font-weight: 800; color: #0f172a; margin-bottom: 2px;">${item.namaPelapor}</div>
+                  <div style="color: #64748b; font-size: 0.76rem; margin-bottom: 4px;">📍 Kec. ${item.kecamatan}, Desa ${item.desa || '-'}</div>
+                  <div style="color: #047857; font-weight: 700; margin-bottom: 6px;">🏷️ ${item.jenisPencemaran}</div>
+                  <div style="color: #475569; font-size: 0.76rem; margin-bottom: 10px; max-height: 44px; overflow: hidden; text-overflow: ellipsis;">
+                    "${(item.uraian || '').substring(0, 75)}..."
+                  </div>
+                  <div style="display: flex; gap: 6px;">
+                    <button type="button" class="btn-tbl btn-tbl-detail" style="flex: 1; padding: 5px; font-size: 0.74rem;" onclick="window.portal.showDetailModal('${item.id}')">
+                      🔍 Rincian
+                    </button>
+                    <button type="button" class="btn-tbl btn-tbl-verify" style="flex: 1; padding: 5px; font-size: 0.74rem;" onclick="window.portal.openVerifikasiModal('${item.id}')">
+                      📋 Verifikasi
+                    </button>
+                  </div>
+                </div>
+              `;
+
+              marker.bindPopup(popupHtml);
+              this.markersGroup.addLayer(marker);
+            });
+          }
+        }
+
+        // 2. Render Peta Panas (Heatmap)
+        if (this.heatmapLayer) {
+          this.map.removeLayer(this.heatmapLayer);
+          this.heatmapLayer = null;
+        }
+
+        if ((this.mapMode === 'heatmap' || this.mapMode === 'hybrid') && filtered.length > 0) {
+          const heatData = filtered.map(item => {
+            const st = (item.status || 'Baru').toLowerCase();
+            let intensity = 0.9;
+            if (st.includes('verif')) intensity = 0.75;
+            else if (st.includes('tindak') || st.includes('proses')) intensity = 0.6;
+            else if (st.includes('selesai')) intensity = 0.35;
+            return [item.lat, item.lng, intensity];
+          });
+
+          if (typeof L.heatLayer === 'function') {
+            this.heatmapLayer = L.heatLayer(heatData, {
+              radius: 32,
+              blur: 20,
+              maxZoom: 15,
+              gradient: {
+                0.2: '#3b82f6',
+                0.4: '#06b6d4',
+                0.6: '#10b981',
+                0.8: '#f59e0b',
+                1.0: '#ef4444'
+              }
+            });
+            this.heatmapLayer.addTo(this.map);
+          } else {
+            // Fallback Heatmap lingkaran radial transparan jika offline
+            const heatFallbackGroup = L.layerGroup();
+            filtered.forEach(item => {
+              L.circle([item.lat, item.lng], {
+                radius: 400,
+                color: '#ef4444',
+                fillColor: '#f97316',
+                fillOpacity: 0.45,
+                stroke: false
+              }).addTo(heatFallbackGroup);
+            });
+            this.heatmapLayer = heatFallbackGroup.addTo(this.map);
+          }
+        }
+      }
+
+      setMapMode(mode) {
+        this.mapMode = mode;
+        const btnM = document.getElementById('btnModeMarkers');
+        const btnH = document.getElementById('btnModeHeatmap');
+        const btnY = document.getElementById('btnModeHybrid');
+
+        if (btnM) btnM.classList.toggle('active', mode === 'markers');
+        if (btnH) btnH.classList.toggle('active', mode === 'heatmap');
+        if (btnY) btnY.classList.toggle('active', mode === 'hybrid');
+
+        this.renderMapLayers();
+      }
+
+      changeBasemap(type) {
+        if (!this.map || !this.baseLayers[type]) return;
+        Object.values(this.baseLayers).forEach(layer => {
+          if (this.map.hasLayer(layer)) this.map.removeLayer(layer);
+        });
+        this.baseLayers[type].addTo(this.map);
+        this.currentBaseLayer = type;
+      }
+
+      resetMapView() {
+        if (!this.map) return;
+        this.map.flyTo(this.centerCoords, 11, { duration: 1.2 });
+      }
+
+      onMapFilterChange() {
+        const kecSelect = document.getElementById('mapFilterKecamatan');
+        const stSelect = document.getElementById('mapFilterStatus');
+
+        if (kecSelect) this.mapFilters.kecamatan = kecSelect.value;
+        if (stSelect) this.mapFilters.status = stSelect.value;
+
+        this.renderMapLayers();
+      }
+
+      /* ===================================================================
+         3. DIALOG KONFIRMASI HAPUS DATA (DELETE CONFIRMATION MODAL)
+         =================================================================== */
+      confirmDeleteAduan(id) {
+        const item = window.aduanStore.getById(id);
+        if (!item) return;
+
+        this.pendingDeleteId = id;
+        const modal = document.getElementById('modalConfirmDelete');
+        const preview = document.getElementById('deletePreviewCard');
+
+        if (preview) {
+          preview.innerHTML = `
+            <div class="delete-info-row">
+              <span style="color: #64748b; font-weight: 600;">Nomor Register:</span>
+              <span style="font-family: monospace; font-weight: 800; color: #065f46;">${item.id}</span>
+            </div>
+            <div class="delete-info-row">
+              <span style="color: #64748b; font-weight: 600;">Nama Pelapor:</span>
+              <strong style="color: #0f172a;">${item.namaPelapor}</strong>
+            </div>
+            <div class="delete-info-row">
+              <span style="color: #64748b; font-weight: 600;">Lokasi Kejadian:</span>
+              <span>Kec. ${item.kecamatan}, Desa ${item.desa || '-'}</span>
+            </div>
+            <div class="delete-info-row">
+              <span style="color: #64748b; font-weight: 600;">Jenis Dugaan:</span>
+              <span style="color: #059669; font-weight: 700;">${item.jenisPencemaran}</span>
+            </div>
+            <div class="delete-info-row">
+              <span style="color: #64748b; font-weight: 600;">Waktu Lapor:</span>
+              <span>${item.timestamp || item.tanggalKejadian || '-'}</span>
+            </div>
+          `;
+        }
+
+        if (modal) modal.classList.add('show');
+      }
+
+      executeDelete() {
+        if (!this.pendingDeleteId) return;
+        const id = this.pendingDeleteId;
+        const success = window.aduanStore.deleteAduan(id);
+
+        this.closeAllModals();
+        if (success) {
+          this.showToast(`Laporan aduan ${id} berhasil dihapus permanen.`, 'success');
+          this.updateKPIs();
+          this.renderTable();
+          this.renderMapLayers();
+        } else {
+          this.showToast(`Gagal menghapus aduan ${id}.`, 'warning');
+        }
+        this.pendingDeleteId = null;
+      }
+
+      /* ===================================================================
+         4. MODAL VERIFIKASI: UPLOAD FOTO FISIK RIIL & BERITA ACARA
+         =================================================================== */
+      setupPhotoUploadUI() {
+        const fileInput = document.getElementById('vFotoRiilInput');
+        const camInput = document.getElementById('vFotoKameraInput');
+
+        const handleFiles = (files) => {
+          if (!files || files.length === 0) return;
+          Array.from(files).forEach(file => {
+            if (!file.type.startsWith('image/')) return;
+            const reader = new FileReader();
+            reader.onload = (e) => {
+              if (e.target && e.target.result) {
+                this.tempUploadedPhotos.push(e.target.result);
+                this.renderPhotoPreviews();
+              }
+            };
+            reader.readAsDataURL(file);
+          });
+        };
+
+        if (fileInput) {
+          fileInput.addEventListener('change', (e) => handleFiles(e.target.files));
+        }
+        if (camInput) {
+          camInput.addEventListener('change', (e) => handleFiles(e.target.files));
+        }
+      }
+
+      renderPhotoPreviews() {
+        const grid = document.getElementById('vFotoPreviewGrid');
+        const hint = document.getElementById('vFotoCountHint');
+        if (!grid) return;
+
+        if (this.tempUploadedPhotos.length === 0) {
+          grid.innerHTML = '';
+          if (hint) hint.style.display = 'none';
+          return;
+        }
+
+        grid.innerHTML = this.tempUploadedPhotos.map((src, idx) => `
+          <div class="preview-thumb-box">
+            <img src="${src}" alt="Foto Fisik ${idx + 1}">
+            <button type="button" class="btn-remove-thumb" onclick="window.portal.removeUploadedPhoto(${idx})" title="Hapus foto">&times;</button>
+          </div>
+        `).join('');
+
+        if (hint) {
+          hint.style.display = 'block';
+          hint.textContent = `✅ ${this.tempUploadedPhotos.length} foto kondisi riil terlampir untuk Berita Acara.`;
+        }
+      }
+
+      removeUploadedPhoto(idx) {
+        this.tempUploadedPhotos.splice(idx, 1);
+        this.renderPhotoPreviews();
+      }
+
+      generateNoBA() {
+        const year = new Date().getFullYear();
+        const month = String(new Date().getMonth() + 1).padStart(2, '0');
+        const randomNum = String(Math.floor(Math.random() * 900) + 100);
+        const autoNo = `BA-DLH/LMB/${year}/${month}/${randomNum}`;
+        const input = document.getElementById('vNomorBA');
+        if (input) input.value = autoNo;
+        this.showToast(`Nomor BA ${autoNo} digenerate otomatis.`, 'info');
+      }
+
+      openVerifikasiModal(id) {
+        const item = window.aduanStore.getById(id);
+        if (!item) return;
+
+        const modal = document.getElementById('modalVerifikasiPetugas');
+        if (!modal) return;
+
+        document.getElementById('vTargetId').value = item.id;
+        document.getElementById('vAduanId').textContent = item.id;
+        document.getElementById('vNamaPelapor').textContent = item.namaPelapor;
+        document.getElementById('vLokasi').textContent = `Kec. ${item.kecamatan}, Desa ${item.desa || '-'}`;
+        document.getElementById('vJenisPencemaran').textContent = item.jenisPencemaran;
+
+        // Set form fields
+        document.getElementById('vStatusSelect').value = item.status || 'Diverifikasi';
+        document.getElementById('vPetugasInput').value = (item.petugasVerifikasi && item.petugasVerifikasi !== '-') ? item.petugasVerifikasi : 'Tim Verifikasi Lapangan DLH Lembata';
+        document.getElementById('vTanggalVerifikasi').value = item.tanggalVerifikasi || new Date().toISOString().split('T')[0];
+        document.getElementById('vHasilVerifikasi').value = item.hasilVerifikasi && item.hasilVerifikasi !== '-' ? item.hasilVerifikasi : '';
+        document.getElementById('vTindakanDLH').value = item.tindakanDLH && item.tindakanDLH !== '-' ? item.tindakanDLH : '';
+        document.getElementById('vTanggalSelesai').value = item.tanggalSelesai && item.tanggalSelesai !== '-' ? item.tanggalSelesai : '';
+
+        // Berita Acara & Foto Fisik
+        const inputBA = document.getElementById('vNomorBA');
+        const catBA = document.getElementById('vCatatanBA');
+        if (inputBA) inputBA.value = item.nomorBeritaAcara || '';
+        if (catBA) catBA.value = item.catatanBeritaAcara || '';
+
+        // Foto verifikasi riil
+        this.tempUploadedPhotos = [];
+        if (Array.isArray(item.fotoVerifikasiList) && item.fotoVerifikasiList.length > 0) {
+          this.tempUploadedPhotos = [...item.fotoVerifikasiList];
+        } else if (item.fotoKondisiRiil && item.fotoKondisiRiil !== '-') {
+          this.tempUploadedPhotos = [item.fotoKondisiRiil];
+        }
+        this.renderPhotoPreviews();
+
+        modal.classList.add('show');
+      }
+
+      /* ===================================================================
+         5. DETAIL RINCIAN: AUDIT LOG TIMESTAMP & AKUNTABILITAS BULANAN DLH
+         =================================================================== */
+      showDetailModal(id) {
+        const item = window.aduanStore.getById(id);
+        if (!item) return;
+
+        const modal = document.getElementById('modalDetailAduan');
+        const body = document.getElementById('detailModalContent');
+        if (!modal || !body) return;
+
+        // Kumpulan foto bukti pelapor
+        const citizenPhotos = [];
+        if (Array.isArray(item.buktiFotoList)) {
+          item.buktiFotoList.forEach(p => {
+            if (typeof p === 'string' && p.trim() && !citizenPhotos.includes(p.trim())) citizenPhotos.push(p.trim());
+            else if (p && p.dataUrl && !citizenPhotos.includes(p.dataUrl)) citizenPhotos.push(p.dataUrl);
+          });
+        }
+        ['fotoBukti', 'linkFotoBukti', 'buktiFoto', 'linkFoto'].forEach(field => {
+          const val = item[field];
+          if (val && typeof val === 'string' && val.trim() && val !== '-' && !citizenPhotos.includes(val.trim())) {
+            const strVal = val.trim();
+            if (strVal.includes(',') && !strVal.startsWith('data:')) {
+              strVal.split(',').forEach(sub => {
+                const tr = sub.trim();
+                if (tr && !citizenPhotos.includes(tr)) citizenPhotos.push(tr);
+              });
+            } else {
+              citizenPhotos.push(strVal);
+            }
+          }
+        });
+
+        // Foto kondisi riil pengecekan fisik petugas
+        const officerPhotos = [];
+        if (Array.isArray(item.fotoVerifikasiList)) {
+          item.fotoVerifikasiList.forEach(p => {
+            if (p && !officerPhotos.includes(p)) officerPhotos.push(p);
+          });
+        }
+        if (item.fotoKondisiRiil && item.fotoKondisiRiil !== '-' && !officerPhotos.includes(item.fotoKondisiRiil)) {
+          officerPhotos.push(item.fotoKondisiRiil);
+        }
+
+        const mapsUrl = (item.lat && item.lng) ? `https://maps.google.com/?q=${item.lat},${item.lng}` : '';
+
+        // Hitung siklus timestamp akuntabilitas
+        const timeMasuk = item.timestamp || item.tanggalKejadian || 'Tercatat';
+        const timeVerif = item.timestampVerifikasi || (item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' ? `${item.tanggalVerifikasi} 09:30` : '');
+        const timeTindak = item.timestampTindakLanjut || ((item.status === 'Ditindaklanjuti' || item.status === 'Dalam Penanganan' || item.status === 'Selesai') && item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' ? `${item.tanggalVerifikasi} 14:00` : '');
+        const timeSelesai = item.timestampSelesai || (item.tanggalSelesai && item.tanggalSelesai !== '-' ? `${item.tanggalSelesai} 16:30` : '');
+
+        const isVerifDone = !!(timeVerif || item.tanggalVerifikasi && item.tanggalVerifikasi !== '-');
+        const isTindakDone = !!(timeTindak || item.status === 'Ditindaklanjuti' || item.status === 'Dalam Penanganan' || item.status === 'Selesai');
+        const isSelesaiDone = item.status === 'Selesai';
+
+        body.innerHTML = `
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
+            <div>
+              <span style="font-size: 0.72rem; color: #64748b; font-weight: 800; text-transform: uppercase;">NO. REGISTER ADUAN RESMI:</span>
+              <h2 style="font-size: 1.35rem; color: #065f46; font-weight: 800; font-family: monospace;">${item.id}</h2>
+            </div>
+            <div>
+              ${this.getStatusBadgeHtml(item.status)}
+            </div>
+          </div>
+
+          <!-- ==============================================================
+               LOG TIMESTAMP AKUNTABILITAS KINERJA BULANAN DLH
+               ============================================================== -->
+          <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 16px; margin-bottom: 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+              <div style="font-weight: 800; color: #0f172a; font-size: 0.88rem; display: flex; align-items: center; gap: 6px;">
+                <span>⏱️</span> Akuntabilitas Kinerja &bull; Log Timestamp Siklus Penanganan
+              </div>
+              <span style="font-size: 0.72rem; background: #e2e8f0; color: #334155; font-weight: 700; padding: 2px 8px; border-radius: 999px;">
+                Standar SPM DLH
+              </span>
+            </div>
+
+            <div class="timeline-accountability">
+              <!-- Tahap 1: Masuk -->
+              <div class="timeline-node done">
+                <div class="timeline-dot">✓</div>
+                <div class="timeline-content-card">
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <strong style="color: #0f172a;">1. Laporan Masuk &amp; Registrasi Sistem</strong>
+                    <span class="timeline-time-badge">${timeMasuk}</span>
+                  </div>
+                  <div style="color: #64748b; font-size: 0.76rem; margin-top: 2px;">
+                    Aduan masyarakat berhasil didata dan nomor tiket diterbitkan di portal SILAPOR.
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tahap 2: Verifikasi Lapangan -->
+              <div class="timeline-node ${isVerifDone ? 'done' : 'active'}">
+                <div class="timeline-dot">${isVerifDone ? '✓' : '2'}</div>
+                <div class="timeline-content-card">
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <strong style="color: #0f172a;">2. Pemeriksaan Fisik &amp; Verifikasi Faktual</strong>
+                    <span class="timeline-time-badge">${timeVerif ? timeVerif : 'Sedang Dijadwalkan'}</span>
+                  </div>
+                  <div style="color: #64748b; font-size: 0.76rem; margin-top: 2px;">
+                    Verifikator: <strong>${item.petugasVerifikasi && item.petugasVerifikasi !== '-' ? item.petugasVerifikasi : 'Menunggu penugasan tim DLH'}</strong>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tahap 3: Tindak Lanjut Teknis -->
+              <div class="timeline-node ${isTindakDone ? 'done' : (isVerifDone ? 'active' : '')}">
+                <div class="timeline-dot">${isTindakDone ? '✓' : '3'}</div>
+                <div class="timeline-content-card">
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <strong style="color: #0f172a;">3. Penanganan &amp; Rekomendasi Nyata DLH</strong>
+                    <span class="timeline-time-badge">${timeTindak ? timeTindak : (isVerifDone ? 'Dalam Penanganan' : 'Antrean')}</span>
+                  </div>
+                  <div style="color: #64748b; font-size: 0.76rem; margin-top: 2px;">
+                    Tindakan: ${(item.tindakanDLH && item.tindakanDLH !== '-') ? item.tindakanDLH : 'Pengangkutan / teguran / koordinasi desa'}
+                  </div>
+                </div>
+              </div>
+
+              <!-- Tahap 4: Tuntas Selesai -->
+              <div class="timeline-node ${isSelesaiDone ? 'done' : ''}">
+                <div class="timeline-dot">${isSelesaiDone ? '✓' : '4'}</div>
+                <div class="timeline-content-card">
+                  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
+                    <strong style="color: #0f172a;">4. Perkara Lingkungan Dinyatakan Tuntas</strong>
+                    <span class="timeline-time-badge">${isSelesaiDone ? (timeSelesai || 'Tuntas') : 'Belum Ditutup'}</span>
+                  </div>
+                  <div style="color: #64748b; font-size: 0.76rem; margin-top: 2px;">
+                    ${isSelesaiDone ? 'Telah diverifikasi tuntas & didokumentasikan ke laporan akuntabilitas DLH.' : 'Kasus masih berjalan dalam pengawasan DLH Lembata.'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- SLA & Compliance Metric Box -->
+            <div class="sla-metric-box">
+              <div style="font-size: 0.8rem; color: #1e3a8a;">
+                <strong>📊 Indikator Kinerja Pelayanan:</strong>
+                <div style="font-size: 0.75rem; color: #3b82f6; margin-top: 2px;">
+                  Target Respons Verifikasi: &le; 24 Jam &bull; Target Penyelesaian: &le; 3 Hari Kerja
+                </div>
+              </div>
+              <span style="font-size: 0.75rem; font-weight: 800; background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 999px; border: 1px solid #bbf7d0;">
+                🌱 ${isSelesaiDone ? 'SOP Terpenuhi &bull; Akuntabel' : 'Dalam Pemantauan DLH'}
+              </span>
+            </div>
+          </div>
+
+          <!-- Grid Info Pelapor & Lokasi -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px;">
+              <div style="color: #64748b; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">👤 IDENTITAS PELAPOR</div>
+              <div style="font-weight: 800; color: #0f172a; font-size: 0.95rem;">${item.namaPelapor}</div>
+              <div style="color: #475569; font-size: 0.82rem; margin-top: 2px;">No. WhatsApp: <strong>${item.noHp || '-'}</strong></div>
+              <div style="color: #64748b; font-size: 0.8rem; margin-top: 2px;">Domisili: ${item.alamatPelapor || '-'}</div>
+            </div>
+
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px;">
+              <div style="color: #64748b; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">📍 LOKASI KEJADIAN</div>
+              <div style="font-weight: 800; color: #0f172a; font-size: 0.95rem;">Kec. ${item.kecamatan}</div>
+              <div style="color: #475569; font-size: 0.82rem; margin-top: 2px;">Desa/Kelurahan: <strong>${item.desa || '-'}</strong></div>
+              <div style="color: #64748b; font-size: 0.8rem; margin-top: 2px;">Patokan: ${item.lokasiDetail || '-'}</div>
+            </div>
+          </div>
+
+          <!-- Dugaan & Koordinat GPS -->
+          <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px; margin-bottom: 16px; font-size: 0.86rem;">
+            <div style="margin-bottom: 6px;">
+              <strong style="color: #334155;">Jenis Dugaan Pencemaran:</strong> 
+              <span style="color: #059669; font-weight: 800;">${item.jenisPencemaran}</span>
+            </div>
+            ${item.sumberDugaan ? `
+              <div style="margin-bottom: 6px;">
+                <strong style="color: #334155;">Dugaan Sumber / Pelaku:</strong> ${item.sumberDugaan}
+              </div>
+            ` : ''}
+            <div>
+              <strong style="color: #334155;">Titik Koordinat GPS:</strong> 
+              <span style="font-family: monospace; color: #065f46;">${item.lat || '-'}, ${item.lng || '-'}</span>
+              ${mapsUrl ? ` &bull; <a href="${mapsUrl}" target="_blank" style="color: #0284c7; text-decoration: underline; font-weight: 700;">Buka Google Maps ↗</a>` : ''}
+            </div>
+          </div>
+
+          <!-- Uraian Kronologi Warga -->
+          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 14px; border-radius: 10px; margin-bottom: 16px; font-size: 0.88rem; color: #14532d;">
+            <div style="font-weight: 800; margin-bottom: 6px;">📝 Uraian Kronologi Aduan dari Warga:</div>
+            <p style="line-height: 1.5; white-space: pre-wrap;">${item.uraian || 'Tidak ada uraian detail.'}</p>
+          </div>
+
+          <!-- Berita Acara Pemeriksaan Fisik Lapangan (Jika ada) -->
+          ${(item.nomorBeritaAcara || item.catatanBeritaAcara) ? `
+            <div class="berita-acara-card">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                <strong style="font-size: 0.9rem; color: #854d0e;">📜 BERITA ACARA PEMERIKSAAN FISIK LAPANGAN (BAST)</strong>
+                <span style="font-family: monospace; font-size: 0.78rem; font-weight: 800; background: #fef08a; padding: 2px 8px; border-radius: 4px;">
+                  ${item.nomorBeritaAcara || 'Nomor BA Tersimpan'}
+                </span>
+              </div>
+              <div style="font-size: 0.82rem; line-height: 1.5; color: #713f12;">
+                ${item.catatanBeritaAcara ? `<p style="white-space: pre-wrap; margin-bottom: 6px;">${item.catatanBeritaAcara}</p>` : ''}
+                <div style="font-size: 0.76rem; color: #a16207;">
+                  Verifikator Resmi: <strong>${item.petugasVerifikasi || 'Tim Lapangan DLH'}</strong> &bull; Tanggal: ${item.tanggalVerifikasi || '-'}
+                </div>
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Foto Kondisi Riil Pemeriksaan Fisik Petugas -->
+          ${officerPhotos.length > 0 ? `
+            <div style="background: #ffffff; border: 1.5px solid #059669; padding: 14px; border-radius: 10px; margin-bottom: 16px;">
+              <div style="font-size: 0.82rem; font-weight: 800; color: #065f46; margin-bottom: 10px; display: flex; align-items: center; gap: 6px;">
+                <span>📸</span> DOKUMENTASI FISIK RIIL PETUGAS DI LOKASI (${officerPhotos.length} Foto Riil):
+              </div>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                ${officerPhotos.map((src, i) => `
+                  <a href="${src}" target="_blank" style="display: inline-block; width: 100px; height: 100px; border-radius: 10px; overflow: hidden; border: 2px solid #059669; box-shadow: 0 4px 10px rgba(5,150,105,0.18);" title="Klik untuk perbesar Foto Fisik ${i+1}">
+                    <img src="${src}" alt="Foto Fisik Petugas ${i+1}" style="width: 100%; height: 100%; object-fit: cover;">
+                  </a>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Foto Bukti Lampiran Pelapor -->
+          ${citizenPhotos.length > 0 ? `
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 14px; border-radius: 10px; margin-bottom: 16px;">
+              <div style="font-size: 0.8rem; font-weight: 800; color: #334155; margin-bottom: 10px;">
+                📸 BUKTI FOTO DARI WARGA PELAPOR (${citizenPhotos.length} Foto):
+              </div>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                ${citizenPhotos.map((src, i) => `
+                  <a href="${src}" target="_blank" style="display: inline-block; width: 85px; height: 85px; border-radius: 10px; overflow: hidden; border: 1.5px solid #cbd5e1; box-shadow: 0 2px 6px rgba(0,0,0,0.08);" title="Klik untuk perbesar Bukti Pelapor ${i+1}">
+                    <img src="${src}" alt="Bukti Pelapor ${i+1}" style="width: 100%; height: 100%; object-fit: cover;">
+                  </a>
+                `).join('')}
+              </div>
+            </div>
+          ` : ''}
+
+          <!-- Tombol Aksi Cepat Modal -->
+          <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+            <button type="button" class="btn-action-tool" onclick="window.portal.closeAllModals(); window.portal.openVerifikasiModal('${item.id}')" style="background: #059669; color: white; border-color: #047857;">
+              📋 Perbarui Verifikasi Petugas
+            </button>
+          </div>
+        `;
+
+        modal.classList.add('show');
+      }
+
+      closeAllModals() {
+        document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('show'));
       }
 
       getStatusBadgeHtml(status) {
@@ -1434,9 +3078,31 @@
         return `<span class="badge ${cssClass}">● ${label}</span>`;
       }
 
+      showToast(message, type = 'info') {
+        const container = document.getElementById('toastContainer');
+        if (!container) return;
+
+        const toast = document.createElement('div');
+        toast.className = `toast-item ${type}`;
+
+        let icon = 'ℹ️';
+        if (type === 'success') icon = '✅';
+        if (type === 'warning') icon = '⚠️';
+
+        toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+        container.appendChild(toast);
+
+        setTimeout(() => {
+          toast.style.opacity = '0';
+          toast.style.transform = 'translateY(10px)';
+          toast.style.transition = 'all 0.3s ease';
+          setTimeout(() => toast.remove(), 300);
+        }, 3500);
+      }
+
       updateKPIs() {
         const stats = window.aduanStore ? window.aduanStore.getStats() : { total: 0, baru: 0, dalamProses: 0, selesai: 0 };
-        
+
         const elTotal = document.getElementById('kpiTotal');
         const elBaru = document.getElementById('kpiBaru');
         const elProses = document.getElementById('kpiProses');
@@ -1502,8 +3168,7 @@
           const dateOnly = item.timestamp ? item.timestamp.split(' ')[0] : (item.tanggalKejadian || '-');
           const timeOnly = item.timestamp && item.timestamp.includes(' ') ? item.timestamp.split(' ')[1] : '';
           const mapsUrl = (item.lat && item.lng) ? `https://maps.google.com/?q=${item.lat},${item.lng}` : '';
-          
-          // Pesan WhatsApp konfirmasi verifikasi untuk pelapor
+
           const waTextPelapor = encodeURIComponent(
             `Halo Bapak/Ibu ${item.namaPelapor}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata mengonfirmasi laporan Anda dengan No. Register: ${item.id} terkait dugaan ${item.jenisPencemaran} di Desa ${item.desa}, Kec. ${item.kecamatan}. Mohon informasi tambahan terkait laporan ini.`
           );
@@ -1559,7 +3224,7 @@
                     </a>
                   ` : ''}
 
-                  <!-- Hapus (khusus pengujian) -->
+                  <!-- Hapus (Modal Konfirmasi Khusus) -->
                   <button type="button" class="btn-tbl btn-tbl-del" onclick="window.portal.confirmDeleteAduan('${item.id}')" title="Hapus Laporan">
                     🗑️
                   </button>
@@ -1575,175 +3240,6 @@
         }
       }
 
-      showDetailModal(id) {
-        const item = window.aduanStore.getById(id);
-        if (!item) return;
-
-        const modal = document.getElementById('modalDetailAduan');
-        const body = document.getElementById('detailModalContent');
-        if (!modal || !body) return;
-
-        // Foto bukti
-        const photoList = [];
-        if (Array.isArray(item.buktiFotoList)) {
-          item.buktiFotoList.forEach(p => {
-            if (typeof p === 'string' && p.trim() && !photoList.includes(p.trim())) photoList.push(p.trim());
-            else if (p && p.dataUrl && !photoList.includes(p.dataUrl)) photoList.push(p.dataUrl);
-          });
-        }
-        ['fotoBukti', 'linkFotoBukti', 'buktiFoto', 'linkFoto'].forEach(field => {
-          const val = item[field];
-          if (val && typeof val === 'string' && val.trim() && val !== '-' && !photoList.includes(val.trim())) {
-            const strVal = val.trim();
-            if (strVal.includes(',') && !strVal.startsWith('data:')) {
-              strVal.split(',').forEach(sub => {
-                const trimmed = sub.trim();
-                if (trimmed && !photoList.includes(trimmed)) photoList.push(trimmed);
-              });
-            } else {
-              photoList.push(strVal);
-            }
-          }
-        });
-
-        const mapsUrl = (item.lat && item.lng) ? `https://maps.google.com/?q=${item.lat},${item.lng}` : '';
-
-        body.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
-            <div>
-              <span style="font-size: 0.75rem; color: #64748b; font-weight: 700; text-transform: uppercase;">KODE REGISTER ADUAN:</span>
-              <h2 style="font-size: 1.35rem; color: #065f46; font-weight: 800; font-family: monospace;">${item.id}</h2>
-            </div>
-            <div>
-              ${this.getStatusBadgeHtml(item.status)}
-            </div>
-          </div>
-
-          <!-- Grid Info Pelapor & Lokasi -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px;">
-              <div style="color: #64748b; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">👤 IDENTITAS PELAPOR</div>
-              <div style="font-weight: 800; color: #0f172a; font-size: 0.95rem;">${item.namaPelapor}</div>
-              <div style="color: #475569; font-size: 0.82rem; margin-top: 2px;">No. WhatsApp: <strong>${item.noHp || '-'}</strong></div>
-              <div style="color: #64748b; font-size: 0.8rem; margin-top: 2px;">Domisili: ${item.alamatPelapor || '-'}</div>
-            </div>
-
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px;">
-              <div style="color: #64748b; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">📍 LOKASI KEJADIAN</div>
-              <div style="font-weight: 800; color: #0f172a; font-size: 0.95rem;">Kec. ${item.kecamatan}</div>
-              <div style="color: #475569; font-size: 0.82rem; margin-top: 2px;">Desa/Kelurahan: <strong>${item.desa || '-'}</strong></div>
-              <div style="color: #64748b; font-size: 0.8rem; margin-top: 2px;">Patokan: ${item.lokasiDetail || '-'}</div>
-            </div>
-          </div>
-
-          <!-- Dugaan & Koordinat -->
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px; margin-bottom: 16px; font-size: 0.86rem;">
-            <div style="margin-bottom: 6px;">
-              <strong style="color: #334155;">Jenis Dugaan Pencemaran:</strong> 
-              <span style="color: #059669; font-weight: 800;">${item.jenisPencemaran}</span>
-            </div>
-            ${item.sumberDugaan ? `
-              <div style="margin-bottom: 6px;">
-                <strong style="color: #334155;">Dugaan Sumber / Pelaku:</strong> ${item.sumberDugaan}
-              </div>
-            ` : ''}
-            <div>
-              <strong style="color: #334155;">Titik Koordinat GPS:</strong> 
-              <span style="font-family: monospace; color: #065f46;">${item.lat || '-'}, ${item.lng || '-'}</span>
-              ${mapsUrl ? ` &bull; <a href="${mapsUrl}" target="_blank" style="color: #0284c7; text-decoration: underline; font-weight: 700;">Buka Google Maps ↗</a>` : ''}
-            </div>
-          </div>
-
-          <!-- Uraian Kronologi -->
-          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 14px; border-radius: 10px; margin-bottom: 16px; font-size: 0.88rem; color: #14532d;">
-            <div style="font-weight: 800; margin-bottom: 6px;">📝 Uraian Kronologi Aduan dari Warga:</div>
-            <p style="line-height: 1.5; white-space: pre-wrap;">${item.uraian || 'Tidak ada uraian detail.'}</p>
-          </div>
-
-          <!-- Galeri Foto Bukti -->
-          ${photoList.length > 0 ? `
-            <div style="background: #ffffff; border: 1px solid #e2e8f0; padding: 14px; border-radius: 10px; margin-bottom: 16px;">
-              <div style="font-size: 0.8rem; font-weight: 800; color: #334155; margin-bottom: 10px;">
-                📸 DOKUMENTASI FOTO BUKTI PENDUKUNG (${photoList.length} Foto):
-              </div>
-              <div style="display: flex; gap: 10px; flex-wrap: wrap;">
-                ${photoList.map((src, i) => `
-                  <a href="${src}" target="_blank" style="display: inline-block; width: 90px; height: 90px; border-radius: 10px; overflow: hidden; border: 1.5px solid #cbd5e1; box-shadow: 0 2px 6px rgba(0,0,0,0.08);" title="Klik untuk perbesar Bukti Foto ${i+1}">
-                    <img src="${src}" alt="Bukti Foto ${i+1}" style="width: 100%; height: 100%; object-fit: cover;">
-                  </a>
-                `).join('')}
-              </div>
-            </div>
-          ` : `
-            <div style="background: #f8fafc; border: 1px dashed #cbd5e1; padding: 12px; border-radius: 10px; text-align: center; color: #64748b; font-size: 0.82rem; margin-bottom: 16px;">
-              📷 Pelapor tidak melampirkan foto bukti fisik.
-            </div>
-          `}
-
-          <!-- Riwayat Verifikasi Petugas Jika Sudah Ada -->
-          ${item.petugasVerifikasi && item.petugasVerifikasi !== '-' ? `
-            <div style="background: #eff6ff; border: 1px solid #bfdbfe; padding: 14px; border-radius: 10px; margin-bottom: 16px; font-size: 0.86rem; color: #1e3a8a;">
-              <div style="font-weight: 800; margin-bottom: 8px;">📋 CATATAN VERIFIKASI &amp; TINDAK LANJUT DLH:</div>
-              <div style="margin-bottom: 4px;"><strong>Petugas Verifikator:</strong> ${item.petugasVerifikasi}</div>
-              ${item.tanggalVerifikasi ? `<div style="margin-bottom: 4px;"><strong>Tanggal Verifikasi:</strong> ${item.tanggalVerifikasi}</div>` : ''}
-              ${item.hasilVerifikasi ? `<div style="margin-bottom: 4px;"><strong>Temuan Lapangan:</strong> ${item.hasilVerifikasi}</div>` : ''}
-              ${item.tindakanDLH ? `<div style="margin-bottom: 4px;"><strong>Tindakan DLH:</strong> ${item.tindakanDLH}</div>` : ''}
-              ${item.tanggalSelesai ? `<div><strong>Tanggal Selesai:</strong> ${item.tanggalSelesai}</div>` : ''}
-            </div>
-          ` : ''}
-
-          <!-- Tombol Aksi Cepat Modal -->
-          <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
-            <button type="button" class="btn-action-tool" onclick="window.portal.closeAllModals(); window.portal.openVerifikasiModal('${item.id}')" style="background: #059669; color: white; border-color: #047857;">
-              📋 Perbarui Verifikasi Petugas
-            </button>
-          </div>
-        `;
-
-        modal.classList.add('show');
-      }
-
-      openVerifikasiModal(id) {
-        const item = window.aduanStore.getById(id);
-        if (!item) return;
-
-        const modal = document.getElementById('modalVerifikasiPetugas');
-        if (!modal) return;
-
-        document.getElementById('vTargetId').value = item.id;
-        document.getElementById('vAduanId').textContent = item.id;
-        document.getElementById('vNamaPelapor').textContent = item.namaPelapor;
-        document.getElementById('vLokasi').textContent = `Kec. ${item.kecamatan}, Desa ${item.desa || '-'}`;
-        document.getElementById('vJenisPencemaran').textContent = item.jenisPencemaran;
-
-        // Set form fields
-        document.getElementById('vStatusSelect').value = item.status || 'Diverifikasi';
-        document.getElementById('vPetugasInput').value = (item.petugasVerifikasi && item.petugasVerifikasi !== '-') ? item.petugasVerifikasi : 'Tim Verifikasi Lapangan DLH Lembata';
-        document.getElementById('vTanggalVerifikasi').value = item.tanggalVerifikasi || new Date().toISOString().split('T')[0];
-        document.getElementById('vHasilVerifikasi').value = item.hasilVerifikasi || '';
-        document.getElementById('vTindakanDLH').value = item.tindakanDLH || '';
-        document.getElementById('vTanggalSelesai').value = item.tanggalSelesai || '';
-
-        modal.classList.add('show');
-      }
-
-      confirmDeleteAduan(id) {
-        if (confirm(`Yakin ingin menghapus laporan aduan register ${id}? Tindakan ini tidak dapat dibatalkan.`)) {
-          const success = window.aduanStore.deleteAduan(id);
-          if (success) {
-            this.showToast(`Aduan ${id} berhasil dihapus dari sistem.`, 'success');
-            this.updateKPIs();
-            this.renderTable();
-          } else {
-            this.showToast(`Gagal menghapus aduan ${id}.`, 'warning');
-          }
-        }
-      }
-
-      closeAllModals() {
-        document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('show'));
-      }
-
       bindEvents() {
         // Modal close buttons
         document.querySelectorAll('[data-close-modal], .modal-close').forEach(btn => {
@@ -1755,6 +3251,18 @@
             if (e.target === backdrop) this.closeAllModals();
           });
         });
+
+        // Tombol Lock Portal di Header
+        const btnLock = document.getElementById('btnLockPortal');
+        if (btnLock) {
+          btnLock.addEventListener('click', () => this.lockPortal());
+        }
+
+        // Tombol Konfirmasi Hapus Modal 4
+        const btnExecDelete = document.getElementById('btnExecuteDelete');
+        if (btnExecDelete) {
+          btnExecDelete.addEventListener('click', () => this.executeDelete());
+        }
 
         // Search input
         const searchInput = document.getElementById('tableSearch');
@@ -1830,6 +3338,7 @@
 
             this.updateKPIs();
             this.renderTable();
+            this.renderMapLayers();
             btnManualSync.disabled = false;
             if (syncIcon) syncIcon.style.animation = 'none';
           });
@@ -1849,7 +3358,11 @@
               tanggalVerifikasi: document.getElementById('vTanggalVerifikasi').value,
               hasilVerifikasi: document.getElementById('vHasilVerifikasi').value.trim(),
               tindakanDLH: document.getElementById('vTindakanDLH').value.trim(),
-              tanggalSelesai: document.getElementById('vTanggalSelesai').value
+              tanggalSelesai: document.getElementById('vTanggalSelesai').value,
+              nomorBeritaAcara: document.getElementById('vNomorBA').value.trim(),
+              catatanBeritaAcara: document.getElementById('vCatatanBA').value.trim(),
+              fotoKondisiRiil: this.tempUploadedPhotos[0] || '',
+              fotoVerifikasiList: [...this.tempUploadedPhotos]
             };
 
             const updated = window.aduanStore.updateVerifikasi(id, updateData);
@@ -1857,7 +3370,8 @@
               this.closeAllModals();
               this.updateKPIs();
               this.renderTable();
-              this.showToast(`Verifikasi untuk nomor tiket ${id} berhasil disimpan!`, 'success');
+              this.renderMapLayers();
+              this.showToast(`Verifikasi & Berita Acara untuk tiket ${id} berhasil disimpan!`, 'success');
             } else {
               this.showToast('Gagal menyimpan pembaruan verifikasi.', 'warning');
             }
@@ -1912,6 +3426,7 @@
               modal.classList.remove('show');
               this.updateKPIs();
               this.renderTable();
+              this.renderMapLayers();
               this.showToast('Berhasil terhubung ke Google Apps Script DLH!', 'success');
             } else {
               modal.classList.remove('show');
@@ -1931,9 +3446,36 @@
             if (res.success) {
               this.updateKPIs();
               this.renderTable();
-              this.showToast('Data berhasil disinkronkan dari Google Apps Script!', 'success');
+              this.renderMapLayers();
+              if (res.emptyRemote) {
+                this.showToast('✅ Terhubung ke Google Spreadsheet! Database di spreadsheet saat ini masih kosong (0 data aduan).', 'info');
+              } else {
+                this.showToast(res.message || 'Data berhasil disinkronkan dari Google Apps Script!', 'success');
+              }
             } else {
               this.showToast(`Sinkronisasi: ${res.error || res.reason}`, 'warning');
+            }
+          });
+        }
+
+        const btnUploadToGas = document.getElementById('btnUploadLocalToGas');
+        if (btnUploadToGas) {
+          btnUploadToGas.addEventListener('click', async () => {
+            const count = (window.aduanStore.getAll() || []).length;
+            if (!confirm(`Unggah ${count} data aduan lokal saat ini ke Google Spreadsheet DLH Lembata?`)) return;
+            btnUploadToGas.disabled = true;
+            btnUploadToGas.textContent = '⏳ Mengunggah...';
+            const res = await window.aduanStore.uploadAllLocalToGAS();
+            btnUploadToGas.disabled = false;
+            btnUploadToGas.textContent = '📤 Unggah ke Sheets';
+            if (res.success) {
+              this.updateKPIs();
+              this.renderTable();
+              this.renderMapLayers();
+              updateStatusIndicator();
+              this.showToast(`✅ Berhasil mengunggah ${res.uploaded} data ke Google Spreadsheet!`, 'success');
+            } else {
+              this.showToast(`Gagal mengunggah: ${res.error || 'Terjadi kendala jaringan'}`, 'warning');
             }
           });
         }
@@ -1944,6 +3486,7 @@
               window.aduanStore.resetToDefault();
               this.updateKPIs();
               this.renderTable();
+              this.renderMapLayers();
               updateStatusIndicator();
               modal.classList.remove('show');
               this.showToast('Data aduan dikembalikan ke dataset standar Lembata.', 'info');
@@ -1962,6 +3505,7 @@
             if (window.aduanStore) window.aduanStore.init();
             this.updateKPIs();
             this.renderTable();
+            this.renderMapLayers();
             const id = msg.data && msg.data.id ? msg.data.id : '';
             const nama = msg.data && msg.data.item ? msg.data.item.namaPelapor : 'Masyarakat';
             this.showToast(`📢 Laporan Aduan Baru (${id}) diterima dari ${nama}!`, 'success');
@@ -1969,12 +3513,14 @@
             if (window.aduanStore) window.aduanStore.init();
             this.updateKPIs();
             this.renderTable();
+            this.renderMapLayers();
           }
         });
 
         window.addEventListener('aduanDataSynced', () => {
           this.updateKPIs();
           this.renderTable();
+          this.renderMapLayers();
         });
       }
     }
