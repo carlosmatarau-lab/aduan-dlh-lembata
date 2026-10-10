@@ -695,12 +695,13 @@ class AduanDataStore {
   constructor() {
     this.aduanList = [];
     const saved = localStorage.getItem(GAS_CONFIG_KEY);
-    // Jika masih menyimpan URL lama yang sudah terhapus, otomatis migrasikan ke URL baru
-    const isOldUrl = saved && saved.includes('AKfycbxm4r8QU2dv0S6csTTpmewuuvMNNrqiD2NeF_ENzXi8z7E3qDALHz6HNiBWtiEpGMruIQ');
-    if (isOldUrl) {
+    // Otomatis sinkronkan dan migrasikan URL lama ke URL deployment baru yang aktif
+    if (saved && !saved.includes('AKfycbwuDJ9X5a27GnVuuiU1keHexKXzG3OITUxwOomwHGt-1S53DdqfAfguDInXwtbh9ljKMw')) {
       localStorage.setItem(GAS_CONFIG_KEY, DEFAULT_GAS_API_URL);
+      this.gasApiUrl = DEFAULT_GAS_API_URL;
+    } else {
+      this.gasApiUrl = (saved && saved.trim().startsWith('http')) ? saved.trim() : DEFAULT_GAS_API_URL;
     }
-    this.gasApiUrl = (saved && !isOldUrl && saved.trim().startsWith('http')) ? saved.trim() : DEFAULT_GAS_API_URL;
     this.isSyncing = false;
     this.currentSyncPromise = null;
     this.lastSyncTime = null;
@@ -818,11 +819,11 @@ class AduanDataStore {
   }
 
   getGasUrl() {
-    if (this.gasApiUrl && this.gasApiUrl.trim().startsWith('http')) {
+    if (this.gasApiUrl && this.gasApiUrl.trim().startsWith('http') && this.gasApiUrl.includes('AKfycbwuDJ9X5a27GnVuuiU1keHexKXzG3OITUxwOomwHGt-1S53DdqfAfguDInXwtbh9ljKMw')) {
       return this.gasApiUrl.trim();
     }
     const stored = (localStorage.getItem(GAS_CONFIG_KEY) || '').trim();
-    if (stored && stored.startsWith('http')) {
+    if (stored && stored.startsWith('http') && stored.includes('AKfycbwuDJ9X5a27GnVuuiU1keHexKXzG3OITUxwOomwHGt-1S53DdqfAfguDInXwtbh9ljKMw')) {
       return stored;
     }
     if (window.GAS_API_URL && String(window.GAS_API_URL).trim().startsWith('http')) {
