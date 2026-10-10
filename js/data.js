@@ -542,6 +542,38 @@ const INITIAL_ADUAN_DATA = [
     hasilVerifikasi: 'Uji air sumur menunjukkan parameter bakteriologis normal, bau berasal dari saluran drainase umum yang tersumbat daun dan lumpur, bukan pencemaran limbah B3/berbahaya.',
     tindakanDLH: 'Diserahkan penanganannya kepada pengelola pasar dan pemdes Wulandoni untuk pembersihan got bersama warga.',
     tanggalSelesai: '2026-09-08'
+  },
+  {
+    id: 'ADU-LMB-2026-480',
+    timestamp: '2026-10-11 01:58',
+    namaPelapor: 'Bahanna',
+    noHp: '08555699888',
+    alamatPelapor: 'B',
+    kecamatan: 'Omesuri',
+    desa: 'Nualela',
+    lokasiDetail: 'Bhbb',
+    lat: -8.329107,
+    lng: 123.475804,
+    jenisPencemaran: 'Pencemaran Air & Sungai',
+    uraian: 'Laporan pengaduan warga terkait pencemaran air & sungai di Nualela, Omesuri melalui pesan WhatsApp resmi.',
+    sumberDugaan: '-',
+    tanggalKejadian: '2026-10-01',
+    fotoBukti: '',
+    linkFotoBukti: '',
+    buktiFotoList: [],
+    status: 'Aduan Diterima',
+    petugasVerifikasi: '-',
+    tanggalVerifikasi: '-',
+    hasilVerifikasi: 'Menunggu jadwal penugasan verifikator lapangan DLH.',
+    tindakanDLH: 'Aduan warga terdaftar dalam antrean verifikasi lapangan.',
+    tanggalSelesai: '-',
+    nomorBeritaAcara: '',
+    catatanBeritaAcara: '',
+    fotoKondisiRiil: '',
+    fotoVerifikasiList: [],
+    timestampVerifikasi: '',
+    timestampTindakLanjut: '',
+    timestampSelesai: ''
   }
 ];
 
@@ -685,6 +717,18 @@ class AduanDataStore {
             timestampSelesai: item.timestampSelesai || (matchInitial ? matchInitial.timestampSelesai : '') || (item.tanggalSelesai && item.tanggalSelesai !== '-' ? `${item.tanggalSelesai} 16:30` : '')
           };
         });
+
+        // Pastikan tiket aduan terbaru (seperti ADU-LMB-2026-480) tersinkronisasi ke daftar lokal
+        let hasNewInitial = false;
+        INITIAL_ADUAN_DATA.forEach(initItem => {
+          if (!this.aduanList.some(x => x.id === initItem.id) && !this.isDeleted(initItem.id)) {
+            this.aduanList.unshift(initItem);
+            hasNewInitial = true;
+          }
+        });
+        if (hasNewInitial) {
+          this.save();
+        }
       } catch (e) {
         console.error('Error parsing stored aduan, fallback to default:', e);
         this.aduanList = INITIAL_ADUAN_DATA.filter(item => !this.isDeleted(item.id));
@@ -859,6 +903,7 @@ class AduanDataStore {
     } catch (err) {
       console.warn(`Gagal kirim '${action}' ke Google Apps Script:`, err);
       return { success: false, error: err.message };
+    }
   }
 
   save() {
@@ -957,15 +1002,18 @@ class AduanDataStore {
   }
 
   addAduan(formData) {
-    const newId = this.generateNewId();
+    const customId = (formData && formData.id && String(formData.id).trim().toUpperCase().startsWith('ADU-'))
+      ? String(formData.id).trim().toUpperCase()
+      : null;
+    const newId = customId || this.generateNewId();
     const now = new Date();
-    const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+    const formattedDate = formData.timestamp || `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
     // Lookup default lat lng from kecamatan if not provided
     const kecDict = (typeof KECAMATAN_LEMBATA !== 'undefined' ? KECAMATAN_LEMBATA : (window.KECAMATAN_LEMBATA || {}));
     const kecMeta = (formData.kecamatan && kecDict[formData.kecamatan]) ? kecDict[formData.kecamatan] : { lat: -8.375, lng: 123.55 };
-    const lat = formData.lat ? parseFloat(formData.lat) : (kecMeta.lat + (Math.random() - 0.5) * 0.02);
-    const lng = formData.lng ? parseFloat(formData.lng) : (kecMeta.lng + (Math.random() - 0.5) * 0.02);
+    const lat = (formData.lat !== undefined && formData.lat !== '' && !isNaN(parseFloat(formData.lat))) ? parseFloat(formData.lat) : (kecMeta.lat + (Math.random() - 0.5) * 0.02);
+    const lng = (formData.lng !== undefined && formData.lng !== '' && !isNaN(parseFloat(formData.lng))) ? parseFloat(formData.lng) : (kecMeta.lng + (Math.random() - 0.5) * 0.02);
 
     const newRecord = {
       id: newId,
@@ -982,25 +1030,30 @@ class AduanDataStore {
       uraian: formData.uraian || '-',
       sumberDugaan: formData.sumberDugaan || '-',
       tanggalKejadian: formData.tanggalKejadian || formattedDate.split(' ')[0],
-      status: 'Aduan Diterima',
+      status: formData.status || 'Aduan Diterima',
       fotoBukti: formData.fotoBukti || '',
       linkFotoBukti: formData.linkFotoBukti || formData.fotoBukti || '',
       buktiFotoList: Array.isArray(formData.buktiFotoList) ? formData.buktiFotoList : (formData.fotoBukti ? [formData.fotoBukti] : []),
-      petugasVerifikasi: '-',
-      tanggalVerifikasi: '-',
-      hasilVerifikasi: 'Menunggu penugasan verifikator lapangan.',
-      tindakanDLH: 'Aduan telah dicatat ke sistem dan siap dijadwalkan verifikasi.',
-      tanggalSelesai: '-',
-      nomorBeritaAcara: '',
-      catatanBeritaAcara: '',
-      fotoKondisiRiil: '',
-      fotoVerifikasiList: [],
-      timestampVerifikasi: '',
-      timestampTindakLanjut: '',
-      timestampSelesai: ''
+      petugasVerifikasi: formData.petugasVerifikasi || '-',
+      tanggalVerifikasi: formData.tanggalVerifikasi || '-',
+      hasilVerifikasi: formData.hasilVerifikasi || 'Menunggu penugasan verifikator lapangan.',
+      tindakanDLH: formData.tindakanDLH || 'Aduan telah dicatat ke sistem dan siap dijadwalkan verifikasi.',
+      tanggalSelesai: formData.tanggalSelesai || '-',
+      nomorBeritaAcara: formData.nomorBeritaAcara || '',
+      catatanBeritaAcara: formData.catatanBeritaAcara || '',
+      fotoKondisiRiil: formData.fotoKondisiRiil || '',
+      fotoVerifikasiList: formData.fotoVerifikasiList || [],
+      timestampVerifikasi: formData.timestampVerifikasi || '',
+      timestampTindakLanjut: formData.timestampTindakLanjut || '',
+      timestampSelesai: formData.timestampSelesai || ''
     };
 
-    this.aduanList.unshift(newRecord);
+    const existingIndex = this.aduanList.findIndex(x => x.id === newId);
+    if (existingIndex !== -1) {
+      this.aduanList[existingIndex] = { ...this.aduanList[existingIndex], ...newRecord };
+    } else {
+      this.aduanList.unshift(newRecord);
+    }
     this.save();
 
     // Broadcast Real-Time ke tab/portal petugas secara langsung

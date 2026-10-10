@@ -674,10 +674,40 @@ class DLHApp {
 
         // Simpan ke database lokal & cloud
         let newRecord = null;
-        if (window.aduanStore && typeof window.aduanStore.addAduan === 'function') {
-          newRecord = window.aduanStore.addAduan(formData);
+        let store = window.aduanStore;
+        if (!store && typeof AduanDataStore !== 'undefined') {
+          store = new AduanDataStore();
+          window.aduanStore = store;
+        }
+
+        if (store && typeof store.addAduan === 'function') {
+          newRecord = store.addAduan(formData);
         } else {
-          newRecord = { id: `ADU-LMB-${new Date().getFullYear()}-${Date.now().toString().slice(-3)}`, ...formData };
+          // Fallback aman jika store belum terpasang
+          const now = new Date();
+          const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+          const newId = `ADU-LMB-${now.getFullYear()}-${Date.now().toString().slice(-3)}`;
+          newRecord = {
+            id: newId,
+            timestamp: formattedDate,
+            ...formData,
+            status: 'Aduan Diterima',
+            petugasVerifikasi: '-',
+            tanggalVerifikasi: '-',
+            hasilVerifikasi: 'Menunggu penugasan verifikator lapangan.',
+            tindakanDLH: 'Aduan telah dicatat ke sistem dan siap dijadwalkan verifikasi.',
+            tanggalSelesai: '-'
+          };
+          try {
+            const rawStored = localStorage.getItem('dlh_lembata_aduan_v1');
+            const arr = rawStored ? JSON.parse(rawStored) : [];
+            arr.unshift(newRecord);
+            localStorage.setItem('dlh_lembata_aduan_v1', JSON.stringify(arr));
+          } catch(e) {}
+        }
+
+        if (window.dlhRealtime && newRecord) {
+          window.dlhRealtime.broadcast('ADUAN_BARU', { id: newRecord.id, item: newRecord });
         }
 
         this.showToast(`💾 Laporan ${newRecord.id} tersimpan di arsip database DLH Lembata!`, 'success');

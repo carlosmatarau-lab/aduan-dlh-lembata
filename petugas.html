@@ -1911,6 +1911,11 @@
         </div>
 
         <div class="table-header-buttons">
+          <!-- Input / Impor Pesan WhatsApp -->
+          <button type="button" class="btn-action-tool btn-import-wa" id="btnOpenWaImportModal" onclick="window.portal.openWaImportModal();" style="background: #ecfdf5; border-color: #10b981; color: #047857; font-weight: 800;" title="Salin & Tempel Pesan Pengaduan dari WhatsApp">
+            <span>💬</span> 📥 Catat dari WA
+          </button>
+
           <!-- Refresh / Sync Manual -->
           <button type="button" class="btn-action-tool" id="btnManualSync" onclick="if(window.portal) window.portal.manualSync();" title="Segarkan data dari penyimpanan">
             <span id="syncIconSpin">🔄</span> Segarkan Data
@@ -2266,6 +2271,68 @@
         <button type="button" class="btn-modal-cancel" data-close-modal>Batal</button>
         <button type="button" class="btn-danger-confirm" id="btnExecuteDelete">
           🗑️ Ya, Hapus Permanen
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL 5: CATAT / IMPOR ADUAN DARI WHATSAPP
+       =================================================================== -->
+  <div class="modal-backdrop" id="modalWaImport">
+    <div class="modal-dialog" style="max-width: 600px;">
+      <div class="modal-header" style="background: #ecfdf5; border-bottom: 1px solid #a7f3d0;">
+        <h3 class="modal-title" style="color: #065f46; display: flex; align-items: center; gap: 8px;">
+          <span>💬</span> Catat / Impor Aduan dari WhatsApp
+        </h3>
+        <button type="button" class="modal-close" data-close-modal>&times;</button>
+      </div>
+
+      <div class="modal-body">
+        <p style="font-size: 0.86rem; color: #475569; margin-bottom: 12px; line-height: 1.45;">
+          Tempel (paste) teks format laporan aduan yang dikirim warga via WhatsApp (contoh: <em>ADU-LMB-2026-480</em>). Sistem akan membaca Nomor Register, Pelapor, Titik GPS, dan Uraian secara otomatis.
+        </p>
+
+        <div class="form-group-modal">
+          <label class="form-label-modal" for="inputWaRawText" style="display: flex; justify-content: space-between; align-items: center;">
+            <span>Teks Pesan WhatsApp:</span>
+            <button type="button" class="auto-ba-btn" onclick="window.portal.pasteClipboardToWaImport()" style="font-size: 0.72rem; padding: 2px 8px;">📋 Tempel dari Clipboard</button>
+          </label>
+          <textarea id="inputWaRawText" class="form-control-modal" rows="8" style="font-family: monospace; font-size: 0.82rem; line-height: 1.45;" placeholder="Tempelkan pesan WhatsApp laporan pengaduan masyarakat di sini...&#10;&#10;Contoh:&#10;*LAYANAN PENGADUAN MASYARAKAT*&#10;📌 *NOMOR REGISTER:* ADU-LMB-2026-480&#10;👤 *DATA PELAPOR:*&#10;• *Nama Pelapor:* Bahanna&#10;• *Nomor WhatsApp / HP:* 08555699888&#10;📍 *LOKASI KEJADIAN PENCEMARAN:*&#10;• *Kecamatan:* Omesuri&#10;• *Desa / Kelurahan:* Nualela&#10;• *Titik Koordinat GPS:* -8.329107, 123.475804&#10;⚠️ *RINCIAN MASALAH:*&#10;• *Jenis Pencemaran:* Pencemaran Air & Sungai"></textarea>
+        </div>
+
+        <div style="margin-bottom: 14px;">
+          <button type="button" class="btn-action-tool" id="btnParseWaText" onclick="window.portal.parseWaText()" style="width: 100%; background: #059669; color: white; border-color: #047857; justify-content: center; padding: 10px; font-weight: 700;">
+            ⚡ Ekstrak &amp; Tinjau Data Aduan
+          </button>
+        </div>
+
+        <!-- Hasil Ekstraksi Preview Card -->
+        <div id="waParsePreviewCard" style="display: none; background: #f8fafc; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 14px; font-size: 0.84rem;">
+          <div style="font-weight: 800; color: #065f46; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+            <span>🔍 Data Berhasil Diekstrak:</span>
+            <span id="previewWaRegisterBadge" class="ticket-badge">-</span>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.82rem; margin-bottom: 8px;">
+            <div><strong>Pelapor:</strong> <span id="previewWaNama">-</span></div>
+            <div><strong>No WA/HP:</strong> <span id="previewWaHp">-</span></div>
+            <div><strong>Kecamatan:</strong> <span id="previewWaKec">-</span></div>
+            <div><strong>Desa:</strong> <span id="previewWaDesa">-</span></div>
+            <div style="grid-column: 1 / -1;"><strong>Patokan Lokasi:</strong> <span id="previewWaLokasi">-</span></div>
+            <div style="grid-column: 1 / -1;"><strong>Koordinat GPS:</strong> <span id="previewWaGps">-</span></div>
+            <div style="grid-column: 1 / -1;"><strong>Jenis Dugaan:</strong> <span id="previewWaJenis" style="color: #059669; font-weight: 700;">-</span></div>
+            <div style="grid-column: 1 / -1;"><strong>Tanggal Kejadian:</strong> <span id="previewWaTanggal">-</span></div>
+          </div>
+          <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid #e2e8f0; font-size: 0.82rem;">
+            <strong>Uraian:</strong> <span id="previewWaUraian">-</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0;">
+        <button type="button" class="btn-modal-cancel" data-close-modal>Batal</button>
+        <button type="button" class="btn-modal-submit" id="btnSaveWaImport" onclick="window.portal.saveWaImport()" disabled style="background: #059669;">
+          💾 Simpan Aduan ke Portal Petugas
         </button>
       </div>
     </div>
@@ -3548,6 +3615,213 @@
         window.addEventListener('aduanDataSynced', () => {
           reloadAll();
         });
+      }
+
+      /* ===================================================================
+         5. FITUR IMPOR & PENCATATAN PESAN WHATSAPP WARGA
+         =================================================================== */
+      openWaImportModal() {
+        const modal = document.getElementById('modalWaImport');
+        const input = document.getElementById('inputWaRawText');
+        const preview = document.getElementById('waParsePreviewCard');
+        const btnSave = document.getElementById('btnSaveWaImport');
+        if (input) input.value = '';
+        if (preview) preview.style.display = 'none';
+        if (btnSave) btnSave.disabled = true;
+        this.currentParsedWaData = null;
+        if (modal) modal.classList.add('show');
+      }
+
+      async pasteClipboardToWaImport() {
+        const input = document.getElementById('inputWaRawText');
+        if (!input) return;
+        try {
+          if (navigator.clipboard && navigator.clipboard.readText) {
+            const text = await navigator.clipboard.readText();
+            if (text && text.trim()) {
+              input.value = text;
+              this.parseWaText();
+              this.showToast('Teks pesan WhatsApp berhasil ditempel dari clipboard.', 'success');
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn('Clipboard read failed:', e);
+        }
+        input.focus();
+        this.showToast('Gunakan pintasan Ctrl+V (atau tempel manual) pada kotak teks.', 'info');
+      }
+
+      parseWaText() {
+        const input = document.getElementById('inputWaRawText');
+        const raw = (input ? input.value : '').trim();
+        if (!raw) {
+          this.showToast('Silakan tempelkan teks pesan WhatsApp terlebih dahulu.', 'warning');
+          return;
+        }
+
+        // Helper regex extraction
+        const clean = (val) => (val || '').replace(/[\*\_]/g, '').trim();
+
+        // 1. Ekstrak Nomor Register (misal ADU-LMB-2026-480)
+        let id = '';
+        const matchId = raw.match(/NOMOR\s+REGISTER:\s*([A-Za-z0-9\-]+)/i) || raw.match(/(ADU-LMB-\d{4}-\d+)/i);
+        if (matchId && matchId[1]) {
+          id = clean(matchId[1]).toUpperCase();
+        } else {
+          id = `ADU-LMB-${new Date().getFullYear()}-${Date.now().toString().slice(-3)}`;
+        }
+
+        // 2. Ekstrak Nama Pelapor
+        let nama = '';
+        const matchNama = raw.match(/Nama\s+Pelapor:\s*([^\n\r]+)/i);
+        if (matchNama && matchNama[1]) nama = clean(matchNama[1]);
+        if (!nama || nama === '-') nama = 'Masyarakat (Laporan WA)';
+
+        // 3. Ekstrak Nomor WhatsApp / HP
+        let noHp = '';
+        const matchHp = raw.match(/Nomor\s+WhatsApp(?:\s*\/\s*HP)?:\s*([^\n\r]+)/i) || raw.match(/No\s*HP:\s*([^\n\r]+)/i);
+        if (matchHp && matchHp[1]) noHp = clean(matchHp[1]);
+
+        // 4. Ekstrak Alamat Domisili
+        let alamat = '';
+        const matchAlamat = raw.match(/Alamat\s+Domisili:\s*([^\n\r]+)/i) || raw.match(/Alamat:\s*([^\n\r]+)/i);
+        if (matchAlamat && matchAlamat[1]) alamat = clean(matchAlamat[1]);
+
+        // 5. Ekstrak Kecamatan
+        let kecamatan = 'Nubatukan';
+        const matchKec = raw.match(/Kecamatan:\s*([^\n\r]+)/i);
+        if (matchKec && matchKec[1]) {
+          const kecRaw = clean(matchKec[1]);
+          const kecDict = (typeof KECAMATAN_LEMBATA !== 'undefined' ? KECAMATAN_LEMBATA : (window.KECAMATAN_LEMBATA || {}));
+          const foundKec = Object.keys(kecDict).find(k => k.toLowerCase() === kecRaw.toLowerCase());
+          kecamatan = foundKec || kecRaw || 'Nubatukan';
+        }
+
+        // 6. Ekstrak Desa / Kelurahan
+        let desa = '';
+        const matchDesa = raw.match(/Desa\s*(?:\/\s*Kelurahan)?:\s*([^\n\r]+)/i);
+        if (matchDesa && matchDesa[1]) desa = clean(matchDesa[1]);
+
+        // 7. Ekstrak Patokan Lokasi Detail
+        let lokasiDetail = '';
+        const matchLok = raw.match(/Patokan\s+Lokasi\s+Detail:\s*([^\n\r]+)/i) || raw.match(/Lokasi\s+Detail:\s*([^\n\r]+)/i);
+        if (matchLok && matchLok[1]) lokasiDetail = clean(matchLok[1]);
+
+        // 8. Ekstrak Titik Koordinat GPS
+        let lat = null;
+        let lng = null;
+        const matchGps = raw.match(/Titik\s+Koordinat\s+GPS:\s*(-?[0-9\.]+)\s*,\s*([0-9\.]+)/i) ||
+                         raw.match(/maps\.google\.com\/\?q=(-?[0-9\.]+),([0-9\.]+)/i);
+        if (matchGps && matchGps[1] && matchGps[2]) {
+          lat = parseFloat(matchGps[1]);
+          lng = parseFloat(matchGps[2]);
+        }
+
+        // 9. Ekstrak Jenis Pencemaran
+        let jenisPencemaran = 'Pencemaran Lingkungan';
+        const matchJenis = raw.match(/Jenis\s+Pencemaran:\s*([^\n\r]+)/i);
+        if (matchJenis && matchJenis[1]) jenisPencemaran = clean(matchJenis[1]);
+
+        // 10. Ekstrak Tanggal Kejadian
+        let tanggalKejadian = new Date().toISOString().split('T')[0];
+        const matchTgl = raw.match(/Tanggal\s+Kejadian:\s*([^\n\r]+)/i);
+        if (matchTgl && matchTgl[1]) tanggalKejadian = clean(matchTgl[1]);
+
+        // 11. Ekstrak Sumber Dugaan
+        let sumberDugaan = '-';
+        const matchSumber = raw.match(/Dugaan\s+Sumber:\s*([^\n\r]+)/i);
+        if (matchSumber && matchSumber[1]) sumberDugaan = clean(matchSumber[1]);
+
+        // 12. Ekstrak Uraian Kronologi
+        let uraian = '';
+        const matchUraian = raw.match(/URAIAN\s+KRONOLOGI:\s*([\s\S]*?)(?=(?:📸|BUKTI\s+FOTO|Status:\s*Pelapor|----------------|_Laporan|$))/i);
+        if (matchUraian && matchUraian[1]) {
+          uraian = clean(matchUraian[1]);
+        }
+        if (!uraian || uraian === '-') {
+          uraian = `Pengaduan masuk dari warga via pesan WhatsApp resmi mengenai dugaan ${jenisPencemaran} di wilayah Desa ${desa || '-'}, Kecamatan ${kecamatan}.`;
+        }
+
+        const now = new Date();
+        const formattedTimestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+        this.currentParsedWaData = {
+          id: id,
+          timestamp: formattedTimestamp,
+          namaPelapor: nama,
+          noHp: noHp || '-',
+          alamatPelapor: alamat || '-',
+          kecamatan: kecamatan,
+          desa: desa || '-',
+          lokasiDetail: lokasiDetail || '-',
+          lat: lat,
+          lng: lng,
+          jenisPencemaran: jenisPencemaran,
+          uraian: uraian,
+          sumberDugaan: sumberDugaan,
+          tanggalKejadian: tanggalKejadian,
+          status: 'Aduan Diterima',
+          petugasVerifikasi: '-',
+          tanggalVerifikasi: '-',
+          hasilVerifikasi: 'Menunggu penugasan verifikator lapangan DLH.',
+          tindakanDLH: 'Aduan dicatat melalui integrasi pesan WhatsApp.',
+          tanggalSelesai: '-'
+        };
+
+        // Render preview card
+        const preview = document.getElementById('waParsePreviewCard');
+        const badge = document.getElementById('previewWaRegisterBadge');
+        const pNama = document.getElementById('previewWaNama');
+        const pHp = document.getElementById('previewWaHp');
+        const pKec = document.getElementById('previewWaKec');
+        const pDesa = document.getElementById('previewWaDesa');
+        const pLokasi = document.getElementById('previewWaLokasi');
+        const pGps = document.getElementById('previewWaGps');
+        const pJenis = document.getElementById('previewWaJenis');
+        const pTanggal = document.getElementById('previewWaTanggal');
+        const pUraian = document.getElementById('previewWaUraian');
+        const btnSave = document.getElementById('btnSaveWaImport');
+
+        if (badge) badge.textContent = id;
+        if (pNama) pNama.textContent = nama;
+        if (pHp) pHp.textContent = noHp || '-';
+        if (pKec) pKec.textContent = kecamatan;
+        if (pDesa) pDesa.textContent = desa || '-';
+        if (pLokasi) pLokasi.textContent = lokasiDetail || '-';
+        if (pGps) pGps.textContent = (lat && lng) ? `${lat}, ${lng}` : 'Auto-center Kecamatan';
+        if (pJenis) pJenis.textContent = jenisPencemaran;
+        if (pTanggal) pTanggal.textContent = tanggalKejadian;
+        if (pUraian) pUraian.textContent = uraian;
+
+        if (preview) preview.style.display = 'block';
+        if (btnSave) btnSave.disabled = false;
+        this.showToast('✅ Format WhatsApp berhasil diurai! Periksa ringkasan lalu klik Simpan.', 'success');
+      }
+
+      saveWaImport() {
+        if (!this.currentParsedWaData || !window.aduanStore) {
+          this.showToast('Data aduan belum siap disimpan.', 'warning');
+          return;
+        }
+
+        const record = window.aduanStore.addAduan(this.currentParsedWaData);
+        this.closeAllModals();
+        this.updateKPIs();
+        this.renderTable();
+        this.renderMapLayers();
+
+        this.showToast(`🎉 Aduan ${record.id} atas nama "${record.namaPelapor}" berhasil dicatat ke sistem!`, 'success');
+
+        // Focus & highlight baris di tabel jika ada
+        setTimeout(() => {
+          const row = document.querySelector(`[data-id="${record.id}"]`);
+          if (row) {
+            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            row.style.background = '#ecfdf5';
+            setTimeout(() => { row.style.background = ''; }, 3000);
+          }
+        }, 400);
       }
     }
 
