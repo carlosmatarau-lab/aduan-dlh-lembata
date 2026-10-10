@@ -1912,7 +1912,7 @@
 
         <div class="table-header-buttons">
           <!-- Refresh / Sync Manual -->
-          <button type="button" class="btn-action-tool" id="btnManualSync" title="Segarkan data dari penyimpanan">
+          <button type="button" class="btn-action-tool" id="btnManualSync" onclick="if(window.portal) window.portal.manualSync();" title="Segarkan data dari penyimpanan">
             <span id="syncIconSpin">🔄</span> Segarkan Data
           </button>
 
@@ -2310,14 +2310,14 @@
       }
 
       init() {
-        this.checkAuth();
-        this.bindEvents();
-        this.setupPhotoUploadUI();
-        this.setupCloudSyncUI();
-        this.setupRealtimeListener();
-        this.updateKPIs();
-        this.renderTable();
-        this.initMap();
+        try { this.checkAuth(); } catch (e) { console.error('checkAuth:', e); }
+        try { this.bindEvents(); } catch (e) { console.error('bindEvents:', e); }
+        try { this.setupPhotoUploadUI(); } catch (e) { console.error('setupPhotoUploadUI:', e); }
+        try { this.setupCloudSyncUI(); } catch (e) { console.error('setupCloudSyncUI:', e); }
+        try { this.setupRealtimeListener(); } catch (e) { console.error('setupRealtimeListener:', e); }
+        try { this.updateKPIs(); } catch (e) { console.error('updateKPIs:', e); }
+        try { this.renderTable(); } catch (e) { console.error('renderTable:', e); }
+        try { this.initMap(); } catch (e) { console.error('initMap:', e); }
       }
 
       /* ===================================================================
@@ -3320,25 +3320,36 @@
         const syncIcon = document.getElementById('syncIconSpin');
         if (btnManualSync) {
           btnManualSync.addEventListener('click', async () => {
-            if (syncIcon) syncIcon.style.animation = 'spin 1s linear infinite';
+            if (syncIcon) syncIcon.style.animation = 'spin 0.8s linear infinite';
             btnManualSync.disabled = true;
 
-            this.showToast('Mengambil data terbaru dari Google Apps Script...', 'info');
-            const res = await window.aduanStore.syncFromGAS();
-            if (res && res.success) {
-              const count = res.count || window.aduanStore.getAll().length;
-              this.showToast(`Berhasil menyinkronkan ${count} data dari cloud Google Spreadsheet!`, 'success');
-            } else if (res && res.error) {
-              this.showToast(`Koneksi cloud: ${res.error}`, 'warning');
-            } else if (res && res.reason) {
-              this.showToast(`Info sinkronisasi: ${res.reason}`, 'info');
-            } else {
-              this.showToast('Data lokal berhasil disegarkan.', 'success');
+            // 1. Segarkan seketika dari penyimpanan lokal browser
+            if (window.aduanStore) {
+              window.aduanStore.init();
             }
-
             this.updateKPIs();
             this.renderTable();
             this.renderMapLayers();
+
+            // 2. Jika Google Apps Script terhubung, lakukan sinkronisasi cloud
+            if (window.aduanStore && window.aduanStore.hasGasConfigured()) {
+              this.showToast('Mengambil data terbaru dari Google Spreadsheet DLH...', 'info');
+              const res = await window.aduanStore.syncFromGAS();
+              if (res && res.success) {
+                const count = res.count || window.aduanStore.getAll().length;
+                this.showToast(`✅ Berhasil menyinkronkan ${count} data dari Google Spreadsheet!`, 'success');
+              } else if (res && res.error) {
+                this.showToast(`Koneksi cloud: ${res.error}`, 'warning');
+              } else {
+                this.showToast('Data lokal berhasil disegarkan.', 'success');
+              }
+              this.updateKPIs();
+              this.renderTable();
+              this.renderMapLayers();
+            } else {
+              this.showToast('✅ Data aduan lokal berhasil disegarkan!', 'success');
+            }
+
             btnManualSync.disabled = false;
             if (syncIcon) syncIcon.style.animation = 'none';
           });
@@ -3495,41 +3506,64 @@
         }
       }
 
+      manualSync() {
+        if (window.aduanStore) {
+          window.aduanStore.init();
+        }
+        this.updateKPIs();
+        this.renderTable();
+        this.renderMapLayers();
+      }
+
       setupRealtimeListener() {
-        if (!window.dlhRealtime) return;
+        const reloadAll = () => {
+          if (window.aduanStore) window.aduanStore.init();
+          this.updateKPIs();
+          this.renderTable();
+          this.renderMapLayers();
+        };
 
-        window.dlhRealtime.listen((msg) => {
-          if (!msg || !msg.type) return;
+        if (window.dlhRealtime) {
+          window.dlhRealtime.listen((msg) => {
+            if (!msg || !msg.type) return;
 
-          if (msg.type === 'ADUAN_BARU') {
-            if (window.aduanStore) window.aduanStore.init();
-            this.updateKPIs();
-            this.renderTable();
-            this.renderMapLayers();
-            const id = msg.data && msg.data.id ? msg.data.id : '';
-            const nama = msg.data && msg.data.item ? msg.data.item.namaPelapor : 'Masyarakat';
-            this.showToast(`📢 Laporan Aduan Baru (${id}) diterima dari ${nama}!`, 'success');
-          } else if (msg.type === 'TINDAK_LANJUT_UPDATED' || msg.type === 'ADUAN_DELETED' || msg.type === 'STORAGE_RAW_UPDATED') {
-            if (window.aduanStore) window.aduanStore.init();
-            this.updateKPIs();
-            this.renderTable();
-            this.renderMapLayers();
+            reloadAll();
+
+            if (msg.type === 'ADUAN_BARU') {
+              const payload = msg.payload || msg.data || {};
+              const id = payload.id || '';
+              const nama = (payload.item && payload.item.namaPelapor) ? payload.item.namaPelapor : 'Masyarakat';
+              this.showToast(`📢 Laporan Aduan Baru (${id}) diterima dari ${nama}!`, 'success');
+            }
+          });
+        }
+
+        // Sinkronisasi otomatis antar tab browser via storage event
+        window.addEventListener('storage', (e) => {
+          if (e.key === 'dlh_lembata_aduan_v1' || e.key === 'dlh_lembata_realtime_ping') {
+            reloadAll();
           }
         });
 
         window.addEventListener('aduanDataSynced', () => {
-          this.updateKPIs();
-          this.renderTable();
-          this.renderMapLayers();
+          reloadAll();
         });
       }
     }
 
-    // Initialize on DOM ready
-    document.addEventListener('DOMContentLoaded', () => {
-      window.portal = new PetugasPortal();
-      window.portal.init();
-    });
+    // Inisialisasi Handal (Mendukung DOMContentLoaded & readyState Interactive / Complete)
+    function startPetugasPortal() {
+      if (!window.portal) {
+        window.portal = new PetugasPortal();
+        window.portal.init();
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', startPetugasPortal);
+    } else {
+      startPetugasPortal();
+    }
   </script>
 
 </body>
