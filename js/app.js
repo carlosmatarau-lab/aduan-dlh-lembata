@@ -600,7 +600,7 @@ class DLHApp {
                     const canvas = document.createElement('canvas');
                     let width = img.width || 640;
                     let height = img.height || 480;
-                    const maxDim = 800;
+                    const maxDim = 720;
                     if (width > maxDim || height > maxDim) {
                       if (width > height) {
                         height = Math.round((height * maxDim) / width);
@@ -614,7 +614,7 @@ class DLHApp {
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.75));
+                    resolve(canvas.toDataURL('image/jpeg', 0.65));
                   } catch (err) {
                     resolve(dataUrl);
                   }
@@ -1277,14 +1277,34 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       </div>
 
       ${photoList.length > 0 ? `
-        <div style="background: #ffffff; padding: 12px; border-radius: 8px; border: 1px solid #e2e8f0; margin-bottom: 14px;">
-          <div style="font-size: 0.76rem; font-weight: 700; color: #64748b; margin-bottom: 8px;">📸 FOTO BUKTI PENDUKUNG (${photoList.length} Foto):</div>
-          <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-            ${photoList.map((src, i) => `
-              <a href="${src}" target="_blank" style="display: inline-block; width: 80px; height: 80px; border-radius: 8px; overflow: hidden; border: 1.5px solid #cbd5e1; box-shadow: 0 2px 4px rgba(0,0,0,0.06);" title="Lihat Foto Bukti ${i+1}">
-                <img src="${src}" alt="Bukti ${i+1}" style="width: 100%; height: 100%; object-fit: cover;">
-              </a>
-            `).join('')}
+        <div style="background: #ffffff; padding: 14px; border-radius: 12px; border: 1.5px solid #cbd5e1; margin-bottom: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="font-size: 0.82rem; font-weight: 800; color: #1e293b;">📸 FOTO BUKTI PENDUKUNG (${photoList.length} Foto):</div>
+            <span style="font-size: 0.72rem; color: #059669; font-weight: 700;">🔍 Klik foto untuk memperbesar</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px;">
+            ${photoList.map((src, i) => {
+              const safeSrc = src.replace(/'/g, "\\'");
+              return `
+                <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 6px;">
+                  <div onclick="window.app.openLightbox('${safeSrc}', 'Bukti Foto #${i+1} &bull; ${item.id}')"
+                       style="cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid #059669; background: #0f172a; position: relative; height: 120px; transition: transform 0.2s;"
+                       onmouseover="this.style.transform='scale(1.02)';"
+                       onmouseout="this.style.transform='scale(1)';"
+                       title="Klik foto untuk melihat ukuran penuh">
+                    <img src="${src}" alt="Bukti ${i+1}" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 4px; text-align: center; pointer-events: none;">
+                      🔍 Klik Perbesar
+                    </div>
+                  </div>
+                  <button type="button" onclick="window.app.openLightbox('${safeSrc}', 'Bukti Foto #${i+1} &bull; ${item.id}')"
+                          style="width: 100%; background: #059669; color: #ffffff; border: none; border-radius: 6px; padding: 5px 8px; font-size: 0.74rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;"
+                          title="Buka foto ukuran penuh">
+                    <span>🔍 Buka Foto</span>
+                  </button>
+                </div>
+              `;
+            }).join('')}
           </div>
         </div>
       ` : ''}
@@ -1297,6 +1317,66 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
     `;
 
     modal.classList.add('show');
+  }
+
+  openLightbox(src, caption = 'Bukti Foto Aduan Lingkungan') {
+    this.currentLightboxSrc = src;
+    this.currentLightboxCaption = caption;
+    const modal = document.getElementById('modalPhotoLightbox');
+    const img = document.getElementById('lightboxPhotoImg');
+    const cap = document.getElementById('lightboxPhotoCaption');
+    if (img) {
+      img.src = src;
+      img.style.transform = 'scale(1)';
+      img.style.cursor = 'zoom-in';
+    }
+    if (cap) cap.textContent = caption;
+    if (modal) {
+      modal.style.zIndex = '999999';
+      modal.style.display = 'flex';
+      modal.classList.add('show');
+    }
+  }
+
+  closeLightbox() {
+    const modal = document.getElementById('modalPhotoLightbox');
+    if (modal) {
+      modal.classList.remove('show');
+      modal.style.display = 'none';
+    }
+  }
+
+  toggleZoomPhoto(imgElem) {
+    if (!imgElem) return;
+    if (imgElem.style.transform === 'scale(1.8)') {
+      imgElem.style.transform = 'scale(1)';
+      imgElem.style.cursor = 'zoom-in';
+    } else {
+      imgElem.style.transform = 'scale(1.8)';
+      imgElem.style.cursor = 'zoom-out';
+    }
+  }
+
+  openPhotoInNewWindow() {
+    const src = this.currentLightboxSrc;
+    if (!src) return;
+    const caption = this.currentLightboxCaption || 'Bukti Foto Aduan Lingkungan';
+    const w = window.open('', '_blank');
+    if (w) {
+      w.document.write(`<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${caption} - DLH Lembata</title><style>body{margin:0;background:#0b1120;color:#f8fafc;font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;box-sizing:border-box;}.topbar{margin-bottom:14px;text-align:center;}.topbar h3{margin:0 0 4px;color:#10b981;font-size:1.15rem;}.img-wrap{max-width:96vw;max-height:82vh;border-radius:10px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.8);border:2px solid #334155;}img{max-width:100%;max-height:82vh;object-fit:contain;display:block;}.btn-dl{margin-top:14px;display:inline-block;background:#059669;color:white;padding:8px 18px;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.85rem;}</style></head><body><div class="topbar"><h3>📸 ${caption}</h3><p>Dinas Lingkungan Hidup Kabupaten Lembata</p></div><div class="img-wrap"><img src="${src}" alt="${caption}"></div><a href="${src}" download="Bukti_Foto_DLH_${Date.now()}.jpg" class="btn-dl">⬇️ Unduh Foto Ini</a></body></html>`);
+      w.document.close();
+    }
+  }
+
+  downloadCurrentPhoto() {
+    const src = this.currentLightboxSrc;
+    if (!src) return;
+    const a = document.createElement('a');
+    a.href = src;
+    a.download = `Bukti_Foto_DLH_${Date.now()}.jpg`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
   }
 
   /* ===================================================================

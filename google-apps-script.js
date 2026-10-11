@@ -367,12 +367,20 @@ function handleGetAll() {
       const sData = storageSheet.getDataRange().getValues();
       for (let i = 1; i < sData.length; i++) {
         const sid = String(sData[i][0] || '').trim().toUpperCase();
+        if (!sid) continue;
         let sb64 = '';
-        for (let c = 1; c < sData[i].length; c++) {
-          const val = String(sData[i][c] || '').trim();
-          if (val.startsWith('data:image')) {
-            sb64 = val;
-            break;
+        // Gabungkan seluruh chunk mulai dari kolom D (index 3) ke kanan
+        for (let c = 3; c < sData[i].length; c++) {
+          sb64 += String(sData[i][c] || '');
+        }
+        // Fallback untuk format lama jika belum dipisah chunk
+        if (!sb64 || !sb64.startsWith('data:image')) {
+          for (let c = 1; c < sData[i].length; c++) {
+            const val = String(sData[i][c] || '').trim();
+            if (val.startsWith('data:image')) {
+              sb64 = val;
+              break;
+            }
           }
         }
         if (sid && sb64) storageMap[sid] = sb64;
@@ -416,12 +424,18 @@ function handleGetById(id) {
       const sData = storageSheet.getDataRange().getValues();
       for (let i = 1; i < sData.length; i++) {
         const sid = String(sData[i][0] || '').trim().toUpperCase();
+        if (!sid) continue;
         let sb64 = '';
-        for (let c = 1; c < sData[i].length; c++) {
-          const val = String(sData[i][c] || '').trim();
-          if (val.startsWith('data:image')) {
-            sb64 = val;
-            break;
+        for (let c = 3; c < sData[i].length; c++) {
+          sb64 += String(sData[i][c] || '');
+        }
+        if (!sb64 || !sb64.startsWith('data:image')) {
+          for (let c = 1; c < sData[i].length; c++) {
+            const val = String(sData[i][c] || '').trim();
+            if (val.startsWith('data:image')) {
+              sb64 = val;
+              break;
+            }
           }
         }
         if (sid && sb64) storageMap[sid] = sb64;
@@ -483,6 +497,44 @@ function handleGetStats() {
 }
 
 
+/**
+ * Menyimpan data gambar Base64 ke folder khusus di Google Drive
+ * Mengembalikan URL view publik jika berhasil
+ */
+function saveBase64ImageToDrive(base64Data, idAduan) {
+  try {
+    if (!base64Data || typeof base64Data !== 'string' || !base64Data.startsWith('data:image')) {
+      return '';
+    }
+    const commaIdx = base64Data.indexOf(',');
+    if (commaIdx === -1) return '';
+
+    const mimeMatch = base64Data.substring(0, commaIdx).match(/data:([^;]+)/);
+    const contentType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
+    const rawBase64 = base64Data.substring(commaIdx + 1);
+    const decodedBytes = Utilities.base64Decode(rawBase64);
+    const ext = contentType.includes('png') ? '.png' : '.jpg';
+    const filename = 'Bukti_' + (idAduan || 'Foto') + '_' + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyyMMdd_HHmmss') + ext;
+    const blob = Utilities.newBlob(decodedBytes, contentType, filename);
+
+    const folderName = 'SILAPOR_DLH_FOTO_BUKTI';
+    let folder;
+    const folders = DriveApp.getFoldersByName(folderName);
+    if (folders.hasNext()) {
+      folder = folders.next();
+    } else {
+      folder = DriveApp.createFolder(folderName);
+    }
+
+    const file = folder.createFile(blob);
+    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+    return 'https://drive.google.com/uc?export=view&id=' + file.getId();
+  } catch (e) {
+    Logger.log('DriveApp save info: ' + e.message);
+    return '';
+  }
+}
+
 // ==================================================================================
 // HANDLER AKSI: TAMBAH ADUAN BARU (POST)
 // ==================================================================================
@@ -537,10 +589,15 @@ function handleAddAduan(formData) {
         ? driveUrl
         : (webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(newId));
 
-      // Simpan cadangan data gambar Base64 ke sheet Foto_Storage (Kolom C = Link Klik, Kolom D = Base64 Data)
+      // Simpan cadangan data gambar Base64 ke sheet Foto_Storage (Kolom C = Link Klik, Kolom D, E, F... = Chunk Base64)
       try {
         const storageSheet = getOrCreateSheet(SHEET_NAME_FOTO, ['ID_Aduan', 'Timestamp', 'Link_Buka_Foto', 'Base64_Data']);
-        storageSheet.appendRow([newId, now, targetUrl, trimmed]);
+        const CHUNK_SIZE = 40000;
+        const rowData = [newId, now, targetUrl];
+        for (let k = 0; k < trimmed.length; k += CHUNK_SIZE) {
+          rowData.push(trimmed.substring(k, k + CHUNK_SIZE));
+        }
+        storageSheet.appendRow(rowData);
         const lastRow = storageSheet.getLastRow();
         const cell = storageSheet.getRange(lastRow, 3);
         const richText = SpreadsheetApp.newRichTextValue()
@@ -1183,7 +1240,22 @@ function handleViewImage(id, fileId) {
         const sData = storageSheet.getDataRange().getValues();
         for (let i = 1; i < sData.length; i++) {
           if (String(sData[i][0]).trim().toUpperCase() === String(idDisplay).trim().toUpperCase()) {
-            photoData = String(sData[i][2] || '').trim();
+            let combined = '';
+            // Gabungkan seluruh chunk base64 dari kolom D ke kanan
+            for (let c = 3; c < sData[i].length; c++) {
+              combined += String(sData[i][c] || '');
+            }
+            // Fallback untuk baris lama
+            if (!combined || !combined.startsWith('data:image')) {
+              for (let c = 1; c < sData[i].length; c++) {
+                let v = String(sData[i][c] || '').trim();
+                if (v.startsWith('data:image')) {
+                  combined = v;
+                  break;
+                }
+              }
+            }
+            if (combined) photoData = combined;
             break;
           }
         }
@@ -1360,7 +1432,12 @@ function handleFixPhotoLinks() {
     if (cellVal.startsWith('data:image')) {
       if (!existingStorageIds.has(idAduan.toUpperCase())) {
         try {
-          storageSheet.appendRow([idAduan, Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm'), cellVal]);
+          const CHUNK_SIZE = 40000;
+          const rowData = [idAduan, Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm'), targetUrl];
+          for (let k = 0; k < cellVal.length; k += CHUNK_SIZE) {
+            rowData.push(cellVal.substring(k, k + CHUNK_SIZE));
+          }
+          storageSheet.appendRow(rowData);
           existingStorageIds.add(idAduan.toUpperCase());
         } catch (e) {}
       }
@@ -1457,13 +1534,18 @@ function bersihkanErrorFoto() {
       if (!sid) continue;
       var stime = String(sData[s][1] || '').trim();
 
-      // Cari string base64 yang sudah tersimpan
+      // Cari string base64 yang sudah tersimpan (gabungkan jika terpecah di kolom D, E, F...)
       var b64 = '';
-      for (var c = 1; c < sData[s].length; c++) {
-        var v = String(sData[s][c] || '').trim();
-        if (v.startsWith('data:image')) {
-          b64 = v;
-          break;
+      for (var c = 3; c < sData[s].length; c++) {
+        b64 += String(sData[s][c] || '');
+      }
+      if (!b64 || !b64.startsWith('data:image')) {
+        for (var c = 1; c < sData[s].length; c++) {
+          var v = String(sData[s][c] || '').trim();
+          if (v.startsWith('data:image')) {
+            b64 = v;
+            break;
+          }
         }
       }
 
@@ -1482,9 +1564,16 @@ function bersihkanErrorFoto() {
         linkCell.setValue(targetUrl);
       }
 
-      // Pastikan data teks Base64 tersimpan rapi di kolom D
+      // Pastikan data teks Base64 tersimpan aman di kolom D, E, F... tanpa melebihi batas 50.000 karakter per sel!
       if (b64) {
-        storageSheet.getRange(s + 1, 4).setValue(b64);
+        var CHUNK_SIZE = 40000;
+        var chunks = [];
+        for (var k = 0; k < b64.length; k += CHUNK_SIZE) {
+          chunks.push(b64.substring(k, k + CHUNK_SIZE));
+        }
+        if (chunks.length > 0) {
+          storageSheet.getRange(s + 1, 4, 1, chunks.length).setValues([chunks]);
+        }
       }
       fixedStorage++;
     }
@@ -1493,5 +1582,18 @@ function bersihkanErrorFoto() {
   var msg = 'SELESAI TUNTAS! Diperbaiki ' + fixedAduan + ' baris di Data_Aduan dan ' + fixedStorage + ' baris di Foto_Storage.';
   Logger.log(msg);
   return { success: true, fixedAduan: fixedAduan, fixedStorage: fixedStorage, message: msg };
+}
+
+/**
+ * Menu otomatis di Google Spreadsheet saat spreadsheet dibuka
+ */
+function onOpen() {
+  try {
+    const ui = SpreadsheetApp.getUi();
+    ui.createMenu('🌱 DLH Lembata')
+      .addItem('📸 Bersihkan & Perbaiki Semua Foto (#ERROR!)', 'bersihkanErrorFoto')
+      .addItem('🔄 Sinkronkan Seluruh Sheet', 'syncAllSheets')
+      .addToUi();
+  } catch (e) {}
 }
 

@@ -3094,8 +3094,38 @@
             const reader = new FileReader();
             reader.onload = (e) => {
               if (e.target && e.target.result) {
-                this.tempUploadedPhotos.push(e.target.result);
-                this.renderPhotoPreviews();
+                const dataUrl = e.target.result;
+                const img = new Image();
+                img.onload = () => {
+                  try {
+                    const canvas = document.createElement('canvas');
+                    let width = img.width || 640;
+                    let height = img.height || 480;
+                    const maxDim = 720;
+                    if (width > maxDim || height > maxDim) {
+                      if (width > height) {
+                        height = Math.round((height * maxDim) / width);
+                        width = maxDim;
+                      } else {
+                        width = Math.round((width * maxDim) / height);
+                        height = maxDim;
+                      }
+                    }
+                    canvas.width = width;
+                    canvas.height = height;
+                    const ctx = canvas.getContext('2d');
+                    ctx.drawImage(img, 0, 0, width, height);
+                    this.tempUploadedPhotos.push(canvas.toDataURL('image/jpeg', 0.65));
+                  } catch (err) {
+                    this.tempUploadedPhotos.push(dataUrl);
+                  }
+                  this.renderPhotoPreviews();
+                };
+                img.onerror = () => {
+                  this.tempUploadedPhotos.push(dataUrl);
+                  this.renderPhotoPreviews();
+                };
+                img.src = dataUrl;
               }
             };
             reader.readAsDataURL(file);
