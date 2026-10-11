@@ -103,6 +103,11 @@ function doGet(e) {
         });
         break;
 
+      case 'resetData':
+      case 'resetToZero':
+        result = handleResetToZero();
+        break;
+
       default:
         result = { success: false, error: 'Aksi tidak dikenali: ' + action };
     }
@@ -145,6 +150,11 @@ function doPost(e) {
 
       case 'verifyResetPin':
         result = handleVerifyResetPin(body.data || body);
+        break;
+
+      case 'resetData':
+      case 'resetToZero':
+        result = handleResetToZero();
         break;
 
       default:
@@ -574,11 +584,52 @@ function handleDeleteAduan(data) {
 
 
 // ==================================================================================
+// HANDLER AKSI: KOSONGKAN DATABASE / RESET KE 0 ADUAN
+// ==================================================================================
+/**
+ * Mengosongkan seluruh baris data aduan di Google Spreadsheet (menyisakan baris header).
+ * Digunakan untuk penyegaran data total (Fresh Start / 0 Aduan).
+ */
+function handleResetToZero() {
+  const sheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
+  const lastRow = sheet.getLastRow();
+  let deletedRows = 0;
+
+  if (lastRow > 1) {
+    deletedRows = lastRow - 1;
+    // Hapus seluruh baris data mulai dari baris 2
+    sheet.deleteRows(2, deletedRows);
+  }
+
+  writeLog('RESET_DATABASE', 'Seluruh data aduan dibersihkan (reset ke 0 aduan). Siap pengujian baru.');
+
+  return {
+    success: true,
+    message: 'Database Google Spreadsheet berhasil dikosongkan (0 aduan). Sistem siap menerima pengujian baru.',
+    deletedRows: deletedRows,
+    count: 0
+  };
+}
+
+/**
+ * Jalankan fungsi ini langsung dari editor Apps Script untuk mengosongkan spreadsheet (0 aduan)
+ */
+function resetDatabaseToZero() {
+  const res = handleResetToZero();
+  SpreadsheetApp.getUi().alert(
+    '✅ Database Berhasil Direset ke 0 Aduan!\n\n' +
+    'Seluruh data lama (' + res.deletedRows + ' baris) telah dibersihkan.\n' +
+    'Spreadsheet kini dalam kondisi awal yang bersih untuk pengujian.'
+  );
+}
+
+
+// ==================================================================================
 // FUNGSI PEMBANTU: INISIALISASI SPREADSHEET (Jalankan 1x untuk setup awal)
 // ==================================================================================
 /**
  * Jalankan fungsi ini secara manual (1 kali saja) dari menu Run di Apps Script Editor
- * untuk mempersiapkan sheet "Data_Aduan" dan "Log_Aktivitas" beserta header-nya.
+ * untuk mempersiapkan sheet "Data_Aduan" dan "Log_Aktivitas" beserta header-nya (0 aduan).
  */
 function setupSpreadsheet() {
   // Buat sheet Data_Aduan
@@ -830,3 +881,42 @@ function handleVerifyResetPin(data) {
     return { success: false, error: 'Terjadi kesalahan pemrosesan kode: ' + err.message };
   }
 }
+
+// ==================================================================================
+// HANDLER AKSI: RESET KE 0 ADUAN (FRESH START / PENYEGARAN PENUH)
+// ==================================================================================
+
+/**
+ * Mengosongkan seluruh baris data aduan (Fresh Start: 0 Aduan)
+ * Menyisakan baris header saja pada sheet Data_Aduan.
+ * Dipanggil via Web App API (GET/POST ?action=resetToZero) atau tombol petugas.
+ */
+function handleResetToZero() {
+  const sheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
+  const lastRow = sheet.getLastRow();
+  let deletedCount = 0;
+
+  if (lastRow > 1) {
+    deletedCount = lastRow - 1;
+    sheet.deleteRows(2, deletedCount);
+  }
+
+  writeLog('RESET_TO_ZERO', 'Seluruh data aduan (' + deletedCount + ' baris) dikosongkan. Database 0 aduan siap untuk pengujian awal baru.');
+
+  return {
+    success: true,
+    message: 'Data spreadsheet berhasil dikosongkan menjadi 0 aduan. Sistem siap untuk pengujian awal baru.',
+    deletedCount: deletedCount,
+    remainingRows: 0
+  };
+}
+
+/**
+ * Alias fungsi untuk dijalankan langsung dari menu Run/Jalankan di editor Apps Script
+ */
+function resetDatabaseToZero() {
+  const result = handleResetToZero();
+  Logger.log(JSON.stringify(result));
+  return result;
+}
+

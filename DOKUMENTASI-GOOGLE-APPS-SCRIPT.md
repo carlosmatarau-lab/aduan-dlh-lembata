@@ -287,18 +287,49 @@ Semua respons dikembalikan dalam format standar JSON:
 
 ## 🔗 5. Cara Menghubungkan ke Portal Web DLH (`js/data.js`)
 
-Pada file [`js/data.js`](file:///d:/app/js/data.js), cukup ubah konstanta konfigurasi di bagian paling atas:
+---
+
+### 6. Reset Database ke 0 Aduan (Fresh Start / Penyegaran Penuh)
+- **Method**: `GET` atau `POST`
+- **URL Parameter / Body**: `?action=resetToZero` atau `body: { action: "resetToZero" }`
+- **Fungsi**: Mengosongkan seluruh baris aduan di sheet `Data_Aduan` (menyisakan baris header) sehingga database kembali bersih (0 aduan) untuk pengujian baru.
+- **Contoh Request**:
+  ```http
+  GET https://script.google.com/macros/s/[DEPLOYMENT_ID]/exec?action=resetToZero
+  ```
+- **Contoh Respons**:
+  ```json
+  {
+    "success": true,
+    "message": "Data spreadsheet berhasil dikosongkan menjadi 0 aduan. Sistem siap untuk pengujian awal baru.",
+    "deletedCount": 8,
+    "remainingRows": 0
+  }
+  ```
+
+---
+
+### 7. Pemulihan Sandi Petugas (Lupa Sandi via Email OTP)
+- **Kirim OTP**: `POST` atau `GET` dengan parameter `action=sendResetPin&email=petugas@lembata.go.id`
+  Mengirimkan 6-digit kode konfirmasi ke email petugas melalui `MailApp.sendEmail()`.
+- **Verifikasi OTP**: `POST` atau `GET` dengan parameter `action=verifyResetPin&email=...&otp=123456&newPin=8888`
+  Memvalidasi OTP dan menetapkan PIN baru.
+
+---
+
+## 💻 5. Integrasi Frontend (Web Portal)
+
+Pada file [`js/data.js`](file:///d:/app/js/data.js), URL Web App telah disetel ke endpoint aktif resmi:
 
 ```javascript
-// Ganti string kosong dengan URL Web App Anda:
-window.GAS_API_URL = 'https://script.google.com/macros/s/AKfycbx.../exec';
+const DEFAULT_GAS_API_URL = 'https://script.google.com/macros/s/AKfycbwuDJ9X5a27GnVuuiU1keHexKXzG3OITUxwOomwHGt-1S53DdqfAfguDInXwtbh9ljKMw/exec';
 ```
 
 Aplikasi portal web DLH secara otomatis akan:
-1. Mengambil data real-time dari Google Spreadsheet setiap kali dibuka.
-2. Menyimpan form aduan baru langsung ke baris Google Spreadsheet.
-3. Memperbarui status verifikasi petugas langsung ke Google Spreadsheet.
-4. Jika koneksi internet terputus atau URL belum disetel, aplikasi otomatis beralih (*fallback*) ke penyimpanan lokal (**LocalStorage**) tanpa terjadi crash / error.
+1. **Satu Kesatuan Data**: Data di HP petugas, laptop, dan masyarakat membaca dari Google Spreadsheet yang sama.
+2. Ketika spreadsheet memiliki 0 data (setelah di-reset), seluruh portal di HP dan laptop otomatis menampilkan 0 aduan (Fresh Start).
+3. Setiap laporan baru yang dikirim dari HP atau laptop langsung tersinkron ke Google Spreadsheet dan mulai dari nomor tiket `ADU-LMB-2026-001`.
+4. Jika koneksi internet terputus, aplikasi otomatis beralih (*fallback*) ke penyimpanan lokal (**LocalStorage**) tanpa terjadi crash / error.
 
 ---
 

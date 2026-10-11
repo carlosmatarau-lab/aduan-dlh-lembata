@@ -1938,9 +1938,9 @@
             <span>📥</span> Ekspor CSV
           </button>
 
-          <!-- Reset Standar Bersih -->
-          <button type="button" class="btn-action-tool" id="btnResetOfficialData" onclick="if(window.portal) window.portal.resetOfficialData();" title="Bersihkan data uji coba lama dan setel ke 8 aduan resmi berurutan ADU-LMB-2026-001 s/d 008" style="color: #475569; background: #f8fafc;">
-            <span>🧹</span> Bersihkan Data Lama
+          <!-- Reset Standar Bersih: 0 Aduan Fresh Start -->
+          <button type="button" class="btn-action-tool" id="btnResetOfficialData" onclick="if(window.portal) window.portal.resetOfficialData();" title="Kosongkan seluruh data aduan menjadi 0 aduan (Fresh Start) di Google Spreadsheet, Laptop & HP Petugas" style="color: #b91c1c; background: #fef2f2; border-color: #fca5a5; font-weight: 700;">
+            <span>🧹</span> Reset ke 0 Aduan
           </button>
         </div>
       </div>
@@ -2238,8 +2238,8 @@
       </div>
 
       <div class="modal-footer" style="justify-content: space-between;">
-        <button type="button" class="btn-modal-cancel" id="btnResetDefaultData" style="color: #dc2626;">
-          ⏮️ Reset ke Standar
+        <button type="button" class="btn-modal-cancel" id="btnResetDefaultData" style="color: #dc2626; font-weight: 700;" title="Kosongkan sistem menjadi 0 aduan (Fresh Start)">
+          🧹 Reset ke 0 Aduan
         </button>
 
         <div style="display: flex; gap: 8px;">
@@ -3478,6 +3478,21 @@
           return matchSearch && matchStatus && matchKecamatan;
         });
 
+        if (data.length === 0) {
+          tbody.innerHTML = `
+            <tr>
+              <td colspan="8" style="text-align: center; padding: 48px 20px; color: #64748b;">
+                <div style="font-size: 2.2rem; margin-bottom: 8px;">✨</div>
+                <strong style="color: #0f172a; font-size: 1rem;">Belum ada aduan masuk (0 Aduan).</strong>
+                <p style="font-size: 0.85rem; color: #64748b; margin-top: 6px;">Sistem telah disegarkan dan bersih total. Siap menerima pengujian laporan baru dari formulir warga maupun WhatsApp.</p>
+              </td>
+            </tr>
+          `;
+          const footer = document.getElementById('tablePagination');
+          if (footer) footer.textContent = `Menampilkan 0 dari 0 laporan aduan (Database Bersih / Fresh Start)`;
+          return;
+        }
+
         if (filtered.length === 0) {
           tbody.innerHTML = `
             <tr>
@@ -3814,15 +3829,19 @@
         }
 
         if (btnReset) {
-          btnReset.addEventListener('click', () => {
-            if (confirm('Muat ulang dataset simulasi standar Kabupaten Lembata? Data kustom lokal akan direset.')) {
-              window.aduanStore.resetToDefault();
+          btnReset.addEventListener('click', async () => {
+            if (confirm('Kosongkan seluruh data aduan menjadi 0 aduan (Fresh Start) di Google Spreadsheet dan semua perangkat (HP Petugas/Laptop)?')) {
+              if (window.aduanStore && typeof window.aduanStore.resetDatabaseToZero === 'function') {
+                await window.aduanStore.resetDatabaseToZero();
+              } else {
+                window.aduanStore.resetToDefault();
+              }
               this.updateKPIs();
               this.renderTable();
               this.renderMapLayers();
               updateStatusIndicator();
               modal.classList.remove('show');
-              this.showToast('Data aduan dikembalikan ke dataset standar Lembata.', 'info');
+              this.showToast('✨ Seluruh data berhasil dikosongkan (0 aduan). Siap pengujian baru!', 'success');
             }
           });
         }
@@ -3859,16 +3878,25 @@
         }
       }
 
-      resetOfficialData() {
-        if (!confirm('Apakah Anda ingin membersihkan seluruh data pengujian lama dan menyinkronkan ke 8 data aduan resmi standar (ADU-LMB-2026-001 s/d ADU-LMB-2026-008)?')) {
+      async resetOfficialData() {
+        if (!confirm('⚠️ KONFIRMASI PENYEGARAN TOTAL:\n\nApakah Anda ingin mengosongkan seluruh data aduan menjadi 0 aduan (Fresh Start) di Google Spreadsheet dan semua perangkat (HP Petugas & Laptop)?\n\nSetelah ini sistem akan bersih total untuk pengujian laporan baru dari awal.')) {
           return;
         }
-        if (window.aduanStore && typeof window.aduanStore.resetToOfficialDefaults === 'function') {
+
+        this.showToast('⏳ Sedang menyegarkan sistem dan mengosongkan data...', 'info');
+
+        if (window.aduanStore && typeof window.aduanStore.resetDatabaseToZero === 'function') {
+          const res = await window.aduanStore.resetDatabaseToZero();
+          this.updateKPIs();
+          this.renderTable();
+          this.renderMapLayers();
+          this.showToast(res.message || '✨ Penyegaran Berhasil! Sistem kini bersih (0 aduan) siap untuk pengujian baru.', 'success');
+        } else if (window.aduanStore && typeof window.aduanStore.resetToOfficialDefaults === 'function') {
           window.aduanStore.resetToOfficialDefaults();
           this.updateKPIs();
           this.renderTable();
           this.renderMapLayers();
-          this.showToast('✅ Data lama berhasil dibersihkan! 8 data aduan resmi aktif berurutan.', 'success');
+          this.showToast('✨ Penyegaran Berhasil! Sistem kini bersih (0 aduan).', 'success');
         }
       }
 

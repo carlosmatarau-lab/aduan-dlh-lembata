@@ -4,8 +4,8 @@
  * Data Store, Default Dataset & LocalStorage Management
  */
 
-const STORAGE_KEY = 'dlh_lembata_aduan_v2';
-const LEGACY_STORAGE_KEY = 'dlh_lembata_aduan_v1';
+const STORAGE_KEY = 'dlh_lembata_aduan_v3';
+const LEGACY_STORAGE_KEYS = ['dlh_lembata_aduan_v1', 'dlh_lembata_aduan_v2', 'dlh_deleted_aduan_ids', 'dlh_cleaned_v2'];
 
 /* ===================================================================
    DLH LEMBATA REAL-TIME SYNC ENGINE (BROADCASTCHANNEL + STORAGE FALLBACK)
@@ -298,253 +298,8 @@ if (typeof window !== 'undefined') {
   window.KECAMATAN_LEMBATA = KECAMATAN_LEMBATA;
 }
 
-// Data Awal Aduan Realistis Kabupaten Lembata
-const INITIAL_ADUAN_DATA = [
-  {
-    id: 'ADU-LMB-2026-001',
-    timestamp: '2026-09-12 09:15',
-    namaPelapor: 'Fransiskus Kedang',
-    noHp: '081234567890',
-    alamatPelapor: 'Kel. Selandoro, Nubatukan',
-    kecamatan: 'Nubatukan',
-    desa: 'Lewoleba Tengah',
-    lokasiDetail: 'Pesisir Dermaga Jeti Rakyat Lewoleba',
-    lat: -8.3615,
-    lng: 123.5512,
-    jenisPencemaran: 'Laut & Pesisir',
-    uraian: 'Terdapat ceceran oli bekas dan limbah bahan bakar kapal motor yang mengapung di air laut sekitar dermaga rakyat. Air laut berwarna kehitaman dan berbau menyengat.',
-    sumberDugaan: 'Aktivitas bengkel perahu & kapal motor nelayan',
-    tanggalKejadian: '2026-09-11',
-    fotoBukti: 'https://images.unsplash.com/photo-1618477388954-7852f32655ec?auto=format&fit=crop&w=700&q=80',
-    linkFotoBukti: 'https://images.unsplash.com/photo-1618477388954-7852f32655ec?auto=format&fit=crop&w=700&q=80',
-    buktiFotoList: [
-      'https://images.unsplash.com/photo-1618477388954-7852f32655ec?auto=format&fit=crop&w=700&q=80'
-    ],
-    status: 'Selesai',
-    petugasVerifikasi: 'Yohanes B. (Pengendali Dampak Lingkungan)',
-    tanggalVerifikasi: '2026-09-13',
-    hasilVerifikasi: 'Terbukti ada ceceran oli sekitar 15 m² dekat tambatan kapal.',
-    tindakanDLH: 'Pembersihan tumpahan oli dengan absorbent pad, serta pembinaan dan surat teguran kepada pengelola kapal tambat.',
-    tanggalSelesai: '2026-09-16',
-    nomorBeritaAcara: 'BA-01/DLH-LMB/IX/2026',
-    catatanBeritaAcara: 'Pemeriksaan bersama Syahbandar & Polairud Lewoleba. Pelaku kooperatif menandatangani Berita Acara dan bersedia membersihkan sisa ceceran dalam tempo 2x24 jam.',
-    fotoKondisiRiil: 'https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=700&q=80',
-    fotoVerifikasiList: ['https://images.unsplash.com/photo-1544816155-12df9643f363?auto=format&fit=crop&w=700&q=80'],
-    timestampVerifikasi: '2026-09-13 10:15',
-    timestampTindakLanjut: '2026-09-14 08:30',
-    timestampSelesai: '2026-09-16 16:45'
-  },
-  {
-    id: 'ADU-LMB-2026-002',
-    timestamp: '2026-09-18 14:30',
-    namaPelapor: 'Theresia Purek',
-    noHp: '082198765432',
-    alamatPelapor: 'Desa Hadakewa, Lebatukan',
-    kecamatan: 'Lebatukan',
-    desa: 'Hadakewa',
-    lokasiDetail: 'Jalan poros dekat area pantai belakang pasar ikan',
-    lat: -8.3580,
-    lng: 123.6650,
-    jenisPencemaran: 'Sampah Ilegal & Bau',
-    uraian: 'Penumpukan sampah sisa ikan dan plastik dibuang liar di semak pantai belakang pasar ikan. Menimbulkan bau busuk menyengat dan lalat.',
-    sumberDugaan: 'Pedagang liar & oknum warga sekitar pasar',
-    tanggalKejadian: '2026-09-17',
-    fotoBukti: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=700&q=80',
-    linkFotoBukti: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=700&q=80',
-    buktiFotoList: [
-      'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=700&q=80'
-    ],
-    status: 'Selesai',
-    petugasVerifikasi: 'Agustinus L. (Staf Kebersihan DLH)',
-    tanggalVerifikasi: '2026-09-19',
-    hasilVerifikasi: 'Timbunan sampah liar volume ~2 m³ membusuk di semak belukar pantai.',
-    tindakanDLH: 'Pengangkutan seluruh sampah dengan armada truk DLH dan pemasangan spanduk larangan membuang sampah.',
-    tanggalSelesai: '2026-09-21',
-    nomorBeritaAcara: 'BA-02/DLH-LMB/IX/2026',
-    catatanBeritaAcara: 'Koordinasi bersama Kepala Desa Hadakewa dan pengelola Pasar Hadakewa.',
-    fotoKondisiRiil: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=700&q=80',
-    fotoVerifikasiList: ['https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=700&q=80'],
-    timestampVerifikasi: '2026-09-19 11:00',
-    timestampTindakLanjut: '2026-09-20 09:30',
-    timestampSelesai: '2026-09-21 15:00'
-  },
-  {
-    id: 'ADU-LMB-2026-003',
-    timestamp: '2026-09-25 11:20',
-    namaPelapor: 'Petrus Laba',
-    noHp: '085233445566',
-    alamatPelapor: 'Desa Waipukang, Ile Ape',
-    kecamatan: 'Ile Ape',
-    desa: 'Waipukang',
-    lokasiDetail: 'Lembah lereng dekat road usaha tani',
-    lat: -8.2830,
-    lng: 123.5410,
-    jenisPencemaran: 'Udara & Asap',
-    uraian: 'Pembakaran ban bekas dan tumpukan material kabel setiap sore hari untuk mengambil kawat tembaga. Asap hitam pekat mengganggu pernapasan warga dan anak sekolah.',
-    sumberDugaan: 'Aktivitas pengumpul rongsokan / besi tua liar',
-    tanggalKejadian: '2026-09-24',
-    fotoBukti: 'https://images.unsplash.com/photo-1569163139599-0f4517e36f51?auto=format&fit=crop&w=700&q=80',
-    linkFotoBukti: 'https://images.unsplash.com/photo-1569163139599-0f4517e36f51?auto=format&fit=crop&w=700&q=80',
-    buktiFotoList: [
-      'https://images.unsplash.com/photo-1569163139599-0f4517e36f51?auto=format&fit=crop&w=700&q=80'
-    ],
-    status: 'Dalam Penanganan',
-    petugasVerifikasi: 'Maria E. Karangora (PPNS Lingkungan Hidup)',
-    tanggalVerifikasi: '2026-09-27',
-    hasilVerifikasi: 'Ditemukan sisa abu pembakaran ban dan kabel tembaga.',
-    tindakanDLH: 'Pemberian Surat Peringatan ke-1 kepada pelaku usaha rongsokan dan pelarangan aktivitas pembakaran terbuka (open burning). Sedang dalam masa pengawasan 14 hari.',
-    tanggalSelesai: '-',
-    nomorBeritaAcara: 'BA-03/DLH-LMB/IX/2026',
-    catatanBeritaAcara: 'Pemeriksaan lapangan bersama Babinsa Koramil Ile Ape. Pelaku usaha menandatangani surat pernyataan tidak mengulangi pembakaran kabel terbuka.',
-    fotoKondisiRiil: 'https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=700&q=80',
-    fotoVerifikasiList: ['https://images.unsplash.com/photo-1542601906990-b4d3fb778b09?auto=format&fit=crop&w=700&q=80'],
-    timestampVerifikasi: '2026-09-27 10:30',
-    timestampTindakLanjut: '2026-09-28 14:00',
-    timestampSelesai: ''
-  },
-  {
-    id: 'ADU-LMB-2026-004',
-    timestamp: '2026-10-01 08:45',
-    namaPelapor: 'Kornelis Making',
-    noHp: '081377889900',
-    alamatPelapor: 'Desa Kalikasa, Atadei',
-    kecamatan: 'Atadei',
-    desa: 'Kalikasa',
-    lokasiDetail: 'Aliran anak sungai Wai Henga',
-    lat: -8.4555,
-    lng: 123.5685,
-    jenisPencemaran: 'Pencemaran Air',
-    uraian: 'Air sungai yang biasa dipakai warga untuk cuci dan ternak terlihat keruh pekat berwarna keputihan dan berbau belerang tak wajar sejak pekerjaan saluran air.',
-    sumberDugaan: 'Material proyek galian yang dibuang langsung ke sungai',
-    tanggalKejadian: '2026-09-30',
-    fotoBukti: 'https://images.unsplash.com/photo-1574482620826-40685ca5ebd2?auto=format&fit=crop&w=700&q=80',
-    linkFotoBukti: 'https://images.unsplash.com/photo-1574482620826-40685ca5ebd2?auto=format&fit=crop&w=700&q=80',
-    buktiFotoList: [
-      'https://images.unsplash.com/photo-1574482620826-40685ca5ebd2?auto=format&fit=crop&w=700&q=80'
-    ],
-    status: 'Sedang Diverifikasi',
-    petugasVerifikasi: 'Ir. Damianus T. (Kabid Penataan DLH)',
-    tanggalVerifikasi: '2026-10-03',
-    hasilVerifikasi: 'Sampel air telah diambil untuk uji parameter kekeruhan (TDS & TSS). Terindikasi sedimentasi akibat erosi galian.',
-    tindakanDLH: 'Menyusun rekomendasi teknis pembuatan settling pond (kolam endap) kepada pihak pelaksana proyek.',
-    tanggalSelesai: '-',
-    nomorBeritaAcara: 'BA-04/DLH-LMB/X/2026',
-    catatanBeritaAcara: 'Pengambilan sampel air di 3 titik aliran sungai bersama Kepala Desa Kalikasa. Berita Acara pengambilan sampel ditandatangani bersama.',
-    fotoKondisiRiil: 'https://images.unsplash.com/photo-1527482797697-8795b05a13fe?auto=format&fit=crop&w=700&q=80',
-    fotoVerifikasiList: ['https://images.unsplash.com/photo-1527482797697-8795b05a13fe?auto=format&fit=crop&w=700&q=80'],
-    timestampVerifikasi: '2026-10-03 11:20',
-    timestampTindakLanjut: '',
-    timestampSelesai: ''
-  },
-  {
-    id: 'ADU-LMB-2026-005',
-    timestamp: '2026-10-03 16:10',
-    namaPelapor: 'Siti Aminah',
-    noHp: '082233441122',
-    alamatPelapor: 'Desa Balauring, Omesuri',
-    kecamatan: 'Omesuri',
-    desa: 'Balauring',
-    lokasiDetail: 'Kawasan mangrove muara teluk Balauring',
-    lat: -8.2355,
-    lng: 123.8220,
-    jenisPencemaran: 'Limbah B3 & Plastik',
-    uraian: 'Ditemukan drum bekas cairan kimia/aki bekas dan tumpukan oli yang dibuang sembarangan di antara vegetasi bakau tepi muara.',
-    sumberDugaan: 'Bengkel aki liar / penampung limbah tanpa izin',
-    tanggalKejadian: '2026-10-02',
-    fotoBukti: 'https://images.unsplash.com/photo-1621451537084-482c73073a0f?auto=format&fit=crop&w=700&q=80',
-    linkFotoBukti: 'https://images.unsplash.com/photo-1621451537084-482c73073a0f?auto=format&fit=crop&w=700&q=80',
-    buktiFotoList: [
-      'https://images.unsplash.com/photo-1621451537084-482c73073a0f?auto=format&fit=crop&w=700&q=80'
-    ],
-    status: 'Aduan Diterima',
-    petugasVerifikasi: '-',
-    tanggalVerifikasi: '-',
-    hasilVerifikasi: 'Menunggu penugasan tim verifikasi lapangan ke Omesuri',
-    tindakanDLH: 'Jadwal verifikasi lapangan direncanakan minggu ini bersama Babinsa setempat.',
-    tanggalSelesai: '-'
-  },
-  {
-    id: 'ADU-LMB-2026-006',
-    timestamp: '2026-10-04 10:00',
-    namaPelapor: 'Yosefina Lipat',
-    noHp: '081266778899',
-    alamatPelapor: 'Desa Wairiang, Buyasuri',
-    kecamatan: 'Buyasuri',
-    desa: 'Wairiang',
-    lokasiDetail: 'Pesisir pantai desa Wairiang',
-    lat: -8.1920,
-    lng: 123.9455,
-    jenisPencemaran: 'Laut & Pesisir',
-    uraian: 'Sampah kiriman plastik kemasan dan tali jaring hanyut memenuhi garis pantai hingga 200 meter, mengancam lokasi penjemuran rumput laut.',
-    sumberDugaan: 'Arus laut sampah musiman & perahu nelayan melintas',
-    tanggalKejadian: '2026-10-03',
-    fotoBukti: 'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&w=700&q=80',
-    linkFotoBukti: 'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&w=700&q=80',
-    buktiFotoList: [
-      'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&w=700&q=80'
-    ],
-    status: 'Aduan Diterima',
-    petugasVerifikasi: '-',
-    tanggalVerifikasi: '-',
-    hasilVerifikasi: 'Aduan masuk, koordinasi awal dengan perangkat desa Buyasuri',
-    tindakanDLH: 'Rencana aksi bersih pantai (coastal clean up) bersama warga & karang taruna desa.',
-    tanggalSelesai: '-'
-  },
-  {
-    id: 'ADU-LMB-2026-007',
-    timestamp: '2026-10-05 13:25',
-    namaPelapor: 'Markus Belang',
-    noHp: '081355443322',
-    alamatPelapor: 'Desa Loang, Nagawutung',
-    kecamatan: 'Nagawutung',
-    desa: 'Loang',
-    lokasiDetail: 'Kawasan pantai pasir putih Loang',
-    lat: -8.4900,
-    lng: 123.3850,
-    jenisPencemaran: 'Kerusakan Lingkungan & Tanah',
-    uraian: 'Pengambilan pasir laut secara masif menggunakan truk tanpa izin konservasi, menyebabkan abrasi tebing pantai dan pohon kelapa tumbang.',
-    sumberDugaan: 'Oknum penambang pasir liar',
-    tanggalKejadian: '2026-10-04',
-    fotoBukti: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=80',
-    linkFotoBukti: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=80',
-    buktiFotoList: [
-      'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=80'
-    ],
-    status: 'Sedang Diverifikasi',
-    petugasVerifikasi: 'Petrus S. (Bidang Pengawasan LH)',
-    tanggalVerifikasi: '2026-10-06',
-    hasilVerifikasi: 'Terbukti terjadi lubang galian pasir pada sempadan pantai seluas ~100 m².',
-    tindakanDLH: 'Koordinasi bersama Satpol PP Lembata untuk penertiban dan pemasangan plang larangan penambangan pasir sempadan pantai.',
-    tanggalSelesai: '-'
-  },
-  {
-    id: 'ADU-LMB-2026-008',
-    timestamp: '2026-09-05 08:30',
-    namaPelapor: 'Antonius Boli',
-    noHp: '081244556677',
-    alamatPelapor: 'Desa Wulandoni, Wulandoni',
-    kecamatan: 'Wulandoni',
-    desa: 'Wulandoni',
-    lokasiDetail: 'Area pasar barter tradisional Wulandoni',
-    lat: -8.5410,
-    lng: 123.4910,
-    jenisPencemaran: 'Pencemaran Air',
-    uraian: 'Diduga air sumur warga tercemar rembesan limbah pengolahan daging paus/ikan dari tempat pemotongan tradisional.',
-    sumberDugaan: 'Saluran pembuangan tradisional yang mampet',
-    tanggalKejadian: '2026-09-04',
-    fotoBukti: 'https://images.unsplash.com/photo-1584555613497-9ecf9dd06f68?auto=format&fit=crop&w=700&q=80',
-    linkFotoBukti: 'https://images.unsplash.com/photo-1584555613497-9ecf9dd06f68?auto=format&fit=crop&w=700&q=80',
-    buktiFotoList: [
-      'https://images.unsplash.com/photo-1584555613497-9ecf9dd06f68?auto=format&fit=crop&w=700&q=80'
-    ],
-    status: 'Ditolak',
-    petugasVerifikasi: 'Tim Gabungan DLH & Dinkes Lembata',
-    tanggalVerifikasi: '2026-09-07',
-    hasilVerifikasi: 'Uji air sumur menunjukkan parameter bakteriologis normal, bau berasal dari saluran drainase umum yang tersumbat daun dan lumpur, bukan pencemaran limbah B3/berbahaya.',
-    tindakanDLH: 'Diserahkan penanganannya kepada pengelola pasar dan pemdes Wulandoni untuk pembersihan got bersama warga.',
-    tanggalSelesai: '2026-09-08'
-  }
-];
+// Data Awal Aduan Bersih (Fresh Start: 0 Aduan untuk pengujian baru dari nol)
+const INITIAL_ADUAN_DATA = [];
 
 // Helper: Parse Google Sheets CSV Export menjadi array data aduan
 function parseCsvToAduan(csvText) {
@@ -669,73 +424,24 @@ class AduanDataStore {
   }
 
   init() {
+    // 1. Bersihkan seluruh penyimpanan lokal usang & cache sebelumnya
+    LEGACY_STORAGE_KEYS.forEach(key => {
+      try { localStorage.removeItem(key); } catch (e) {}
+    });
+
     this.deletedIds = this.loadDeletedIds();
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        // Pastikan tidak ada aduan yang ada dalam daftar blacklist terhapus
-        this.aduanList = parsed.filter(item => item && item.id && !this.isDeleted(item.id));
-        // Backfill bidang baru jika belum ada di cache browser lokal
-        this.aduanList = this.aduanList.map(item => {
-          const matchInitial = INITIAL_ADUAN_DATA.find(x => x.id === item.id);
-          return {
-            ...item,
-            nomorBeritaAcara: item.nomorBeritaAcara || (matchInitial ? matchInitial.nomorBeritaAcara : '') || '',
-            catatanBeritaAcara: item.catatanBeritaAcara || (matchInitial ? matchInitial.catatanBeritaAcara : '') || '',
-            fotoKondisiRiil: item.fotoKondisiRiil || (matchInitial ? matchInitial.fotoKondisiRiil : '') || '',
-            fotoVerifikasiList: Array.isArray(item.fotoVerifikasiList) && item.fotoVerifikasiList.length > 0
-              ? item.fotoVerifikasiList
-              : (matchInitial && matchInitial.fotoVerifikasiList ? matchInitial.fotoVerifikasiList : (item.fotoKondisiRiil ? [item.fotoKondisiRiil] : [])),
-            timestampVerifikasi: item.timestampVerifikasi || (matchInitial ? matchInitial.timestampVerifikasi : '') || (item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' ? `${item.tanggalVerifikasi} 09:30` : ''),
-            timestampTindakLanjut: item.timestampTindakLanjut || (matchInitial ? matchInitial.timestampTindakLanjut : '') || ((item.status === 'Ditindaklanjuti' || item.status === 'Dalam Penanganan' || item.status === 'Selesai') && item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' ? `${item.tanggalVerifikasi} 14:00` : ''),
-            timestampSelesai: item.timestampSelesai || (matchInitial ? matchInitial.timestampSelesai : '') || (item.tanggalSelesai && item.tanggalSelesai !== '-' ? `${item.tanggalSelesai} 16:30` : '')
-          };
-        });
-
-        // Bersihkan data sampah / uji coba lama jika ada di penyimpanan lokal
-        this.aduanList = this.aduanList.filter(item => {
-          if (!item || !item.id) return false;
-          // Hapus tiket uji coba lama
-          if (item.id === 'ADU-LMB-2026-480') return false;
-          if (item.namaPelapor === 'Bahanna' && (item.alamatPelapor === 'B' || item.lokasiDetail === 'Bhbb')) return false;
-          if (item.namaPelapor === 'Carlos Matarau' && item.lokasiDetail === 'Tepi jalan') return false;
-          return true;
-        });
-
-        // Sinkronkan data resmi berurutan ADU-LMB-2026-001 s/d 008
-        INITIAL_ADUAN_DATA.forEach(initItem => {
-          const existingIdx = this.aduanList.findIndex(x => x.id === initItem.id);
-          if (existingIdx === -1 && !this.isDeleted(initItem.id)) {
-            this.aduanList.push(initItem);
-          } else if (existingIdx !== -1) {
-            // Perbarui dengan data valid jika sebelumnya tercemar data sampah
-            if (this.aduanList[existingIdx].namaPelapor === 'Bahanna' || this.aduanList[existingIdx].namaPelapor === 'Carlos Matarau') {
-              this.aduanList[existingIdx] = { ...initItem };
-            }
-          }
-        });
-
-        // Urutkan data berdasarkan ID secara rapi
-        this.aduanList.sort((a, b) => {
-          const numA = parseInt((a.id || '').replace(/\D/g, ''), 10) || 0;
-          const numB = parseInt((b.id || '').replace(/\D/g, ''), 10) || 0;
-          return numA - numB;
-        });
-
-        this.save();
-        // Hapus cache storage lama
-        try { localStorage.removeItem(LEGACY_STORAGE_KEY); } catch (e) {}
+        this.aduanList = Array.isArray(parsed) ? parsed.filter(item => item && item.id && !this.isDeleted(item.id)) : [];
       } catch (e) {
-        console.error('Error parsing stored aduan, fallback to default:', e);
-        this.aduanList = [...INITIAL_ADUAN_DATA].filter(item => !this.isDeleted(item.id));
-        this.save();
+        this.aduanList = [];
       }
     } else {
-      this.aduanList = [...INITIAL_ADUAN_DATA].filter(item => !this.isDeleted(item.id));
-      this.save();
-      try { localStorage.removeItem(LEGACY_STORAGE_KEY); } catch (e) {}
+      this.aduanList = [];
     }
+    this.save();
 
     // Jika URL Google Apps Script sudah disetel, lakukan sinkronisasi otomatis
     if (this.hasGasConfigured() && !this._pollIntervalStarted) {
@@ -782,7 +488,7 @@ class AduanDataStore {
       return { success: false, reason: 'URL Web App Google Apps Script belum disetel.' };
     }
 
-    // Jika sedang dalam proses sinkronisasi, tunggu promise yang sedang aktif daripada gagal
+    // Jika sedang dalam proses sinkronisasi, tunggu promise yang sedang aktif daripada tumpang tindih
     if (this.isSyncing) {
       if (this.currentSyncPromise) {
         return await this.currentSyncPromise;
@@ -795,73 +501,81 @@ class AduanDataStore {
       try {
         let endpoint = this.getGasUrl();
 
-      // Dukungan jika pengguna memasukkan link Google Spreadsheet langsung
-      if (endpoint.includes('docs.google.com/spreadsheets')) {
-        const match = endpoint.match(/\/d\/([a-zA-Z0-9-_]+)/);
-        if (match) {
-          const sheetId = match[1];
-          endpoint = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Data_Aduan`;
-          const response = await fetch(endpoint);
-          if (!response.ok) throw new Error(`Gagal membaca sheet (HTTP ${response.status})`);
-          const csvText = await response.text();
-          const parsedData = parseCsvToAduan(csvText);
-          if (parsedData.length > 0) {
-            parsedData.filter(p => !this.isDeleted(p.id)).forEach(p => this.mergeRemoteRecord(p));
-            this.lastSyncTime = new Date();
-            window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent } }));
-            return { success: true, count: this.aduanList.length };
-          } else {
-            throw new Error('Data di sheet kosong atau format kolom belum sesuai');
+        // Dukungan jika pengguna memasukkan link Google Spreadsheet langsung
+        if (endpoint.includes('docs.google.com/spreadsheets')) {
+          const match = endpoint.match(/\/d\/([a-zA-Z0-9-_]+)/);
+          if (match) {
+            const sheetId = match[1];
+            endpoint = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Data_Aduan`;
+            const response = await fetch(endpoint);
+            if (!response.ok) throw new Error(`Gagal membaca sheet (HTTP ${response.status})`);
+            const csvText = await response.text();
+            const parsedData = parseCsvToAduan(csvText);
+            if (parsedData.length > 0) {
+              const valid = parsedData.filter(p => !this.isDeleted(p.id));
+              this.aduanList = valid.map(item => this.mapRemoteRecord(item)).filter(Boolean);
+              this.save();
+              this.lastSyncTime = new Date();
+              window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent } }));
+              return { success: true, count: this.aduanList.length };
+            } else {
+              // Sheet kosong 0 baris
+              this.aduanList = [];
+              this.save();
+              this.lastSyncTime = new Date();
+              window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: 0, silent: silent, emptyRemote: true } }));
+              return { success: true, count: 0, emptyRemote: true };
+            }
           }
         }
-      }
 
-      // Endpoint Google Apps Script Web App
-      endpoint = `${endpoint}${endpoint.includes('?') ? '&' : '?'}action=getAll&_t=${Date.now()}`;
-      const response = await fetch(endpoint, { method: 'GET', mode: 'cors' });
-      if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
-      const json = await response.json();
+        // Endpoint resmi Google Apps Script Web App
+        endpoint = `${endpoint}${endpoint.includes('?') ? '&' : '?'}action=getAll&_t=${Date.now()}`;
+        const response = await fetch(endpoint, { method: 'GET', mode: 'cors' });
+        if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
+        const json = await response.json();
 
-      if (json && json.success && Array.isArray(json.data)) {
-        if (json.data.length > 0) {
-          // Sinkronkan dan gabungkan seluruh record dari Google Apps Script (abaikan yang sudah dihapus)
-          const validItems = json.data.filter(item => !this.isDeleted(item.id));
-          validItems.forEach(item => {
-            this.mergeRemoteRecord(item);
-          });
+        if (json && json.success && Array.isArray(json.data)) {
+          if (json.data.length > 0) {
+            // Sinkronkan seluruh data dari Google Apps Script sebagai Single Source of Truth
+            const validItems = json.data.filter(item => !this.isDeleted(item.id));
+            this.aduanList = validItems.map(item => this.mapRemoteRecord(item)).filter(Boolean);
+            this.save();
 
-          this.lastSyncTime = new Date();
-          window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent } }));
-          return { success: true, count: this.aduanList.length, remoteCount: validItems.length, message: `Berhasil sinkronisasi ${validItems.length} aduan dari Google Spreadsheet.` };
-        } else {
-          // Spreadsheet kosong (0 data baris), namun koneksi API terbukti SUKSES
-          this.lastSyncTime = new Date();
-          window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent, emptyRemote: true } }));
-          return {
-            success: true,
-            count: this.aduanList.length,
-            remoteCount: 0,
-            emptyRemote: true,
-            message: 'Terhubung ke Google Spreadsheet! Database spreadsheet saat ini masih kosong (0 data aduan).'
-          };
+            this.lastSyncTime = new Date();
+            window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent } }));
+            return { success: true, count: this.aduanList.length, remoteCount: validItems.length, message: `Berhasil sinkronisasi ${validItems.length} aduan dari Google Spreadsheet.` };
+          } else {
+            // Spreadsheet kosong (0 data aduan) -> Jadikan data lokal di HP & Laptop juga 0 aduan (Satu Kesatuan Data)
+            this.aduanList = [];
+            this.save();
+            this.lastSyncTime = new Date();
+            window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: 0, silent: silent, emptyRemote: true } }));
+            return {
+              success: true,
+              count: 0,
+              remoteCount: 0,
+              emptyRemote: true,
+              message: 'Terhubung ke Google Spreadsheet! Database kosong (0 aduan). Sistem siap pengujian baru.'
+            };
+          }
         }
+        return { success: false, reason: 'Format respons tidak valid dari Google Apps Script' };
+      } catch (err) {
+        console.warn('Sinkronisasi Google Spreadsheet offline/gagal (menggunakan data lokal):', err);
+        let errMsg = err.message;
+        if (errMsg.includes('Failed to fetch') || errMsg.includes('NetworkError')) {
+          errMsg = 'Gagal terhubung. Pastikan Web App disetel "Who has access: Anyone" dan spreadsheet dapat diakses.';
+        }
+        return { success: false, error: errMsg };
+      } finally {
+        this.isSyncing = false;
+        this.currentSyncPromise = null;
       }
-      return { success: false, reason: 'Format respons tidak valid dari Google Apps Script' };
-    } catch (err) {
-      console.warn('Sinkronisasi Google Spreadsheet offline/gagal (menggunakan data lokal):', err);
-      let errMsg = err.message;
-      if (errMsg.includes('Failed to fetch') || errMsg.includes('NetworkError')) {
-        errMsg = 'Gagal terhubung. Pastikan Web App disetel "Who has access: Anyone" dan spreadsheet dapat diakses.';
-      }
-      return { success: false, error: errMsg };
-    } finally {
-      this.isSyncing = false;
-      this.currentSyncPromise = null;
-    }
-  })();
+    })();
 
-  return await this.currentSyncPromise;
-}
+    return await this.currentSyncPromise;
+  }
 
   async uploadAllLocalToGAS() {
     if (!this.hasGasConfigured()) {
@@ -1014,16 +728,66 @@ class AduanDataStore {
   resetToOfficialDefaults() {
     this.deletedIds = new Set();
     this.saveDeletedIds();
-    this.aduanList = JSON.parse(JSON.stringify(INITIAL_ADUAN_DATA));
+    this.aduanList = [];
     this.save();
-    try {
-      localStorage.removeItem(LEGACY_STORAGE_KEY);
-    } catch (e) {}
+    LEGACY_STORAGE_KEYS.forEach(k => {
+      try { localStorage.removeItem(k); } catch (e) {}
+    });
     if (window.dlhRealtime) {
-      window.dlhRealtime.broadcast('DATA_RESET', { count: this.aduanList.length });
+      window.dlhRealtime.broadcast('DATA_RESET', { count: 0 });
     }
     return this.aduanList;
   }
+
+  async resetDatabaseToZero() {
+    // 1. Kosongkan memori & penyimpanan lokal (0 aduan)
+    this.deletedIds = new Set();
+    this.saveDeletedIds();
+    this.aduanList = [];
+    this.save();
+    LEGACY_STORAGE_KEYS.forEach(k => {
+      try { localStorage.removeItem(k); } catch (e) {}
+    });
+
+    // 2. Broadcast ke semua tab & perangkat lokal secara instan (0-latency)
+    if (window.dlhRealtime) {
+      window.dlhRealtime.broadcast('DATA_RESET', { count: 0 });
+    }
+
+    // 3. Panggil API Google Apps Script untuk mengosongkan sheet Data_Aduan menjadi 0 baris
+    let gasSuccess = false;
+    let gasMsg = '';
+    if (this.hasGasConfigured()) {
+      try {
+        const postRes = await this.postToGAS('resetToZero', {});
+        if (postRes && postRes.success) {
+          gasSuccess = true;
+          gasMsg = (postRes.response && postRes.response.message) ? postRes.response.message : 'Spreadsheet berhasil dikosongkan (0 aduan)';
+        } else {
+          // Fallback via GET
+          const getUrl = `${this.gasApiUrl}${this.gasApiUrl.includes('?') ? '&' : '?'}action=resetToZero&_t=${Date.now()}`;
+          const getRes = await fetch(getUrl, { method: 'GET', mode: 'cors' });
+          const getJson = await getRes.json();
+          if (getJson && getJson.success) {
+            gasSuccess = true;
+            gasMsg = getJson.message;
+          }
+        }
+      } catch (err) {
+        console.warn('Gagal reset remote Google Apps Script:', err);
+      }
+    }
+
+    // 4. Picu event lokal agar tampilan tabel & dashboard langsung kosong 0 aduan
+    window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: 0, silent: false, emptyRemote: true } }));
+
+    return {
+      success: true,
+      gasSynced: gasSuccess,
+      message: gasSuccess ? `Google Spreadsheet dan seluruh portal petugas berhasil dikosongkan (0 aduan). Siap untuk pengujian baru.` : `Data lokal berhasil dikosongkan menjadi 0 aduan.`
+    };
+  }
+
 
   addAduan(formData) {
     const customId = (formData && formData.id && String(formData.id).trim().toUpperCase().startsWith('ADU-'))
