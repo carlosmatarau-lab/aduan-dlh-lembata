@@ -71,7 +71,13 @@ const HEADERS_ADUAN = [
   'Tanggal_Verifikasi',
   'Hasil_Verifikasi',
   'Tindakan_DLH',
-  'Tanggal_Selesai'
+  'Tanggal_Selesai',
+  'Nomor_Berita_Acara',
+  'Catatan_Berita_Acara',
+  'Foto_Kondisi_Riil',
+  'Timestamp_Verifikasi',
+  'Timestamp_Tindak_Lanjut',
+  'Timestamp_Selesai'
 ];
 
 
@@ -238,6 +244,21 @@ function getOrCreateSheet(sheetName, headers) {
         sheet.autoResizeColumn(i);
       }
     }
+  } else if (headers && headers.length > 0) {
+    // Jika sheet sudah ada sebelumnya, pastikan seluruh header baru otomatis terpasang
+    try {
+      const lastCol = Math.max(sheet.getLastColumn(), 1);
+      const existingHeaders = sheet.getRange(1, 1, 1, lastCol).getValues()[0] || [];
+      headers.forEach(h => {
+        if (existingHeaders.indexOf(h) === -1) {
+          const nextCol = sheet.getLastColumn() + 1;
+          const cell = sheet.getRange(1, nextCol);
+          cell.setValue(h);
+          cell.setFontWeight('bold').setBackground('#059669').setFontColor('#ffffff').setHorizontalAlignment('center');
+          existingHeaders.push(h);
+        }
+      });
+    } catch (e) {}
   }
 
   return sheet;
@@ -289,6 +310,19 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
     }
   }
 
+  // Cek foto kondisi riil petugas
+  let linkFotoRiil = String(row['Foto_Kondisi_Riil'] || '');
+  if (linkFotoRiil.startsWith('=HYPERLINK')) {
+    const match = linkFotoRiil.match(/=HYPERLINK\("([^"]+)"/i);
+    if (match) linkFotoRiil = match[1];
+  }
+  let fotoRiilDirect = linkFotoRiil;
+  const officerPhotoKey = (id.trim() + '_PETUGAS').toUpperCase();
+  const backupFotoRiil = storageLookup[officerPhotoKey];
+  if (backupFotoRiil && typeof backupFotoRiil === 'string' && backupFotoRiil.startsWith('data:image')) {
+    fotoRiilDirect = backupFotoRiil;
+  }
+
   return {
     id: id,
     timestamp: String(row['Timestamp'] || ''),
@@ -312,7 +346,14 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
     tanggalVerifikasi: String(row['Tanggal_Verifikasi'] || '-'),
     hasilVerifikasi: String(row['Hasil_Verifikasi'] || '-'),
     tindakanDLH: String(row['Tindakan_DLH'] || '-'),
-    tanggalSelesai: String(row['Tanggal_Selesai'] || '-')
+    tanggalSelesai: String(row['Tanggal_Selesai'] || '-'),
+    nomorBeritaAcara: String(row['Nomor_Berita_Acara'] || ''),
+    catatanBeritaAcara: String(row['Catatan_Berita_Acara'] || ''),
+    fotoKondisiRiil: fotoRiilDirect,
+    fotoVerifikasiList: fotoRiilDirect ? [fotoRiilDirect] : [],
+    timestampVerifikasi: String(row['Timestamp_Verifikasi'] || ''),
+    timestampTindakLanjut: String(row['Timestamp_Tindak_Lanjut'] || ''),
+    timestampSelesai: String(row['Timestamp_Selesai'] || '')
   };
 }
 
@@ -707,6 +748,13 @@ function handleUpdateVerifikasi(updateData) {
     return { success: false, error: 'Aduan dengan ID "' + targetId + '" tidak ditemukan di spreadsheet.' };
   }
 
+  const colNomorBA = headers.indexOf('Nomor_Berita_Acara');
+  const colCatatanBA = headers.indexOf('Catatan_Berita_Acara');
+  const colFotoRiil = headers.indexOf('Foto_Kondisi_Riil');
+  const colTimeVerif = headers.indexOf('Timestamp_Verifikasi');
+  const colTimeTindak = headers.indexOf('Timestamp_Tindak_Lanjut');
+  const colTimeSelesai = headers.indexOf('Timestamp_Selesai');
+
   // Update sel-sel yang relevan
   if (updateData.status) {
     sheet.getRange(targetRowIndex, colStatus + 1).setValue(updateData.status);
@@ -722,6 +770,81 @@ function handleUpdateVerifikasi(updateData) {
   }
   if (updateData.tindakanDLH) {
     sheet.getRange(targetRowIndex, colTindakan + 1).setValue(updateData.tindakanDLH);
+  }
+
+  // Berita Acara (BAST) & Catatan Pemeriksaan
+  if (updateData.nomorBeritaAcara !== undefined && colNomorBA !== -1) {
+    sheet.getRange(targetRowIndex, colNomorBA + 1).setValue(updateData.nomorBeritaAcara);
+  }
+  if (updateData.catatanBeritaAcara !== undefined && colCatatanBA !== -1) {
+    sheet.getRange(targetRowIndex, colCatatanBA + 1).setValue(updateData.catatanBeritaAcara);
+  }
+
+  // Timestamps Akuntabilitas Kinerja
+  if (updateData.timestampVerifikasi && colTimeVerif !== -1) {
+    sheet.getRange(targetRowIndex, colTimeVerif + 1).setValue(updateData.timestampVerifikasi);
+  }
+  if (updateData.timestampTindakLanjut && colTimeTindak !== -1) {
+    sheet.getRange(targetRowIndex, colTimeTindak + 1).setValue(updateData.timestampTindakLanjut);
+  }
+  if (updateData.timestampSelesai && colTimeSelesai !== -1) {
+    sheet.getRange(targetRowIndex, colTimeSelesai + 1).setValue(updateData.timestampSelesai);
+  }
+
+  // Foto Kondisi Riil Pemeriksaan Petugas
+  let rawFotoRiil = updateData.fotoKondisiRiil || (Array.isArray(updateData.fotoVerifikasiList) ? updateData.fotoVerifikasiList[0] : '') || '';
+  if (rawFotoRiil && typeof rawFotoRiil === 'string' && rawFotoRiil.trim() && colFotoRiil !== -1) {
+    const trimmedRiil = rawFotoRiil.trim();
+    let targetRiilUrl = '';
+    const officerPhotoId = targetId + '_PETUGAS';
+
+    if (trimmedRiil.startsWith('http')) {
+      targetRiilUrl = trimmedRiil;
+    } else if (trimmedRiil.startsWith('data:image')) {
+      const webAppUrl = getWebAppUrl();
+      let driveUrl = '';
+      try {
+        driveUrl = saveBase64ImageToDrive(trimmedRiil, officerPhotoId);
+      } catch (e) {}
+
+      targetRiilUrl = (driveUrl && driveUrl.startsWith('http'))
+        ? driveUrl
+        : (webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(officerPhotoId));
+
+      // Simpan cadangan data gambar petugas ke Foto_Storage dengan chunking aman
+      try {
+        const storageSheet = getOrCreateSheet(SHEET_NAME_FOTO, ['ID_Aduan', 'Timestamp', 'Link_Buka_Foto', 'Base64_Data']);
+        const nowStr = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm');
+        const CHUNK_SIZE = 40000;
+        const rowData = [officerPhotoId, nowStr, targetRiilUrl];
+        for (let k = 0; k < trimmedRiil.length; k += CHUNK_SIZE) {
+          rowData.push(trimmedRiil.substring(k, k + CHUNK_SIZE));
+        }
+        storageSheet.appendRow(rowData);
+        const lastRow = storageSheet.getLastRow();
+        const cell = storageSheet.getRange(lastRow, 3);
+        const richText = SpreadsheetApp.newRichTextValue()
+          .setText("📸 Buka Foto Petugas (" + targetId + ")")
+          .setLinkUrl(targetRiilUrl)
+          .build();
+        cell.setRichTextValue(richText);
+      } catch (e) {
+        Logger.log('Officer storage backup error: ' + e.message);
+      }
+    }
+
+    if (targetRiilUrl) {
+      const cellRiil = sheet.getRange(targetRowIndex, colFotoRiil + 1);
+      try {
+        const richText = SpreadsheetApp.newRichTextValue()
+          .setText("📸 Buka Foto Petugas (" + targetId + ")")
+          .setLinkUrl(targetRiilUrl)
+          .build();
+        cellRiil.setRichTextValue(richText);
+      } catch (e) {
+        cellRiil.setValue(targetRiilUrl);
+      }
+    }
   }
 
   const colFoto = headers.indexOf('Link_Foto_Bukti');
@@ -1197,9 +1320,12 @@ function handleViewImage(id, fileId) {
   const sheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
   const rawData = getSheetDataAsObjects(sheet);
 
+  const isOfficerPhoto = String(id || '').toUpperCase().endsWith('_PETUGAS');
+  const baseId = isOfficerPhoto ? String(id).replace(/_PETUGAS$/i, '') : id;
+
   let item = null;
-  if (id) {
-    item = rawData.find(r => String(r['ID_Aduan']).trim().toUpperCase() === String(id).trim().toUpperCase());
+  if (baseId) {
+    item = rawData.find(r => String(r['ID_Aduan']).trim().toUpperCase() === String(baseId).trim().toUpperCase());
   }
 
   let photoData = '';
@@ -1210,12 +1336,12 @@ function handleViewImage(id, fileId) {
   let status = 'Baru';
 
   if (item) {
-    idDisplay = item['ID_Aduan'];
+    idDisplay = item['ID_Aduan'] + (isOfficerPhoto ? ' (Dokumentasi Petugas)' : '');
     namaPelapor = item['Nama_Pelapor'] || 'Masyarakat';
     timestamp = item['Timestamp'] || '-';
     uraian = item['Uraian_Aduan'] || '-';
     status = item['Status'] || 'Baru';
-    photoData = item['Link_Foto_Bukti'] || '';
+    photoData = isOfficerPhoto ? (item['Foto_Kondisi_Riil'] || '') : (item['Link_Foto_Bukti'] || '');
   }
 
   if (photoData.startsWith('=HYPERLINK')) {
@@ -1492,8 +1618,8 @@ function bersihkanErrorFoto() {
   var fixedAduan = 0;
   var fixedStorage = 0;
 
-  // 1. RAPIKAN SHEET "Data_Aduan" (Kolom O / Link_Foto_Bukti)
-  var sheet = ss.getSheetByName(SHEET_NAME_ADUAN);
+  // 1. RAPIKAN SHEET "Data_Aduan" (Kolom O / Link_Foto_Bukti dan Kolom Foto_Kondisi_Riil)
+  var sheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
   if (sheet) {
     var data = sheet.getDataRange().getValues();
     var colFotoIdx = HEADERS_ADUAN.indexOf('Link_Foto_Bukti');
@@ -1516,6 +1642,33 @@ function bersihkanErrorFoto() {
         cell.setValue(targetUrl);
       }
       fixedAduan++;
+    }
+
+    var colFotoRiilIdx = HEADERS_ADUAN.indexOf('Foto_Kondisi_Riil');
+    if (colFotoRiilIdx !== -1) {
+      for (var r = 1; r < data.length; r++) {
+        var rid = String(data[r][0] || '').trim();
+        if (!rid) continue;
+        var rVal = String(data[r][colFotoRiilIdx] || '').trim();
+        if (rVal && (rVal.startsWith('http') || rVal.includes('viewFoto') || rVal.startsWith('=HYPERLINK'))) {
+          var targetRiilUrl = rVal;
+          if (targetRiilUrl.startsWith('=HYPERLINK')) {
+            var m = targetRiilUrl.match(/=HYPERLINK\("([^"]+)"/i);
+            if (m) targetRiilUrl = m[1];
+          }
+          var cellR = sheet.getRange(r + 1, colFotoRiilIdx + 1);
+          cellR.clear({ contentsOnly: true });
+          try {
+            var rt = SpreadsheetApp.newRichTextValue()
+              .setText('📸 Buka Foto Petugas (' + rid + ')')
+              .setLinkUrl(targetRiilUrl)
+              .build();
+            cellR.setRichTextValue(rt);
+          } catch (e) {
+            cellR.setValue(targetRiilUrl);
+          }
+        }
+      }
     }
   }
 

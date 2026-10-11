@@ -653,6 +653,34 @@ class AduanDataStore {
     return await this.currentSyncPromise;
   }
 
+  async pushPendingVerifications() {
+    if (!this.hasGasConfigured()) return 0;
+    let pushedCount = 0;
+    for (const item of (this.aduanList || [])) {
+      if (item && (item.nomorBeritaAcara || item.fotoKondisiRiil || item.catatanBeritaAcara)) {
+        try {
+          await this.postToGAS('updateVerifikasi', {
+            id: item.id,
+            status: item.status,
+            petugasVerifikasi: item.petugasVerifikasi,
+            tanggalVerifikasi: item.tanggalVerifikasi,
+            hasilVerifikasi: item.hasilVerifikasi,
+            tindakanDLH: item.tindakanDLH,
+            tanggalSelesai: item.tanggalSelesai,
+            nomorBeritaAcara: item.nomorBeritaAcara,
+            catatanBeritaAcara: item.catatanBeritaAcara,
+            fotoKondisiRiil: item.fotoKondisiRiil,
+            timestampVerifikasi: item.timestampVerifikasi,
+            timestampTindakLanjut: item.timestampTindakLanjut,
+            timestampSelesai: item.timestampSelesai
+          });
+          pushedCount++;
+        } catch (e) {}
+      }
+    }
+    return pushedCount;
+  }
+
   async uploadAllLocalToGAS() {
     if (!this.hasGasConfigured()) {
       return { success: false, error: 'URL Google Apps Script belum disetel.' };
@@ -745,7 +773,7 @@ class AduanDataStore {
     }
     const finalFoto = finalPhotos[0] || '';
 
-    return {
+    const mappedObj = {
       id: cleanId,
       timestamp: remoteItem.timestamp || '-',
       namaPelapor: remoteItem.namaPelapor || 'Masyarakat',
@@ -772,10 +800,38 @@ class AduanDataStore {
       nomorBeritaAcara: remoteItem.nomorBeritaAcara || (existing ? existing.nomorBeritaAcara : '') || '',
       catatanBeritaAcara: remoteItem.catatanBeritaAcara || (existing ? existing.catatanBeritaAcara : '') || '',
       fotoKondisiRiil: remoteItem.fotoKondisiRiil || (existing ? existing.fotoKondisiRiil : '') || '',
-      fotoVerifikasiList: Array.isArray(remoteItem.fotoVerifikasiList) ? remoteItem.fotoVerifikasiList : (existing && existing.fotoVerifikasiList ? existing.fotoVerifikasiList : []),
+      fotoVerifikasiList: (Array.isArray(remoteItem.fotoVerifikasiList) && remoteItem.fotoVerifikasiList.length > 0)
+        ? remoteItem.fotoVerifikasiList
+        : (existing && existing.fotoVerifikasiList ? existing.fotoVerifikasiList : (remoteItem.fotoKondisiRiil ? [remoteItem.fotoKondisiRiil] : [])),
       rekamTindakanTerakhir: rekamTerakhir,
       riwayatTindakan: Array.isArray(remoteItem.riwayatTindakan) ? remoteItem.riwayatTindakan : (rekamTerakhir ? [rekamTerakhir] : [])
     };
+
+    // Auto-Sync: Jika perangkat ini (misal HP) memiliki BAST / Foto Riil lokal yang belum tercatat di spreadsheet remote,
+    // otomatis unggah ke Google Apps Script agar PC/Web dan semua perangkat lain langsung sinkron identik!
+    if (existing && (existing.nomorBeritaAcara || existing.fotoKondisiRiil || existing.catatanBeritaAcara) && (!remoteItem.nomorBeritaAcara && !remoteItem.fotoKondisiRiil)) {
+      setTimeout(() => {
+        try {
+          this.postToGAS('updateVerifikasi', {
+            id: cleanId,
+            status: existing.status,
+            petugasVerifikasi: existing.petugasVerifikasi,
+            tanggalVerifikasi: existing.tanggalVerifikasi,
+            hasilVerifikasi: existing.hasilVerifikasi,
+            tindakanDLH: existing.tindakanDLH,
+            tanggalSelesai: existing.tanggalSelesai,
+            nomorBeritaAcara: existing.nomorBeritaAcara,
+            catatanBeritaAcara: existing.catatanBeritaAcara,
+            fotoKondisiRiil: existing.fotoKondisiRiil,
+            timestampVerifikasi: existing.timestampVerifikasi,
+            timestampTindakLanjut: existing.timestampTindakLanjut,
+            timestampSelesai: existing.timestampSelesai
+          });
+        } catch (e) {}
+      }, 500);
+    }
+
+    return mappedObj;
   }
 
   mergeRemoteRecord(remoteItem) {

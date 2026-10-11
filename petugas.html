@@ -2473,7 +2473,7 @@
   <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 
   <!-- Scripts: Data Engine & Portal Controller -->
-  <script src="js/data.js?v=20261012_07"></script>
+  <script src="js/data.js?v=20261012_08"></script>
   <script>
     // Safeguard prototype jika browser masih memuat file js lama dari cache
     if (typeof AduanDataStore !== 'undefined') {
@@ -4001,7 +4001,11 @@
         if (btnSyncNow) {
           btnSyncNow.addEventListener('click', async () => {
             btnSyncNow.disabled = true;
-            btnSyncNow.textContent = '⏳ Mengambil...';
+            btnSyncNow.textContent = '⏳ Menyinkronkan...';
+            // Unggah data verifikasi lokal yang belum tersimpan ke Google Sheets
+            if (window.aduanStore && typeof window.aduanStore.pushPendingVerifications === 'function') {
+              await window.aduanStore.pushPendingVerifications();
+            }
             const res = await window.aduanStore.syncFromGAS();
             btnSyncNow.disabled = false;
             btnSyncNow.textContent = '🔄 Sinkronkan Sekarang';
