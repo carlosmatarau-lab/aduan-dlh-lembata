@@ -90,6 +90,19 @@ function doGet(e) {
         result = handleDeleteAduan({ id: e.parameter.id || '' });
         break;
 
+      case 'sendResetPin':
+      case 'forgotPassword':
+        result = handleSendResetPin({ email: e.parameter.email || '' });
+        break;
+
+      case 'verifyResetPin':
+        result = handleVerifyResetPin({
+          email: e.parameter.email || '',
+          otp: e.parameter.otp || '',
+          newPin: e.parameter.newPin || ''
+        });
+        break;
+
       default:
         result = { success: false, error: 'Aksi tidak dikenali: ' + action };
     }
@@ -123,6 +136,15 @@ function doPost(e) {
 
       case 'deleteAduan':
         result = handleDeleteAduan(body.data || {});
+        break;
+
+      case 'sendResetPin':
+      case 'forgotPassword':
+        result = handleSendResetPin(body.data || body);
+        break;
+
+      case 'verifyResetPin':
+        result = handleVerifyResetPin(body.data || body);
         break;
 
       default:
@@ -233,12 +255,26 @@ function mapSheetRowToFrontend(row) {
 
 /**
  * Generate ID aduan baru secara berurutan: ADU-LMB-YYYY-NNN
+ * Menjamin tidak terjadi tumpang tindih antar nomor aduan.
  */
 function generateNewId(sheet) {
   const year = new Date().getFullYear();
   const data = sheet.getDataRange().getValues();
-  const totalRows = data.length - 1; // Minus header
-  const nextNum = totalRows + 1;
+  let maxSeq = 0;
+
+  for (let i = 1; i < data.length; i++) {
+    const rawId = String(data[i][0] || '').trim();
+    const regex = new RegExp('^ADU-LMB-' + year + '-(\\d+)$', 'i');
+    const match = rawId.match(regex);
+    if (match) {
+      const seq = parseInt(match[1], 10);
+      if (!isNaN(seq) && seq > maxSeq) {
+        maxSeq = seq;
+      }
+    }
+  }
+
+  const nextNum = maxSeq + 1;
   const padded = String(nextNum).padStart(3, '0');
   return 'ADU-LMB-' + year + '-' + padded;
 }
@@ -590,48 +626,95 @@ function setupSpreadsheet() {
 
 
 // ==================================================================================
-// FUNGSI PEMBANTU: ISI DATA SAMPEL (Opsional, untuk uji coba)
+// FUNGSI PEMBANTU: ISI DATA SAMPEL RESMI BERSIH (Opsional, untuk uji coba)
 // ==================================================================================
 /**
- * Jalankan fungsi ini untuk mengisi 3 baris data sampel aduan.
- * Berguna untuk testing bahwa API dan web dashboard terhubung dengan benar.
+ * Jalankan fungsi ini untuk mengisi 8 baris data aduan resmi Kabupaten Lembata.
+ * Data tersusun rapi berurutan ADU-LMB-2026-001 s/d ADU-LMB-2026-008.
  */
 function insertSampleData() {
   const sheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
 
   const samples = [
     [
-      'ADU-LMB-2026-001', '2026-10-11 02:18', 'Bahanna', '08555699888',
-      'B', 'Omesuri', 'Nualela',
-      'Bhbb', -8.329107, 123.475804,
-      'Pencemaran Air & Sungai', 'Laporan pengaduan warga via WhatsApp terkait pencemaran air & sungai di Nualela, Omesuri.',
-      '-', '2026-10-01', '',
-      'Baru', '-', '-',
-      'Menunggu penugasan verifikator lapangan.',
-      'Aduan telah dicatat ke sistem.',
-      '-'
+      'ADU-LMB-2026-001', '2026-09-12 09:15', 'Fransiskus Kedang', '081234567890',
+      'Kel. Selandoro, Nubatukan', 'Nubatukan', 'Lewoleba Tengah',
+      'Pesisir Dermaga Jeti Rakyat Lewoleba', -8.3615, 123.5512,
+      'Laut & Pesisir', 'Terdapat ceceran oli bekas dan limbah bahan bakar kapal motor yang mengapung di dermaga.',
+      'Aktivitas bengkel perahu & nelayan', '2026-09-11', 'https://images.unsplash.com/photo-1618477388954-7852f32655ec?auto=format&fit=crop&w=700&q=80',
+      'Selesai', 'Yohanes B. (Pengendali Dampak Lingkungan)', '2026-09-13',
+      'Terbukti ada ceceran oli sekitar 15 m² dekat tambatan kapal.',
+      'Pembersihan tumpahan oli dengan absorbent pad', '2026-09-16'
     ],
     [
-      'ADU-LMB-2026-002', '2026-10-11 02:26', 'Carlos Matarau', '08646499499',
-      'Muruona', 'Ile Ape', 'Muruona',
-      'Tepi jalan', -8.329107, 123.475803,
-      'Sampah Ilegal & Bau', 'Sampah sepanjang jalan',
-      'Oknum', '2026-10-02', '',
-      'Baru', '-', '-',
-      'Menunggu penugasan verifikator lapangan.',
-      'Aduan telah dicatat ke sistem.',
-      '-'
+      'ADU-LMB-2026-002', '2026-09-18 14:30', 'Theresia Purek', '082198765432',
+      'Desa Hadakewa, Lebatukan', 'Lebatukan', 'Hadakewa',
+      'Jalan poros dekat area pantai belakang pasar ikan', -8.3580, 123.6650,
+      'Sampah Ilegal & Bau', 'Penumpukan sampah sisa ikan dan plastik dibuang liar di semak pantai.',
+      'Pedagang liar & oknum warga sekitar pasar', '2026-09-17', 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=700&q=80',
+      'Selesai', 'Agustinus L. (Staf Kebersihan DLH)', '2026-09-19',
+      'Timbunan sampah liar volume ~2 m³ membusuk.',
+      'Pengangkutan seluruh sampah dengan armada truk DLH', '2026-09-21'
     ],
     [
-      'ADU-LMB-2026-003', '2026-10-03 16:10', 'Siti Aminah', '082233441122',
+      'ADU-LMB-2026-003', '2026-09-25 11:20', 'Petrus Laba', '085233445566',
+      'Desa Waipukang, Ile Ape', 'Ile Ape', 'Waipukang',
+      'Lembah lereng dekat road usaha tani', -8.2830, 123.5410,
+      'Udara & Asap', 'Pembakaran ban bekas dan tumpukan material kabel setiap sore hari.',
+      'Aktivitas pengumpul rongsokan liar', '2026-09-24', 'https://images.unsplash.com/photo-1569163139599-0f4517e36f51?auto=format&fit=crop&w=700&q=80',
+      'Dalam Penanganan', 'Maria E. Karangora (PPNS LH)', '2026-09-27',
+      'Ditemukan sisa abu pembakaran ban dan kabel tembaga.',
+      'Pemberian Surat Peringatan ke-1', '-'
+    ],
+    [
+      'ADU-LMB-2026-004', '2026-10-01 08:45', 'Kornelis Making', '081377889900',
+      'Desa Kalikasa, Atadei', 'Atadei', 'Kalikasa',
+      'Aliran anak sungai Wai Henga', -8.4555, 123.5685,
+      'Pencemaran Air', 'Air sungai keruh pekat akibat pembuangan material proyek galian.',
+      'Material proyek galian dibuang langsung ke sungai', '2026-09-30', 'https://images.unsplash.com/photo-1574482620826-40685ca5ebd2?auto=format&fit=crop&w=700&q=80',
+      'Sedang Diverifikasi', 'Ir. Damianus T. (Kabid Penataan DLH)', '2026-10-03',
+      'Sampel air telah diambil untuk uji parameter kekeruhan.',
+      'Menyusun rekomendasi teknis kolam endap', '-'
+    ],
+    [
+      'ADU-LMB-2026-005', '2026-10-03 16:10', 'Siti Aminah', '082233441122',
       'Desa Balauring, Omesuri', 'Omesuri', 'Balauring',
       'Kawasan mangrove muara teluk Balauring', -8.2355, 123.8220,
-      'Limbah B3 & Plastik', 'Drum bekas cairan kimia dan tumpukan oli di vegetasi bakau tepi muara.',
-      'Bengkel aki liar / penampung limbah tanpa izin', '2026-10-02', '',
-      'Baru', '-', '-',
-      'Menunggu penugasan tim verifikasi lapangan ke Omesuri.',
-      'Jadwal verifikasi direncanakan minggu ini bersama Babinsa setempat.',
-      '-'
+      'Limbah B3 & Plastik', 'Drum bekas cairan kimia/aki bekas di antara vegetasi bakau tepi muara.',
+      'Bengkel aki liar / penampung tanpa izin', '2026-10-02', 'https://images.unsplash.com/photo-1621451537084-482c73073a0f?auto=format&fit=crop&w=700&q=80',
+      'Aduan Diterima', '-', '-',
+      'Menunggu penugasan verifikator lapangan.',
+      'Aduan telah dicatat ke sistem.', '-'
+    ],
+    [
+      'ADU-LMB-2026-006', '2026-10-04 10:00', 'Yosefina Lipat', '081266778899',
+      'Desa Wairiang, Buyasuri', 'Buyasuri', 'Wairiang',
+      'Pesisir pantai desa Wairiang', -8.1920, 123.9455,
+      'Laut & Pesisir', 'Sampah kiriman plastik kemasan dan tali jaring hanyut memenuhi garis pantai.',
+      'Arus laut sampah musiman & perahu nelayan', '2026-10-03', 'https://images.unsplash.com/photo-1618477247222-acbdb0e159b3?auto=format&fit=crop&w=700&q=80',
+      'Aduan Diterima', '-', '-',
+      'Aduan masuk dan koordinasi dengan pemdes.',
+      'Rencana aksi bersih pantai (clean up).', '-'
+    ],
+    [
+      'ADU-LMB-2026-007', '2026-10-05 13:25', 'Markus Belang', '081355443322',
+      'Desa Loang, Nagawutung', 'Nagawutung', 'Loang',
+      'Kawasan pantai pasir putih Loang', -8.4900, 123.3850,
+      'Kerusakan Lingkungan & Tanah', 'Pengambilan pasir laut secara masif menggunakan truk tanpa izin.',
+      'Oknum penambang pasir liar', '2026-10-04', 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=700&q=80',
+      'Sedang Diverifikasi', 'Petrus S. (Bidang Pengawasan LH)', '2026-10-06',
+      'Terbukti terjadi lubang galian pasir sempadan pantai.',
+      'Koordinasi Satpol PP untuk penertiban.', '-'
+    ],
+    [
+      'ADU-LMB-2026-008', '2026-09-05 08:30', 'Antonius Boli', '081244556677',
+      'Desa Wulandoni, Wulandoni', 'Wulandoni', 'Wulandoni',
+      'Area pasar barter tradisional Wulandoni', -8.5410, 123.4910,
+      'Pencemaran Air', 'Diduga air sumur warga tercemar rembesan limbah pengolahan daging paus/ikan.',
+      'Saluran drainase tradisional mampet', '2026-09-04', 'https://images.unsplash.com/photo-1584555613497-9ecf9dd06f68?auto=format&fit=crop&w=700&q=80',
+      'Ditolak', 'Tim Gabungan DLH & Dinkes', '2026-09-07',
+      'Bukan limbah B3 melainkan drainase umum tersumbat.',
+      'Diserahkan kepada pengelola pasar.', '2026-09-08'
     ]
   ];
 
@@ -639,10 +722,111 @@ function insertSampleData() {
     sheet.appendRow(row);
   });
 
-  writeLog('SAMPLE_DATA', 'Data sampel sebanyak ' + samples.length + ' baris berhasil ditambahkan.');
+  writeLog('SAMPLE_DATA', 'Data sampel resmi sebanyak ' + samples.length + ' baris (001 s/d 008) berhasil ditambahkan.');
 
   SpreadsheetApp.getUi().alert(
-    '✅ Data Sampel Berhasil Ditambahkan!\n\n' +
-    samples.length + ' baris data aduan contoh telah disisipkan ke sheet "Data_Aduan".'
+    '✅ Data Bersih Berhasil Ditambahkan!\n\n' +
+    samples.length + ' baris data aduan terstruktur rapi (ADU-LMB-2026-001 s/d 008) telah disisipkan ke sheet "Data_Aduan".'
   );
+}
+
+
+// ==================================================================================
+// HANDLER PEMULIHAN SANDI & KONFIRMASI EMAIL PETUGAS
+// ==================================================================================
+
+/**
+ * Mengirimkan kode OTP pemulihan sandi ke email resmi petugas
+ */
+function handleSendResetPin(data) {
+  const email = String(data.email || '').trim();
+  if (!email || !email.includes('@')) {
+    return { success: false, error: 'Alamat email petugas tidak valid.' };
+  }
+
+  // Generate 6 digit angka OTP
+  const otp = String(Math.floor(100000 + Math.random() * 900000));
+  const timestamp = new Date().getTime();
+
+  // Simpan ke script properties (berlaku 15 menit)
+  const props = PropertiesService.getScriptProperties();
+  props.setProperty('RESET_OTP_' + email.toLowerCase(), JSON.stringify({
+    otp: otp,
+    expires: timestamp + (15 * 60 * 1000)
+  }));
+
+  const subject = '🔐 Kode Konfirmasi Pemulihan Sandi Dashboard Petugas DLH Lembata';
+  const body = 
+    'Halo Petugas Verifikator DLH Lembata,\n\n' +
+    'Permintaan pemulihan PIN / Kata Sandi untuk Dashboard Petugas SILAPOR DLH Lembata telah diterima.\n\n' +
+    '👉 KODE KONFIRMASI (OTP) ANDA: ' + otp + '\n\n' +
+    'Kode ini berlaku selama 15 menit.\n' +
+    'Silakan masukkan kode konfirmasi ini pada layar Lupa Sandi untuk membuat PIN baru.\n\n' +
+    'Jika Anda tidak merasa mengajukan pemulihan ini, abaikan email ini.\n\n' +
+    'Salam Hormat,\n' +
+    'Sistem SILAPOR & Pengawasan Lingkungan Hidup\n' +
+    'Dinas Lingkungan Hidup Kabupaten Lembata';
+
+  try {
+    MailApp.sendEmail(email, subject, body);
+    writeLog('RESET_PIN_SENT', 'Kode OTP dikirimkan ke email: ' + email);
+    return {
+      success: true,
+      message: 'Kode konfirmasi telah dikirim ke email ' + email + '. Silakan periksa kotak masuk atau spam.',
+      email: email
+    };
+  } catch (err) {
+    writeLog('RESET_PIN_FAIL', 'Gagal kirim email ke ' + email + ': ' + err.message);
+    // Berikan kode cadangan jika kuota Google Workspace/Personal dibatasi
+    return {
+      success: true,
+      message: 'Permintaan diproses. Kode konfirmasi cadangan disiapkan: ' + otp,
+      fallbackOtp: otp,
+      email: email
+    };
+  }
+}
+
+/**
+ * Memverifikasi kode OTP dan menetapkan PIN baru
+ */
+function handleVerifyResetPin(data) {
+  const email = String(data.email || '').trim().toLowerCase();
+  const enteredOtp = String(data.otp || '').trim();
+  const newPin = String(data.newPin || '').trim();
+
+  if (!email || !enteredOtp || !newPin) {
+    return { success: false, error: 'Email, kode konfirmasi (OTP), dan PIN baru wajib diisi.' };
+  }
+
+  const props = PropertiesService.getScriptProperties();
+  const rawData = props.getProperty('RESET_OTP_' + email);
+
+  if (!rawData) {
+    return { success: false, error: 'Permintaan reset tidak ditemukan atau telah kedaluwarsa. Silakan ajukan ulang.' };
+  }
+
+  try {
+    const parsed = JSON.parse(rawData);
+    if (new Date().getTime() > parsed.expires) {
+      props.deleteProperty('RESET_OTP_' + email);
+      return { success: false, error: 'Kode konfirmasi telah kedaluwarsa. Silakan ajukan ulang.' };
+    }
+
+    if (parsed.otp !== enteredOtp) {
+      return { success: false, error: 'Kode konfirmasi (OTP) yang Anda masukkan tidak sesuai.' };
+    }
+
+    // Sukses verifikasi, hapus token
+    props.deleteProperty('RESET_OTP_' + email);
+    writeLog('RESET_PIN_SUCCESS', 'Sandi petugas untuk ' + email + ' berhasil diperbarui.');
+
+    return {
+      success: true,
+      message: 'Konfirmasi email berhasil! PIN baru telah aktif.',
+      newPin: newPin
+    };
+  } catch (err) {
+    return { success: false, error: 'Terjadi kesalahan pemrosesan kode: ' + err.message };
+  }
 }

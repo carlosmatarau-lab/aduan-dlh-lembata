@@ -10,7 +10,7 @@ Aplikasi ini dikembangkan untuk mendukung rancangan aktualisasi ASN:
 ## 🌐 Akses Aplikasi Online (Production Vercel)
 
 - **Portal Pengaduan Publik:** [https://aduan-dlh-lembata.vercel.app](https://aduan-dlh-lembata.vercel.app)
-- **Portal Khusus Petugas DLH:** [https://aduan-dlh-lembata.vercel.app/petugas](https://aduan-dlh-lembata.vercel.app/petugas)
+- **Dashboard Petugas DLH:** [https://aduan-dlh-lembata.vercel.app/petugas](https://aduan-dlh-lembata.vercel.app/petugas)
 - **Poster & Generator QR Code:** [https://aduan-dlh-lembata.vercel.app/qr-code](https://aduan-dlh-lembata.vercel.app/qr-code)
 
 ---
@@ -51,7 +51,7 @@ Aplikasi ini dibangun murni menggunakan **HTML5, CSS3 Modern, dan Vanilla JavaSc
 d:\app/
 ├── index.html                           # File utama aplikasi portal aduan & peta publik
 ├── qr-code.html                         # Poster cetak & generator QR Code publik
-├── petugas.html                         # Portal Khusus Petugas & Verifikasi Aduan DLH
+├── petugas.html                         # Dashboard Petugas & Verifikasi Aduan DLH
 ├── vercel.json                          # Konfigurasi deployment & security headers Vercel
 ├── check-vercel.ps1                     # Script diagnostik deployment Vercel
 ├── perencanaan.md                       # Dokumen rencana aktualisasi lengkap

@@ -685,8 +685,24 @@ class DLHApp {
         } else {
           // Fallback aman jika store belum terpasang
           const now = new Date();
-          const formattedDate = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-          const newId = `ADU-LMB-${now.getFullYear()}-${Date.now().toString().slice(-3)}`;
+          const year = now.getFullYear();
+          const formattedDate = `${year}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+          let maxSeq = 8;
+          let arr = [];
+          try {
+            const rawStored = localStorage.getItem('dlh_lembata_aduan_v2') || localStorage.getItem('dlh_lembata_aduan_v1');
+            arr = rawStored ? JSON.parse(rawStored) : [];
+            arr.forEach(x => {
+              if (x && x.id) {
+                const m = String(x.id).match(new RegExp(`ADU-LMB-${year}-(\\d+)`, 'i'));
+                if (m) {
+                  const n = parseInt(m[1], 10);
+                  if (!isNaN(n) && n > maxSeq) maxSeq = n;
+                }
+              }
+            });
+          } catch(e) {}
+          const newId = `ADU-LMB-${year}-${String(maxSeq + 1).padStart(3, '0')}`;
           newRecord = {
             id: newId,
             timestamp: formattedDate,
@@ -699,10 +715,8 @@ class DLHApp {
             tanggalSelesai: '-'
           };
           try {
-            const rawStored = localStorage.getItem('dlh_lembata_aduan_v1');
-            const arr = rawStored ? JSON.parse(rawStored) : [];
             arr.unshift(newRecord);
-            localStorage.setItem('dlh_lembata_aduan_v1', JSON.stringify(arr));
+            localStorage.setItem('dlh_lembata_aduan_v2', JSON.stringify(arr));
           } catch(e) {}
         }
 

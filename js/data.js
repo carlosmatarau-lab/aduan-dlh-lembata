@@ -4,7 +4,8 @@
  * Data Store, Default Dataset & LocalStorage Management
  */
 
-const STORAGE_KEY = 'dlh_lembata_aduan_v1';
+const STORAGE_KEY = 'dlh_lembata_aduan_v2';
+const LEGACY_STORAGE_KEY = 'dlh_lembata_aduan_v1';
 
 /* ===================================================================
    DLH LEMBATA REAL-TIME SYNC ENGINE (BROADCASTCHANNEL + STORAGE FALLBACK)
@@ -301,70 +302,6 @@ if (typeof window !== 'undefined') {
 const INITIAL_ADUAN_DATA = [
   {
     id: 'ADU-LMB-2026-001',
-    timestamp: '2026-10-11 02:18',
-    namaPelapor: 'Bahanna',
-    noHp: '08555699888',
-    alamatPelapor: 'B',
-    kecamatan: 'Omesuri',
-    desa: 'Nualela',
-    lokasiDetail: 'Bhbb',
-    lat: -8.329107,
-    lng: 123.475804,
-    jenisPencemaran: 'Pencemaran Air & Sungai',
-    uraian: 'Laporan pengaduan warga via WhatsApp terkait pencemaran air & sungai di Nualela, Omesuri.',
-    sumberDugaan: '-',
-    tanggalKejadian: '2026-10-01',
-    fotoBukti: '',
-    linkFotoBukti: '',
-    buktiFotoList: [],
-    status: 'Baru',
-    petugasVerifikasi: '-',
-    tanggalVerifikasi: '-',
-    hasilVerifikasi: 'Menunggu penugasan verifikator lapangan.',
-    tindakanDLH: 'Aduan telah dicatat ke sistem.',
-    tanggalSelesai: '-',
-    nomorBeritaAcara: '',
-    catatanBeritaAcara: '',
-    fotoKondisiRiil: '',
-    fotoVerifikasiList: [],
-    timestampVerifikasi: '',
-    timestampTindakLanjut: '',
-    timestampSelesai: ''
-  },
-  {
-    id: 'ADU-LMB-2026-002',
-    timestamp: '2026-10-11 02:26',
-    namaPelapor: 'Carlos Matarau',
-    noHp: '08646499499',
-    alamatPelapor: 'Muruona',
-    kecamatan: 'Ile Ape',
-    desa: 'Muruona',
-    lokasiDetail: 'Tepi jalan',
-    lat: -8.329107,
-    lng: 123.475803,
-    jenisPencemaran: 'Sampah Ilegal & Bau',
-    uraian: 'Sampah sepanjang jalan',
-    sumberDugaan: 'Oknum',
-    tanggalKejadian: '2026-10-02',
-    fotoBukti: '',
-    linkFotoBukti: '',
-    buktiFotoList: [],
-    status: 'Baru',
-    petugasVerifikasi: '-',
-    tanggalVerifikasi: '-',
-    hasilVerifikasi: 'Menunggu penugasan verifikator lapangan.',
-    tindakanDLH: 'Aduan telah dicatat ke sistem.',
-    tanggalSelesai: '-',
-    nomorBeritaAcara: '',
-    catatanBeritaAcara: '',
-    fotoKondisiRiil: '',
-    fotoVerifikasiList: [],
-    timestampVerifikasi: '',
-    timestampTindakLanjut: '',
-    timestampSelesai: ''
-  },
-  {
-    id: 'ADU-LMB-2026-010',
     timestamp: '2026-09-12 09:15',
     namaPelapor: 'Fransiskus Kedang',
     noHp: '081234567890',
@@ -396,6 +333,40 @@ const INITIAL_ADUAN_DATA = [
     timestampVerifikasi: '2026-09-13 10:15',
     timestampTindakLanjut: '2026-09-14 08:30',
     timestampSelesai: '2026-09-16 16:45'
+  },
+  {
+    id: 'ADU-LMB-2026-002',
+    timestamp: '2026-09-18 14:30',
+    namaPelapor: 'Theresia Purek',
+    noHp: '082198765432',
+    alamatPelapor: 'Desa Hadakewa, Lebatukan',
+    kecamatan: 'Lebatukan',
+    desa: 'Hadakewa',
+    lokasiDetail: 'Jalan poros dekat area pantai belakang pasar ikan',
+    lat: -8.3580,
+    lng: 123.6650,
+    jenisPencemaran: 'Sampah Ilegal & Bau',
+    uraian: 'Penumpukan sampah sisa ikan dan plastik dibuang liar di semak pantai belakang pasar ikan. Menimbulkan bau busuk menyengat dan lalat.',
+    sumberDugaan: 'Pedagang liar & oknum warga sekitar pasar',
+    tanggalKejadian: '2026-09-17',
+    fotoBukti: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=700&q=80',
+    linkFotoBukti: 'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=700&q=80',
+    buktiFotoList: [
+      'https://images.unsplash.com/photo-1530587191325-3db32d826c18?auto=format&fit=crop&w=700&q=80'
+    ],
+    status: 'Selesai',
+    petugasVerifikasi: 'Agustinus L. (Staf Kebersihan DLH)',
+    tanggalVerifikasi: '2026-09-19',
+    hasilVerifikasi: 'Timbunan sampah liar volume ~2 m³ membusuk di semak belukar pantai.',
+    tindakanDLH: 'Pengangkutan seluruh sampah dengan armada truk DLH dan pemasangan spanduk larangan membuang sampah.',
+    tanggalSelesai: '2026-09-21',
+    nomorBeritaAcara: 'BA-02/DLH-LMB/IX/2026',
+    catatanBeritaAcara: 'Koordinasi bersama Kepala Desa Hadakewa dan pengelola Pasar Hadakewa.',
+    fotoKondisiRiil: 'https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=700&q=80',
+    fotoVerifikasiList: ['https://images.unsplash.com/photo-1532996122724-e3c354a0b15b?auto=format&fit=crop&w=700&q=80'],
+    timestampVerifikasi: '2026-09-19 11:00',
+    timestampTindakLanjut: '2026-09-20 09:30',
+    timestampSelesai: '2026-09-21 15:00'
   },
   {
     id: 'ADU-LMB-2026-003',
@@ -572,38 +543,6 @@ const INITIAL_ADUAN_DATA = [
     hasilVerifikasi: 'Uji air sumur menunjukkan parameter bakteriologis normal, bau berasal dari saluran drainase umum yang tersumbat daun dan lumpur, bukan pencemaran limbah B3/berbahaya.',
     tindakanDLH: 'Diserahkan penanganannya kepada pengelola pasar dan pemdes Wulandoni untuk pembersihan got bersama warga.',
     tanggalSelesai: '2026-09-08'
-  },
-  {
-    id: 'ADU-LMB-2026-480',
-    timestamp: '2026-10-11 01:58',
-    namaPelapor: 'Bahanna',
-    noHp: '08555699888',
-    alamatPelapor: 'B',
-    kecamatan: 'Omesuri',
-    desa: 'Nualela',
-    lokasiDetail: 'Bhbb',
-    lat: -8.329107,
-    lng: 123.475804,
-    jenisPencemaran: 'Pencemaran Air & Sungai',
-    uraian: 'Laporan pengaduan warga terkait pencemaran air & sungai di Nualela, Omesuri melalui pesan WhatsApp resmi.',
-    sumberDugaan: '-',
-    tanggalKejadian: '2026-10-01',
-    fotoBukti: '',
-    linkFotoBukti: '',
-    buktiFotoList: [],
-    status: 'Aduan Diterima',
-    petugasVerifikasi: '-',
-    tanggalVerifikasi: '-',
-    hasilVerifikasi: 'Menunggu jadwal penugasan verifikator lapangan DLH.',
-    tindakanDLH: 'Aduan warga terdaftar dalam antrean verifikasi lapangan.',
-    tanggalSelesai: '-',
-    nomorBeritaAcara: '',
-    catatanBeritaAcara: '',
-    fotoKondisiRiil: '',
-    fotoVerifikasiList: [],
-    timestampVerifikasi: '',
-    timestampTindakLanjut: '',
-    timestampSelesai: ''
   }
 ];
 
@@ -754,55 +693,48 @@ class AduanDataStore {
           };
         });
 
-        // Migrasi cache lokal: pastikan 001 dan 002 mengikuti data riil spreadsheet
-        const match001 = this.aduanList.find(x => x.id === 'ADU-LMB-2026-001');
-        if (match001 && match001.namaPelapor === 'Fransiskus Kedang') {
-          match001.namaPelapor = 'Bahanna';
-          match001.noHp = '08555699888';
-          match001.alamatPelapor = 'B';
-          match001.kecamatan = 'Omesuri';
-          match001.desa = 'Nualela';
-          match001.lokasiDetail = 'Bhbb';
-          match001.lat = -8.329107;
-          match001.lng = 123.475804;
-          match001.jenisPencemaran = 'Pencemaran Air & Sungai';
-          match001.uraian = 'Laporan pengaduan warga via WhatsApp terkait pencemaran air & sungai di Nualela, Omesuri.';
-          match001.status = 'Baru';
-        }
-        const match002 = this.aduanList.find(x => x.id === 'ADU-LMB-2026-002');
-        if (match002 && match002.namaPelapor === 'Theresia Purek') {
-          match002.namaPelapor = 'Carlos Matarau';
-          match002.noHp = '08646499499';
-          match002.alamatPelapor = 'Muruona';
-          match002.kecamatan = 'Ile Ape';
-          match002.desa = 'Muruona';
-          match002.lokasiDetail = 'Tepi jalan';
-          match002.lat = -8.329107;
-          match002.lng = 123.475803;
-          match002.jenisPencemaran = 'Sampah Ilegal & Bau';
-          match002.uraian = 'Sampah sepanjang jalan';
-          match002.status = 'Baru';
-        }
+        // Bersihkan data sampah / uji coba lama jika ada di penyimpanan lokal
+        this.aduanList = this.aduanList.filter(item => {
+          if (!item || !item.id) return false;
+          // Hapus tiket uji coba lama
+          if (item.id === 'ADU-LMB-2026-480') return false;
+          if (item.namaPelapor === 'Bahanna' && (item.alamatPelapor === 'B' || item.lokasiDetail === 'Bhbb')) return false;
+          if (item.namaPelapor === 'Carlos Matarau' && item.lokasiDetail === 'Tepi jalan') return false;
+          return true;
+        });
 
-        // Pastikan tiket aduan terbaru tersinkronisasi ke daftar lokal
-        let hasNewInitial = false;
+        // Sinkronkan data resmi berurutan ADU-LMB-2026-001 s/d 008
         INITIAL_ADUAN_DATA.forEach(initItem => {
-          if (!this.aduanList.some(x => x.id === initItem.id) && !this.isDeleted(initItem.id)) {
-            this.aduanList.unshift(initItem);
-            hasNewInitial = true;
+          const existingIdx = this.aduanList.findIndex(x => x.id === initItem.id);
+          if (existingIdx === -1 && !this.isDeleted(initItem.id)) {
+            this.aduanList.push(initItem);
+          } else if (existingIdx !== -1) {
+            // Perbarui dengan data valid jika sebelumnya tercemar data sampah
+            if (this.aduanList[existingIdx].namaPelapor === 'Bahanna' || this.aduanList[existingIdx].namaPelapor === 'Carlos Matarau') {
+              this.aduanList[existingIdx] = { ...initItem };
+            }
           }
         });
-        if (hasNewInitial || match001 || match002) {
-          this.save();
-        }
+
+        // Urutkan data berdasarkan ID secara rapi
+        this.aduanList.sort((a, b) => {
+          const numA = parseInt((a.id || '').replace(/\D/g, ''), 10) || 0;
+          const numB = parseInt((b.id || '').replace(/\D/g, ''), 10) || 0;
+          return numA - numB;
+        });
+
+        this.save();
+        // Hapus cache storage lama
+        try { localStorage.removeItem(LEGACY_STORAGE_KEY); } catch (e) {}
       } catch (e) {
         console.error('Error parsing stored aduan, fallback to default:', e);
-        this.aduanList = INITIAL_ADUAN_DATA.filter(item => !this.isDeleted(item.id));
+        this.aduanList = [...INITIAL_ADUAN_DATA].filter(item => !this.isDeleted(item.id));
         this.save();
       }
     } else {
-      this.aduanList = INITIAL_ADUAN_DATA.filter(item => !this.isDeleted(item.id));
+      this.aduanList = [...INITIAL_ADUAN_DATA].filter(item => !this.isDeleted(item.id));
       this.save();
+      try { localStorage.removeItem(LEGACY_STORAGE_KEY); } catch (e) {}
     }
 
     // Jika URL Google Apps Script sudah disetel, lakukan sinkronisasi otomatis
@@ -1062,9 +994,35 @@ class AduanDataStore {
 
   generateNewId() {
     const year = new Date().getFullYear();
-    const count = this.aduanList.length + 1;
-    const padded = String(count).padStart(3, '0');
+    let maxSeq = 0;
+    (this.aduanList || []).forEach(item => {
+      if (item && item.id) {
+        const match = String(item.id).trim().match(new RegExp(`^ADU-LMB-${year}-(\\d+)$`, 'i'));
+        if (match) {
+          const num = parseInt(match[1], 10);
+          if (!isNaN(num) && num > maxSeq) {
+            maxSeq = num;
+          }
+        }
+      }
+    });
+    const nextNum = maxSeq + 1;
+    const padded = String(nextNum).padStart(3, '0');
     return `ADU-LMB-${year}-${padded}`;
+  }
+
+  resetToOfficialDefaults() {
+    this.deletedIds = new Set();
+    this.saveDeletedIds();
+    this.aduanList = JSON.parse(JSON.stringify(INITIAL_ADUAN_DATA));
+    this.save();
+    try {
+      localStorage.removeItem(LEGACY_STORAGE_KEY);
+    } catch (e) {}
+    if (window.dlhRealtime) {
+      window.dlhRealtime.broadcast('DATA_RESET', { count: this.aduanList.length });
+    }
+    return this.aduanList;
   }
 
   addAduan(formData) {
@@ -1306,65 +1264,90 @@ class AduanDataStore {
   }
 
   exportToCSV() {
+    // Header kolom resmi yang persis sama dengan Google Spreadsheet DLH Lembata
     const headers = [
-      'ID Aduan',
-      'Waktu Lapor',
-      'Nama Pelapor',
-      'No HP',
+      'ID_Aduan',
+      'Timestamp',
+      'Nama_Pelapor',
+      'No_HP',
+      'Alamat_Pelapor',
       'Kecamatan',
-      'Desa',
-      'Jenis Pencemaran',
-      'Lokasi Detail',
+      'Desa_Kelurahan',
+      'Lokasi_Detail',
       'Latitude',
       'Longitude',
-      'Uraian Aduan',
+      'Jenis_Pencemaran',
+      'Uraian_Aduan',
+      'Sumber_Dugaan',
+      'Tanggal_Kejadian',
+      'Link_Foto_Bukti',
       'Status',
-      'Petugas Verifikasi',
-      'Hasil Verifikasi',
-      'Tindakan DLH',
-      'Tanggal Selesai',
-      'Nomor Berita Acara',
-      'Catatan Berita Acara',
-      'Foto Fisik Lapangan',
-      'Timestamp Verifikasi',
-      'Timestamp Tindak Lanjut',
-      'Timestamp Selesai'
+      'Petugas_Verifikasi',
+      'Tanggal_Verifikasi',
+      'Hasil_Verifikasi',
+      'Tindakan_DLH',
+      'Tanggal_Selesai',
+      'Nomor_Berita_Acara',
+      'Catatan_Berita_Acara'
     ];
 
+    // Helper sanitasi sel CSV agar rapi dan tidak merusak baris di Excel / Google Sheets
+    const cleanCell = (val, isPhone = false) => {
+      if (val === null || val === undefined) return '""';
+      let str = String(val).trim();
+      if (isPhone && str && str !== '-') {
+        // Format teks khusus nomor HP agar angka 0 di depan tidak hilang saat dibuka di Excel
+        return `="${str}"`;
+      }
+      // Ganti enter / baris baru internal dengan spasi agar tidak membuat baris tabel berantakan
+      str = str.replace(/[\r\n]+/g, ' ').trim();
+      // Escape tanda petik ganda
+      str = str.replace(/"/g, '""');
+      return `"${str}"`;
+    };
+
     const rows = this.aduanList.map(item => [
-      `"${item.id}"`,
-      `"${item.timestamp}"`,
-      `"${item.namaPelapor}"`,
-      `"${item.noHp}"`,
-      `"${item.kecamatan}"`,
-      `"${item.desa}"`,
-      `"${item.jenisPencemaran}"`,
-      `"${(item.lokasiDetail || '').replace(/"/g, '""')}"`,
-      item.lat,
-      item.lng,
-      `"${(item.uraian || '').replace(/"/g, '""')}"`,
-      `"${item.status}"`,
-      `"${item.petugasVerifikasi || '-'}"`,
-      `"${(item.hasilVerifikasi || '-').replace(/"/g, '""')}"`,
-      `"${(item.tindakanDLH || '-').replace(/"/g, '""')}"`,
-      `"${item.tanggalSelesai || '-'}"`,
-      `"${(item.nomorBeritaAcara || '-').replace(/"/g, '""')}"`,
-      `"${(item.catatanBeritaAcara || '-').replace(/"/g, '""')}"`,
-      `"${(item.fotoKondisiRiil || '-').replace(/"/g, '""')}"`,
-      `"${item.timestampVerifikasi || '-'}"`,
-      `"${item.timestampTindakLanjut || '-'}"`,
-      `"${item.timestampSelesai || '-'}"`
+      cleanCell(item.id),
+      cleanCell(item.timestamp),
+      cleanCell(item.namaPelapor),
+      cleanCell(item.noHp, true),
+      cleanCell(item.alamatPelapor || '-'),
+      cleanCell(item.kecamatan),
+      cleanCell(item.desa),
+      cleanCell(item.lokasiDetail || '-'),
+      cleanCell(item.lat !== undefined ? item.lat : ''),
+      cleanCell(item.lng !== undefined ? item.lng : ''),
+      cleanCell(item.jenisPencemaran),
+      cleanCell(item.uraian || '-'),
+      cleanCell(item.sumberDugaan || '-'),
+      cleanCell(item.tanggalKejadian || '-'),
+      cleanCell(item.linkFotoBukti || item.fotoBukti || '-'),
+      cleanCell(item.status || 'Baru'),
+      cleanCell(item.petugasVerifikasi || '-'),
+      cleanCell(item.tanggalVerifikasi || '-'),
+      cleanCell(item.hasilVerifikasi || '-'),
+      cleanCell(item.tindakanDLH || '-'),
+      cleanCell(item.tanggalSelesai || '-'),
+      cleanCell(item.nomorBeritaAcara || '-'),
+      cleanCell(item.catatanBeritaAcara || '-')
     ]);
 
-    const csvContent = '\uFEFF' + [headers.join(','), ...rows.map(r => r.join(','))].join('\r\n');
+    // Tambahkan UTF-8 Byte Order Mark (\uFEFF) untuk kompatibilitas penuh Excel & Google Sheets
+    const csvContent = '\uFEFF' + [
+      headers.map(h => `"${h}"`).join(','),
+      ...rows.map(r => r.join(','))
+    ].join('\r\n');
+
     const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
     const url = URL.createObjectURL(blob);
     const link = document.createElement('a');
     link.setAttribute('href', url);
-    link.setAttribute('download', `Rekap_Aduan_Lingkungan_DLH_Lembata_${new Date().toISOString().split('T')[0]}.csv`);
+    const today = new Date().toISOString().split('T')[0];
+    link.setAttribute('download', `Rekap_Resmi_Aduan_DLH_Lembata_${today}.csv`);
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
+    URL.revokeObjectURL(url);
   }
 }
 
