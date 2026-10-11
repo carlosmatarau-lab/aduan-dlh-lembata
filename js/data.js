@@ -632,14 +632,14 @@ class AduanDataStore {
     return this.aduanList.find(item => item.id.trim().toLowerCase() === id.trim().toLowerCase()) || null;
   }
 
-  mergeRemoteRecord(remoteItem) {
+  mapRemoteRecord(remoteItem) {
     if (!remoteItem || !remoteItem.id) return null;
     const cleanId = String(remoteItem.id).trim().toUpperCase();
 
     // Jangan pernah mengembalikan aduan yang sudah dihapus oleh pengguna
     if (this.isDeleted(cleanId)) return null;
 
-    const index = this.aduanList.findIndex(x => x.id.trim().toUpperCase() === cleanId);
+    const existing = this.aduanList.find(x => x && x.id && x.id.trim().toUpperCase() === cleanId);
 
     const rekamTerakhir = remoteItem.rekamTindakanTerakhir || (
       (remoteItem.tindakanDLH && remoteItem.tindakanDLH !== '-') ? {
@@ -653,7 +653,6 @@ class AduanDataStore {
       } : null
     );
 
-    const existing = index !== -1 ? this.aduanList[index] : null;
     const existingPhotos = existing ? (Array.isArray(existing.buktiFotoList) ? existing.buktiFotoList : (existing.fotoBukti ? [existing.fotoBukti] : [])) : [];
     const remotePhotos = Array.isArray(remoteItem.buktiFotoList) && remoteItem.buktiFotoList.length > 0
       ? remoteItem.buktiFotoList
@@ -670,7 +669,7 @@ class AduanDataStore {
     }
     const finalFoto = finalPhotos[0] || '';
 
-    const mapped = {
+    return {
       id: cleanId,
       timestamp: remoteItem.timestamp || '-',
       namaPelapor: remoteItem.namaPelapor || 'Masyarakat',
@@ -688,16 +687,27 @@ class AduanDataStore {
       fotoBukti: finalFoto,
       linkFotoBukti: finalFoto,
       buktiFotoList: finalPhotos,
-      status: remoteItem.status || 'Aduan Diterima',
+      status: remoteItem.status || 'Baru',
       petugasVerifikasi: remoteItem.petugasVerifikasi || '-',
       tanggalVerifikasi: remoteItem.tanggalVerifikasi || '-',
       hasilVerifikasi: remoteItem.hasilVerifikasi || '-',
       tindakanDLH: remoteItem.tindakanDLH || '-',
       tanggalSelesai: remoteItem.tanggalSelesai || '-',
+      nomorBeritaAcara: remoteItem.nomorBeritaAcara || (existing ? existing.nomorBeritaAcara : '') || '',
+      catatanBeritaAcara: remoteItem.catatanBeritaAcara || (existing ? existing.catatanBeritaAcara : '') || '',
+      fotoKondisiRiil: remoteItem.fotoKondisiRiil || (existing ? existing.fotoKondisiRiil : '') || '',
+      fotoVerifikasiList: Array.isArray(remoteItem.fotoVerifikasiList) ? remoteItem.fotoVerifikasiList : (existing && existing.fotoVerifikasiList ? existing.fotoVerifikasiList : []),
       rekamTindakanTerakhir: rekamTerakhir,
       riwayatTindakan: Array.isArray(remoteItem.riwayatTindakan) ? remoteItem.riwayatTindakan : (rekamTerakhir ? [rekamTerakhir] : [])
     };
+  }
 
+  mergeRemoteRecord(remoteItem) {
+    const mapped = this.mapRemoteRecord(remoteItem);
+    if (!mapped) return null;
+    const cleanId = mapped.id;
+
+    const index = this.aduanList.findIndex(x => x.id.trim().toUpperCase() === cleanId);
     if (index !== -1) {
       this.aduanList.splice(index, 1);
     }
