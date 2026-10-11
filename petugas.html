@@ -2432,31 +2432,33 @@
         </div>
       </div>
     </div>
+  </div>
+
   <!-- ===================================================================
        MODAL LIGHTBOX: LIHAT BUKTI FOTO UKURAN PENUH & ZOOM
        =================================================================== -->
-  <div class="modal-backdrop modal-lightbox" id="modalPhotoLightbox" style="z-index: 99999; background: rgba(11, 17, 32, 0.95); backdrop-filter: blur(8px);">
-    <div style="position: relative; width: 100%; max-width: 920px; height: 92vh; margin: auto; display: flex; flex-direction: column; padding: 12px; box-sizing: border-box;">
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: rgba(15, 23, 42, 0.85); border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.12);">
-        <div style="color: #f8fafc; font-weight: 700; font-size: 0.92rem; display: flex; align-items: center; gap: 8px;">
+  <div class="modal-backdrop modal-lightbox" id="modalPhotoLightbox" style="z-index: 999999; background: rgba(11, 17, 32, 0.96); backdrop-filter: blur(8px);">
+    <div style="position: relative; width: 100%; max-width: 960px; max-height: 94vh; margin: auto; display: flex; flex-direction: column; padding: 12px; box-sizing: border-box;">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; background: #1e293b; border-radius: 12px; margin-bottom: 12px; border: 1.5px solid #334155; box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
+        <div style="color: #f8fafc; font-weight: 800; font-size: 0.98rem; display: flex; align-items: center; gap: 8px;">
           <span>📸</span> <span id="lightboxPhotoCaption">Bukti Foto Aduan Lingkungan</span>
         </div>
         <div style="display: flex; gap: 8px; align-items: center;">
-          <button type="button" onclick="window.portal && window.portal.openPhotoInNewWindow()" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600;">
-            ↗ Tab Baru
+          <button type="button" onclick="window.portal && window.portal.openPhotoInNewWindow()" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 0.82rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+            <span>↗</span> Tab Baru
           </button>
-          <button type="button" onclick="window.portal && window.portal.downloadCurrentPhoto()" style="background: #059669; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600;">
-            ⬇️ Unduh
+          <button type="button" onclick="window.portal && window.portal.downloadCurrentPhoto()" style="background: #059669; color: #fff; border: none; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 0.82rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+            <span>⬇️</span> Unduh Foto
           </button>
-          <button type="button" onclick="window.portal && window.portal.closeLightbox()" style="background: #ef4444; color: #fff; border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 1.2rem; line-height: 1; display: flex; align-items: center; justify-content: center;">
+          <button type="button" onclick="window.portal && window.portal.closeLightbox()" style="background: #ef4444; color: #fff; border: none; width: 34px; height: 34px; border-radius: 8px; cursor: pointer; font-size: 1.3rem; line-height: 1; display: flex; align-items: center; justify-content: center; font-weight: 800;">
             &times;
           </button>
         </div>
       </div>
-      <div style="flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; background: rgba(0,0,0,0.6); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); position: relative; padding: 10px;" onclick="window.portal && window.portal.closeLightbox()">
-        <img id="lightboxPhotoImg" src="" alt="Bukti Foto Penuh" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); cursor: zoom-in; transition: transform 0.2s;" onclick="event.stopPropagation(); window.portal && window.portal.toggleZoomPhoto(this)">
+      <div style="flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #020617; border-radius: 12px; border: 1.5px solid #334155; position: relative; padding: 14px; min-height: 400px;" onclick="window.portal && window.portal.closeLightbox()">
+        <img id="lightboxPhotoImg" src="" alt="Bukti Foto Penuh" style="max-width: 100%; max-height: 75vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); cursor: zoom-in; transition: transform 0.2s;" onclick="event.stopPropagation(); window.portal && window.portal.toggleZoomPhoto(this)">
       </div>
-      <div style="text-align: center; color: #94a3b8; font-size: 0.75rem; margin-top: 8px;">
+      <div style="text-align: center; color: #94a3b8; font-size: 0.78rem; margin-top: 10px;">
         💡 Klik gambar untuk memperbesar (Zoom In / Out) &bull; Klik area gelap atau tombol &times; untuk menutup
       </div>
     </div>
@@ -2471,7 +2473,7 @@
   <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 
   <!-- Scripts: Data Engine & Portal Controller -->
-  <script src="js/data.js?v=20261012_06"></script>
+  <script src="js/data.js?v=20261012_07"></script>
   <script>
     // Safeguard prototype jika browser masih memuat file js lama dari cache
     if (typeof AduanDataStore !== 'undefined') {
@@ -3414,15 +3416,24 @@
               <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px;">
                 ${officerPhotos.map((src, i) => {
                   return `
-                    <div onclick="window.portal.openLightboxByIndex('officer', ${i})"
-                         style="cursor: pointer; border-radius: 10px; overflow: hidden; border: 2px solid #a7f3d0; background: #0f172a; position: relative; height: 130px; box-shadow: 0 4px 10px rgba(5,150,105,0.15); transition: transform 0.2s, border-color 0.2s;"
-                         onmouseover="this.style.transform='scale(1.03)'; this.style.borderColor='#047857';"
-                         onmouseout="this.style.transform='scale(1)'; this.style.borderColor='#a7f3d0';"
-                         title="Klik untuk melihat foto ukuran penuh">
-                      <img src="${src}" alt="Foto Fisik Petugas ${i+1}" style="width: 100%; height: 100%; object-fit: cover;">
-                      <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.75)); color: #fff; font-size: 0.68rem; font-weight: 700; padding: 4px 6px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 4px;">
-                        <span>🔍 Perbesar</span>
+                    <div style="background: #f8fafc; border: 1.5px solid #a7f3d0; border-radius: 10px; padding: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 6px;">
+                      <div onclick="window.portal.openLightboxByIndex('officer', ${i})"
+                           style="cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid #059669; background: #0f172a; position: relative; height: 125px; transition: transform 0.2s, box-shadow 0.2s;"
+                           onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 12px rgba(5,150,105,0.25)';"
+                           onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';"
+                           title="Klik foto untuk melihat ukuran penuh">
+                        <img src="${src}" alt="Foto Fisik Petugas ${i+1}" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
+                        <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 4px; text-align: center; pointer-events: none;">
+                          🔍 Klik Perbesar
+                        </div>
                       </div>
+                      <button type="button" onclick="window.portal.openLightboxByIndex('officer', ${i})"
+                              style="width: 100%; background: #059669; color: #ffffff; border: none; border-radius: 6px; padding: 5px 8px; font-size: 0.74rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: background 0.2s;"
+                              onmouseover="this.style.background='#047857';"
+                              onmouseout="this.style.background='#059669';"
+                              title="Buka foto ukuran penuh">
+                        <span>🔍 Buka Foto</span>
+                      </button>
                     </div>
                   `;
                 }).join('')}
@@ -3442,15 +3453,24 @@
               <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px;">
                 ${citizenPhotos.map((src, i) => {
                   return `
-                    <div onclick="window.portal.openLightboxByIndex('citizen', ${i})"
-                         style="cursor: pointer; border-radius: 10px; overflow: hidden; border: 2px solid #e2e8f0; background: #0f172a; position: relative; height: 130px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); transition: transform 0.2s, border-color 0.2s;"
-                         onmouseover="this.style.transform='scale(1.03)'; this.style.borderColor='#059669';"
-                         onmouseout="this.style.transform='scale(1)'; this.style.borderColor='#e2e8f0';"
-                         title="Klik untuk melihat foto ukuran penuh">
-                      <img src="${src}" alt="Bukti Pelapor ${i+1}" style="width: 100%; height: 100%; object-fit: cover;">
-                      <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.75)); color: #fff; font-size: 0.68rem; font-weight: 700; padding: 4px 6px; text-align: center; display: flex; align-items: center; justify-content: center; gap: 4px;">
-                        <span>🔍 Perbesar</span>
+                    <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 6px;">
+                      <div onclick="window.portal.openLightboxByIndex('citizen', ${i})"
+                           style="cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid #059669; background: #0f172a; position: relative; height: 125px; transition: transform 0.2s, box-shadow 0.2s;"
+                           onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 12px rgba(5,150,105,0.25)';"
+                           onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';"
+                           title="Klik foto untuk melihat ukuran penuh">
+                        <img src="${src}" alt="Bukti Pelapor ${i+1}" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
+                        <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 4px; text-align: center; pointer-events: none;">
+                          🔍 Klik Perbesar
+                        </div>
                       </div>
+                      <button type="button" onclick="window.portal.openLightboxByIndex('citizen', ${i})"
+                              style="width: 100%; background: #059669; color: #ffffff; border: none; border-radius: 6px; padding: 5px 8px; font-size: 0.74rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: background 0.2s;"
+                              onmouseover="this.style.background='#047857';"
+                              onmouseout="this.style.background='#059669';"
+                              title="Buka foto ukuran penuh">
+                        <span>🔍 Buka Foto</span>
+                      </button>
                     </div>
                   `;
                 }).join('')}
