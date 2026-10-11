@@ -1152,14 +1152,17 @@ function handleViewImage(id, fileId) {
     }
   }
 
-  if (!photoData || photoData === '-' || photoData.includes('viewFoto')) {
+  // Pastikan photoData adalah gambar valid; jika berupa #ERROR!, tautan viewFoto, atau teks kosong, cari langsung dari Foto_Storage
+  const isDirectImage = photoData && (photoData.startsWith('data:image') || photoData.includes('drive.google.com/thumbnail') || photoData.match(/\.(jpeg|jpg|png|webp|gif)/i));
+
+  if (!isDirectImage) {
     try {
       const storageSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_FOTO);
       if (storageSheet) {
         const sData = storageSheet.getDataRange().getValues();
         for (let i = 1; i < sData.length; i++) {
           if (String(sData[i][0]).trim().toUpperCase() === String(idDisplay).trim().toUpperCase()) {
-            photoData = sData[i][2];
+            photoData = String(sData[i][2] || '').trim();
             break;
           }
         }
@@ -1273,11 +1276,15 @@ function handleViewImage(id, fileId) {
       <div class="badge">${idDisplay} &bull; ${status}</div>
     </div>
     <div class="photo-area">
-      ${photoData ? '<img src="' + photoData + '" alt="Bukti Foto Aduan ' + idDisplay + '">' : '<div style="color:#94a3b8;">Foto bukti tidak ditemukan.</div>'}
+      ${(photoData && (photoData.startsWith('data:image') || photoData.startsWith('http')))
+        ? '<img src="' + photoData + '" alt="Bukti Foto Aduan ' + idDisplay + '">'
+        : '<div style="color:#94a3b8; padding: 40px; text-align: center;">📸 Foto bukti tidak ditemukan atau sedang diproses.</div>'}
     </div>
     <div class="footer">
       <div><strong>Kronologi:</strong> ${uraian}</div>
-      ${photoData ? '<a href="' + photoData + '" download="Bukti_Foto_' + idDisplay + '.jpg" class="btn-dl">⬇️ Unduh Foto Asli</a>' : ''}
+      ${(photoData && (photoData.startsWith('data:image') || photoData.startsWith('http')))
+        ? '<a href="' + photoData + '" download="Bukti_Foto_' + idDisplay + '.jpg" class="btn-dl">⬇️ Unduh Foto Asli</a>'
+        : ''}
     </div>
   </div>
 </body>
@@ -1385,7 +1392,7 @@ function bersihkanErrorFoto() {
   var sheet = ss.getSheetByName('Data_Aduan');
   if (!sheet) return;
   var data = sheet.getDataRange().getValues();
-  var webAppUrl = 'https://script.google.com/macros/s/AKfycbwuDJ9X5a27GnVuuiU1keHexKXzG3OITUxwOomwHGt-1S53DdqfAfguDInXwtbh9ljKMw/exec';
+  var webAppUrl = getWebAppUrl();
 
   for (var i = 1; i < data.length; i++) {
     var id = String(data[i][0] || '').trim();
