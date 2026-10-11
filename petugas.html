@@ -2443,7 +2443,48 @@
   <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 
   <!-- Scripts: Data Engine & Portal Controller -->
-  <script src="js/data.js"></script>
+  <script src="js/data.js?v=20261012_04"></script>
+  <script>
+    // Safeguard prototype jika browser masih memuat file js lama dari cache
+    if (typeof AduanDataStore !== 'undefined') {
+      if (typeof AduanDataStore.prototype.mapRemoteRecord !== 'function') {
+        AduanDataStore.prototype.mapRemoteRecord = function(remoteItem) {
+          if (typeof window.mapRemoteAduanRecord === 'function') {
+            return window.mapRemoteAduanRecord(remoteItem, this.aduanList, (id) => this.isDeleted ? this.isDeleted(id) : false);
+          }
+          if (!remoteItem || !remoteItem.id) return null;
+          return {
+            id: String(remoteItem.id).trim().toUpperCase(),
+            timestamp: remoteItem.timestamp || '-',
+            namaPelapor: remoteItem.namaPelapor || 'Masyarakat',
+            noHp: remoteItem.noHp || '-',
+            alamatPelapor: remoteItem.alamatPelapor || '-',
+            kecamatan: remoteItem.kecamatan || 'Nubatukan',
+            desa: remoteItem.desa || '-',
+            lokasiDetail: remoteItem.lokasiDetail || '-',
+            lat: parseFloat(remoteItem.lat || -8.368),
+            lng: parseFloat(remoteItem.lng || 123.558),
+            jenisPencemaran: remoteItem.jenisPencemaran || 'Lainnya',
+            uraian: remoteItem.uraian || '-',
+            sumberDugaan: remoteItem.sumberDugaan || '-',
+            tanggalKejadian: remoteItem.tanggalKejadian || '-',
+            fotoBukti: remoteItem.fotoBukti || remoteItem.linkFoto || '',
+            linkFotoBukti: remoteItem.fotoBukti || remoteItem.linkFoto || '',
+            buktiFotoList: Array.isArray(remoteItem.buktiFotoList) ? remoteItem.buktiFotoList : (remoteItem.fotoBukti ? [remoteItem.fotoBukti] : []),
+            status: remoteItem.status || 'Baru',
+            petugasVerifikasi: remoteItem.petugasVerifikasi || '-',
+            tanggalVerifikasi: remoteItem.tanggalVerifikasi || '-',
+            hasilVerifikasi: remoteItem.hasilVerifikasi || '-',
+            tindakanDLH: remoteItem.tindakanDLH || '-',
+            tanggalSelesai: remoteItem.tanggalSelesai || '-'
+          };
+        };
+      }
+      if (window.aduanStore && typeof window.aduanStore.mapRemoteRecord !== 'function') {
+        window.aduanStore.mapRemoteRecord = AduanDataStore.prototype.mapRemoteRecord.bind(window.aduanStore);
+      }
+    }
+  </script>
   <script>
     /**
      * ===================================================================
@@ -3857,6 +3898,9 @@
 
         try {
           if (window.aduanStore) {
+            if (typeof window.aduanStore.mapRemoteRecord !== 'function' && typeof AduanDataStore !== 'undefined') {
+              window.aduanStore.mapRemoteRecord = AduanDataStore.prototype.mapRemoteRecord.bind(window.aduanStore);
+            }
             const res = await window.aduanStore.syncFromGAS(false);
             if (res && res.success) {
               const remoteCount = res.remoteCount !== undefined ? res.remoteCount : (res.count || 0);
@@ -3869,6 +3913,7 @@
           }
         } catch (e) {
           console.warn('Manual sync error:', e);
+          this.showToast(`Info Sinkronisasi: ${e.message}`, 'warning');
         } finally {
           this.updateKPIs();
           this.renderTable();

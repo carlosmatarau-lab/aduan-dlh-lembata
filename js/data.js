@@ -380,6 +380,75 @@ function parseCsvToAduan(csvText) {
   return result;
 }
 
+// Helper pemetaan aduan remote Google Spreadsheet ke model data aplikasi
+function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) {
+  if (!remoteItem || !remoteItem.id) return null;
+  const cleanId = String(remoteItem.id).trim().toUpperCase();
+
+  if (typeof isDeletedFn === 'function' && isDeletedFn(cleanId)) return null;
+
+  const existing = Array.isArray(currentList) ? currentList.find(x => x && x.id && x.id.trim().toUpperCase() === cleanId) : null;
+
+  const rekamTerakhir = remoteItem.rekamTindakanTerakhir || (
+    (remoteItem.tindakanDLH && remoteItem.tindakanDLH !== '-') ? {
+      waktu: remoteItem.tanggalVerifikasi && remoteItem.tanggalVerifikasi !== '-' ? `${remoteItem.tanggalVerifikasi} 10:00` : (remoteItem.timestamp || '-'),
+      petugas: remoteItem.petugasVerifikasi && remoteItem.petugasVerifikasi !== '-' ? remoteItem.petugasVerifikasi : 'Tim Lapangan DLH',
+      kategori: remoteItem.status === 'Selesai' ? 'Penyelesaian Kasus' : (remoteItem.status === 'Ditindaklanjuti' || remoteItem.status === 'Dalam Penanganan' ? 'Tindakan Lapangan' : 'Verifikasi Lapangan'),
+      status: remoteItem.status || 'Dalam Penanganan',
+      tindakan: remoteItem.tindakanDLH,
+      hasil: remoteItem.hasilVerifikasi !== '-' ? remoteItem.hasilVerifikasi : '',
+      catatan: remoteItem.catatan || ''
+    } : null
+  );
+
+  const existingPhotos = existing ? (Array.isArray(existing.buktiFotoList) ? existing.buktiFotoList : (existing.fotoBukti ? [existing.fotoBukti] : [])) : [];
+  const remotePhotos = Array.isArray(remoteItem.buktiFotoList) && remoteItem.buktiFotoList.length > 0
+    ? remoteItem.buktiFotoList
+    : (remoteItem.linkFoto && remoteItem.linkFoto !== '-' ? [remoteItem.linkFoto] : (remoteItem.fotoBukti && remoteItem.fotoBukti !== '-' ? [remoteItem.fotoBukti] : []));
+
+  let finalPhotos = [];
+  if (existingPhotos.length > 0 && existingPhotos.some(p => typeof p === 'string' && (p.startsWith('data:image') || p.startsWith('http')))) {
+    finalPhotos = existingPhotos;
+  } else if (remotePhotos.length > 0 && remotePhotos.some(p => typeof p === 'string' && p.trim() && p !== '-')) {
+    finalPhotos = remotePhotos;
+  } else {
+    finalPhotos = existingPhotos;
+  }
+  const finalFoto = finalPhotos[0] || '';
+
+  return {
+    id: cleanId,
+    timestamp: remoteItem.timestamp || '-',
+    namaPelapor: remoteItem.namaPelapor || 'Masyarakat',
+    noHp: remoteItem.noHp || '-',
+    alamatPelapor: remoteItem.alamatPelapor || '-',
+    kecamatan: remoteItem.kecamatan || 'Nubatukan',
+    desa: remoteItem.desa || '-',
+    lokasiDetail: remoteItem.lokasiDetail || '-',
+    lat: parseFloat(remoteItem.lat || -8.368),
+    lng: parseFloat(remoteItem.lng || 123.558),
+    jenisPencemaran: remoteItem.jenisPencemaran || 'Lainnya',
+    uraian: remoteItem.uraian || '-',
+    sumberDugaan: remoteItem.sumberDugaan || '-',
+    tanggalKejadian: remoteItem.tanggalKejadian || '-',
+    fotoBukti: finalFoto,
+    linkFotoBukti: finalFoto,
+    buktiFotoList: finalPhotos,
+    status: remoteItem.status || 'Baru',
+    petugasVerifikasi: remoteItem.petugasVerifikasi || '-',
+    tanggalVerifikasi: remoteItem.tanggalVerifikasi || '-',
+    hasilVerifikasi: remoteItem.hasilVerifikasi || '-',
+    tindakanDLH: remoteItem.tindakanDLH || '-',
+    tanggalSelesai: remoteItem.tanggalSelesai || '-',
+    nomorBeritaAcara: remoteItem.nomorBeritaAcara || (existing ? existing.nomorBeritaAcara : '') || '',
+    catatanBeritaAcara: remoteItem.catatanBeritaAcara || (existing ? existing.catatanBeritaAcara : '') || '',
+    fotoKondisiRiil: remoteItem.fotoKondisiRiil || (existing ? existing.fotoKondisiRiil : '') || '',
+    fotoVerifikasiList: Array.isArray(remoteItem.fotoVerifikasiList) ? remoteItem.fotoVerifikasiList : (existing && existing.fotoVerifikasiList ? existing.fotoVerifikasiList : []),
+    rekamTindakanTerakhir: rekamTerakhir,
+    riwayatTindakan: Array.isArray(remoteItem.riwayatTindakan) ? remoteItem.riwayatTindakan : (rekamTerakhir ? [rekamTerakhir] : [])
+  };
+}
+
 // Konfigurasi Kunci Penyimpanan & URL Web App Google Apps Script
 const GAS_CONFIG_KEY = 'dlh_gas_api_url';
 const DELETED_STORAGE_KEY = 'dlh_deleted_aduan_ids';
@@ -387,6 +456,7 @@ const DEFAULT_GAS_API_URL = 'https://script.google.com/macros/s/AKfycbwuDJ9X5a27
 
 class AduanDataStore {
   constructor() {
+    this.mapRemoteRecord = this.mapRemoteRecord.bind(this);
     this.aduanList = [];
     const saved = localStorage.getItem(GAS_CONFIG_KEY);
     // Otomatis sinkronkan dan migrasikan URL lama ke URL deployment baru yang aktif
@@ -513,7 +583,10 @@ class AduanDataStore {
             const parsedData = parseCsvToAduan(csvText);
             if (parsedData.length > 0) {
               const valid = parsedData.filter(p => !this.isDeleted(p.id));
-              this.aduanList = valid.map(item => this.mapRemoteRecord(item)).filter(Boolean);
+              const mapFn = typeof this.mapRemoteRecord === 'function'
+                ? (item) => this.mapRemoteRecord(item)
+                : (item) => mapRemoteAduanRecord(item, this.aduanList, (id) => this.isDeleted(id));
+              this.aduanList = valid.map(mapFn).filter(Boolean);
               this.save();
               this.lastSyncTime = new Date();
               window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent } }));
@@ -539,7 +612,10 @@ class AduanDataStore {
           if (json.data.length > 0) {
             // Sinkronkan seluruh data dari Google Apps Script sebagai Single Source of Truth
             const validItems = json.data.filter(item => !this.isDeleted(item.id));
-            this.aduanList = validItems.map(item => this.mapRemoteRecord(item)).filter(Boolean);
+            const mapFn = typeof this.mapRemoteRecord === 'function'
+              ? (item) => this.mapRemoteRecord(item)
+              : (item) => mapRemoteAduanRecord(item, this.aduanList, (id) => this.isDeleted(id));
+            this.aduanList = validItems.map(mapFn).filter(Boolean);
             this.save();
 
             this.lastSyncTime = new Date();
@@ -1125,5 +1201,10 @@ class AduanDataStore {
   }
 }
 
-// Global instance
+// Global instance & prototype safeguards
+AduanDataStore.prototype.mapRemoteRecord = function(remoteItem) {
+  return mapRemoteAduanRecord(remoteItem, this.aduanList, (id) => this.isDeleted(id));
+};
+window.mapRemoteAduanRecord = mapRemoteAduanRecord;
+window.AduanDataStore = AduanDataStore;
 window.aduanStore = new AduanDataStore();
