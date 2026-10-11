@@ -2948,6 +2948,36 @@
     </div>
   </div>
 
+  <!-- ===================================================================
+       MODAL LIGHTBOX: LIHAT BUKTI FOTO UKURAN PENUH & ZOOM
+       =================================================================== -->
+  <div class="modal-backdrop modal-lightbox" id="modalPhotoLightbox" style="z-index: 99999; background: rgba(11, 17, 32, 0.95); backdrop-filter: blur(8px);">
+    <div style="position: relative; width: 100%; max-width: 920px; height: 92vh; margin: auto; display: flex; flex-direction: column; padding: 12px; box-sizing: border-box;">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: rgba(15, 23, 42, 0.85); border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.12);">
+        <div style="color: #f8fafc; font-weight: 700; font-size: 0.92rem; display: flex; align-items: center; gap: 8px;">
+          <span>📸</span> <span id="lightboxPhotoCaption">Bukti Foto Aduan Lingkungan</span>
+        </div>
+        <div style="display: flex; gap: 8px; align-items: center;">
+          <button type="button" onclick="window.app && window.app.openPhotoInNewWindow()" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600;">
+            ↗ Tab Baru
+          </button>
+          <button type="button" onclick="window.app && window.app.downloadCurrentPhoto()" style="background: #059669; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600;">
+            ⬇️ Unduh
+          </button>
+          <button type="button" onclick="window.app && window.app.closeLightbox()" style="background: #ef4444; color: #fff; border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 1.2rem; line-height: 1; display: flex; align-items: center; justify-content: center;">
+            &times;
+          </button>
+        </div>
+      </div>
+      <div style="flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; background: rgba(0,0,0,0.6); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); position: relative; padding: 10px;" onclick="window.app && window.app.closeLightbox()">
+        <img id="lightboxPhotoImg" src="" alt="Bukti Foto Penuh" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); cursor: zoom-in; transition: transform 0.2s;" onclick="event.stopPropagation(); window.app && window.app.toggleZoomPhoto(this)">
+      </div>
+      <div style="text-align: center; color: #94a3b8; font-size: 0.75rem; margin-top: 8px;">
+        💡 Klik gambar untuk memperbesar (Zoom In / Out) &bull; Klik area gelap atau tombol &times; untuk menutup
+      </div>
+    </div>
+  </div>
+
   <!-- ===============================================================
        MODAL: KAMERA LANGSUNG AMBIL BUKTI FOTO
        =============================================================== -->
@@ -3060,9 +3090,9 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Application Logic (Embedded directly for 100% fail-proof execution on Vercel, Netlify & GitHub) -->
-  <script src="js/data.js?v=20261012_04"></script>
-  <script src="js/map.js?v=20261012_04"></script>
-  <script src="js/app.js?v=20261012_04"></script>
+  <script src="js/data.js?v=20261012_06"></script>
+  <script src="js/map.js?v=20261012_06"></script>
+  <script src="js/app.js?v=20261012_06"></script>
 </body>
 
 </html>

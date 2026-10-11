@@ -367,7 +367,14 @@ function handleGetAll() {
       const sData = storageSheet.getDataRange().getValues();
       for (let i = 1; i < sData.length; i++) {
         const sid = String(sData[i][0] || '').trim().toUpperCase();
-        const sb64 = String(sData[i][2] || '').trim();
+        let sb64 = '';
+        for (let c = 1; c < sData[i].length; c++) {
+          const val = String(sData[i][c] || '').trim();
+          if (val.startsWith('data:image')) {
+            sb64 = val;
+            break;
+          }
+        }
         if (sid && sb64) storageMap[sid] = sb64;
       }
     }
@@ -409,7 +416,14 @@ function handleGetById(id) {
       const sData = storageSheet.getDataRange().getValues();
       for (let i = 1; i < sData.length; i++) {
         const sid = String(sData[i][0] || '').trim().toUpperCase();
-        const sb64 = String(sData[i][2] || '').trim();
+        let sb64 = '';
+        for (let c = 1; c < sData[i].length; c++) {
+          const val = String(sData[i][c] || '').trim();
+          if (val.startsWith('data:image')) {
+            sb64 = val;
+            break;
+          }
+        }
         if (sid && sb64) storageMap[sid] = sb64;
       }
     }
@@ -519,17 +533,24 @@ function handleAddAduan(formData) {
         Logger.log('Drive error: ' + e.message);
       }
 
-      // Simpan cadangan data gambar Base64 ke sheet Foto_Storage
-      try {
-        const storageSheet = getOrCreateSheet(SHEET_NAME_FOTO, ['ID_Aduan', 'Timestamp', 'Base64_Data']);
-        storageSheet.appendRow([newId, now, trimmed]);
-      } catch (e) {
-        Logger.log('Storage backup error: ' + e.message);
-      }
-
       targetUrl = (driveUrl && driveUrl.startsWith('http'))
         ? driveUrl
         : (webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(newId));
+
+      // Simpan cadangan data gambar Base64 ke sheet Foto_Storage (Kolom C = Link Klik, Kolom D = Base64 Data)
+      try {
+        const storageSheet = getOrCreateSheet(SHEET_NAME_FOTO, ['ID_Aduan', 'Timestamp', 'Link_Buka_Foto', 'Base64_Data']);
+        storageSheet.appendRow([newId, now, targetUrl, trimmed]);
+        const lastRow = storageSheet.getLastRow();
+        const cell = storageSheet.getRange(lastRow, 3);
+        const richText = SpreadsheetApp.newRichTextValue()
+          .setText("📸 Buka Foto Bukti (" + newId + ")")
+          .setLinkUrl(targetUrl)
+          .build();
+        cell.setRichTextValue(richText);
+      } catch (e) {
+        Logger.log('Storage backup error: ' + e.message);
+      }
     }
   }
 
@@ -1379,38 +1400,98 @@ function handleFixPhotoLinks() {
  * Alias fungsi untuk bisa dijalankan langsung dengan memilih fungsi ini dan klik "Run / Jalankan" di editor Apps Script
  */
 function fixAllPhotos() {
-  const res = handleFixPhotoLinks();
+  const res = bersihkanErrorFoto();
   Logger.log(JSON.stringify(res));
   return res;
 }
 
 /**
- * Fungsi instan dan sederhana untuk membersihkan tulisan #ERROR! di kolom foto
+ * Fungsi instan dan tuntas untuk merapikan sheet Data_Aduan dan sheet Foto_Storage
+ * Membersihkan #ERROR!, memindahkan Base64 yang panjang ke kolom D, dan membuat tautan klik rapi di kolom C
  */
 function bersihkanErrorFoto() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
-  var sheet = ss.getSheetByName('Data_Aduan');
-  if (!sheet) return;
-  var data = sheet.getDataRange().getValues();
   var webAppUrl = getWebAppUrl();
+  var fixedAduan = 0;
+  var fixedStorage = 0;
 
-  for (var i = 1; i < data.length; i++) {
-    var id = String(data[i][0] || '').trim();
-    if (!id) continue;
-    var targetUrl = webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(id);
-    var cell = sheet.getRange(i + 1, 15); // Kolom 15 (O) = Link_Foto_Bukti
-    cell.clear({ contentsOnly: true });
+  // 1. RAPIKAN SHEET "Data_Aduan" (Kolom O / Link_Foto_Bukti)
+  var sheet = ss.getSheetByName(SHEET_NAME_ADUAN);
+  if (sheet) {
+    var data = sheet.getDataRange().getValues();
+    var colFotoIdx = HEADERS_ADUAN.indexOf('Link_Foto_Bukti');
+    if (colFotoIdx === -1) colFotoIdx = 14;
 
-    try {
-      var richText = SpreadsheetApp.newRichTextValue()
-        .setText('📸 Buka Foto Bukti (' + id + ')')
-        .setLinkUrl(targetUrl)
-        .build();
-      cell.setRichTextValue(richText);
-    } catch (e) {
-      cell.setValue(targetUrl);
+    for (var i = 1; i < data.length; i++) {
+      var id = String(data[i][0] || '').trim();
+      if (!id) continue;
+      var targetUrl = webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(id);
+      var cell = sheet.getRange(i + 1, colFotoIdx + 1);
+      cell.clear({ contentsOnly: true });
+
+      try {
+        var richText = SpreadsheetApp.newRichTextValue()
+          .setText('📸 Buka Foto Bukti (' + id + ')')
+          .setLinkUrl(targetUrl)
+          .build();
+        cell.setRichTextValue(richText);
+      } catch (e) {
+        cell.setValue(targetUrl);
+      }
+      fixedAduan++;
     }
   }
-  Logger.log('SELESAI! Seluruh #ERROR! di kolom Link_Foto_Bukti berhasil dibersihkan.');
+
+  // 2. RAPIKAN SHEET "Foto_Storage"
+  var storageSheet = ss.getSheetByName(SHEET_NAME_FOTO);
+  if (storageSheet) {
+    var sData = storageSheet.getDataRange().getValues();
+    var numRows = sData.length;
+
+    // Set header resmi 4 kolom
+    storageSheet.getRange(1, 1, 1, 4).setValues([['ID_Aduan', 'Timestamp', 'Link_Buka_Foto', 'Base64_Data']]);
+    storageSheet.getRange(1, 1, 1, 4).setFontWeight('bold').setBackground('#065f46').setFontColor('#fff');
+
+    for (var s = 1; s < numRows; s++) {
+      var sid = String(sData[s][0] || '').trim();
+      if (!sid) continue;
+      var stime = String(sData[s][1] || '').trim();
+
+      // Cari string base64 yang sudah tersimpan
+      var b64 = '';
+      for (var c = 1; c < sData[s].length; c++) {
+        var v = String(sData[s][c] || '').trim();
+        if (v.startsWith('data:image')) {
+          b64 = v;
+          break;
+        }
+      }
+
+      var targetUrl = webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(sid);
+
+      // Tulis kolom C sebagai tautan hyperlink yang bisa diklik langsung di browser
+      var linkCell = storageSheet.getRange(s + 1, 3);
+      linkCell.clear({ contentsOnly: true });
+      try {
+        var richText = SpreadsheetApp.newRichTextValue()
+          .setText('📸 Buka Foto Bukti (' + sid + ')')
+          .setLinkUrl(targetUrl)
+          .build();
+        linkCell.setRichTextValue(richText);
+      } catch (e) {
+        linkCell.setValue(targetUrl);
+      }
+
+      // Pastikan data teks Base64 tersimpan rapi di kolom D
+      if (b64) {
+        storageSheet.getRange(s + 1, 4).setValue(b64);
+      }
+      fixedStorage++;
+    }
+  }
+
+  var msg = 'SELESAI TUNTAS! Diperbaiki ' + fixedAduan + ' baris di Data_Aduan dan ' + fixedStorage + ' baris di Foto_Storage.';
+  Logger.log(msg);
+  return { success: true, fixedAduan: fixedAduan, fixedStorage: fixedStorage, message: msg };
 }
 
