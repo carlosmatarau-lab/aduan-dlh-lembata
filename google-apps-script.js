@@ -892,6 +892,7 @@ function handleVerifyResetPin(data) {
  * Dipanggil via Web App API (GET/POST ?action=resetToZero) atau tombol petugas.
  */
 function handleResetToZero() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
   const lastRow = sheet.getLastRow();
   let deletedCount = 0;
@@ -901,14 +902,35 @@ function handleResetToZero() {
     sheet.deleteRows(2, deletedCount);
   }
 
+  // Bersihkan juga baris data pada sheet default bawaan "Sheet1" jika ada sisa uji coba
+  const sheet1 = ss.getSheetByName('Sheet1');
+  if (sheet1 && sheet1.getLastRow() > 1) {
+    sheet1.deleteRows(2, sheet1.getLastRow() - 1);
+  }
+
   writeLog('RESET_TO_ZERO', 'Seluruh data aduan (' + deletedCount + ' baris) dikosongkan. Database 0 aduan siap untuk pengujian awal baru.');
 
   return {
     success: true,
-    message: 'Data spreadsheet berhasil dikosongkan menjadi 0 aduan. Sistem siap untuk pengujian awal baru.',
+    message: 'Data spreadsheet berhasil dikosongkan menjadi 0 aduan di seluruh sheet. Sistem siap untuk pengujian awal baru.',
     deletedCount: deletedCount,
     remainingRows: 0
   };
+}
+
+/**
+ * Sinkronisasi seluruh sheet agar sesuai dengan sheet Data_Aduan
+ */
+function syncAllSheets() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
+  const mainSheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
+  const sheet1 = ss.getSheetByName('Sheet1');
+  if (sheet1) {
+    // Samakan header Sheet1 dengan Data_Aduan jika digunakan
+    sheet1.clearContents();
+    sheet1.getRange(1, 1, 1, HEADERS_ADUAN.length).setValues([HEADERS_ADUAN]);
+  }
+  return { success: true, message: 'Seluruh sheet berhasil disinkronkan.' };
 }
 
 /**
@@ -916,6 +938,7 @@ function handleResetToZero() {
  */
 function resetDatabaseToZero() {
   const result = handleResetToZero();
+  syncAllSheets();
   Logger.log(JSON.stringify(result));
   return result;
 }

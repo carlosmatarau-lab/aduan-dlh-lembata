@@ -24,6 +24,7 @@ class DLHApp {
     this.setupGPSDetection();
     this.setupUploadPreview();
     this.setupTableAndFilters();
+    this.setupQuickTracker();
     this.setupModals();
     this.setupCloudSync();
     this.setupRealtimeSync();
@@ -815,6 +816,14 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         this.renderTable();
         if (window.lembataMap) window.lembataMap.renderMarkers();
 
+        // 🌟 TAMPILKAN ANIMASI PENGIRIMAN LAPORAN (FLIGHT & PULSE EFFECT)
+        const animOverlay = document.getElementById('submitAnimOverlay');
+        if (animOverlay) {
+          animOverlay.classList.add('active');
+          await new Promise(resolve => setTimeout(resolve, 1300));
+          animOverlay.classList.remove('active');
+        }
+
         // Tampilkan Modal Sukses Aduan
         const modalSuccess = document.getElementById('modalSuccessAduan');
         const ticketDisplay = document.getElementById('successTicketId');
@@ -1087,6 +1096,100 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
     if (elBaru) elBaru.textContent = stats.baru;
     if (elProses) elProses.textContent = stats.dalamProses;
     if (elSelesai) elSelesai.textContent = stats.selesai;
+
+    // Metrik Dashboard Publik Masyarakat
+    const userTotal = document.getElementById('userKpiTotal');
+    const userProses = document.getElementById('userKpiProses');
+    const userSelesai = document.getElementById('userKpiSelesai');
+    if (userTotal) userTotal.textContent = stats.total;
+    if (userProses) userProses.textContent = stats.dalamProses;
+    if (userSelesai) userSelesai.textContent = stats.selesai;
+  }
+
+  /* ===================================================================
+     6B. DASHBOARD MASYARAKAT: QUICK TRACKER & CATEGORY PICKER
+     =================================================================== */
+  setupQuickTracker() {
+    const btnTrack = document.getElementById('btnQuickTrack');
+    const inputTrack = document.getElementById('quickTrackInput');
+    const resultBox = document.getElementById('quickTrackResult');
+    if (!btnTrack || !inputTrack || !resultBox) return;
+
+    const doTrack = async () => {
+      const q = inputTrack.value.trim().toUpperCase();
+      if (!q) {
+        this.showToast('⚠️ Masukkan nomor ID tiket yang ingin dilacak.', 'warning');
+        inputTrack.focus();
+        return;
+      }
+
+      btnTrack.disabled = true;
+      btnTrack.innerHTML = '<span>⏳</span> Melacak...';
+
+      if (window.aduanStore && window.aduanStore.hasGasConfigured()) {
+        try { await window.aduanStore.syncFromGAS(true); } catch(e) {}
+      }
+
+      btnTrack.disabled = false;
+      btnTrack.innerHTML = '<span>Lacak Tiket</span>';
+
+      const item = window.aduanStore ? window.aduanStore.getById(q) : null;
+      if (!item) {
+        resultBox.style.display = 'block';
+        resultBox.innerHTML = `
+          <div style="text-align: center; padding: 12px 8px; color: #64748b;">
+            <div style="font-size: 1.5rem; margin-bottom: 4px;">🔍</div>
+            <strong style="color: #334155; font-size: 0.9rem;">Tiket "${q}" Belum Ditemukan</strong>
+            <p style="font-size: 0.78rem; margin-top: 4px; color: #64748b;">Pastikan nomor ID tiket sudah tepat (contoh: ADU-LMB-2026-001) atau laporan baru saja dibuat dan sedang disinkronkan.</p>
+          </div>
+        `;
+        return;
+      }
+
+      resultBox.style.display = 'block';
+      resultBox.innerHTML = `
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 8px;">
+          <div>
+            <span style="font-size: 0.7rem; color: #64748b; font-weight: 700;">NO. TIKET RESMI:</span>
+            <div style="font-family: monospace; font-weight: 900; color: #059669; font-size: 1.15rem;">${item.id}</div>
+          </div>
+          <span class="badge ${this.getStatusBadgeClass(item.status)}">${item.status || 'Aduan Masuk'}</span>
+        </div>
+        <div style="font-size: 0.82rem; color: #334155; line-height: 1.5;">
+          <div><strong>Jenis:</strong> <span style="color:#059669; font-weight:700;">${item.jenisPencemaran}</span></div>
+          <div><strong>Lokasi:</strong> Kec. ${item.kecamatan}, Desa ${item.desa}</div>
+          <div><strong>Waktu Lapor:</strong> ${item.timestamp}</div>
+          ${item.petugasVerifikasi && item.petugasVerifikasi !== '-' ? `<div style="margin-top: 4px; color: #047857;"><strong>Petugas DLH:</strong> ${item.petugasVerifikasi}</div>` : '<div style="margin-top: 4px; color: #d97706;"><em>Menunggu penugasan tim verifikator lapangan DLH.</em></div>'}
+          ${item.tindakanDLH && item.tindakanDLH !== '-' ? `<div style="margin-top: 2px; color: #0284c7;"><strong>Tindak Lanjut:</strong> ${item.tindakanDLH}</div>` : ''}
+        </div>
+      `;
+    };
+
+    btnTrack.addEventListener('click', doTrack);
+    inputTrack.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter') {
+        e.preventDefault();
+        doTrack();
+      }
+    });
+  }
+
+  selectCategoryFromDashboard(categoryName) {
+    const chips = document.querySelectorAll('.chip-item');
+    chips.forEach(chip => {
+      const radio = chip.querySelector('input[type="radio"]');
+      if (radio && radio.value.toLowerCase().includes(categoryName.toLowerCase())) {
+        chips.forEach(c => c.classList.remove('active'));
+        chip.classList.add('active');
+        radio.checked = true;
+      }
+    });
+
+    const formCard = document.querySelector('.form-card');
+    if (formCard) {
+      formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    this.showToast(`🎯 Kategori "${categoryName}" dipilih! Silakan lengkapi formulir laporan di bawah.`, 'info');
   }
 
   /* ===================================================================
