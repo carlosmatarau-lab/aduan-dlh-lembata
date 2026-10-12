@@ -134,6 +134,9 @@ function doGet(e) {
 
       case 'resetData':
       case 'resetToZero':
+      case 'cleanupStorage':
+      case 'resetFotoStorage':
+      case 'purgeOldPhotos':
         result = handleResetToZero();
         break;
 
@@ -296,17 +299,22 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
     if (match) linkFoto = match[1];
   }
 
-  // Cek apakah ada data gambar di storage cadangan (Foto_Storage)
+  // Prioritaskan nilai tautan gambar langsung dari sheet (Drive thumbnail atau URL valid)
   let fotoDirect = linkFoto;
-  const storageLookup = fotoStorageMap || {};
-  const backupFoto = storageLookup[id.trim().toUpperCase()];
-
-  if (backupFoto && typeof backupFoto === 'string' && backupFoto.startsWith('data:image')) {
-    fotoDirect = backupFoto;
-  } else if (linkFoto.includes('drive.google.com/file/d/')) {
+  if (linkFoto.includes('drive.google.com/file/d/')) {
     const dMatch = linkFoto.match(/\/file\/d\/([a-zA-Z0-9-_]+)/);
     if (dMatch) {
       fotoDirect = 'https://drive.google.com/thumbnail?id=' + dMatch[1] + '&sz=w1200';
+    }
+  }
+
+  // Hanya jika fotoDirect kosong atau masih berupa link viewFoto/formula usang, ambil cadangan Foto_Storage
+  const isDirectImage = fotoDirect && (fotoDirect.startsWith('data:image') || fotoDirect.includes('drive.google.com/thumbnail') || fotoDirect.match(/\.(jpeg|jpg|png|webp|gif)/i));
+  if (!isDirectImage) {
+    const storageLookup = fotoStorageMap || {};
+    const backupFoto = storageLookup[id.trim().toUpperCase()];
+    if (backupFoto && typeof backupFoto === 'string' && backupFoto.startsWith('data:image')) {
+      fotoDirect = backupFoto;
     }
   }
 
@@ -317,10 +325,19 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
     if (match) linkFotoRiil = match[1];
   }
   let fotoRiilDirect = linkFotoRiil;
-  const officerPhotoKey = (id.trim() + '_PETUGAS').toUpperCase();
-  const backupFotoRiil = storageLookup[officerPhotoKey];
-  if (backupFotoRiil && typeof backupFotoRiil === 'string' && backupFotoRiil.startsWith('data:image')) {
-    fotoRiilDirect = backupFotoRiil;
+  if (linkFotoRiil.includes('drive.google.com/file/d/')) {
+    const dMatchRiil = linkFotoRiil.match(/\/file\/d\/([a-zA-Z0-9-_]+)/);
+    if (dMatchRiil) {
+      fotoRiilDirect = 'https://drive.google.com/thumbnail?id=' + dMatchRiil[1] + '&sz=w1200';
+    }
+  }
+  const isDirectOfficerImage = fotoRiilDirect && (fotoRiilDirect.startsWith('data:image') || fotoRiilDirect.includes('drive.google.com/thumbnail') || fotoRiilDirect.match(/\.(jpeg|jpg|png|webp|gif)/i));
+  if (!isDirectOfficerImage) {
+    const officerPhotoKey = (id.trim() + '_PETUGAS').toUpperCase();
+    const backupFotoRiil = (fotoStorageMap || {})[officerPhotoKey];
+    if (backupFotoRiil && typeof backupFotoRiil === 'string' && backupFotoRiil.startsWith('data:image')) {
+      fotoRiilDirect = backupFotoRiil;
+    }
   }
 
   const currentStatus = String(row['Status'] || 'Baru').trim();
@@ -412,9 +429,9 @@ function handleGetAll() {
     const storageSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_FOTO);
     if (storageSheet) {
       const sData = storageSheet.getDataRange().getValues();
-      for (let i = 1; i < sData.length; i++) {
+      for (let i = sData.length - 1; i >= 1; i--) {
         const sid = String(sData[i][0] || '').trim().toUpperCase();
-        if (!sid) continue;
+        if (!sid || storageMap[sid]) continue; // Simpan entri TERBARU saja
         let sb64 = '';
         // Gabungkan seluruh chunk mulai dari kolom D (index 3) ke kanan
         for (let c = 3; c < sData[i].length; c++) {
@@ -545,8 +562,103 @@ function handleGetStats() {
 
 
 /**
- * Menyimpan data gambar Base64 ke folder khusus di Google Drive
- * Mengembalikan URL view publik jika berhasil
+ * Menghapus file di Google Drive berdasarkan URL Drive
+ */
+function trashDriveFileByUrl(url) {
+  if (!url || typeof url !== 'string') return;
+  try {
+    let fileId = '';
+    const match1 = url.match(/\/file\/d\/([a-zA-Z0-9-_]+)/);
+    const match2 = url.match(/[?&]id=([a-zA-Z0-9-_]+)/);
+    if (match1) fileId = match1[1];
+    else if (match2) fileId = match2[1];
+    if (fileId) {
+      DriveApp.getFileById(fileId).setTrashed(true);
+    }
+  } catch (e) {
+    Logger.log('trashDriveFileByUrl error: ' + e.message);
+  }
+}
+
+/**
+ * Menghapus seluruh file di folder Drive yang mengandung ID aduan
+ */
+function deleteDriveFilesForId(idAduan) {
+  if (!idAduan || typeof idAduan !== 'string') return;
+  const cleanId = idAduan.trim().toUpperCase();
+  if (!cleanId) return;
+  try {
+    const folders = ['Dokumentasi_Foto_Aduan_DLH_Lembata', 'SILAPOR_DLH_FOTO_BUKTI'];
+    folders.forEach(function(fName) {
+      try {
+        const fIter = DriveApp.getFoldersByName(fName);
+        while (fIter.hasNext()) {
+          const fld = fIter.next();
+          const files = fld.getFiles();
+          while (files.hasNext()) {
+            const file = files.next();
+            const n = file.getName().toUpperCase();
+            if (n.indexOf(cleanId) !== -1) {
+              file.setTrashed(true);
+            }
+          }
+        }
+      } catch (e) {}
+    });
+  } catch (err) {
+    Logger.log('deleteDriveFilesForId error: ' + err.message);
+  }
+}
+
+/**
+ * Menghapus seluruh file foto di Drive dalam folder SILAPOR (Pembersihan Total)
+ */
+function purgeAllDrivePhotos() {
+  try {
+    const folders = ['Dokumentasi_Foto_Aduan_DLH_Lembata', 'SILAPOR_DLH_FOTO_BUKTI'];
+    folders.forEach(function(fName) {
+      try {
+        const fIter = DriveApp.getFoldersByName(fName);
+        while (fIter.hasNext()) {
+          const fld = fIter.next();
+          const files = fld.getFiles();
+          while (files.hasNext()) {
+            const file = files.next();
+            file.setTrashed(true);
+          }
+        }
+      } catch (e) {}
+    });
+  } catch (err) {
+    Logger.log('purgeAllDrivePhotos error: ' + err.message);
+  }
+}
+
+/**
+ * Menghapus baris cache foto dari sheet Foto_Storage untuk ID aduan tertentu
+ */
+function purgeFotoStorage(idAduan) {
+  if (!idAduan) return;
+  try {
+    const storageSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_FOTO);
+    if (!storageSheet || storageSheet.getLastRow() <= 1) return;
+    const target = String(idAduan).trim().toUpperCase();
+    const targetPetugas = target + '_PETUGAS';
+    const sData = storageSheet.getDataRange().getValues();
+    for (let i = sData.length - 1; i >= 1; i--) {
+      const rowId = String(sData[i][0] || '').trim().toUpperCase();
+      if (rowId === target || rowId === targetPetugas) {
+        storageSheet.deleteRow(i + 1);
+      }
+    }
+  } catch (e) {
+    Logger.log('purgeFotoStorage error: ' + e.message);
+  }
+}
+
+/**
+ * Menyimpan data gambar Base64 ke folder Google Drive resmi DLH Lembata
+ * Mengembalikan tautan publik Google Drive yang bisa dibuka langsung di browser
  */
 function saveBase64ImageToDrive(base64Data, idAduan) {
   try {
@@ -560,11 +672,11 @@ function saveBase64ImageToDrive(base64Data, idAduan) {
     const contentType = mimeMatch ? mimeMatch[1] : 'image/jpeg';
     const rawBase64 = base64Data.substring(commaIdx + 1);
     const decodedBytes = Utilities.base64Decode(rawBase64);
-    const ext = contentType.includes('png') ? '.png' : '.jpg';
+    const ext = contentType.includes('png') ? '.png' : (contentType.includes('webp') ? '.webp' : '.jpg');
     const filename = 'Bukti_' + (idAduan || 'Foto') + '_' + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyyMMdd_HHmmss') + ext;
     const blob = Utilities.newBlob(decodedBytes, contentType, filename);
 
-    const folderName = 'SILAPOR_DLH_FOTO_BUKTI';
+    const folderName = 'Dokumentasi_Foto_Aduan_DLH_Lembata';
     let folder;
     const folders = DriveApp.getFoldersByName(folderName);
     if (folders.hasNext()) {
@@ -575,7 +687,7 @@ function saveBase64ImageToDrive(base64Data, idAduan) {
 
     const file = folder.createFile(blob);
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    return 'https://drive.google.com/uc?export=view&id=' + file.getId();
+    return file.getUrl();
   } catch (e) {
     Logger.log('DriveApp save info: ' + e.message);
     return '';
@@ -590,6 +702,10 @@ function handleAddAduan(formData) {
 
   // Gunakan ID dari formulir jika ada, atau generate baru
   const newId = (formData.id && String(formData.id).trim()) ? String(formData.id).trim() : generateNewId(sheet);
+
+  // Hapus sisa foto/cache lama jika ada ID yang sama sebelumnya (Zero Ghost Photos)
+  purgeFotoStorage(newId);
+  deleteDriveFilesForId(newId);
 
   // Generate timestamp saat ini
   const now = Utilities.formatDate(
@@ -798,57 +914,71 @@ function handleUpdateVerifikasi(updateData) {
   }
 
   // Foto Kondisi Riil Pemeriksaan Petugas
-  let rawFotoRiil = updateData.fotoKondisiRiil || (Array.isArray(updateData.fotoVerifikasiList) ? updateData.fotoVerifikasiList[0] : '') || '';
-  if (rawFotoRiil && typeof rawFotoRiil === 'string' && rawFotoRiil.trim() && colFotoRiil !== -1) {
-    const trimmedRiil = rawFotoRiil.trim();
-    let targetRiilUrl = '';
-    const officerPhotoId = targetId + '_PETUGAS';
+  const officerPhotoId = targetId + '_PETUGAS';
+  const isUnverifiedStatus = (updateData.status === 'Baru' || updateData.status === 'Aduan Diterima' || updateData.status === 'Verifikasi Administrasi');
 
-    if (trimmedRiil.startsWith('http')) {
-      targetRiilUrl = trimmedRiil;
-    } else if (trimmedRiil.startsWith('data:image')) {
-      const webAppUrl = getWebAppUrl();
-      let driveUrl = '';
-      try {
-        driveUrl = saveBase64ImageToDrive(trimmedRiil, officerPhotoId);
-      } catch (e) { }
+  if (isUnverifiedStatus) {
+    if (colFotoRiil !== -1) sheet.getRange(targetRowIndex, colFotoRiil + 1).setValue('');
+    if (colNomorBA !== -1) sheet.getRange(targetRowIndex, colNomorBA + 1).setValue('');
+    if (colCatatanBA !== -1) sheet.getRange(targetRowIndex, colCatatanBA + 1).setValue('');
+    purgeFotoStorage(officerPhotoId);
+    deleteDriveFilesForId(officerPhotoId);
+  } else {
+    let rawFotoRiil = updateData.fotoKondisiRiil || (Array.isArray(updateData.fotoVerifikasiList) ? updateData.fotoVerifikasiList[0] : '') || '';
+    if (rawFotoRiil && typeof rawFotoRiil === 'string' && rawFotoRiil.trim() && colFotoRiil !== -1) {
+      const trimmedRiil = rawFotoRiil.trim();
+      let targetRiilUrl = '';
 
-      targetRiilUrl = (driveUrl && driveUrl.startsWith('http'))
-        ? driveUrl
-        : (webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(officerPhotoId));
+      // Bersihkan foto petugas lama sebelum menyimpan foto baru
+      purgeFotoStorage(officerPhotoId);
+      deleteDriveFilesForId(officerPhotoId);
 
-      // Simpan cadangan data gambar petugas ke Foto_Storage dengan chunking aman
-      try {
-        const storageSheet = getOrCreateSheet(SHEET_NAME_FOTO, ['ID_Aduan', 'Timestamp', 'Link_Buka_Foto', 'Base64_Data']);
-        const nowStr = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm');
-        const CHUNK_SIZE = 40000;
-        const rowData = [officerPhotoId, nowStr, targetRiilUrl];
-        for (let k = 0; k < trimmedRiil.length; k += CHUNK_SIZE) {
-          rowData.push(trimmedRiil.substring(k, k + CHUNK_SIZE));
+      if (trimmedRiil.startsWith('http')) {
+        targetRiilUrl = trimmedRiil;
+      } else if (trimmedRiil.startsWith('data:image')) {
+        const webAppUrl = getWebAppUrl();
+        let driveUrl = '';
+        try {
+          driveUrl = saveBase64ImageToDrive(trimmedRiil, officerPhotoId);
+        } catch (e) { }
+
+        targetRiilUrl = (driveUrl && driveUrl.startsWith('http'))
+          ? driveUrl
+          : (webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(officerPhotoId));
+
+        // Simpan cadangan data gambar petugas ke Foto_Storage dengan chunking aman
+        try {
+          const storageSheet = getOrCreateSheet(SHEET_NAME_FOTO, ['ID_Aduan', 'Timestamp', 'Link_Buka_Foto', 'Base64_Data']);
+          const nowStr = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm');
+          const CHUNK_SIZE = 40000;
+          const rowData = [officerPhotoId, nowStr, targetRiilUrl];
+          for (let k = 0; k < trimmedRiil.length; k += CHUNK_SIZE) {
+            rowData.push(trimmedRiil.substring(k, k + CHUNK_SIZE));
+          }
+          storageSheet.appendRow(rowData);
+          const lastRow = storageSheet.getLastRow();
+          const cell = storageSheet.getRange(lastRow, 3);
+          const richText = SpreadsheetApp.newRichTextValue()
+            .setText("📸 Buka Foto Petugas (" + targetId + ")")
+            .setLinkUrl(targetRiilUrl)
+            .build();
+          cell.setRichTextValue(richText);
+        } catch (e) {
+          Logger.log('Officer storage backup error: ' + e.message);
         }
-        storageSheet.appendRow(rowData);
-        const lastRow = storageSheet.getLastRow();
-        const cell = storageSheet.getRange(lastRow, 3);
-        const richText = SpreadsheetApp.newRichTextValue()
-          .setText("📸 Buka Foto Petugas (" + targetId + ")")
-          .setLinkUrl(targetRiilUrl)
-          .build();
-        cell.setRichTextValue(richText);
-      } catch (e) {
-        Logger.log('Officer storage backup error: ' + e.message);
       }
-    }
 
-    if (targetRiilUrl) {
-      const cellRiil = sheet.getRange(targetRowIndex, colFotoRiil + 1);
-      try {
-        const richText = SpreadsheetApp.newRichTextValue()
-          .setText("📸 Buka Foto Petugas (" + targetId + ")")
-          .setLinkUrl(targetRiilUrl)
-          .build();
-        cellRiil.setRichTextValue(richText);
-      } catch (e) {
-        cellRiil.setValue(targetRiilUrl);
+      if (targetRiilUrl) {
+        const cellRiil = sheet.getRange(targetRowIndex, colFotoRiil + 1);
+        try {
+          const richText = SpreadsheetApp.newRichTextValue()
+            .setText("📸 Buka Foto Petugas (" + targetId + ")")
+            .setLinkUrl(targetRiilUrl)
+            .build();
+          cellRiil.setRichTextValue(richText);
+        } catch (e) {
+          cellRiil.setValue(targetRiilUrl);
+        }
       }
     }
   }
@@ -882,37 +1012,43 @@ function handleUpdateVerifikasi(updateData) {
 // HANDLER AKSI: HAPUS ADUAN (POST / GET)
 // ==================================================================================
 function handleDeleteAduan(data) {
-  const targetId = String(data.id || '').trim().toLowerCase();
+  const targetId = String(data.id || '').trim();
   if (!targetId) {
     return { success: false, error: 'Parameter "id" wajib diisi untuk menghapus aduan.' };
   }
 
   const sheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
   const rows = sheet.getDataRange().getValues();
-  if (rows.length <= 1) {
-    return { success: true, message: 'Sheet kosong atau hanya ada header.', deletedCount: 0 };
-  }
-
-  const headers = rows[0];
-  const colId = headers.indexOf('ID_Aduan');
-  if (colId === -1) {
-    return { success: false, error: 'Kolom ID_Aduan tidak ditemukan di spreadsheet.' };
-  }
-
   let deletedCount = 0;
-  // Telusuri dari baris terbawah ke atas untuk menghapus dengan aman
-  for (let i = rows.length - 1; i >= 1; i--) {
-    if (String(rows[i][colId]).trim().toLowerCase() === targetId) {
-      sheet.deleteRow(i + 1);
-      deletedCount++;
+
+  if (rows.length > 1) {
+    const headers = rows[0];
+    const colId = headers.indexOf('ID_Aduan');
+    const colFoto = headers.indexOf('Link_Foto_Bukti');
+    const colFotoRiil = headers.indexOf('Foto_Kondisi_Riil');
+
+    if (colId !== -1) {
+      for (let i = rows.length - 1; i >= 1; i--) {
+        if (String(rows[i][colId]).trim().toUpperCase() === targetId.toUpperCase()) {
+          // Buang file foto yang tertaut di Drive jika ada
+          if (colFoto !== -1) trashDriveFileByUrl(String(rows[i][colFoto] || ''));
+          if (colFotoRiil !== -1) trashDriveFileByUrl(String(rows[i][colFotoRiil] || ''));
+          sheet.deleteRow(i + 1);
+          deletedCount++;
+        }
+      }
     }
   }
+
+  // Bersihkan dari Foto_Storage dan Google Drive permanen
+  purgeFotoStorage(targetId);
+  deleteDriveFilesForId(targetId);
 
   writeLog('ADUAN_DIHAPUS', 'ID: ' + targetId + ' | Baris dihapus: ' + deletedCount);
 
   return {
     success: true,
-    message: 'Aduan ' + targetId + ' berhasil dihapus dari spreadsheet (' + deletedCount + ' baris dihapus).',
+    message: 'Aduan ' + targetId + ' beserta seluruh foto di Drive & Foto_Storage berhasil dihapus permanen (' + deletedCount + ' baris dihapus).',
     deletedCount: deletedCount
   };
 }
@@ -922,25 +1058,50 @@ function handleDeleteAduan(data) {
 // HANDLER AKSI: KOSONGKAN DATABASE / RESET KE 0 ADUAN
 // ==================================================================================
 /**
- * Mengosongkan seluruh baris data aduan di Google Spreadsheet (menyisakan baris header).
+ * Mengosongkan seluruh baris data aduan di Google Spreadsheet & Foto_Storage & Google Drive.
  * Digunakan untuk penyegaran data total (Fresh Start / 0 Aduan).
  */
 function handleResetToZero() {
+  const ss = SpreadsheetApp.getActiveSpreadsheet();
   const sheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
   const lastRow = sheet.getLastRow();
   let deletedRows = 0;
 
   if (lastRow > 1) {
     deletedRows = lastRow - 1;
-    // Hapus seluruh baris data mulai dari baris 2
     sheet.deleteRows(2, deletedRows);
   }
 
-  writeLog('RESET_DATABASE', 'Seluruh data aduan dibersihkan (reset ke 0 aduan). Siap pengujian baru.');
+  // Bersihkan seluruh baris cadangan di Foto_Storage
+  try {
+    const storageSheet = ss.getSheetByName(SHEET_NAME_FOTO);
+    if (storageSheet && storageSheet.getLastRow() > 1) {
+      storageSheet.deleteRows(2, storageSheet.getLastRow() - 1);
+    }
+  } catch (e) {
+    Logger.log('Gagal reset Foto_Storage: ' + e.message);
+  }
+
+  // Bersihkan juga baris pada sheet bawaan "Sheet1" jika ada
+  try {
+    const sheet1 = ss.getSheetByName('Sheet1');
+    if (sheet1 && sheet1.getLastRow() > 1) {
+      sheet1.deleteRows(2, sheet1.getLastRow() - 1);
+    }
+  } catch (e) {}
+
+  // Pindahkan seluruh file foto lama di Google Drive ke Trash
+  try {
+    purgeAllDrivePhotos();
+  } catch (e) {
+    Logger.log('Gagal bersihkan foto Drive: ' + e.message);
+  }
+
+  writeLog('RESET_DATABASE', 'Seluruh data aduan, Foto_Storage, dan Google Drive dibersihkan (reset ke 0 aduan). Siap pengujian baru.');
 
   return {
     success: true,
-    message: 'Database Google Spreadsheet berhasil dikosongkan (0 aduan). Sistem siap menerima pengujian baru.',
+    message: 'Database Google Spreadsheet, Foto_Storage, dan Google Drive berhasil dikosongkan (0 aduan). Sistem bersih sempurna.',
     deletedRows: deletedRows,
     count: 0
   };
@@ -1217,41 +1378,7 @@ function handleVerifyResetPin(data) {
   }
 }
 
-// ==================================================================================
-// HANDLER AKSI: RESET KE 0 ADUAN (FRESH START / PENYEGARAN PENUH)
-// ==================================================================================
 
-/**
- * Mengosongkan seluruh baris data aduan (Fresh Start: 0 Aduan)
- * Menyisakan baris header saja pada sheet Data_Aduan.
- * Dipanggil via Web App API (GET/POST ?action=resetToZero) atau tombol petugas.
- */
-function handleResetToZero() {
-  const ss = SpreadsheetApp.getActiveSpreadsheet();
-  const sheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
-  const lastRow = sheet.getLastRow();
-  let deletedCount = 0;
-
-  if (lastRow > 1) {
-    deletedCount = lastRow - 1;
-    sheet.deleteRows(2, deletedCount);
-  }
-
-  // Bersihkan juga baris data pada sheet default bawaan "Sheet1" jika ada sisa uji coba
-  const sheet1 = ss.getSheetByName('Sheet1');
-  if (sheet1 && sheet1.getLastRow() > 1) {
-    sheet1.deleteRows(2, sheet1.getLastRow() - 1);
-  }
-
-  writeLog('RESET_TO_ZERO', 'Seluruh data aduan (' + deletedCount + ' baris) dikosongkan. Database 0 aduan siap untuk pengujian awal baru.');
-
-  return {
-    success: true,
-    message: 'Data spreadsheet berhasil dikosongkan menjadi 0 aduan di seluruh sheet. Sistem siap untuk pengujian awal baru.',
-    deletedCount: deletedCount,
-    remainingRows: 0
-  };
-}
 
 /**
  * Sinkronisasi seluruh sheet agar sesuai dengan sheet Data_Aduan
@@ -1278,46 +1405,7 @@ function resetDatabaseToZero() {
   return result;
 }
 
-/**
- * Menyimpan data gambar Base64 ke folder Google Drive resmi DLH Lembata
- * Mengembalikan tautan publik Google Drive yang bisa dibuka langsung di browser
- */
-function saveBase64ImageToDrive(base64Data, idAduan) {
-  if (!base64Data || typeof base64Data !== 'string') return '';
-  if (!base64Data.startsWith('data:image')) return base64Data;
 
-  try {
-    const parts = base64Data.split(',');
-    if (parts.length < 2) return '';
-    const header = parts[0];
-    const encoded = parts[1];
-
-    let mimeType = 'image/jpeg';
-    let ext = 'jpg';
-    if (header.includes('image/png')) { mimeType = 'image/png'; ext = 'png'; }
-    else if (header.includes('image/webp')) { mimeType = 'image/webp'; ext = 'webp'; }
-
-    const decoded = Utilities.base64Decode(encoded);
-    const fileName = 'BUKTI_' + idAduan + '_' + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyyMMdd_HHmmss') + '.' + ext;
-    const blob = Utilities.newBlob(decoded, mimeType, fileName);
-
-    const folderName = 'Dokumentasi_Foto_Aduan_DLH_Lembata';
-    let folder;
-    const folders = DriveApp.getFoldersByName(folderName);
-    if (folders.hasNext()) {
-      folder = folders.next();
-    } else {
-      folder = DriveApp.createFolder(folderName);
-    }
-
-    const file = folder.createFile(blob);
-    file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    return file.getUrl();
-  } catch (err) {
-    Logger.log('Gagal simpan ke Drive: ' + err.message);
-    return '';
-  }
-}
 
 /**
  * Penampil Halaman Web Responsif untuk Foto Bukti Aduan (Bisa diklik langsung dari Google Spreadsheet)
@@ -1334,21 +1422,40 @@ function handleViewImage(id, fileId) {
     item = rawData.find(r => String(r['ID_Aduan']).trim().toUpperCase() === String(baseId).trim().toUpperCase());
   }
 
-  let photoData = '';
-  let idDisplay = id || 'ADUAN';
-  let namaPelapor = '-';
-  let timestamp = '-';
-  let uraian = '-';
-  let status = 'Baru';
-
-  if (item) {
-    idDisplay = item['ID_Aduan'] + (isOfficerPhoto ? ' (Dokumentasi Petugas)' : '');
-    namaPelapor = item['Nama_Pelapor'] || 'Masyarakat';
-    timestamp = item['Timestamp'] || '-';
-    uraian = item['Uraian_Aduan'] || '-';
-    status = item['Status'] || 'Baru';
-    photoData = isOfficerPhoto ? (item['Foto_Kondisi_Riil'] || '') : (item['Link_Foto_Bukti'] || '');
+  // Jika aduan tidak ditemukan di spreadsheet (telah dibersihkan atau belum terdaftar)
+  if (!item) {
+    const notFoundHtml = `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Aduan Tidak Ditemukan | DLH Lembata</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { background: #0f172a; color: #f8fafc; font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif; min-height: 100vh; display: flex; align-items: center; justify-content: center; padding: 16px; }
+    .card { max-width: 560px; width: 100%; background: #1e293b; border: 1px solid #334155; border-radius: 16px; padding: 32px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.6); }
+    h1 { font-size: 1.25rem; color: #f87171; margin-bottom: 12px; }
+    p { color: #94a3b8; font-size: 0.9rem; line-height: 1.6; margin-bottom: 20px; }
+    .badge { display: inline-block; background: #334155; color: #e2e8f0; padding: 4px 12px; border-radius: 999px; font-family: monospace; font-size: 0.85rem; margin-bottom: 16px; }
+  </style>
+</head>
+<body>
+  <div class="card">
+    <div class="badge">${id || '-'}</div>
+    <h1>⚠️ Aduan Tidak Ditemukan atau Telah Dihapus</h1>
+    <p>Data aduan dengan ID tersebut tidak ditemukan pada database resmi Dinas Lingkungan Hidup Kabupaten Lembata. Aduan dan fotonya telah dibersihkan atau belum didaftarkan.</p>
+  </div>
+</body>
+</html>`;
+    return HtmlService.createHtmlOutput(notFoundHtml).setTitle('Aduan Tidak Ditemukan - DLH Lembata');
   }
+
+  const idDisplay = item['ID_Aduan'] + (isOfficerPhoto ? ' (Dokumentasi Petugas)' : '');
+  const namaPelapor = item['Nama_Pelapor'] || 'Masyarakat';
+  const timestamp = item['Timestamp'] || '-';
+  const uraian = item['Uraian_Aduan'] || '-';
+  const status = item['Status'] || 'Baru';
+  let photoData = isOfficerPhoto ? (item['Foto_Kondisi_Riil'] || '') : (item['Link_Foto_Bukti'] || '');
 
   if (photoData.startsWith('=HYPERLINK')) {
     const match = photoData.match(/=HYPERLINK\("([^"]+)"/i);
@@ -1362,7 +1469,7 @@ function handleViewImage(id, fileId) {
     }
   }
 
-  // Pastikan photoData adalah gambar valid; jika berupa #ERROR!, tautan viewFoto, atau teks kosong, cari langsung dari Foto_Storage
+  // Pastikan photoData adalah gambar valid; jika berupa #ERROR!, tautan viewFoto, atau teks kosong, cari langsung dari Foto_Storage (urutan TERBARU)
   const isDirectImage = photoData && (photoData.startsWith('data:image') || photoData.includes('drive.google.com/thumbnail') || photoData.match(/\.(jpeg|jpg|png|webp|gif)/i));
 
   if (!isDirectImage) {
@@ -1370,8 +1477,9 @@ function handleViewImage(id, fileId) {
       const storageSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_FOTO);
       if (storageSheet) {
         const sData = storageSheet.getDataRange().getValues();
-        for (let i = 1; i < sData.length; i++) {
-          if (String(sData[i][0]).trim().toUpperCase() === String(idDisplay).trim().toUpperCase()) {
+        const searchKey = String(id || '').trim().toUpperCase();
+        for (let i = sData.length - 1; i >= 1; i--) {
+          if (String(sData[i][0]).trim().toUpperCase() === searchKey) {
             let combined = '';
             // Gabungkan seluruh chunk base64 dari kolom D ke kanan
             for (let c = 3; c < sData[i].length; c++) {
@@ -1387,8 +1495,10 @@ function handleViewImage(id, fileId) {
                 }
               }
             }
-            if (combined) photoData = combined;
-            break;
+            if (combined) {
+              photoData = combined;
+              break;
+            }
           }
         }
       }

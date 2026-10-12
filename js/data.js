@@ -4,8 +4,8 @@
  * Data Store, Default Dataset & LocalStorage Management
  */
 
-const STORAGE_KEY = 'dlh_lembata_aduan_v3';
-const LEGACY_STORAGE_KEYS = ['dlh_lembata_aduan_v1', 'dlh_lembata_aduan_v2', 'dlh_deleted_aduan_ids', 'dlh_cleaned_v2'];
+const STORAGE_KEY = 'dlh_lembata_aduan_v5';
+const LEGACY_STORAGE_KEYS = ['dlh_lembata_aduan_v1', 'dlh_lembata_aduan_v2', 'dlh_lembata_aduan_v3', 'dlh_lembata_aduan_v4', 'dlh_deleted_aduan_ids', 'dlh_cleaned_v2'];
 
 /* ===================================================================
    DLH LEMBATA REAL-TIME SYNC ENGINE (BROADCASTCHANNEL + STORAGE FALLBACK)
@@ -298,34 +298,8 @@ if (typeof window !== 'undefined') {
   window.KECAMATAN_LEMBATA = KECAMATAN_LEMBATA;
 }
 
-// Data Awal Aduan Riil Terverifikasi (Sinkron dengan Database Cloud DLH Lembata)
-const INITIAL_ADUAN_DATA = [
-  {
-    id: 'ADU-LMB-2026-001',
-    timestamp: '12/10/2026 04:15',
-    namaPelapor: 'Carlos Matarau',
-    noHp: '08555699888',
-    alamatPelapor: 'Abbaa',
-    kecamatan: 'Ile Ape',
-    desa: 'Muruona',
-    lokasiDetail: 'Hhh',
-    lat: -8.329127,
-    lng: 123.474487,
-    jenisPencemaran: 'Kerusakan Lingkungan & Tanah',
-    uraian: 'Babab',
-    sumberDugaan: 'Bbabbab',
-    tanggalKejadian: '01/10/2026',
-    fotoBukti: '',
-    linkFotoBukti: '',
-    buktiFotoList: [],
-    status: 'Sedang Diverifikasi',
-    petugasVerifikasi: 'Tim Lapangan DLH',
-    tanggalVerifikasi: '12/10/2026',
-    hasilVerifikasi: 'Sedang dalam penanganan verifikasi lapangan',
-    tindakanDLH: 'Verifikasi lapangan telah dijadwalkan oleh Tim Pengawas DLH Lembata.',
-    tanggalSelesai: '-'
-  }
-];
+// Data Awal Aduan (Kosong 0 aduan secara default - terhubung murni & sinkron langsung dengan Google Spreadsheet & Drive)
+const INITIAL_ADUAN_DATA = [];
 
 // Helper: Parse Google Sheets CSV Export menjadi array data aduan
 function parseCsvToAduan(csvText) {
@@ -432,15 +406,17 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     ? remoteItem.buktiFotoList
     : (remoteItem.linkFoto && remoteItem.linkFoto !== '-' ? [remoteItem.linkFoto] : (remoteItem.fotoBukti && remoteItem.fotoBukti !== '-' ? [remoteItem.fotoBukti] : []));
 
+  // Prioritas utama: Foto dari database remote Google Sheets / Drive (Anti-Cache Zombie)
   let finalPhotos = [];
-  if (existingPhotos.length > 0 && existingPhotos.some(p => typeof p === 'string' && (p.startsWith('data:image') || p.startsWith('http')))) {
-    finalPhotos = existingPhotos;
-  } else if (remotePhotos.length > 0 && remotePhotos.some(p => typeof p === 'string' && p.trim() && p !== '-')) {
-    finalPhotos = remotePhotos;
-  } else {
+  const validRemote = remotePhotos.filter(p => typeof p === 'string' && p.trim() && p !== '-' && !p.includes('#ERROR'));
+  if (validRemote.length > 0) {
+    finalPhotos = validRemote;
+  } else if (existingPhotos.length > 0 && existingPhotos.some(p => typeof p === 'string' && (p.startsWith('data:image') || p.startsWith('http')))) {
     finalPhotos = existingPhotos;
   }
   const finalFoto = finalPhotos[0] || '';
+
+  const isUnverified = (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima' || remoteItem.status === 'Verifikasi Administrasi' || remoteItem.status === '-');
 
   return {
     id: cleanId,
@@ -461,15 +437,15 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     linkFotoBukti: finalFoto,
     buktiFotoList: finalPhotos,
     status: remoteItem.status || 'Baru',
-    petugasVerifikasi: remoteItem.petugasVerifikasi || '-',
-    tanggalVerifikasi: remoteItem.tanggalVerifikasi || '-',
-    hasilVerifikasi: remoteItem.hasilVerifikasi || '-',
-    tindakanDLH: remoteItem.tindakanDLH || '-',
-    tanggalSelesai: remoteItem.tanggalSelesai || '-',
-    nomorBeritaAcara: (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima') ? '' : (remoteItem.nomorBeritaAcara || (existing ? existing.nomorBeritaAcara : '') || ''),
-    catatanBeritaAcara: (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima') ? '' : (remoteItem.catatanBeritaAcara || (existing ? existing.catatanBeritaAcara : '') || ''),
-    fotoKondisiRiil: (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima') ? '' : (remoteItem.fotoKondisiRiil || (existing ? existing.fotoKondisiRiil : '') || ''),
-    fotoVerifikasiList: (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima') ? [] : (Array.isArray(remoteItem.fotoVerifikasiList) ? remoteItem.fotoVerifikasiList : (existing && existing.fotoVerifikasiList ? existing.fotoVerifikasiList : [])),
+    petugasVerifikasi: isUnverified ? '-' : (remoteItem.petugasVerifikasi || '-'),
+    tanggalVerifikasi: isUnverified ? '-' : (remoteItem.tanggalVerifikasi || '-'),
+    hasilVerifikasi: isUnverified ? '-' : (remoteItem.hasilVerifikasi || '-'),
+    tindakanDLH: isUnverified ? '-' : (remoteItem.tindakanDLH || '-'),
+    tanggalSelesai: isUnverified ? '-' : (remoteItem.tanggalSelesai || '-'),
+    nomorBeritaAcara: isUnverified ? '' : (remoteItem.nomorBeritaAcara || ''),
+    catatanBeritaAcara: isUnverified ? '' : (remoteItem.catatanBeritaAcara || ''),
+    fotoKondisiRiil: isUnverified ? '' : (remoteItem.fotoKondisiRiil || ''),
+    fotoVerifikasiList: isUnverified ? [] : (Array.isArray(remoteItem.fotoVerifikasiList) && remoteItem.fotoVerifikasiList.length > 0 ? remoteItem.fotoVerifikasiList : (remoteItem.fotoKondisiRiil ? [remoteItem.fotoKondisiRiil] : [])),
     rekamTindakanTerakhir: rekamTerakhir,
     riwayatTindakan: Array.isArray(remoteItem.riwayatTindakan) ? remoteItem.riwayatTindakan : (rekamTerakhir ? [rekamTerakhir] : [])
   };
@@ -530,12 +506,19 @@ class AduanDataStore {
     if (stored) {
       try {
         const parsed = JSON.parse(stored);
-        this.aduanList = Array.isArray(parsed) ? parsed.filter(item => item && item.id && !this.isDeleted(item.id)) : [];
+        this.aduanList = Array.isArray(parsed) ? parsed.filter(item => {
+          if (!item || !item.id) return false;
+          // Hapus sisa cache dummy Carlos Matarau jika tersimpan dari sesi lama
+          if (String(item.id).toUpperCase() === 'ADU-LMB-2026-001' && (item.namaPelapor === 'Carlos Matarau' || item.status === 'Ditolak')) {
+            return false;
+          }
+          return !this.isDeleted(item.id);
+        }) : [];
       } catch (e) {
-        this.aduanList = [...INITIAL_ADUAN_DATA];
+        this.aduanList = [];
       }
     } else {
-      this.aduanList = [...INITIAL_ADUAN_DATA];
+      this.aduanList = [];
     }
 
     // Bersihkan foto petugas lama jika ada pada aduan baru / belum diverifikasi
@@ -551,11 +534,11 @@ class AduanDataStore {
 
     this.save();
 
-    // Jika URL Google Apps Script sudah disetel, lakukan sinkronisasi otomatis
+    // Sinkronisasi otomatis real-time lintas perangkat (Interval 8 detik)
     if (this.hasGasConfigured() && !this._pollIntervalStarted) {
       this._pollIntervalStarted = true;
-      setTimeout(() => this.syncFromGAS(true), 300);
-      setInterval(() => this.syncFromGAS(true), 15000);
+      setTimeout(() => this.syncFromGAS(true), 200);
+      setInterval(() => this.syncFromGAS(true), 8000);
     }
   }
 
@@ -695,7 +678,7 @@ class AduanDataStore {
     if (!this.hasGasConfigured()) return 0;
     let pushedCount = 0;
     for (const item of (this.aduanList || [])) {
-      if (item && (item.nomorBeritaAcara || item.fotoKondisiRiil || item.catatanBeritaAcara)) {
+      if (item && item._pendingOfficerSync && (item.nomorBeritaAcara || item.fotoKondisiRiil || item.catatanBeritaAcara)) {
         try {
           await this.postToGAS('updateVerifikasi', {
             id: item.id,
@@ -708,14 +691,17 @@ class AduanDataStore {
             nomorBeritaAcara: item.nomorBeritaAcara,
             catatanBeritaAcara: item.catatanBeritaAcara,
             fotoKondisiRiil: item.fotoKondisiRiil,
+            fotoVerifikasiList: item.fotoVerifikasiList,
             timestampVerifikasi: item.timestampVerifikasi,
             timestampTindakLanjut: item.timestampTindakLanjut,
             timestampSelesai: item.timestampSelesai
           });
+          delete item._pendingOfficerSync;
           pushedCount++;
         } catch (e) {}
       }
     }
+    if (pushedCount > 0) this.save();
     return pushedCount;
   }
 
@@ -800,16 +786,17 @@ class AduanDataStore {
       ? remoteItem.buktiFotoList
       : (remoteItem.linkFoto && remoteItem.linkFoto !== '-' ? [remoteItem.linkFoto] : (remoteItem.fotoBukti && remoteItem.fotoBukti !== '-' ? [remoteItem.fotoBukti] : []));
 
-    // Jika record lokal sudah memiliki foto valid (termasuk Data URL base64), jangan ditimpa dengan remote kosong
+    // Prioritas utama: Foto dari database remote Google Sheets / Drive (Anti-Cache Zombie)
     let finalPhotos = [];
-    if (existingPhotos.length > 0 && existingPhotos.some(p => typeof p === 'string' && (p.startsWith('data:image') || p.startsWith('http')))) {
-      finalPhotos = existingPhotos;
-    } else if (remotePhotos.length > 0 && remotePhotos.some(p => typeof p === 'string' && p.trim() && p !== '-')) {
-      finalPhotos = remotePhotos;
-    } else {
+    const validRemote = remotePhotos.filter(p => typeof p === 'string' && p.trim() && p !== '-' && !p.includes('#ERROR'));
+    if (validRemote.length > 0) {
+      finalPhotos = validRemote;
+    } else if (existingPhotos.length > 0 && existingPhotos.some(p => typeof p === 'string' && (p.startsWith('data:image') || p.startsWith('http')))) {
       finalPhotos = existingPhotos;
     }
     const finalFoto = finalPhotos[0] || '';
+
+    const isUnverified = (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima' || remoteItem.status === 'Verifikasi Administrasi' || remoteItem.status === '-');
 
     const mappedObj = {
       id: cleanId,
@@ -830,42 +817,20 @@ class AduanDataStore {
       linkFotoBukti: finalFoto,
       buktiFotoList: finalPhotos,
       status: remoteItem.status || 'Baru',
-      petugasVerifikasi: remoteItem.petugasVerifikasi || '-',
-      tanggalVerifikasi: remoteItem.tanggalVerifikasi || '-',
-      hasilVerifikasi: remoteItem.hasilVerifikasi || '-',
-      tindakanDLH: remoteItem.tindakanDLH || '-',
-      tanggalSelesai: remoteItem.tanggalSelesai || '-',
-      nomorBeritaAcara: (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima') ? '' : (remoteItem.nomorBeritaAcara || (existing ? existing.nomorBeritaAcara : '') || ''),
-      catatanBeritaAcara: (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima') ? '' : (remoteItem.catatanBeritaAcara || (existing ? existing.catatanBeritaAcara : '') || ''),
-      fotoKondisiRiil: (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima') ? '' : (remoteItem.fotoKondisiRiil || (existing ? existing.fotoKondisiRiil : '') || ''),
-      fotoVerifikasiList: (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima') ? [] : ((Array.isArray(remoteItem.fotoVerifikasiList) && remoteItem.fotoVerifikasiList.length > 0)
+      petugasVerifikasi: isUnverified ? '-' : (remoteItem.petugasVerifikasi || '-'),
+      tanggalVerifikasi: isUnverified ? '-' : (remoteItem.tanggalVerifikasi || '-'),
+      hasilVerifikasi: isUnverified ? '-' : (remoteItem.hasilVerifikasi || '-'),
+      tindakanDLH: isUnverified ? '-' : (remoteItem.tindakanDLH || '-'),
+      tanggalSelesai: isUnverified ? '-' : (remoteItem.tanggalSelesai || '-'),
+      nomorBeritaAcara: isUnverified ? '' : (remoteItem.nomorBeritaAcara || ''),
+      catatanBeritaAcara: isUnverified ? '' : (remoteItem.catatanBeritaAcara || ''),
+      fotoKondisiRiil: isUnverified ? '' : (remoteItem.fotoKondisiRiil || ''),
+      fotoVerifikasiList: isUnverified ? [] : (Array.isArray(remoteItem.fotoVerifikasiList) && remoteItem.fotoVerifikasiList.length > 0
         ? remoteItem.fotoVerifikasiList
-        : (existing && existing.fotoVerifikasiList ? existing.fotoVerifikasiList : (remoteItem.fotoKondisiRiil ? [remoteItem.fotoKondisiRiil] : []))),
+        : (remoteItem.fotoKondisiRiil ? [remoteItem.fotoKondisiRiil] : [])),
       rekamTindakanTerakhir: rekamTerakhir,
       riwayatTindakan: Array.isArray(remoteItem.riwayatTindakan) ? remoteItem.riwayatTindakan : (rekamTerakhir ? [rekamTerakhir] : [])
     };
-
-    if (existing && existing.status !== 'Baru' && existing.status !== 'Aduan Diterima' && (existing.nomorBeritaAcara || existing.fotoKondisiRiil || existing.catatanBeritaAcara) && (!remoteItem.nomorBeritaAcara && !remoteItem.fotoKondisiRiil)) {
-      setTimeout(() => {
-        try {
-          this.postToGAS('updateVerifikasi', {
-            id: cleanId,
-            status: existing.status,
-            petugasVerifikasi: existing.petugasVerifikasi,
-            tanggalVerifikasi: existing.tanggalVerifikasi,
-            hasilVerifikasi: existing.hasilVerifikasi,
-            tindakanDLH: existing.tindakanDLH,
-            tanggalSelesai: existing.tanggalSelesai,
-            nomorBeritaAcara: existing.nomorBeritaAcara,
-            catatanBeritaAcara: existing.catatanBeritaAcara,
-            fotoKondisiRiil: existing.fotoKondisiRiil,
-            timestampVerifikasi: existing.timestampVerifikasi,
-            timestampTindakLanjut: existing.timestampTindakLanjut,
-            timestampSelesai: existing.timestampSelesai
-          });
-        } catch (e) {}
-      }, 500);
-    }
 
     return mappedObj;
   }
@@ -1084,7 +1049,8 @@ class AduanDataStore {
       // Timestamps akuntabilitas kinerja
       timestampVerifikasi: timestampVerifikasi,
       timestampTindakLanjut: timestampTindakLanjut,
-      timestampSelesai: timestampSelesai
+      timestampSelesai: timestampSelesai,
+      _pendingOfficerSync: true
     };
 
     this.save();
@@ -1101,9 +1067,17 @@ class AduanDataStore {
         ...updateData,
         nomorBeritaAcara: this.aduanList[index].nomorBeritaAcara,
         catatanBeritaAcara: this.aduanList[index].catatanBeritaAcara,
+        fotoKondisiRiil: this.aduanList[index].fotoKondisiRiil,
+        fotoVerifikasiList: this.aduanList[index].fotoVerifikasiList,
         timestampVerifikasi: this.aduanList[index].timestampVerifikasi,
+        timestampTindakLanjut: this.aduanList[index].timestampTindakLanjut,
         timestampSelesai: this.aduanList[index].timestampSelesai
-      });
+      }).then(res => {
+        if (res && res.success && this.aduanList[index]) {
+          delete this.aduanList[index]._pendingOfficerSync;
+          this.save();
+        }
+      }).catch(() => {});
     }
 
     return this.aduanList[index];
