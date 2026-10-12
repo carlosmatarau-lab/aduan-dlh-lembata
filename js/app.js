@@ -968,7 +968,10 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         }
         this.updateKPIs();
         this.renderTable();
-        if (window.lembataMap) window.lembataMap.renderMarkers();
+        if (window.lembataMap) {
+          window.lembataMap.renderMarkers();
+          window.lembataMap.initMiniMap('miniMapPreview');
+        }
       }
     });
   }
@@ -1097,21 +1100,21 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
     if (elProses) elProses.textContent = stats.dalamProses;
     if (elSelesai) elSelesai.textContent = stats.selesai;
 
-    // Metrik Dashboard Publik Masyarakat & Hero Section (Sesuai Gambar 2)
+    // Metrik Dashboard Publik Masyarakat & Hero Section (100% Sinkron Data Real Aduan)
     const userTotal = document.getElementById('userKpiTotal');
     const userProses = document.getElementById('userKpiProses');
     const userSelesai = document.getElementById('userKpiSelesai');
-    if (userTotal) userTotal.textContent = stats.total > 0 ? (1240 + stats.total).toLocaleString('id-ID') : '1,240';
-    if (userProses) userProses.textContent = stats.dalamProses > 0 ? (85 + stats.dalamProses).toLocaleString('id-ID') : '85';
-    if (userSelesai) userSelesai.textContent = stats.selesai > 0 ? (1155 + stats.selesai).toLocaleString('id-ID') : '1,155';
+    if (userTotal) userTotal.textContent = (stats.total || 0).toLocaleString('id-ID');
+    if (userProses) userProses.textContent = (stats.dalamProses || 0).toLocaleString('id-ID');
+    if (userSelesai) userSelesai.textContent = (stats.selesai || 0).toLocaleString('id-ID');
 
-    // Hero Section Stat Card
+    // Hero Section Stat Card (Sinkron Murni dengan Data Real Database/Spreadsheet)
     const heroTotal = document.getElementById('heroStatTotal');
     const heroProses = document.getElementById('heroStatProses');
     const heroSelesai = document.getElementById('heroStatSelesai');
-    if (heroTotal) heroTotal.textContent = stats.total > 0 ? (1240 + stats.total).toLocaleString('id-ID') : '1,240';
-    if (heroProses) heroProses.textContent = stats.dalamProses > 0 ? (85 + stats.dalamProses).toLocaleString('id-ID') : '85';
-    if (heroSelesai) heroSelesai.textContent = stats.selesai > 0 ? (1155 + stats.selesai).toLocaleString('id-ID') : '1,155';
+    if (heroTotal) heroTotal.textContent = (stats.total || 0).toLocaleString('id-ID');
+    if (heroProses) heroProses.textContent = (stats.dalamProses || 0).toLocaleString('id-ID');
+    if (heroSelesai) heroSelesai.textContent = (stats.selesai || 0).toLocaleString('id-ID');
   }
 
   scrollToForm() {
@@ -1424,7 +1427,10 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
     window.addEventListener('aduanDataSynced', (e) => {
       this.updateKPIs();
       this.renderTable();
-      if (window.lembataMap) window.lembataMap.renderMarkers();
+      if (window.lembataMap) {
+        window.lembataMap.renderMarkers();
+        window.lembataMap.initMiniMap('miniMapPreview');
+      }
       this.updateCloudUI();
       if (!e.detail?.silent) {
         const count = e.detail && e.detail.count ? e.detail.count : window.aduanStore.getAll().length;

@@ -632,20 +632,9 @@ class LembataMapEngine {
         maxZoom: 19
       }).addTo(this.miniMapInstance);
 
-      // Render pin titik aduan
+      // Render pin titik aduan murni dari data real database/store
       const data = window.aduanStore ? window.aduanStore.getAll() : [];
-      let pinPoints = data.filter(d => d.lat && d.lng);
-
-      if (pinPoints.length === 0) {
-        // Sample pinpoints representative of Lembata
-        pinPoints = [
-          { lat: -8.368, lng: 123.558, status: 'Diverifikasi' },
-          { lat: -8.283, lng: 123.541, status: 'Dalam Penanganan' },
-          { lat: -8.358, lng: 123.665, status: 'Baru' },
-          { lat: -8.220, lng: 123.880, status: 'Selesai' },
-          { lat: -8.510, lng: 123.530, status: 'Dalam Penanganan' }
-        ];
-      }
+      const pinPoints = data.filter(d => d && d.lat && d.lng);
 
       pinPoints.forEach(p => {
         const col = this.getMarkerColor(p.status);

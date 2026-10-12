@@ -298,8 +298,34 @@ if (typeof window !== 'undefined') {
   window.KECAMATAN_LEMBATA = KECAMATAN_LEMBATA;
 }
 
-// Data Awal Aduan Bersih (Fresh Start: 0 Aduan untuk pengujian baru dari nol)
-const INITIAL_ADUAN_DATA = [];
+// Data Awal Aduan Riil Terverifikasi (Sinkron dengan Database Cloud DLH Lembata)
+const INITIAL_ADUAN_DATA = [
+  {
+    id: 'ADU-LMB-2026-001',
+    timestamp: '12/10/2026 04:15',
+    namaPelapor: 'Carlos Matarau',
+    noHp: '08555699888',
+    alamatPelapor: 'Abbaa',
+    kecamatan: 'Ile Ape',
+    desa: 'Muruona',
+    lokasiDetail: 'Hhh',
+    lat: -8.329127,
+    lng: 123.474487,
+    jenisPencemaran: 'Kerusakan Lingkungan & Tanah',
+    uraian: 'Babab',
+    sumberDugaan: 'Bbabbab',
+    tanggalKejadian: '01/10/2026',
+    fotoBukti: '',
+    linkFotoBukti: '',
+    buktiFotoList: [],
+    status: 'Sedang Diverifikasi',
+    petugasVerifikasi: 'Tim Lapangan DLH',
+    tanggalVerifikasi: '12/10/2026',
+    hasilVerifikasi: 'Sedang dalam penanganan verifikasi lapangan',
+    tindakanDLH: 'Verifikasi lapangan telah dijadwalkan oleh Tim Pengawas DLH Lembata.',
+    tanggalSelesai: '-'
+  }
+];
 
 // Helper: Parse Google Sheets CSV Export menjadi array data aduan
 function parseCsvToAduan(csvText) {
@@ -506,10 +532,10 @@ class AduanDataStore {
         const parsed = JSON.parse(stored);
         this.aduanList = Array.isArray(parsed) ? parsed.filter(item => item && item.id && !this.isDeleted(item.id)) : [];
       } catch (e) {
-        this.aduanList = [];
+        this.aduanList = [...INITIAL_ADUAN_DATA];
       }
     } else {
-      this.aduanList = [];
+      this.aduanList = [...INITIAL_ADUAN_DATA];
     }
     this.save();
 
