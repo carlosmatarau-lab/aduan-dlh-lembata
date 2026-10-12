@@ -974,29 +974,71 @@
     }
 
     /* ===================================================================
-       LOGIN / AUTHENTICATION SHIELD & ANIMATIONS (PROTEKSI PETUGAS)
+       STANDALONE LOGIN PAGE & DASHBOARD WRAPPER (PORTAL PETUGAS)
        =================================================================== */
-    .auth-shield-overlay {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      background: radial-gradient(circle at 50% 35%, rgba(6, 78, 59, 0.88), rgba(15, 23, 42, 0.96));
-      backdrop-filter: blur(24px);
-      -webkit-backdrop-filter: blur(24px);
-      z-index: 99999;
+    .petugas-login-page {
+      min-height: 100vh;
+      width: 100%;
+      background: radial-gradient(circle at 50% 25%, #064e3b 0%, #022c22 60%, #0f172a 100%);
+      background-attachment: fixed;
       display: flex;
+      flex-direction: column;
       align-items: center;
       justify-content: center;
-      padding: 16px;
-      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s ease;
+      padding: 32px 16px;
+      box-sizing: border-box;
+      position: relative;
     }
 
-    .auth-shield-overlay.hidden {
-      opacity: 0;
-      visibility: hidden;
-      pointer-events: none;
+    .login-brand-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 22px;
+      text-align: left;
+    }
+
+    .login-brand-header img {
+      width: 52px;
+      height: 52px;
+      object-fit: contain;
+      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
+    }
+
+    .login-brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: 0.5px;
+      line-height: 1.15;
+    }
+
+    .login-brand-sub {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #a7f3d0;
+      letter-spacing: 0.6px;
+    }
+
+    .silapor-pill-blue {
+      background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
+      color: #ffffff;
+      padding: 3px 10px;
+      border-radius: 6px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 900;
+      letter-spacing: 0.8px;
+      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
+      display: inline-block;
+    }
+
+    #dashboardAppWrapper {
+      width: 100%;
+      min-height: 100vh;
+      display: none;
+      flex-direction: column;
     }
 
     .auth-card {
@@ -1735,9 +1777,21 @@
   <div class="nature-top-ribbon"></div>
 
   <!-- ===================================================================
-       LOGIN / AUTHENTICATION SHIELD (PROTEKSI AKSES PETUGAS)
-       =================================================================== */
-  <div class="auth-shield-overlay" id="petugasAuthShield">
+       HALAMAN LOGIN RESMI PETUGAS DLH LEMBATA (STANDALONE VIEW)
+       =================================================================== -->
+  <div id="petugasLoginPage" class="petugas-login-page">
+    <div class="login-brand-header">
+      <img src="assets/logo-lingkungan-hidup.svg" alt="Logo Resmi Lingkungan Hidup" title="Dinas Lingkungan Hidup Kabupaten Lembata">
+      <div>
+        <div style="display: flex; align-items: center; gap: 8px;">
+          <span class="silapor-pill-blue">SILAPOR</span>
+          <span style="background: rgba(16, 185, 129, 0.2); color: #a7f3d0; border: 1px solid rgba(52, 211, 153, 0.4); border-radius: 6px; padding: 2px 8px; font-size: 0.74rem; font-weight: 800;">PORTAL KHUSUS</span>
+        </div>
+        <div class="login-brand-title">DINAS LINGKUNGAN HIDUP</div>
+        <div class="login-brand-sub">KABUPATEN LEMBATA</div>
+      </div>
+    </div>
+
     <div class="auth-card" id="authCard">
       <div class="auth-scanning-bar"></div>
       <div class="auth-icon-badge" id="authBadgeIcon">🛡️</div>
@@ -1787,12 +1841,21 @@
       </form>
 
       <div style="margin-top: 18px; padding-top: 12px; border-top: 1px solid #e2e8f0;">
-        <a href="index.html" style="font-size: 0.8rem; color: #64748b; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+        <a href="index.html" style="font-size: 0.82rem; color: #64748b; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
           ← Kembali ke Formulir Warga
         </a>
       </div>
     </div>
+
+    <div style="margin-top: 24px; text-align: center; color: #a7f3d0; font-size: 0.78rem;">
+      &copy; 2026 Pemerintah Kabupaten Lembata &bull; Dinas Lingkungan Hidup
+    </div>
   </div>
+
+  <!-- ===================================================================
+       WRAPPER UTAMA DASHBOARD PETUGAS (DITAMPILKAN HANYA SETELAH LOGIN)
+       =================================================================== -->
+  <div id="dashboardAppWrapper">
 
   <!-- ===================================================================
        HEADER RESMI DASHBOARD PETUGAS
@@ -2114,6 +2177,7 @@
     </section>
 
   </main>
+  </div> <!-- /#dashboardAppWrapper -->
 
   <!-- ===================================================================
        MODAL 1: FORMULIR VERIFIKASI LAPANGAN PETUGAS DLH
@@ -2659,14 +2723,20 @@
          1. PROTEKSI AKSES (LOGIN / PIN SEDERHANA)
          =================================================================== */
       checkAuth() {
-        const shield = document.getElementById('petugasAuthShield');
+        const loginPage = document.getElementById('petugasLoginPage');
+        const dashWrap = document.getElementById('dashboardAppWrapper');
         const isAuthSession = sessionStorage.getItem('dlh_petugas_auth') === 'true';
         const isAuthRemember = localStorage.getItem('dlh_petugas_remember') === 'true';
 
         if (isAuthSession || isAuthRemember) {
-          if (shield) shield.classList.add('hidden');
+          if (loginPage) loginPage.style.display = 'none';
+          if (dashWrap) dashWrap.style.display = 'flex';
+          if (this.map) {
+            setTimeout(() => this.map.invalidateSize(), 300);
+          }
         } else {
-          if (shield) shield.classList.remove('hidden');
+          if (loginPage) loginPage.style.display = 'flex';
+          if (dashWrap) dashWrap.style.display = 'none';
           const input = document.getElementById('inputPetugasPin');
           if (input) {
             input.value = '';
@@ -2722,7 +2792,8 @@
       submitPin() {
         const input = document.getElementById('inputPetugasPin');
         const card = document.getElementById('authCard');
-        const shield = document.getElementById('petugasAuthShield');
+        const loginPage = document.getElementById('petugasLoginPage');
+        const dashWrap = document.getElementById('dashboardAppWrapper');
         const errEl = document.getElementById('authErrorMsg');
         const rememberCheck = document.getElementById('checkRememberPin');
         const submitBtn = document.getElementById('btnSubmitLogin');
@@ -2785,7 +2856,9 @@
               if (rememberCheck && rememberCheck.checked) {
                 localStorage.setItem('dlh_petugas_remember', 'true');
               }
-              if (shield) shield.classList.add('hidden');
+              if (loginPage) loginPage.style.display = 'none';
+              if (dashWrap) dashWrap.style.display = 'flex';
+
               if (card) {
                 card.classList.remove('unlocking', 'scanning');
               }
@@ -2796,8 +2869,12 @@
 
               this.showToast('🔓 Akses Berhasil: Selamat bertugas di Dashboard Petugas DLH Lembata!', 'success');
 
+              this.updateKPIs();
+              this.renderTable();
               if (this.map) {
                 setTimeout(() => this.map.invalidateSize(), 300);
+              } else {
+                this.initMap();
               }
             }, 500);
           } else {
@@ -2811,8 +2888,11 @@
       lockPortal() {
         sessionStorage.removeItem('dlh_petugas_auth');
         localStorage.removeItem('dlh_petugas_remember');
-        const shield = document.getElementById('petugasAuthShield');
-        if (shield) shield.classList.remove('hidden');
+        const loginPage = document.getElementById('petugasLoginPage');
+        const dashWrap = document.getElementById('dashboardAppWrapper');
+        if (loginPage) loginPage.style.display = 'flex';
+        if (dashWrap) dashWrap.style.display = 'none';
+
         const input = document.getElementById('inputPetugasPin');
         if (input) {
           input.value = '';
