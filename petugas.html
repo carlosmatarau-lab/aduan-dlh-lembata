@@ -1633,6 +1633,43 @@
       font-size: 0.86rem;
       color: #713f12;
     }
+
+    @media (max-width: 768px) {
+      .header-inner {
+        padding: 8px 12px;
+        gap: 8px;
+        flex-wrap: wrap;
+      }
+      .brand-title-instansi {
+        font-size: 0.82rem;
+      }
+      .brand-sub-kab {
+        font-size: 0.65rem;
+      }
+      .brand-lh-logo {
+        width: 34px;
+        height: 34px;
+      }
+      .kpi-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 8px;
+      }
+      .filter-toolbar {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .search-box-wrap, .filter-select, .btn-reset-filter {
+        width: 100% !important;
+      }
+      .modal-dialog {
+        width: 95% !important;
+        margin: 10px auto;
+      }
+      .auth-card {
+        padding: 24px 18px;
+        margin: 12px;
+      }
+    }
   </style>
 </head>
 
@@ -1709,11 +1746,11 @@
   <header class="app-header">
     <div class="header-inner">
       <div class="brand-group" style="display: flex; align-items: center; gap: 12px;">
-        <img src="assets/logo-lingkungan-hidup.png" alt="Logo Lingkungan Hidup" style="width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));" title="Dinas Lingkungan Hidup Kabupaten Lembata">
+        <img src="assets/logo-lingkungan-hidup.svg" alt="Logo Resmi Lingkungan Hidup" style="width: 46px; height: 46px; object-fit: contain; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.15));" title="Dinas Lingkungan Hidup Kabupaten Lembata">
         <div>
           <div style="display: flex; align-items: center; gap: 8px;">
             <div class="silapor-badge-wrap" style="display: inline-flex; align-items: center; font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 900; line-height: 1;">
-              <span style="background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%); color: #ffffff; padding: 2px 6px; border-radius: 5px; box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35); margin-right: 2px;">SILA</span><span style="color: #064e3b; padding: 2px 2px;">POR</span>
+              <span style="background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%); color: #ffffff; padding: 3px 10px; border-radius: 6px; box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35); letter-spacing: 0.8px;">SILAPOR</span>
             </div>
             <span class="badge-role-petugas">🛡️ Dashboard Petugas</span>
           </div>

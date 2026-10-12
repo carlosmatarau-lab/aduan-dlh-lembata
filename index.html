@@ -182,9 +182,9 @@
       display: inline-flex;
       align-items: center;
       font-family: 'Outfit', sans-serif;
-      font-size: 1.35rem;
+      font-size: 1.3rem;
       font-weight: 900;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.8px;
       line-height: 1;
       filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.08));
     }
@@ -192,20 +192,12 @@
     .silapor-pill-blue {
       background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
       color: #ffffff;
-      padding: 4px 8px;
-      border-radius: 6px;
-      box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35);
-      margin-right: 2px;
+      padding: 5px 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.32);
       display: inline-block;
       text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-    }
-
-    .silapor-text-green {
-      color: #064e3b;
-      padding: 2px 2px;
-      display: inline-block;
-      font-weight: 900;
-      letter-spacing: 0.8px;
+      letter-spacing: 1px;
     }
 
     .silapor-product-tagline {
@@ -2365,192 +2357,773 @@
     /* ===================================================================
    MOBILE-FIRST PERFECTION & OVERFLOW SHIELD (< 520px)
    =================================================================== */
+    /* ===================================================================
+       MOBILE-FIRST PERFECTION & RESPONSIVE DESIGN SYSTEM (< 768px & < 440px)
+       =================================================================== */
     html,
     body {
       width: 100%;
       max-width: 100vw;
       overflow-x: hidden !important;
+      -webkit-text-size-adjust: 100%;
+      -webkit-tap-highlight-color: transparent;
+      scroll-behavior: smooth;
     }
 
-    @media (max-width: 520px) {
+    /* Standard Segmented Tab for QR Code */
+    .nav-tab-qr {
+      text-decoration: none;
+      color: #047857;
+      background: #ecfdf5;
+      font-weight: 700;
+      border: 1px solid #a7f3d0;
+      border-radius: 999px;
+      margin-left: auto;
+    }
+
+    .nav-tab-qr:hover {
+      background: #d1fae5;
+      color: #064e3b;
+    }
+
+    /* Structured Submit Button Typography */
+    .btn-submit-icon {
+      font-size: 1.35rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .btn-submit-text-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      line-height: 1.25;
+    }
+
+    .btn-submit-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+    }
+
+    .btn-submit-sub {
+      font-size: 0.72rem;
+      font-weight: 600;
+      opacity: 0.92;
+      letter-spacing: 0.2px;
+      margin-top: 2px;
+    }
+
+    @media (max-width: 768px) {
+      /* Header & Branding di HP */
+      .app-header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(16, 185, 129, 0.16);
+        box-shadow: 0 2px 10px rgba(6, 78, 59, 0.05);
+      }
+
       .header-inner {
-        padding: 10px 14px;
-        flex-wrap: wrap;
+        padding: 8px 12px;
         gap: 8px;
-      }
-
-      .brand-icon {
-        width: 34px;
-        height: 34px;
-        font-size: 1.1rem;
-        border-radius: 8px;
-      }
-
-      .brand-name {
-        font-size: 0.92rem;
-      }
-
-      .brand-sub {
-        font-size: 0.68rem;
-      }
-
-      .header-right {
-        width: 100%;
         display: flex;
+        align-items: center;
         justify-content: space-between;
+      }
+
+      .brand-group {
         gap: 8px;
-        padding-top: 8px;
-        border-top: 1px solid #f1f5f9;
-      }
-
-      .btn-cloud-badge {
-        font-size: 0.72rem;
-        padding: 6px 10px;
+        min-width: 0;
         flex: 1;
-        justify-content: center;
       }
 
-      .btn-wa-header {
-        font-size: 0.72rem;
-        padding: 6px 10px;
-        flex: 1;
-        justify-content: center;
+      .brand-lh-logo {
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
       }
 
-      .btn-wa-header span {
-        display: inline !important;
+      .brand-text-block {
+        min-width: 0;
       }
 
+      .brand-title-instansi {
+        font-size: 0.82rem;
+        font-weight: 800;
+        line-height: 1.15;
+        color: #064e3b;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+      }
+
+      .brand-sub-kab {
+        font-size: 0.65rem;
+        font-weight: 700;
+        color: #475569;
+        letter-spacing: 0.3px;
+      }
+
+      .silapor-product-brand {
+        flex-shrink: 0;
+      }
+
+      .silapor-pill-blue {
+        font-size: 0.88rem;
+        padding: 4px 10px;
+        border-radius: 6px;
+        font-weight: 900;
+        box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
+      }
+
+      .silapor-product-tagline {
+        font-size: 0.52rem;
+        letter-spacing: 0.6px;
+        margin-top: 2px;
+      }
+
+      /* Segmented Navigation Bar di HP (Mudah Diklik dengan Jempol) */
       .nav-bar {
         position: sticky;
-        top: auto;
+        top: 53px;
+        z-index: 95;
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.03);
+      }
+
+      .nav-inner {
+        padding: 6px 10px;
+        display: grid;
+        grid-template-columns: 1fr 1fr 1.05fr;
+        gap: 6px;
+        width: 100%;
+        overflow-x: visible;
       }
 
       .nav-tab-btn {
-        padding: 10px 12px;
-        font-size: 0.8rem;
+        width: 100%;
+        margin: 0 !important;
+        padding: 8px 4px;
+        font-size: 0.78rem;
+        font-weight: 700;
+        justify-content: center;
+        text-align: center;
+        border-radius: 10px;
+        border: 1.5px solid #e2e8f0;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        white-space: nowrap;
+        min-height: 40px;
+        background: #f8fafc;
+        color: #334155;
       }
 
+      .nav-tab-btn.active {
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+        border-color: #047857;
+        color: #ffffff;
+        box-shadow: 0 3px 8px rgba(5, 150, 105, 0.28);
+        transform: none;
+      }
+
+      .nav-tab-btn:active {
+        transform: scale(0.97);
+      }
+
+      .nav-tab-qr {
+        margin-left: 0 !important;
+        background: #ecfdf5 !important;
+        border-color: #a7f3d0 !important;
+        color: #047857 !important;
+      }
+
+      /* Kontainer Utama */
       .main-wrap {
-        padding: 14px 10px 80px 10px;
+        padding: 10px 10px 70px 10px;
       }
 
-      .welcome-box {
-        padding: 16px 14px;
-        border-radius: var(--radius-md);
-      }
-
-      .welcome-heading {
-        font-size: 1.12rem;
-      }
-
-      .welcome-desc {
-        font-size: 0.82rem;
-      }
-
-      .form-card {
-        border-radius: var(--radius-md);
-      }
-
-      .form-card-header {
-        padding: 14px 16px;
-      }
-
-      .form-card-title {
-        font-size: 1.05rem;
-      }
-
-      .aduan-form {
-        padding: 16px 14px;
-      }
-
-      .form-section-title {
-        font-size: 0.92rem;
-        margin: 14px 0 10px 0;
-      }
-
-      .category-chips {
+      /* Hero Section HP: Ringkas, Tegas & Terpadu */
+      .silapor-hero-container {
         grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .hero-left-banner {
+        padding: 18px 16px;
+        border-radius: 16px;
+        background: linear-gradient(145deg, #133a2a 0%, #064e3b 60%, #047857 100%);
+        box-shadow: 0 6px 18px rgba(6, 78, 59, 0.2);
+      }
+
+      .hero-main-heading {
+        font-size: 1.22rem;
+        font-weight: 800;
+        line-height: 1.25;
+        margin-bottom: 4px;
+        color: #ffffff;
+      }
+
+      .hero-sub-heading {
+        font-size: 0.8rem;
+        color: #a7f3d0;
+        margin-bottom: 14px;
+        font-weight: 600;
+      }
+
+      .hero-actions-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
         gap: 8px;
       }
 
-      .chip-item {
+      .btn-hero-action {
         padding: 10px 12px;
-        font-size: 0.82rem;
+        border-radius: 12px;
+        gap: 8px;
+        background: #ffffff;
+        border: 1.5px solid transparent;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        min-height: 52px;
+        text-align: left;
       }
 
+      .btn-hero-action:active {
+        transform: scale(0.97);
+        background: #f0fdf4;
+      }
+
+      .btn-hero-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #ecfdf5;
+      }
+
+      .btn-hero-icon svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .btn-hero-tag {
+        font-size: 0.62rem;
+        font-weight: 800;
+        color: #059669;
+        letter-spacing: 0.3px;
+      }
+
+      .btn-hero-title {
+        font-size: 0.8rem;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.15;
+      }
+
+      /* Hero Stat Card -> Strip 3-Kolom Elegan & Rapi */
+      .hero-right-stats {
+        background: #ffffff;
+        border: 1.5px solid #d1fae5;
+        border-radius: 14px;
+        padding: 10px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        box-shadow: 0 4px 12px rgba(6, 78, 59, 0.05);
+      }
+
+      .hero-stat-pill {
+        grid-column: 1 / -1;
+        padding: 5px 8px;
+        justify-content: center;
+        font-size: 0.72rem;
+        gap: 6px;
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        border-radius: 8px;
+        margin-bottom: 2px;
+        font-weight: 700;
+        color: #065f46;
+      }
+
+      .hero-stat-row {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 8px 4px;
+        gap: 2px;
+        border-radius: 10px;
+        background: #f8fafc;
+        border: 1px solid #f1f5f9;
+      }
+
+      .stat-row-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+      }
+
+      .stat-row-icon svg {
+        width: 15px;
+        height: 15px;
+      }
+
+      .stat-row-lbl {
+        font-size: 0.62rem;
+        font-weight: 700;
+        color: #64748b;
+      }
+
+      .stat-row-val {
+        font-size: 1.12rem;
+        font-weight: 900;
+        color: #0f172a;
+      }
+
+      /* Bottom Cards Stacking Mobile */
+      .silapor-bottom-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .bottom-card {
+        padding: 14px 12px;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .bottom-card-title {
+        font-size: 0.88rem;
+      }
+
+      /* PENTING: Sembunyikan garis alur agar grid 2x2 rapi dan tidak ada celah kosong */
+      .alur-step-line {
+        display: none !important;
+      }
+
+      .alur-steps-track {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 8px;
+        padding: 0;
+      }
+
+      .alur-step-item {
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        transition: transform 0.15s ease;
+      }
+
+      .alur-step-item:active {
+        transform: scale(0.97);
+        background: #f0fdf4;
+        border-color: #86efac;
+      }
+
+      .alur-step-icon {
+        width: 36px;
+        height: 36px;
+        margin-bottom: 6px;
+        border-width: 1.5px;
+      }
+
+      .alur-step-icon svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .alur-step-label {
+        font-size: 0.76rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 2px;
+        line-height: 1.2;
+      }
+
+      .alur-step-sub {
+        font-size: 0.65rem;
+        color: #059669;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+
+      /* Mini Map Preview */
+      .mini-map-container {
+        height: 170px;
+        border-radius: 10px;
+        margin: 8px 0 10px 0;
+      }
+
+      #miniMapPreview {
+        height: 170px !important;
+      }
+
+      .mini-map-actions-row {
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .btn-buka-peta-spasial,
+      .btn-wa-helpline-hubungi {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        padding: 10px 14px;
+        min-height: 42px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+      }
+
+      /* Quick Tracker Box Mobile */
+      .quick-track-box {
+        padding: 14px 12px;
+        border-radius: 14px;
+        margin-bottom: 14px;
+        border: 1.5px solid #a7f3d0;
+      }
+
+      .track-input-group {
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .track-input {
+        width: 100%;
+        min-height: 46px;
+        font-size: 16px !important;
+        padding: 10px 12px;
+        border-radius: 10px;
+      }
+
+      .btn-track {
+        width: 100%;
+        min-height: 44px;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 0.88rem;
+      }
+
+      /* Form Pengaduan Warga di Mobile */
+      .form-card {
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .form-card-header {
+        padding: 16px 14px 12px 14px;
+      }
+
+      .form-card-badge {
+        font-size: 0.72rem;
+        padding: 3px 8px;
+      }
+
+      .form-card-title {
+        font-size: 1.15rem;
+        margin: 6px 0 2px 0;
+      }
+
+      .form-card-desc {
+        font-size: 0.78rem;
+        color: #64748b;
+      }
+
+      .aduan-form {
+        padding: 14px 12px 20px 12px;
+      }
+
+      .form-section-title {
+        font-size: 0.86rem;
+        padding: 8px 10px;
+        margin: 16px 0 10px 0;
+        border-radius: 8px;
+        gap: 8px;
+      }
+
+      .form-section-title span {
+        width: 22px;
+        height: 22px;
+        font-size: 0.76rem;
+      }
+
+      .form-row-2 {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .form-field {
+        margin-bottom: 10px;
+      }
+
+      .field-label {
+        font-size: 0.82rem;
+        margin-bottom: 4px;
+      }
+
+      /* Input Fields 16px Mencegah Auto-Zoom di Safari iOS */
       .input-text,
       .input-select,
       .input-textarea {
-        font-size: 0.88rem;
-        padding: 9px 12px;
+        font-size: 16px !important;
+        padding: 11px 12px;
+        border-radius: 10px;
+        min-height: 46px;
+        border: 1.5px solid #cbd5e1;
       }
 
+      .input-textarea {
+        min-height: 96px;
+        line-height: 1.4;
+      }
+
+      /* Upload Tombol Kamera & Galeri di Layar HP */
+      .upload-zone {
+        padding: 12px;
+        border-radius: 12px;
+      }
+
+      .upload-actions-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .btn-camera-trigger {
+        width: 100%;
+        min-height: 46px;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 0.86rem;
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      }
+
+      .btn-upload-trigger {
+        width: 100%;
+        min-height: 44px;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 0.84rem;
+        background: #ffffff;
+        border: 1.5px solid #cbd5e1;
+      }
+
+      .upload-hint {
+        font-size: 0.72rem;
+        margin-top: 6px;
+      }
+
+      .upload-preview-list {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      .upload-preview-item {
+        width: 100%;
+        height: 72px;
+        border-radius: 8px;
+      }
+
+      .upload-preview-item .btn-remove-preview {
+        width: 22px;
+        height: 22px;
+        font-size: 13px;
+      }
+
+      /* GPS Detection Button */
+      .gps-box {
+        margin-bottom: 10px;
+      }
+
+      .btn-gps {
+        width: 100%;
+        min-height: 46px;
+        padding: 11px 12px;
+        font-size: 0.84rem;
+        border-radius: 10px;
+        border: 1.5px solid #86efac;
+        justify-content: center;
+      }
+
+      /* Koordinat Lat/Lng Tetap 2 Kolom Seimbang */
+      .form-row-2.coords-row {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+        margin-bottom: 12px;
+      }
+
+      /* Kategori Pilihan Cepat 2-Kolom */
+      .category-chips {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+
+      .chip-item {
+        padding: 8px 8px;
+        font-size: 0.78rem;
+        border-radius: 10px;
+        min-height: 44px;
+        justify-content: center;
+        text-align: center;
+        border: 1.5px solid #e2e8f0;
+      }
+
+      /* Tombol Kirim Aduan Utama */
       .btn-submit-main {
-        font-size: 0.95rem;
-        padding: 12px 16px;
+        width: 100%;
+        min-height: 54px;
+        padding: 12px 16px !important;
+        border-radius: 12px;
+        margin-top: 12px;
+        box-shadow: 0 6px 18px rgba(5, 150, 105, 0.35);
       }
 
+      .btn-submit-main:active {
+        transform: scale(0.98);
+      }
 
+      .btn-submit-title {
+        font-size: 0.98rem;
+      }
 
+      .btn-submit-sub {
+        font-size: 0.68rem;
+      }
+
+      .submit-note {
+        font-size: 0.72rem;
+        margin-top: 8px;
+        line-height: 1.35;
+      }
+
+      /* Peta Spasial Tab di Layar HP */
       .map-render-container {
-        height: 440px;
+        height: 60vh !important;
+        min-height: 380px;
+        border-radius: 14px;
+      }
+
+      .map-header-bar {
+        padding: 12px 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .map-main-title {
+        font-size: 1.15rem;
+      }
+
+      .map-sub-title {
+        font-size: 0.78rem;
       }
 
       .map-stats-strip {
         grid-template-columns: 1fr 1fr;
-        padding: 10px 14px;
-        gap: 8px;
+        padding: 8px 10px;
+        gap: 6px;
       }
 
       .map-toolbar {
-        padding: 12px 14px;
+        padding: 8px 10px;
         flex-direction: column;
-        align-items: stretch;
+        gap: 6px;
       }
 
       .map-filter-group {
+        width: 100%;
         flex-direction: column;
-        align-items: stretch;
+        gap: 6px;
       }
 
       .map-filter-group select {
         width: 100%;
+        min-height: 44px;
+        font-size: 16px !important;
       }
 
-      .map-region-pills {
-        padding: 8px 14px;
-      }
-
-      .map-cards-section {
-        padding: 16px 14px;
-      }
-
-      .map-legend-box {
-        left: 10px;
-        right: 10px;
-        bottom: 10px;
-        max-width: none;
-        padding: 8px 12px;
-      }
-
-      .kpi-grid {
-        grid-template-columns: 1fr 1fr;
-        gap: 8px;
-      }
-
-      .kpi-box {
-        padding: 10px 12px;
-      }
-
-      .kpi-num {
-        font-size: 1.3rem;
-      }
-
+      /* Floating WhatsApp Button HP */
       .floating-wa-btn {
         bottom: 16px;
         right: 16px;
         padding: 10px;
+      }
+
+      /* Modal Dialogs di Layar HP */
+      .modal-backdrop {
+        padding: 10px;
+      }
+
+      .modal-dialog {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 90vh;
+        border-radius: 18px !important;
+      }
+
+      .camera-viewport-wrap {
+        height: 260px;
+        border-radius: 10px;
+      }
+    }
+
+    @media (max-width: 440px) {
+      .hero-actions-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .btn-hero-action {
+        width: 100%;
+      }
+
+      .header-inner {
+        padding: 8px 10px;
+      }
+
+      .brand-title-instansi {
+        font-size: 0.78rem;
+      }
+
+      .brand-sub-kab {
+        font-size: 0.6rem;
+      }
+
+      .brand-lh-logo {
+        width: 32px;
+        height: 32px;
+      }
+
+      .silapor-product-tagline {
+        display: none;
+      }
+
+      .nav-inner {
+        padding: 4px 6px;
+        gap: 4px;
+      }
+
+      .nav-tab-btn {
+        font-size: 0.72rem !important;
+        padding: 7px 2px !important;
+      }
+
+      .category-chips {
+        grid-template-columns: 1fr 1fr;
       }
     }
 
@@ -2753,27 +3326,7 @@
   <header class="app-header">
     <div class="header-inner">
       <div class="brand-group">
-        <div class="brand-crest-logo" title="Lambang Daerah Kabupaten Lembata">
-          <svg width="42" height="48" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <!-- Perisai Segilima Emas & Hijau Daun -->
-            <polygon points="50,4 96,24 82,108 50,118 18,108 4,24" fill="#047857" stroke="#eab308" stroke-width="4" stroke-linejoin="round"/>
-            <!-- Pita Merah Atas -->
-            <path d="M14 26 Q50 36 86 26 L88 34 Q50 44 12 34 Z" fill="#dc2626" stroke="#b91c1c" stroke-width="1"/>
-            <text x="50" y="32" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="'Outfit', sans-serif" letter-spacing="0.5">LEMBATA</text>
-            <!-- Gunung Ile Lewotolok -->
-            <polygon points="50,44 72,78 28,78" fill="#065f46" stroke="#fbbf24" stroke-width="1.5"/>
-            <circle cx="50" cy="44" r="3" fill="#f59e0b"/>
-            <!-- Perahu Tradisional Pesisir -->
-            <path d="M30 84 Q50 82 70 84 L64 92 Q50 96 36 92 Z" fill="#991b1b" stroke="#fef08a" stroke-width="1"/>
-            <polygon points="50,66 50,83 60,83" fill="#ffffff"/>
-            <!-- Gelombang Laut -->
-            <path d="M22 98 Q36 94 50 98 Q64 102 78 98" stroke="#38bdf8" stroke-width="2.5" fill="none" stroke-linecap="round"/>
-            <!-- Padi & Kapas -->
-            <path d="M22 46 Q16 68 24 90" stroke="#facc15" stroke-width="2" fill="none" stroke-linecap="round"/>
-            <path d="M78 46 Q84 68 76 90" stroke="#facc15" stroke-width="2" fill="none" stroke-linecap="round"/>
-          </svg>
-        </div>
-        <img src="assets/logo-lingkungan-hidup.png" alt="Logo Lingkungan Hidup" class="brand-lh-logo" title="Logo Lingkungan Hidup Republik Indonesia">
+        <img src="assets/logo-lingkungan-hidup.svg" alt="Logo Resmi Lingkungan Hidup" class="brand-lh-logo" title="Dinas Lingkungan Hidup Kabupaten Lembata">
         <div class="brand-text-block">
           <h1 class="brand-title-instansi">DINAS LINGKUNGAN HIDUP</h1>
           <div class="brand-sub-kab">KABUPATEN LEMBATA</div>
@@ -2783,7 +3336,7 @@
       <div class="header-right-portal">
         <div class="silapor-product-brand" title="SILAPOR - Sistem Informasi Layanan Pengaduan">
           <div class="silapor-badge-wrap">
-            <span class="silapor-pill-blue">SILA</span><span class="silapor-text-green">POR</span>
+            <span class="silapor-pill-blue">SILAPOR</span>
           </div>
           <div class="silapor-product-tagline">PLATFORM ADUAN DIGITAL</div>
         </div>
@@ -2803,9 +3356,9 @@
       <button class="nav-tab-btn" data-tab="peta">
         🗺️ Peta Sebaran
       </button>
-      <a href="qr-code.html" class="nav-tab-btn"
-        style="margin-left: auto; text-decoration: none; color: #047857; background: #ecfdf5; font-weight: 700; border: 1px solid #a7f3d0; border-radius: 999px;">
-        📱 Poster QR Code
+
+      <a href="qr-code.html" class="nav-tab-btn nav-tab-qr" title="Unduh Poster QR Code Pengaduan DLH Lembata">
+        📱 Unduh QR
       </a>
     </div>
   </nav>
@@ -3149,7 +3702,7 @@
             <div id="gpsStatusMessage" class="gps-status-msg"></div>
           </div>
 
-          <div class="form-row-2" style="margin-bottom: 20px;">
+          <div class="form-row-2 coords-row" style="margin-bottom: 20px;">
             <div class="form-field">
               <label class="field-label" style="font-size: 0.8rem; color: #64748b;">Latitude (Otomatis)</label>
               <input type="number" step="any" id="inputLat" class="input-text input-sm" placeholder="-8.368">
@@ -3213,9 +3766,12 @@
           </div>
 
           <!-- Submit Button -->
-          <button type="submit" class="btn-submit-main" id="btnSubmitAduan"
-            style="background: linear-gradient(135deg, #10b981 0%, #059669 50%, #047857 100%); font-size: 1.05rem; padding: 16px 24px; box-shadow: 0 10px 25px -5px rgba(5, 150, 105, 0.4); display: flex; align-items: center; justify-content: center; gap: 10px; width: 100%;">
-            <span>📲</span> KIRIM LAPORAN KE KONTAK LAYANAN PENGADUAN
+          <button type="submit" class="btn-submit-main" id="btnSubmitAduan">
+            <span class="btn-submit-icon">📲</span>
+            <span class="btn-submit-text-wrap">
+              <span class="btn-submit-title">KIRIM PENGADUAN SEKARANG</span>
+              <span class="btn-submit-sub">Diteruskan Langsung ke Kontak Tim DLH Lembata</span>
+            </span>
           </button>
           <div class="submit-note"
             style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; font-weight: 600; color: #065f46;">

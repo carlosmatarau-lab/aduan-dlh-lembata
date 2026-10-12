@@ -206,6 +206,34 @@
       border-top: 1px solid #e2e8f0;
     }
 
+    @media (max-width: 480px) {
+      body {
+        padding: 12px;
+      }
+      .poster-header {
+        padding: 20px 16px;
+      }
+      .poster-body {
+        padding: 20px 14px;
+      }
+      .qr-image {
+        width: 190px;
+        height: 190px;
+      }
+      .action-buttons {
+        flex-direction: column;
+        gap: 8px;
+      }
+      .btn {
+        width: 100%;
+      }
+      .url-pill {
+        font-size: 0.8rem;
+        padding: 6px 12px;
+        word-break: break-all;
+      }
+    }
+
     @media print {
       body {
         background: white;
@@ -237,7 +265,9 @@
     
     <!-- Header Instansi -->
     <div class="poster-header">
-      <div class="emblem-badge">🌿</div>
+      <div class="emblem-badge" style="background: rgba(255, 255, 255, 0.95); border: none; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+        <img src="assets/logo-lingkungan-hidup.svg" alt="Logo Resmi Lingkungan Hidup" style="width: 42px; height: 42px; object-fit: contain;">
+      </div>
       <div class="gov-title">Pemerintah Kabupaten Lembata</div>
       <h1 class="main-title">DINAS LINGKUNGAN HIDUP</h1>
       <p class="sub-title">Sistem Pendataan Digital Aduan Pencemaran Lingkungan</p>
