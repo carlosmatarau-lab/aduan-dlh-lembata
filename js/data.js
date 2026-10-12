@@ -466,10 +466,10 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     hasilVerifikasi: remoteItem.hasilVerifikasi || '-',
     tindakanDLH: remoteItem.tindakanDLH || '-',
     tanggalSelesai: remoteItem.tanggalSelesai || '-',
-    nomorBeritaAcara: remoteItem.nomorBeritaAcara || (existing ? existing.nomorBeritaAcara : '') || '',
-    catatanBeritaAcara: remoteItem.catatanBeritaAcara || (existing ? existing.catatanBeritaAcara : '') || '',
-    fotoKondisiRiil: remoteItem.fotoKondisiRiil || (existing ? existing.fotoKondisiRiil : '') || '',
-    fotoVerifikasiList: Array.isArray(remoteItem.fotoVerifikasiList) ? remoteItem.fotoVerifikasiList : (existing && existing.fotoVerifikasiList ? existing.fotoVerifikasiList : []),
+    nomorBeritaAcara: (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima') ? '' : (remoteItem.nomorBeritaAcara || (existing ? existing.nomorBeritaAcara : '') || ''),
+    catatanBeritaAcara: (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima') ? '' : (remoteItem.catatanBeritaAcara || (existing ? existing.catatanBeritaAcara : '') || ''),
+    fotoKondisiRiil: (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima') ? '' : (remoteItem.fotoKondisiRiil || (existing ? existing.fotoKondisiRiil : '') || ''),
+    fotoVerifikasiList: (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima') ? [] : (Array.isArray(remoteItem.fotoVerifikasiList) ? remoteItem.fotoVerifikasiList : (existing && existing.fotoVerifikasiList ? existing.fotoVerifikasiList : [])),
     rekamTindakanTerakhir: rekamTerakhir,
     riwayatTindakan: Array.isArray(remoteItem.riwayatTindakan) ? remoteItem.riwayatTindakan : (rekamTerakhir ? [rekamTerakhir] : [])
   };
@@ -537,6 +537,18 @@ class AduanDataStore {
     } else {
       this.aduanList = [...INITIAL_ADUAN_DATA];
     }
+
+    // Bersihkan foto petugas lama jika ada pada aduan baru / belum diverifikasi
+    this.aduanList.forEach(item => {
+      const st = String(item.status || 'Baru').trim().toLowerCase();
+      if (!st || st === 'baru' || st === 'aduan diterima' || st === 'verifikasi administrasi' || st === '-') {
+        item.fotoKondisiRiil = '';
+        item.fotoVerifikasiList = [];
+        item.nomorBeritaAcara = '';
+        item.catatanBeritaAcara = '';
+      }
+    });
+
     this.save();
 
     // Jika URL Google Apps Script sudah disetel, lakukan sinkronisasi otomatis
@@ -823,19 +835,17 @@ class AduanDataStore {
       hasilVerifikasi: remoteItem.hasilVerifikasi || '-',
       tindakanDLH: remoteItem.tindakanDLH || '-',
       tanggalSelesai: remoteItem.tanggalSelesai || '-',
-      nomorBeritaAcara: remoteItem.nomorBeritaAcara || (existing ? existing.nomorBeritaAcara : '') || '',
-      catatanBeritaAcara: remoteItem.catatanBeritaAcara || (existing ? existing.catatanBeritaAcara : '') || '',
-      fotoKondisiRiil: remoteItem.fotoKondisiRiil || (existing ? existing.fotoKondisiRiil : '') || '',
-      fotoVerifikasiList: (Array.isArray(remoteItem.fotoVerifikasiList) && remoteItem.fotoVerifikasiList.length > 0)
+      nomorBeritaAcara: (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima') ? '' : (remoteItem.nomorBeritaAcara || (existing ? existing.nomorBeritaAcara : '') || ''),
+      catatanBeritaAcara: (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima') ? '' : (remoteItem.catatanBeritaAcara || (existing ? existing.catatanBeritaAcara : '') || ''),
+      fotoKondisiRiil: (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima') ? '' : (remoteItem.fotoKondisiRiil || (existing ? existing.fotoKondisiRiil : '') || ''),
+      fotoVerifikasiList: (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima') ? [] : ((Array.isArray(remoteItem.fotoVerifikasiList) && remoteItem.fotoVerifikasiList.length > 0)
         ? remoteItem.fotoVerifikasiList
-        : (existing && existing.fotoVerifikasiList ? existing.fotoVerifikasiList : (remoteItem.fotoKondisiRiil ? [remoteItem.fotoKondisiRiil] : [])),
+        : (existing && existing.fotoVerifikasiList ? existing.fotoVerifikasiList : (remoteItem.fotoKondisiRiil ? [remoteItem.fotoKondisiRiil] : []))),
       rekamTindakanTerakhir: rekamTerakhir,
       riwayatTindakan: Array.isArray(remoteItem.riwayatTindakan) ? remoteItem.riwayatTindakan : (rekamTerakhir ? [rekamTerakhir] : [])
     };
 
-    // Auto-Sync: Jika perangkat ini (misal HP) memiliki BAST / Foto Riil lokal yang belum tercatat di spreadsheet remote,
-    // otomatis unggah ke Google Apps Script agar PC/Web dan semua perangkat lain langsung sinkron identik!
-    if (existing && (existing.nomorBeritaAcara || existing.fotoKondisiRiil || existing.catatanBeritaAcara) && (!remoteItem.nomorBeritaAcara && !remoteItem.fotoKondisiRiil)) {
+    if (existing && existing.status !== 'Baru' && existing.status !== 'Aduan Diterima' && (existing.nomorBeritaAcara || existing.fotoKondisiRiil || existing.catatanBeritaAcara) && (!remoteItem.nomorBeritaAcara && !remoteItem.fotoKondisiRiil)) {
       setTimeout(() => {
         try {
           this.postToGAS('updateVerifikasi', {

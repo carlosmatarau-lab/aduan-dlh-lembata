@@ -974,7 +974,7 @@
     }
 
     /* ===================================================================
-       PIN / LOGIN PROTECTION SHIELD
+       LOGIN / AUTHENTICATION SHIELD & ANIMATIONS (PROTEKSI PETUGAS)
        =================================================================== */
     .auth-shield-overlay {
       position: fixed;
@@ -982,15 +982,15 @@
       left: 0;
       width: 100vw;
       height: 100vh;
-      background: rgba(15, 23, 42, 0.88);
-      backdrop-filter: blur(20px);
-      -webkit-backdrop-filter: blur(20px);
+      background: radial-gradient(circle at 50% 35%, rgba(6, 78, 59, 0.88), rgba(15, 23, 42, 0.96));
+      backdrop-filter: blur(24px);
+      -webkit-backdrop-filter: blur(24px);
       z-index: 99999;
       display: flex;
       align-items: center;
       justify-content: center;
       padding: 16px;
-      transition: opacity 0.35s ease, visibility 0.35s ease;
+      transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s ease;
     }
 
     .auth-shield-overlay.hidden {
@@ -1002,28 +1002,93 @@
     .auth-card {
       background: #ffffff;
       border-radius: 24px;
-      padding: 32px 28px;
+      padding: 34px 28px;
       max-width: 440px;
       width: 100%;
-      box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.45);
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.5), 0 0 35px rgba(5, 150, 105, 0.18);
+      border: 1.5px solid rgba(16, 185, 129, 0.3);
       text-align: center;
       position: relative;
-      animation: modalFadeIn 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      overflow: hidden;
+      transition: transform 0.3s ease, box-shadow 0.3s ease, border-color 0.3s ease;
+      animation: authCardIn 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes authCardIn {
+      0% { opacity: 0; transform: scale(0.92) translateY(20px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
+    }
+
+    .auth-card.shaking {
+      animation: authShake 0.45s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+      border-color: #f43f5e;
+      box-shadow: 0 25px 60px -12px rgba(225, 29, 72, 0.35), 0 0 30px rgba(225, 29, 72, 0.25);
+    }
+
+    @keyframes authShake {
+      10%, 90% { transform: translate3d(-4px, 0, 0); }
+      20%, 80% { transform: translate3d(6px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-7px, 0, 0); }
+      40%, 60% { transform: translate3d(7px, 0, 0); }
+    }
+
+    .auth-card.unlocking {
+      animation: authUnlock 0.55s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes authUnlock {
+      0% { transform: scale(1); }
+      35% { transform: scale(1.03); border-color: #10b981; box-shadow: 0 0 45px rgba(16, 185, 129, 0.45); }
+      100% { transform: scale(0.92) translateY(-18px); opacity: 0; }
+    }
+
+    .auth-scanning-bar {
+      height: 3px;
+      width: 100%;
+      background: linear-gradient(90deg, transparent, #10b981, #059669, transparent);
+      position: absolute;
+      top: 0;
+      left: 0;
+      opacity: 0;
+      transition: opacity 0.3s;
+    }
+
+    .auth-card.scanning .auth-scanning-bar {
+      opacity: 1;
+      animation: scanProgress 1.2s infinite linear;
+    }
+
+    @keyframes scanProgress {
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
     }
 
     .auth-icon-badge {
-      width: 64px;
-      height: 64px;
+      width: 70px;
+      height: 70px;
       margin: 0 auto 16px;
-      border-radius: 20px;
+      border-radius: 22px;
       background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
       color: white;
-      font-size: 2rem;
+      font-size: 2.1rem;
       display: flex;
       align-items: center;
       justify-content: center;
-      box-shadow: 0 8px 24px rgba(5, 150, 105, 0.35);
+      box-shadow: 0 10px 25px rgba(5, 150, 105, 0.35);
+      position: relative;
+      animation: badgePulse 3s infinite ease-in-out;
+      transition: all 0.3s ease;
+    }
+
+    @keyframes badgePulse {
+      0%, 100% {
+        transform: translateY(0);
+        box-shadow: 0 8px 24px rgba(5, 150, 105, 0.35), 0 0 0 0 rgba(16, 185, 129, 0.4);
+      }
+      50% {
+        transform: translateY(-4px);
+        box-shadow: 0 14px 28px rgba(5, 150, 105, 0.45), 0 0 0 10px rgba(16, 185, 129, 0);
+      }
     }
 
     .auth-title {
@@ -1037,112 +1102,103 @@
     .auth-subtitle {
       font-size: 0.84rem;
       color: #64748b;
-      margin-bottom: 20px;
+      margin-bottom: 18px;
       line-height: 1.45;
     }
 
-    .pin-display-wrap {
+    .auth-password-wrapper {
+      position: relative;
       display: flex;
-      justify-content: center;
-      gap: 12px;
-      margin-bottom: 20px;
+      align-items: center;
+      margin-bottom: 12px;
     }
 
-    .pin-dot {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      border: 2px solid #cbd5e1;
-      background: #f8fafc;
-      transition: all 0.2s ease;
-    }
-
-    .pin-dot.filled {
-      background: #059669;
-      border-color: #047857;
-      transform: scale(1.15);
-      box-shadow: 0 2px 8px rgba(5, 150, 105, 0.4);
-    }
-
-    .pin-input-field {
+    .auth-password-input {
       width: 100%;
-      font-size: 1.6rem;
-      letter-spacing: 14px;
-      font-family: monospace;
-      text-align: center;
-      padding: 10px 14px;
+      font-size: 1.05rem;
+      font-weight: 600;
+      padding: 13px 48px 13px 16px;
       border-radius: 12px;
       border: 2px solid #cbd5e1;
-      margin-bottom: 16px;
       outline: none;
-      transition: all 0.2s;
-    }
-
-    .pin-input-field:focus {
-      border-color: var(--primary);
-      box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.15);
-    }
-
-    .pin-keypad {
-      display: grid;
-      grid-template-columns: repeat(3, 1fr);
-      gap: 10px;
-      margin-bottom: 18px;
-    }
-
-    .btn-keypad {
       background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      padding: 14px 0;
+      color: #0f172a;
+      letter-spacing: 1px;
+      transition: all 0.25s ease;
+      font-family: inherit;
+    }
+
+    .auth-password-input:focus {
+      background: #ffffff;
+      border-color: #059669;
+      box-shadow: 0 0 0 4px rgba(5, 150, 105, 0.15), 0 4px 12px rgba(5, 150, 105, 0.08);
+    }
+
+    .btn-toggle-eye {
+      position: absolute;
+      right: 10px;
+      background: none;
+      border: none;
+      color: #64748b;
       font-size: 1.25rem;
-      font-weight: 700;
-      color: #1e293b;
       cursor: pointer;
-      transition: all 0.15s ease;
-      font-family: 'Outfit', sans-serif;
+      padding: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      transition: color 0.2s, background 0.2s;
     }
 
-    .btn-keypad:hover {
-      background: #e2e8f0;
-      border-color: #cbd5e1;
-      transform: translateY(-2px);
+    .btn-toggle-eye:hover {
+      color: #059669;
+      background: #f1f5f9;
     }
 
-    .btn-keypad:active {
-      transform: translateY(1px);
-      background: #cbd5e1;
+    .auth-req-pill {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #166534;
+      border-radius: 20px;
+      padding: 6px 12px;
+      font-size: 0.76rem;
+      font-weight: 700;
+      margin-bottom: 16px;
     }
 
-    .btn-keypad.btn-keypad-action {
-      background: #ecfdf5;
+    .auth-req-pill code {
+      background: #dcfce7;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-family: monospace;
       color: #047857;
-      border-color: #a7f3d0;
-    }
-
-    .btn-keypad.btn-keypad-clear {
-      background: #fff1f2;
-      color: #e11d48;
-      border-color: #fecdd3;
+      font-size: 0.8rem;
     }
 
     .auth-hint-banner {
       background: #ecfdf5;
       border: 1px solid #a7f3d0;
       border-radius: 10px;
-      padding: 8px 12px;
-      font-size: 0.78rem;
+      padding: 10px 14px;
+      font-size: 0.8rem;
       color: #065f46;
       margin-bottom: 16px;
       text-align: left;
+      line-height: 1.45;
     }
 
     .auth-error-msg {
       color: #e11d48;
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 700;
       margin-bottom: 12px;
       min-height: 20px;
+      line-height: 1.4;
+      text-align: center;
     }
 
     .btn-lock-portal {
@@ -1679,61 +1735,59 @@
   <div class="nature-top-ribbon"></div>
 
   <!-- ===================================================================
-       LOGIN / PIN SECURITY SHIELD (PROTEKSI AKSES PETUGAS)
-       =================================================================== -->
+       LOGIN / AUTHENTICATION SHIELD (PROTEKSI AKSES PETUGAS)
+       =================================================================== */
   <div class="auth-shield-overlay" id="petugasAuthShield">
-    <div class="auth-card">
-      <div class="auth-icon-badge">🔐</div>
+    <div class="auth-card" id="authCard">
+      <div class="auth-scanning-bar"></div>
+      <div class="auth-icon-badge" id="authBadgeIcon">🛡️</div>
       <h2 class="auth-title">Akses Khusus Petugas DLH</h2>
       <p class="auth-subtitle">
         Dashboard Pengawasan &amp; Verifikasi Aduan Pencemaran Lingkungan<br>
         <strong>Dinas Lingkungan Hidup Kabupaten Lembata</strong>
       </p>
 
-      <div class="auth-hint-banner" style="background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; border-radius: 8px; padding: 10px 14px; font-size: 0.82rem; line-height: 1.45; margin-bottom: 16px;">
-        🛡️ <strong>Akses Keamanan Petugas:</strong> Masukkan PIN atau Kata Sandi resmi verifikator DLH Lembata untuk membuka akses dashboard.
+      <div class="auth-hint-banner">
+        🔐 <strong>Kredensial Resmi Petugas:</strong> Masukkan kata sandi verifikator DLH Lembata (wajib kombinasi huruf dan angka) untuk membuka dashboard.
       </div>
 
       <div id="authErrorMsg" class="auth-error-msg"></div>
 
-      <!-- PIN Input -->
+      <!-- Alphanumeric Password Form -->
       <form id="formPetugasPin" onsubmit="event.preventDefault(); window.portal && window.portal.submitPin();">
-        <input type="password" id="inputPetugasPin" class="pin-input-field" maxlength="8" placeholder="••••" autocomplete="off" autofocus>
-
-        <!-- Touch / Quick Keypad -->
-        <div class="pin-keypad">
-          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('1')">1</button>
-          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('2')">2</button>
-          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('3')">3</button>
-          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('4')">4</button>
-          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('5')">5</button>
-          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('6')">6</button>
-          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('7')">7</button>
-          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('8')">8</button>
-          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('9')">9</button>
-          <button type="button" class="btn-keypad btn-keypad-clear" onclick="window.portal.clearPinKey()">⌫ C</button>
-          <button type="button" class="btn-keypad" onclick="window.portal.pressPinKey('0')">0</button>
-          <button type="button" class="btn-keypad btn-keypad-action" onclick="window.portal.submitPin()">OK ⏎</button>
+        <div class="auth-password-wrapper">
+          <input type="password" id="inputPetugasPin" class="auth-password-input" placeholder="Masukkan kata sandi..." autocomplete="current-password" autofocus>
+          <button type="button" class="btn-toggle-eye" id="btnTogglePassword" onclick="window.portal && window.portal.togglePasswordVisibility()" title="Tampilkan / Sembunyikan Kata Sandi">
+            👁️
+          </button>
         </div>
 
-        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 16px; font-size: 0.82rem; color: #475569;">
+        <div id="capsLockWarning" style="display: none; background: #fef2f2; border: 1px solid #fecdd3; color: #be123c; border-radius: 8px; padding: 6px 10px; font-size: 0.76rem; font-weight: 700; margin-bottom: 12px; text-align: left;">
+          ⚠️ Peringatan: Tombol Caps Lock sedang aktif!
+        </div>
+
+        <div class="auth-req-pill">
+          <span>🔤🔢</span> Kombinasi huruf &amp; angka (contoh: <code>DLH2026</code>)
+        </div>
+
+        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 18px; font-size: 0.82rem; color: #475569;">
           <input type="checkbox" id="checkRememberPin" style="accent-color: #059669; cursor: pointer;">
           <label for="checkRememberPin" style="cursor: pointer;">Ingat sesi masuk di perangkat ini</label>
         </div>
 
-        <button type="submit" class="btn-modal-submit" style="width: 100%; padding: 12px; font-size: 0.95rem;">
-          🔓 Buka Dashboard Petugas
+        <button type="submit" class="btn-modal-submit" id="btnSubmitLogin" style="width: 100%; padding: 13px; font-size: 0.96rem; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; border-radius: 12px; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35);">
+          <span id="btnSubmitIcon">🔓</span> <span id="btnSubmitText">Buka Dashboard Petugas</span>
         </button>
 
-        <div style="margin-top: 14px; text-align: center;">
-          <button type="button" id="btnForgotPin" onclick="window.portal && window.portal.openForgotModal()" style="background: none; border: none; color: #047857; font-weight: 700; font-size: 0.85rem; cursor: pointer; text-decoration: underline; padding: 4px 8px;">
-            🔑 Lupa Sandi / PIN Petugas?
+        <div style="margin-top: 16px; text-align: center;">
+          <button type="button" id="btnForgotPin" onclick="window.portal && window.portal.openForgotModal()" style="background: none; border: none; color: #047857; font-weight: 700; font-size: 0.86rem; cursor: pointer; text-decoration: underline; padding: 4px 8px; transition: color 0.2s;" onmouseover="this.style.color='#065f46'" onmouseout="this.style.color='#047857'">
+            📞 Lupa Sandi? Hubungi Admin DLH
           </button>
         </div>
       </form>
 
-      <div style="margin-top: 16px; padding-top: 12px; border-top: 1px solid #e2e8f0;">
-        <a href="index.html" style="font-size: 0.8rem; color: #64748b; text-decoration: none; font-weight: 600;">
+      <div style="margin-top: 18px; padding-top: 12px; border-top: 1px solid #e2e8f0;">
+        <a href="index.html" style="font-size: 0.8rem; color: #64748b; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
           ← Kembali ke Formulir Warga
         </a>
       </div>
@@ -2171,7 +2225,12 @@
 
             <!-- Preview List Foto Fisik Riil -->
             <div class="upload-preview-grid" id="vFotoPreviewGrid"></div>
-            <div id="vFotoCountHint" style="font-size: 0.74rem; color: #64748b; margin-top: 6px; font-weight: 600;"></div>
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px; flex-wrap: wrap; gap: 6px;">
+              <div id="vFotoCountHint" style="font-size: 0.74rem; color: #64748b; font-weight: 600;"></div>
+              <button type="button" id="vBtnClearPhotos" onclick="window.portal && window.portal.clearAllUploadedPhotos()" style="display: none; background: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; font-size: 0.74rem; font-weight: 700; border-radius: 6px; padding: 4px 10px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#fecdd3'" onmouseout="this.style.background='#fee2e2'">
+                🗑️ Hapus Semua Foto Petugas
+              </button>
+            </div>
           </div>
 
           <!-- Berita Acara Pemeriksaan Fisik Lapangan (BAST) -->
@@ -2397,79 +2456,66 @@
   </div>
 
   <!-- ===================================================================
-       MODAL LUPA SANDI & KONFIRMASI EMAIL PETUGAS
+       MODAL BANTUAN LUPA SANDI: HUBUNGI ADMIN DLH LEMBATA
        =================================================================== -->
   <div class="modal-backdrop" id="modalForgotPin">
-    <div class="modal-card" style="max-width: 460px;">
+    <div class="modal-card" style="max-width: 490px;">
       <div class="modal-header" style="background: linear-gradient(135deg, #065f46 0%, #047857 100%); color: #ffffff;">
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="font-size: 1.3rem;">🔑</span>
+        <div style="display: flex; align-items: center; gap: 10px;">
+          <span style="font-size: 1.4rem;">📞</span>
           <div>
-            <h3 class="modal-title" style="color: #ffffff; font-size: 1.05rem;">Pemulihan Kata Sandi Petugas</h3>
-            <div style="font-size: 0.74rem; color: #a7f3d0;">Verifikasi &amp; Konfirmasi Lewat Email Resmi Petugas</div>
+            <h3 class="modal-title" style="color: #ffffff; font-size: 1.05rem;">Bantuan Pemulihan Kata Sandi</h3>
+            <div style="font-size: 0.74rem; color: #a7f3d0;">Hubungi Administrator Resmi DLH Kabupaten Lembata</div>
           </div>
         </div>
         <button type="button" class="btn-modal-close" data-close-modal style="color: #ffffff;">&times;</button>
       </div>
 
-      <div class="modal-body" style="padding: 20px;">
-        <!-- Step 1: Input Email Petugas -->
-        <div id="forgotStep1">
-          <p style="font-size: 0.85rem; color: #475569; margin-bottom: 14px; line-height: 1.5;">
-            Masukkan alamat email aktif petugas. Sistem akan mengirimkan <strong>Kode Konfirmasi 6-Digit (OTP)</strong> ke email Anda untuk membuat PIN baru.
-          </p>
-
-          <div class="form-group-modal" style="margin-bottom: 14px;">
-            <label style="font-size: 0.82rem; font-weight: 700; color: #1e293b; display: block; margin-bottom: 6px;">
-              📧 Email Petugas Terdaftar:
-            </label>
-            <input type="email" id="forgotInputEmail" class="form-control-modal" placeholder="contoh: dlhlembata.aduan@gmail.com" value="dlhlembata.aduan@gmail.com" required>
-          </div>
-
-          <div id="forgotErrorMsg1" class="auth-error-msg" style="margin-bottom: 12px; display: none;"></div>
-
-          <button type="button" class="btn-modal-submit" id="btnSendResetCode" onclick="window.portal && window.portal.sendResetEmail()" style="width: 100%; padding: 11px; background: #059669; font-size: 0.92rem; display: flex; align-items: center; justify-content: center; gap: 6px;">
-            <span>📨</span> Kirim Kode Konfirmasi ke Email
-          </button>
+      <div class="modal-body" style="padding: 22px;">
+        <div style="background: #f0fdf4; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 14px; margin-bottom: 18px; font-size: 0.84rem; color: #166534; line-height: 1.5;">
+          🛡️ <strong>Ketentuan Keamanan Akses:</strong><br>
+          Untuk menjamin validitas dan kerahasiaan data pengawasan aduan lingkungan hidup, pemulihan atau reset kata sandi verifikator dilakukan langsung oleh <strong>Administrator Sistem Dinas Lingkungan Hidup Kabupaten Lembata</strong>.
         </div>
 
-        <!-- Step 2: Input OTP & PIN Baru -->
-        <div id="forgotStep2" style="display: none;">
-          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 8px; padding: 12px; margin-bottom: 14px; font-size: 0.82rem; color: #166534; line-height: 1.45;">
-            ✅ Kode konfirmasi telah dikirim ke <strong id="forgotSentEmailText">-</strong>. Silakan periksa inbox email atau folder spam Anda.
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 18px;">
+          <div style="font-weight: 800; color: #0f172a; font-size: 0.88rem; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            <span>🏢</span> Kontak Pengelola / Administrator DLH:
           </div>
 
-          <div class="form-group-modal" style="margin-bottom: 12px;">
-            <label style="font-size: 0.82rem; font-weight: 700; color: #1e293b; display: block; margin-bottom: 4px;">
-              🔢 Kode Konfirmasi 6-Digit (OTP):
-            </label>
-            <input type="text" id="forgotInputOtp" class="form-control-modal" maxlength="6" placeholder="Misal: 123456" style="font-family: monospace; font-size: 1.15rem; letter-spacing: 4px; text-align: center;" required>
+          <div style="font-size: 0.84rem; color: #334155; line-height: 1.6; display: flex; flex-direction: column; gap: 10px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
+              <span style="font-weight: 700; color: #64748b;">WhatsApp Admin:</span>
+              <a href="https://wa.me/6282234582769?text=Halo%20Admin%20DLH%20Lembata,%20saya%20petugas%20verifikator%20ingin%20meminta%20bantuan%20reset%20kata%20sandi%20dashboard%20petugas." target="_blank" style="color: #059669; font-weight: 800; text-decoration: underline;">
+                +62 822-3458-2769 ↗
+              </a>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
+              <span style="font-weight: 700; color: #64748b;">Admin Pengawas:</span>
+              <span style="font-weight: 700; color: #0f172a;">Administrator DLH Lembata</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
+              <span style="font-weight: 700; color: #64748b;">Email Resmi:</span>
+              <span style="font-family: monospace; color: #047857; font-size: 0.8rem;">dlh.kabupatenlembata@gmail.com</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
+              <span style="font-weight: 700; color: #64748b;">Kantor Fisik:</span>
+              <span style="font-size: 0.82rem;">Kantor DLH Kab. Lembata, Lewoleba</span>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
+              <span style="font-weight: 700; color: #64748b;">Jam Pelayanan:</span>
+              <span style="font-size: 0.82rem; color: #059669; font-weight: 700;">Senin - Jumat, 08:00 - 16:00 WITA</span>
+            </div>
           </div>
+        </div>
 
-          <div class="form-group-modal" style="margin-bottom: 12px;">
-            <label style="font-size: 0.82rem; font-weight: 700; color: #1e293b; display: block; margin-bottom: 4px;">
-              🔒 Kata Sandi / PIN Baru (4 - 8 Karakter):
-            </label>
-            <input type="password" id="forgotInputNewPin" class="form-control-modal" maxlength="8" placeholder="Masukkan PIN baru" required>
-          </div>
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <a href="https://wa.me/6282234582769?text=Halo%20Admin%20DLH%20Lembata,%20saya%20petugas%20verifikator%20ingin%20meminta%20bantuan%20reset%20kata%20sandi%20dashboard%20petugas." target="_blank" class="btn-modal-submit" style="text-decoration: none; text-align: center; padding: 12px; background: #16a34a; font-size: 0.94rem; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; border-radius: 10px; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);">
+            <span>💬</span> Hubungi Admin via WhatsApp (+62 822-3458-2769)
+          </a>
 
-          <div class="form-group-modal" style="margin-bottom: 14px;">
-            <label style="font-size: 0.82rem; font-weight: 700; color: #1e293b; display: block; margin-bottom: 4px;">
-              🔒 Konfirmasi PIN Baru:
-            </label>
-            <input type="password" id="forgotInputConfirmPin" class="form-control-modal" maxlength="8" placeholder="Ulangi PIN baru" required>
-          </div>
-
-          <div id="forgotErrorMsg2" class="auth-error-msg" style="margin-bottom: 12px; display: none;"></div>
-
-          <div style="display: flex; gap: 8px;">
-            <button type="button" class="btn-modal-cancel" onclick="window.portal && window.portal.backToForgotStep1()" style="flex: 1;">
-              ← Kembali
-            </button>
-            <button type="button" class="btn-modal-submit" id="btnVerifyResetPin" onclick="window.portal && window.portal.submitResetPin()" style="flex: 2; padding: 11px; background: #059669; font-size: 0.92rem;">
-              ✅ Simpan PIN Baru
-            </button>
-          </div>
+          <button type="button" class="btn-modal-cancel" data-close-modal style="width: 100%; padding: 10px; text-align: center;">
+            Tutup Dialog
+          </button>
         </div>
       </div>
     </div>
@@ -2624,67 +2670,142 @@
           const input = document.getElementById('inputPetugasPin');
           if (input) {
             input.value = '';
-            setTimeout(() => input.focus(), 300);
+            setTimeout(() => input.focus(), 350);
+
+            // Listen for CapsLock state
+            input.addEventListener('keyup', (e) => {
+              const warning = document.getElementById('capsLockWarning');
+              if (warning && e.getModifierState) {
+                warning.style.display = e.getModifierState('CapsLock') ? 'block' : 'none';
+              }
+            });
           }
         }
       }
 
-      pressPinKey(key) {
+      togglePasswordVisibility() {
         const input = document.getElementById('inputPetugasPin');
-        if (!input) return;
-        if (input.value.length < 8) {
-          input.value += key;
+        const btn = document.getElementById('btnTogglePassword');
+        if (!input || !btn) return;
+        if (input.type === 'password') {
+          input.type = 'text';
+          btn.textContent = '🙈';
+          btn.title = 'Sembunyikan Kata Sandi';
+        } else {
+          input.type = 'password';
+          btn.textContent = '👁️';
+          btn.title = 'Tampilkan Kata Sandi';
         }
-        const err = document.getElementById('authErrorMsg');
-        if (err) err.textContent = '';
       }
 
-      clearPinKey() {
-        const input = document.getElementById('inputPetugasPin');
-        if (!input) return;
-        input.value = input.value.slice(0, -1);
-        const err = document.getElementById('authErrorMsg');
-        if (err) err.textContent = '';
+      triggerAuthShake(errorMsg) {
+        const card = document.getElementById('authCard');
+        const errEl = document.getElementById('authErrorMsg');
+        const btnIcon = document.getElementById('btnSubmitIcon');
+        const btnText = document.getElementById('btnSubmitText');
+        const submitBtn = document.getElementById('btnSubmitLogin');
+
+        if (errEl) errEl.textContent = errorMsg;
+        if (btnIcon) btnIcon.textContent = '🔓';
+        if (btnText) btnText.textContent = 'Buka Dashboard Petugas';
+        if (submitBtn) submitBtn.disabled = false;
+
+        if (card) {
+          card.classList.remove('scanning', 'unlocking');
+          card.classList.remove('shaking');
+          void card.offsetWidth; // Force reflow
+          card.classList.add('shaking');
+          setTimeout(() => card.classList.remove('shaking'), 500);
+        }
       }
 
       submitPin() {
         const input = document.getElementById('inputPetugasPin');
+        const card = document.getElementById('authCard');
         const shield = document.getElementById('petugasAuthShield');
-        const errorEl = document.getElementById('authErrorMsg');
+        const errEl = document.getElementById('authErrorMsg');
         const rememberCheck = document.getElementById('checkRememberPin');
+        const submitBtn = document.getElementById('btnSubmitLogin');
+        const btnIcon = document.getElementById('btnSubmitIcon');
+        const btnText = document.getElementById('btnSubmitText');
+        const badgeIcon = document.getElementById('authBadgeIcon');
 
         if (!input) return;
-        const enteredPin = input.value.trim().toLowerCase();
+        const entered = input.value.trim();
 
-        // Validasi PIN default sistem DLH Lembata (1234 atau dlh2026) atau pin kustom
-        const validPins = ['1234', 'dlh2026', 'dlhlembata'];
-        const customPin = localStorage.getItem('dlh_custom_pin');
-        if (customPin) validPins.push(customPin.toLowerCase());
-
-        if (validPins.includes(enteredPin)) {
-          sessionStorage.setItem('dlh_petugas_auth', 'true');
-          if (rememberCheck && rememberCheck.checked) {
-            localStorage.setItem('dlh_petugas_remember', 'true');
-          }
-          if (errorEl) errorEl.textContent = '';
-          if (shield) shield.classList.add('hidden');
-          this.showToast('🔓 Akses Berhasil: Selamat bertugas di Dashboard Petugas DLH Lembata!', 'success');
-
-          // Refresh map container sizing setelah unlock
-          if (this.map) {
-            setTimeout(() => this.map.invalidateSize(), 300);
-          }
-        } else {
-          if (errorEl) {
-            errorEl.textContent = '❌ PIN / Kata Sandi salah! Silakan coba lagi atau gunakan menu Lupa Sandi.';
-          }
-          input.value = '';
-          const card = shield.querySelector('.auth-card');
-          if (card) {
-            card.style.animation = 'none';
-            setTimeout(() => { card.style.animation = 'modalFadeIn 0.25s ease'; }, 10);
-          }
+        if (!entered) {
+          this.triggerAuthShake('⚠️ Masukkan kata sandi petugas verifikator.');
+          input.focus();
+          return;
         }
+
+        // Aturan Wajib: Kombinasi Huruf dan Angka
+        const hasLetter = /[a-zA-Z]/.test(entered);
+        const hasNumber = /[0-9]/.test(entered);
+
+        if (!hasLetter || !hasNumber) {
+          this.triggerAuthShake('⚠️ Kata sandi wajib kombinasi huruf dan angka (contoh: DLH2026).');
+          input.focus();
+          return;
+        }
+
+        // Animasi Proses Verifikasi (Scanning)
+        if (errEl) errEl.textContent = '';
+        if (submitBtn) submitBtn.disabled = true;
+        if (btnIcon) btnIcon.textContent = '⏳';
+        if (btnText) btnText.textContent = 'Memverifikasi Kredensial...';
+        if (card) card.classList.add('scanning');
+
+        setTimeout(() => {
+          const lower = entered.toLowerCase();
+          // Daftar kata sandi resmi petugas (kombinasi huruf & angka)
+          const validPasswords = [
+            'dlh2026',
+            'dlhlembata2026',
+            'petugas2026',
+            'petugasdlh2026',
+            'admindlh2026',
+            'lembata2026'
+          ];
+          const customPass = localStorage.getItem('dlh_petugas_password') || localStorage.getItem('dlh_custom_pin');
+          if (customPass) validPasswords.push(customPass.toLowerCase());
+
+          if (validPasswords.includes(lower)) {
+            // Animasi Berhasil (Unlock Transition)
+            if (card) {
+              card.classList.remove('scanning');
+              card.classList.add('unlocking');
+            }
+            if (badgeIcon) badgeIcon.textContent = '✅';
+            if (btnIcon) btnIcon.textContent = '🔓';
+            if (btnText) btnText.textContent = 'Akses Terverifikasi!';
+
+            setTimeout(() => {
+              sessionStorage.setItem('dlh_petugas_auth', 'true');
+              if (rememberCheck && rememberCheck.checked) {
+                localStorage.setItem('dlh_petugas_remember', 'true');
+              }
+              if (shield) shield.classList.add('hidden');
+              if (card) {
+                card.classList.remove('unlocking', 'scanning');
+              }
+              if (submitBtn) submitBtn.disabled = false;
+              if (btnIcon) btnIcon.textContent = '🔓';
+              if (btnText) btnText.textContent = 'Buka Dashboard Petugas';
+              if (badgeIcon) badgeIcon.textContent = '🛡️';
+
+              this.showToast('🔓 Akses Berhasil: Selamat bertugas di Dashboard Petugas DLH Lembata!', 'success');
+
+              if (this.map) {
+                setTimeout(() => this.map.invalidateSize(), 300);
+              }
+            }, 500);
+          } else {
+            this.triggerAuthShake('❌ Kata sandi salah! Pastikan kombinasi huruf dan angka sudah benar (contoh: DLH2026). Apabila lupa sandi, silakan hubungi Admin.');
+            input.focus();
+            input.select();
+          }
+        }, 400);
       }
 
       lockPortal() {
@@ -2695,147 +2816,17 @@
         const input = document.getElementById('inputPetugasPin');
         if (input) {
           input.value = '';
-          setTimeout(() => input.focus(), 200);
+          setTimeout(() => input.focus(), 250);
         }
+        const errEl = document.getElementById('authErrorMsg');
+        if (errEl) errEl.textContent = '';
         this.showToast('🔒 Sesi dashboard berhasil dikunci.', 'info');
       }
 
       openForgotModal() {
         const modal = document.getElementById('modalForgotPin');
-        if (!modal) return;
-        this.backToForgotStep1();
-        modal.classList.add('show');
-      }
-
-      backToForgotStep1() {
-        const s1 = document.getElementById('forgotStep1');
-        const s2 = document.getElementById('forgotStep2');
-        const err1 = document.getElementById('forgotErrorMsg1');
-        const err2 = document.getElementById('forgotErrorMsg2');
-        if (s1) s1.style.display = 'block';
-        if (s2) s2.style.display = 'none';
-        if (err1) { err1.style.display = 'none'; err1.textContent = ''; }
-        if (err2) { err2.style.display = 'none'; err2.textContent = ''; }
-      }
-
-      async sendResetEmail() {
-        const emailInput = document.getElementById('forgotInputEmail');
-        const err1 = document.getElementById('forgotErrorMsg1');
-        const btnSend = document.getElementById('btnSendResetCode');
-        const email = emailInput ? emailInput.value.trim() : '';
-
-        if (!email || !email.includes('@')) {
-          if (err1) {
-            err1.textContent = '⚠️ Masukkan alamat email petugas yang valid.';
-            err1.style.display = 'block';
-          }
-          return;
-        }
-
-        if (err1) err1.style.display = 'none';
-        if (btnSend) {
-          btnSend.disabled = true;
-          btnSend.innerHTML = '<span>⏳</span> Mengirim kode konfirmasi...';
-        }
-
-        // Generate kode 6-digit OTP
-        const otp = String(Math.floor(100000 + Math.random() * 900000));
-        this.activeResetOtp = otp;
-        this.activeResetEmail = email;
-        this.resetOtpExpires = Date.now() + (15 * 60 * 1000);
-
-        // Jika ada koneksi Google Apps Script, kirimkan email riil via MailApp
-        if (window.aduanStore && window.aduanStore.hasGasConfigured()) {
-          try {
-            const gasUrl = window.aduanStore.getGasUrl();
-            await fetch(gasUrl, {
-              method: 'POST',
-              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-              body: JSON.stringify({
-                action: 'sendResetPin',
-                email: email,
-                otp: otp
-              })
-            });
-          } catch (e) {
-            console.warn('GAS mail error fallback:', e);
-          }
-        }
-
-        if (btnSend) {
-          btnSend.disabled = false;
-          btnSend.innerHTML = '<span>📨</span> Kirim Kode Konfirmasi ke Email';
-        }
-
-        // Beralih ke step 2
-        const s1 = document.getElementById('forgotStep1');
-        const s2 = document.getElementById('forgotStep2');
-        const sentText = document.getElementById('forgotSentEmailText');
-        if (s1) s1.style.display = 'none';
-        if (s2) s2.style.display = 'block';
-        if (sentText) sentText.textContent = email;
-
-        const otpInput = document.getElementById('forgotInputOtp');
-        if (otpInput) {
-          otpInput.value = '';
-          setTimeout(() => otpInput.focus(), 200);
-        }
-
-        this.showToast(`📩 Kode konfirmasi berhasil dikirim ke email: ${email}`, 'success');
-      }
-
-      async submitResetPin() {
-        const enteredOtp = (document.getElementById('forgotInputOtp')?.value || '').trim();
-        const newPin = (document.getElementById('forgotInputNewPin')?.value || '').trim();
-        const confirmPin = (document.getElementById('forgotInputConfirmPin')?.value || '').trim();
-        const err2 = document.getElementById('forgotErrorMsg2');
-
-        const showErr = (msg) => {
-          if (err2) {
-            err2.textContent = msg;
-            err2.style.display = 'block';
-          }
-        };
-
-        if (!enteredOtp) {
-          showErr('⚠️ Masukkan 6-digit kode konfirmasi yang diterima di email.');
-          return;
-        }
-
-        if (this.resetOtpExpires && Date.now() > this.resetOtpExpires) {
-          showErr('⚠️ Kode konfirmasi telah kedaluwarsa. Silakan kirim ulang.');
-          return;
-        }
-
-        if (enteredOtp !== this.activeResetOtp && enteredOtp !== '123456') {
-          showErr('❌ Kode konfirmasi tidak cocok dengan email Anda. Periksa kembali.');
-          return;
-        }
-
-        if (!newPin || newPin.length < 4) {
-          showErr('⚠️ Kata sandi / PIN baru minimal 4 karakter.');
-          return;
-        }
-
-        if (newPin !== confirmPin) {
-          showErr('⚠️ Konfirmasi PIN baru tidak cocok.');
-          return;
-        }
-
-        if (err2) err2.style.display = 'none';
-
-        // Simpan PIN baru ke custom PIN
-        localStorage.setItem('dlh_custom_pin', newPin);
-        sessionStorage.setItem('dlh_petugas_auth', 'true');
-
-        // Buka dashboard dan tutup modal
-        this.closeAllModals();
-        const shield = document.getElementById('petugasAuthShield');
-        if (shield) shield.classList.add('hidden');
-
-        this.showToast('🎉 PIN Petugas berhasil diperbarui! Selamat datang di Dashboard Petugas.', 'success');
-        if (this.map) {
-          setTimeout(() => this.map.invalidateSize(), 300);
+        if (modal) {
+          modal.classList.add('show');
         }
       }
 
@@ -3193,11 +3184,13 @@
       renderPhotoPreviews() {
         const grid = document.getElementById('vFotoPreviewGrid');
         const hint = document.getElementById('vFotoCountHint');
+        const btnClear = document.getElementById('vBtnClearPhotos');
         if (!grid) return;
 
         if (this.tempUploadedPhotos.length === 0) {
           grid.innerHTML = '';
           if (hint) hint.style.display = 'none';
+          if (btnClear) btnClear.style.display = 'none';
           return;
         }
 
@@ -3212,6 +3205,15 @@
           hint.style.display = 'block';
           hint.textContent = `✅ ${this.tempUploadedPhotos.length} foto kondisi riil terlampir untuk Berita Acara.`;
         }
+        if (btnClear) {
+          btnClear.style.display = 'inline-flex';
+        }
+      }
+
+      clearAllUploadedPhotos() {
+        this.tempUploadedPhotos = [];
+        this.renderPhotoPreviews();
+        this.showToast('Semua foto kondisi riil petugas berhasil dikosongkan dari formulir.', 'info');
       }
 
       removeUploadedPhoto(idx) {
@@ -3251,17 +3253,20 @@
         document.getElementById('vTanggalSelesai').value = item.tanggalSelesai && item.tanggalSelesai !== '-' ? item.tanggalSelesai : '';
 
         // Berita Acara & Foto Fisik
+        const isUnverified = (!item.status || item.status === 'Baru' || item.status === 'Aduan Diterima' || item.status === 'Verifikasi Administrasi');
         const inputBA = document.getElementById('vNomorBA');
         const catBA = document.getElementById('vCatatanBA');
-        if (inputBA) inputBA.value = item.nomorBeritaAcara || '';
-        if (catBA) catBA.value = item.catatanBeritaAcara || '';
+        if (inputBA) inputBA.value = isUnverified ? '' : (item.nomorBeritaAcara || '');
+        if (catBA) catBA.value = isUnverified ? '' : (item.catatanBeritaAcara || '');
 
-        // Foto verifikasi riil
+        // Foto verifikasi riil (HANYA dimuat jika laporan SUDAH pernah diverifikasi sebelumnya)
         this.tempUploadedPhotos = [];
-        if (Array.isArray(item.fotoVerifikasiList) && item.fotoVerifikasiList.length > 0) {
-          this.tempUploadedPhotos = [...item.fotoVerifikasiList];
-        } else if (item.fotoKondisiRiil && item.fotoKondisiRiil !== '-') {
-          this.tempUploadedPhotos = [item.fotoKondisiRiil];
+        if (!isUnverified) {
+          if (Array.isArray(item.fotoVerifikasiList) && item.fotoVerifikasiList.length > 0) {
+            this.tempUploadedPhotos = [...item.fotoVerifikasiList];
+          } else if (item.fotoKondisiRiil && item.fotoKondisiRiil !== '-') {
+            this.tempUploadedPhotos = [item.fotoKondisiRiil];
+          }
         }
         this.renderPhotoPreviews();
 
@@ -3302,15 +3307,18 @@
           }
         });
 
-        // Foto kondisi riil pengecekan fisik petugas
+        // Foto kondisi riil pengecekan fisik petugas (HANYA dimuat jika laporan SUDAH diverifikasi)
+        const isUnverified = (!item.status || item.status === 'Baru' || item.status === 'Aduan Diterima' || item.status === 'Verifikasi Administrasi');
         const officerPhotos = [];
-        if (Array.isArray(item.fotoVerifikasiList)) {
-          item.fotoVerifikasiList.forEach(p => {
-            if (p && !officerPhotos.includes(p)) officerPhotos.push(p);
-          });
-        }
-        if (item.fotoKondisiRiil && item.fotoKondisiRiil !== '-' && !officerPhotos.includes(item.fotoKondisiRiil)) {
-          officerPhotos.push(item.fotoKondisiRiil);
+        if (!isUnverified) {
+          if (Array.isArray(item.fotoVerifikasiList)) {
+            item.fotoVerifikasiList.forEach(p => {
+              if (p && !officerPhotos.includes(p)) officerPhotos.push(p);
+            });
+          }
+          if (item.fotoKondisiRiil && item.fotoKondisiRiil !== '-' && !officerPhotos.includes(item.fotoKondisiRiil)) {
+            officerPhotos.push(item.fotoKondisiRiil);
+          }
         }
 
         this._currentModalItem = item;
@@ -3965,17 +3973,20 @@
             const id = document.getElementById('vTargetId').value;
             if (!id) return;
 
+            const selectedStatus = document.getElementById('vStatusSelect').value;
+            const isUnverifiedStatus = (selectedStatus === 'Baru' || selectedStatus === 'Aduan Diterima');
+
             const updateData = {
-              status: document.getElementById('vStatusSelect').value,
-              petugasVerifikasi: document.getElementById('vPetugasInput').value.trim(),
+              status: selectedStatus,
+              petugasVerifikasi: isUnverifiedStatus ? '-' : document.getElementById('vPetugasInput').value.trim(),
               tanggalVerifikasi: document.getElementById('vTanggalVerifikasi').value,
               hasilVerifikasi: document.getElementById('vHasilVerifikasi').value.trim(),
               tindakanDLH: document.getElementById('vTindakanDLH').value.trim(),
               tanggalSelesai: document.getElementById('vTanggalSelesai').value,
-              nomorBeritaAcara: document.getElementById('vNomorBA').value.trim(),
-              catatanBeritaAcara: document.getElementById('vCatatanBA').value.trim(),
-              fotoKondisiRiil: this.tempUploadedPhotos[0] || '',
-              fotoVerifikasiList: [...this.tempUploadedPhotos]
+              nomorBeritaAcara: isUnverifiedStatus ? '' : document.getElementById('vNomorBA').value.trim(),
+              catatanBeritaAcara: isUnverifiedStatus ? '' : document.getElementById('vCatatanBA').value.trim(),
+              fotoKondisiRiil: isUnverifiedStatus ? '' : (this.tempUploadedPhotos[0] || ''),
+              fotoVerifikasiList: isUnverifiedStatus ? [] : [...this.tempUploadedPhotos]
             };
 
             const updated = window.aduanStore.updateVerifikasi(id, updateData);

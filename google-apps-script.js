@@ -323,6 +323,12 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
     fotoRiilDirect = backupFotoRiil;
   }
 
+  const currentStatus = String(row['Status'] || 'Baru').trim();
+  const isUnverified = (currentStatus === 'Baru' || currentStatus === 'Aduan Diterima' || currentStatus === 'Verifikasi Administrasi' || currentStatus === '-');
+  if (isUnverified) {
+    fotoRiilDirect = '';
+  }
+
   return {
     id: id,
     timestamp: String(row['Timestamp'] || ''),
@@ -341,19 +347,19 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
     linkFoto: fotoDirect,
     fotoBukti: fotoDirect,
     linkFotoClickable: linkFoto,
-    status: String(row['Status'] || 'Baru'),
-    petugasVerifikasi: String(row['Petugas_Verifikasi'] || '-'),
-    tanggalVerifikasi: String(row['Tanggal_Verifikasi'] || '-'),
-    hasilVerifikasi: String(row['Hasil_Verifikasi'] || '-'),
-    tindakanDLH: String(row['Tindakan_DLH'] || '-'),
-    tanggalSelesai: String(row['Tanggal_Selesai'] || '-'),
-    nomorBeritaAcara: String(row['Nomor_Berita_Acara'] || ''),
-    catatanBeritaAcara: String(row['Catatan_Berita_Acara'] || ''),
-    fotoKondisiRiil: fotoRiilDirect,
-    fotoVerifikasiList: fotoRiilDirect ? [fotoRiilDirect] : [],
-    timestampVerifikasi: String(row['Timestamp_Verifikasi'] || ''),
-    timestampTindakLanjut: String(row['Timestamp_Tindak_Lanjut'] || ''),
-    timestampSelesai: String(row['Timestamp_Selesai'] || '')
+    status: currentStatus || 'Baru',
+    petugasVerifikasi: isUnverified ? '-' : String(row['Petugas_Verifikasi'] || '-'),
+    tanggalVerifikasi: isUnverified ? '-' : String(row['Tanggal_Verifikasi'] || '-'),
+    hasilVerifikasi: isUnverified ? '-' : String(row['Hasil_Verifikasi'] || '-'),
+    tindakanDLH: isUnverified ? '-' : String(row['Tindakan_DLH'] || '-'),
+    tanggalSelesai: isUnverified ? '-' : String(row['Tanggal_Selesai'] || '-'),
+    nomorBeritaAcara: isUnverified ? '' : String(row['Nomor_Berita_Acara'] || ''),
+    catatanBeritaAcara: isUnverified ? '' : String(row['Catatan_Berita_Acara'] || ''),
+    fotoKondisiRiil: isUnverified ? '' : fotoRiilDirect,
+    fotoVerifikasiList: (isUnverified || !fotoRiilDirect) ? [] : [fotoRiilDirect],
+    timestampVerifikasi: isUnverified ? '' : String(row['Timestamp_Verifikasi'] || ''),
+    timestampTindakLanjut: isUnverified ? '' : String(row['Timestamp_Tindak_Lanjut'] || ''),
+    timestampSelesai: isUnverified ? '' : String(row['Timestamp_Selesai'] || '')
   };
 }
 
