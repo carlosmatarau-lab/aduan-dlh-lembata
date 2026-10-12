@@ -24,27 +24,41 @@ class LembataMapEngine {
 
   init() {
     const container = document.getElementById(this.containerId);
-    if (!container) return;
-
     if (typeof L !== 'undefined') {
-      this.initLeaflet();
-      this.setupBasemapButtons();
-      this.setupRegionPills();
-      this.setupLegendInteractions();
+      if (container) {
+        this.initLeaflet();
+        this.setupBasemapButtons();
+        this.setupRegionPills();
+        this.setupLegendInteractions();
+      }
+      this.initMiniMap('miniMapPreview');
     } else {
       console.warn('Leaflet CDN tidak terdeteksi, mengaktifkan peta vektor SVG fallback');
-      this.initSvgFallback();
+      if (container) this.initSvgFallback();
+      this.initMiniMapFallback('miniMapPreview');
     }
   }
 
   initLeaflet() {
     try {
+      // Bounding box geografis Pulau Lembata (mengunci peta hanya di wilayah Lembata)
+      const southWest = L.latLng(-8.75, 123.05);
+      const northEast = L.latLng(-8.05, 124.02);
+      this.lembataBounds = L.latLngBounds(southWest, northEast);
+
       this.map = L.map(this.containerId, {
         center: this.centerCoords,
         zoom: this.defaultZoom,
+        minZoom: 10,
+        maxZoom: 18,
+        maxBounds: this.lembataBounds,
+        maxBoundsViscosity: 1.0, // Mengunci gerak peta 100% hanya di Pulau Lembata
         zoomControl: true,
         scrollWheelZoom: true
       });
+
+      // Kunci juga maxBounds secara eksplisit
+      this.map.setMaxBounds(this.lembataBounds);
 
       // 1. Layer Peta Standar OpenStreetMap
       const osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
@@ -580,6 +594,97 @@ class LembataMapEngine {
             }).join('')}
           </svg>
         </div>
+      </div>
+    `;
+  }
+
+  /* Mini Map Preview untuk Kartu Peta Sebaran di Beranda */
+  initMiniMap(containerId = 'miniMapPreview') {
+    const el = document.getElementById(containerId);
+    if (!el || typeof L === 'undefined') return;
+
+    // Bersihkan jika sudah pernah diinisialisasi
+    if (this.miniMapInstance) {
+      try { this.miniMapInstance.remove(); } catch(e) {}
+    }
+
+    try {
+      const southWest = L.latLng(-8.72, 123.05);
+      const northEast = L.latLng(-8.10, 124.00);
+      const bounds = L.latLngBounds(southWest, northEast);
+
+      this.miniMapInstance = L.map(containerId, {
+        center: [-8.370, 123.560],
+        zoom: 10,
+        minZoom: 9,
+        maxZoom: 12,
+        zoomControl: false,
+        attributionControl: false,
+        dragging: false,
+        touchZoom: false,
+        scrollWheelZoom: false,
+        doubleClickZoom: false,
+        boxZoom: false,
+        maxBounds: bounds
+      });
+
+      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+        maxZoom: 19
+      }).addTo(this.miniMapInstance);
+
+      // Render pin titik aduan
+      const data = window.aduanStore ? window.aduanStore.getAll() : [];
+      let pinPoints = data.filter(d => d.lat && d.lng);
+
+      if (pinPoints.length === 0) {
+        // Sample pinpoints representative of Lembata
+        pinPoints = [
+          { lat: -8.368, lng: 123.558, status: 'Diverifikasi' },
+          { lat: -8.283, lng: 123.541, status: 'Dalam Penanganan' },
+          { lat: -8.358, lng: 123.665, status: 'Baru' },
+          { lat: -8.220, lng: 123.880, status: 'Selesai' },
+          { lat: -8.510, lng: 123.530, status: 'Dalam Penanganan' }
+        ];
+      }
+
+      pinPoints.forEach(p => {
+        const col = this.getMarkerColor(p.status);
+        L.circleMarker([p.lat, p.lng], {
+          radius: 5,
+          fillColor: col,
+          color: '#ffffff',
+          weight: 1.5,
+          opacity: 1,
+          fillOpacity: 0.95
+        }).addTo(this.miniMapInstance);
+      });
+
+      // Klik mini map otomatis beralih ke peta spasial penuh
+      el.style.cursor = 'pointer';
+      el.onclick = () => {
+        if (window.app) window.app.switchTab('peta');
+      };
+    } catch(err) {
+      console.warn('Gagal memuat mini map Leaflet:', err);
+      this.initMiniMapFallback(containerId);
+    }
+  }
+
+  /* Fallback Mini Map SVG jika offline/no CDN */
+  initMiniMapFallback(containerId = 'miniMapPreview') {
+    const el = document.getElementById(containerId);
+    if (!el) return;
+    el.innerHTML = `
+      <div style="width: 100%; height: 100%; background: #e0f2fe; display: flex; align-items: center; justify-content: center; position: relative; cursor: pointer;" onclick="if(window.app) window.app.switchTab('peta');">
+        <svg viewBox="0 0 400 150" style="width: 100%; height: 100%;">
+          <path d="M 110 90 C 90 80 80 60 100 40 C 130 30 180 25 220 30 C 260 35 300 30 340 25 C 380 30 390 40 380 60 C 360 80 320 85 270 95 C 220 105 170 120 140 115 Z" fill="#bbf7d0" stroke="#059669" stroke-width="2"/>
+          <circle cx="160" cy="65" r="5" fill="#f59e0b" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="140" cy="45" r="5" fill="#8b5cf6" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="210" cy="55" r="5" fill="#2563eb" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="320" cy="40" r="5" fill="#059669" stroke="#fff" stroke-width="1.5"/>
+          <circle cx="150" cy="100" r="5" fill="#ea580c" stroke="#fff" stroke-width="1.5"/>
+        </svg>
+        <span style="position: absolute; bottom: 6px; right: 8px; font-size: 10px; font-weight: 700; color: #065f46; background: rgba(255,255,255,0.9); padding: 2px 6px; border-radius: 4px;">Pulau Lembata</span>
       </div>
     `;
   }

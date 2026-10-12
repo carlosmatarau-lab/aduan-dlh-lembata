@@ -108,58 +108,59 @@
     }
 
     .header-inner {
-      max-width: 960px;
+      max-width: 1080px;
       margin: 0 auto;
-      padding: 12px 16px;
+      padding: 12px 20px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
+      gap: 16px;
     }
 
     .brand-group {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
     }
 
-    .brand-icon {
-      width: 42px;
-      height: 42px;
-      background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
-      color: white;
-      border-radius: 12px;
+    .brand-crest-logo {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.35rem;
-      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);
-      border: 1px solid rgba(255, 255, 255, 0.25);
+      flex-shrink: 0;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
     }
 
-    .brand-name {
+    .brand-title-instansi {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.1rem;
+      font-size: 0.96rem;
       font-weight: 800;
-      background: linear-gradient(135deg, #064e3b 0%, #047857 70%, #059669 100%);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
+      color: #0f172a;
+      letter-spacing: 0.2px;
+      line-height: 1.15;
+      margin: 0;
+    }
+
+    .brand-sub-kab {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #475569;
+      letter-spacing: 0.4px;
       line-height: 1.2;
     }
 
-    .brand-sub {
-      font-size: 0.76rem;
-      color: #047857;
-      font-weight: 600;
+    .header-right-portal {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 12px;
     }
 
-    .header-right {
-      display: flex;
-      align-items: center;
-      gap: 8px;
+    .portal-brand-text {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #064e3b;
+      letter-spacing: 0.4px;
     }
 
     .btn-cloud-badge {
@@ -363,6 +364,347 @@
       line-height: 1.55;
       max-width: 680px;
       margin: 0;
+    }
+
+    /* ===================================================================
+       HERO CONTAINER & STATS PANEL (SESUAI GAMBAR 2)
+       =================================================================== */
+    .silapor-hero-container {
+      display: grid;
+      grid-template-columns: 1fr 290px;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .hero-left-banner {
+      background: #194a36;
+      border-radius: 16px;
+      padding: 28px 32px;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 8px 24px -4px rgba(6, 78, 59, 0.25);
+    }
+
+    .hero-main-heading {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.65rem;
+      font-weight: 800;
+      line-height: 1.25;
+      color: #ffffff;
+      margin-bottom: 6px;
+      letter-spacing: -0.2px;
+    }
+
+    .hero-sub-heading {
+      font-size: 0.95rem;
+      color: #d1fae5;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+
+    .hero-actions-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .btn-hero-action {
+      background: #ffffff;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .btn-hero-action:hover {
+      background: #f0fdf4;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .btn-hero-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: #ecfdf5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .btn-hero-tag {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #059669;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-hero-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.15;
+    }
+
+    .hero-right-stats {
+      background: #e3ebe4;
+      border-radius: 16px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border: 1px solid rgba(16, 185, 129, 0.15);
+    }
+
+    .hero-stat-pill {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #1e293b;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .hero-stat-row {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .stat-row-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stat-row-lbl {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #64748b;
+      line-height: 1.1;
+    }
+
+    .stat-row-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.1;
+      margin-top: 1px;
+    }
+
+    /* ===================================================================
+       DUA KARTU BAWAH: ALUR PENGADUAN & PETA SEBARAN (SESUAI GAMBAR 2)
+       =================================================================== */
+    .silapor-bottom-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .bottom-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 18px 20px;
+      box-shadow: 0 4px 16px rgba(6, 78, 59, 0.04);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bottom-card-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .bottom-card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: 0.4px;
+      margin: 0;
+    }
+
+    .alur-steps-track {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      position: relative;
+      margin-top: 10px;
+      padding: 0 4px;
+    }
+
+    .alur-step-item {
+      flex: 1;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .alur-step-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #ecfdf5;
+      border: 2px solid #a7f3d0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15);
+      transition: all 0.2s;
+    }
+
+    .alur-step-item:hover .alur-step-icon {
+      transform: scale(1.08);
+      background: #d1fae5;
+    }
+
+    .alur-step-label {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.2;
+      margin-bottom: 2px;
+    }
+
+    .alur-step-sub {
+      font-size: 0.7rem;
+      color: #64748b;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .alur-step-line {
+      flex: 0.6;
+      height: 2px;
+      background: #cbd5e1;
+      margin-top: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mini-map-container {
+      height: 110px;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      border: 1.5px solid #cbd5e1;
+      margin: 8px 0 12px 0;
+      background: #e0f2fe;
+    }
+
+    .mini-map-canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .btn-expand-mini-map {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      z-index: 400;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      width: 26px;
+      height: 26px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #334155;
+    }
+
+    .btn-expand-mini-map:hover {
+      background: #ffffff;
+      color: #059669;
+    }
+
+    .mini-map-actions-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-buka-peta-spasial {
+      background: #194a36;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-weight: 700;
+      font-size: 0.78rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .btn-buka-peta-spasial:hover {
+      background: #0f3d2b;
+      transform: translateY(-1px);
+    }
+
+    .btn-wa-helpline-hubungi {
+      background: #25d366;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.76rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      font-weight: 700;
+      margin-left: auto;
+      box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
+      transition: all 0.2s;
+    }
+
+    .btn-wa-helpline-hubungi:hover {
+      background: #20ba5a;
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 860px) {
+      .silapor-hero-container {
+        grid-template-columns: 1fr;
+      }
+      .silapor-bottom-grid {
+        grid-template-columns: 1fr;
+      }
     }
 
     /* ===================================================================
@@ -1409,11 +1751,11 @@
       padding-top: 4px;
     }
 
-    /* Leaflet Popup Card */
+    /* Leaflet Popup Card (Sesuai Gambar 1) */
     .map-popup-card {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      min-width: 250px;
-      max-width: 300px;
+      min-width: 270px;
+      max-width: 320px;
       padding: 4px;
     }
 
@@ -1421,53 +1763,57 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       padding-bottom: 6px;
-      border-bottom: 1px solid #e2e8f0;
+      border-bottom: 1px solid #f1f5f9;
     }
 
     .popup-id {
       font-family: monospace;
       font-weight: 800;
       color: #065f46;
-      font-size: 0.9rem;
+      font-size: 0.98rem;
     }
 
     .popup-cat {
       display: flex;
       align-items: center;
-      gap: 6px;
-      font-size: 0.85rem;
-      color: #059669;
-      margin-bottom: 6px;
+      gap: 8px;
+      font-size: 0.96rem;
+      font-weight: 800;
+      color: #047857;
+      margin-bottom: 10px;
     }
 
     .popup-location {
-      font-size: 0.78rem;
+      font-size: 0.84rem;
       color: #334155;
-      margin-bottom: 8px;
+      margin-bottom: 10px;
       background: #f8fafc;
-      padding: 8px;
-      border-radius: 6px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #f1f5f9;
+      line-height: 1.4;
     }
 
     .popup-detail-loc {
-      font-size: 0.75rem;
+      font-size: 0.78rem;
       color: #64748b;
-      margin-top: 2px;
+      margin-top: 3px;
     }
 
     .popup-coords {
       font-family: monospace;
-      font-size: 0.7rem;
-      color: #059669;
-      margin-top: 4px;
+      font-size: 0.78rem;
+      color: #0d9488;
+      font-weight: 700;
+      margin-top: 5px;
     }
 
     .popup-chronology {
-      font-size: 0.78rem;
+      font-size: 0.84rem;
       color: #1e293b;
-      line-height: 1.4;
+      line-height: 1.45;
       margin-bottom: 10px;
     }
 
@@ -1478,12 +1824,13 @@
 
     .popup-dlh-status {
       background: #ecfdf5;
-      border-left: 3px solid #10b981;
-      padding: 6px 8px;
+      border-left: 3.5px solid #10b981;
+      padding: 8px 10px;
       border-radius: 4px;
-      font-size: 0.74rem;
+      font-size: 0.8rem;
       color: #065f46;
-      margin-bottom: 10px;
+      margin-bottom: 12px;
+      line-height: 1.4;
     }
 
     .popup-actions {
@@ -2334,24 +2681,39 @@
   <div class="nature-top-ribbon"></div>
 
   <!-- ===================================================================
-       HEADER RESMI DLH LEMBATA
+       HEADER RESMI DLH LEMBATA (SESUAI GAMBAR 2)
        =================================================================== -->
   <header class="app-header">
     <div class="header-inner">
       <div class="brand-group">
-        <div class="brand-icon">🌿</div>
-        <div>
-          <h1 class="brand-name">SILAPOR DLH LEMBATA</h1>
-          <p class="brand-sub">🌱 DLH Kabupaten Lembata &bull; Jaga Alam Lewotana Lestari</p>
+        <div class="brand-crest-logo" title="Lambang Daerah Kabupaten Lembata">
+          <svg width="42" height="48" viewBox="0 0 100 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <!-- Perisai Segilima Emas & Hijau Daun -->
+            <polygon points="50,4 96,24 82,108 50,118 18,108 4,24" fill="#047857" stroke="#eab308" stroke-width="4" stroke-linejoin="round"/>
+            <!-- Pita Merah Atas -->
+            <path d="M14 26 Q50 36 86 26 L88 34 Q50 44 12 34 Z" fill="#dc2626" stroke="#b91c1c" stroke-width="1"/>
+            <text x="50" y="32" font-size="7" font-weight="900" fill="#ffffff" text-anchor="middle" font-family="'Outfit', sans-serif" letter-spacing="0.5">LEMBATA</text>
+            <!-- Gunung Ile Lewotolok -->
+            <polygon points="50,44 72,78 28,78" fill="#065f46" stroke="#fbbf24" stroke-width="1.5"/>
+            <circle cx="50" cy="44" r="3" fill="#f59e0b"/>
+            <!-- Perahu Tradisional Pesisir -->
+            <path d="M30 84 Q50 82 70 84 L64 92 Q50 96 36 92 Z" fill="#991b1b" stroke="#fef08a" stroke-width="1"/>
+            <polygon points="50,66 50,83 60,83" fill="#ffffff"/>
+            <!-- Gelombang Laut -->
+            <path d="M22 98 Q36 94 50 98 Q64 102 78 98" stroke="#38bdf8" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+            <!-- Padi & Kapas -->
+            <path d="M22 46 Q16 68 24 90" stroke="#facc15" stroke-width="2" fill="none" stroke-linecap="round"/>
+            <path d="M78 46 Q84 68 76 90" stroke="#facc15" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+        <div class="brand-text-block">
+          <h1 class="brand-title-instansi">DINAS LINGKUNGAN HIDUP</h1>
+          <div class="brand-sub-kab">KABUPATEN LEMBATA</div>
         </div>
       </div>
 
-      <div class="header-right">
-        <!-- Status Indikator Layanan Cloud DLH -->
-        <div class="btn-cloud-badge" id="cloudStatusBadgeWarga" title="Status Database Google Spreadsheet DLH Lembata">
-          <span class="dot-indicator"></span>
-          <span>Layanan Aktif 24 Jam</span>
-        </div>
+      <div class="header-right-portal">
+        <span class="portal-brand-text">SILAPOR DLH LEMBATA</span>
       </div>
     </div>
   </header>
@@ -2385,81 +2747,201 @@
          =============================================================== -->
     <section class="tab-content active" id="pane-lapor">
 
-      <!-- Hero Banner Elegan & Simpel (Tidak Bertele-tele) -->
-      <div class="hero-banner-clean">
-        <div class="hero-pill-badge">🌿 SILAPOR &bull; DLH KABUPATEN LEMBATA</div>
-        <h2 class="hero-headline">Jaga Kelestarian Alam Lewotana</h2>
-        <p class="hero-tagline">
-          Laporkan segala bentuk pencemaran lingkungan di wilayah Kabupaten Lembata secara cepat, transparan, dan terverifikasi langsung oleh Dinas Lingkungan Hidup.
-        </p>
-      </div>
+      <!-- ===============================================================
+           HERO SECTION: LAYANAN PENGADUAN & ASPIRASI (SESUAI GAMBAR 2)
+           =============================================================== -->
+      <section class="silapor-hero-container">
+        <!-- Kolom Kiri: Banner Hijau Tua dengan 2 Tombol Aksi Utama -->
+        <div class="hero-left-banner">
+          <div>
+            <h2 class="hero-main-heading">Layanan Pengaduan &amp; Aspirasi Lingkungan Hidup</h2>
+            <p class="hero-sub-heading">Jaga Kelestarian Alam Lewotana Lembata</p>
+          </div>
 
-      <!-- Dashboard Masyarakat Terpadu: Pantau Status Lingkungan & Lacak Cepat -->
-      <div class="community-dashboard">
-        <div class="community-dash-header">
-          <div class="community-dash-title">
-            <span>📊</span> Dashboard Publik &bull; Pantauan Lingkungan
-          </div>
-          <span style="font-size: 0.74rem; background: #ecfdf5; color: #047857; font-weight: 800; padding: 4px 10px; border-radius: 999px; border: 1px solid #a7f3d0;">
-            🌱 9 Kecamatan Terkoneksi
-          </span>
-        </div>
+          <div class="hero-actions-row">
+            <button type="button" class="btn-hero-action" id="btnHeroAjukan" onclick="window.app && window.app.scrollToForm()">
+              <span class="btn-hero-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#064e3b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+              </span>
+              <div class="btn-hero-text">
+                <div class="btn-hero-tag">✏️ AJUKAN</div>
+                <div class="btn-hero-title">ADUAN BARU</div>
+              </div>
+            </button>
 
-        <!-- Metrik Live Lingkungan -->
-        <div class="community-metrics-grid">
-          <div class="c-metric-card">
-            <div class="c-metric-val" id="userKpiTotal">0</div>
-            <div class="c-metric-label">📥 Total Aduan</div>
-          </div>
-          <div class="c-metric-card">
-            <div class="c-metric-val" id="userKpiProses" style="color: #d97706;">0</div>
-            <div class="c-metric-label">🔍 Dalam Penanganan</div>
-          </div>
-          <div class="c-metric-card">
-            <div class="c-metric-val" id="userKpiSelesai" style="color: #2563eb;">0</div>
-            <div class="c-metric-label">✅ Tuntas Ditangani</div>
-          </div>
-        </div>
-
-        <!-- Quick Tracker: Lacak Status Tiket Instan -->
-        <div class="quick-track-box">
-          <div style="font-size: 0.8rem; font-weight: 800; color: #065f46; display: flex; align-items: center; gap: 6px;">
-            <span>🔎</span> Cek Status Laporan Aduan Anda
-          </div>
-          <div class="track-input-group">
-            <input type="text" id="quickTrackInput" class="track-input" placeholder="Masukkan ID Tiket (misal: ADU-LMB-2026-001)">
-            <button type="button" class="btn-track" id="btnQuickTrack">
-              <span>Lacak Tiket</span>
+            <button type="button" class="btn-hero-action" id="btnHeroLacak" onclick="window.app && window.app.scrollToTracker()">
+              <span class="btn-hero-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#064e3b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </span>
+              <div class="btn-hero-text">
+                <div class="btn-hero-tag">🔍 LACAK</div>
+                <div class="btn-hero-title">STATUS ADUAN</div>
+              </div>
             </button>
           </div>
-          <!-- Hasil Lacak Cepat -->
-          <div id="quickTrackResult" class="track-result-card"></div>
         </div>
 
-        <!-- Pemilih Isu Pencemaran Cepat (Interaktif ke Form) -->
-        <div style="margin-top: 10px;">
-          <div style="font-size: 0.78rem; font-weight: 800; color: #475569; margin-bottom: 6px;">
-            🎯 Pilih Jenis Pencemaran yang Ingin Dilaporkan:
+        <!-- Kolom Kanan: Panel Statistik Kartu Sage -->
+        <div class="hero-right-stats">
+          <div class="hero-stat-pill">
+            <span style="display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid #064e3b; font-size: 10px; font-weight: 800; color: #064e3b;">24</span>
+            <span style="font-size: 0.82rem; font-weight: 700; color: #1e293b;">Layanan Aktif 24 Jam</span>
           </div>
-          <div class="quick-category-grid">
-            <div class="quick-cat-btn" onclick="if(window.app) window.app.selectCategoryFromDashboard('Sampah Liar');">
-              <span class="quick-cat-icon">🚯</span>
-              <span class="quick-cat-name">Sampah Liar</span>
+
+          <div class="hero-stat-row">
+            <div class="stat-row-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2">
+                <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+                <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+              </svg>
             </div>
-            <div class="quick-cat-btn" onclick="if(window.app) window.app.selectCategoryFromDashboard('Limbah B3 & Kimia');">
-              <span class="quick-cat-icon">🌊</span>
-              <span class="quick-cat-name">Limbah Laut & B3</span>
+            <div>
+              <div class="stat-row-lbl">Total Aduan</div>
+              <div class="stat-row-val" id="heroStatTotal">1,240</div>
             </div>
-            <div class="quick-cat-btn" onclick="if(window.app) window.app.selectCategoryFromDashboard('Pencemaran Air & Sungai');">
-              <span class="quick-cat-icon">💧</span>
-              <span class="quick-cat-name">Pencemaran Air</span>
+          </div>
+
+          <div class="hero-stat-row">
+            <div class="stat-row-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
             </div>
-            <div class="quick-cat-btn" onclick="if(window.app) window.app.selectCategoryFromDashboard('Udara & Asap');">
-              <span class="quick-cat-icon">🌫️</span>
-              <span class="quick-cat-name">Udara & Asap</span>
+            <div>
+              <div class="stat-row-lbl">Dalam Penanganan</div>
+              <div class="stat-row-val" id="heroStatProses">85</div>
+            </div>
+          </div>
+
+          <div class="hero-stat-row">
+            <div class="stat-row-icon" style="background: #dcfce7;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <div>
+              <div class="stat-row-lbl">Selesai</div>
+              <div class="stat-row-val" id="heroStatSelesai">1,155</div>
             </div>
           </div>
         </div>
+      </section>
+
+      <!-- ===============================================================
+           DUA KARTU BAWAH: ALUR PENGADUAN DIGITAL & PETA SEBARAN (GAMBAR 2)
+           =============================================================== -->
+      <section class="silapor-bottom-grid">
+        <!-- Kartu Kiri: Alur Pengaduan Digital (Sesuai Aturan) -->
+        <div class="bottom-card card-alur">
+          <div class="bottom-card-header">
+            <h3 class="bottom-card-title">ALUR PENGADUAN DIGITAL</h3>
+          </div>
+
+          <div class="alur-steps-track">
+            <!-- Step 1: Pengisian Data Pelapor -->
+            <div class="alur-step-item">
+              <div class="alur-step-icon" title="Data Pelapor dijamin 100% rahasia">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div class="alur-step-label">1. Isi Data Pelapor</div>
+              <div class="alur-step-sub">Kerahasiaan Terjamin</div>
+            </div>
+
+            <div class="alur-step-line"></div>
+
+            <!-- Step 2: Ambil Foto & Lokasi -->
+            <div class="alur-step-item">
+              <div class="alur-step-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                  <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+              </div>
+              <div class="alur-step-label">2. Foto &amp; Lokasi</div>
+              <div class="alur-step-sub">GPS &amp; Bukti Faktual</div>
+            </div>
+
+            <div class="alur-step-line"></div>
+
+            <!-- Step 3: Kirim Laporan -->
+            <div class="alur-step-item">
+              <div class="alur-step-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+              </div>
+              <div class="alur-step-label">3. Kirim Laporan</div>
+              <div class="alur-step-sub">Uraian Pencemaran</div>
+            </div>
+
+            <div class="alur-step-line"></div>
+
+            <!-- Step 4: Verifikasi & Penanganan -->
+            <div class="alur-step-item">
+              <div class="alur-step-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <path d="m9 12 2 2 4-4"></path>
+                </svg>
+              </div>
+              <div class="alur-step-label">4. Penanganan DLH</div>
+              <div class="alur-step-sub">Verifikasi Lapangan</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Kartu Kanan: Peta Sebaran Aduan (Mini Preview) -->
+        <div class="bottom-card card-peta-mini">
+          <div class="bottom-card-header" style="justify-content: space-between;">
+            <h3 class="bottom-card-title">PETA SEBARAN ADUAN</h3>
+            <span style="font-size: 0.72rem; color: #047857; font-weight: 700; background: #ecfdf5; padding: 2px 8px; border-radius: 999px;">🏝️ Pulau Lembata</span>
+          </div>
+
+          <div class="mini-map-container" id="miniMapContainer">
+            <div id="miniMapPreview" class="mini-map-canvas"></div>
+            <button type="button" class="btn-expand-mini-map" onclick="window.app && window.app.switchTab('peta')" title="Buka Peta Spasial Penuh">
+              ⛶
+            </button>
+          </div>
+
+          <div class="mini-map-actions-row">
+            <button type="button" class="btn-buka-peta-spasial" onclick="window.app && window.app.switchTab('peta')">
+              Buka Peta Spasial ↗
+            </button>
+            <a href="https://wa.me/6282234582759?text=Halo%20Dinas%20Lingkungan%20Hidup%20Kabupaten%20Lembata,%20saya%20warga%20ingin%20berkonsultasi%20layanan%20pengaduan" target="_blank" class="btn-wa-helpline-hubungi">
+              <span>💬 Hubungi DLH</span>
+              <strong>0822-3458-2759</strong>
+            </a>
+          </div>
+        </div>
+      </section>
+
+      <!-- Quick Tracker: Lacak Status Tiket Instan -->
+      <div class="quick-track-box" id="quickTrackSection">
+        <div style="font-size: 0.82rem; font-weight: 800; color: #065f46; display: flex; align-items: center; gap: 6px;">
+          <span>🔎</span> Cek Status Laporan Aduan Anda
+        </div>
+        <div class="track-input-group">
+          <input type="text" id="quickTrackInput" class="track-input" placeholder="Masukkan ID Tiket (misal: ADU-LMB-2026-001)">
+          <button type="button" class="btn-track" id="btnQuickTrack">
+            <span>Lacak Tiket</span>
+          </button>
+        </div>
+        <!-- Hasil Lacak Cepat -->
+        <div id="quickTrackResult" class="track-result-card"></div>
       </div>
 
       <!-- Form Box Card -->
@@ -2472,9 +2954,18 @@
 
         <form id="formAduanWarga" class="aduan-form">
 
+          <!-- Banner Kerahasiaan Data Pelapor -->
+          <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 12px 14px; margin-bottom: 18px; font-size: 0.84rem; color: #166534; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 6px rgba(16, 185, 129, 0.08);">
+            <span style="font-size: 1.4rem; line-height: 1;">🔒</span>
+            <div>
+              <strong style="color: #065f46; display: block; font-size: 0.86rem; margin-bottom: 2px;">Kerahasiaan Data Pelapor Dijamin 100%</strong>
+              <span>Identitas dan kontak Anda tidak akan ditampilkan pada peta sebaran publik atau pihak luar guna melindungi privasi &amp; keamanan pelapor.</span>
+            </div>
+          </div>
+
           <!-- Bagian 1: Data Diri Pelapor -->
           <div class="form-section-title">
-            <span>1</span> Identitas Pelapor
+            <span>1</span> Identitas Pelapor (Rahasia &amp; Terlindungi)
           </div>
 
           <div class="form-row-2">
@@ -2494,9 +2985,40 @@
             <input type="text" id="inputAlamat" class="input-text" placeholder="Contoh: Kelurahan Selandoro, Nubatukan">
           </div>
 
-          <!-- Bagian 2: Lokasi Pencemaran di Lembata -->
+          <!-- Bagian 2: Upload Bukti Foto/Video Kejadian -->
           <div class="form-section-title">
-            <span>2</span> Lokasi Kejadian (Kabupaten Lembata)
+            <span>2</span> Bukti Foto / Video Kejadian
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">📷 Unggah Foto / Video Lapangan (Kamera / Galeri)</label>
+            <div class="upload-zone" id="uploadZone">
+
+              <!-- Hidden Inputs -->
+              <input type="file" id="inputBuktiFoto" accept="image/*,video/*" multiple style="display: none;">
+              <input type="file" id="inputCameraCapture" accept="image/*" capture="environment" style="display: none;">
+
+              <!-- Action Buttons -->
+              <div class="upload-actions-group">
+                <button type="button" class="btn-camera-trigger" id="btnOpenLiveCamera">
+                  📸 Ambil Foto Langsung (Kamera)
+                </button>
+                <button type="button" class="btn-upload-trigger" id="btnUploadFoto">
+                  📁 Pilih File dari Galeri / Dokumen
+                </button>
+              </div>
+
+              <p class="upload-hint">Maks. 3 foto/video (JPG, PNG, MP4). Mengambil foto langsung di lokasi kejadian
+                sangat membantu ketepatan verifikasi tim DLH.</p>
+
+              <!-- Preview Thumbnails -->
+              <div id="uploadPreviewList" class="upload-preview-list"></div>
+            </div>
+          </div>
+
+          <!-- Bagian 3: Lokasi Pencemaran di Lembata -->
+          <div class="form-section-title">
+            <span>3</span> Lokasi Kejadian (Kabupaten Lembata)
           </div>
 
           <div class="form-row-2">
@@ -2565,9 +3087,9 @@
             </div>
           </div>
 
-          <!-- Bagian 3: Detail Dugaan Pencemaran -->
+          <!-- Bagian 4: Detail Dugaan Pencemaran -->
           <div class="form-section-title">
-            <span>3</span> Detail Dugaan Pencemaran
+            <span>4</span> Rincian Pencemaran &amp; Kirim Aduan
           </div>
 
           <div class="form-field">
@@ -2615,33 +3137,6 @@
             <label class="field-label">Uraian / Kronologi Masalah Pencemaran <span class="req">*</span></label>
             <textarea id="inputUraian" class="input-textarea" rows="4" required
               placeholder="Jelaskan kondisi pencemaran yang terjadi, dampaknya pada masyarakat/lingkungan sekitar, bau, perubahan warna air, dll..."></textarea>
-          </div>
-
-          <!-- Upload Bukti Foto/Video -->
-          <div class="form-field">
-            <label class="field-label">📷 Bukti Foto / Video Kejadian (Opsional)</label>
-            <div class="upload-zone" id="uploadZone">
-
-              <!-- Hidden Inputs -->
-              <input type="file" id="inputBuktiFoto" accept="image/*,video/*" multiple style="display: none;">
-              <input type="file" id="inputCameraCapture" accept="image/*" capture="environment" style="display: none;">
-
-              <!-- Action Buttons -->
-              <div class="upload-actions-group">
-                <button type="button" class="btn-camera-trigger" id="btnOpenLiveCamera">
-                  📸 Ambil Foto Langsung (Kamera)
-                </button>
-                <button type="button" class="btn-upload-trigger" id="btnUploadFoto">
-                  📁 Pilih File dari Galeri / Dokumen
-                </button>
-              </div>
-
-              <p class="upload-hint">Maks. 3 foto/video (JPG, PNG, MP4). Mengambil foto langsung di lokasi kejadian
-                sangat membantu ketepatan verifikasi tim DLH.</p>
-
-              <!-- Preview Thumbnails -->
-              <div id="uploadPreviewList" class="upload-preview-list"></div>
-            </div>
           </div>
 
           <!-- Submit Button -->

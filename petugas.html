@@ -2806,12 +2806,21 @@
         if (!container || typeof L === 'undefined') return;
 
         try {
+          const southWest = L.latLng(-8.75, 123.05);
+          const northEast = L.latLng(-8.05, 124.02);
+          const lembataBounds = L.latLngBounds(southWest, northEast);
+
           this.map = L.map('petugasMap', {
             center: this.centerCoords,
             zoom: 11,
+            minZoom: 10,
+            maxZoom: 18,
+            maxBounds: lembataBounds,
+            maxBoundsViscosity: 1.0,
             zoomControl: true,
             scrollWheelZoom: true
           });
+          this.map.setMaxBounds(lembataBounds);
 
           // Layer Basemap
           const osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {

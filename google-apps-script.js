@@ -45,7 +45,7 @@ function getWebAppUrl() {
   try {
     const url = ScriptApp.getService().getUrl();
     if (url && url.startsWith('http')) return url;
-  } catch (e) {}
+  } catch (e) { }
   return DEFAULT_GAS_URL;
 }
 
@@ -258,7 +258,7 @@ function getOrCreateSheet(sheetName, headers) {
           existingHeaders.push(h);
         }
       });
-    } catch (e) {}
+    } catch (e) { }
   }
 
   return sheet;
@@ -427,7 +427,7 @@ function handleGetAll() {
         if (sid && sb64) storageMap[sid] = sb64;
       }
     }
-  } catch (e) {}
+  } catch (e) { }
 
   const result = rawData.map(row => mapSheetRowToFrontend(row, storageMap));
 
@@ -482,7 +482,7 @@ function handleGetById(id) {
         if (sid && sb64) storageMap[sid] = sb64;
       }
     }
-  } catch (e) {}
+  } catch (e) { }
 
   return {
     success: true,
@@ -695,7 +695,7 @@ function handleAddAduan(formData) {
           .build();
         sheet.getRange(lastRow, colFotoIdx + 1).setRichTextValue(richText);
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   // Tulis log
@@ -805,7 +805,7 @@ function handleUpdateVerifikasi(updateData) {
       let driveUrl = '';
       try {
         driveUrl = saveBase64ImageToDrive(trimmedRiil, officerPhotoId);
-      } catch (e) {}
+      } catch (e) { }
 
       targetRiilUrl = (driveUrl && driveUrl.startsWith('http'))
         ? driveUrl
@@ -1136,7 +1136,7 @@ function handleSendResetPin(data) {
   }));
 
   const subject = '🔐 Kode Konfirmasi Pemulihan Sandi Dashboard Petugas DLH Lembata';
-  const body = 
+  const body =
     'Halo Petugas Verifikator DLH Lembata,\n\n' +
     'Permintaan pemulihan PIN / Kata Sandi untuk Dashboard Petugas SILAPOR DLH Lembata telah diterima.\n\n' +
     '👉 KODE KONFIRMASI (OTP) ANDA: ' + otp + '\n\n' +
@@ -1386,7 +1386,7 @@ function handleViewImage(id, fileId) {
           }
         }
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   const html = `<!DOCTYPE html>
@@ -1496,14 +1496,14 @@ function handleViewImage(id, fileId) {
     </div>
     <div class="photo-area">
       ${(photoData && (photoData.startsWith('data:image') || photoData.startsWith('http')))
-        ? '<img src="' + photoData + '" alt="Bukti Foto Aduan ' + idDisplay + '">'
-        : '<div style="color:#94a3b8; padding: 40px; text-align: center;">📸 Foto bukti tidak ditemukan atau sedang diproses.</div>'}
+      ? '<img src="' + photoData + '" alt="Bukti Foto Aduan ' + idDisplay + '">'
+      : '<div style="color:#94a3b8; padding: 40px; text-align: center;">📸 Foto bukti tidak ditemukan atau sedang diproses.</div>'}
     </div>
     <div class="footer">
       <div><strong>Kronologi:</strong> ${uraian}</div>
       ${(photoData && (photoData.startsWith('data:image') || photoData.startsWith('http')))
-        ? '<a href="' + photoData + '" download="Bukti_Foto_' + idDisplay + '.jpg" class="btn-dl">⬇️ Unduh Foto Asli</a>'
-        : ''}
+      ? '<a href="' + photoData + '" download="Bukti_Foto_' + idDisplay + '.jpg" class="btn-dl">⬇️ Unduh Foto Asli</a>'
+      : ''}
     </div>
   </div>
 </body>
@@ -1565,7 +1565,7 @@ function handleFixPhotoLinks() {
           }
           storageSheet.appendRow(rowData);
           existingStorageIds.add(idAduan.toUpperCase());
-        } catch (e) {}
+        } catch (e) { }
       }
     }
 
@@ -1747,6 +1747,6 @@ function onOpen() {
       .addItem('📸 Bersihkan & Perbaiki Semua Foto (#ERROR!)', 'bersihkanErrorFoto')
       .addItem('🔄 Sinkronkan Seluruh Sheet', 'syncAllSheets')
       .addToUi();
-  } catch (e) {}
+  } catch (e) { }
 }
 
