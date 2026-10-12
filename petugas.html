@@ -4,7 +4,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Dashboard Khusus Petugas &amp; Verifikasi Aduan | SILAPOR DLH LEMBATA</title>
+  <title>Dashboard Petugas &amp; Verifikasi Aduan | Dinas Lingkungan Hidup Kabupaten Lembata</title>
   <meta name="description"
     content="Dashboard resmi petugas dan verifikator Dinas Lingkungan Hidup Kabupaten Lembata untuk verifikasi lapangan, penanganan aduan masyarakat, pembaruan status, dan audit log tindak lanjut.">
   <link rel="canonical" href="https://aduan-dlh-lembata.vercel.app/petugas">
@@ -13,7 +13,7 @@
   <!-- Open Graph -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://aduan-dlh-lembata.vercel.app/petugas">
-  <meta property="og:title" content="Dashboard Petugas &amp; Verifikasi - SILAPOR DLH LEMBATA">
+  <meta property="og:title" content="Dashboard Petugas &amp; Verifikasi - DLH Kabupaten Lembata">
   <meta property="og:description"
     content="Dashboard penanganan dan verifikasi aduan dugaan pencemaran lingkungan hidup Kabupaten Lembata.">
   <meta property="og:locale" content="id_ID">
@@ -173,14 +173,22 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 8px 14px;
+      padding: 7px 13px;
       border-radius: 999px;
-      font-size: 0.82rem;
+      font-size: 0.8rem;
       font-weight: 700;
       text-decoration: none;
       transition: all 0.2s ease;
       cursor: pointer;
-      border: 1px solid transparent;
+      border: 1px solid var(--border);
+      background: #ffffff;
+      color: #334155;
+    }
+
+    .btn-header-link:hover {
+      background: #f8fafc;
+      color: #0f172a;
+      border-color: #cbd5e1;
     }
 
     .btn-header-link.btn-warga {
@@ -191,7 +199,6 @@
 
     .btn-header-link.btn-warga:hover {
       background: #d1fae5;
-      transform: translateY(-1px);
     }
 
     .btn-header-link.btn-qr {
@@ -206,14 +213,24 @@
     }
 
     .btn-header-link.btn-wa {
-      background: linear-gradient(135deg, #25d366 0%, #16a34a 100%);
-      color: white;
-      box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
+      background: #25d366;
+      color: #ffffff;
+      border-color: #22c55e;
+      box-shadow: 0 1px 4px rgba(37, 211, 102, 0.25);
     }
 
     .btn-header-link.btn-wa:hover {
       background: #20ba5a;
-      transform: translateY(-1px);
+    }
+
+    .btn-header-link.btn-lock-portal {
+      background: #fef2f2;
+      color: #b91c1c;
+      border-color: #fecaca;
+    }
+
+    .btn-header-link.btn-lock-portal:hover {
+      background: #fee2e2;
     }
 
     /* Main Container */
@@ -221,131 +238,127 @@
       max-width: 1200px;
       width: 100%;
       margin: 0 auto;
-      padding: 24px 20px 60px 20px;
+      padding: 20px 20px 60px 20px;
       flex: 1;
     }
 
-    /* Officer Banner */
-    .officer-banner {
-      background: linear-gradient(135deg, #022c22 0%, #064e3b 50%, #047857 100%);
-      color: white;
-      border-radius: 20px;
-      padding: 26px 28px;
-      margin-bottom: 24px;
-      box-shadow: 0 16px 36px -12px rgba(6, 78, 59, 0.35), 0 0 0 1px rgba(52, 211, 153, 0.25);
+    /* Compact Minimalist Officer Top Strip */
+    .officer-top-strip {
+      background: #ffffff;
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 12px 18px;
+      margin-bottom: 16px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
       display: flex;
       justify-content: space-between;
       align-items: center;
       flex-wrap: wrap;
-      gap: 20px;
+      gap: 12px;
     }
 
-    .officer-banner-content {
-      max-width: 680px;
-    }
-
-    .officer-banner-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(16, 185, 129, 0.25);
-      border: 1px solid #34d399;
-      color: #a7f3d0;
-      padding: 4px 12px;
-      border-radius: 999px;
-      font-size: 0.74rem;
-      font-weight: 800;
-      letter-spacing: 0.6px;
-      margin-bottom: 10px;
-      text-transform: uppercase;
-    }
-
-    .officer-banner h2 {
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.45rem;
-      font-weight: 800;
-      line-height: 1.3;
-      margin-bottom: 8px;
-      color: #ffffff;
-    }
-
-    .officer-banner p {
-      color: #d1fae5;
-      font-size: 0.9rem;
-      line-height: 1.55;
-    }
-
-    .officer-banner-actions {
+    .top-strip-left {
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      min-width: 220px;
+      gap: 2px;
     }
 
-    .btn-cloud-status {
+    .top-strip-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.25;
+      margin: 0;
+    }
+
+    .top-strip-sub {
+      color: #64748b;
+      font-size: 0.78rem;
+      margin: 0;
+    }
+
+    .top-strip-right {
+      display: flex;
+      align-items: center;
+    }
+
+    .btn-cloud-compact {
       display: inline-flex;
       align-items: center;
       gap: 8px;
-      background: rgba(255, 255, 255, 0.12);
-      border: 1px solid rgba(255, 255, 255, 0.25);
-      color: #ffffff;
-      padding: 10px 16px;
-      border-radius: 12px;
-      font-size: 0.82rem;
+      background: #f0fdf4;
+      border: 1px solid #bbf7d0;
+      color: #065f46;
+      padding: 7px 14px;
+      border-radius: 999px;
+      font-size: 0.8rem;
       font-weight: 700;
       cursor: pointer;
-      backdrop-filter: blur(8px);
       transition: all 0.2s ease;
-      text-align: left;
+      text-decoration: none;
     }
 
-    .btn-cloud-status:hover {
-      background: rgba(255, 255, 255, 0.22);
+    .btn-cloud-compact:hover {
+      background: #dcfce7;
+      border-color: #86efac;
       transform: translateY(-1px);
     }
 
     .status-dot-pulse {
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       background: #10b981;
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.35);
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.25);
       flex-shrink: 0;
     }
 
-    /* KPI Summary Cards */
+    .cloud-status-title {
+      font-weight: 700;
+      color: #065f46;
+      font-size: 0.8rem;
+    }
+
+    .cloud-status-detail {
+      font-size: 0.74rem;
+      color: #047857;
+      opacity: 0.85;
+    }
+
+    /* Compact KPI Summary Cards */
     .kpi-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(230px, 1fr));
-      gap: 16px;
-      margin-bottom: 24px;
+      grid-template-columns: repeat(auto-fit, minmax(210px, 1fr));
+      gap: 12px;
+      margin-bottom: 20px;
     }
 
     .kpi-card {
       background: #ffffff;
       border: 1px solid var(--border);
-      border-radius: 16px;
-      padding: 18px 20px;
+      border-radius: 14px;
+      padding: 12px 16px;
       display: flex;
       align-items: center;
-      gap: 16px;
-      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.04);
+      gap: 12px;
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
       transition: all 0.2s ease;
     }
 
     .kpi-card:hover {
-      transform: translateY(-2px);
-      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
     }
 
     .kpi-icon-wrap {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 1.5rem;
+      font-size: 1.3rem;
       flex-shrink: 0;
     }
 
@@ -379,7 +392,7 @@
 
     .kpi-val {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.8rem;
+      font-size: 1.45rem;
       font-weight: 800;
       color: #0f172a;
       line-height: 1.1;
@@ -387,11 +400,10 @@
     }
 
     .kpi-title {
-      font-size: 0.8rem;
+      font-size: 0.74rem;
       font-weight: 700;
       color: #64748b;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
+      letter-spacing: 0.3px;
     }
 
     /* Main Table Card */
@@ -1748,6 +1760,19 @@
         width: 34px;
         height: 34px;
       }
+      .officer-top-strip {
+        padding: 10px 14px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .top-strip-right {
+        width: 100%;
+      }
+      .btn-cloud-compact {
+        width: 100%;
+        justify-content: center;
+      }
       .kpi-grid {
         grid-template-columns: repeat(2, 1fr) !important;
         gap: 8px;
@@ -1784,8 +1809,7 @@
       <img src="assets/logo-lingkungan-hidup.svg" alt="Logo Resmi Lingkungan Hidup" title="Dinas Lingkungan Hidup Kabupaten Lembata">
       <div>
         <div style="display: flex; align-items: center; gap: 8px;">
-          <span class="silapor-pill-blue">SILAPOR</span>
-          <span style="background: rgba(16, 185, 129, 0.2); color: #a7f3d0; border: 1px solid rgba(52, 211, 153, 0.4); border-radius: 6px; padding: 2px 8px; font-size: 0.74rem; font-weight: 800;">PORTAL KHUSUS</span>
+          <span style="background: rgba(16, 185, 129, 0.2); color: #a7f3d0; border: 1px solid rgba(52, 211, 153, 0.4); border-radius: 6px; padding: 2px 8px; font-size: 0.74rem; font-weight: 800;">PORTAL KHUSUS PETUGAS</span>
         </div>
         <div class="login-brand-title">DINAS LINGKUNGAN HIDUP</div>
         <div class="login-brand-sub">KABUPATEN LEMBATA</div>
@@ -1860,39 +1884,36 @@
   <header class="app-header">
     <div class="header-inner">
       <div class="brand-group" style="display: flex; align-items: center; gap: 12px;">
-        <img src="assets/logo-lingkungan-hidup.svg" alt="Logo Resmi Lingkungan Hidup" style="width: 46px; height: 46px; object-fit: contain; filter: drop-shadow(0 2px 5px rgba(0,0,0,0.15));" title="Dinas Lingkungan Hidup Kabupaten Lembata">
+        <img src="assets/logo-lingkungan-hidup.svg" alt="Logo Resmi Lingkungan Hidup" style="width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));" title="Dinas Lingkungan Hidup Kabupaten Lembata">
         <div>
-          <div style="display: flex; align-items: center; gap: 8px;">
-            <div class="silapor-badge-wrap" style="display: inline-flex; align-items: center; font-family: 'Outfit', sans-serif; font-size: 1.25rem; font-weight: 900; line-height: 1;">
-              <span style="background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%); color: #ffffff; padding: 3px 10px; border-radius: 6px; box-shadow: 0 2px 6px rgba(37, 99, 235, 0.35); letter-spacing: 0.8px;">SILAPOR</span>
-            </div>
-            <span class="badge-role-petugas">🛡️ Dashboard Petugas</span>
+          <div style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 800; color: #0f172a; line-height: 1.2;">
+            Dashboard Petugas
           </div>
-          <p class="brand-sub" style="margin: 2px 0 0 0; font-size: 0.78rem; font-weight: 700; color: #475569;">
-            <span>Dinas Lingkungan Hidup Kabupaten Lembata</span>
+          <p class="brand-sub" style="margin: 2px 0 0 0; font-size: 0.76rem; font-weight: 600; color: #64748b;">
+            Dinas Lingkungan Hidup Kabupaten Lembata
           </p>
         </div>
       </div>
 
       <nav class="header-nav">
-        <!-- Ke Formulir Warga -->
+        <!-- Formulir Warga -->
         <a href="index.html" class="btn-header-link btn-warga" title="Buka Halaman Formulir Pengaduan Masyarakat">
           <span>📝</span> Formulir Warga
         </a>
 
-        <!-- Poster QR Code -->
-        <a href="qr-code.html" class="btn-header-link btn-qr" title="Poster Cetak & QR Code">
-          <span>📱</span> Poster QR Code
+        <!-- Poster QR -->
+        <a href="qr-code.html" class="btn-header-link btn-qr" title="Poster Cetak &amp; QR Code">
+          <span>📱</span> Poster QR
         </a>
 
-        <!-- Helpline WhatsApp DLH -->
+        <!-- WA Pengaduan -->
         <a href="https://wa.me/6282234582769" target="_blank" class="btn-header-link btn-wa" title="Nomor Kontak Layanan Pengaduan">
           <span>💬</span> WA Pengaduan
         </a>
 
-        <!-- Kunci Dashboard (Logout) -->
+        <!-- Kunci Dashboard -->
         <button type="button" class="btn-header-link btn-lock-portal" id="btnLockPortal" title="Kunci Sesi Dashboard Petugas">
-          <span>🔒</span> Kunci Dashboard
+          <span>🔒</span> Kunci
         </button>
       </nav>
     </div>
@@ -1903,26 +1924,19 @@
        =================================================================== -->
   <main class="portal-container">
 
-    <!-- Officer Banner -->
-    <section class="officer-banner">
-      <div class="officer-banner-content">
-        <div class="officer-banner-badge">
-          <span>📋</span> SISTEM PENGAWASAN &amp; VERIFIKASI LAPANGAN
-        </div>
-        <h2>Dashboard Verifikasi Pengaduan Lingkungan Hidup</h2>
-        <p>
-          Kelola laporan dugaan pencemaran dari masyarakat di 9 kecamatan Kabupaten Lembata. Lakukan verifikasi lapangan, perbarui status penanganan secara berkala, dan dokumentasikan hasil pemeriksaan fisik secara transparan dan akuntabel.
-        </p>
+    <!-- Compact Minimalist Top Strip -->
+    <section class="officer-top-strip">
+      <div class="top-strip-left">
+        <h2 class="top-strip-title">Pengawasan &amp; Verifikasi Aduan</h2>
+        <p class="top-strip-sub">Pemantauan lapangan dan rekapitulasi penanganan pencemaran lingkungan Lembata</p>
       </div>
 
-      <div class="officer-banner-actions">
+      <div class="top-strip-right">
         <!-- Status Indikator Cloud GAS -->
-        <button type="button" class="btn-cloud-status" id="btnOpenCloudModal">
+        <button type="button" class="btn-cloud-compact" id="btnOpenCloudModal" title="Pengaturan &amp; Status Koneksi Google Apps Script">
           <span class="status-dot-pulse" id="cloudStatusDot"></span>
-          <div>
-            <div style="font-size: 0.72rem; color: #a7f3d0;" id="cloudStatusText">Cloud GAS Aktif</div>
-            <div style="font-size: 0.8rem; font-weight: 800;" id="cloudStatusDetail">Google Apps Script</div>
-          </div>
+          <span class="cloud-status-title" id="cloudStatusText">Cloud GAS Aktif</span>
+          <span class="cloud-status-detail" id="cloudStatusDetail">• Google Apps Script</span>
         </button>
       </div>
     </section>
@@ -1934,7 +1948,7 @@
         <div class="kpi-icon-wrap">📊</div>
         <div class="kpi-info">
           <div class="kpi-val" id="kpiTotal">0</div>
-          <div class="kpi-title">Total Aduan Masuk</div>
+          <div class="kpi-title">Total Aduan</div>
         </div>
       </div>
 
@@ -1943,7 +1957,7 @@
         <div class="kpi-icon-wrap">⏳</div>
         <div class="kpi-info">
           <div class="kpi-val" id="kpiBaru">0</div>
-          <div class="kpi-title">Aduan Belum Diverifikasi</div>
+          <div class="kpi-title">Belum Verifikasi</div>
         </div>
       </div>
 
@@ -1952,7 +1966,7 @@
         <div class="kpi-icon-wrap">⚙️</div>
         <div class="kpi-info">
           <div class="kpi-val" id="kpiProses">0</div>
-          <div class="kpi-title">Dalam Penanganan DLH</div>
+          <div class="kpi-title">Dalam Proses</div>
         </div>
       </div>
 
@@ -1961,7 +1975,7 @@
         <div class="kpi-icon-wrap">✅</div>
         <div class="kpi-info">
           <div class="kpi-val" id="kpiSelesai">0</div>
-          <div class="kpi-title">Tuntas &amp; Selesai</div>
+          <div class="kpi-title">Tuntas Selesai</div>
         </div>
       </div>
     </section>
@@ -1972,9 +1986,8 @@
     <section class="officer-map-card">
       <div class="map-card-header">
         <div>
-          <div class="map-title-badge">🗺️ GIS PENGAWASAN LINGKUNGAN KABUPATEN LEMBATA</div>
-          <h2 class="map-card-title">Peta Sebaran &amp; Heatmap Titik Rawan Pencemaran</h2>
-          <p class="map-card-sub">Visualisasi spasial titik koordinat GPS aduan masyarakat, pemetaan konsentrasi pencemaran (peta panas), dan filter wilayah 9 kecamatan.</p>
+          <h2 class="map-card-title">🗺️ Peta Titik Rawan &amp; Sebaran Aduan</h2>
+          <p class="map-card-sub">Visualisasi spasial titik koordinat GPS dan sebaran 9 kecamatan</p>
         </div>
 
         <div class="map-header-controls">
@@ -1984,7 +1997,7 @@
               📍 Marker GPS
             </button>
             <button type="button" class="btn-map-mode" id="btnModeHeatmap" onclick="window.portal.setMapMode('heatmap')">
-              🔥 Heatmap (Peta Panas)
+              🔥 Heatmap
             </button>
             <button type="button" class="btn-map-mode" id="btnModeHybrid" onclick="window.portal.setMapMode('hybrid')">
               🎯 Gabungan
@@ -2064,38 +2077,37 @@
       <div class="table-card-header">
         <div>
           <h2 class="table-card-title">
-            <span>📑</span> Rekapitulasi Data Aduan Masuk
+            <span>📑</span> Rekapitulasi Data Aduan
           </h2>
           <p class="table-card-sub">
-            Sinkronisasi real-time dengan form laporan warga &amp; Google Spreadsheet DLH Lembata
+            Sinkronisasi form pengaduan masyarakat &amp; Google Spreadsheet DLH Lembata
           </p>
         </div>
 
         <div class="table-header-buttons">
-          <!-- Pengaturan Koneksi Cloud Google Spreadsheet -->
-          <button type="button" class="btn-action-tool" id="btnOpenCloudModal" title="Pengaturan Database Google Spreadsheet" style="background: #f0fdf4; border-color: #86efac; color: #166534; font-weight: 700;">
-            <span id="cloudStatusDot" style="display:inline-block; width:8px; height:8px; border-radius:50%; background:#10b981; margin-right:4px;"></span>
-            <span id="cloudStatusText">☁️ Database Sheets</span>
+          <!-- Refresh / Sync Manual -->
+          <button type="button" class="btn-action-tool" id="btnManualSync" onclick="if(window.portal) window.portal.manualSync();" title="Segarkan data dari penyimpanan">
+            <span id="syncIconSpin">🔄</span> Segarkan
           </button>
 
           <!-- Input / Impor Pesan WhatsApp -->
-          <button type="button" class="btn-action-tool btn-import-wa" id="btnOpenWaImportModal" onclick="window.portal.openWaImportModal();" style="background: #ecfdf5; border-color: #10b981; color: #047857; font-weight: 800;" title="Salin & Tempel Pesan Pengaduan dari WhatsApp">
-            <span>💬</span> 📥 Catat dari WA
+          <button type="button" class="btn-action-tool btn-import-wa" id="btnOpenWaImportModal" onclick="window.portal.openWaImportModal();" style="background: #ecfdf5; border-color: #10b981; color: #047857; font-weight: 700;" title="Salin &amp; Tempel Pesan Pengaduan dari WhatsApp">
+            <span>💬</span> Catat dari WA
           </button>
 
-          <!-- Refresh / Sync Manual -->
-          <button type="button" class="btn-action-tool" id="btnManualSync" onclick="if(window.portal) window.portal.manualSync();" title="Segarkan data dari penyimpanan">
-            <span id="syncIconSpin">🔄</span> Segarkan Data
+          <!-- Pengaturan Koneksi Cloud Google Spreadsheet -->
+          <button type="button" class="btn-action-tool" id="btnOpenCloudModalTable" onclick="document.getElementById('btnOpenCloudModal').click();" title="Pengaturan Database Google Spreadsheet" style="background: #f0fdf4; border-color: #86efac; color: #166534; font-weight: 700;">
+            <span>☁️</span> Database Sheets
           </button>
 
           <!-- Ekspor CSV -->
-          <button type="button" class="btn-action-tool btn-export" id="btnExportCsv" title="Unduh dataset lengkap dalam format CSV yang rapi dan terstruktur">
+          <button type="button" class="btn-action-tool btn-export" id="btnExportCsv" title="Unduh dataset lengkap dalam format CSV">
             <span>📥</span> Ekspor CSV
           </button>
 
           <!-- Reset Standar Bersih: 0 Aduan Fresh Start -->
-          <button type="button" class="btn-action-tool" id="btnResetOfficialData" onclick="if(window.portal) window.portal.resetOfficialData();" title="Kosongkan seluruh data aduan menjadi 0 aduan (Fresh Start) di Google Spreadsheet, Laptop & HP Petugas" style="color: #b91c1c; background: #fef2f2; border-color: #fca5a5; font-weight: 700;">
-            <span>🧹</span> Reset ke 0 Aduan
+          <button type="button" class="btn-action-tool" id="btnResetOfficialData" onclick="if(window.portal) window.portal.resetOfficialData();" title="Kosongkan seluruh data aduan menjadi 0 aduan (Fresh Start) di Google Spreadsheet, Laptop &amp; HP Petugas" style="color: #b91c1c; background: #fef2f2; border-color: #fca5a5; font-weight: 700;">
+            <span>🧹</span> Reset ke 0
           </button>
         </div>
       </div>
@@ -3448,7 +3460,7 @@
                     <span class="timeline-time-badge">${timeMasuk}</span>
                   </div>
                   <div style="color: #64748b; font-size: 0.76rem; margin-top: 2px;">
-                    Aduan masyarakat berhasil didata dan nomor tiket diterbitkan di portal SILAPOR.
+                    Aduan masyarakat berhasil didata dan nomor tiket diterbitkan.
                   </div>
                 </div>
               </div>
