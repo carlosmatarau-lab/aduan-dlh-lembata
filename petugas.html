@@ -1820,9 +1820,6 @@
           ⚠️ Peringatan: Tombol Caps Lock sedang aktif!
         </div>
 
-        <div class="auth-req-pill">
-          <span>🔤🔢</span> Kombinasi huruf &amp; angka (contoh: <code>DLH2026</code>)
-        </div>
 
         <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 18px; font-size: 0.82rem; color: #475569;">
           <input type="checkbox" id="checkRememberPin" style="accent-color: #059669; cursor: pointer;">
@@ -2815,7 +2812,7 @@
         const hasNumber = /[0-9]/.test(entered);
 
         if (!hasLetter || !hasNumber) {
-          this.triggerAuthShake('⚠️ Kata sandi wajib kombinasi huruf dan angka (contoh: DLH2026).');
+          this.triggerAuthShake('⚠️ Kata sandi wajib kombinasi huruf dan angka.');
           input.focus();
           return;
         }
@@ -2878,7 +2875,7 @@
               }
             }, 500);
           } else {
-            this.triggerAuthShake('❌ Kata sandi salah! Pastikan kombinasi huruf dan angka sudah benar (contoh: DLH2026). Apabila lupa sandi, silakan hubungi Admin.');
+            this.triggerAuthShake('❌ Kata sandi salah! Pastikan kombinasi huruf dan angka sudah benar. Apabila lupa sandi, silakan hubungi Admin.');
             input.focus();
             input.select();
           }
