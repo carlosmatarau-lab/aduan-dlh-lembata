@@ -132,29 +132,31 @@
     }
 
     .brand-lh-logo {
-      width: 48px;
-      height: 48px;
-      object-fit: contain;
+      width: 52px;
+      height: 52px;
+      object-fit: cover;
+      border-radius: 50%;
       flex-shrink: 0;
-      filter: drop-shadow(0 3px 10px rgba(16, 185, 129, 0.4));
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4), 0 0 0 2px rgba(52, 211, 153, 0.45);
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
       animation: lenteraLogoFloat 3.8s ease-in-out infinite alternate;
+      background: #064e3b;
     }
 
     @keyframes lenteraLogoFloat {
       0% {
         transform: translateY(0) scale(1);
-        filter: drop-shadow(0 3px 8px rgba(16, 185, 129, 0.35));
+        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35), 0 0 0 2px rgba(52, 211, 153, 0.4);
       }
       100% {
         transform: translateY(-2px) scale(1.04);
-        filter: drop-shadow(0 5px 14px rgba(245, 158, 11, 0.5));
+        box-shadow: 0 6px 18px rgba(245, 158, 11, 0.5), 0 0 0 2.5px rgba(251, 191, 36, 0.6);
       }
     }
 
     .brand-lh-logo:hover {
       transform: scale(1.12) rotate(3deg);
-      filter: drop-shadow(0 6px 20px rgba(245, 158, 11, 0.65));
+      box-shadow: 0 8px 22px rgba(245, 158, 11, 0.7), 0 0 0 3px rgba(251, 191, 36, 0.8);
     }
 
     /* Animasi Cahaya Berpendar LENTERA LEMBATA */
@@ -236,6 +238,35 @@
       border-radius: 999px;
       letter-spacing: 0.4px;
       white-space: nowrap;
+    }
+
+    /* Footer Brand - Bebas Animasi (Seperti Semula) */
+    .footer-lh-logo {
+      width: 46px;
+      height: 46px;
+      object-fit: contain;
+      flex-shrink: 0;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+      animation: none !important;
+      transform: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      background: transparent !important;
+    }
+
+    .footer-brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #ffffff !important;
+      letter-spacing: 0.3px;
+      line-height: 1.15;
+      margin: 0;
+      background: none !important;
+      -webkit-text-fill-color: #ffffff !important;
+      animation: none !important;
+      filter: none !important;
+      text-shadow: none !important;
     }
 
     .btn-cloud-badge {
@@ -3328,7 +3359,7 @@
   <header class="app-header">
     <div class="header-inner">
       <div class="brand-group">
-        <img src="assets/logo-lentera.svg" alt="Logo Resmi LENTERA LEMBATA" class="brand-lh-logo" title="LENTERA LEMBATA - Dinas Lingkungan Hidup Kabupaten Lembata">
+        <img src="assets/logo-lentera.png" alt="Logo LENTERA LEMBATA" class="brand-lh-logo" onerror="this.onerror=null; this.src='assets/logo-lingkungan-hidup.png';" title="LENTERA LEMBATA - Dinas Lingkungan Hidup Kabupaten Lembata">
         <div class="brand-text-block">
           <h1 class="brand-title-instansi">LENTERA LEMBATA</h1>
           <div class="brand-sub-kab">Layanan Elektronik Penanganan dan Verifikasi Aduan Lingkungan Kabupaten Lembata</div>
@@ -3397,11 +3428,6 @@
 
         <!-- Kolom Kanan: Panel Statistik Kartu Sage -->
         <div class="hero-right-stats">
-          <div class="hero-stat-pill">
-            <span style="display: flex; align-items: center; justify-content: center; width: 22px; height: 22px; border-radius: 50%; border: 1.5px solid #064e3b; font-size: 10px; font-weight: 800; color: #064e3b;">24</span>
-            <span style="font-size: 0.82rem; font-weight: 700; color: #1e293b;">Layanan Aktif 24 Jam</span>
-          </div>
-
           <div class="hero-stat-row">
             <div class="stat-row-icon">
               <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2">
@@ -4208,9 +4234,9 @@
       <div class="footer-top">
         <div class="footer-brand">
           <div class="brand-group" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-            <img src="assets/logo-lingkungan-hidup.svg" alt="Logo Resmi Lingkungan Hidup" class="brand-lh-logo" style="width: 46px; height: 46px; object-fit: contain; filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));" title="Dinas Lingkungan Hidup Kabupaten Lembata">
+            <img src="assets/logo-lingkungan-hidup.svg" alt="Logo Resmi Lingkungan Hidup" class="footer-lh-logo" title="Dinas Lingkungan Hidup Kabupaten Lembata">
             <div class="brand-text-block">
-              <div class="brand-title-instansi" style="font-family: 'Outfit', sans-serif; font-size: 1.05rem; font-weight: 800; color: #ffffff; letter-spacing: 0.3px; line-height: 1.15; margin: 0;">DINAS LINGKUNGAN HIDUP</div>
+              <div class="footer-brand-title">DINAS LINGKUNGAN HIDUP</div>
               <div class="brand-sub-kab" style="font-size: 0.78rem; font-weight: 700; color: #a7f3d0; letter-spacing: 0.5px; line-height: 1.2;">KABUPATEN LEMBATA</div>
             </div>
           </div>
@@ -4224,11 +4250,6 @@
         </div>
 
         <div class="footer-links">
-          <a href="#pane-beranda" onclick="window.app && window.app.switchTab('beranda')" class="footer-link-btn">🏠 Beranda</a>
-          <a href="#pane-form" onclick="window.app && window.app.switchTab('form')" class="footer-link-btn">✍️ Formulir Aduan</a>
-          <a href="#pane-lacak" onclick="window.app && window.app.switchTab('lacak')" class="footer-link-btn">🔍 Lacak Tiket</a>
-          <a href="#pane-peta" onclick="window.app && window.app.switchTab('peta')" class="footer-link-btn">🗺️ Peta Sebaran</a>
-          <a href="qr-code.html" class="footer-link-btn">📱 Poster QR Code</a>
           <a href="petugas.html" class="footer-link-btn" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.4) 100%); border: 1.5px solid #34d399; color: #ffffff; font-weight: 800;" title="Buka Dashboard Khusus Petugas Verifikator DLH Lembata">🛡️ Dashboard Petugas</a>
           <a href="https://wa.me/6282234582769" target="_blank" class="footer-link-btn"
             style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: 1.5px solid #6ee7b7; color: #ffffff; font-weight: 800; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">💬 WhatsApp Helpline DLH ↗</a>
