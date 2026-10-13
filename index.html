@@ -4,20 +4,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>SILAPOR DLH LEMBATA - Layanan Aduan Pencemaran Lingkungan</title>
+  <title>LENTERA LEMBATA - Layanan Elektronik Penanganan dan Verifikasi Aduan Lingkungan Kabupaten Lembata</title>
   <meta name="description"
-    content="Layanan resmi pengaduan pencemaran lingkungan hidup Dinas Lingkungan Hidup Kabupaten Lembata. Cepat, mudah, dan transparan.">
+    content="LENTERA LEMBATA — Layanan resmi penanganan dan verifikasi aduan lingkungan hidup Dinas Lingkungan Hidup Kabupaten Lembata. Cepat, mudah, dan transparan.">
   <link rel="canonical" href="https://aduan-dlh-lembata.vercel.app/">
   <meta name="theme-color" content="#064e3b">
 
   <!-- Open Graph / WhatsApp Preview Meta Tags -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://aduan-dlh-lembata.vercel.app/">
-  <meta property="og:title" content="SILAPOR DLH LEMBATA - Layanan Aduan Pencemaran Lingkungan">
+  <meta property="og:title" content="LENTERA LEMBATA - Layanan Elektronik Penanganan dan Verifikasi Aduan Lingkungan Kabupaten Lembata">
   <meta property="og:description"
-    content="Layanan resmi pengaduan pencemaran lingkungan hidup Dinas Lingkungan Hidup Kabupaten Lembata. Cepat, mudah, dan transparan.">
+    content="LENTERA LEMBATA — Layanan resmi penanganan dan verifikasi aduan lingkungan hidup Dinas Lingkungan Hidup Kabupaten Lembata. Cepat, mudah, dan transparan.">
   <meta property="og:locale" content="id_ID">
-  <meta property="og:site_name" content="SILAPOR DLH LEMBATA">
+  <meta property="og:site_name" content="LENTERA LEMBATA">
 
   <!-- Google Fonts: Inter & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -146,20 +146,21 @@
 
     .brand-title-instansi {
       font-family: 'Outfit', sans-serif;
-      font-size: 0.98rem;
+      font-size: 1.15rem;
       font-weight: 800;
-      color: #0f172a;
-      letter-spacing: 0.2px;
+      color: #064e3b;
+      letter-spacing: 0.3px;
       line-height: 1.15;
       margin: 0;
     }
 
     .brand-sub-kab {
-      font-size: 0.78rem;
-      font-weight: 700;
+      font-size: 0.74rem;
+      font-weight: 600;
       color: #475569;
-      letter-spacing: 0.4px;
-      line-height: 1.2;
+      letter-spacing: 0.2px;
+      line-height: 1.25;
+      max-width: 520px;
     }
 
     .header-right-portal {
@@ -168,58 +169,24 @@
       gap: 14px;
     }
 
-    /* Brand Produk SILAPOR Modern GovTech */
-    .silapor-product-brand {
-      display: inline-flex;
-      flex-direction: column;
-      align-items: flex-end;
-      text-decoration: none;
-      cursor: default;
-      user-select: none;
-    }
-
-    .silapor-badge-wrap {
+    .lentera-badge-wrap {
       display: inline-flex;
       align-items: center;
-      font-family: 'Outfit', sans-serif;
-      font-size: 1.3rem;
-      font-weight: 900;
-      letter-spacing: 0.8px;
-      line-height: 1;
-      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.08));
     }
 
-    .silapor-pill-blue {
-      background: linear-gradient(135deg, #1d4ed8 0%, #2563eb 100%);
-      color: #ffffff;
-      padding: 5px 12px;
-      border-radius: 8px;
-      box-shadow: 0 2px 8px rgba(37, 99, 235, 0.32);
-      display: inline-block;
-      text-shadow: 0 1px 2px rgba(0, 0, 0, 0.25);
-      letter-spacing: 1px;
-    }
-
-    .silapor-product-tagline {
-      font-size: 0.62rem;
+    .lentera-dlh-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(5, 150, 105, 0.08);
+      border: 1px solid rgba(5, 150, 105, 0.28);
+      color: #065f46;
+      font-size: 0.76rem;
       font-weight: 800;
-      color: #059669;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      margin-top: 3px;
-      display: flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .silapor-product-tagline::before {
-      content: '';
-      display: inline-block;
-      width: 5px;
-      height: 5px;
-      border-radius: 50%;
-      background: #10b981;
-      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.25);
+      padding: 5px 12px;
+      border-radius: 999px;
+      letter-spacing: 0.4px;
+      white-space: nowrap;
     }
 
     .btn-cloud-badge {
@@ -305,32 +272,41 @@
     }
 
     .nav-tab-btn {
-      background: transparent;
-      border: 1px solid transparent;
-      padding: 8px 16px;
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      padding: 8px 18px;
       font-size: 0.88rem;
       font-weight: 700;
-      color: #334155;
+      color: #1e293b;
       cursor: pointer;
+      text-decoration: none;
       white-space: nowrap;
       border-radius: 999px;
       transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
       display: inline-flex;
       align-items: center;
       gap: 6px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
     }
 
     .nav-tab-btn:hover {
+      background: #f1f5f9;
       color: #065f46;
-      background: rgba(16, 185, 129, 0.1);
+      border-color: #059669;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(5, 150, 105, 0.12);
     }
 
-    .nav-tab-btn.active {
-      color: #ffffff;
-      background: linear-gradient(135deg, #059669 0%, #047857 100%);
-      border-color: rgba(5, 150, 105, 0.4);
-      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.3);
-      transform: translateY(-1px);
+    .nav-tab-btn.nav-tab-wa {
+      background: #ecfdf5;
+      border-color: #6ee7b7;
+      color: #047857;
+    }
+
+    .nav-tab-btn.nav-tab-wa:hover {
+      background: #d1fae5;
+      color: #064e3b;
+      border-color: #10b981;
     }
 
     /* ===================================================================
@@ -2453,38 +2429,24 @@
       }
 
       .brand-title-instansi {
-        font-size: 0.82rem;
+        font-size: 0.95rem;
         font-weight: 800;
-        line-height: 1.15;
+        line-height: 1.2;
         color: #064e3b;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
+        white-space: normal;
       }
 
       .brand-sub-kab {
-        font-size: 0.65rem;
-        font-weight: 700;
+        font-size: 0.64rem;
+        font-weight: 600;
         color: #475569;
-        letter-spacing: 0.3px;
+        letter-spacing: 0.2px;
+        line-height: 1.25;
       }
 
-      .silapor-product-brand {
-        flex-shrink: 0;
-      }
-
-      .silapor-pill-blue {
-        font-size: 0.88rem;
-        padding: 4px 10px;
-        border-radius: 6px;
-        font-weight: 900;
-        box-shadow: 0 2px 6px rgba(37, 99, 235, 0.25);
-      }
-
-      .silapor-product-tagline {
-        font-size: 0.52rem;
-        letter-spacing: 0.6px;
-        margin-top: 2px;
+      .lentera-dlh-pill {
+        font-size: 0.68rem;
+        padding: 4px 8px;
       }
 
       /* Segmented Navigation Bar di HP (Mudah Diklik dengan Jempol) */
@@ -2502,8 +2464,8 @@
       .nav-inner {
         padding: 6px 10px;
         display: grid;
-        grid-template-columns: 1fr 1fr 1.05fr;
-        gap: 6px;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
         width: 100%;
         overflow-x: visible;
       }
@@ -2511,37 +2473,28 @@
       .nav-tab-btn {
         width: 100%;
         margin: 0 !important;
-        padding: 8px 4px;
-        font-size: 0.78rem;
+        padding: 9px 6px;
+        font-size: 0.8rem;
         font-weight: 700;
         justify-content: center;
         text-align: center;
         border-radius: 10px;
-        border: 1.5px solid #e2e8f0;
+        border: 1.5px solid #cbd5e1;
         transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
         white-space: nowrap;
         min-height: 40px;
         background: #f8fafc;
-        color: #334155;
+        color: #1e293b;
       }
 
-      .nav-tab-btn.active {
-        background: linear-gradient(135deg, #059669 0%, #047857 100%);
-        border-color: #047857;
-        color: #ffffff;
-        box-shadow: 0 3px 8px rgba(5, 150, 105, 0.28);
-        transform: none;
+      .nav-tab-btn.nav-tab-wa {
+        background: #ecfdf5;
+        border-color: #6ee7b7;
+        color: #047857;
       }
 
       .nav-tab-btn:active {
         transform: scale(0.97);
-      }
-
-      .nav-tab-qr {
-        margin-left: 0 !important;
-        background: #ecfdf5 !important;
-        border-color: #a7f3d0 !important;
-        color: #047857 !important;
       }
 
       /* Kontainer Utama */
@@ -3096,11 +3049,11 @@
       }
 
       .brand-title-instansi {
-        font-size: 0.78rem;
+        font-size: 0.88rem;
       }
 
       .brand-sub-kab {
-        font-size: 0.6rem;
+        font-size: 0.62rem;
       }
 
       .brand-lh-logo {
@@ -3108,18 +3061,18 @@
         height: 32px;
       }
 
-      .silapor-product-tagline {
+      .lentera-dlh-pill {
         display: none;
       }
 
       .nav-inner {
         padding: 4px 6px;
-        gap: 4px;
+        gap: 6px;
       }
 
       .nav-tab-btn {
-        font-size: 0.72rem !important;
-        padding: 7px 2px !important;
+        font-size: 0.74rem !important;
+        padding: 8px 4px !important;
       }
 
       .category-chips {
@@ -3321,52 +3274,37 @@
   <div class="nature-top-ribbon"></div>
 
   <!-- ===================================================================
-       HEADER RESMI DLH LEMBATA (SESUAI GAMBAR 2)
+       HEADER RESMI LENTERA LEMBATA
        =================================================================== -->
   <header class="app-header">
     <div class="header-inner">
       <div class="brand-group">
         <img src="assets/logo-lingkungan-hidup.svg" alt="Logo Resmi Lingkungan Hidup" class="brand-lh-logo" title="Dinas Lingkungan Hidup Kabupaten Lembata">
         <div class="brand-text-block">
-          <h1 class="brand-title-instansi">DINAS LINGKUNGAN HIDUP</h1>
-          <div class="brand-sub-kab">KABUPATEN LEMBATA</div>
+          <h1 class="brand-title-instansi">LENTERA LEMBATA</h1>
+          <div class="brand-sub-kab">Layanan Elektronik Penanganan dan Verifikasi Aduan Lingkungan Kabupaten Lembata</div>
         </div>
       </div>
 
       <div class="header-right-portal">
-        <div class="silapor-product-brand" title="SILAPOR - Sistem Informasi Layanan Pengaduan">
-          <div class="silapor-badge-wrap">
-            <span class="silapor-pill-blue">SILAPOR</span>
-          </div>
-          <div class="silapor-product-tagline">PLATFORM ADUAN DIGITAL</div>
+        <div class="lentera-badge-wrap" title="Dinas Lingkungan Hidup Kabupaten Lembata">
+          <span class="lentera-dlh-pill">🏛️ DLH KAB. LEMBATA</span>
         </div>
       </div>
     </div>
   </header>
 
   <!-- ===================================================================
-       NAVIGASI UTAMA RINGKAS (PORTAL PUBLIK WARGA)
+       NAVIGASI TAB UTAMA (HANYA DASHBOARD PETUGAS & WA HELPLINE)
        =================================================================== -->
   <nav class="nav-bar">
     <div class="nav-inner">
-      <button class="nav-tab-btn active" data-tab="beranda">
-        🏠 Beranda
-      </button>
+      <a href="petugas.html" class="nav-tab-btn" title="Buka Dashboard Khusus Petugas &amp; Verifikator DLH Lembata">
+        🛡️ Dashboard Petugas
+      </a>
 
-      <button class="nav-tab-btn" data-tab="form">
-        ✍️ Formulir Aduan
-      </button>
-
-      <button class="nav-tab-btn" data-tab="lacak">
-        🔍 Lacak Tiket
-      </button>
-
-      <button class="nav-tab-btn" data-tab="peta">
-        🗺️ Peta Sebaran
-      </button>
-
-      <a href="qr-code.html" class="nav-tab-btn nav-tab-qr" title="Unduh Poster QR Code Pengaduan DLH Lembata">
-        📱 Unduh QR
+      <a href="https://wa.me/6282234582769?text=Halo%20Dinas%20Lingkungan%20Hidup%20Kabupaten%20Lembata,%20saya%20warga%20ingin%20berkonsultasi%20layanan%20pengaduan" target="_blank" class="nav-tab-btn nav-tab-wa" title="Hubungi WhatsApp Helpline DLH Lembata">
+        💬 WA Helpline
       </a>
     </div>
   </nav>
@@ -3575,6 +3513,13 @@
          TAB 2: FORMULIR ADUAN UTAMA (TERBUKA KETIKA MEMILIH TAB)
          =============================================================== -->
     <section class="tab-content" id="pane-form">
+
+      <!-- Tombol Kembali ke Beranda -->
+      <div style="margin-bottom: 12px;">
+        <button type="button" class="btn-back-beranda" onclick="window.app && window.app.switchTab('beranda')" style="background: #ffffff; border: 1.5px solid #cbd5e1; color: #1e293b; font-weight: 700; font-size: 0.84rem; padding: 7px 16px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all 0.2s;">
+          ← Kembali ke Beranda
+        </button>
+      </div>
 
       <!-- Form Box Card -->
       <div class="form-card">
@@ -3794,6 +3739,13 @@
          =============================================================== -->
     <section class="tab-content" id="pane-lacak">
 
+      <!-- Tombol Kembali ke Beranda -->
+      <div style="margin-bottom: 12px;">
+        <button type="button" class="btn-back-beranda" onclick="window.app && window.app.switchTab('beranda')" style="background: #ffffff; border: 1.5px solid #cbd5e1; color: #1e293b; font-weight: 700; font-size: 0.84rem; padding: 7px 16px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all 0.2s;">
+          ← Kembali ke Beranda
+        </button>
+      </div>
+
       <div class="form-card" style="margin-bottom: 24px;">
         <div class="form-card-header">
           <div class="form-card-badge">🔍 PELACAKAN STATUS TIKET</div>
@@ -3856,6 +3808,13 @@
          TAB 4: PETA SPASIAL SEBARAN
          =============================================================== -->
     <section class="tab-content" id="pane-peta">
+
+      <!-- Tombol Kembali ke Beranda -->
+      <div style="margin-bottom: 12px;">
+        <button type="button" class="btn-back-beranda" onclick="window.app && window.app.switchTab('beranda')" style="background: #ffffff; border: 1.5px solid #cbd5e1; color: #1e293b; font-weight: 700; font-size: 0.84rem; padding: 7px 16px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all 0.2s;">
+          ← Kembali ke Beranda
+        </button>
+      </div>
 
       <div class="map-card-box">
 
@@ -4222,7 +4181,7 @@
             </div>
           </div>
           <p>
-            Sistem Informasi &amp; Pendataan Digital Pengaduan Pencemaran Lingkungan Hidup (SILAPOR DLH Lembata).
+            LENTERA LEMBATA — Layanan Elektronik Penanganan dan Verifikasi Aduan Lingkungan Kabupaten Lembata.
             Mewujudkan pelayanan publik yang cepat, akurat, dan transparan demi kelestarian alam Lewotana Lembata.
           </p>
           <div style="margin-top: 10px; font-size: 0.8rem; color: #a7f3d0;">

@@ -1,5 +1,5 @@
-# 🌿 SILAPOR-DLH LEMBATA
-## Sistem Informasi & Pendataan Digital Aduan Pencemaran Lingkungan
+# 🌿 LENTERA LEMBATA
+## Layanan Elektronik Penanganan dan Verifikasi Aduan Lingkungan Kabupaten Lembata
 ### Dinas Lingkungan Hidup Kabupaten Lembata
 
 Aplikasi ini dikembangkan untuk mendukung rancangan aktualisasi ASN:
