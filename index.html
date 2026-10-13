@@ -3349,8 +3349,16 @@
        =================================================================== -->
   <nav class="nav-bar">
     <div class="nav-inner">
-      <button class="nav-tab-btn active" data-tab="lapor">
-        ✍️ Buat Aduan
+      <button class="nav-tab-btn active" data-tab="beranda">
+        🏠 Beranda
+      </button>
+
+      <button class="nav-tab-btn" data-tab="form">
+        ✍️ Formulir Aduan
+      </button>
+
+      <button class="nav-tab-btn" data-tab="lacak">
+        🔍 Lacak Tiket
       </button>
 
       <button class="nav-tab-btn" data-tab="peta">
@@ -3369,9 +3377,9 @@
   <main class="main-wrap">
 
     <!-- ===============================================================
-         TAB 1: FORMULIR ADUAN UTAMA (LANGSUNG SIAP DIPAKAI WARGA)
+         TAB 1: BERANDA LAYANAN & ASPIRASI (BEBAS BEBAN GULIR)
          =============================================================== -->
-    <section class="tab-content active" id="pane-lapor">
+    <section class="tab-content active" id="pane-beranda">
 
       <!-- ===============================================================
            HERO SECTION: LAYANAN PENGADUAN & ASPIRASI (SESUAI GAMBAR 2)
@@ -3385,7 +3393,7 @@
           </div>
 
           <div class="hero-actions-row">
-            <button type="button" class="btn-hero-action" id="btnHeroAjukan" onclick="window.app && window.app.scrollToForm()">
+            <button type="button" class="btn-hero-action" id="btnHeroAjukan" onclick="window.app && window.app.switchTab('form')">
               <span class="btn-hero-icon">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#064e3b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
@@ -3400,7 +3408,7 @@
               </div>
             </button>
 
-            <button type="button" class="btn-hero-action" id="btnHeroLacak" onclick="window.app && window.app.scrollToTracker()">
+            <button type="button" class="btn-hero-action" id="btnHeroLacak" onclick="window.app && window.app.switchTab('lacak')">
               <span class="btn-hero-icon">
                 <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#064e3b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="11" cy="11" r="8"></circle>
@@ -3527,6 +3535,12 @@
               <div class="alur-step-sub">Verifikasi Lapangan</div>
             </div>
           </div>
+
+          <div style="margin-top: 14px; text-align: center;">
+            <button type="button" class="btn-buka-peta-spasial" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);" onclick="window.app && window.app.switchTab('form')">
+              ✍️ Mulai Buat Aduan Sekarang ➔
+            </button>
+          </div>
         </div>
 
         <!-- Kartu Kanan: Peta Sebaran Aduan (Mini Preview) -->
@@ -3547,28 +3561,20 @@
             <button type="button" class="btn-buka-peta-spasial" onclick="window.app && window.app.switchTab('peta')">
               Buka Peta Spasial ↗
             </button>
-            <a href="https://wa.me/6282234582759?text=Halo%20Dinas%20Lingkungan%20Hidup%20Kabupaten%20Lembata,%20saya%20warga%20ingin%20berkonsultasi%20layanan%20pengaduan" target="_blank" class="btn-wa-helpline-hubungi">
+            <a href="https://wa.me/6282234582769?text=Halo%20Dinas%20Lingkungan%20Hidup%20Kabupaten%20Lembata,%20saya%20warga%20ingin%20berkonsultasi%20layanan%20pengaduan" target="_blank" class="btn-wa-helpline-hubungi">
               <span>💬 Hubungi DLH</span>
-              <strong>0822-3458-2759</strong>
+              <strong>0822-3458-2769</strong>
             </a>
           </div>
         </div>
       </section>
 
-      <!-- Quick Tracker: Lacak Status Tiket Instan -->
-      <div class="quick-track-box" id="quickTrackSection">
-        <div style="font-size: 0.82rem; font-weight: 800; color: #065f46; display: flex; align-items: center; gap: 6px;">
-          <span>🔎</span> Cek Status Laporan Aduan Anda
-        </div>
-        <div class="track-input-group">
-          <input type="text" id="quickTrackInput" class="track-input" placeholder="Masukkan ID Tiket (misal: ADU-LMB-2026-001)">
-          <button type="button" class="btn-track" id="btnQuickTrack">
-            <span>Lacak Tiket</span>
-          </button>
-        </div>
-        <!-- Hasil Lacak Cepat -->
-        <div id="quickTrackResult" class="track-result-card"></div>
-      </div>
+    </section>
+
+    <!-- ===============================================================
+         TAB 2: FORMULIR ADUAN UTAMA (TERBUKA KETIKA MEMILIH TAB)
+         =============================================================== -->
+    <section class="tab-content" id="pane-form">
 
       <!-- Form Box Card -->
       <div class="form-card">
@@ -3783,10 +3789,71 @@
 
     </section>
 
+    <!-- ===============================================================
+         TAB 3: LACAK TIKET ADUAN (TERBUKA KETIKA MEMILIH TAB)
+         =============================================================== -->
+    <section class="tab-content" id="pane-lacak">
 
+      <div class="form-card" style="margin-bottom: 24px;">
+        <div class="form-card-header">
+          <div class="form-card-badge">🔍 PELACAKAN STATUS TIKET</div>
+          <h3 class="form-card-title">Cek Status Laporan Aduan Anda</h3>
+          <p class="form-card-desc">Ketahui perkembangan verifikasi lapangan &amp; penanganan tindak lanjut DLH secara transparan.</p>
+        </div>
+
+        <!-- Quick Tracker: Lacak Status Tiket Instan -->
+        <div class="quick-track-box" id="quickTrackSection" style="margin-bottom: 20px;">
+          <div style="font-size: 0.88rem; font-weight: 800; color: #065f46; display: flex; align-items: center; gap: 8px;">
+            <span>🔎</span> Masukkan ID Register Tiket Aduan Anda
+          </div>
+          <div class="track-input-group" style="margin-top: 10px;">
+            <input type="text" id="quickTrackInput" class="track-input" placeholder="Masukkan ID Tiket (misal: ADU-LMB-2026-001)" autocomplete="off">
+            <button type="button" class="btn-track" id="btnQuickTrack">
+              <span>Lacak Tiket</span>
+            </button>
+          </div>
+          <!-- Hasil Lacak Cepat -->
+          <div id="quickTrackResult" class="track-result-card"></div>
+        </div>
+
+        <!-- Panduan Tahapan Status Penanganan Aduan -->
+        <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px 16px;">
+          <h4 style="font-size: 0.88rem; font-weight: 800; color: #0f172a; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            <span>ℹ️</span> Tahapan Status Pengaduan DLH Lembata
+          </h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
+              <span class="badge badge-aduan-diterima" style="display: inline-block; margin-bottom: 4px;">Aduan Diterima</span>
+              <p style="font-size: 0.76rem; color: #64748b; margin: 0; line-height: 1.4;">Laporan teregistrasi ke database dan menunggu telaah dokumen.</p>
+            </div>
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
+              <span class="badge badge-diverifikasi" style="display: inline-block; margin-bottom: 4px;">Diverifikasi</span>
+              <p style="font-size: 0.76rem; color: #64748b; margin: 0; line-height: 1.4;">Tim Pengawas DLH turun langsung memeriksa fisik di lapangan.</p>
+            </div>
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
+              <span class="badge badge-ditindaklanjuti" style="display: inline-block; margin-bottom: 4px;">Ditindaklanjuti</span>
+              <p style="font-size: 0.76rem; color: #64748b; margin: 0; line-height: 1.4;">Langkah penanganan, teguran, atau pembersihan lokasi sedang berjalan.</p>
+            </div>
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
+              <span class="badge badge-selesai" style="display: inline-block; margin-bottom: 4px;">Selesai</span>
+              <p style="font-size: 0.76rem; color: #64748b; margin: 0; line-height: 1.4;">Aduan telah tuntas diselesaikan dan berita acara diarsipkan.</p>
+            </div>
+          </div>
+
+          <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed #cbd5e1; font-size: 0.8rem; color: #475569; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <span>Lupa atau kehilangan nomor tiket aduan?</span>
+            <a href="https://wa.me/6282234582769?text=Halo%20DLH%20Lembata,%20saya%20ingin%20menanyakan%20nomor%20tiket%20aduan%20saya" target="_blank" style="color: #047857; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+              💬 Hubungi Helpline WhatsApp DLH ➔
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
 
     <!-- ===============================================================
-         TAB 3: PETA SPASIAL SEBARAN
+         TAB 4: PETA SPASIAL SEBARAN
          =============================================================== -->
     <section class="tab-content" id="pane-peta">
 
@@ -4041,6 +4108,11 @@
             style="border-color: #10b981; color: #047857; font-weight: 700; font-size: 0.88rem; padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #ecfdf5; cursor: pointer;">
             <span>💬</span> Buka Langsung Room Chat Kontak Layanan Pengaduan (+62 822-3458-2769)
           </button>
+          <button type="button" class="btn btn-outline"
+            style="border-color: #059669; color: #065f46; font-weight: 700; font-size: 0.88rem; padding: 11px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #f0fdf4; cursor: pointer;"
+            onclick="document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('show')); const tid = document.getElementById('successTicketId')?.textContent?.trim(); window.app && window.app.switchTab('lacak'); if (tid) { const q = document.getElementById('quickTrackInput'); if (q) { q.value = tid; setTimeout(() => document.getElementById('btnQuickTrack')?.click(), 200); } }">
+            <span>🔍</span> Lacak Perkembangan Tiket Ini Langsung
+          </button>
           <button type="button" class="btn btn-outline btn-close-modal" style="font-size: 0.9rem; padding: 11px; border-radius: 10px; font-weight: 600; color: #64748b; border-color: #e2e8f0;">
             Tutup &amp; Buat Aduan Baru
           </button>
@@ -4159,11 +4231,10 @@
         </div>
 
         <div class="footer-links">
-          <a href="#pane-lapor" onclick="window.app && window.app.switchTab('lapor')" class="footer-link-btn">✍️ Buat
-            Aduan</a>
-
-          <a href="#pane-peta" onclick="window.app && window.app.switchTab('peta')" class="footer-link-btn">🗺️ Peta
-            Sebaran</a>
+          <a href="#pane-beranda" onclick="window.app && window.app.switchTab('beranda')" class="footer-link-btn">🏠 Beranda</a>
+          <a href="#pane-form" onclick="window.app && window.app.switchTab('form')" class="footer-link-btn">✍️ Formulir Aduan</a>
+          <a href="#pane-lacak" onclick="window.app && window.app.switchTab('lacak')" class="footer-link-btn">🔍 Lacak Tiket</a>
+          <a href="#pane-peta" onclick="window.app && window.app.switchTab('peta')" class="footer-link-btn">🗺️ Peta Sebaran</a>
           <a href="qr-code.html" class="footer-link-btn">📱 Poster QR Code</a>
           <a href="petugas.html" class="footer-link-btn" style="background: rgba(5, 150, 105, 0.25); border-color: #10b981; color: #a7f3d0; font-weight: 700;" title="Buka Dashboard Khusus Petugas Verifikator DLH Lembata">🛡️ Dashboard Petugas</a>
           <a href="https://wa.me/6282234582769" target="_blank" class="footer-link-btn"

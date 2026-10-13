@@ -7,7 +7,7 @@
 
 class DLHApp {
   constructor() {
-    this.currentTab = 'lapor';
+    this.currentTab = 'beranda';
     this.tableFilters = {
       search: '',
       kecamatan: 'all',
@@ -41,6 +41,15 @@ class DLHApp {
     setTimeout(() => {
       if (window.lembataMap) window.lembataMap.init();
     }, 150);
+
+    // Dukungan deep link tab via URL hash (#pane-form / #pane-lacak) atau query (?tab=form)
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetTab = urlParams.get('tab') || window.location.hash.replace('#', '').replace('pane-', '');
+      if (targetTab && ['beranda', 'form', 'lapor', 'lacak', 'peta'].includes(targetTab)) {
+        setTimeout(() => this.switchTab(targetTab), 100);
+      }
+    } catch(e) {}
 
     // Buka otomatis detail/foto aduan jika dibuka dari tautan WhatsApp (?lihatFoto=ADU-LMB-...)
     try {
@@ -83,11 +92,15 @@ class DLHApp {
   }
 
   switchTab(tabName) {
+    // Dukungan alias tab untuk kompatibilitas
+    if (tabName === 'lapor' || tabName === 'aduan') tabName = 'form';
+    if (tabName === 'tracker') tabName = 'lacak';
     this.currentTab = tabName;
 
     // Update active nav buttons
     document.querySelectorAll('.nav-tab-btn').forEach(btn => {
-      if (btn.getAttribute('data-tab') === tabName) {
+      const btnTab = btn.getAttribute('data-tab');
+      if (btnTab === tabName || (tabName === 'form' && btnTab === 'lapor')) {
         btn.classList.add('active');
       } else {
         btn.classList.remove('active');
@@ -99,10 +112,17 @@ class DLHApp {
       pane.classList.remove('active');
     });
 
-    const targetPane = document.getElementById(`pane-${tabName}`);
+    const targetPane = document.getElementById(`pane-${tabName}`) || (tabName === 'form' ? document.getElementById('pane-lapor') : null);
     if (targetPane) {
       targetPane.classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Refresh mini map jika kembali ke tab beranda
+    if (tabName === 'beranda' && window.lembataMap && window.lembataMap.miniMapInstance) {
+      setTimeout(() => {
+        try { window.lembataMap.miniMapInstance.invalidateSize(); } catch(e) {}
+      }, 100);
     }
 
     // Refresh map when entering peta tab
@@ -600,7 +620,7 @@ class DLHApp {
                     const canvas = document.createElement('canvas');
                     let width = img.width || 640;
                     let height = img.height || 480;
-                    const maxDim = 800;
+                    const maxDim = 720;
                     if (width > maxDim || height > maxDim) {
                       if (width > height) {
                         height = Math.round((height * maxDim) / width);
@@ -614,7 +634,7 @@ class DLHApp {
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
                     ctx.drawImage(img, 0, 0, width, height);
-                    resolve(canvas.toDataURL('image/jpeg', 0.75));
+                    resolve(canvas.toDataURL('image/jpeg', 0.65));
                   } catch (err) {
                     resolve(dataUrl);
                   }
@@ -968,7 +988,10 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         }
         this.updateKPIs();
         this.renderTable();
-        if (window.lembataMap) window.lembataMap.renderMarkers();
+        if (window.lembataMap) {
+          window.lembataMap.renderMarkers();
+          window.lembataMap.initMiniMap('miniMapPreview');
+        }
       }
     });
   }
@@ -1097,13 +1120,39 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
     if (elProses) elProses.textContent = stats.dalamProses;
     if (elSelesai) elSelesai.textContent = stats.selesai;
 
-    // Metrik Dashboard Publik Masyarakat
+    // Metrik Dashboard Publik Masyarakat & Hero Section (100% Sinkron Data Real Aduan)
     const userTotal = document.getElementById('userKpiTotal');
     const userProses = document.getElementById('userKpiProses');
     const userSelesai = document.getElementById('userKpiSelesai');
-    if (userTotal) userTotal.textContent = stats.total;
-    if (userProses) userProses.textContent = stats.dalamProses;
-    if (userSelesai) userSelesai.textContent = stats.selesai;
+    if (userTotal) userTotal.textContent = (stats.total || 0).toLocaleString('id-ID');
+    if (userProses) userProses.textContent = (stats.dalamProses || 0).toLocaleString('id-ID');
+    if (userSelesai) userSelesai.textContent = (stats.selesai || 0).toLocaleString('id-ID');
+
+    // Hero Section Stat Card (Sinkron Murni dengan Data Real Database/Spreadsheet)
+    const heroTotal = document.getElementById('heroStatTotal');
+    const heroProses = document.getElementById('heroStatProses');
+    const heroSelesai = document.getElementById('heroStatSelesai');
+    if (heroTotal) heroTotal.textContent = (stats.total || 0).toLocaleString('id-ID');
+    if (heroProses) heroProses.textContent = (stats.dalamProses || 0).toLocaleString('id-ID');
+    if (heroSelesai) heroSelesai.textContent = (stats.selesai || 0).toLocaleString('id-ID');
+  }
+
+  scrollToForm() {
+    this.switchTab('form');
+    const firstInput = document.getElementById('inputNama');
+    if (firstInput) setTimeout(() => firstInput.focus(), 300);
+  }
+
+  scrollToTracker() {
+    this.switchTab('lacak');
+    const input = document.getElementById('quickTrackInput');
+    if (input) {
+      setTimeout(() => {
+        input.focus();
+        input.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.4)';
+        setTimeout(() => { input.style.boxShadow = ''; }, 2200);
+      }, 300);
+    }
   }
 
   /* ===================================================================
@@ -1252,13 +1301,17 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       </div>
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; font-size: 0.85rem;">
-        <div style="background: #f8fafc; padding: 10px; border-radius: 8px;">
-          <div style="color: #64748b; font-size: 0.75rem;">PELAPOR</div>
-          <strong>${item.namaPelapor}</strong> (${item.noHp})
+        <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; padding: 10px; border-radius: 8px;">
+          <div style="color: #047857; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.3px;">KERAHASIAAN IDENTITAS PELAPOR</div>
+          <strong style="color: #065f46; display: flex; align-items: center; gap: 5px; font-size: 0.88rem; margin-top: 2px;">
+            🔒 Data Pelapor Dirahasiakan
+          </strong>
+          <span style="font-size: 0.72rem; color: #166534; display: block; margin-top: 2px;">Identitas dilindungi guna menjamin kerahasiaan &amp; keamanan pelapor</span>
         </div>
-        <div style="background: #f8fafc; padding: 10px; border-radius: 8px;">
-          <div style="color: #64748b; font-size: 0.75rem;">LOKASI</div>
-          <strong>Kec. ${item.kecamatan}</strong> - Desa ${item.desa}
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px;">
+          <div style="color: #64748b; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.3px;">LOKASI KEJADIAN</div>
+          <strong style="color: #0f172a; font-size: 0.88rem; display: block; margin-top: 2px;">Kec. ${item.kecamatan}</strong>
+          <span style="color: #475569; font-size: 0.8rem;">Desa/Kel. ${item.desa}</span>
         </div>
       </div>
 
@@ -1388,7 +1441,10 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
     window.addEventListener('aduanDataSynced', (e) => {
       this.updateKPIs();
       this.renderTable();
-      if (window.lembataMap) window.lembataMap.renderMarkers();
+      if (window.lembataMap) {
+        window.lembataMap.renderMarkers();
+        window.lembataMap.initMiniMap('miniMapPreview');
+      }
       this.updateCloudUI();
       if (!e.detail?.silent) {
         const count = e.detail && e.detail.count ? e.detail.count : window.aduanStore.getAll().length;
