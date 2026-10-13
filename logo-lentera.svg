@@ -1,0 +1,103 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 120" width="100%" height="100%">
+  <defs>
+    <!-- Background Gradient Glow -->
+    <radialGradient id="lanternAura" cx="50%" cy="50%" r="50%">
+      <stop offset="0%" stop-color="#fef08a" stop-opacity="0.9" />
+      <stop offset="40%" stop-color="#34d399" stop-opacity="0.5" />
+      <stop offset="75%" stop-color="#059669" stop-opacity="0.2" />
+      <stop offset="100%" stop-color="#064e3b" stop-opacity="0" />
+    </radialGradient>
+
+    <!-- Outer Ring Gradient -->
+    <linearGradient id="ringGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#10b981" />
+      <stop offset="50%" stop-color="#047857" />
+      <stop offset="100%" stop-color="#064e3b" />
+    </linearGradient>
+
+    <!-- Gold Accent Gradient -->
+    <linearGradient id="goldGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#fef08a" />
+      <stop offset="45%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#d97706" />
+    </linearGradient>
+
+    <!-- Flame / Eco-Leaf Gradient -->
+    <linearGradient id="flameLeafGrad" x1="50%" y1="100%" x2="50%" y2="0%">
+      <stop offset="0%" stop-color="#059669" />
+      <stop offset="35%" stop-color="#10b981" />
+      <stop offset="70%" stop-color="#fbbf24" />
+      <stop offset="100%" stop-color="#fef08a" />
+    </linearGradient>
+
+    <!-- Lantern Glass Glow -->
+    <linearGradient id="glassGrad" x1="0%" y1="0%" x2="0%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff" stop-opacity="0.5" />
+      <stop offset="50%" stop-color="#ecfdf5" stop-opacity="0.1" />
+      <stop offset="100%" stop-color="#a7f3d0" stop-opacity="0.4" />
+    </linearGradient>
+
+    <!-- Filter for Soft Glow -->
+    <filter id="softGlow" x="-20%" y="-20%" width="140%" height="140%">
+      <feGaussianBlur stdDeviation="3" result="blur" />
+      <feComposite in="SourceGraphic" in2="blur" operator="over" />
+    </filter>
+  </defs>
+
+  <!-- Ambient Light Halo -->
+  <circle cx="60" cy="58" r="46" fill="url(#lanternAura)" />
+
+  <!-- Outer Protective Nature Ring -->
+  <circle cx="60" cy="60" r="54" fill="none" stroke="url(#ringGrad)" stroke-width="3" stroke-dasharray="160 4 8 4" opacity="0.9" />
+  <circle cx="60" cy="60" r="50" fill="none" stroke="#34d399" stroke-width="1" opacity="0.6" />
+
+  <!-- Top Handle / Crown of the Lantern -->
+  <!-- Hanging Loop -->
+  <path d="M 50 20 C 50 13, 70 13, 70 20" fill="none" stroke="url(#goldGrad)" stroke-width="3.5" stroke-linecap="round" />
+  <!-- Small Ring Loop -->
+  <circle cx="60" cy="14" r="4.5" fill="none" stroke="url(#goldGrad)" stroke-width="2.5" />
+
+  <!-- Lantern Roof / Dome -->
+  <path d="M 40 28 L 60 21 L 80 28 L 74 34 L 46 34 Z" fill="url(#goldGrad)" filter="url(#softGlow)" />
+  <path d="M 42 33 L 78 33 L 74 36 L 46 36 Z" fill="#047857" />
+
+  <!-- Glass Chamber Background Glow -->
+  <polygon points="45,36 75,36 70,82 50,82" fill="url(#glassGrad)" />
+
+  <!-- Four Rays of Light (Lentera Pancaran Cahaya) -->
+  <line x1="60" y1="56" x2="32" y2="46" stroke="#fef08a" stroke-width="1.5" stroke-linecap="round" opacity="0.75" />
+  <line x1="60" y1="56" x2="88" y2="46" stroke="#fef08a" stroke-width="1.5" stroke-linecap="round" opacity="0.75" />
+  <line x1="60" y1="56" x2="34" y2="68" stroke="#fef08a" stroke-width="1.5" stroke-linecap="round" opacity="0.75" />
+  <line x1="60" y1="56" x2="86" y2="68" stroke="#fef08a" stroke-width="1.5" stroke-linecap="round" opacity="0.75" />
+
+  <!-- Inner Flame + Eco-Leaf (The Heart of Lentera Lembata) -->
+  <!-- Outer Flame Aura -->
+  <path d="M 60 40 C 68 50, 72 61, 60 74 C 48 61, 52 50, 60 40 Z" fill="#fbbf24" opacity="0.5" filter="url(#softGlow)" />
+  <!-- Vibrant Leaf Flame -->
+  <path d="M 60 42 C 67 52, 70 62, 60 72 C 50 62, 53 52, 60 42 Z" fill="url(#flameLeafGrad)" />
+  <!-- Core Bright Light Sparkle -->
+  <ellipse cx="60" cy="58" rx="3.5" ry="6" fill="#ffffff" filter="url(#softGlow)" />
+
+  <!-- Leaf Vein Inside Light (Simbol Lingkungan Hidup) -->
+  <path d="M 60 49 L 60 67" stroke="#ffffff" stroke-width="1" stroke-linecap="round" opacity="0.8" />
+  <path d="M 60 55 L 63 53" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round" opacity="0.8" />
+  <path d="M 60 58 L 57 56" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round" opacity="0.8" />
+  <path d="M 60 61 L 63 59" stroke="#ffffff" stroke-width="0.8" stroke-linecap="round" opacity="0.8" />
+
+  <!-- Lantern Metallic Pillars (Side Struts) -->
+  <path d="M 44 35 L 49 82" stroke="url(#goldGrad)" stroke-width="2.5" stroke-linecap="round" />
+  <path d="M 76 35 L 71 82" stroke="url(#goldGrad)" stroke-width="2.5" stroke-linecap="round" />
+
+  <!-- Lantern Base Stand (Penyangga) -->
+  <path d="M 46 82 L 74 82 L 78 88 L 42 88 Z" fill="url(#goldGrad)" />
+  <rect x="44" y="88" width="32" height="4" rx="2" fill="#064e3b" />
+
+  <!-- Two Harmonious Lewotana Waves at Bottom (Lembata Maritime & Nature) -->
+  <path d="M 36 97 Q 48 93 60 97 T 84 97" fill="none" stroke="#10b981" stroke-width="2" stroke-linecap="round" opacity="0.9" />
+  <path d="M 40 102 Q 50 99 60 102 T 80 102" fill="none" stroke="#34d399" stroke-width="1.5" stroke-linecap="round" opacity="0.7" />
+
+  <!-- Little Sparkles of Light -->
+  <circle cx="36" cy="38" r="1.5" fill="#fef08a" opacity="0.9" />
+  <circle cx="84" cy="38" r="1.5" fill="#fef08a" opacity="0.9" />
+  <circle cx="60" cy="28" r="1.2" fill="#ffffff" />
+</svg>

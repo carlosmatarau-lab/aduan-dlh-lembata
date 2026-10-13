@@ -132,26 +132,75 @@
     }
 
     .brand-lh-logo {
-      width: 44px;
-      height: 44px;
+      width: 48px;
+      height: 48px;
       object-fit: contain;
       flex-shrink: 0;
-      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
-      transition: transform 0.2s ease;
+      filter: drop-shadow(0 3px 10px rgba(16, 185, 129, 0.4));
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+      animation: lenteraLogoFloat 3.8s ease-in-out infinite alternate;
+    }
+
+    @keyframes lenteraLogoFloat {
+      0% {
+        transform: translateY(0) scale(1);
+        filter: drop-shadow(0 3px 8px rgba(16, 185, 129, 0.35));
+      }
+      100% {
+        transform: translateY(-2px) scale(1.04);
+        filter: drop-shadow(0 5px 14px rgba(245, 158, 11, 0.5));
+      }
     }
 
     .brand-lh-logo:hover {
-      transform: scale(1.06);
+      transform: scale(1.12) rotate(3deg);
+      filter: drop-shadow(0 6px 20px rgba(245, 158, 11, 0.65));
+    }
+
+    /* Animasi Cahaya Berpendar LENTERA LEMBATA */
+    @keyframes lenteraLightBeam {
+      0% {
+        background-position: 200% center;
+      }
+      100% {
+        background-position: -200% center;
+      }
+    }
+
+    @keyframes lenteraRadiantGlow {
+      0%, 100% {
+        filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.35)) drop-shadow(0 0 12px rgba(245, 158, 11, 0.25));
+      }
+      50% {
+        filter: drop-shadow(0 0 12px rgba(52, 211, 153, 0.8)) drop-shadow(0 0 22px rgba(251, 191, 36, 0.55));
+      }
     }
 
     .brand-title-instansi {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.15rem;
-      font-weight: 800;
-      color: #064e3b;
-      letter-spacing: 0.3px;
+      font-size: 1.25rem;
+      font-weight: 900;
+      letter-spacing: 0.6px;
       line-height: 1.15;
       margin: 0;
+      display: inline-block;
+      /* Gradien Pancaran Cahaya Lentera */
+      background: linear-gradient(
+        105deg,
+        #064e3b 0%,
+        #047857 18%,
+        #10b981 32%,
+        #fef08a 46%,
+        #ffffff 50%,
+        #fef08a 54%,
+        #10b981 68%,
+        #047857 82%,
+        #064e3b 100%
+      );
+      background-size: 250% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: lenteraLightBeam 4s ease-in-out infinite, lenteraRadiantGlow 2.8s ease-in-out infinite;
     }
 
     .brand-sub-kab {
@@ -3274,12 +3323,12 @@
   <div class="nature-top-ribbon"></div>
 
   <!-- ===================================================================
-       HEADER RESMI LENTERA LEMBATA
+       HEADER RESMI LENTERA LEMBATA (TANPA TAB ATAS)
        =================================================================== -->
   <header class="app-header">
     <div class="header-inner">
       <div class="brand-group">
-        <img src="assets/logo-lingkungan-hidup.svg" alt="Logo Resmi Lingkungan Hidup" class="brand-lh-logo" title="Dinas Lingkungan Hidup Kabupaten Lembata">
+        <img src="assets/logo-lentera.svg" alt="Logo Resmi LENTERA LEMBATA" class="brand-lh-logo" title="LENTERA LEMBATA - Dinas Lingkungan Hidup Kabupaten Lembata">
         <div class="brand-text-block">
           <h1 class="brand-title-instansi">LENTERA LEMBATA</h1>
           <div class="brand-sub-kab">Layanan Elektronik Penanganan dan Verifikasi Aduan Lingkungan Kabupaten Lembata</div>
@@ -3293,21 +3342,6 @@
       </div>
     </div>
   </header>
-
-  <!-- ===================================================================
-       NAVIGASI TAB UTAMA (HANYA DASHBOARD PETUGAS & WA HELPLINE)
-       =================================================================== -->
-  <nav class="nav-bar">
-    <div class="nav-inner">
-      <a href="petugas.html" class="nav-tab-btn" title="Buka Dashboard Khusus Petugas &amp; Verifikator DLH Lembata">
-        🛡️ Dashboard Petugas
-      </a>
-
-      <a href="https://wa.me/6282234582769?text=Halo%20Dinas%20Lingkungan%20Hidup%20Kabupaten%20Lembata,%20saya%20warga%20ingin%20berkonsultasi%20layanan%20pengaduan" target="_blank" class="nav-tab-btn nav-tab-wa" title="Hubungi WhatsApp Helpline DLH Lembata">
-        💬 WA Helpline
-      </a>
-    </div>
-  </nav>
 
   <!-- ===================================================================
        MAIN CONTAINER
@@ -4195,10 +4229,9 @@
           <a href="#pane-lacak" onclick="window.app && window.app.switchTab('lacak')" class="footer-link-btn">🔍 Lacak Tiket</a>
           <a href="#pane-peta" onclick="window.app && window.app.switchTab('peta')" class="footer-link-btn">🗺️ Peta Sebaran</a>
           <a href="qr-code.html" class="footer-link-btn">📱 Poster QR Code</a>
-          <a href="petugas.html" class="footer-link-btn" style="background: rgba(5, 150, 105, 0.25); border-color: #10b981; color: #a7f3d0; font-weight: 700;" title="Buka Dashboard Khusus Petugas Verifikator DLH Lembata">🛡️ Dashboard Petugas</a>
+          <a href="petugas.html" class="footer-link-btn" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.4) 100%); border: 1.5px solid #34d399; color: #ffffff; font-weight: 800;" title="Buka Dashboard Khusus Petugas Verifikator DLH Lembata">🛡️ Dashboard Petugas</a>
           <a href="https://wa.me/6282234582769" target="_blank" class="footer-link-btn"
-            style="background: rgba(16, 185, 129, 0.2); border-color: #34d399; color: #a7f3d0;">💬 WhatsApp Helpline DLH
-            ↗</a>
+            style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: 1.5px solid #6ee7b7; color: #ffffff; font-weight: 800; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">💬 WhatsApp Helpline DLH ↗</a>
         </div>
       </div>
 
