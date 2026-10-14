@@ -471,37 +471,40 @@ class AduanDataStore {
     this.isSyncing = false;
     this.currentSyncPromise = null;
     this.lastSyncTime = null;
-    this.deletedIds = this.loadDeletedIds();
+    this.pendingDeletions = {};
     this.init();
-  }
-
-  loadDeletedIds() {
-    try {
-      const raw = localStorage.getItem(DELETED_STORAGE_KEY);
-      return raw ? new Set(JSON.parse(raw).map(id => String(id).trim().toUpperCase())) : new Set();
-    } catch (e) {
-      return new Set();
-    }
-  }
-
-  saveDeletedIds() {
-    try {
-      localStorage.setItem(DELETED_STORAGE_KEY, JSON.stringify([...this.deletedIds]));
-    } catch (e) {}
   }
 
   isDeleted(id) {
     if (!id) return false;
-    return this.deletedIds.has(String(id).trim().toUpperCase());
+    const cleanId = String(id).trim().toUpperCase();
+    if (!this.pendingDeletions) this.pendingDeletions = {};
+    const delTime = this.pendingDeletions[cleanId];
+    if (!delTime) return false;
+    // TTL 60 detik: cegah flickering saat request delete sedang berjalan ke cloud
+    if (Date.now() - delTime > 60000) {
+      delete this.pendingDeletions[cleanId];
+      return false;
+    }
+    return true;
+  }
+
+  markDeleted(id) {
+    if (!id) return;
+    const cleanId = String(id).trim().toUpperCase();
+    if (!this.pendingDeletions) this.pendingDeletions = {};
+    this.pendingDeletions[cleanId] = Date.now();
   }
 
   init() {
-    // 1. Bersihkan seluruh penyimpanan lokal usang & cache sebelumnya
+    // 1. Bersihkan seluruh penyimpanan lokal usang & blacklist masa lalu agar sinkron 100% antar perangkat
     LEGACY_STORAGE_KEYS.forEach(key => {
       try { localStorage.removeItem(key); } catch (e) {}
     });
-
-    this.deletedIds = this.loadDeletedIds();
+    try {
+      localStorage.removeItem(DELETED_STORAGE_KEY);
+      localStorage.removeItem('dlh_deleted_aduan_ids');
+    } catch (e) {}
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       try {
@@ -665,11 +668,12 @@ class AduanDataStore {
               }
             }
 
-            // Pertahankan aduan lokal yang baru di-submit tapi belum terindeks di server
+            // Pertahankan HANYA aduan lokal yang secara eksplisit _pendingSync (belum terindeks di server)
+            // Item tanpa _pendingSync yang tidak ada di server berarti sudah dihapus di server / perangkat lain
             const localPending = (this.aduanList || []).filter(item => {
               if (!item || !item.id) return false;
               const cid = String(item.id).trim().toUpperCase();
-              return !this.isDeleted(cid) && !seenIds.has(cid);
+              return Boolean(item._pendingSync) && !this.isDeleted(cid) && !seenIds.has(cid);
             });
 
             this.aduanList = [...uniqueServerItems, ...localPending];
@@ -960,8 +964,7 @@ class AduanDataStore {
   }
 
   resetToOfficialDefaults() {
-    this.deletedIds = new Set();
-    this.saveDeletedIds();
+    this.pendingDeletions = {};
     this.aduanList = [];
     this.save();
     LEGACY_STORAGE_KEYS.forEach(k => {
@@ -975,8 +978,7 @@ class AduanDataStore {
 
   async resetDatabaseToZero() {
     // 1. Kosongkan memori & penyimpanan lokal (0 aduan)
-    this.deletedIds = new Set();
-    this.saveDeletedIds();
+    this.pendingDeletions = {};
     this.aduanList = [];
     this.save();
     LEGACY_STORAGE_KEYS.forEach(k => {
@@ -1199,9 +1201,8 @@ class AduanDataStore {
     if (!id) return false;
     const cleanId = String(id).trim().toUpperCase();
 
-    // 1. Catat ke blacklist permanen agar tidak pernah dipulihkan lagi oleh sync berkala
-    this.deletedIds.add(cleanId);
-    this.saveDeletedIds();
+    // 1. Catat ke pendingDeletions (TTL 60 detik) agar sync yang sedang berjalan tidak memunculkan kembali item
+    this.markDeleted(cleanId);
 
     // 2. Hapus dari daftar memori lokal
     const index = this.aduanList.findIndex(item => String(item.id).trim().toUpperCase() === cleanId);
@@ -1235,7 +1236,9 @@ class AduanDataStore {
   }
 
   getStats() {
-    const total = this.aduanList.length;
+    this._deduplicateList();
+    const cleanList = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id));
+    const total = cleanList.length;
     let aduanDiterima = 0;
     let verifAdmin = 0;
     let menungguVerif = 0;
@@ -1247,7 +1250,7 @@ class AduanDataStore {
     const perKecamatan = {};
     const perJenis = {};
 
-    this.aduanList.forEach(item => {
+    cleanList.forEach(item => {
       // By Status
       if (item.status === 'Aduan Diterima') aduanDiterima++;
       else if (item.status === 'Verifikasi Administrasi') verifAdmin++;

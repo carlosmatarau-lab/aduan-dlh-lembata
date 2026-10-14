@@ -60,17 +60,22 @@ class LembataMapEngine {
       // Kunci juga maxBounds secara eksplisit
       this.map.setMaxBounds(this.lembataBounds);
 
-      // 1. Layer Peta Standar OpenStreetMap
-      const osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      // 1. Layer Peta Standar (CartoDB Voyager / OSM - Bebas Blokir & Stabil)
+      const osmLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
         maxZoom: 19,
-        attribution: '&copy; OpenStreetMap kontributor | DLH Lembata'
+        subdomains: 'abcd',
+        attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> kontributor &copy; <a href="https://carto.com/attributions">CARTO</a> | DLH Lembata'
       });
 
-      // 2. Layer Citra Satelit Nyata (Esri World Imagery)
-      const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+      // 2. Layer Citra Satelit Nyata + Label Nama Kota (Esri World Imagery Hybrid)
+      const satBase = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
         maxZoom: 19,
         attribution: 'Citra Satelit &copy; Esri, Maxar, Earthstar Geographics'
       });
+      const satLabels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 19
+      });
+      const satLayer = L.layerGroup([satBase, satLabels]);
 
       // 3. Layer Peta Topografi & Relief (Esri World Topo)
       const topoLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
@@ -641,28 +646,44 @@ class LembataMapEngine {
     }
 
     try {
-      const southWest = L.latLng(-8.72, 123.05);
-      const northEast = L.latLng(-8.10, 124.00);
+      // Koordinat Bounding Box Pulau Lembata presisi agar seluruh pulau pas di tengah
+      const southWest = L.latLng(-8.64, 123.12);
+      const northEast = L.latLng(-8.12, 123.95);
       const bounds = L.latLngBounds(southWest, northEast);
 
       this.miniMapInstance = L.map(containerId, {
-        center: [-8.370, 123.560],
+        center: [-8.38, 123.54],
         zoom: 10,
-        minZoom: 9,
-        maxZoom: 12,
+        minZoom: 8,
+        maxZoom: 14,
         zoomControl: false,
         attributionControl: false,
         dragging: false,
         touchZoom: false,
         scrollWheelZoom: false,
         doubleClickZoom: false,
-        boxZoom: false,
-        maxBounds: bounds
+        boxZoom: false
       });
 
-      L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
-        maxZoom: 19
+      // Layer 1: Citra Satelit Nyata Esri (Lembata terlihat hijau kontras di atas laut biru gelap)
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 18,
+        attribution: 'Esri, Maxar'
       }).addTo(this.miniMapInstance);
+
+      // Layer 2: Label Nama Kota, Kecamatan & Batas Wilayah
+      L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+        maxZoom: 18
+      }).addTo(this.miniMapInstance);
+
+      // Posisikan seluruh Pulau Lembata pas di tengah kontainer mini map
+      this.miniMapInstance.fitBounds(bounds, { padding: [2, 2] });
+      setTimeout(() => {
+        if (this.miniMapInstance) {
+          this.miniMapInstance.invalidateSize();
+          this.miniMapInstance.fitBounds(bounds, { padding: [2, 2] });
+        }
+      }, 250);
 
       // Render pin titik aduan murni dari data real database/store
       const data = window.aduanStore ? window.aduanStore.getAll() : [];
@@ -671,10 +692,10 @@ class LembataMapEngine {
       pinPoints.forEach(p => {
         const col = this.getMarkerColor(p.status);
         L.circleMarker([p.lat, p.lng], {
-          radius: 5,
+          radius: 6,
           fillColor: col,
           color: '#ffffff',
-          weight: 1.5,
+          weight: 2,
           opacity: 1,
           fillOpacity: 0.95
         }).addTo(this.miniMapInstance);

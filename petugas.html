@@ -2924,16 +2924,21 @@
           });
           this.map.setMaxBounds(lembataBounds);
 
-          // Layer Basemap
-          const osmLayer = L.tileLayer('https://tile.openstreetmap.org/{z}/{x}/{y}.png', {
+          // Layer Basemap (CartoDB Voyager / OSM - Bebas Blokir & Stabil)
+          const osmLayer = L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
             maxZoom: 19,
-            attribution: '&copy; OpenStreetMap &bull; DLH Kab. Lembata'
+            subdomains: 'abcd',
+            attribution: '&copy; OpenStreetMap &bull; CARTO &bull; DLH Kab. Lembata'
           });
 
-          const satLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
+          const satBase = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
             maxZoom: 19,
             attribution: 'Citra Satelit &copy; Esri, Maxar'
           });
+          const satLabels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+            maxZoom: 19
+          });
+          const satLayer = L.layerGroup([satBase, satLabels]);
 
           const topoLayer = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Topo_Map/MapServer/tile/{z}/{y}/{x}', {
             maxZoom: 19,
