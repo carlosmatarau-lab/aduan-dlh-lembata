@@ -1,5 +1,5 @@
-# 🌿 LENTERA LEMBATA
-## Layanan Elektronik Penanganan dan Verifikasi Aduan Lingkungan Kabupaten Lembata
+# 🌍 ECOADU LEMBATA
+## Ekosistem Digital Aduan Lingkungan Lembata
 ### Dinas Lingkungan Hidup Kabupaten Lembata
 
 Aplikasi ini dikembangkan untuk mendukung rancangan aktualisasi ASN:

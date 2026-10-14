@@ -1004,33 +1004,36 @@
 
     .login-brand-header {
       display: flex;
+      flex-direction: column;
       align-items: center;
-      gap: 14px;
-      margin-bottom: 22px;
-      text-align: left;
+      justify-content: center;
+      gap: 12px;
+      margin-bottom: 24px;
+      text-align: center;
     }
 
-    .login-brand-header img {
-      width: 52px;
-      height: 52px;
+    .login-brand-header img,
+    .login-pemkab-logo {
+      width: 90px;
+      height: 120px;
       object-fit: contain;
-      filter: drop-shadow(0 4px 10px rgba(0, 0, 0, 0.4));
+      filter: drop-shadow(0 4px 14px rgba(0, 0, 0, 0.45));
     }
 
     .login-brand-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.15rem;
+      font-size: 1.25rem;
       font-weight: 800;
       color: #ffffff;
-      letter-spacing: 0.5px;
-      line-height: 1.15;
+      letter-spacing: 0.6px;
+      line-height: 1.2;
     }
 
     .login-brand-sub {
-      font-size: 0.8rem;
+      font-size: 0.86rem;
       font-weight: 700;
       color: #a7f3d0;
-      letter-spacing: 0.6px;
+      letter-spacing: 0.8px;
     }
 
     .silapor-pill-blue {
@@ -1118,20 +1121,11 @@
     }
 
     .auth-icon-badge {
-      width: 70px;
-      height: 70px;
-      margin: 0 auto 16px;
-      border-radius: 22px;
-      background: linear-gradient(135deg, #059669 0%, #064e3b 100%);
-      color: white;
-      font-size: 2.1rem;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 10px 25px rgba(5, 150, 105, 0.35);
-      position: relative;
-      animation: badgePulse 3s infinite ease-in-out;
-      transition: all 0.3s ease;
+      display: none !important;
+    }
+
+    .auth-scanning-bar {
+      display: none !important;
     }
 
     @keyframes badgePulse {
@@ -1806,19 +1800,14 @@
        =================================================================== -->
   <div id="petugasLoginPage" class="petugas-login-page">
     <div class="login-brand-header">
-      <img src="assets/logo-lingkungan-hidup.svg" alt="Logo Resmi Lingkungan Hidup" title="Dinas Lingkungan Hidup Kabupaten Lembata">
-      <div>
-        <div style="display: flex; align-items: center; gap: 8px;">
-          <span style="background: rgba(16, 185, 129, 0.2); color: #a7f3d0; border: 1px solid rgba(52, 211, 153, 0.4); border-radius: 6px; padding: 2px 8px; font-size: 0.74rem; font-weight: 800;">PORTAL KHUSUS PETUGAS</span>
-        </div>
+      <img src="assets/logo-pemkab-lembata.png" alt="Logo Resmi Pemerintah Kabupaten Lembata" class="login-pemkab-logo" title="Pemerintah Kabupaten Lembata - Dinas Lingkungan Hidup">
+      <div class="login-brand-text">
         <div class="login-brand-title">DINAS LINGKUNGAN HIDUP</div>
         <div class="login-brand-sub">KABUPATEN LEMBATA</div>
       </div>
     </div>
 
     <div class="auth-card" id="authCard">
-      <div class="auth-scanning-bar"></div>
-      <div class="auth-icon-badge" id="authBadgeIcon">🛡️</div>
       <h2 class="auth-title">Akses Khusus Petugas DLH</h2>
       <p class="auth-subtitle">
         Dashboard Pengawasan &amp; Verifikasi Aduan Pencemaran Lingkungan<br>
@@ -1884,7 +1873,7 @@
   <header class="app-header">
     <div class="header-inner">
       <div class="brand-group" style="display: flex; align-items: center; gap: 12px;">
-        <img src="assets/logo-lingkungan-hidup.svg" alt="Logo Resmi Lingkungan Hidup" style="width: 44px; height: 44px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));" title="Dinas Lingkungan Hidup Kabupaten Lembata">
+        <img src="assets/logo-pemkab-lembata.png" alt="Logo Resmi Pemerintah Kabupaten Lembata" style="width: 40px; height: 50px; object-fit: contain; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.12));" title="Pemerintah Kabupaten Lembata - Dinas Lingkungan Hidup">
         <div>
           <div style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 800; color: #0f172a; line-height: 1.2;">
             Dashboard Petugas
@@ -1996,8 +1985,8 @@
 
           <!-- Basemap Selector -->
           <select id="mapBasemapSelect" class="filter-select" style="min-width: 170px;" onchange="window.portal.changeBasemap(this.value)">
+            <option value="sat" selected>🛰️ Citra Satelit Nyata</option>
             <option value="osm">🗺️ Peta Jalan (OSM)</option>
-            <option value="sat">🛰️ Citra Satelit Nyata</option>
             <option value="topo">⛰️ Relief Topografi</option>
           </select>
 
@@ -2623,7 +2612,7 @@
   <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 
   <!-- Scripts: Data Engine & Portal Controller -->
-  <script src="js/data.js?v=20261012_08"></script>
+  <script src="js/data.js?v=20261014_01"></script>
   <script>
     // Safeguard prototype jika browser masih memuat file js lama dari cache
     if (typeof AduanDataStore !== 'undefined') {
@@ -2949,9 +2938,9 @@
             attribution: 'Topografi &copy; Esri, USGS'
           });
 
-          osmLayer.addTo(this.map);
+          satLayer.addTo(this.map);
           this.baseLayers = { osm: osmLayer, sat: satLayer, topo: topoLayer };
-          this.currentBaseLayer = 'osm';
+          this.currentBaseLayer = 'sat';
 
           L.control.scale({ imperial: false, position: 'bottomright' }).addTo(this.map);
 

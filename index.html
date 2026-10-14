@@ -4,20 +4,20 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>LENTERA LEMBATA - Layanan Elektronik Penanganan dan Verifikasi Aduan Lingkungan Kabupaten Lembata</title>
+  <title>ECOADU LEMBATA - Ekosistem Digital Aduan Lingkungan Lembata</title>
   <meta name="description"
-    content="LENTERA LEMBATA — Layanan resmi penanganan dan verifikasi aduan lingkungan hidup Dinas Lingkungan Hidup Kabupaten Lembata. Cepat, mudah, dan transparan.">
+    content="ECOADU LEMBATA — Ekosistem Digital Aduan Lingkungan Lembata Dinas Lingkungan Hidup Kabupaten Lembata. Cepat, mudah, dan transparan.">
   <link rel="canonical" href="https://aduan-dlh-lembata.vercel.app/">
   <meta name="theme-color" content="#064e3b">
 
   <!-- Open Graph / WhatsApp Preview Meta Tags -->
   <meta property="og:type" content="website">
   <meta property="og:url" content="https://aduan-dlh-lembata.vercel.app/">
-  <meta property="og:title" content="LENTERA LEMBATA - Layanan Elektronik Penanganan dan Verifikasi Aduan Lingkungan Kabupaten Lembata">
+  <meta property="og:title" content="ECOADU LEMBATA - Ekosistem Digital Aduan Lingkungan Lembata">
   <meta property="og:description"
-    content="LENTERA LEMBATA — Layanan resmi penanganan dan verifikasi aduan lingkungan hidup Dinas Lingkungan Hidup Kabupaten Lembata. Cepat, mudah, dan transparan.">
+    content="ECOADU LEMBATA — Ekosistem Digital Aduan Lingkungan Lembata Dinas Lingkungan Hidup Kabupaten Lembata. Cepat, mudah, dan transparan.">
   <meta property="og:locale" content="id_ID">
-  <meta property="og:site_name" content="LENTERA LEMBATA">
+  <meta property="og:site_name" content="ECOADU LEMBATA">
 
   <!-- Google Fonts: Inter & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -132,49 +132,55 @@
     }
 
     .brand-lh-logo {
-      width: 52px;
-      height: 52px;
-      object-fit: cover;
-      border-radius: 50%;
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
       flex-shrink: 0;
-      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4), 0 0 0 2px rgba(52, 211, 153, 0.45);
-      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.3s ease;
-      animation: lenteraLogoFloat 3.8s ease-in-out infinite alternate;
-      background: #064e3b;
+      filter: drop-shadow(0 3px 10px rgba(5, 150, 105, 0.45));
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+      animation: ecoGlobeFloat 3.6s ease-in-out infinite alternate;
+      background: transparent;
     }
 
-    @keyframes lenteraLogoFloat {
+    @keyframes ecoGlobeFloat {
       0% {
-        transform: translateY(0) scale(1);
-        box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35), 0 0 0 2px rgba(52, 211, 153, 0.4);
+        transform: translateY(0) scale(1) rotate(0deg);
+        filter: drop-shadow(0 3px 8px rgba(5, 150, 105, 0.35));
+      }
+      50% {
+        transform: translateY(-3px) scale(1.05) rotate(1.5deg);
+        filter: drop-shadow(0 6px 16px rgba(16, 185, 129, 0.6)) drop-shadow(0 0 10px rgba(52, 211, 153, 0.45));
       }
       100% {
-        transform: translateY(-2px) scale(1.04);
-        box-shadow: 0 6px 18px rgba(245, 158, 11, 0.5), 0 0 0 2.5px rgba(251, 191, 36, 0.6);
+        transform: translateY(1px) scale(0.98) rotate(-1deg);
+        filter: drop-shadow(0 3px 8px rgba(4, 120, 87, 0.4));
       }
     }
 
     .brand-lh-logo:hover {
-      transform: scale(1.12) rotate(3deg);
-      box-shadow: 0 8px 22px rgba(245, 158, 11, 0.7), 0 0 0 3px rgba(251, 191, 36, 0.8);
+      transform: scale(1.14) rotate(4deg);
+      filter: drop-shadow(0 8px 20px rgba(16, 185, 129, 0.75));
     }
 
-    /* Animasi Cahaya Berpendar LENTERA LEMBATA */
-    @keyframes lenteraLightBeam {
+    /* Model Animasi Baru: Eco Emerald Biosphere Stream & Nature Pulse */
+    @keyframes ecoEmeraldStream {
       0% {
-        background-position: 200% center;
-      }
-      100% {
-        background-position: -200% center;
-      }
-    }
-
-    @keyframes lenteraRadiantGlow {
-      0%, 100% {
-        filter: drop-shadow(0 0 5px rgba(16, 185, 129, 0.35)) drop-shadow(0 0 12px rgba(245, 158, 11, 0.25));
+        background-position: 0% 50%;
       }
       50% {
-        filter: drop-shadow(0 0 12px rgba(52, 211, 153, 0.8)) drop-shadow(0 0 22px rgba(251, 191, 36, 0.55));
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    @keyframes ecoNatureAura {
+      0%, 100% {
+        filter: drop-shadow(0 1px 3px rgba(6, 78, 59, 0.25)) drop-shadow(0 0 6px rgba(16, 185, 129, 0.2));
+      }
+      50% {
+        filter: drop-shadow(0 2px 8px rgba(5, 150, 105, 0.45)) drop-shadow(0 0 18px rgba(52, 211, 153, 0.55));
       }
     }
 
@@ -186,23 +192,23 @@
       line-height: 1.15;
       margin: 0;
       display: inline-block;
-      /* Gradien Pancaran Cahaya Lentera */
+      /* Gradien Dinamis Hijau Ekosistem Bumi */
       background: linear-gradient(
-        105deg,
+        110deg,
         #064e3b 0%,
-        #047857 18%,
-        #10b981 32%,
-        #fef08a 46%,
-        #ffffff 50%,
-        #fef08a 54%,
+        #047857 15%,
+        #059669 30%,
+        #10b981 45%,
+        #6ee7b7 52%,
+        #a7f3d0 58%,
         #10b981 68%,
-        #047857 82%,
+        #047857 85%,
         #064e3b 100%
       );
-      background-size: 250% 100%;
+      background-size: 240% 100%;
       -webkit-background-clip: text;
       -webkit-text-fill-color: transparent;
-      animation: lenteraLightBeam 4s ease-in-out infinite, lenteraRadiantGlow 2.8s ease-in-out infinite;
+      animation: ecoEmeraldStream 4.5s ease-in-out infinite, ecoNatureAura 3s ease-in-out infinite;
     }
 
     .brand-sub-kab {
@@ -242,8 +248,8 @@
 
     /* Footer Brand - Bebas Animasi (Seperti Semula) */
     .footer-lh-logo {
-      width: 46px;
-      height: 46px;
+      width: 44px;
+      height: 54px;
       object-fit: contain;
       flex-shrink: 0;
       filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
@@ -3089,6 +3095,59 @@
         font-size: 16px !important;
       }
 
+      /* Legenda Keterangan Warna Pin di Layar HP (Kompak, Rapi, & Bebas Menutupi Peta) */
+      .map-legend-box {
+        bottom: 10px !important;
+        left: 10px !important;
+        right: 10px !important;
+        max-width: none !important;
+        padding: 6px 12px !important;
+        border-radius: 10px !important;
+        background: rgba(255, 255, 255, 0.94) !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22) !important;
+        border: 1px solid rgba(226, 232, 240, 0.95) !important;
+      }
+
+      .map-legend-box .legend-header {
+        margin-bottom: 0 !important;
+        font-size: 0.72rem !important;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .map-legend-box .legend-items {
+        display: none;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        gap: 4px 8px !important;
+        margin-top: 6px !important;
+        padding-top: 6px !important;
+        border-top: 1px solid #e2e8f0 !important;
+      }
+
+      .map-legend-box.expanded .legend-items {
+        display: flex !important;
+      }
+
+      .map-legend-box .legend-item {
+        padding: 2px 6px !important;
+        font-size: 0.68rem !important;
+        background: #f8fafc;
+        border-radius: 6px;
+      }
+
+      .map-legend-box .legend-dot {
+        width: 8px !important;
+        height: 8px !important;
+      }
+
+      .map-legend-box .legend-text {
+        font-size: 0.68rem !important;
+        font-weight: 600 !important;
+      }
+
       /* Floating WhatsApp Button HP */
       .floating-wa-btn {
         bottom: 16px;
@@ -3354,15 +3413,15 @@
   <div class="nature-top-ribbon"></div>
 
   <!-- ===================================================================
-       HEADER RESMI LENTERA LEMBATA (TANPA TAB ATAS)
+       HEADER RESMI ECOADU LEMBATA (TANPA TAB ATAS)
        =================================================================== -->
   <header class="app-header">
     <div class="header-inner">
       <div class="brand-group">
-        <img src="assets/logo-lentera.png" alt="Logo LENTERA LEMBATA" class="brand-lh-logo" onerror="this.onerror=null; this.src='assets/logo-lingkungan-hidup.png';" title="LENTERA LEMBATA - Dinas Lingkungan Hidup Kabupaten Lembata">
+        <img src="assets/logo-ecoadu.png" alt="Logo ECOADU LEMBATA" class="brand-lh-logo" onerror="this.onerror=null; this.src='assets/logo-pemkab-lembata.png';" title="ECOADU LEMBATA - Dinas Lingkungan Hidup Kabupaten Lembata">
         <div class="brand-text-block">
-          <h1 class="brand-title-instansi">LENTERA LEMBATA</h1>
-          <div class="brand-sub-kab">Layanan Elektronik Penanganan dan Verifikasi Aduan Lingkungan Kabupaten Lembata</div>
+          <h1 class="brand-title-instansi">ECOADU LEMBATA</h1>
+          <div class="brand-sub-kab">Ekosistem Digital Aduan Lingkungan Lembata</div>
         </div>
       </div>
 
@@ -3891,10 +3950,10 @@
 
           <!-- Quick Basemap Toggle Buttons -->
           <div class="map-basemap-buttons">
-            <button type="button" class="btn-basemap active" id="btnBaseOsm" title="Tampilan Peta Standar">
+            <button type="button" class="btn-basemap" id="btnBaseOsm" title="Tampilan Peta Standar">
               🗺️ Peta Standar
             </button>
-            <button type="button" class="btn-basemap" id="btnBaseSat" title="Tampilan Citra Satelit Nyata">
+            <button type="button" class="btn-basemap active" id="btnBaseSat" title="Tampilan Citra Satelit Nyata">
               🛰️ Citra Satelit
             </button>
             <button type="button" class="btn-basemap" id="btnBaseTopo" title="Tampilan Relief Topografi">
@@ -4234,14 +4293,14 @@
       <div class="footer-top">
         <div class="footer-brand">
           <div class="brand-group" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
-            <img src="assets/logo-lingkungan-hidup.svg" alt="Logo Resmi Lingkungan Hidup" class="footer-lh-logo" title="Dinas Lingkungan Hidup Kabupaten Lembata">
+            <img src="assets/logo-pemkab-lembata.png" alt="Logo Resmi Pemerintah Kabupaten Lembata" class="footer-lh-logo" title="Pemerintah Kabupaten Lembata - Dinas Lingkungan Hidup">
             <div class="brand-text-block">
               <div class="footer-brand-title">DINAS LINGKUNGAN HIDUP</div>
               <div class="brand-sub-kab" style="font-size: 0.78rem; font-weight: 700; color: #a7f3d0; letter-spacing: 0.5px; line-height: 1.2;">KABUPATEN LEMBATA</div>
             </div>
           </div>
           <p>
-            LENTERA LEMBATA — Layanan Elektronik Penanganan dan Verifikasi Aduan Lingkungan Kabupaten Lembata.
+            ECOADU LEMBATA — Ekosistem Digital Aduan Lingkungan Lembata.
             Mewujudkan pelayanan publik yang cepat, akurat, dan transparan demi kelestarian alam Lewotana Lembata.
           </p>
           <div style="margin-top: 10px; font-size: 0.8rem; color: #a7f3d0;">
@@ -4304,9 +4363,9 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Application Logic (Embedded directly for 100% fail-proof execution on Vercel, Netlify & GitHub) -->
-  <script src="js/data.js?v=20261012_08"></script>
-  <script src="js/map.js?v=20261012_08"></script>
-  <script src="js/app.js?v=20261012_08"></script>
+  <script src="js/data.js?v=20261014_01"></script>
+  <script src="js/map.js?v=20261014_01"></script>
+  <script src="js/app.js?v=20261014_01"></script>
 </body>
 
 </html>
