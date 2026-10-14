@@ -7,7 +7,7 @@
 
 class DLHApp {
   constructor() {
-    this.currentTab = 'lapor';
+    this.currentTab = 'beranda';
     this.tableFilters = {
       search: '',
       kecamatan: 'all',
@@ -41,6 +41,15 @@ class DLHApp {
     setTimeout(() => {
       if (window.lembataMap) window.lembataMap.init();
     }, 150);
+
+    // Dukungan deep link tab via URL hash (#pane-form / #pane-lacak) atau query (?tab=form)
+    try {
+      const urlParams = new URLSearchParams(window.location.search);
+      const targetTab = urlParams.get('tab') || window.location.hash.replace('#', '').replace('pane-', '');
+      if (targetTab && ['beranda', 'form', 'lapor', 'lacak', 'peta'].includes(targetTab)) {
+        setTimeout(() => this.switchTab(targetTab), 100);
+      }
+    } catch(e) {}
 
     // Buka otomatis detail/foto aduan jika dibuka dari tautan WhatsApp (?lihatFoto=ADU-LMB-...)
     try {
@@ -83,11 +92,15 @@ class DLHApp {
   }
 
   switchTab(tabName) {
+    // Dukungan alias tab untuk kompatibilitas
+    if (tabName === 'lapor' || tabName === 'aduan') tabName = 'form';
+    if (tabName === 'tracker') tabName = 'lacak';
     this.currentTab = tabName;
 
     // Update active nav buttons
     document.querySelectorAll('.nav-tab-btn').forEach(btn => {
-      if (btn.getAttribute('data-tab') === tabName) {
+      const btnTab = btn.getAttribute('data-tab');
+      if (btnTab === tabName || (tabName === 'form' && btnTab === 'lapor')) {
         btn.classList.add('active');
       } else {
         btn.classList.remove('active');
@@ -99,10 +112,17 @@ class DLHApp {
       pane.classList.remove('active');
     });
 
-    const targetPane = document.getElementById(`pane-${tabName}`);
+    const targetPane = document.getElementById(`pane-${tabName}`) || (tabName === 'form' ? document.getElementById('pane-lapor') : null);
     if (targetPane) {
       targetPane.classList.add('active');
       window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    // Refresh mini map jika kembali ke tab beranda
+    if (tabName === 'beranda' && window.lembataMap && window.lembataMap.miniMapInstance) {
+      setTimeout(() => {
+        try { window.lembataMap.miniMapInstance.invalidateSize(); } catch(e) {}
+      }, 100);
     }
 
     // Refresh map when entering peta tab
@@ -682,7 +702,7 @@ class DLHApp {
         }
 
         if (store && typeof store.addAduan === 'function') {
-          newRecord = store.addAduan(formData);
+          newRecord = await store.addAduan(formData);
         } else {
           // Fallback aman jika store belum terpasang
           const now = new Date();
@@ -1118,26 +1138,20 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
   }
 
   scrollToForm() {
-    this.switchTab('lapor');
-    const formCard = document.querySelector('.form-card') || document.getElementById('formAduanWarga');
-    if (formCard) {
-      formCard.scrollIntoView({ behavior: 'smooth', block: 'start' });
-      const firstInput = document.getElementById('inputNama');
-      if (firstInput) setTimeout(() => firstInput.focus(), 500);
-    }
+    this.switchTab('form');
+    const firstInput = document.getElementById('inputNama');
+    if (firstInput) setTimeout(() => firstInput.focus(), 300);
   }
 
   scrollToTracker() {
-    this.switchTab('lapor');
-    const trackBox = document.getElementById('quickTrackSection') || document.querySelector('.quick-track-box');
-    if (trackBox) {
-      trackBox.scrollIntoView({ behavior: 'smooth', block: 'center' });
-      const input = document.getElementById('quickTrackInput');
-      if (input) {
+    this.switchTab('lacak');
+    const input = document.getElementById('quickTrackInput');
+    if (input) {
+      setTimeout(() => {
         input.focus();
         input.style.boxShadow = '0 0 0 4px rgba(16, 185, 129, 0.4)';
         setTimeout(() => { input.style.boxShadow = ''; }, 2200);
-      }
+      }, 300);
     }
   }
 

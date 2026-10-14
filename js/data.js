@@ -534,11 +534,24 @@ class AduanDataStore {
 
     this.save();
 
-    // Sinkronisasi otomatis real-time lintas perangkat (Interval 8 detik)
+    // Sinkronisasi otomatis real-time lintas perangkat (Interval 5 detik + event-driven)
     if (this.hasGasConfigured() && !this._pollIntervalStarted) {
       this._pollIntervalStarted = true;
-      setTimeout(() => this.syncFromGAS(true), 200);
-      setInterval(() => this.syncFromGAS(true), 8000);
+      setTimeout(() => this.syncFromGAS(true), 150);
+      setInterval(() => this.syncFromGAS(true), 5000);
+
+      // Sinkronkan instan saat tab dibuka kembali, window fokus, atau koneksi pulih
+      if (typeof window !== 'undefined') {
+        window.addEventListener('focus', () => this.syncFromGAS(true));
+        window.addEventListener('online', () => this.syncFromGAS(true));
+        if (typeof document !== 'undefined') {
+          document.addEventListener('visibilitychange', () => {
+            if (document.visibilityState === 'visible') {
+              this.syncFromGAS(true);
+            }
+          });
+        }
+      }
     }
   }
 
@@ -631,29 +644,53 @@ class AduanDataStore {
 
         if (json && json.success && Array.isArray(json.data)) {
           if (json.data.length > 0) {
-            // Sinkronkan seluruh data dari Google Apps Script sebagai Single Source of Truth
+            // Sinkronkan data dari Google Apps Script sebagai Single Source of Truth
             const validItems = json.data.filter(item => !this.isDeleted(item.id));
+            const serverIdSet = new Set(validItems.map(item => String(item.id).trim().toUpperCase()));
+
             const mapFn = typeof this.mapRemoteRecord === 'function'
               ? (item) => this.mapRemoteRecord(item)
               : (item) => mapRemoteAduanRecord(item, this.aduanList, (id) => this.isDeleted(id));
-            this.aduanList = validItems.map(mapFn).filter(Boolean);
+            const mappedServerItems = validItems.map(mapFn).filter(Boolean);
+
+            // Pertahankan aduan lokal yang baru di-submit tapi belum terindeks di server
+            const localPending = (this.aduanList || []).filter(item => {
+              if (!item || !item.id) return false;
+              const cid = String(item.id).trim().toUpperCase();
+              return !this.isDeleted(cid) && !serverIdSet.has(cid);
+            });
+
+            this.aduanList = [...mappedServerItems, ...localPending];
             this.save();
 
             this.lastSyncTime = new Date();
             window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent } }));
+
+            // Otomatis dorong item lokal pending ke server jika ada
+            if (localPending.length > 0) {
+              setTimeout(() => this.flushPendingQueue(), 500);
+            }
+
             return { success: true, count: this.aduanList.length, remoteCount: validItems.length, message: `Berhasil sinkronisasi ${validItems.length} aduan dari Google Spreadsheet.` };
           } else {
-            // Spreadsheet kosong (0 data aduan) -> Jadikan data lokal di HP & Laptop juga 0 aduan (Satu Kesatuan Data)
-            this.aduanList = [];
-            this.save();
+            // Server kosong: jika ada item lokal pending, dorong ke server; jika tidak ada, reset 0
+            const localPending = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id) && item._pendingSync);
+            if (localPending.length > 0) {
+              this.aduanList = localPending;
+              this.save();
+              setTimeout(() => this.flushPendingQueue(), 500);
+            } else {
+              this.aduanList = [];
+              this.save();
+            }
             this.lastSyncTime = new Date();
-            window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: 0, silent: silent, emptyRemote: true } }));
+            window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent, emptyRemote: true } }));
             return {
               success: true,
-              count: 0,
+              count: this.aduanList.length,
               remoteCount: 0,
               emptyRemote: true,
-              message: 'Terhubung ke Google Spreadsheet! Database kosong (0 aduan). Sistem siap pengujian baru.'
+              message: 'Terhubung ke Google Spreadsheet!'
             };
           }
         }
@@ -703,6 +740,30 @@ class AduanDataStore {
     }
     if (pushedCount > 0) this.save();
     return pushedCount;
+  }
+
+  async flushPendingQueue() {
+    if (!this.hasGasConfigured() || this._isFlushing) return;
+    this._isFlushing = true;
+    try {
+      // 1. Flush aduan baru pending
+      const pendingItems = (this.aduanList || []).filter(item => item && item._pendingSync);
+      for (const item of pendingItems) {
+        try {
+          const res = await this.postToGAS('addAduan', item);
+          if (res && res.success) {
+            delete item._pendingSync;
+          }
+        } catch (e) {}
+      }
+
+      // 2. Flush update verifikasi petugas pending
+      await this.pushPendingVerifications();
+
+      this.save();
+    } finally {
+      this._isFlushing = false;
+    }
   }
 
   async uploadAllLocalToGAS() {
@@ -932,7 +993,7 @@ class AduanDataStore {
   }
 
 
-  addAduan(formData) {
+  async addAduan(formData) {
     const customId = (formData && formData.id && String(formData.id).trim().toUpperCase().startsWith('ADU-'))
       ? String(formData.id).trim().toUpperCase()
       : null;
@@ -976,7 +1037,8 @@ class AduanDataStore {
       fotoVerifikasiList: formData.fotoVerifikasiList || [],
       timestampVerifikasi: formData.timestampVerifikasi || '',
       timestampTindakLanjut: formData.timestampTindakLanjut || '',
-      timestampSelesai: formData.timestampSelesai || ''
+      timestampSelesai: formData.timestampSelesai || '',
+      _pendingSync: true
     };
 
     const existingIndex = this.aduanList.findIndex(x => x.id === newId);
@@ -992,9 +1054,22 @@ class AduanDataStore {
       window.dlhRealtime.broadcast('ADUAN_BARU', { id: newRecord.id, item: newRecord });
     }
 
-    // Kirim asinkron ke Google Apps Script jika terhubung
+    // Kirim langsung ke Google Apps Script dan tunggu konfirmasi dengan timeout aman
     if (this.hasGasConfigured()) {
-      this.postToGAS('addAduan', newRecord);
+      try {
+        const sendPromise = this.postToGAS('addAduan', newRecord);
+        const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ timeout: true }), 4000));
+        const res = await Promise.race([sendPromise, timeoutPromise]);
+        if (res && res.success) {
+          const idx = this.aduanList.findIndex(x => x.id === newId);
+          if (idx !== -1) {
+            delete this.aduanList[idx]._pendingSync;
+            this.save();
+          }
+        }
+      } catch (err) {
+        console.warn('Gagal sinkron instan ke Google Apps Script, antrean pending aktif:', err);
+      }
     }
 
     return newRecord;

@@ -78,14 +78,15 @@ class LembataMapEngine {
         attribution: 'Topografi &copy; Esri, USGS'
       });
 
-      // Default basemap
-      osmLayer.addTo(this.map);
+      // Default basemap: Citra Satelit Nyata (Esri World Imagery)
+      satLayer.addTo(this.map);
 
       this.baseLayers = {
         'osm': osmLayer,
         'sat': satLayer,
         'topo': topoLayer
       };
+      this.currentBaseLayer = 'sat';
 
       // Kontrol Layer Bawaan Leaflet di Pojok Kanan Atas
       const layerControlLabels = {
@@ -449,6 +450,11 @@ class LembataMapEngine {
     if (btnOsm) btnOsm.addEventListener('click', () => switchBase('osm'));
     if (btnSat) btnSat.addEventListener('click', () => switchBase('sat'));
     if (btnTopo) btnTopo.addEventListener('click', () => switchBase('topo'));
+
+    // Set default tombol aktif ke Citra Satelit
+    if (btnSat) btnSat.classList.add('active');
+    if (btnOsm) btnOsm.classList.remove('active');
+    if (btnTopo) btnTopo.classList.remove('active');
   }
 
   /* Setup Tombol Cepat Wilayah Lembata */
@@ -516,12 +522,38 @@ class LembataMapEngine {
     const toggleBtn = document.getElementById('btnToggleLegend');
     const itemsList = document.getElementById('legendItemsList');
 
-    if (toggleBtn && itemsList) {
-      toggleBtn.addEventListener('click', () => {
+    const box = document.getElementById('mapLegendBox');
+    const header = box ? box.querySelector('.legend-header') : null;
+
+    const toggleFn = () => {
+      if (!itemsList) return;
+      const isExpanded = box && box.classList.contains('expanded');
+      if (box) {
+        if (isExpanded) {
+          box.classList.remove('expanded');
+          itemsList.style.display = 'none';
+          if (toggleBtn) toggleBtn.textContent = '▸';
+        } else {
+          box.classList.add('expanded');
+          itemsList.style.display = 'flex';
+          if (toggleBtn) toggleBtn.textContent = '▾';
+        }
+      } else {
         const isHidden = itemsList.style.display === 'none';
         itemsList.style.display = isHidden ? 'flex' : 'none';
-        toggleBtn.textContent = isHidden ? '▾' : '▸';
+        if (toggleBtn) toggleBtn.textContent = isHidden ? '▾' : '▸';
+      }
+    };
+
+    if (toggleBtn) {
+      toggleBtn.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleFn();
       });
+    }
+
+    if (header) {
+      header.addEventListener('click', toggleFn);
     }
 
     // Klik item legenda untuk langsung memfilter status
