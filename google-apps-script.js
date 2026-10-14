@@ -452,12 +452,21 @@ function handleGetAll() {
     }
   } catch (e) { }
 
-  const result = rawData.map(row => mapSheetRowToFrontend(row, storageMap));
+  // Deduplikasi rekaman berdasar ID_Aduan (Jaminan 0 Duplikasi)
+  const seenIds = {};
+  const uniqueResult = [];
+  rawData.forEach(row => {
+    const rId = String(row['ID_Aduan'] || '').trim().toUpperCase();
+    if (rId && !seenIds[rId]) {
+      seenIds[rId] = true;
+      uniqueResult.push(mapSheetRowToFrontend(row, storageMap));
+    }
+  });
 
   return {
     success: true,
-    count: result.length,
-    data: result
+    count: uniqueResult.length,
+    data: uniqueResult
   };
 }
 
@@ -702,6 +711,27 @@ function handleAddAduan(formData) {
 
   // Gunakan ID dari formulir jika ada, atau generate baru
   const newId = (formData.id && String(formData.id).trim()) ? String(formData.id).trim() : generateNewId(sheet);
+
+  // Pencegahan Duplikasi: Jika ID sudah ada di sheet Data_Aduan, jangan buat baris ganda
+  const existingValues = sheet.getDataRange().getValues();
+  const colIdIndex = HEADERS_ADUAN.indexOf('ID_Aduan');
+  if (colIdIndex !== -1 && existingValues.length > 1) {
+    for (let r = 1; r < existingValues.length; r++) {
+      if (String(existingValues[r][colIdIndex]).trim().toUpperCase() === newId.toUpperCase()) {
+        Logger.log('Duplikasi terdeteksi untuk ID ' + newId + ' - mencegah baris ganda.');
+        return {
+          success: true,
+          duplicate: true,
+          message: 'Aduan ' + newId + ' sudah tercatat sebelumnya di Google Spreadsheet.',
+          data: {
+            id: newId,
+            timestamp: existingValues[r][1] || '',
+            status: existingValues[r][HEADERS_ADUAN.indexOf('Status')] || 'Baru'
+          }
+        };
+      }
+    }
+  }
 
   // Hapus sisa foto/cache lama jika ada ID yang sama sebelumnya (Zero Ghost Photos)
   purgeFotoStorage(newId);

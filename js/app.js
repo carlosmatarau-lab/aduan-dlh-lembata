@@ -553,6 +553,9 @@ class DLHApp {
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
+      if (this._isSubmittingAduan) return;
+      this._isSubmittingAduan = true;
+
       // 1. Validasi Input Nomor WhatsApp
       const inputNoHp = document.getElementById('inputNoHp');
       const noHpRaw = (inputNoHp?.value || '').trim();
@@ -741,10 +744,6 @@ class DLHApp {
           } catch(e) {}
         }
 
-        if (window.dlhRealtime && newRecord) {
-          window.dlhRealtime.broadcast('ADUAN_BARU', { id: newRecord.id, item: newRecord });
-        }
-
         this.showToast(`💾 Laporan ${newRecord.id} tersimpan di arsip database DLH Lembata!`, 'success');
 
         // Link Google Maps koordinat presisi
@@ -754,10 +753,9 @@ class DLHApp {
           ? `https://maps.google.com/?q=${finalLat},${finalLng}`
           : 'Koordinat belum disetel';
 
-        // Susun Format Pesan WhatsApp: LAYANAN PENGADUAN MASYARAKAT (KABUPATEN LEMBATA)
+        // Susun Format Pesan WhatsApp: LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA
         const waMessage = 
-`*LAYANAN PENGADUAN MASYARAKAT*
-*KABUPATEN LEMBATA*
+`*LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA*
 --------------------------------------------------
 📌 *NOMOR REGISTER:* ${newRecord.id}
 📅 *WAKTU LAPOR:* ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
@@ -787,7 +785,7 @@ ${buktiList.length > 0
   ? `• Status: ${buktiList.length} Foto Bukti Terlampir Bersama Laporan Ini` 
   : '• Status: Pelapor tidak melampirkan foto bukti.'}
 --------------------------------------------------
-_Laporan resmi dikirim melalui formulir Layanan Pengaduan Masyarakat._
+_Laporan resmi dikirim melalui formulir Layanan Pengaduan Lingkungan Masyarakat Kabupaten Lembata._
 _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
 
         // Tautan langsung ke room chat nomor kontak layanan pengaduan (+62 822-3458-2769)
@@ -969,6 +967,8 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         setTimeout(() => {
           window.location.href = fallbackWaUrl;
         }, 600);
+      } finally {
+        this._isSubmittingAduan = false;
       }
     });
   }

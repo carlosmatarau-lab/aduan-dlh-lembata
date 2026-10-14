@@ -532,6 +532,7 @@ class AduanDataStore {
       }
     });
 
+    this._deduplicateList();
     this.save();
 
     // Sinkronisasi otomatis real-time lintas perangkat (Interval 5 detik + event-driven)
@@ -651,16 +652,27 @@ class AduanDataStore {
             const mapFn = typeof this.mapRemoteRecord === 'function'
               ? (item) => this.mapRemoteRecord(item)
               : (item) => mapRemoteAduanRecord(item, this.aduanList, (id) => this.isDeleted(id));
-            const mappedServerItems = validItems.map(mapFn).filter(Boolean);
+            // Deduplikasi item dari server (Cegah kemunculan 2 laporan untuk 1 aduan)
+            const seenIds = new Set();
+            const uniqueServerItems = [];
+            for (const item of mappedServerItems) {
+              if (!item || !item.id) continue;
+              const cid = String(item.id).trim().toUpperCase();
+              if (!seenIds.has(cid)) {
+                seenIds.add(cid);
+                uniqueServerItems.push(item);
+              }
+            }
 
             // Pertahankan aduan lokal yang baru di-submit tapi belum terindeks di server
             const localPending = (this.aduanList || []).filter(item => {
               if (!item || !item.id) return false;
               const cid = String(item.id).trim().toUpperCase();
-              return !this.isDeleted(cid) && !serverIdSet.has(cid);
+              return !this.isDeleted(cid) && !seenIds.has(cid);
             });
 
-            this.aduanList = [...mappedServerItems, ...localPending];
+            this.aduanList = [...uniqueServerItems, ...localPending];
+            this._deduplicateList();
             this.save();
 
             this.lastSyncTime = new Date();
@@ -746,15 +758,19 @@ class AduanDataStore {
     if (!this.hasGasConfigured() || this._isFlushing) return;
     this._isFlushing = true;
     try {
-      // 1. Flush aduan baru pending
-      const pendingItems = (this.aduanList || []).filter(item => item && item._pendingSync);
+      // 1. Flush aduan baru pending (hindari item yang sedang dalam proses kirim instan)
+      const pendingItems = (this.aduanList || []).filter(item => item && item._pendingSync && !item._syncingNow);
       for (const item of pendingItems) {
         try {
+          item._syncingNow = true;
           const res = await this.postToGAS('addAduan', item);
           if (res && res.success) {
             delete item._pendingSync;
           }
-        } catch (e) {}
+        } catch (e) {
+        } finally {
+          delete item._syncingNow;
+        }
       }
 
       // 2. Flush update verifikasi petugas pending
@@ -808,11 +824,24 @@ class AduanDataStore {
     }
   }
 
+  _deduplicateList() {
+    const seen = new Set();
+    this.aduanList = (this.aduanList || []).filter(item => {
+      if (!item || !item.id) return false;
+      const cid = String(item.id).trim().toUpperCase();
+      if (this.isDeleted(cid) || seen.has(cid)) return false;
+      seen.add(cid);
+      return true;
+    });
+  }
+
   save() {
+    this._deduplicateList();
     localStorage.setItem(STORAGE_KEY, JSON.stringify(this.aduanList));
   }
 
   getAll() {
+    this._deduplicateList();
     return this.aduanList.filter(item => !this.isDeleted(item.id));
   }
 
@@ -1038,7 +1067,8 @@ class AduanDataStore {
       timestampVerifikasi: formData.timestampVerifikasi || '',
       timestampTindakLanjut: formData.timestampTindakLanjut || '',
       timestampSelesai: formData.timestampSelesai || '',
-      _pendingSync: true
+      _pendingSync: true,
+      _syncingNow: true
     };
 
     const existingIndex = this.aduanList.findIndex(x => x.id === newId);
@@ -1047,6 +1077,7 @@ class AduanDataStore {
     } else {
       this.aduanList.unshift(newRecord);
     }
+    this._deduplicateList();
     this.save();
 
     // Broadcast Real-Time ke tab/portal petugas secara langsung
@@ -1060,15 +1091,20 @@ class AduanDataStore {
         const sendPromise = this.postToGAS('addAduan', newRecord);
         const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ timeout: true }), 4000));
         const res = await Promise.race([sendPromise, timeoutPromise]);
-        if (res && res.success) {
-          const idx = this.aduanList.findIndex(x => x.id === newId);
-          if (idx !== -1) {
+        const idx = this.aduanList.findIndex(x => x.id === newId);
+        if (idx !== -1) {
+          delete this.aduanList[idx]._syncingNow;
+          if (res && res.success) {
             delete this.aduanList[idx]._pendingSync;
-            this.save();
           }
+          this.save();
         }
       } catch (err) {
         console.warn('Gagal sinkron instan ke Google Apps Script, antrean pending aktif:', err);
+        const idx = this.aduanList.findIndex(x => x.id === newId);
+        if (idx !== -1) {
+          delete this.aduanList[idx]._syncingNow;
+        }
       }
     }
 
