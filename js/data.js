@@ -652,6 +652,7 @@ class AduanDataStore {
             const mapFn = typeof this.mapRemoteRecord === 'function'
               ? (item) => this.mapRemoteRecord(item)
               : (item) => mapRemoteAduanRecord(item, this.aduanList, (id) => this.isDeleted(id));
+            const mappedServerItems = validItems.map(mapFn).filter(Boolean);
             // Deduplikasi item dari server (Cegah kemunculan 2 laporan untuk 1 aduan)
             const seenIds = new Set();
             const uniqueServerItems = [];
