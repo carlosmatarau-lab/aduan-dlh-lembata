@@ -1,9 +1,22 @@
-# 🌍 ECOADU LEMBATA
-## Ekosistem Digital Aduan Lingkungan Lembata
+# 🌿 ECOADU LEMBATA
+## Sistem Informasi Digital Berbasis Web Spasial Penanganan dan Verifikasi Lapangan Aduan Lingkungan Hidup
 ### Dinas Lingkungan Hidup Kabupaten Lembata
 
-Aplikasi ini dikembangkan untuk mendukung rancangan aktualisasi ASN:
-> **"OPTIMALISASI PENANGANAN DAN VERIFIKASI ADUAN MASYARAKAT TERKAIT DUGAAN PENCEMARAN LINGKUNGAN MELALUI SISTEM PENDATAAN DIGITAL BERBASIS GOOGLE FORM, GOOGLE SPREADSHEET, DAN GOOGLE MAPS PADA DINAS LINGKUNGAN HIDUP KABUPATEN LEMBATA"**
+Aplikasi ini dikembangkan sebagai wujud inovasi dan aksi perubahan dalam rangka Aktualisasi Pelatihan Dasar CPNS Golongan III BPSDMD Provinsi Nusa Tenggara Timur Tahun 2026:
+
+> **"PENGUATAN TATA KELOLA PENANGANAN DAN VERIFIKASI LAPANGAN ATAS ADUAN MASYARAKAT MENGENAI DUGAAN PENCEMARAN LINGKUNGAN MELALUI SISTEM INFORMASI DIGITAL BERBASIS WEB SPASIAL (ECOADU) PADA DINAS LINGKUNGAN HIDUP KABUPATEN LEMBATA"**
+
+---
+
+### Profil Pelaksana & Pembimbing
+- **Nama Peserta** : Yohanes Kepitan Rau, S.T.
+- **NIP** : 19950624 202506 1 006
+- **Jabatan** : Pengawas Lingkungan Hidup Ahli Pertama
+- **Unit Kerja** : Bidang Pengendalian Pencemaran dan Kerusakan Lingkungan Hidup (PPKLH)
+- **Instansi** : Dinas Lingkungan Hidup Kabupaten Lembata
+- **Coach** : Katarina nikmat, SE., M.A.P (NIP. 19780618 201001 2 010)
+- **Mentor** : Rasyid Abd. Jalal, S.Si (NIP. 19790515 200604 1 031) - Kepala Bidang PPKLH DLH Lembata
+- **Penguji** : Rizhard N. A. Sanam, SE (NIP. 19681123 199203 1 008)
 
 ---
 
@@ -15,67 +28,65 @@ Aplikasi ini dikembangkan untuk mendukung rancangan aktualisasi ASN:
 
 ---
 
-## 🚀 Cara Menjalankan Aplikasi Secara Lokal (Offline)
+## ⚡ Cara Menjalankan Aplikasi Secara Lokal (Offline)
 
-Aplikasi ini dibangun murni menggunakan **HTML5, CSS3 Modern, dan Vanilla JavaScript**.
-**Tidak memerlukan instalasi server atau dependensi tambahan apa pun.**
+Aplikasi ini dibangun menggunakan arsitektur **HTML5, CSS3 Modern, dan Vanilla JavaScript**.
+**Dapat berjalan secara mandiri tanpa dependensi runtime tambahan.**
 
-1. Cukup buka folder `d:\app\`.
-2. Klik ganda (double click) pada file **`index.html`**.
-3. Aplikasi akan langsung terbuka di browser Anda (Google Chrome, Microsoft Edge, Mozilla Firefox, dll.) dengan tampilan responsif dan interaktif.
-
----
-
-## 🌟 Fitur Utama Aplikasi
-
-1. **📲 Pengiriman Pengaduan Langsung ke WhatsApp DLH (+62 822-3458-2769)**
-   - Aduan warga secara otomatis diformat rapi dan diteruskan langsung ke WhatsApp resmi DLH Lembata.
-   - Dilengkapi dukungan lampiran bukti foto via Web Share API native (di HP) dan clipboard copy / download di desktop.
-   - Menyertakan titik GPS otomatis dan tautan navigasi Google Maps akurat.
-
-2. **🗺️ Peta Spasial Sebaran Titik Aduan (GIS Interaktif)**
-   - Peta interaktif berbasis Leaflet dengan pilihan layer Peta Standar, Citra Satelit Nyata, dan Topografi.
-   - Mencakup seluruh 9 kecamatan di Kabupaten Lembata (*Nubatukan/Lewoleba, Ile Ape, Ile Ape Timur, Lebatukan, Nagawutung, Wulandoni, Atadei, Omesuri, Buyasuri*).
-   - Filter dinamis berdasarkan kecamatan, jenis pencemaran, dan status.
-
-3. **📝 Formulir Pengaduan Digital Cepat & Akurat**
-   - Mendukung deteksi GPS otomatis satu klik untuk koordinat akurat di lapangan.
-   - Upload bukti foto langsung dari kamera HP atau galeri file (maks. 3 berkas).
-   - Pilihan kategori pencemaran: Laut & Pesisir, Sampah Ilegal, Air & Sungai, Udara & Asap, Limbah B3, dan Kerusakan Lingkungan.
+1. Buka folder `d:\app\`.
+2. Klik ganda pada file **`index.html`** untuk Portal Publik / Form Pengaduan Warga.
+3. Klik ganda pada file **`petugas.html`** untuk Dashboard Pengawasan & Verifikasi Lapangan Petugas DLH.
+4. Klik ganda pada file **`qr-code.html`** untuk Cetak Poster QR Code Sosialisasi.
 
 ---
 
-## 📁 Struktur Berkas
+## 🚀 Fitur Utama Sistem ECOADU
+
+1. **📍 Peta Spasial Interaktif Sebaran Titik Aduan (GIS Mini)**
+   - Peta interaktif berbasis Leaflet yang memetakan seluruh titik kejadian pencemaran di 9 kecamatan se-Kabupaten Lembata:
+     1. Nubatukan (Kota Lewoleba)
+     2. Ile Ape (Waipukang)
+     3. Ile Ape Timur (Bungamuda)
+     4. Lebatukan (Hadakewa)
+     5. Nagawutung (Loang)
+     6. Wulandoni (Wulandoni)
+     7. Atadei (Kalikasa)
+     8. Omesuri (Balauring)
+     9. Buyasuri (Wairiang)
+   - Indikator pin warna dinamis: Merah (Aduan Masuk), Kuning (Verifikasi Lapangan), Hijau (Selesai Ditangani), Abu-abu (Ditolak/Tidak Terbukti).
+
+2. **📸 Form Aduan Publik dengan Deteksi Koordinat GPS & Kamera Langsung**
+   - Tangkapan lokasi presisi satu klik via Geolocation API.
+   - Ambil foto bukti langsung kamera HP maupun unggah berkas dari galeri.
+   - Penerbitan otomatis Nomor Registrasi Tiket Aduan resmi format `ADU-LMB-YYYY-XXX`.
+
+3. **📋 Modul Verifikasi Lapangan & Checklist Standar Pengawas LH**
+   - Instrumen verifikasi langsung di lapangan sesuai Uraian Tugas Jabatan Pengawas Lingkungan Hidup Ahli Pertama (Kepala Bidang PPKLH DLH Lembata).
+   - Penilaian parameter ketaatan lingkungan (Air & Laut, Udara & Emisi, Limbah Padat & Sampah TPA/TPST, B3, serta Kerusakan Lahan).
+   - Pembuatan Berita Acara Pemeriksaan Fisik Lapangan (BAST/BAP) otomatis yang siap cetak / PDF.
+
+4. **📊 Rekapitulasi & Integrasi Google Spreadsheet API**
+   - Sinkronisasi real-time dua arah ke Cloud Google Spreadsheet (Sheet `Data_Aduan` 21 kolom dan Sheet `Log_Aktivitas`).
+   - Ekspor data laporan akuntabilitas ke format CSV / Excel sekali klik.
+
+---
+
+## 📂 Struktur Berkas
 
 ```
 d:\app/
-├── index.html                           # File utama aplikasi portal aduan & peta publik
-├── qr-code.html                         # Poster cetak & generator QR Code publik
-├── petugas.html                         # Dashboard Petugas & Verifikasi Aduan DLH
-├── vercel.json                          # Konfigurasi deployment & security headers Vercel
-├── check-vercel.ps1                     # Script diagnostik deployment Vercel
-├── perencanaan.md                       # Dokumen rencana aktualisasi lengkap
-├── README.md                            # Petunjuk penggunaan aplikasi
-├── google-apps-script.js                # Web API Serverless (Google Apps Script)
-├── DOKUMENTASI-GOOGLE-APPS-SCRIPT.md    # Panduan setup & deployment Web API Google Spreadsheet
+├── index.html                           # Portal Aduan & Peta Spasial Publik
+├── petugas.html                         # Dashboard Pengawas & Modul Verifikasi Lapangan
+├── qr-code.html                         # Media Sosialisasi Poster & QR Code Publik
+├── perencanaan.md                       # Dokumen Rancangan Aktualisasi Latsar CPNS 2026 Lengkap
+├── README.md                            # Dokumentasi & Panduan Operasional Sistem
+├── google-apps-script.js                # Serverless Backend Web API Google Apps Script
+├── DOKUMENTASI-GOOGLE-APPS-SCRIPT.md    # Panduan Instalasi Google Sheets & Script API
 ├── css/
-│   └── style.css                        # Desain antarmuka modern, glassmorphism, & palet DLH
+│   └── style.css                        # Desain Antarmuka Glassmorphism & UI Emerald DLH
 └── js/
-    ├── app.js                           # Kontroler navigasi tab, filter, modal, & tracker
-    ├── data.js                          # Database lokal/GAS API, data sampel realistis Lembata, ekspor CSV
-    ├── map.js                           # Sistem pemetaan interaktif Leaflet & fallback spasial
-    └── charts.js                        # Engine grafik statistik Chart.js & fallback Canvas
+    ├── app.js                           # Logika Kontrol Navigasi, Form, & Pelacakan
+    ├── data.js                          # Database Lokal & Sinkronisasi API GAS
+    ├── map.js                           # Engine Pemetaan Spasial Leaflet
+    └── charts.js                        # Visualisasi Statistik & Grafik
 ```
-
----
-
-## 🇮🇩 Wilayah Cakupan (9 Kecamatan Kabupaten Lembata)
-1. **Nubatukan** (Ibukota Lewoleba)
-2. **Ile Ape** (Waipukang)
-3. **Ile Ape Timur** (Bungamuda)
-4. **Lebatukan** (Hadakewa)
-5. **Nagawutung** (Loang)
-6. **Wulandoni** (Wulandoni)
-7. **Atadei** (Kalikasa)
-8. **Omesuri** (Balauring)
-9. **Buyasuri** (Wairiang)
