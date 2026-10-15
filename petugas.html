@@ -4991,27 +4991,31 @@
         this.showToast('✅ Format WhatsApp berhasil diurai! Periksa ringkasan lalu klik Simpan.', 'success');
       }
 
-      saveWaImport() {
+      async saveWaImport() {
         if (!this.currentParsedWaData || !window.aduanStore) {
           this.showToast('Data aduan belum siap disimpan.', 'warning');
           return;
         }
 
-        const record = window.aduanStore.addAduan(this.currentParsedWaData);
+        const record = await window.aduanStore.addAduan(this.currentParsedWaData);
         this.closeAllModals();
         this.updateKPIs();
         this.renderTable();
         this.renderMapLayers();
 
-        this.showToast(`🎉 Aduan ${record.id} atas nama "${record.namaPelapor}" berhasil dicatat ke sistem!`, 'success');
+        const recId = (record && record.id) ? record.id : (this.currentParsedWaData.id || '');
+        const recNama = (record && record.namaPelapor) ? record.namaPelapor : (this.currentParsedWaData.namaPelapor || '');
+        this.showToast(`🎉 Aduan ${recId} atas nama "${recNama}" berhasil dicatat ke sistem!`, 'success');
 
         // Focus & highlight baris di tabel jika ada
         setTimeout(() => {
-          const row = document.querySelector(`[data-id="${record.id}"]`);
-          if (row) {
-            row.scrollIntoView({ behavior: 'smooth', block: 'center' });
-            row.style.background = '#ecfdf5';
-            setTimeout(() => { row.style.background = ''; }, 3000);
+          if (recId) {
+            const row = document.querySelector(`[data-id="${recId}"]`);
+            if (row) {
+              row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              row.style.background = '#ecfdf5';
+              setTimeout(() => { row.style.background = ''; }, 3000);
+            }
           }
         }, 400);
       }

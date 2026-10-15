@@ -28,8 +28,7 @@ class DLHApp {
     this.setupModals();
     this.setupCloudSync();
     this.setupRealtimeSync();
-    if (typeof submitAnimPromise !== 'undefined') { await submitAnimPromise; }
-        this.updateKPIs();
+    this.updateKPIs();
     this.renderTable();
 
     // Set default date to today
