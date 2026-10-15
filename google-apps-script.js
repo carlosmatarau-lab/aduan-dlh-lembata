@@ -90,7 +90,7 @@ function doGet(e) {
 
     // Aksi penampil foto bukti ukuran penuh responsif (Bisa diklik langsung dari spreadsheet)
     if (action === 'viewFoto' || action === 'viewImage' || action === 'foto') {
-      return handleViewImage(e.parameter.id || '', e.parameter.fileId || '');
+      return handleViewImage(e.parameter.id || '', e.parameter.fileId || '', e.parameter.photoIdx || '0');
     }
 
     let result;
@@ -299,24 +299,47 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
     if (match) linkFoto = match[1];
   }
 
-  // Prioritaskan nilai tautan gambar langsung dari sheet (Drive thumbnail atau URL valid)
-  let fotoDirect = linkFoto;
-  if (linkFoto.includes('drive.google.com/file/d/')) {
-    const dMatch = linkFoto.match(/\/file\/d\/([a-zA-Z0-9-_]+)/);
-    if (dMatch) {
-      fotoDirect = 'https://drive.google.com/thumbnail?id=' + dMatch[1] + '&sz=w1200';
+  // Ekstrak seluruh foto pelapor (Mendukung satu tautan, multi-tautan koma, dan cadangan Foto_Storage)
+  const allRawLinks = linkFoto.split(',').map(s => s.trim()).filter(Boolean);
+  const resolvedCitizenPhotos = [];
+
+  allRawLinks.forEach(rawLink => {
+    let cleanLink = rawLink;
+    if (cleanLink.startsWith('=HYPERLINK')) {
+      const match = cleanLink.match(/=HYPERLINK\("([^"]+)"/i);
+      if (match) cleanLink = match[1];
+    }
+    if (cleanLink.includes('drive.google.com/file/d/')) {
+      const dMatch = cleanLink.match(/\/file\/d\/([a-zA-Z0-9-_]+)/);
+      if (dMatch) {
+        cleanLink = 'https://drive.google.com/thumbnail?id=' + dMatch[1] + '&sz=w1200';
+      }
+    }
+    if (cleanLink && cleanLink !== '-' && !cleanLink.includes('#ERROR') && !resolvedCitizenPhotos.includes(cleanLink)) {
+      resolvedCitizenPhotos.push(cleanLink);
+    }
+  });
+
+  // Jika belum ada foto valid dari tautan sheet, ambil dari cadangan Foto_Storage
+  const storageLookup = fotoStorageMap || {};
+  const baseKey = id.trim().toUpperCase();
+  if (resolvedCitizenPhotos.length === 0) {
+    const backupFoto = storageLookup[baseKey];
+    if (backupFoto && typeof backupFoto === 'string' && backupFoto.startsWith('data:image')) {
+      resolvedCitizenPhotos.push(backupFoto);
     }
   }
 
-  // Hanya jika fotoDirect kosong atau masih berupa link viewFoto/formula usang, ambil cadangan Foto_Storage
-  const isDirectImage = fotoDirect && (fotoDirect.startsWith('data:image') || fotoDirect.includes('drive.google.com/thumbnail') || fotoDirect.match(/\.(jpeg|jpg|png|webp|gif)/i));
-  if (!isDirectImage) {
-    const storageLookup = fotoStorageMap || {};
-    const backupFoto = storageLookup[id.trim().toUpperCase()];
-    if (backupFoto && typeof backupFoto === 'string' && backupFoto.startsWith('data:image')) {
-      fotoDirect = backupFoto;
+  // Tambahkan juga foto-foto lampiran tambahan yang disimpan di storage: ID_FOTO_1, ID_FOTO_2, dst.
+  for (let idx = 1; idx <= 6; idx++) {
+    const multiKey = baseKey + '_FOTO_' + idx;
+    const multiBackup = storageLookup[multiKey];
+    if (multiBackup && typeof multiBackup === 'string' && !resolvedCitizenPhotos.includes(multiBackup)) {
+      resolvedCitizenPhotos.push(multiBackup);
     }
   }
+
+  const fotoDirect = resolvedCitizenPhotos[0] || (linkFoto !== '-' ? linkFoto : '');
 
   // Cek foto kondisi riil petugas
   let linkFotoRiil = String(row['Foto_Kondisi_Riil'] || '');
@@ -364,6 +387,7 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
     linkFoto: fotoDirect,
     fotoBukti: fotoDirect,
     linkFotoClickable: linkFoto,
+    buktiFotoList: resolvedCitizenPhotos,
     status: currentStatus || 'Baru',
     petugasVerifikasi: isUnverified ? '-' : String(row['Petugas_Verifikasi'] || '-'),
     tanggalVerifikasi: isUnverified ? '-' : String(row['Tanggal_Verifikasi'] || '-'),
@@ -761,32 +785,54 @@ function handleAddAduan(formData) {
   const lat = formData.lat ? parseFloat(formData.lat) : (kecCoord.lat + (Math.random() - 0.5) * 0.02);
   const lng = formData.lng ? parseFloat(formData.lng) : (kecCoord.lng + (Math.random() - 0.5) * 0.02);
 
-  // Kelola Foto Bukti: Unggah ke Google Drive atau simpan ke Foto_Storage & buat hyperlink rapi yang bisa diklik langsung di spreadsheet
-  let rawFoto = formData.fotoBukti || formData.linkFotoBukti || formData.linkFoto || (Array.isArray(formData.buktiFotoList) ? formData.buktiFotoList[0] : '') || '';
-  let targetUrl = '';
+  // Kelola Seluruh Foto Bukti (Mendukung Multi-Foto Lapangan)
+  let rawPhotos = [];
+  if (Array.isArray(formData.buktiFotoList) && formData.buktiFotoList.length > 0) {
+    formData.buktiFotoList.forEach(p => {
+      const s = (p && p.dataUrl) ? p.dataUrl : (typeof p === 'string' ? p : '');
+      if (s && s.trim() && s.trim() !== '-') rawPhotos.push(s.trim());
+    });
+  } else {
+    const rawVal = formData.fotoBukti || formData.linkFotoBukti || formData.linkFoto || '';
+    if (typeof rawVal === 'string' && rawVal.trim() && rawVal.trim() !== '-') {
+      if (rawVal.includes(',') && !rawVal.startsWith('data:')) {
+        rawVal.split(',').forEach(s => { if (s.trim()) rawPhotos.push(s.trim()); });
+      } else {
+        rawPhotos.push(rawVal.trim());
+      }
+    }
+  }
 
-  if (rawFoto && typeof rawFoto === 'string' && rawFoto.trim()) {
-    const trimmed = rawFoto.trim();
+  const targetUrls = [];
+  const webAppUrl = getWebAppUrl();
+  let storageSheet = null;
+
+  rawPhotos.forEach((photoStr, idx) => {
+    if (!photoStr || typeof photoStr !== 'string') return;
+    const trimmed = photoStr.trim();
     if (trimmed.startsWith('http')) {
-      targetUrl = trimmed;
+      targetUrls.push(trimmed);
     } else if (trimmed.startsWith('data:image')) {
-      const webAppUrl = getWebAppUrl();
+      const photoKey = (idx === 0) ? newId : (newId + '_FOTO_' + (idx + 1));
       let driveUrl = '';
       try {
-        driveUrl = saveBase64ImageToDrive(trimmed, newId);
+        driveUrl = saveBase64ImageToDrive(trimmed, photoKey);
       } catch (e) {
-        Logger.log('Drive error: ' + e.message);
+        Logger.log('Drive error foto ' + idx + ': ' + e.message);
       }
 
-      targetUrl = (driveUrl && driveUrl.startsWith('http'))
+      const viewUrl = (driveUrl && driveUrl.startsWith('http'))
         ? driveUrl
-        : (webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(newId));
+        : (webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(newId) + '&photoIdx=' + idx);
+      targetUrls.push(viewUrl);
 
-      // Simpan cadangan data gambar Base64 ke sheet Foto_Storage (Kolom C = Link Klik, Kolom D, E, F... = Chunk Base64)
+      // Simpan cadangan data gambar Base64 ke sheet Foto_Storage
       try {
-        const storageSheet = getOrCreateSheet(SHEET_NAME_FOTO, ['ID_Aduan', 'Timestamp', 'Link_Buka_Foto', 'Base64_Data']);
+        if (!storageSheet) {
+          storageSheet = getOrCreateSheet(SHEET_NAME_FOTO, ['ID_Aduan', 'Timestamp', 'Link_Buka_Foto', 'Base64_Data']);
+        }
         const CHUNK_SIZE = 40000;
-        const rowData = [newId, now, targetUrl];
+        const rowData = [photoKey, now, viewUrl];
         for (let k = 0; k < trimmed.length; k += CHUNK_SIZE) {
           rowData.push(trimmed.substring(k, k + CHUNK_SIZE));
         }
@@ -794,18 +840,18 @@ function handleAddAduan(formData) {
         const lastRow = storageSheet.getLastRow();
         const cell = storageSheet.getRange(lastRow, 3);
         const richText = SpreadsheetApp.newRichTextValue()
-          .setText("📸 Buka Foto Bukti (" + newId + ")")
-          .setLinkUrl(targetUrl)
+          .setText("📸 Buka Foto Bukti (" + photoKey + ")")
+          .setLinkUrl(viewUrl)
           .build();
         cell.setRichTextValue(richText);
       } catch (e) {
-        Logger.log('Storage backup error: ' + e.message);
+        Logger.log('Storage backup error foto ' + idx + ': ' + e.message);
       }
     }
-  }
+  });
 
-  // Gunakan URL langsung sebagai nilai awal (BEBAS dari error formula #ERROR!)
-  const cellFotoValue = targetUrl || '-';
+  const primaryUrl = targetUrls[0] || '';
+  const cellFotoValue = targetUrls.length > 0 ? targetUrls.join(', ') : '-';
 
   // Susun baris data baru sesuai urutan HEADERS_ADUAN
   const newRow = [
@@ -836,14 +882,17 @@ function handleAddAduan(formData) {
   sheet.appendRow(newRow);
 
   // Jika ada targetUrl foto, pasang RichText hyperlink interaktif agar tampil teks rapi yang bisa diklik
-  if (targetUrl) {
+  if (primaryUrl) {
     try {
       const lastRow = sheet.getLastRow();
       const colFotoIdx = HEADERS_ADUAN.indexOf('Link_Foto_Bukti');
       if (colFotoIdx !== -1) {
+        const linkTitle = targetUrls.length > 1
+          ? "📸 Buka " + targetUrls.length + " Foto Bukti (" + newId + ")"
+          : "📸 Buka Foto Bukti (" + newId + ")";
         const richText = SpreadsheetApp.newRichTextValue()
-          .setText("📸 Buka Foto Bukti (" + newId + ")")
-          .setLinkUrl(targetUrl)
+          .setText(linkTitle)
+          .setLinkUrl(primaryUrl)
           .build();
         sheet.getRange(lastRow, colFotoIdx + 1).setRichTextValue(richText);
       }
@@ -851,7 +900,7 @@ function handleAddAduan(formData) {
   }
 
   // Tulis log
-  writeLog('ADUAN_BARU', 'ID: ' + newId + ' | Pelapor: ' + (formData.namaPelapor || 'Anonim') + ' | Kec: ' + (formData.kecamatan || '-'));
+  writeLog('ADUAN_BARU', 'ID: ' + newId + ' | Pelapor: ' + (formData.namaPelapor || 'Anonim') + ' | Kec: ' + (formData.kecamatan || '-') + ' | Total Foto: ' + targetUrls.length);
 
   return {
     success: true,
@@ -859,7 +908,11 @@ function handleAddAduan(formData) {
     data: {
       id: newId,
       timestamp: now,
-      status: 'Baru'
+      status: 'Baru',
+      linkFoto: primaryUrl,
+      fotoBukti: primaryUrl,
+      linkFotoClickable: cellFotoValue,
+      buktiFotoList: targetUrls
     }
   };
 }
@@ -1440,12 +1493,13 @@ function resetDatabaseToZero() {
 /**
  * Penampil Halaman Web Responsif untuk Foto Bukti Aduan (Bisa diklik langsung dari Google Spreadsheet)
  */
-function handleViewImage(id, fileId) {
+function handleViewImage(id, fileId, photoIdx) {
   const sheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
   const rawData = getSheetDataAsObjects(sheet);
 
   const isOfficerPhoto = String(id || '').toUpperCase().endsWith('_PETUGAS');
   const baseId = isOfficerPhoto ? String(id).replace(/_PETUGAS$/i, '') : id;
+  const pIdx = parseInt(photoIdx || '0', 10) || 0;
 
   let item = null;
   if (baseId) {
@@ -1480,12 +1534,18 @@ function handleViewImage(id, fileId) {
     return HtmlService.createHtmlOutput(notFoundHtml).setTitle('Aduan Tidak Ditemukan - DLH Lembata');
   }
 
-  const idDisplay = item['ID_Aduan'] + (isOfficerPhoto ? ' (Dokumentasi Petugas)' : '');
+  const idDisplay = item['ID_Aduan'] + (isOfficerPhoto ? ' (Dokumentasi Petugas)' : (pIdx > 0 ? ' [Foto #' + (pIdx + 1) + ']' : ''));
   const namaPelapor = item['Nama_Pelapor'] || 'Masyarakat';
   const timestamp = item['Timestamp'] || '-';
   const uraian = item['Uraian_Aduan'] || '-';
   const status = item['Status'] || 'Baru';
-  let photoData = isOfficerPhoto ? (item['Foto_Kondisi_Riil'] || '') : (item['Link_Foto_Bukti'] || '');
+  let rawColPhoto = isOfficerPhoto ? (item['Foto_Kondisi_Riil'] || '') : (item['Link_Foto_Bukti'] || '');
+
+  let photoData = rawColPhoto;
+  if (photoData.includes(',') && !photoData.startsWith('data:')) {
+    const splitted = photoData.split(',').map(s => s.trim()).filter(Boolean);
+    photoData = splitted[pIdx] || splitted[0] || '';
+  }
 
   if (photoData.startsWith('=HYPERLINK')) {
     const match = photoData.match(/=HYPERLINK\("([^"]+)"/i);
@@ -1499,7 +1559,7 @@ function handleViewImage(id, fileId) {
     }
   }
 
-  // Pastikan photoData adalah gambar valid; jika berupa #ERROR!, tautan viewFoto, atau teks kosong, cari langsung dari Foto_Storage (urutan TERBARU)
+  // Pastikan photoData adalah gambar valid; jika berupa #ERROR!, tautan viewFoto, atau teks kosong, cari langsung dari Foto_Storage
   const isDirectImage = photoData && (photoData.startsWith('data:image') || photoData.includes('drive.google.com/thumbnail') || photoData.match(/\.(jpeg|jpg|png|webp|gif)/i));
 
   if (!isDirectImage) {
@@ -1507,9 +1567,12 @@ function handleViewImage(id, fileId) {
       const storageSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_FOTO);
       if (storageSheet) {
         const sData = storageSheet.getDataRange().getValues();
-        const searchKey = String(id || '').trim().toUpperCase();
+        const baseSearch = String(id || '').trim().toUpperCase();
+        const targetSearch = (pIdx > 0) ? (baseSearch + '_FOTO_' + (pIdx + 1)) : baseSearch;
+        const candidateKeys = [targetSearch, baseSearch];
         for (let i = sData.length - 1; i >= 1; i--) {
-          if (String(sData[i][0]).trim().toUpperCase() === searchKey) {
+          const rowKey = String(sData[i][0]).trim().toUpperCase();
+          if (candidateKeys.includes(rowKey)) {
             let combined = '';
             // Gabungkan seluruh chunk base64 dari kolom D ke kanan
             for (let c = 3; c < sData[i].length; c++) {

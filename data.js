@@ -402,17 +402,36 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
   );
 
   const existingPhotos = existing ? (Array.isArray(existing.buktiFotoList) ? existing.buktiFotoList : (existing.fotoBukti ? [existing.fotoBukti] : [])) : [];
-  const remotePhotos = Array.isArray(remoteItem.buktiFotoList) && remoteItem.buktiFotoList.length > 0
-    ? remoteItem.buktiFotoList
-    : (remoteItem.linkFoto && remoteItem.linkFoto !== '-' ? [remoteItem.linkFoto] : (remoteItem.fotoBukti && remoteItem.fotoBukti !== '-' ? [remoteItem.fotoBukti] : []));
+  
+  let remotePhotos = [];
+  if (Array.isArray(remoteItem.buktiFotoList) && remoteItem.buktiFotoList.length > 0) {
+    remotePhotos = remoteItem.buktiFotoList;
+  } else {
+    const rawPhotoStr = (remoteItem.linkFoto && remoteItem.linkFoto !== '-') ? remoteItem.linkFoto : (remoteItem.fotoBukti && remoteItem.fotoBukti !== '-' ? remoteItem.fotoBukti : '');
+    if (rawPhotoStr && typeof rawPhotoStr === 'string') {
+      if (rawPhotoStr.includes(',') && !rawPhotoStr.startsWith('data:')) {
+        remotePhotos = rawPhotoStr.split(',').map(s => s.trim()).filter(Boolean);
+      } else {
+        remotePhotos = [rawPhotoStr.trim()];
+      }
+    }
+  }
 
-  // Prioritas utama: Foto dari database remote Google Sheets / Drive (Anti-Cache Zombie)
+  // Prioritas: Gabungkan bukti foto agar seluruh foto yang diunggah warga tetap utuh
   let finalPhotos = [];
   const validRemote = remotePhotos.filter(p => typeof p === 'string' && p.trim() && p !== '-' && !p.includes('#ERROR'));
-  if (validRemote.length > 0) {
+  if (validRemote.length >= existingPhotos.length && validRemote.length > 0) {
     finalPhotos = validRemote;
-  } else if (existingPhotos.length > 0 && existingPhotos.some(p => typeof p === 'string' && (p.startsWith('data:image') || p.startsWith('http')))) {
-    finalPhotos = existingPhotos;
+  } else if (existingPhotos.length > 0) {
+    finalPhotos = [...existingPhotos];
+    // Lengkapi jika ada URL remote tambahan
+    for (let i = 0; i < validRemote.length; i++) {
+      if (validRemote[i] && (!finalPhotos[i] || finalPhotos[i] === '-')) {
+        finalPhotos[i] = validRemote[i];
+      }
+    }
+  } else {
+    finalPhotos = validRemote;
   }
   const finalFoto = finalPhotos[0] || '';
 
@@ -471,37 +490,40 @@ class AduanDataStore {
     this.isSyncing = false;
     this.currentSyncPromise = null;
     this.lastSyncTime = null;
-    this.deletedIds = this.loadDeletedIds();
+    this.pendingDeletions = {};
     this.init();
-  }
-
-  loadDeletedIds() {
-    try {
-      const raw = localStorage.getItem(DELETED_STORAGE_KEY);
-      return raw ? new Set(JSON.parse(raw).map(id => String(id).trim().toUpperCase())) : new Set();
-    } catch (e) {
-      return new Set();
-    }
-  }
-
-  saveDeletedIds() {
-    try {
-      localStorage.setItem(DELETED_STORAGE_KEY, JSON.stringify([...this.deletedIds]));
-    } catch (e) {}
   }
 
   isDeleted(id) {
     if (!id) return false;
-    return this.deletedIds.has(String(id).trim().toUpperCase());
+    const cleanId = String(id).trim().toUpperCase();
+    if (!this.pendingDeletions) this.pendingDeletions = {};
+    const delTime = this.pendingDeletions[cleanId];
+    if (!delTime) return false;
+    // TTL 60 detik: cegah flickering saat request delete sedang berjalan ke cloud
+    if (Date.now() - delTime > 60000) {
+      delete this.pendingDeletions[cleanId];
+      return false;
+    }
+    return true;
+  }
+
+  markDeleted(id) {
+    if (!id) return;
+    const cleanId = String(id).trim().toUpperCase();
+    if (!this.pendingDeletions) this.pendingDeletions = {};
+    this.pendingDeletions[cleanId] = Date.now();
   }
 
   init() {
-    // 1. Bersihkan seluruh penyimpanan lokal usang & cache sebelumnya
+    // 1. Bersihkan seluruh penyimpanan lokal usang & blacklist masa lalu agar sinkron 100% antar perangkat
     LEGACY_STORAGE_KEYS.forEach(key => {
       try { localStorage.removeItem(key); } catch (e) {}
     });
-
-    this.deletedIds = this.loadDeletedIds();
+    try {
+      localStorage.removeItem(DELETED_STORAGE_KEY);
+      localStorage.removeItem('dlh_deleted_aduan_ids');
+    } catch (e) {}
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       try {
@@ -665,11 +687,12 @@ class AduanDataStore {
               }
             }
 
-            // Pertahankan aduan lokal yang baru di-submit tapi belum terindeks di server
+            // Pertahankan HANYA aduan lokal yang secara eksplisit _pendingSync (belum terindeks di server)
+            // Item tanpa _pendingSync yang tidak ada di server berarti sudah dihapus di server / perangkat lain
             const localPending = (this.aduanList || []).filter(item => {
               if (!item || !item.id) return false;
               const cid = String(item.id).trim().toUpperCase();
-              return !this.isDeleted(cid) && !seenIds.has(cid);
+              return Boolean(item._pendingSync) && !this.isDeleted(cid) && !seenIds.has(cid);
             });
 
             this.aduanList = [...uniqueServerItems, ...localPending];
@@ -873,17 +896,35 @@ class AduanDataStore {
     );
 
     const existingPhotos = existing ? (Array.isArray(existing.buktiFotoList) ? existing.buktiFotoList : (existing.fotoBukti ? [existing.fotoBukti] : [])) : [];
-    const remotePhotos = Array.isArray(remoteItem.buktiFotoList) && remoteItem.buktiFotoList.length > 0
-      ? remoteItem.buktiFotoList
-      : (remoteItem.linkFoto && remoteItem.linkFoto !== '-' ? [remoteItem.linkFoto] : (remoteItem.fotoBukti && remoteItem.fotoBukti !== '-' ? [remoteItem.fotoBukti] : []));
+    
+    let remotePhotos = [];
+    if (Array.isArray(remoteItem.buktiFotoList) && remoteItem.buktiFotoList.length > 0) {
+      remotePhotos = remoteItem.buktiFotoList;
+    } else {
+      const rawPhotoStr = (remoteItem.linkFoto && remoteItem.linkFoto !== '-') ? remoteItem.linkFoto : (remoteItem.fotoBukti && remoteItem.fotoBukti !== '-' ? remoteItem.fotoBukti : '');
+      if (rawPhotoStr && typeof rawPhotoStr === 'string') {
+        if (rawPhotoStr.includes(',') && !rawPhotoStr.startsWith('data:')) {
+          remotePhotos = rawPhotoStr.split(',').map(s => s.trim()).filter(Boolean);
+        } else {
+          remotePhotos = [rawPhotoStr.trim()];
+        }
+      }
+    }
 
-    // Prioritas utama: Foto dari database remote Google Sheets / Drive (Anti-Cache Zombie)
+    // Prioritas: Jaga seluruh foto lampiran warga tetap utuh & sinkron
     let finalPhotos = [];
     const validRemote = remotePhotos.filter(p => typeof p === 'string' && p.trim() && p !== '-' && !p.includes('#ERROR'));
-    if (validRemote.length > 0) {
+    if (validRemote.length >= existingPhotos.length && validRemote.length > 0) {
       finalPhotos = validRemote;
-    } else if (existingPhotos.length > 0 && existingPhotos.some(p => typeof p === 'string' && (p.startsWith('data:image') || p.startsWith('http')))) {
-      finalPhotos = existingPhotos;
+    } else if (existingPhotos.length > 0) {
+      finalPhotos = [...existingPhotos];
+      for (let i = 0; i < validRemote.length; i++) {
+        if (validRemote[i] && (!finalPhotos[i] || finalPhotos[i] === '-')) {
+          finalPhotos[i] = validRemote[i];
+        }
+      }
+    } else {
+      finalPhotos = validRemote;
     }
     const finalFoto = finalPhotos[0] || '';
 
@@ -960,8 +1001,7 @@ class AduanDataStore {
   }
 
   resetToOfficialDefaults() {
-    this.deletedIds = new Set();
-    this.saveDeletedIds();
+    this.pendingDeletions = {};
     this.aduanList = [];
     this.save();
     LEGACY_STORAGE_KEYS.forEach(k => {
@@ -975,8 +1015,7 @@ class AduanDataStore {
 
   async resetDatabaseToZero() {
     // 1. Kosongkan memori & penyimpanan lokal (0 aduan)
-    this.deletedIds = new Set();
-    this.saveDeletedIds();
+    this.pendingDeletions = {};
     this.aduanList = [];
     this.save();
     LEGACY_STORAGE_KEYS.forEach(k => {
@@ -1037,42 +1076,71 @@ class AduanDataStore {
     const lat = (formData.lat !== undefined && formData.lat !== '' && !isNaN(parseFloat(formData.lat))) ? parseFloat(formData.lat) : (kecMeta.lat + (Math.random() - 0.5) * 0.02);
     const lng = (formData.lng !== undefined && formData.lng !== '' && !isNaN(parseFloat(formData.lng))) ? parseFloat(formData.lng) : (kecMeta.lng + (Math.random() - 0.5) * 0.02);
 
+    const existingIndex = this.aduanList.findIndex(x => x.id === newId);
+    const existingItem = existingIndex !== -1 ? this.aduanList[existingIndex] : null;
+
+    // Normalisasi daftar foto masuk (mendukung multi foto dari form pelapor & pesan WA)
+    let incomingPhotos = [];
+    if (Array.isArray(formData.buktiFotoList) && formData.buktiFotoList.length > 0) {
+      formData.buktiFotoList.forEach(p => {
+        const str = (p && p.dataUrl) ? p.dataUrl : (typeof p === 'string' ? p : '');
+        if (str && str.trim() && str.trim() !== '-' && !incomingPhotos.includes(str.trim())) {
+          incomingPhotos.push(str.trim());
+        }
+      });
+    } else if (formData.fotoBukti && formData.fotoBukti !== '-') {
+      const raw = String(formData.fotoBukti).trim();
+      if (raw.includes(',') && !raw.startsWith('data:')) {
+        raw.split(',').forEach(s => {
+          const tr = s.trim();
+          if (tr && !incomingPhotos.includes(tr)) incomingPhotos.push(tr);
+        });
+      } else if (raw) {
+        incomingPhotos.push(raw);
+      }
+    }
+
+    const mergedPhotos = incomingPhotos.length > 0
+      ? incomingPhotos
+      : (existingItem && Array.isArray(existingItem.buktiFotoList) && existingItem.buktiFotoList.length > 0 ? existingItem.buktiFotoList : (existingItem && existingItem.fotoBukti ? [existingItem.fotoBukti] : []));
+
+    const fotoUtama = mergedPhotos[0] || (existingItem ? existingItem.fotoBukti : '') || '';
+
     const newRecord = {
       id: newId,
       timestamp: formattedDate,
-      namaPelapor: formData.namaPelapor || 'Masyarakat (Anonim)',
-      noHp: formData.noHp || '-',
-      alamatPelapor: formData.alamatPelapor || '-',
-      kecamatan: formData.kecamatan || 'Nubatukan',
-      desa: formData.desa || '-',
-      lokasiDetail: formData.lokasiDetail || '-',
+      namaPelapor: formData.namaPelapor || (existingItem ? existingItem.namaPelapor : 'Masyarakat (Anonim)'),
+      noHp: formData.noHp || (existingItem ? existingItem.noHp : '-'),
+      alamatPelapor: formData.alamatPelapor || (existingItem ? existingItem.alamatPelapor : '-'),
+      kecamatan: formData.kecamatan || (existingItem ? existingItem.kecamatan : 'Nubatukan'),
+      desa: formData.desa || (existingItem ? existingItem.desa : '-'),
+      lokasiDetail: formData.lokasiDetail || (existingItem ? existingItem.lokasiDetail : '-'),
       lat: lat,
       lng: lng,
-      jenisPencemaran: formData.jenisPencemaran || 'Lainnya',
-      uraian: formData.uraian || '-',
-      sumberDugaan: formData.sumberDugaan || '-',
-      tanggalKejadian: formData.tanggalKejadian || formattedDate.split(' ')[0],
-      status: formData.status || 'Aduan Diterima',
-      fotoBukti: formData.fotoBukti || '',
-      linkFotoBukti: formData.linkFotoBukti || formData.fotoBukti || '',
-      buktiFotoList: Array.isArray(formData.buktiFotoList) ? formData.buktiFotoList : (formData.fotoBukti ? [formData.fotoBukti] : []),
-      petugasVerifikasi: formData.petugasVerifikasi || '-',
-      tanggalVerifikasi: formData.tanggalVerifikasi || '-',
-      hasilVerifikasi: formData.hasilVerifikasi || 'Menunggu penugasan verifikator lapangan.',
-      tindakanDLH: formData.tindakanDLH || 'Aduan telah dicatat ke sistem dan siap dijadwalkan verifikasi.',
-      tanggalSelesai: formData.tanggalSelesai || '-',
-      nomorBeritaAcara: formData.nomorBeritaAcara || '',
-      catatanBeritaAcara: formData.catatanBeritaAcara || '',
-      fotoKondisiRiil: formData.fotoKondisiRiil || '',
-      fotoVerifikasiList: formData.fotoVerifikasiList || [],
-      timestampVerifikasi: formData.timestampVerifikasi || '',
-      timestampTindakLanjut: formData.timestampTindakLanjut || '',
-      timestampSelesai: formData.timestampSelesai || '',
+      jenisPencemaran: formData.jenisPencemaran || (existingItem ? existingItem.jenisPencemaran : 'Lainnya'),
+      uraian: formData.uraian || (existingItem ? existingItem.uraian : '-'),
+      sumberDugaan: formData.sumberDugaan || (existingItem ? existingItem.sumberDugaan : '-'),
+      tanggalKejadian: formData.tanggalKejadian || (existingItem ? existingItem.tanggalKejadian : formattedDate.split(' ')[0]),
+      status: formData.status || (existingItem ? existingItem.status : 'Aduan Diterima'),
+      fotoBukti: fotoUtama,
+      linkFotoBukti: mergedPhotos.length > 1 ? mergedPhotos.join(', ') : fotoUtama,
+      buktiFotoList: mergedPhotos,
+      petugasVerifikasi: formData.petugasVerifikasi || (existingItem ? existingItem.petugasVerifikasi : '-'),
+      tanggalVerifikasi: formData.tanggalVerifikasi || (existingItem ? existingItem.tanggalVerifikasi : '-'),
+      hasilVerifikasi: formData.hasilVerifikasi || (existingItem ? existingItem.hasilVerifikasi : 'Menunggu penugasan verifikator lapangan.'),
+      tindakanDLH: formData.tindakanDLH || (existingItem ? existingItem.tindakanDLH : 'Aduan telah dicatat ke sistem dan siap dijadwalkan verifikasi.'),
+      tanggalSelesai: formData.tanggalSelesai || (existingItem ? existingItem.tanggalSelesai : '-'),
+      nomorBeritaAcara: formData.nomorBeritaAcara || (existingItem ? existingItem.nomorBeritaAcara : ''),
+      catatanBeritaAcara: formData.catatanBeritaAcara || (existingItem ? existingItem.catatanBeritaAcara : ''),
+      fotoKondisiRiil: formData.fotoKondisiRiil || (existingItem ? existingItem.fotoKondisiRiil : ''),
+      fotoVerifikasiList: formData.fotoVerifikasiList || (existingItem ? existingItem.fotoVerifikasiList : []),
+      timestampVerifikasi: formData.timestampVerifikasi || (existingItem ? existingItem.timestampVerifikasi : ''),
+      timestampTindakLanjut: formData.timestampTindakLanjut || (existingItem ? existingItem.timestampTindakLanjut : ''),
+      timestampSelesai: formData.timestampSelesai || (existingItem ? existingItem.timestampSelesai : ''),
       _pendingSync: true,
       _syncingNow: true
     };
 
-    const existingIndex = this.aduanList.findIndex(x => x.id === newId);
     if (existingIndex !== -1) {
       this.aduanList[existingIndex] = { ...this.aduanList[existingIndex], ...newRecord };
     } else {
@@ -1199,9 +1267,8 @@ class AduanDataStore {
     if (!id) return false;
     const cleanId = String(id).trim().toUpperCase();
 
-    // 1. Catat ke blacklist permanen agar tidak pernah dipulihkan lagi oleh sync berkala
-    this.deletedIds.add(cleanId);
-    this.saveDeletedIds();
+    // 1. Catat ke pendingDeletions (TTL 60 detik) agar sync yang sedang berjalan tidak memunculkan kembali item
+    this.markDeleted(cleanId);
 
     // 2. Hapus dari daftar memori lokal
     const index = this.aduanList.findIndex(item => String(item.id).trim().toUpperCase() === cleanId);
@@ -1235,7 +1302,9 @@ class AduanDataStore {
   }
 
   getStats() {
-    const total = this.aduanList.length;
+    this._deduplicateList();
+    const cleanList = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id));
+    const total = cleanList.length;
     let aduanDiterima = 0;
     let verifAdmin = 0;
     let menungguVerif = 0;
@@ -1247,7 +1316,7 @@ class AduanDataStore {
     const perKecamatan = {};
     const perJenis = {};
 
-    this.aduanList.forEach(item => {
+    cleanList.forEach(item => {
       // By Status
       if (item.status === 'Aduan Diterima') aduanDiterima++;
       else if (item.status === 'Verifikasi Administrasi') verifAdmin++;

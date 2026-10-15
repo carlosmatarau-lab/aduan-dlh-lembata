@@ -586,7 +586,7 @@ class DLHApp {
     const addFiles = (files) => {
       const incoming = Array.from(files);
       incoming.forEach(f => {
-        if (this.selectedMediaFiles.length < 3) {
+        if (this.selectedMediaFiles.length < 5) {
           const previewUrl = (f instanceof Blob) ? URL.createObjectURL(f) : (typeof f === 'string' ? f : '');
           const mediaItem = {
             file: f,
@@ -612,7 +612,7 @@ class DLHApp {
 
           this.selectedMediaFiles.push(mediaItem);
         } else {
-          this.showToast('Batas maksimal 3 bukti foto/video tercapai.', 'warning');
+          this.showToast('Batas maksimal 5 bukti foto/video tercapai.', 'warning');
         }
       });
       renderPreviews();
@@ -650,8 +650,8 @@ class DLHApp {
     };
 
     const startCamera = async () => {
-      if (this.selectedMediaFiles.length >= 3) {
-        this.showToast('Maksimal 3 foto/video sudah tercapai.', 'warning');
+      if (this.selectedMediaFiles.length >= 5) {
+        this.showToast('Maksimal 5 foto/video sudah tercapai.', 'warning');
         return;
       }
 
@@ -855,8 +855,8 @@ class DLHApp {
           lat: lat,
           lng: lng,
           fotoBukti: buktiList[0] || '',
-          linkFotoBukti: buktiList[0] || '',
-          buktiFotoList: buktiList
+          linkFotoBukti: buktiList.length > 1 ? buktiList.join(', ') : (buktiList[0] || ''),
+          buktiFotoList: [...buktiList]
         };
 
         // Simpan ke database lokal & cloud
@@ -973,10 +973,14 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
           }
         };
 
-        let shareFile = null;
+        const shareFiles = [];
         if (buktiList.length >= 1) {
-          shareFile = dataUrlToJpegFile(buktiList[0], `bukti_${newRecord.id}.jpg`);
+          buktiList.forEach((fotoDataUrl, idx) => {
+            const f = dataUrlToJpegFile(fotoDataUrl, `bukti_${newRecord.id}_foto_${idx + 1}.jpg`);
+            if (f) shareFiles.push(f);
+          });
         }
+        let shareFile = shareFiles[0] || null;
 
         // Reset form
         form.reset();
@@ -1037,7 +1041,26 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
             }
 
             setTimeout(async () => {
-              if (shareFile && navigator.share && navigator.canShare && navigator.canShare({ files: [shareFile] })) {
+              if (shareFiles.length > 0 && navigator.share && navigator.canShare && navigator.canShare({ files: shareFiles })) {
+                try {
+                  await navigator.share({
+                    title: `Pengaduan Lingkungan ${newRecord.id}`,
+                    text: waMessage,
+                    files: shareFiles
+                  });
+                  this.showToast(`${shareFiles.length} foto bukti & laporan berhasil dibagikan ke WhatsApp!`, 'success');
+                  btnWa.disabled = false;
+                  btnWa.innerHTML = origText;
+                  return;
+                } catch (shareErr) {
+                  if (shareErr.name === 'AbortError') {
+                    btnWa.disabled = false;
+                    btnWa.innerHTML = origText;
+                    if (redirectNotice) redirectNotice.style.display = 'none';
+                    return;
+                  }
+                }
+              } else if (shareFile && navigator.share && navigator.canShare && navigator.canShare({ files: [shareFile] })) {
                 try {
                   await navigator.share({
                     title: `Pengaduan Lingkungan ${newRecord.id}`,

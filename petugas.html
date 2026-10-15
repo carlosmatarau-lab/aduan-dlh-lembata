@@ -2497,6 +2497,18 @@
           <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid #e2e8f0; font-size: 0.82rem;">
             <strong>Uraian:</strong> <span id="previewWaUraian">-</span>
           </div>
+
+          <!-- Pratinjau Foto Lampiran Aduan -->
+          <div id="waImportPhotoSection" style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cbd5e1;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
+              <strong style="color: #065f46; font-size: 0.82rem;">📸 Foto Bukti Pelapor:</strong>
+              <label for="inputWaImportFiles" style="cursor: pointer; background: #059669; color: white; padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 700;">
+                ➕ Tambah Foto
+              </label>
+              <input type="file" id="inputWaImportFiles" accept="image/*" multiple style="display: none;">
+            </div>
+            <div id="previewWaPhotosContainer" style="display: flex; gap: 8px; flex-wrap: wrap;"></div>
+          </div>
         </div>
       </div>
 
@@ -3359,27 +3371,47 @@
         const body = document.getElementById('detailModalContent');
         if (!modal || !body) return;
 
-        // Kumpulan foto bukti pelapor
+        // Kumpulan seluruh foto bukti pelapor (Mendukung multi-foto, format array, JSON string, dan tautan berganda)
         const citizenPhotos = [];
-        if (Array.isArray(item.buktiFotoList)) {
-          item.buktiFotoList.forEach(p => {
-            if (typeof p === 'string' && p.trim() && !citizenPhotos.includes(p.trim())) citizenPhotos.push(p.trim());
-            else if (p && p.dataUrl && !citizenPhotos.includes(p.dataUrl)) citizenPhotos.push(p.dataUrl);
-          });
-        }
-        ['fotoBukti', 'linkFotoBukti', 'buktiFoto', 'linkFoto'].forEach(field => {
-          const val = item[field];
-          if (val && typeof val === 'string' && val.trim() && val !== '-' && !citizenPhotos.includes(val.trim())) {
-            const strVal = val.trim();
-            if (strVal.includes(',') && !strVal.startsWith('data:')) {
-              strVal.split(',').forEach(sub => {
-                const tr = sub.trim();
-                if (tr && !citizenPhotos.includes(tr)) citizenPhotos.push(tr);
+        const extractPhotos = (val) => {
+          if (!val) return;
+          if (Array.isArray(val)) {
+            val.forEach(extractPhotos);
+            return;
+          }
+          if (typeof val === 'object' && val.dataUrl) {
+            extractPhotos(val.dataUrl);
+            return;
+          }
+          if (typeof val === 'string') {
+            const trimmed = val.trim();
+            if (!trimmed || trimmed === '-' || trimmed.includes('#ERROR')) return;
+            // Jika format JSON Array string
+            if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+              try {
+                const parsed = JSON.parse(trimmed);
+                if (Array.isArray(parsed)) {
+                  parsed.forEach(extractPhotos);
+                  return;
+                }
+              } catch(e) {}
+            }
+            // Ekstrak DataURL Base64 atau URL HTTP/Drive
+            const matches = trimmed.match(/(data:image\/[^;]+;base64,[^,\s]+|https?:\/\/[^\s,]+)/g);
+            if (matches && matches.length > 0) {
+              matches.forEach(m => {
+                const cleanM = m.trim();
+                if (cleanM && !citizenPhotos.includes(cleanM)) citizenPhotos.push(cleanM);
               });
-            } else {
-              citizenPhotos.push(strVal);
+            } else if (!citizenPhotos.includes(trimmed)) {
+              citizenPhotos.push(trimmed);
             }
           }
+        };
+
+        extractPhotos(item.buktiFotoList);
+        ['fotoBukti', 'linkFotoBukti', 'buktiFoto', 'linkFoto'].forEach(field => {
+          extractPhotos(item[field]);
         });
 
         // Foto kondisi riil pengecekan fisik petugas (HANYA dimuat jika laporan SUDAH diverifikasi)
@@ -4424,6 +4456,17 @@
         const now = new Date();
         const formattedTimestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
+        // Periksa apakah ID ini sudah tercatat sebelumnya di database untuk mempertahankan seluruh foto bukti
+        const existingRecord = (window.aduanStore && id) ? window.aduanStore.getById(id) : null;
+        let preservedPhotos = [];
+        if (existingRecord) {
+          if (Array.isArray(existingRecord.buktiFotoList) && existingRecord.buktiFotoList.length > 0) {
+            preservedPhotos = [...existingRecord.buktiFotoList];
+          } else if (existingRecord.fotoBukti && existingRecord.fotoBukti !== '-') {
+            preservedPhotos = [existingRecord.fotoBukti];
+          }
+        }
+
         this.currentParsedWaData = {
           id: id,
           timestamp: formattedTimestamp,
@@ -4440,12 +4483,65 @@
           sumberDugaan: sumberDugaan,
           tanggalKejadian: tanggalKejadian,
           status: 'Aduan Diterima',
+          fotoBukti: preservedPhotos[0] || '',
+          linkFotoBukti: preservedPhotos.length > 1 ? preservedPhotos.join(', ') : (preservedPhotos[0] || ''),
+          buktiFotoList: preservedPhotos,
           petugasVerifikasi: '-',
           tanggalVerifikasi: '-',
           hasilVerifikasi: 'Menunggu penugasan verifikator lapangan DLH.',
           tindakanDLH: 'Aduan dicatat melalui integrasi pesan WhatsApp.',
           tanggalSelesai: '-'
         };
+
+        // Render pratinjau foto jika ada
+        const photoContainer = document.getElementById('previewWaPhotosContainer');
+        if (photoContainer) {
+          photoContainer.innerHTML = '';
+          if (preservedPhotos.length > 0) {
+            preservedPhotos.forEach((src, idx) => {
+              const div = document.createElement('div');
+              div.style.cssText = 'position: relative; width: 55px; height: 55px; border-radius: 6px; overflow: hidden; border: 1.5px solid #10b981; flex-shrink: 0;';
+              div.innerHTML = `<img src="${src}" alt="Foto ${idx+1}" style="width: 100%; height: 100%; object-fit: cover;">`;
+              photoContainer.appendChild(div);
+            });
+          } else {
+            photoContainer.innerHTML = '<span style="font-size: 0.74rem; color: #64748b; font-style: italic;">Belum ada lampiran foto. Klik "Tambah Foto" jika ada foto dari WA.</span>';
+          }
+        }
+
+        // Listener unggah foto manual pada dialog impor WA
+        const inputFiles = document.getElementById('inputWaImportFiles');
+        if (inputFiles && !inputFiles._hasListener) {
+          inputFiles._hasListener = true;
+          inputFiles.addEventListener('change', () => {
+            if (inputFiles.files && inputFiles.files.length) {
+              Array.from(inputFiles.files).forEach(f => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                  const b64 = e.target.result;
+                  if (b64 && this.currentParsedWaData) {
+                    if (!this.currentParsedWaData.buktiFotoList) this.currentParsedWaData.buktiFotoList = [];
+                    if (!this.currentParsedWaData.buktiFotoList.includes(b64)) {
+                      this.currentParsedWaData.buktiFotoList.push(b64);
+                      this.currentParsedWaData.fotoBukti = this.currentParsedWaData.buktiFotoList[0];
+                      this.currentParsedWaData.linkFotoBukti = this.currentParsedWaData.buktiFotoList.join(', ');
+                      
+                      const c = document.getElementById('previewWaPhotosContainer');
+                      if (c) {
+                        const div = document.createElement('div');
+                        div.style.cssText = 'position: relative; width: 55px; height: 55px; border-radius: 6px; overflow: hidden; border: 1.5px solid #10b981; flex-shrink: 0;';
+                        div.innerHTML = `<img src="${b64}" alt="Foto" style="width: 100%; height: 100%; object-fit: cover;">`;
+                        c.appendChild(div);
+                      }
+                    }
+                  }
+                };
+                reader.readAsDataURL(f);
+              });
+              inputFiles.value = '';
+            }
+          });
+        }
 
         // Render preview card
         const preview = document.getElementById('waParsePreviewCard');
