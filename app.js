@@ -527,8 +527,23 @@ class DLHApp {
     }
   }
 
+  formatPhotoUrl(src) {
+    if (!src || typeof src !== 'string') return '';
+    let clean = src.trim();
+    if (clean.startsWith('=HYPERLINK')) {
+      const m = clean.match(/=HYPERLINK\("([^"]+)"/i);
+      if (m) clean = m[1];
+    }
+    if (clean.startsWith('data:image')) return clean;
+    const driveMatch = clean.match(/(?:\/file\/d\/|[?&]id=)([a-zA-Z0-9_-]+)/);
+    if (driveMatch && driveMatch[1]) {
+      return `https://lh3.googleusercontent.com/d/${driveMatch[1]}`;
+    }
+    return clean;
+  }
+
   /* ===================================================================
-     3.5 UPLOAD PREVIEW & LIVE CAMERA CAPTURE
+     3.5 UPLOAD PREVIEW & LIVE CAMERA CAPTURE (DENGAN ANIMASI PROGRESS)
      =================================================================== */
   setupUploadPreview() {
     this.selectedMediaFiles = [];
@@ -546,9 +561,77 @@ class DLHApp {
     const btnSnap = document.getElementById('btnSnapPhoto');
     const btnSwitchCam = document.getElementById('btnSwitchCameraDirection');
 
+    const animCard = document.getElementById('uploadAnimationCard');
+    const animTitle = document.getElementById('uploadAnimTitle');
+    const animStep = document.getElementById('uploadAnimStep');
+    const animPercent = document.getElementById('uploadAnimPercent');
+    const progressFill = document.getElementById('uploadProgressFill');
+    const successBanner = document.getElementById('uploadSuccessBanner');
+    const successDesc = document.getElementById('uploadSuccessDesc');
+
+    let uploadAnimTimer = null;
+    const triggerUploadAnimation = (count, onComplete) => {
+      if (!animCard) {
+        if (onComplete) onComplete();
+        return;
+      }
+
+      if (uploadAnimTimer) clearInterval(uploadAnimTimer);
+      if (successBanner) successBanner.style.display = 'none';
+
+      animCard.style.display = 'block';
+      let progress = 0;
+      if (animPercent) animPercent.textContent = '0%';
+      if (progressFill) progressFill.style.width = '0%';
+      if (animTitle) animTitle.textContent = `Mengunggah & Memproses ${count} Bukti Foto...`;
+      if (animStep) animStep.textContent = 'Menghubungkan berkas dari perangkat...';
+
+      const startTime = Date.now();
+      const totalDuration = 2200; // 2.2 detik durasi animasi upload mulus
+
+      uploadAnimTimer = setInterval(() => {
+        const elapsed = Date.now() - startTime;
+        progress = Math.min(100, Math.round((elapsed / totalDuration) * 100));
+
+        if (progressFill) progressFill.style.width = `${progress}%`;
+        if (animPercent) animPercent.textContent = `${progress}%`;
+
+        if (progress < 25) {
+          if (animStep) animStep.textContent = '📥 Membaca data gambar & metadata GPS...';
+        } else if (progress < 60) {
+          if (animStep) animStep.textContent = '⚙️ Mengompresi resolusi visual untuk kecepatan pelaporan...';
+        } else if (progress < 90) {
+          if (animStep) animStep.textContent = '🔒 Mengamankan data bukti digital ke sistem DLH...';
+        } else {
+          if (animStep) animStep.textContent = '✅ Memverifikasi integritas berkas foto...';
+        }
+
+        if (progress >= 100) {
+          clearInterval(uploadAnimTimer);
+          uploadAnimTimer = null;
+          setTimeout(() => {
+            animCard.style.display = 'none';
+            if (successBanner) {
+              successBanner.style.display = 'flex';
+              if (successDesc) {
+                successDesc.textContent = `${this.selectedMediaFiles.length} bukti foto berhasil diunggah dengan status sukses (siap dilampirkan).`;
+              }
+            }
+            this.showToast(`✅ ${count} Foto bukti berhasil diunggah! Status: Sukses.`, 'success');
+            if (onComplete) onComplete();
+          }, 300);
+        }
+      }, 45);
+    };
+
     const renderPreviews = () => {
       if (!previewList) return;
       previewList.innerHTML = '';
+
+      if (this.selectedMediaFiles.length === 0) {
+        if (successBanner) successBanner.style.display = 'none';
+        return;
+      }
 
       this.selectedMediaFiles.forEach((media, idx) => {
         const item = document.createElement('div');
@@ -566,6 +649,12 @@ class DLHApp {
           item.innerHTML = '<span class="file-icon">🎥</span>';
         }
 
+        // Badge Status Sukses di tiap thumbnail
+        const badgeSuccess = document.createElement('span');
+        badgeSuccess.className = 'upload-preview-badge-success';
+        badgeSuccess.textContent = '✓ Sukses';
+        item.appendChild(badgeSuccess);
+
         const removeBtn = document.createElement('button');
         removeBtn.className = 'btn-remove-preview';
         removeBtn.innerHTML = '&times;';
@@ -577,6 +666,9 @@ class DLHApp {
           }
           this.selectedMediaFiles.splice(idx, 1);
           renderPreviews();
+          if (this.selectedMediaFiles.length > 0 && successBanner && successDesc) {
+            successDesc.textContent = `${this.selectedMediaFiles.length} bukti foto terlampir dengan status sukses.`;
+          }
         };
         item.appendChild(removeBtn);
         previewList.appendChild(item);
@@ -585,6 +677,9 @@ class DLHApp {
 
     const addFiles = (files) => {
       const incoming = Array.from(files);
+      if (incoming.length === 0) return;
+
+      let addedCount = 0;
       incoming.forEach(f => {
         if (this.selectedMediaFiles.length < 5) {
           const previewUrl = (f instanceof Blob) ? URL.createObjectURL(f) : (typeof f === 'string' ? f : '');
@@ -611,11 +706,19 @@ class DLHApp {
             });
 
           this.selectedMediaFiles.push(mediaItem);
+          addedCount++;
         } else {
           this.showToast('Batas maksimal 5 bukti foto/video tercapai.', 'warning');
         }
       });
+
       renderPreviews();
+
+      if (addedCount > 0) {
+        triggerUploadAnimation(addedCount, () => {
+          renderPreviews();
+        });
+      }
     };
 
     // 1. Pilih dari Galeri / Dokumen
@@ -1457,28 +1560,60 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
     const body = document.getElementById('detailModalContent');
     if (!modal || !body) return;
 
-    // Foto bukti
+    // 1. Kumpulan Seluruh Foto Bukti Pelapor (Mendukung Multi-Foto, Drive, & Base64)
     const photoList = [];
-    if (Array.isArray(item.buktiFotoList)) {
-      item.buktiFotoList.forEach(p => {
-        if (typeof p === 'string' && p.trim() && !photoList.includes(p.trim())) photoList.push(p.trim());
-        else if (p && p.dataUrl && !photoList.includes(p.dataUrl)) photoList.push(p.dataUrl);
-      });
-    }
-    ['fotoBukti', 'linkFotoBukti', 'buktiFoto', 'linkFoto'].forEach(field => {
-      const val = item[field];
-      if (val && typeof val === 'string' && val.trim() && val !== '-' && !photoList.includes(val.trim())) {
-        const strVal = val.trim();
-        if (strVal.includes(',') && !strVal.startsWith('data:')) {
-          strVal.split(',').forEach(sub => {
-            const trimmed = sub.trim();
-            if (trimmed && !photoList.includes(trimmed)) photoList.push(trimmed);
+    const extractPhotos = (val) => {
+      if (!val) return;
+      if (Array.isArray(val)) {
+        val.forEach(extractPhotos);
+        return;
+      }
+      if (typeof val === 'object' && val.dataUrl) {
+        extractPhotos(val.dataUrl);
+        return;
+      }
+      if (typeof val === 'string') {
+        const trimmed = val.trim();
+        if (!trimmed || trimmed === '-' || trimmed.includes('#ERROR')) return;
+        if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+          try {
+            const parsed = JSON.parse(trimmed);
+            if (Array.isArray(parsed)) {
+              parsed.forEach(extractPhotos);
+              return;
+            }
+          } catch(e) {}
+        }
+        const matches = trimmed.match(/(data:image\/[^;]+;base64,[^,\s]+|https?:\/\/[^\s,]+)/g);
+        if (matches && matches.length > 0) {
+          matches.forEach(m => {
+            const cleanM = m.trim();
+            if (cleanM && !photoList.includes(cleanM)) photoList.push(cleanM);
           });
-        } else {
-          photoList.push(strVal);
+        } else if (!photoList.includes(trimmed)) {
+          photoList.push(trimmed);
         }
       }
+    };
+
+    extractPhotos(item.buktiFotoList);
+    ['fotoBukti', 'linkFotoBukti', 'buktiFoto', 'linkFoto'].forEach(field => {
+      extractPhotos(item[field]);
     });
+
+    // 2. Foto Dokumentasi Tindak Lanjut Petugas DLH (Jika Laporan Sudah Diverifikasi)
+    const isUnverified = (!item.status || item.status === 'Baru' || item.status === 'Aduan Diterima' || item.status === 'Verifikasi Administrasi');
+    const officerPhotos = [];
+    if (!isUnverified) {
+      if (Array.isArray(item.fotoVerifikasiList)) {
+        item.fotoVerifikasiList.forEach(p => {
+          if (p && !officerPhotos.includes(p)) officerPhotos.push(p);
+        });
+      }
+      if (item.fotoKondisiRiil && item.fotoKondisiRiil !== '-' && !officerPhotos.includes(item.fotoKondisiRiil)) {
+        officerPhotos.push(item.fotoKondisiRiil);
+      }
+    }
 
     const mapsUrl = (item.lat && item.lng) ? `https://maps.google.com/?q=${item.lat},${item.lng}` : '';
 
@@ -1523,26 +1658,101 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       ${photoList.length > 0 ? `
         <div style="background: #ffffff; padding: 14px; border-radius: 12px; border: 1.5px solid #cbd5e1; margin-bottom: 14px;">
           <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-            <div style="font-size: 0.82rem; font-weight: 800; color: #1e293b;">📸 FOTO BUKTI PENDUKUNG (${photoList.length} Foto):</div>
+            <div style="font-size: 0.82rem; font-weight: 800; color: #1e293b;">📸 FOTO BUKTI DARI WARGA PELAPOR (${photoList.length} Foto):</div>
             <span style="font-size: 0.72rem; color: #059669; font-weight: 700;">🔍 Klik foto untuk memperbesar</span>
           </div>
           <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px;">
-            ${photoList.map((src, i) => {
-              const safeSrc = src.replace(/'/g, "\\'");
+            ${photoList.map((rawSrc, i) => {
+              const displaySrc = this.formatPhotoUrl(rawSrc);
+              const safeSrc = (displaySrc || rawSrc).replace(/'/g, "\\'");
+              const origSafe = (rawSrc || '').replace(/'/g, "\\'");
               return `
                 <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 6px;">
-                  <div onclick="window.app.openLightbox('${safeSrc}', 'Bukti Foto #${i+1} &bull; ${item.id}')"
-                       style="cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid #059669; background: #0f172a; position: relative; height: 120px; transition: transform 0.2s;"
+                  <div onclick="window.app.openLightbox('${safeSrc}', 'Bukti Foto Pelapor #${i+1} &bull; ${item.id}')"
+                       style="cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid #059669; background: #0f172a; position: relative; height: 125px; transition: transform 0.2s;"
                        onmouseover="this.style.transform='scale(1.02)';"
                        onmouseout="this.style.transform='scale(1)';"
                        title="Klik foto untuk melihat ukuran penuh">
-                    <img src="${src}" alt="Bukti ${i+1}" style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
+                    <img src="${displaySrc}"
+                         data-original="${origSafe}"
+                         alt="Bukti Foto ${i+1}"
+                         onerror="
+                           if (!this.dataset.fallbackDone) {
+                             this.dataset.fallbackDone = '1';
+                             const m = (this.dataset.original || this.src).match(/(?:\\/file\\/d\\/|[?&]id=|\\/d\\/)([a-zA-Z0-9_-]+)/);
+                             if (m && m[1]) {
+                               this.src = 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1200';
+                               return;
+                             }
+                           }
+                           this.style.display = 'none';
+                           if (this.nextElementSibling) this.nextElementSibling.style.display = 'flex';
+                         "
+                         style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
+                    <div style="display: none; width: 100%; height: 100%; background: #0f172a; color: #f8fafc; flex-direction: column; align-items: center; justify-content: center; padding: 8px; text-align: center;">
+                      <span style="font-size: 1.4rem;">📸</span>
+                      <span style="font-size: 0.72rem; font-weight: 700; color: #34d399; margin-top: 4px;">Buka di Google Drive</span>
+                    </div>
                     <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 4px; text-align: center; pointer-events: none;">
                       🔍 Klik Perbesar
                     </div>
                   </div>
-                  <button type="button" onclick="window.app.openLightbox('${safeSrc}', 'Bukti Foto #${i+1} &bull; ${item.id}')"
+                  <button type="button" onclick="window.app.openLightbox('${safeSrc}', 'Bukti Foto Pelapor #${i+1} &bull; ${item.id}')"
                           style="width: 100%; background: #059669; color: #ffffff; border: none; border-radius: 6px; padding: 5px 8px; font-size: 0.74rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;"
+                          title="Buka foto ukuran penuh">
+                    <span>🔍 Buka Foto</span>
+                  </button>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
+      ` : ''}
+
+      ${officerPhotos.length > 0 ? `
+        <div style="background: #f0fdf4; padding: 14px; border-radius: 12px; border: 1.5px solid #86efac; margin-bottom: 14px;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
+            <div style="font-size: 0.82rem; font-weight: 800; color: #166534;">📸 FOTO HASIL CEK FISIK LAPANGAN PETUGAS DLH (${officerPhotos.length} Foto):</div>
+            <span style="font-size: 0.72rem; color: #15803d; font-weight: 700;">🔍 Klik foto untuk memperbesar</span>
+          </div>
+          <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px;">
+            ${officerPhotos.map((rawSrc, i) => {
+              const displaySrc = this.formatPhotoUrl(rawSrc);
+              const safeSrc = (displaySrc || rawSrc).replace(/'/g, "\\'");
+              const origSafe = (rawSrc || '').replace(/'/g, "\\'");
+              return `
+                <div style="background: #ffffff; border: 1.5px solid #86efac; border-radius: 10px; padding: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 6px;">
+                  <div onclick="window.app.openLightbox('${safeSrc}', 'Foto Fisik Petugas #${i+1} &bull; ${item.id}')"
+                       style="cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid #16a34a; background: #0f172a; position: relative; height: 125px; transition: transform 0.2s;"
+                       onmouseover="this.style.transform='scale(1.02)';"
+                       onmouseout="this.style.transform='scale(1)';"
+                       title="Klik foto untuk melihat ukuran penuh">
+                    <img src="${displaySrc}"
+                         data-original="${origSafe}"
+                         alt="Foto Fisik ${i+1}"
+                         onerror="
+                           if (!this.dataset.fallbackDone) {
+                             this.dataset.fallbackDone = '1';
+                             const m = (this.dataset.original || this.src).match(/(?:\\/file\\/d\\/|[?&]id=|\\/d\\/)([a-zA-Z0-9_-]+)/);
+                             if (m && m[1]) {
+                               this.src = 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1200';
+                               return;
+                             }
+                           }
+                           this.style.display = 'none';
+                           if (this.nextElementSibling) this.nextElementSibling.style.display = 'flex';
+                         "
+                         style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
+                    <div style="display: none; width: 100%; height: 100%; background: #0f172a; color: #f8fafc; flex-direction: column; align-items: center; justify-content: center; padding: 8px; text-align: center;">
+                      <span style="font-size: 1.4rem;">📸</span>
+                      <span style="font-size: 0.72rem; font-weight: 700; color: #4ade80; margin-top: 4px;">Buka di Google Drive</span>
+                    </div>
+                    <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 4px; text-align: center; pointer-events: none;">
+                      🔍 Klik Perbesar
+                    </div>
+                  </div>
+                  <button type="button" onclick="window.app.openLightbox('${safeSrc}', 'Foto Fisik Petugas #${i+1} &bull; ${item.id}')"
+                          style="width: 100%; background: #16a34a; color: #ffffff; border: none; border-radius: 6px; padding: 5px 8px; font-size: 0.74rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;"
                           title="Buka foto ukuran penuh">
                     <span>🔍 Buka Foto</span>
                   </button>
@@ -1570,7 +1780,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
     const img = document.getElementById('lightboxPhotoImg');
     const cap = document.getElementById('lightboxPhotoCaption');
     if (img) {
-      img.src = src;
+      img.src = this.formatPhotoUrl(src) || src;
       img.style.transform = 'scale(1)';
       img.style.cursor = 'zoom-in';
     }

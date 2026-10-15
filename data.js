@@ -895,6 +895,21 @@ class AduanDataStore {
       } : null
     );
 
+    const formatDriveUrl = (url) => {
+      if (!url || typeof url !== 'string') return '';
+      let clean = url.trim();
+      if (clean.startsWith('=HYPERLINK')) {
+        const m = clean.match(/=HYPERLINK\("([^"]+)"/i);
+        if (m) clean = m[1];
+      }
+      if (clean.startsWith('data:image')) return clean;
+      const dMatch = clean.match(/(?:\/file\/d\/|[?&]id=)([a-zA-Z0-9_-]+)/);
+      if (dMatch && dMatch[1]) {
+        return `https://lh3.googleusercontent.com/d/${dMatch[1]}`;
+      }
+      return clean;
+    };
+
     const existingPhotos = existing ? (Array.isArray(existing.buktiFotoList) ? existing.buktiFotoList : (existing.fotoBukti ? [existing.fotoBukti] : [])) : [];
     
     let remotePhotos = [];
@@ -912,15 +927,22 @@ class AduanDataStore {
     }
 
     // Prioritas: Jaga seluruh foto lampiran warga tetap utuh & sinkron
+    // Jika data lokal sudah punya Base64 berkualitas tinggi, pertahankan Base64 agar tidak rusak
+    const validRemote = remotePhotos
+      .map(formatDriveUrl)
+      .filter(p => typeof p === 'string' && p.trim() && p !== '-' && !p.includes('#ERROR'));
+
     let finalPhotos = [];
-    const validRemote = remotePhotos.filter(p => typeof p === 'string' && p.trim() && p !== '-' && !p.includes('#ERROR'));
-    if (validRemote.length >= existingPhotos.length && validRemote.length > 0) {
-      finalPhotos = validRemote;
-    } else if (existingPhotos.length > 0) {
-      finalPhotos = [...existingPhotos];
-      for (let i = 0; i < validRemote.length; i++) {
-        if (validRemote[i] && (!finalPhotos[i] || finalPhotos[i] === '-')) {
-          finalPhotos[i] = validRemote[i];
+    if (existingPhotos.length > 0) {
+      // Pertahankan foto lokal Base64 yang valid
+      finalPhotos = existingPhotos.map((p, idx) => {
+        if (typeof p === 'string' && p.startsWith('data:image')) return p;
+        return (validRemote[idx] ? validRemote[idx] : p);
+      });
+      // Tambahkan sisa foto remote jika ada foto tambahan dari petugas/remote
+      for (let i = finalPhotos.length; i < validRemote.length; i++) {
+        if (validRemote[i] && !finalPhotos.includes(validRemote[i])) {
+          finalPhotos.push(validRemote[i]);
         }
       }
     } else {

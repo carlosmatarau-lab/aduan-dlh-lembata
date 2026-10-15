@@ -309,11 +309,9 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
       const match = cleanLink.match(/=HYPERLINK\("([^"]+)"/i);
       if (match) cleanLink = match[1];
     }
-    if (cleanLink.includes('drive.google.com/file/d/')) {
-      const dMatch = cleanLink.match(/\/file\/d\/([a-zA-Z0-9-_]+)/);
-      if (dMatch) {
-        cleanLink = 'https://drive.google.com/thumbnail?id=' + dMatch[1] + '&sz=w1200';
-      }
+    const dMatch = cleanLink.match(/(?:\/file\/d\/|[?&]id=)([a-zA-Z0-9-_]+)/);
+    if (dMatch && !cleanLink.startsWith('data:image')) {
+      cleanLink = 'https://lh3.googleusercontent.com/d/' + dMatch[1];
     }
     if (cleanLink && cleanLink !== '-' && !cleanLink.includes('#ERROR') && !resolvedCitizenPhotos.includes(cleanLink)) {
       resolvedCitizenPhotos.push(cleanLink);
@@ -348,11 +346,9 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
     if (match) linkFotoRiil = match[1];
   }
   let fotoRiilDirect = linkFotoRiil;
-  if (linkFotoRiil.includes('drive.google.com/file/d/')) {
-    const dMatchRiil = linkFotoRiil.match(/\/file\/d\/([a-zA-Z0-9-_]+)/);
-    if (dMatchRiil) {
-      fotoRiilDirect = 'https://drive.google.com/thumbnail?id=' + dMatchRiil[1] + '&sz=w1200';
-    }
+  const dMatchRiil = linkFotoRiil.match(/(?:\/file\/d\/|[?&]id=)([a-zA-Z0-9-_]+)/);
+  if (dMatchRiil && !linkFotoRiil.startsWith('data:image')) {
+    fotoRiilDirect = 'https://lh3.googleusercontent.com/d/' + dMatchRiil[1];
   }
   const isDirectOfficerImage = fotoRiilDirect && (fotoRiilDirect.startsWith('data:image') || fotoRiilDirect.includes('drive.google.com/thumbnail') || fotoRiilDirect.match(/\.(jpeg|jpg|png|webp|gif)/i));
   if (!isDirectOfficerImage) {
@@ -720,7 +716,7 @@ function saveBase64ImageToDrive(base64Data, idAduan) {
 
     const file = folder.createFile(blob);
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    return file.getUrl();
+    return 'https://lh3.googleusercontent.com/d/' + file.getId();
   } catch (e) {
     Logger.log('DriveApp save info: ' + e.message);
     return '';
