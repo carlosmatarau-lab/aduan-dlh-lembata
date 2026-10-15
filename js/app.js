@@ -1616,7 +1616,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
     if (!modal || !body) return;
 
     // 1. Kumpulan Seluruh Foto Bukti Pelapor (Mendukung Multi-Foto, Drive, & Base64)
-    const photoList = [];
+    let photoList = [];
     const extractPhotos = (val) => {
       if (!val) return;
       if (Array.isArray(val)) {
