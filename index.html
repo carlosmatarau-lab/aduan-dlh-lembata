@@ -4371,6 +4371,31 @@
   </main>
 
   <!-- ===================================================================
+       MODAL: ANIMASI LOADING UPLOAD BUKTI FOTO & PENGIRIMAN
+       =================================================================== -->
+  <div class="modal-backdrop" id="modalSubmittingUpload" style="z-index: 999998; background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center;">
+    <div class="modal-dialog" style="max-width: 460px; width: 92%; background: #ffffff; border-radius: 18px; padding: 26px 22px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.4); border: 2px solid #86efac; animation: fadeInSlideDown 0.3s ease-out;">
+      <div style="position: relative; width: 68px; height: 68px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; background: #ecfdf5; border-radius: 50%; border: 3px solid #10b981;">
+        <span class="upload-anim-spinner" style="border-width: 3.5px; border-top-color: #059669; border-right-color: #34d399;"></span>
+        <span id="submitUploadIcon" style="font-size: 2rem;">📤</span>
+      </div>
+      <h3 id="submitUploadTitle" style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 800; color: #065f46; margin-bottom: 6px;">
+        Mengunggah Bukti Foto &amp; Mengirim Aduan...
+      </h3>
+      <p id="submitUploadStep" style="font-size: 0.84rem; color: #047857; margin-bottom: 16px; font-weight: 600;">
+        Menghubungkan berkas ke server DLH Lembata...
+      </p>
+      <div class="upload-progress-track" style="height: 10px; background: #e2e8f0; border-radius: 999px; overflow: hidden; margin-bottom: 12px;">
+        <div id="submitUploadProgressFill" class="upload-progress-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #059669); border-radius: 999px; transition: width 0.1s linear;"></div>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; font-weight: 700; color: #64748b;">
+        <span id="submitUploadSubtext">Memproses resolusi visual...</span>
+        <span id="submitUploadPercent" style="font-family: monospace; font-size: 0.95rem; color: #059669; background: #ecfdf5; padding: 2px 8px; border-radius: 6px; border: 1px solid #a7f3d0;">0%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
        MODAL: SUKSES KIRIM ADUAN
        =================================================================== -->
   <div class="modal-backdrop" id="modalSuccessAduan">

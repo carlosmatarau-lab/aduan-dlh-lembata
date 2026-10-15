@@ -417,21 +417,53 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     }
   }
 
-  // Prioritas: Gabungkan bukti foto agar seluruh foto yang diunggah warga tetap utuh
+  // Prioritas: Pertahankan Base64 lokal yang valid agar foto tidak pernah rusak atau tertimpa
+  const validRemote = remotePhotos.map(p => {
+    if (typeof p !== 'string') return '';
+    let tr = p.trim();
+    if (!tr || tr === '-' || tr.includes('#ERROR')) return '';
+    if (tr.includes('Buka') && tr.includes('Foto Bukti')) return '';
+    return tr;
+  }).filter(Boolean);
+
   let finalPhotos = [];
-  const validRemote = remotePhotos.filter(p => typeof p === 'string' && p.trim() && p !== '-' && !p.includes('#ERROR'));
-  if (validRemote.length >= existingPhotos.length && validRemote.length > 0) {
-    finalPhotos = validRemote;
-  } else if (existingPhotos.length > 0) {
-    finalPhotos = [...existingPhotos];
-    // Lengkapi jika ada URL remote tambahan
-    for (let i = 0; i < validRemote.length; i++) {
-      if (validRemote[i] && (!finalPhotos[i] || finalPhotos[i] === '-')) {
-        finalPhotos[i] = validRemote[i];
+  if (existingPhotos.length > 0) {
+    finalPhotos = existingPhotos.map((p, idx) => {
+      // Jika lokal sudah Base64, utamakan Base64 lokal 100%
+      if (typeof p === 'string' && p.startsWith('data:image')) return p;
+      return (validRemote[idx] ? validRemote[idx] : p);
+    });
+    for (let i = finalPhotos.length; i < validRemote.length; i++) {
+      if (validRemote[i] && !finalPhotos.includes(validRemote[i])) {
+        finalPhotos.push(validRemote[i]);
       }
     }
   } else {
-    finalPhotos = validRemote;
+    finalPhotos = [...validRemote];
+  }
+
+  // Pulihkan dari cadangan foto lokal jika ada link remote yang tidak berformat Base64
+  for (let i = 0; i < Math.max(finalPhotos.length, 6); i++) {
+    try {
+      const cached = localStorage.getItem('dlh_photo_cache_' + cleanId + '_' + i) ||
+                     localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_' + i) ||
+                     (i === 0 ? (localStorage.getItem('dlh_photo_cache_' + cleanId) || localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase())) : null);
+      if (cached && cached.startsWith('data:image')) {
+        if (i < finalPhotos.length) {
+          if (!finalPhotos[i] || !finalPhotos[i].startsWith('data:image')) {
+            finalPhotos[i] = cached;
+          }
+        } else {
+          finalPhotos.push(cached);
+        }
+      }
+    } catch (e) {}
+
+    if (finalPhotos[i] && finalPhotos[i].startsWith('data:image')) {
+      try {
+        localStorage.setItem('dlh_photo_cache_' + cleanId + '_' + i, finalPhotos[i]);
+      } catch (e) {}
+    }
   }
   const finalFoto = finalPhotos[0] || '';
 
@@ -552,6 +584,25 @@ class AduanDataStore {
         item.nomorBeritaAcara = '';
         item.catatanBeritaAcara = '';
       }
+
+      // Pulihkan foto yang tersimpan link Drive dengan data Base64 asli dari cache
+      if (item && item.id) {
+        const cId = String(item.id).trim().toUpperCase();
+        if (Array.isArray(item.buktiFotoList)) {
+          item.buktiFotoList = item.buktiFotoList.map((p, pIdx) => {
+            if (typeof p === 'string' && !p.startsWith('data:image')) {
+              try {
+                const cached = localStorage.getItem('dlh_photo_cache_' + cId + '_' + pIdx);
+                if (cached && cached.startsWith('data:image')) return cached;
+              } catch (e) {}
+            }
+            return p;
+          });
+          if (item.buktiFotoList[0] && item.buktiFotoList[0].startsWith('data:image')) {
+            item.fotoBukti = item.buktiFotoList[0];
+          }
+        }
+      }
     });
 
     this._deduplicateList();
@@ -581,6 +632,82 @@ class AduanDataStore {
   hasGasConfigured() {
     const url = this.getGasUrl();
     return !!(url && url.trim().startsWith('http'));
+  }
+
+  async fetchPhotoBase64FromGAS(aduanId, photoIdx = 0) {
+    if (!aduanId || !this.hasGasConfigured()) return null;
+    const cleanId = String(aduanId).trim().toUpperCase();
+    const pIdx = parseInt(photoIdx || '0', 10) || 0;
+
+    // 1. Cek cache lokal
+    try {
+      const cached = localStorage.getItem('dlh_photo_cache_' + cleanId + '_' + pIdx) ||
+                     localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_' + pIdx) ||
+                     (pIdx === 0 ? localStorage.getItem('dlh_photo_cache_' + cleanId) : null);
+      if (cached && cached.startsWith('data:image')) return cached;
+    } catch (e) {}
+
+    // 2. Fetch rekaman dari GAS endpoint via action getById
+    try {
+      const gasUrl = this.getGasUrl();
+      const url = `${gasUrl}${gasUrl.includes('?') ? '&' : '?'}action=getById&id=${encodeURIComponent(cleanId)}&_t=${Date.now()}`;
+      const res = await fetch(url, { method: 'GET', mode: 'cors' });
+      const json = await res.json();
+      if (json && json.success && json.data) {
+        const item = json.data;
+        let photos = Array.isArray(item.buktiFotoList) ? item.buktiFotoList : [];
+        if (photos.length === 0 && item.fotoBukti) photos = [item.fotoBukti];
+        
+        const photo = photos[pIdx] || photos[0];
+        if (photo && photo.startsWith('data:image')) {
+          try {
+            localStorage.setItem('dlh_photo_cache_' + cleanId + '_' + pIdx, photo);
+          } catch (e) {}
+
+          const idx = this.aduanList.findIndex(x => x && x.id && x.id.trim().toUpperCase() === cleanId);
+          if (idx !== -1) {
+            if (Array.isArray(this.aduanList[idx].buktiFotoList) && this.aduanList[idx].buktiFotoList[pIdx]) {
+              this.aduanList[idx].buktiFotoList[pIdx] = photo;
+            }
+            if (pIdx === 0) {
+              this.aduanList[idx].fotoBukti = photo;
+            }
+            this.save();
+          }
+          return photo;
+        }
+      }
+    } catch (err) {
+      console.warn('Gagal fetch getById dari GAS:', err);
+    }
+
+    // 3. Fallback direct storage lookup via action getFotoBase64
+    try {
+      const gasUrl = this.getGasUrl();
+      const url = `${gasUrl}${gasUrl.includes('?') ? '&' : '?'}action=getFotoBase64&id=${encodeURIComponent(cleanId)}&photoIdx=${pIdx}&_t=${Date.now()}`;
+      const res = await fetch(url, { method: 'GET', mode: 'cors' });
+      const json = await res.json();
+      if (json && json.success && json.base64 && json.base64.startsWith('data:image')) {
+        try {
+          localStorage.setItem('dlh_photo_cache_' + cleanId + '_' + pIdx, json.base64);
+        } catch (e) {}
+        const idx = this.aduanList.findIndex(x => x && x.id && x.id.trim().toUpperCase() === cleanId);
+        if (idx !== -1) {
+          if (Array.isArray(this.aduanList[idx].buktiFotoList) && this.aduanList[idx].buktiFotoList[pIdx]) {
+            this.aduanList[idx].buktiFotoList[pIdx] = json.base64;
+          }
+          if (pIdx === 0) {
+            this.aduanList[idx].fotoBukti = json.base64;
+          }
+          this.save();
+        }
+        return json.base64;
+      }
+    } catch (err) {
+      console.warn('Gagal fetch getFotoBase64 dari GAS:', err);
+    }
+
+    return null;
   }
 
   getGasUrl() {
@@ -948,6 +1075,25 @@ class AduanDataStore {
     } else {
       finalPhotos = validRemote;
     }
+
+    // Pulihkan dari cadangan foto lokal jika ada link remote yang tidak berformat Base64
+    for (let i = 0; i < finalPhotos.length; i++) {
+      if (finalPhotos[i] && !finalPhotos[i].startsWith('data:image')) {
+        try {
+          const cached = localStorage.getItem('dlh_photo_cache_' + cleanId + '_' + i) ||
+                         localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_' + i) ||
+                         (i === 0 ? localStorage.getItem('dlh_photo_cache_' + cleanId) : null);
+          if (cached && cached.startsWith('data:image')) {
+            finalPhotos[i] = cached;
+          }
+        } catch (e) {}
+      } else if (finalPhotos[i] && finalPhotos[i].startsWith('data:image')) {
+        try {
+          localStorage.setItem('dlh_photo_cache_' + cleanId + '_' + i, finalPhotos[i]);
+        } catch (e) {}
+      }
+    }
+
     const finalFoto = finalPhotos[0] || '';
 
     const isUnverified = (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima' || remoteItem.status === 'Verifikasi Administrasi' || remoteItem.status === '-');
@@ -1127,6 +1273,15 @@ class AduanDataStore {
       : (existingItem && Array.isArray(existingItem.buktiFotoList) && existingItem.buktiFotoList.length > 0 ? existingItem.buktiFotoList : (existingItem && existingItem.fotoBukti ? [existingItem.fotoBukti] : []));
 
     const fotoUtama = mergedPhotos[0] || (existingItem ? existingItem.fotoBukti : '') || '';
+
+    // Simpan salinan cadangan foto Base64 ke cache lokal agar kebal dari penimpaan URL remote
+    mergedPhotos.forEach((photoStr, idx) => {
+      if (photoStr && typeof photoStr === 'string' && photoStr.startsWith('data:image')) {
+        try {
+          localStorage.setItem('dlh_photo_cache_' + newId + '_' + idx, photoStr);
+        } catch (e) {}
+      }
+    });
 
     const newRecord = {
       id: newId,
@@ -1477,3 +1632,94 @@ AduanDataStore.prototype.mapRemoteRecord = function(remoteItem) {
 window.mapRemoteAduanRecord = mapRemoteAduanRecord;
 window.AduanDataStore = AduanDataStore;
 window.aduanStore = new AduanDataStore();
+
+/**
+ * Global Self-Healing Handler untuk kegagalan load gambar foto bukti
+ * Mencari cadangan thumbnail Drive, local cache Base64, dan fetch async dari GAS
+ */
+window.handleAduanPhotoError = function(imgEl, aduanId, photoIdx) {
+  if (!imgEl) return;
+  const cleanId = String(aduanId || '').trim().toUpperCase();
+  const idx = parseInt(photoIdx || '0', 10) || 0;
+
+  // 1. Cek cache lokal segera (paling cepat dan pasti jernih)
+  try {
+    const cached = localStorage.getItem('dlh_photo_cache_' + cleanId + '_' + idx) ||
+                   localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_' + idx) ||
+                   (idx === 0 ? (localStorage.getItem('dlh_photo_cache_' + cleanId) || localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase())) : null);
+    if (cached && cached.startsWith('data:image')) {
+      imgEl.src = cached;
+      imgEl.style.display = 'block';
+      if (imgEl.nextElementSibling) imgEl.nextElementSibling.style.display = 'none';
+      return;
+    }
+  } catch(e) {}
+
+  // 2. Coba alternatif Google Drive URL tanpa referrer jika ada fileId terdeteksi
+  const orig = imgEl.dataset.original || imgEl.src || '';
+  const m = orig.match(/(?:\/file\/d\/|[?&]id=|\/d\/)([a-zA-Z0-9_-]+)/);
+
+  if (m && m[1]) {
+    if (!imgEl.dataset.retryStep) {
+      imgEl.dataset.retryStep = '1';
+      imgEl.referrerPolicy = 'no-referrer';
+      imgEl.src = 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1200';
+      return;
+    } else if (imgEl.dataset.retryStep === '1') {
+      imgEl.dataset.retryStep = '2';
+      imgEl.referrerPolicy = 'no-referrer';
+      imgEl.src = 'https://drive.google.com/uc?export=view&id=' + m[1];
+      return;
+    }
+  }
+
+  // 3. Tampilkan visual loading ringan berputar sementara mencari data Base64
+  const fallbackBox = imgEl.nextElementSibling;
+  if (fallbackBox && !imgEl.dataset.fetchingFromGAS) {
+    fallbackBox.style.display = 'flex';
+    fallbackBox.innerHTML = `
+      <div style="display:flex; flex-direction:column; align-items:center; justify-content:center; gap:6px;">
+        <span style="display:inline-block; width:22px; height:22px; border:2.5px solid rgba(110,231,183,0.3); border-top-color:#34d399; border-radius:50%; animation:spin 0.8s linear infinite;"></span>
+        <span style="font-size:0.74rem; color:#6ee7b7; font-weight:700;">Memulihkan Foto...</span>
+      </div>
+    `;
+  }
+
+  // 4. Fetch dari Google Apps Script secara asynchronous
+  if (!imgEl.dataset.fetchingFromGAS && window.aduanStore && typeof window.aduanStore.fetchPhotoBase64FromGAS === 'function') {
+    imgEl.dataset.fetchingFromGAS = '1';
+    window.aduanStore.fetchPhotoBase64FromGAS(cleanId, idx).then(b64 => {
+      if (b64 && b64.startsWith('data:image')) {
+        imgEl.src = b64;
+        imgEl.style.display = 'block';
+        if (fallbackBox) fallbackBox.style.display = 'none';
+      } else {
+        imgEl.style.display = 'none';
+        if (fallbackBox) {
+          fallbackBox.style.display = 'flex';
+          const gasUrl = (window.aduanStore && window.aduanStore.getGasUrl) ? window.aduanStore.getGasUrl() : '';
+          const directUrl = gasUrl ? `${gasUrl}${gasUrl.includes('?') ? '&' : '?'}action=viewFoto&id=${encodeURIComponent(cleanId)}&photoIdx=${idx}` : '';
+          fallbackBox.innerHTML = `
+            <span style="font-size: 1.4rem;">📸</span>
+            <span style="font-size: 0.74rem; font-weight: 700; color: #34d399; margin-top: 4px;">Buka Foto di Drive</span>
+            ${directUrl ? `<a href="${directUrl}" target="_blank" style="font-size:0.68rem; color:#a7f3d0; text-decoration:underline; margin-top:2px;">Buka Tab Baru ↗</a>` : ''}
+          `;
+        }
+      }
+    }).catch(() => {
+      imgEl.style.display = 'none';
+      if (fallbackBox) {
+        fallbackBox.style.display = 'flex';
+        fallbackBox.innerHTML = '<span style="font-size: 1.4rem;">📸</span><span style="font-size: 0.74rem; font-weight: 700; color: #34d399; margin-top: 4px;">Buka di Google Drive</span>';
+      }
+    });
+    return;
+  }
+
+  imgEl.style.display = 'none';
+  if (fallbackBox) {
+    fallbackBox.style.display = 'flex';
+    fallbackBox.innerHTML = '<span style="font-size: 1.4rem;">📸</span><span style="font-size: 0.74rem; font-weight: 700; color: #34d399; margin-top: 4px;">Buka di Google Drive</span>';
+  }
+};
+
