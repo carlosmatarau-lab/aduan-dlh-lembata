@@ -1084,39 +1084,23 @@ class AduanDataStore {
 
   _deduplicateList() {
     const seen = new Set();
-    const seenBaseIds = new Set();
-    const seenContentSigs = new Set();
 
     this.aduanList = (this.aduanList || []).filter(item => {
       if (!item || !item.id) return false;
       const cid = String(item.id).trim().toUpperCase();
       if (this.isDeleted(cid) || seen.has(cid)) return false;
 
-      // Cek apakah ID memiliki suffix tambahan (seperti ADU-LMB-YYYY-MMDD-XXXX-YYY)
+      // Cek apakah ID memiliki suffix tambahan dari retry lama (seperti ADU-LMB-YYYY-MMDD-XXXX-YYY)
       // dan base ID aslinya sudah tercatat di list
-      const baseMatch = cid.match(/^(ADU-LMB-\d{4}-\d{4}-[A-Z0-9]{4})-[A-Z0-9]{3,}$/);
+      const baseMatch = cid.match(/^(ADU-LMB-\d{4}-\d{4}-[A-Z0-9]{4,5})-[A-Z0-9]{3,}$/);
       if (baseMatch) {
         const baseId = baseMatch[1];
-        if (seen.has(baseId) || seenBaseIds.has(baseId)) {
-          return false; // Buang duplicate ber-suffix
+        if (seen.has(baseId)) {
+          return false; // Buang duplicate ber-suffix jika base ID asli sudah ada
         }
-      }
-
-      // Cek signature konten identik (Nama Pelapor + Desa + Uraian)
-      const nama = String(item.namaPelapor || '').trim().toLowerCase();
-      const desa = String(item.desa || '').trim().toLowerCase();
-      const uraian = String(item.uraian || '').trim().toLowerCase();
-      if (nama && uraian && uraian.length > 3) {
-        const sig = `${nama}|${desa}|${uraian}`;
-        if (seenContentSigs.has(sig)) {
-          return false; // Buang duplicate konten identik
-        }
-        seenContentSigs.add(sig);
       }
 
       seen.add(cid);
-      const cleanBase = cid.replace(/-[A-Z0-9]{3,}$/, '');
-      if (cleanBase !== cid) seenBaseIds.add(cleanBase);
       return true;
     });
   }
@@ -1703,10 +1687,17 @@ class AduanDataStore {
     if (!id) return false;
     const cleanId = String(id).trim().toUpperCase();
 
+    // Cegah eksekusi ganda jika ID yang sama sedang dalam proses penghapusan
+    this._activeDeleteIds = this._activeDeleteIds || new Set();
+    if (this._activeDeleteIds.has(cleanId)) {
+      return true;
+    }
+    this._activeDeleteIds.add(cleanId);
+
     // 1. Catat ke pendingDeletions (TTL 60 detik) agar sync yang sedang berjalan tidak memunculkan kembali item
     this.markDeleted(cleanId);
 
-    // 2. Hapus dari daftar memori lokal
+    // 2. Hapus dari daftar memori lokal secara presisi
     const index = this.aduanList.findIndex(item => String(item.id).trim().toUpperCase() === cleanId);
     let deleted = null;
     if (index !== -1) {
@@ -1720,13 +1711,15 @@ class AduanDataStore {
       window.dlhRealtime.broadcast('ADUAN_DELETED', { id: cleanId });
     }
 
-    // 4. Kirim ke Google Apps Script (POST & GET fallback)
+    // 4. Kirim HANYA SATU permintaan POST ke Google Apps Script (menghindari duplikasi request race condition)
     if (this.hasGasConfigured()) {
-      this.postToGAS('deleteAduan', { id: cleanId });
-      try {
-        const getUrl = `${this.gasApiUrl}${this.gasApiUrl.includes('?') ? '&' : '?'}action=deleteAduan&id=${encodeURIComponent(cleanId)}&_t=${Date.now()}`;
-        fetch(getUrl, { method: 'GET', mode: 'no-cors' }).catch(() => {});
-      } catch (e) {}
+      this.postToGAS('deleteAduan', { id: cleanId })
+        .catch(err => console.warn('Gagal menghapus di Google Apps Script:', err))
+        .finally(() => {
+          this._activeDeleteIds.delete(cleanId);
+        });
+    } else {
+      this._activeDeleteIds.delete(cleanId);
     }
 
     return deleted || true;

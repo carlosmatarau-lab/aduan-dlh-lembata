@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -3454,20 +3454,36 @@
       }
 
       executeDelete() {
-        if (!this.pendingDeleteId) return;
-        const id = this.pendingDeleteId;
-        const success = window.aduanStore.deleteAduan(id);
+        if (!this.pendingDeleteId || this._isDeleting) return;
+        this._isDeleting = true;
 
-        this.closeAllModals();
-        if (success) {
-          this.showToast(`Laporan aduan ${id} berhasil dihapus permanen.`, 'success');
-          this.updateKPIs();
-          this.renderTable();
-          this.renderMapLayers();
-        } else {
-          this.showToast(`Gagal menghapus aduan ${id}.`, 'warning');
+        const id = this.pendingDeleteId;
+        const btnExecDelete = document.getElementById('btnExecuteDelete');
+        if (btnExecDelete) {
+          btnExecDelete.disabled = true;
+          btnExecDelete.textContent = '⏳ Menghapus...';
         }
-        this.pendingDeleteId = null;
+
+        try {
+          const success = window.aduanStore.deleteAduan(id);
+
+          this.closeAllModals();
+          if (success) {
+            this.showToast(`Laporan aduan ${id} berhasil dihapus permanen.`, 'success');
+            this.updateKPIs();
+            this.renderTable();
+            this.renderMapLayers();
+          } else {
+            this.showToast(`Gagal menghapus aduan ${id}.`, 'warning');
+          }
+        } finally {
+          this.pendingDeleteId = null;
+          this._isDeleting = false;
+          if (btnExecDelete) {
+            btnExecDelete.disabled = false;
+            btnExecDelete.textContent = '🗑️ Ya, Hapus Permanen';
+          }
+        }
       }
 
       formatPhotoUrl(src) {

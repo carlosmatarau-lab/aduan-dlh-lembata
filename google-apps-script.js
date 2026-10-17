@@ -582,27 +582,17 @@ function handleGetAll() {
     if (!rawId) return;
 
     // Bersihkan base ID jika memiliki suffix -XXX dari duplikasi lama (misal: ADU-LMB-2026-1018-42RU-Y5D)
-    const baseMatch = rawId.match(/^(ADU-LMB-\d{4}-\d{4}-[A-Z0-9]{4})-[A-Z0-9]{3,}$/);
+    const baseMatch = rawId.match(/^(ADU-LMB-\d{4}-\d{4}-[A-Z0-9]{4,5})-[A-Z0-9]{3,}$/);
     const baseId = baseMatch ? baseMatch[1] : rawId;
 
     if (seenIds[rawId] || (baseMatch && seenIds[baseId])) {
       return; // Abaikan duplikasi ID
     }
 
-    // Signature konten identik (Nama + Desa + Uraian)
-    const pelapor = String(row['Nama_Pelapor'] || '').trim().toLowerCase();
-    const desa = String(row['Desa_Kelurahan'] || '').trim().toLowerCase();
-    const uraian = String(row['Uraian_Laporan'] || '').trim().toLowerCase();
-    if (pelapor && uraian && uraian.length > 3) {
-      const sig = pelapor + '|' + desa + '|' + uraian;
-      if (seenContent[sig]) {
-        return; // Abaikan duplikasi konten
-      }
-      seenContent[sig] = true;
-    }
-
     seenIds[rawId] = true;
-    seenIds[baseId] = true;
+    if (baseMatch) {
+      seenIds[baseId] = true;
+    }
     uniqueResult.push(mapSheetRowToFrontend(row, storageMap));
   });
 
@@ -1426,40 +1416,67 @@ function handleDeleteAduan(data) {
     return { success: false, error: 'Parameter "id" wajib diisi untuk menghapus aduan.' };
   }
 
-  const sheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
-  const rows = sheet.getDataRange().getValues();
-  let deletedCount = 0;
+  const cleanTargetId = targetId.toUpperCase();
+  const lock = LockService.getScriptLock();
+  let lockAcquired = false;
 
-  if (rows.length > 1) {
-    const headers = rows[0];
-    const colId = headers.indexOf('ID_Aduan');
-    const colFoto = headers.indexOf('Link_Foto_Bukti');
-    const colFotoRiil = headers.indexOf('Foto_Kondisi_Riil');
+  try {
+    // Kunci script hingga 20 detik agar antrean proses selesai berurutan tanpa saling menimpa
+    lockAcquired = lock.tryLock(20000);
 
-    if (colId !== -1) {
-      for (let i = rows.length - 1; i >= 1; i--) {
-        if (String(rows[i][colId]).trim().toUpperCase() === targetId.toUpperCase()) {
-          // Buang file foto yang tertaut di Drive jika ada
-          if (colFoto !== -1) trashDriveFileByUrl(String(rows[i][colFoto] || ''));
-          if (colFotoRiil !== -1) trashDriveFileByUrl(String(rows[i][colFotoRiil] || ''));
-          sheet.deleteRow(i + 1);
-          deletedCount++;
+    const sheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
+    let deletedCount = 0;
+    const lastRow = sheet.getLastRow();
+
+    if (lastRow > 1) {
+      const headers = sheet.getRange(1, 1, 1, sheet.getLastColumn()).getValues()[0];
+      const colId = headers.indexOf('ID_Aduan');
+      const colFoto = headers.indexOf('Link_Foto_Bukti');
+      const colFotoRiil = headers.indexOf('Foto_Kondisi_Riil');
+
+      if (colId !== -1) {
+        // Loop dari baris paling bawah ke atas (bottom-up)
+        // Di setiap baris, periksa sel ID saat ini secara langsung untuk memastikan 100%
+        // bahwa baris yang akan dihapus adalah memang milik ID target!
+        for (let r = lastRow; r >= 2; r--) {
+          const currentCellId = String(sheet.getRange(r, colId + 1).getValue() || '').trim().toUpperCase();
+          if (currentCellId === cleanTargetId) {
+            // Buang file foto yang tertaut di Drive jika ada
+            if (colFoto !== -1) {
+              const fotoVal = String(sheet.getRange(r, colFoto + 1).getValue() || '');
+              trashDriveFileByUrl(fotoVal);
+            }
+            if (colFotoRiil !== -1) {
+              const fotoRiilVal = String(sheet.getRange(r, colFotoRiil + 1).getValue() || '');
+              trashDriveFileByUrl(fotoRiilVal);
+            }
+            sheet.deleteRow(r);
+            deletedCount++;
+          }
         }
       }
     }
+
+    // Bersihkan dari Foto_Storage dan Google Drive permanen
+    purgeFotoStorage(cleanTargetId);
+    deleteDriveFilesForId(cleanTargetId);
+
+    writeLog('ADUAN_DIHAPUS', 'ID: ' + cleanTargetId + ' | Baris dihapus: ' + deletedCount);
+
+    return {
+      success: true,
+      message: 'Aduan ' + cleanTargetId + ' berhasil dihapus permanen (' + deletedCount + ' baris dihapus).',
+      data: { id: cleanTargetId, deletedRows: deletedCount },
+      deletedCount: deletedCount
+    };
+  } catch (err) {
+    Logger.log('handleDeleteAduan error: ' + err.message);
+    return { success: false, error: err.message };
+  } finally {
+    if (lockAcquired) {
+      try { lock.releaseLock(); } catch (e) { }
+    }
   }
-
-  // Bersihkan dari Foto_Storage dan Google Drive permanen
-  purgeFotoStorage(targetId);
-  deleteDriveFilesForId(targetId);
-
-  writeLog('ADUAN_DIHAPUS', 'ID: ' + targetId + ' | Baris dihapus: ' + deletedCount);
-
-  return {
-    success: true,
-    message: 'Aduan ' + targetId + ' beserta seluruh foto di Drive & Foto_Storage berhasil dihapus permanen (' + deletedCount + ' baris dihapus).',
-    deletedCount: deletedCount
-  };
 }
 
 
