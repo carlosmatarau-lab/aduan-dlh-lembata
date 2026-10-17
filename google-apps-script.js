@@ -295,9 +295,22 @@ function getSheetDataAsObjects(sheet) {
     headers.forEach((h, i) => {
       let val = row[i] !== undefined ? row[i] : '';
       if ((h === 'Link_Foto_Bukti' || h === 'Foto_Kondisi_Riil') && richTextRows && richTextRows[rIdx] && richTextRows[rIdx][i]) {
-        const rtUrl = richTextRows[rIdx][i].getLinkUrl();
-        if (rtUrl && typeof rtUrl === 'string' && rtUrl.startsWith('http')) {
-          val = rtUrl;
+        const cellRt = richTextRows[rIdx][i];
+        const runs = cellRt.getRuns ? cellRt.getRuns() : [];
+        const extractedUrls = [];
+        runs.forEach(r => {
+          const u = r.getLinkUrl();
+          if (u && typeof u === 'string' && u.startsWith('http') && !extractedUrls.includes(u)) {
+            extractedUrls.push(u);
+          }
+        });
+        if (extractedUrls.length > 0) {
+          val = extractedUrls.join(', ');
+        } else {
+          const singleUrl = cellRt.getLinkUrl();
+          if (singleUrl && typeof singleUrl === 'string' && singleUrl.startsWith('http')) {
+            val = singleUrl;
+          }
         }
       }
       obj[h] = val;
@@ -350,13 +363,13 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
     }
   }
 
-  // Prioritaskan cadangan data gambar asli dari sheet Foto_Storage HANYA untuk foto yang memang ada di rekaman
+  // Prioritaskan cadangan data gambar asli dari sheet Foto_Storage
   const storageLookup = fotoStorageMap || {};
   const baseKey = id.trim().toUpperCase();
 
   // Foto 1 (Utama)
   const backupFoto1 = storageLookup[baseKey] || storageLookup[baseKey + '_FOTO_1'] || storageLookup[baseKey + '_1'];
-  if (backupFoto1 && typeof backupFoto1 === 'string' && backupFoto1.startsWith('data:image')) {
+  if (backupFoto1 && typeof backupFoto1 === 'string' && (backupFoto1.startsWith('data:image') || backupFoto1.startsWith('http'))) {
     if (resolvedCitizenPhotos.length > 0) {
       resolvedCitizenPhotos[0] = backupFoto1;
     } else {
@@ -364,14 +377,16 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
     }
   }
 
-  // Foto 2 s/d 6: Gantikan HANYA index yang memang ADA di resolvedCitizenPhotos (Anti-Ghost Photo)
+  // Foto 2 s/d 6: Tambahkan atau gantikan foto multi dari Foto_Storage
   for (let idx = 2; idx <= 6; idx++) {
-    const targetIdx = idx - 1;
-    if (targetIdx < resolvedCitizenPhotos.length) {
-      const multiKey = baseKey + '_FOTO_' + idx;
-      const multiBackup = storageLookup[multiKey] || storageLookup[baseKey + '_' + idx];
-      if (multiBackup && typeof multiBackup === 'string' && multiBackup.startsWith('data:image')) {
+    const multiKey = baseKey + '_FOTO_' + idx;
+    const multiBackup = storageLookup[multiKey] || storageLookup[baseKey + '_' + idx];
+    if (multiBackup && typeof multiBackup === 'string' && (multiBackup.startsWith('data:image') || multiBackup.startsWith('http'))) {
+      const targetIdx = idx - 1;
+      if (targetIdx < resolvedCitizenPhotos.length) {
         resolvedCitizenPhotos[targetIdx] = multiBackup;
+      } else {
+        resolvedCitizenPhotos.push(multiBackup);
       }
     }
   }
@@ -508,7 +523,14 @@ function handleGetAll() {
             }
           }
         }
-        if (sid && sb64) storageMap[sid] = sb64;
+        const sUrl = String(sData[i][2] || '').trim();
+        if (sid) {
+          if (sb64 && sb64.startsWith('data:image')) {
+            storageMap[sid] = sb64;
+          } else if (sUrl && sUrl.startsWith('http')) {
+            storageMap[sid] = sUrl;
+          }
+        }
       }
     }
   } catch (e) { }
@@ -572,7 +594,14 @@ function handleGetById(id) {
             }
           }
         }
-        if (sid && sb64) storageMap[sid] = sb64;
+        const sUrl = String(sData[i][2] || '').trim();
+        if (sid) {
+          if (sb64 && sb64.startsWith('data:image')) {
+            storageMap[sid] = sb64;
+          } else if (sUrl && sUrl.startsWith('http')) {
+            storageMap[sid] = sUrl;
+          }
+        }
       }
     }
   } catch (e) { }
@@ -716,7 +745,7 @@ function deleteDriveFilesForId(idAduan) {
   if (!cleanId) return;
   try {
     const folders = ['Dokumentasi_Foto_Aduan_DLH_Lembata', 'SILAPOR_DLH_FOTO_BUKTI'];
-    folders.forEach(function(fName) {
+    folders.forEach(function (fName) {
       try {
         const fIter = DriveApp.getFoldersByName(fName);
         while (fIter.hasNext()) {
@@ -730,7 +759,7 @@ function deleteDriveFilesForId(idAduan) {
             }
           }
         }
-      } catch (e) {}
+      } catch (e) { }
     });
   } catch (err) {
     Logger.log('deleteDriveFilesForId error: ' + err.message);
@@ -743,7 +772,7 @@ function deleteDriveFilesForId(idAduan) {
 function purgeAllDrivePhotos() {
   try {
     const folders = ['Dokumentasi_Foto_Aduan_DLH_Lembata', 'SILAPOR_DLH_FOTO_BUKTI'];
-    folders.forEach(function(fName) {
+    folders.forEach(function (fName) {
       try {
         const fIter = DriveApp.getFoldersByName(fName);
         while (fIter.hasNext()) {
@@ -754,7 +783,7 @@ function purgeAllDrivePhotos() {
             file.setTrashed(true);
           }
         }
-      } catch (e) {}
+      } catch (e) { }
     });
   } catch (err) {
     Logger.log('purgeAllDrivePhotos error: ' + err.message);
@@ -856,157 +885,176 @@ function handleAddAduan(formData) {
     purgeFotoStorage(newId);
     deleteDriveFilesForId(newId);
 
-  // Generate timestamp saat ini
-  const now = Utilities.formatDate(
-    new Date(),
-    Session.getScriptTimeZone(),
-    'yyyy-MM-dd HH:mm'
-  );
+    // Generate timestamp saat ini
+    const now = Utilities.formatDate(
+      new Date(),
+      Session.getScriptTimeZone(),
+      'yyyy-MM-dd HH:mm'
+    );
 
-  // Tentukan koordinat default dari kecamatan jika tidak disediakan
-  const KECAMATAN_COORDS = {
-    'Nubatukan': { lat: -8.3682, lng: 123.5583 },
-    'Ile Ape': { lat: -8.2831, lng: 123.5412 },
-    'Ile Ape Timur': { lat: -8.2915, lng: 123.6128 },
-    'Lebatukan': { lat: -8.3584, lng: 123.6652 },
-    'Nagawutung': { lat: -8.4902, lng: 123.3854 },
-    'Wulandoni': { lat: -8.5412, lng: 123.4915 },
-    'Atadei': { lat: -8.4550, lng: 123.5681 },
-    'Omesuri': { lat: -8.2351, lng: 123.8224 },
-    'Buyasuri': { lat: -8.1925, lng: 123.9450 }
-  };
+    // Tentukan koordinat default dari kecamatan jika tidak disediakan
+    const KECAMATAN_COORDS = {
+      'Nubatukan': { lat: -8.3682, lng: 123.5583 },
+      'Ile Ape': { lat: -8.2831, lng: 123.5412 },
+      'Ile Ape Timur': { lat: -8.2915, lng: 123.6128 },
+      'Lebatukan': { lat: -8.3584, lng: 123.6652 },
+      'Nagawutung': { lat: -8.4902, lng: 123.3854 },
+      'Wulandoni': { lat: -8.5412, lng: 123.4915 },
+      'Atadei': { lat: -8.4550, lng: 123.5681 },
+      'Omesuri': { lat: -8.2351, lng: 123.8224 },
+      'Buyasuri': { lat: -8.1925, lng: 123.9450 }
+    };
 
-  const kecCoord = KECAMATAN_COORDS[formData.kecamatan] || { lat: -8.375, lng: 123.55 };
-  const lat = (formData.lat !== undefined && formData.lat !== '' && !isNaN(parseFloat(formData.lat))) ? parseFloat(formData.lat) : kecCoord.lat;
-  const lng = (formData.lng !== undefined && formData.lng !== '' && !isNaN(parseFloat(formData.lng))) ? parseFloat(formData.lng) : kecCoord.lng;
+    const kecCoord = KECAMATAN_COORDS[formData.kecamatan] || { lat: -8.375, lng: 123.55 };
+    const lat = (formData.lat !== undefined && formData.lat !== '' && !isNaN(parseFloat(formData.lat))) ? parseFloat(formData.lat) : kecCoord.lat;
+    const lng = (formData.lng !== undefined && formData.lng !== '' && !isNaN(parseFloat(formData.lng))) ? parseFloat(formData.lng) : kecCoord.lng;
 
-  // Kelola Seluruh Foto Bukti (Mendukung Multi-Foto Lapangan secara aman tanpa shredding Base64)
-  let rawPhotos = [];
-  if (Array.isArray(formData.buktiFotoList) && formData.buktiFotoList.length > 0) {
-    formData.buktiFotoList.forEach(p => {
-      const s = (p && p.dataUrl) ? p.dataUrl : (typeof p === 'string' ? p : '');
-      if (s && s.trim() && s.trim() !== '-') rawPhotos.push(s.trim());
-    });
-  } else {
-    const rawVal = formData.fotoBukti || formData.linkFotoBukti || formData.linkFoto || '';
-    if (typeof rawVal === 'string' && rawVal.trim() && rawVal.trim() !== '-') {
-      const matches = rawVal.match(/(data:image\/[a-zA-Z0-9\+\/\-\.]+;base64,[A-Za-z0-9\+\/\=]+|https?:\/\/[^\s,]+)/g);
-      if (matches && matches.length > 0) {
-        matches.forEach(s => { if (s.trim()) rawPhotos.push(s.trim()); });
-      } else {
-        rawPhotos.push(rawVal.trim());
+    // Kelola Seluruh Foto Bukti (Mendukung Multi-Foto Lapangan secara aman tanpa shredding Base64)
+    let rawPhotos = [];
+    if (Array.isArray(formData.buktiFotoList) && formData.buktiFotoList.length > 0) {
+      formData.buktiFotoList.forEach(p => {
+        const s = (p && p.dataUrl) ? p.dataUrl : (typeof p === 'string' ? p : '');
+        if (s && s.trim() && s.trim() !== '-') rawPhotos.push(s.trim());
+      });
+    } else {
+      const rawVal = formData.fotoBukti || formData.linkFotoBukti || formData.linkFoto || '';
+      if (typeof rawVal === 'string' && rawVal.trim() && rawVal.trim() !== '-') {
+        const matches = rawVal.match(/(data:image\/[a-zA-Z0-9\+\/\-\.]+;base64,[A-Za-z0-9\+\/\=]+|https?:\/\/[^\s,]+)/g);
+        if (matches && matches.length > 0) {
+          matches.forEach(s => { if (s.trim()) rawPhotos.push(s.trim()); });
+        } else {
+          rawPhotos.push(rawVal.trim());
+        }
       }
     }
-  }
 
-  const targetUrls = [];
-  const webAppUrl = getWebAppUrl();
-  let storageSheet = null;
+    const targetUrls = [];
+    const webAppUrl = getWebAppUrl();
+    let storageSheet = null;
 
-  rawPhotos.forEach((photoStr, idx) => {
-    if (!photoStr || typeof photoStr !== 'string') return;
-    const trimmed = photoStr.trim();
-    if (trimmed.startsWith('http')) {
-      targetUrls.push(trimmed);
-    } else if (trimmed.startsWith('data:image')) {
-      const photoKey = (idx === 0) ? newId : (newId + '_FOTO_' + (idx + 1));
-      let driveUrl = '';
-      try {
-        driveUrl = saveBase64ImageToDrive(trimmed, photoKey);
-      } catch (e) {
-        Logger.log('Drive error foto ' + idx + ': ' + e.message);
-      }
-
-      const viewUrl = (driveUrl && driveUrl.startsWith('http'))
-        ? driveUrl
-        : (webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(newId) + '&photoIdx=' + idx);
-      targetUrls.push(viewUrl);
-
-      // Simpan cadangan data gambar Base64 ke sheet Foto_Storage
-      try {
-        if (!storageSheet) {
-          storageSheet = getOrCreateSheet(SHEET_NAME_FOTO, ['ID_Aduan', 'Timestamp', 'Link_Buka_Foto', 'Base64_Data']);
+    rawPhotos.forEach((photoStr, idx) => {
+      if (!photoStr || typeof photoStr !== 'string') return;
+      const trimmed = photoStr.trim();
+      if (trimmed.startsWith('http')) {
+        targetUrls.push(trimmed);
+      } else if (trimmed.startsWith('data:image')) {
+        const photoKey = (idx === 0) ? newId : (newId + '_FOTO_' + (idx + 1));
+        let driveUrl = '';
+        try {
+          driveUrl = saveBase64ImageToDrive(trimmed, photoKey);
+        } catch (e) {
+          Logger.log('Drive error foto ' + idx + ': ' + e.message);
         }
-        const CHUNK_SIZE = 40000;
-        const rowData = [photoKey, now, viewUrl];
-        for (let k = 0; k < trimmed.length; k += CHUNK_SIZE) {
-          rowData.push(trimmed.substring(k, k + CHUNK_SIZE));
-        }
-        storageSheet.appendRow(rowData);
 
-        // Jika foto pertama (idx === 0), simpan juga dengan alias ID_FOTO_1 agar selalu terindeks ganda
-        if (idx === 0) {
-          const aliasRow = [newId + '_FOTO_1', now, viewUrl];
-          for (let k = 0; k < trimmed.length; k += CHUNK_SIZE) {
-            aliasRow.push(trimmed.substring(k, k + CHUNK_SIZE));
+        const viewUrl = (driveUrl && driveUrl.startsWith('http'))
+          ? driveUrl
+          : (webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(newId) + '&photoIdx=' + idx);
+        targetUrls.push(viewUrl);
+
+        // Simpan cadangan data gambar Base64 ke sheet Foto_Storage
+        try {
+          if (!storageSheet) {
+            storageSheet = getOrCreateSheet(SHEET_NAME_FOTO, ['ID_Aduan', 'Timestamp', 'Link_Buka_Foto', 'Base64_Data']);
           }
-          storageSheet.appendRow(aliasRow);
+          const CHUNK_SIZE = 40000;
+          const rowData = [photoKey, now, viewUrl];
+          for (let k = 0; k < trimmed.length; k += CHUNK_SIZE) {
+            rowData.push(trimmed.substring(k, k + CHUNK_SIZE));
+          }
+          storageSheet.appendRow(rowData);
+
+          // Jika foto pertama (idx === 0), simpan juga dengan alias ID_FOTO_1 agar selalu terindeks ganda
+          if (idx === 0) {
+            const aliasRow = [newId + '_FOTO_1', now, viewUrl];
+            for (let k = 0; k < trimmed.length; k += CHUNK_SIZE) {
+              aliasRow.push(trimmed.substring(k, k + CHUNK_SIZE));
+            }
+            storageSheet.appendRow(aliasRow);
+          }
+
+          const lastRow = storageSheet.getLastRow();
+          const cell = storageSheet.getRange(lastRow, 3);
+          const richText = SpreadsheetApp.newRichTextValue()
+            .setText("📸 Buka Foto Bukti (" + photoKey + ")")
+            .setLinkUrl(viewUrl)
+            .build();
+          cell.setRichTextValue(richText);
+        } catch (e) {
+          Logger.log('Storage backup error foto ' + idx + ': ' + e.message);
         }
-
-        const lastRow = storageSheet.getLastRow();
-        const cell = storageSheet.getRange(lastRow, 3);
-        const richText = SpreadsheetApp.newRichTextValue()
-          .setText("📸 Buka Foto Bukti (" + photoKey + ")")
-          .setLinkUrl(viewUrl)
-          .build();
-        cell.setRichTextValue(richText);
-      } catch (e) {
-        Logger.log('Storage backup error foto ' + idx + ': ' + e.message);
       }
+    });
+
+    const primaryUrl = targetUrls[0] || '';
+    const cellFotoValue = targetUrls.length > 0 ? targetUrls.join(', ') : '-';
+
+    // Susun baris data baru sesuai urutan HEADERS_ADUAN
+    const newRow = [
+      newId,                                        // ID_Aduan
+      now,                                          // Timestamp
+      formData.namaPelapor || 'Anonim',             // Nama_Pelapor
+      formData.noHp || '-',                         // No_HP
+      formData.alamatPelapor || '-',                // Alamat_Pelapor
+      formData.kecamatan || 'Nubatukan',            // Kecamatan
+      formData.desa || '-',                         // Desa_Kelurahan
+      formData.lokasiDetail || '-',                 // Lokasi_Detail
+      lat,                                          // Latitude
+      lng,                                          // Longitude
+      formData.jenisPencemaran || 'Lainnya',        // Jenis_Pencemaran
+      formData.uraian || '-',                       // Uraian_Aduan
+      formData.sumberDugaan || '-',                 // Sumber_Dugaan
+      formData.tanggalKejadian || now.split(' ')[0],// Tanggal_Kejadian
+      cellFotoValue,                                // Link_Foto_Bukti
+      'Baru',                                       // Status
+      '-',                                          // Petugas_Verifikasi
+      '-',                                          // Tanggal_Verifikasi
+      'Menunggu penugasan verifikator lapangan.',    // Hasil_Verifikasi
+      'Aduan telah dicatat ke sistem.',              // Tindakan_DLH
+      '-'                                           // Tanggal_Selesai
+    ];
+
+    // Tambahkan baris ke sheet
+    sheet.appendRow(newRow);
+
+    // Pasang RichText hyperlink interaktif agar setiap foto dapat diklik langsung di spreadsheet
+    if (targetUrls.length === 1) {
+      try {
+        const lastRow = sheet.getLastRow();
+        const colFotoIdx = HEADERS_ADUAN.indexOf('Link_Foto_Bukti');
+        if (colFotoIdx !== -1) {
+          const richText = SpreadsheetApp.newRichTextValue()
+            .setText("📸 Buka Foto Bukti (" + newId + ")")
+            .setLinkUrl(targetUrls[0])
+            .build();
+          sheet.getRange(lastRow, colFotoIdx + 1).setRichTextValue(richText);
+        }
+      } catch (e) { }
+    } else if (targetUrls.length > 1) {
+      try {
+        const lastRow = sheet.getLastRow();
+        const colFotoIdx = HEADERS_ADUAN.indexOf('Link_Foto_Bukti');
+        if (colFotoIdx !== -1) {
+          let displayText = "📸 Buka Foto (" + targetUrls.length + "): ";
+          const links = [];
+          targetUrls.forEach((u, idx) => {
+            const label = "Foto " + (idx + 1);
+            const start = displayText.length;
+            displayText += label;
+            const end = displayText.length;
+            links.push({ start: start, end: end, url: u });
+            if (idx < targetUrls.length - 1) displayText += " | ";
+          });
+          const richTextBuilder = SpreadsheetApp.newRichTextValue().setText(displayText);
+          links.forEach(l => {
+            richTextBuilder.setLinkUrl(l.start, l.end, l.url);
+          });
+          sheet.getRange(lastRow, colFotoIdx + 1).setRichTextValue(richTextBuilder.build());
+        }
+      } catch (e) { }
     }
-  });
 
-  const primaryUrl = targetUrls[0] || '';
-  const cellFotoValue = targetUrls.length > 0 ? targetUrls.join(', ') : '-';
-
-  // Susun baris data baru sesuai urutan HEADERS_ADUAN
-  const newRow = [
-    newId,                                        // ID_Aduan
-    now,                                          // Timestamp
-    formData.namaPelapor || 'Anonim',             // Nama_Pelapor
-    formData.noHp || '-',                         // No_HP
-    formData.alamatPelapor || '-',                // Alamat_Pelapor
-    formData.kecamatan || 'Nubatukan',            // Kecamatan
-    formData.desa || '-',                         // Desa_Kelurahan
-    formData.lokasiDetail || '-',                 // Lokasi_Detail
-    lat,                                          // Latitude
-    lng,                                          // Longitude
-    formData.jenisPencemaran || 'Lainnya',        // Jenis_Pencemaran
-    formData.uraian || '-',                       // Uraian_Aduan
-    formData.sumberDugaan || '-',                 // Sumber_Dugaan
-    formData.tanggalKejadian || now.split(' ')[0],// Tanggal_Kejadian
-    cellFotoValue,                                // Link_Foto_Bukti
-    'Baru',                                       // Status
-    '-',                                          // Petugas_Verifikasi
-    '-',                                          // Tanggal_Verifikasi
-    'Menunggu penugasan verifikator lapangan.',    // Hasil_Verifikasi
-    'Aduan telah dicatat ke sistem.',              // Tindakan_DLH
-    '-'                                           // Tanggal_Selesai
-  ];
-
-  // Tambahkan baris ke sheet
-  sheet.appendRow(newRow);
-
-  // Jika ada targetUrl foto, pasang RichText hyperlink interaktif agar tampil teks rapi yang bisa diklik
-  if (primaryUrl) {
-    try {
-      const lastRow = sheet.getLastRow();
-      const colFotoIdx = HEADERS_ADUAN.indexOf('Link_Foto_Bukti');
-      if (colFotoIdx !== -1) {
-        const linkTitle = targetUrls.length > 1
-          ? "📸 Buka " + targetUrls.length + " Foto Bukti (" + newId + ")"
-          : "📸 Buka Foto Bukti (" + newId + ")";
-        const richText = SpreadsheetApp.newRichTextValue()
-          .setText(linkTitle)
-          .setLinkUrl(primaryUrl)
-          .build();
-        sheet.getRange(lastRow, colFotoIdx + 1).setRichTextValue(richText);
-      }
-    } catch (e) { }
-  }
-
-  // Tulis log
-  writeLog('ADUAN_BARU', 'ID: ' + newId + ' | Pelapor: ' + (formData.namaPelapor || 'Anonim') + ' | Kec: ' + (formData.kecamatan || '-') + ' | Total Foto: ' + targetUrls.length);
+    // Tulis log
+    writeLog('ADUAN_BARU', 'ID: ' + newId + ' | Pelapor: ' + (formData.namaPelapor || 'Anonim') + ' | Kec: ' + (formData.kecamatan || '-') + ' | Total Foto: ' + targetUrls.length);
 
     return {
       success: true,
@@ -1024,7 +1072,7 @@ function handleAddAduan(formData) {
   } finally {
     try {
       lock.releaseLock();
-    } catch (e) {}
+    } catch (e) { }
   }
 }
 
@@ -1282,7 +1330,7 @@ function handleResetToZero() {
     if (sheet1 && sheet1.getLastRow() > 1) {
       sheet1.deleteRows(2, sheet1.getLastRow() - 1);
     }
-  } catch (e) {}
+  } catch (e) { }
 
   // Pindahkan seluruh file foto lama di Google Drive ke Trash
   try {

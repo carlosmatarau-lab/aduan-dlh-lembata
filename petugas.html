@@ -3792,6 +3792,17 @@
           } catch (e) {}
         }
 
+        // Periksa juga jika ada foto tambahan ke-2, ke-3, dst. yang tersimpan di cache lokal
+        for (let extraIdx = citizenPhotos.length; extraIdx < 6; extraIdx++) {
+          try {
+            const extraVal = localStorage.getItem('dlh_photo_cache_' + cleanAduanId + '_' + extraIdx) ||
+                             localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + extraIdx);
+            if (extraVal && extraVal.startsWith('data:image') && !citizenPhotos.includes(extraVal)) {
+              citizenPhotos.push(extraVal);
+            }
+          } catch (e) {}
+        }
+
         citizenPhotos = citizenPhotos.map((rawP, pIdx) => {
           if (typeof rawP === 'string' && rawP.startsWith('data:image')) return rawP;
           try {
