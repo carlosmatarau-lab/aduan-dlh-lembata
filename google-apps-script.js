@@ -463,19 +463,27 @@ function generateNewId(sheet) {
   const year = Utilities.formatDate(now, Session.getScriptTimeZone(), 'yyyy');
   const dateStr = Utilities.formatDate(now, Session.getScriptTimeZone(), 'MMdd');
   const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-  let entropy = '';
-  for (let i = 0; i < 4; i++) {
-    entropy += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  const candidateId = 'ADU-LMB-' + year + '-' + dateStr + '-' + entropy;
+  
+  let candidateId = '';
+  let exists = true;
+  let attempts = 0;
 
-  // Pastikan kandidat ID belum pernah dipakai di sheet
-  if (sheet) {
-    const data = sheet.getDataRange().getValues();
-    for (let i = 1; i < data.length; i++) {
-      if (String(data[i][0] || '').trim().toUpperCase() === candidateId) {
-        const extra = chars.charAt(Math.floor(Math.random() * chars.length));
-        return candidateId + extra;
+  while (exists && attempts < 20) {
+    attempts++;
+    let entropy = '';
+    for (let i = 0; i < 4; i++) {
+      entropy += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    candidateId = 'ADU-LMB-' + year + '-' + dateStr + '-' + entropy;
+    exists = false;
+
+    if (sheet) {
+      const data = sheet.getDataRange().getValues();
+      for (let i = 1; i < data.length; i++) {
+        if (String(data[i][0] || '').trim().toUpperCase() === candidateId) {
+          exists = true;
+          break;
+        }
       }
     }
   }
@@ -535,15 +543,37 @@ function handleGetAll() {
     }
   } catch (e) { }
 
-  // Deduplikasi rekaman berdasar ID_Aduan (Jaminan 0 Duplikasi)
+  // Deduplikasi rekaman berdasar ID_Aduan & Konten (Jaminan 0 Duplikasi di Seluruh Portal)
   const seenIds = {};
+  const seenContent = {};
   const uniqueResult = [];
   rawData.forEach(row => {
-    const rId = String(row['ID_Aduan'] || '').trim().toUpperCase();
-    if (rId && !seenIds[rId]) {
-      seenIds[rId] = true;
-      uniqueResult.push(mapSheetRowToFrontend(row, storageMap));
+    const rawId = String(row['ID_Aduan'] || '').trim().toUpperCase();
+    if (!rawId) return;
+
+    // Bersihkan base ID jika memiliki suffix -XXX dari duplikasi lama (misal: ADU-LMB-2026-1018-42RU-Y5D)
+    const baseMatch = rawId.match(/^(ADU-LMB-\d{4}-\d{4}-[A-Z0-9]{4})-[A-Z0-9]{3,}$/);
+    const baseId = baseMatch ? baseMatch[1] : rawId;
+
+    if (seenIds[rawId] || (baseMatch && seenIds[baseId])) {
+      return; // Abaikan duplikasi ID
     }
+
+    // Signature konten identik (Nama + Desa + Uraian)
+    const pelapor = String(row['Nama_Pelapor'] || '').trim().toLowerCase();
+    const desa = String(row['Desa_Kelurahan'] || '').trim().toLowerCase();
+    const uraian = String(row['Uraian_Laporan'] || '').trim().toLowerCase();
+    if (pelapor && uraian && uraian.length > 3) {
+      const sig = pelapor + '|' + desa + '|' + uraian;
+      if (seenContent[sig]) {
+        return; // Abaikan duplikasi konten
+      }
+      seenContent[sig] = true;
+    }
+
+    seenIds[rawId] = true;
+    seenIds[baseId] = true;
+    uniqueResult.push(mapSheetRowToFrontend(row, storageMap));
   });
 
   return {
@@ -866,19 +896,65 @@ function handleAddAduan(formData) {
     // Gunakan ID unik dari formulir jika ada, atau generate baru
     let newId = (formData.id && String(formData.id).trim()) ? String(formData.id).trim() : generateNewId(sheet);
 
-    // Pencegahan Duplikasi: Jika ID sudah ada di sheet Data_Aduan, tambahkan suffix unik agar aduan baru tidak hilang
+    // PENCEGAHAN DUPLIKASI SEJATI (IDEMPOTENSI AMAN):
+    // Jika ID sudah ada di sheet Data_Aduan (akibat retry koneksi, background queue flush, atau double submit),
+    // JANGAN PERNAH membuat baris baru atau menambahkan suffix (-XYZ) karena akan memunculkan 2 aduan kembar!
     const existingValues = sheet.getDataRange().getValues();
     const colIdIndex = HEADERS_ADUAN.indexOf('ID_Aduan');
+    let existingRowIndex = -1;
+
     if (colIdIndex !== -1 && existingValues.length > 1) {
       for (let r = 1; r < existingValues.length; r++) {
-        if (String(existingValues[r][colIdIndex]).trim().toUpperCase() === newId.toUpperCase()) {
-          const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-          let extra = '';
-          for (let k = 0; k < 3; k++) extra += chars.charAt(Math.floor(Math.random() * chars.length));
-          newId = newId + '-' + extra;
+        const rowId = String(existingValues[r][colIdIndex] || '').trim().toUpperCase();
+        if (rowId === newId.toUpperCase()) {
+          existingRowIndex = r + 1;
           break;
         }
       }
+    }
+
+    // Cek juga duplikasi berdasarkan konten yang sama persis (Nama Pelapor + Desa + Uraian)
+    if (existingRowIndex === -1 && existingValues.length > 1 && colIdIndex !== -1) {
+      const colNama = HEADERS_ADUAN.indexOf('Nama_Pelapor');
+      const colDesa = HEADERS_ADUAN.indexOf('Desa_Kelurahan');
+      const colUraian = HEADERS_ADUAN.indexOf('Uraian_Laporan');
+      const inputNama = String(formData.namaPelapor || '').trim().toLowerCase();
+      const inputDesa = String(formData.desa || '').trim().toLowerCase();
+      const inputUraian = String(formData.uraian || '').trim().toLowerCase();
+
+      if (inputNama && inputUraian && inputUraian.length > 3) {
+        for (let r = 1; r < existingValues.length; r++) {
+          const rowNama = colNama !== -1 ? String(existingValues[r][colNama] || '').trim().toLowerCase() : '';
+          const rowDesa = colDesa !== -1 ? String(existingValues[r][colDesa] || '').trim().toLowerCase() : '';
+          const rowUraian = colUraian !== -1 ? String(existingValues[r][colUraian] || '').trim().toLowerCase() : '';
+          if (rowNama === inputNama && rowDesa === inputDesa && rowUraian === inputUraian) {
+            existingRowIndex = r + 1;
+            newId = String(existingValues[r][colIdIndex] || '').trim();
+            break;
+          }
+        }
+      }
+    }
+
+    if (existingRowIndex !== -1) {
+      Logger.log('Aduan ' + newId + ' sudah tercatat di baris ' + existingRowIndex + '. Pengiriman ganda diabaikan secara aman (Idempotent).');
+      writeLog('DUPLIKASI_DICEGAH', 'ID: ' + newId + ' sudah ada di baris ' + existingRowIndex + ' - Penambahan baris kedua dicegah.');
+      const rowData = existingValues[existingRowIndex - 1];
+      const colTs = HEADERS_ADUAN.indexOf('Timestamp');
+      const colSt = HEADERS_ADUAN.indexOf('Status_Aduan');
+      const colFp = HEADERS_ADUAN.indexOf('Link_Foto_Bukti');
+      return {
+        success: true,
+        alreadyExists: true,
+        message: 'Aduan ' + newId + ' sudah tersimpan dalam sistem DLH Lembata (duplikasi dicegah).',
+        data: {
+          id: newId,
+          timestamp: colTs !== -1 ? String(rowData[colTs] || '') : '',
+          status: colSt !== -1 ? String(rowData[colSt] || 'Baru') : 'Baru',
+          linkFoto: colFp !== -1 ? String(rowData[colFp] || '-') : '-',
+          fotoBukti: colFp !== -1 ? String(rowData[colFp] || '-') : '-'
+        }
+      };
     }
 
     // Hapus sisa foto/cache lama jika ada ID yang sama sebelumnya (Zero Ghost Photos)

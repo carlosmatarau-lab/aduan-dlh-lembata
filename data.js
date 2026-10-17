@@ -554,6 +554,7 @@ class AduanDataStore {
     this.currentSyncPromise = null;
     this.lastSyncTime = null;
     this.pendingDeletions = {};
+    this._activeSyncIds = new Set();
     this.init();
   }
 
@@ -845,6 +846,18 @@ class AduanDataStore {
               }
             }
 
+            // Bersihkan flag pending untuk item yang telah berhasil terindeks di server
+            (this.aduanList || []).forEach(localItem => {
+              if (localItem && localItem.id) {
+                const cid = String(localItem.id).trim().toUpperCase();
+                if (seenIds.has(cid)) {
+                  delete localItem._pendingSync;
+                  delete localItem._syncingNow;
+                  if (this._activeSyncIds) this._activeSyncIds.delete(localItem.id);
+                }
+              }
+            });
+
             // Pertahankan HANYA aduan lokal yang secara eksplisit _pendingSync (belum terindeks di server)
             // Item tanpa _pendingSync yang tidak ada di server berarti sudah dihapus di server / perangkat lain
             const localPending = (this.aduanList || []).filter(item => {
@@ -940,10 +953,14 @@ class AduanDataStore {
     if (!this.hasGasConfigured() || this._isFlushing) return;
     this._isFlushing = true;
     try {
+      this._activeSyncIds = this._activeSyncIds || new Set();
       // 1. Flush aduan baru pending (hindari item yang sedang dalam proses kirim instan)
-      const pendingItems = (this.aduanList || []).filter(item => item && item._pendingSync && !item._syncingNow);
+      const pendingItems = (this.aduanList || []).filter(item => 
+        item && item.id && item._pendingSync && !item._syncingNow && !this._activeSyncIds.has(item.id)
+      );
       for (const item of pendingItems) {
         try {
+          this._activeSyncIds.add(item.id);
           item._syncingNow = true;
           const res = await this.postToGAS('addAduan', item);
           if (res && res.success) {
@@ -952,6 +969,7 @@ class AduanDataStore {
         } catch (e) {
         } finally {
           delete item._syncingNow;
+          this._activeSyncIds.delete(item.id);
         }
       }
 
@@ -1008,11 +1026,39 @@ class AduanDataStore {
 
   _deduplicateList() {
     const seen = new Set();
+    const seenBaseIds = new Set();
+    const seenContentSigs = new Set();
+
     this.aduanList = (this.aduanList || []).filter(item => {
       if (!item || !item.id) return false;
       const cid = String(item.id).trim().toUpperCase();
       if (this.isDeleted(cid) || seen.has(cid)) return false;
+
+      // Cek apakah ID memiliki suffix tambahan (seperti ADU-LMB-YYYY-MMDD-XXXX-YYY)
+      // dan base ID aslinya sudah tercatat di list
+      const baseMatch = cid.match(/^(ADU-LMB-\d{4}-\d{4}-[A-Z0-9]{4})-[A-Z0-9]{3,}$/);
+      if (baseMatch) {
+        const baseId = baseMatch[1];
+        if (seen.has(baseId) || seenBaseIds.has(baseId)) {
+          return false; // Buang duplicate ber-suffix
+        }
+      }
+
+      // Cek signature konten identik (Nama Pelapor + Desa + Uraian)
+      const nama = String(item.namaPelapor || '').trim().toLowerCase();
+      const desa = String(item.desa || '').trim().toLowerCase();
+      const uraian = String(item.uraian || '').trim().toLowerCase();
+      if (nama && uraian && uraian.length > 3) {
+        const sig = `${nama}|${desa}|${uraian}`;
+        if (seenContentSigs.has(sig)) {
+          return false; // Buang duplicate konten identik
+        }
+        seenContentSigs.add(sig);
+      }
+
       seen.add(cid);
+      const cleanBase = cid.replace(/-[A-Z0-9]{3,}$/, '');
+      if (cleanBase !== cid) seenBaseIds.add(cleanBase);
       return true;
     });
   }
@@ -1403,27 +1449,38 @@ class AduanDataStore {
       window.dlhRealtime.broadcast('ADUAN_BARU', { id: newRecord.id, item: newRecord });
     }
 
-    // Kirim langsung ke Google Apps Script dan tunggu konfirmasi dengan timeout aman
+    // Kirim langsung ke Google Apps Script dan tangani idempotensi tanpa duplikasi antrean
     if (this.hasGasConfigured()) {
-      try {
-        const sendPromise = this.postToGAS('addAduan', newRecord);
-        const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ timeout: true }), 4000));
-        const res = await Promise.race([sendPromise, timeoutPromise]);
+      this._activeSyncIds = this._activeSyncIds || new Set();
+      this._activeSyncIds.add(newId);
+
+      const sendPromise = this.postToGAS('addAduan', newRecord);
+
+      // Handle penyelesaian network request secara mandiri (terlepas dari batas tunggu UI)
+      sendPromise.then(res => {
         const idx = this.aduanList.findIndex(x => x.id === newId);
         if (idx !== -1) {
           delete this.aduanList[idx]._syncingNow;
           if (res && res.success) {
             delete this.aduanList[idx]._pendingSync;
+            this.save();
           }
-          this.save();
         }
-      } catch (err) {
+      }).catch(err => {
         console.warn('Gagal sinkron instan ke Google Apps Script, antrean pending aktif:', err);
         const idx = this.aduanList.findIndex(x => x.id === newId);
         if (idx !== -1) {
           delete this.aduanList[idx]._syncingNow;
         }
-      }
+      }).finally(() => {
+        this._activeSyncIds.delete(newId);
+      });
+
+      // Tunggu respons dengan batas waktu aman agar animasi submit UI responsif
+      try {
+        const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ timeout: true }), 6500));
+        await Promise.race([sendPromise, timeoutPromise]);
+      } catch (err) {}
     }
 
     return newRecord;

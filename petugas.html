@@ -5223,20 +5223,36 @@
       }
 
       async saveWaImport() {
-        if (!this.currentParsedWaData || !window.aduanStore) {
-          this.showToast('Data aduan belum siap disimpan.', 'warning');
-          return;
+        if (this._isSavingWaImport) return;
+        this._isSavingWaImport = true;
+        const btnSave = document.getElementById('btnConfirmSaveWaImport');
+        if (btnSave) {
+          btnSave.disabled = true;
+          btnSave.innerHTML = '<span>⏳</span> Menyimpan...';
         }
 
-        const record = await window.aduanStore.addAduan(this.currentParsedWaData);
-        this.closeAllModals();
-        this.updateKPIs();
-        this.renderTable();
-        this.renderMapLayers();
+        try {
+          if (!this.currentParsedWaData || !window.aduanStore) {
+            this.showToast('Data aduan belum siap disimpan.', 'warning');
+            return;
+          }
 
-        const recId = (record && record.id) ? record.id : (this.currentParsedWaData.id || '');
-        const recNama = (record && record.namaPelapor) ? record.namaPelapor : (this.currentParsedWaData.namaPelapor || '');
-        this.showToast(`🎉 Aduan ${recId} atas nama "${recNama}" berhasil dicatat ke sistem!`, 'success');
+          const record = await window.aduanStore.addAduan(this.currentParsedWaData);
+          this.closeAllModals();
+          this.updateKPIs();
+          this.renderTable();
+          this.renderMapLayers();
+
+          const recId = (record && record.id) ? record.id : (this.currentParsedWaData.id || '');
+          const recNama = (record && record.namaPelapor) ? record.namaPelapor : (this.currentParsedWaData.namaPelapor || '');
+          this.showToast(`🎉 Aduan ${recId} atas nama "${recNama}" berhasil dicatat ke sistem!`, 'success');
+        } finally {
+          this._isSavingWaImport = false;
+          if (btnSave) {
+            btnSave.disabled = false;
+            btnSave.innerHTML = '<span>💾</span> Simpan Aduan ke Database';
+          }
+        }
 
         // Focus & highlight baris di tabel jika ada
         setTimeout(() => {
