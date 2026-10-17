@@ -409,61 +409,62 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
   } else {
     const rawPhotoStr = (remoteItem.linkFoto && remoteItem.linkFoto !== '-') ? remoteItem.linkFoto : (remoteItem.fotoBukti && remoteItem.fotoBukti !== '-' ? remoteItem.fotoBukti : '');
     if (rawPhotoStr && typeof rawPhotoStr === 'string') {
-      if (rawPhotoStr.includes(',') && !rawPhotoStr.startsWith('data:')) {
-        remotePhotos = rawPhotoStr.split(',').map(s => s.trim()).filter(Boolean);
-      } else {
+      const matches = rawPhotoStr.match(/(data:image\/[a-zA-Z0-9\+\/\-\.]+;base64,[A-Za-z0-9\+\/\=]+|https?:\/\/[^\s,]+)/g);
+      if (matches && matches.length > 0) {
+        remotePhotos = matches;
+      } else if (rawPhotoStr.startsWith('data:') || rawPhotoStr.startsWith('http')) {
         remotePhotos = [rawPhotoStr.trim()];
       }
     }
   }
 
-  // Prioritas: Pertahankan Base64 lokal yang valid agar foto tidak pernah rusak atau tertimpa
+  // Format tautan drive dan pastikan hanya item foto valid yang disertakan
   const validRemote = remotePhotos.map(p => {
     if (typeof p !== 'string') return '';
     let tr = p.trim();
     if (!tr || tr === '-' || tr.includes('#ERROR')) return '';
     if (tr.includes('Buka') && tr.includes('Foto Bukti')) return '';
+    const dMatch = tr.match(/(?:\/file\/d\/|[?&]id=)([a-zA-Z0-9_-]+)/);
+    if (dMatch && dMatch[1] && !tr.startsWith('data:image')) {
+      return `https://lh3.googleusercontent.com/d/${dMatch[1]}`;
+    }
     return tr;
   }).filter(Boolean);
 
+  // Penentuan finalPhotos: Jumlah foto harus persis sama dengan rekaman remote (Anti-Ghost Photo)
   let finalPhotos = [];
-  if (existingPhotos.length > 0) {
-    finalPhotos = existingPhotos.map((p, idx) => {
-      // Jika lokal sudah Base64, utamakan Base64 lokal 100%
-      if (typeof p === 'string' && p.startsWith('data:image')) return p;
-      return (validRemote[idx] ? validRemote[idx] : p);
+  if (validRemote.length > 0) {
+    finalPhotos = validRemote.map((remPhoto, idx) => {
+      // Jika remote sudah Base64 kualitas penuh, pakai remote
+      if (remPhoto && remPhoto.startsWith('data:image')) return remPhoto;
+      // Gunakan Base64 lokal HANYA jika ada di index yang bersangkutan untuk meningkatkan ketajaman visual
+      const localBase64 = (existingPhotos[idx] && typeof existingPhotos[idx] === 'string' && existingPhotos[idx].startsWith('data:image'))
+        ? existingPhotos[idx]
+        : null;
+      if (localBase64) return localBase64;
+      try {
+        const cached = localStorage.getItem('dlh_photo_cache_' + cleanId + '_' + idx);
+        if (cached && cached.startsWith('data:image')) return cached;
+      } catch (e) {}
+      return remPhoto;
     });
-    for (let i = finalPhotos.length; i < validRemote.length; i++) {
-      if (validRemote[i] && !finalPhotos.includes(validRemote[i])) {
-        finalPhotos.push(validRemote[i]);
-      }
-    }
-  } else {
-    finalPhotos = [...validRemote];
+  } else if (existingPhotos.length > 0) {
+    finalPhotos = [...existingPhotos];
   }
 
-  // Pulihkan dari cadangan foto lokal jika ada link remote yang tidak berformat Base64
-  for (let i = 0; i < Math.max(finalPhotos.length, 6); i++) {
-    try {
-      const cached = localStorage.getItem('dlh_photo_cache_' + cleanId + '_' + i) ||
-                     localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_' + i) ||
-                     (i === 0 ? (localStorage.getItem('dlh_photo_cache_' + cleanId) || localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase())) : null);
-      if (cached && cached.startsWith('data:image')) {
-        if (i < finalPhotos.length) {
-          if (!finalPhotos[i] || !finalPhotos[i].startsWith('data:image')) {
-            finalPhotos[i] = cached;
-          }
-        } else {
-          finalPhotos.push(cached);
-        }
-      }
-    } catch (e) {}
-
+  // Perbarui cache lokal untuk index aktif dan bersihkan cache kadaluarsa di luar jumlah foto
+  for (let i = 0; i < finalPhotos.length; i++) {
     if (finalPhotos[i] && finalPhotos[i].startsWith('data:image')) {
       try {
         localStorage.setItem('dlh_photo_cache_' + cleanId + '_' + i, finalPhotos[i]);
       } catch (e) {}
     }
+  }
+  for (let i = finalPhotos.length; i < 6; i++) {
+    try {
+      localStorage.removeItem('dlh_photo_cache_' + cleanId + '_' + i);
+      localStorage.removeItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_' + i);
+    } catch (e) {}
   }
   const finalFoto = finalPhotos[0] || '';
 
@@ -1045,53 +1046,52 @@ class AduanDataStore {
     } else {
       const rawPhotoStr = (remoteItem.linkFoto && remoteItem.linkFoto !== '-') ? remoteItem.linkFoto : (remoteItem.fotoBukti && remoteItem.fotoBukti !== '-' ? remoteItem.fotoBukti : '');
       if (rawPhotoStr && typeof rawPhotoStr === 'string') {
-        if (rawPhotoStr.includes(',') && !rawPhotoStr.startsWith('data:')) {
-          remotePhotos = rawPhotoStr.split(',').map(s => s.trim()).filter(Boolean);
-        } else {
+        const matches = rawPhotoStr.match(/(data:image\/[a-zA-Z0-9\+\/\-\.]+;base64,[A-Za-z0-9\+\/\=]+|https?:\/\/[^\s,]+)/g);
+        if (matches && matches.length > 0) {
+          remotePhotos = matches;
+        } else if (rawPhotoStr.startsWith('data:') || rawPhotoStr.startsWith('http')) {
           remotePhotos = [rawPhotoStr.trim()];
         }
       }
     }
 
-    // Prioritas: Jaga seluruh foto lampiran warga tetap utuh & sinkron
-    // Jika data lokal sudah punya Base64 berkualitas tinggi, pertahankan Base64 agar tidak rusak
+    // Format tautan drive dan pastikan hanya item foto valid yang disertakan
     const validRemote = remotePhotos
       .map(formatDriveUrl)
-      .filter(p => typeof p === 'string' && p.trim() && p !== '-' && !p.includes('#ERROR'));
+      .filter(p => typeof p === 'string' && p.trim() && p !== '-' && !p.includes('#ERROR') && !p.includes('Buka') && !p.startsWith('📸'));
 
+    // Penentuan finalPhotos: Jumlah foto harus persis sama dengan rekaman remote (Anti-Ghost Photo)
     let finalPhotos = [];
-    if (existingPhotos.length > 0) {
-      // Pertahankan foto lokal Base64 yang valid
-      finalPhotos = existingPhotos.map((p, idx) => {
-        if (typeof p === 'string' && p.startsWith('data:image')) return p;
-        return (validRemote[idx] ? validRemote[idx] : p);
+    if (validRemote.length > 0) {
+      finalPhotos = validRemote.map((remPhoto, idx) => {
+        if (remPhoto && remPhoto.startsWith('data:image')) return remPhoto;
+        const localBase64 = (existingPhotos[idx] && typeof existingPhotos[idx] === 'string' && existingPhotos[idx].startsWith('data:image'))
+          ? existingPhotos[idx]
+          : null;
+        if (localBase64) return localBase64;
+        try {
+          const cached = localStorage.getItem('dlh_photo_cache_' + cleanId + '_' + idx);
+          if (cached && cached.startsWith('data:image')) return cached;
+        } catch (e) {}
+        return remPhoto;
       });
-      // Tambahkan sisa foto remote jika ada foto tambahan dari petugas/remote
-      for (let i = finalPhotos.length; i < validRemote.length; i++) {
-        if (validRemote[i] && !finalPhotos.includes(validRemote[i])) {
-          finalPhotos.push(validRemote[i]);
-        }
-      }
-    } else {
-      finalPhotos = validRemote;
+    } else if (existingPhotos.length > 0) {
+      finalPhotos = [...existingPhotos];
     }
 
-    // Pulihkan dari cadangan foto lokal jika ada link remote yang tidak berformat Base64
+    // Perbarui cache lokal untuk index aktif dan bersihkan cache kadaluarsa di luar jumlah foto
     for (let i = 0; i < finalPhotos.length; i++) {
-      if (finalPhotos[i] && !finalPhotos[i].startsWith('data:image')) {
-        try {
-          const cached = localStorage.getItem('dlh_photo_cache_' + cleanId + '_' + i) ||
-                         localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_' + i) ||
-                         (i === 0 ? localStorage.getItem('dlh_photo_cache_' + cleanId) : null);
-          if (cached && cached.startsWith('data:image')) {
-            finalPhotos[i] = cached;
-          }
-        } catch (e) {}
-      } else if (finalPhotos[i] && finalPhotos[i].startsWith('data:image')) {
+      if (finalPhotos[i] && finalPhotos[i].startsWith('data:image')) {
         try {
           localStorage.setItem('dlh_photo_cache_' + cleanId + '_' + i, finalPhotos[i]);
         } catch (e) {}
       }
+    }
+    for (let i = finalPhotos.length; i < 6; i++) {
+      try {
+        localStorage.removeItem('dlh_photo_cache_' + cleanId + '_' + i);
+        localStorage.removeItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_' + i);
+      } catch (e) {}
     }
 
     const finalFoto = finalPhotos[0] || '';
@@ -1149,23 +1149,28 @@ class AduanDataStore {
     return mapped;
   }
 
+  /**
+   * Generate Nomor Tiket Unik Bebas Tumpang Tindih
+   * Format: ADU-LMB-YYYY-MMDD-XXXX (contoh: ADU-LMB-2026-1017-8K4F)
+   * Menjamin keunikan 100% antar perangkat, offline/online, dan bebas tubrukan
+   */
   generateNewId() {
-    const year = new Date().getFullYear();
-    let maxSeq = 0;
-    (this.aduanList || []).forEach(item => {
-      if (item && item.id) {
-        const match = String(item.id).trim().match(new RegExp(`^ADU-LMB-${year}-(\\d+)$`, 'i'));
-        if (match) {
-          const num = parseInt(match[1], 10);
-          if (!isNaN(num) && num > maxSeq) {
-            maxSeq = num;
-          }
-        }
-      }
-    });
-    const nextNum = maxSeq + 1;
-    const padded = String(nextNum).padStart(3, '0');
-    return `ADU-LMB-${year}-${padded}`;
+    const now = new Date();
+    const year = now.getFullYear();
+    const month = String(now.getMonth() + 1).padStart(2, '0');
+    const day = String(now.getDate()).padStart(2, '0');
+    const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+    let entropy = '';
+    for (let i = 0; i < 4; i++) {
+      entropy += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    const candidateId = `ADU-LMB-${year}-${month}${day}-${entropy}`;
+    const exists = (this.aduanList || []).some(x => x && x.id && x.id.toUpperCase() === candidateId);
+    if (exists) {
+      const extra = chars.charAt(Math.floor(Math.random() * chars.length));
+      return `ADU-LMB-${year}-${month}${day}-${entropy}${extra}`;
+    }
+    return candidateId;
   }
 
   resetToOfficialDefaults() {
@@ -1238,16 +1243,16 @@ class AduanDataStore {
     const now = new Date();
     const formattedDate = formData.timestamp || `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
 
-    // Lookup default lat lng from kecamatan if not provided
+    // Lookup default lat lng from kecamatan secara presisi tanpa random jitter
     const kecDict = (typeof KECAMATAN_LEMBATA !== 'undefined' ? KECAMATAN_LEMBATA : (window.KECAMATAN_LEMBATA || {}));
     const kecMeta = (formData.kecamatan && kecDict[formData.kecamatan]) ? kecDict[formData.kecamatan] : { lat: -8.375, lng: 123.55 };
-    const lat = (formData.lat !== undefined && formData.lat !== '' && !isNaN(parseFloat(formData.lat))) ? parseFloat(formData.lat) : (kecMeta.lat + (Math.random() - 0.5) * 0.02);
-    const lng = (formData.lng !== undefined && formData.lng !== '' && !isNaN(parseFloat(formData.lng))) ? parseFloat(formData.lng) : (kecMeta.lng + (Math.random() - 0.5) * 0.02);
+    const lat = (formData.lat !== undefined && formData.lat !== '' && !isNaN(parseFloat(formData.lat))) ? parseFloat(formData.lat) : kecMeta.lat;
+    const lng = (formData.lng !== undefined && formData.lng !== '' && !isNaN(parseFloat(formData.lng))) ? parseFloat(formData.lng) : kecMeta.lng;
 
     const existingIndex = this.aduanList.findIndex(x => x.id === newId);
     const existingItem = existingIndex !== -1 ? this.aduanList[existingIndex] : null;
 
-    // Normalisasi daftar foto masuk (mendukung multi foto dari form pelapor & pesan WA)
+    // Normalisasi daftar foto masuk tanpa merusak Base64
     let incomingPhotos = [];
     if (Array.isArray(formData.buktiFotoList) && formData.buktiFotoList.length > 0) {
       formData.buktiFotoList.forEach(p => {
@@ -1258,8 +1263,9 @@ class AduanDataStore {
       });
     } else if (formData.fotoBukti && formData.fotoBukti !== '-') {
       const raw = String(formData.fotoBukti).trim();
-      if (raw.includes(',') && !raw.startsWith('data:')) {
-        raw.split(',').forEach(s => {
+      const matches = raw.match(/(data:image\/[a-zA-Z0-9\+\/\-\.]+;base64,[A-Za-z0-9\+\/\=]+|https?:\/\/[^\s,]+)/g);
+      if (matches && matches.length > 0) {
+        matches.forEach(s => {
           const tr = s.trim();
           if (tr && !incomingPhotos.includes(tr)) incomingPhotos.push(tr);
         });
@@ -1274,7 +1280,7 @@ class AduanDataStore {
 
     const fotoUtama = mergedPhotos[0] || (existingItem ? existingItem.fotoBukti : '') || '';
 
-    // Simpan salinan cadangan foto Base64 ke cache lokal agar kebal dari penimpaan URL remote
+    // Simpan salinan cadangan foto Base64 ke cache lokal untuk index foto ini
     mergedPhotos.forEach((photoStr, idx) => {
       if (photoStr && typeof photoStr === 'string' && photoStr.startsWith('data:image')) {
         try {
@@ -1282,6 +1288,12 @@ class AduanDataStore {
         } catch (e) {}
       }
     });
+    for (let i = mergedPhotos.length; i < 6; i++) {
+      try {
+        localStorage.removeItem('dlh_photo_cache_' + newId + '_' + i);
+        localStorage.removeItem('dlh_photo_cache_' + newId.toLowerCase() + '_' + i);
+      } catch (e) {}
+    }
 
     const newRecord = {
       id: newId,

@@ -4015,21 +4015,37 @@
               placeholder="Contoh: Tepi pantai dekat dermaga jeti / samping pasar ikan / aliran kali">
           </div>
 
-          <!-- GPS Detection Feature -->
-          <div class="gps-box">
-            <button type="button" class="btn-gps" id="btnDetectGps">
-              📍 Dapatkan Titik Lokasi GPS Saya Saat Ini
-            </button>
-            <div id="gpsStatusMessage" class="gps-status-msg"></div>
+          <!-- GPS Detection & Interactive Pin Location Map -->
+          <div class="gps-box" style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 14px; margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+              <div>
+                <strong style="color: #14532d; font-size: 0.9rem;">📍 Titik Lokasi &amp; Pin Presisi GPS</strong>
+                <p style="font-size: 0.76rem; color: #166534; margin: 2px 0 0 0;">Dapatkan koordinat satelit otomatis atau geser pin di peta untuk ketepatan maksimal.</p>
+              </div>
+              <button type="button" class="btn-gps" id="btnDetectGps" style="padding: 9px 16px; font-size: 0.84rem; font-weight: 700; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                <span>🎯</span> Kunci GPS Presisi Tinggi
+              </button>
+            </div>
+            
+            <div id="gpsStatusMessage" class="gps-status-msg" style="margin-bottom: 10px; font-size: 0.82rem; font-weight: 600;"></div>
+
+            <!-- Mini Interactive Map Pin Picker -->
+            <div id="citizenPinPickerContainer" style="position: relative; width: 100%; height: 260px; border-radius: 10px; overflow: hidden; border: 2px solid #059669; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+              <div id="citizenPinMap" style="width: 100%; height: 100%;"></div>
+              <div style="position: absolute; bottom: 8px; left: 8px; right: 8px; z-index: 1000; background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(4px); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 0.74rem; display: flex; justify-content: space-between; align-items: center;">
+                <span>💡 <strong>Tips:</strong> Geser pin merah atau ketuk peta untuk memindahkan titik lokasi</span>
+                <span id="pinCoordsBadge" style="font-family: monospace; font-weight: 700; color: #34d399;">-8.368200, 123.558300</span>
+              </div>
+            </div>
           </div>
 
           <div class="form-row-2 coords-row" style="margin-bottom: 20px;">
             <div class="form-field">
-              <label class="field-label" style="font-size: 0.8rem; color: #64748b;">Latitude (Otomatis)</label>
+              <label class="field-label" style="font-size: 0.8rem; color: #64748b;">Latitude (Koordinat Presisi)</label>
               <input type="number" step="any" id="inputLat" class="input-text input-sm" placeholder="-8.368">
             </div>
             <div class="form-field">
-              <label class="field-label" style="font-size: 0.8rem; color: #64748b;">Longitude (Otomatis)</label>
+              <label class="field-label" style="font-size: 0.8rem; color: #64748b;">Longitude (Koordinat Presisi)</label>
               <input type="number" step="any" id="inputLng" class="input-text input-sm" placeholder="123.558">
             </div>
           </div>
@@ -4501,29 +4517,52 @@
   <!-- ===================================================================
        MODAL LIGHTBOX: LIHAT BUKTI FOTO UKURAN PENUH & ZOOM
        =================================================================== -->
-  <div class="modal-backdrop modal-lightbox" id="modalPhotoLightbox" style="z-index: 99999; background: rgba(11, 17, 32, 0.95); backdrop-filter: blur(8px);">
-    <div style="position: relative; width: 100%; max-width: 920px; height: 92vh; margin: auto; display: flex; flex-direction: column; padding: 12px; box-sizing: border-box;">
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: rgba(15, 23, 42, 0.85); border-radius: 12px; margin-bottom: 10px; border: 1px solid rgba(255,255,255,0.12);">
-        <div style="color: #f8fafc; font-weight: 700; font-size: 0.92rem; display: flex; align-items: center; gap: 8px;">
+  <!-- ===================================================================
+       MODAL LIGHTBOX: LIHAT BUKTI FOTO UKURAN PENUH & ZOOM
+       =================================================================== -->
+  <div class="modal-backdrop modal-lightbox" id="modalPhotoLightbox" style="z-index: 99999; background: rgba(11, 17, 32, 0.96); backdrop-filter: blur(10px);">
+    <div style="position: relative; width: 100%; max-width: 980px; height: 92vh; margin: auto; display: flex; flex-direction: column; padding: 12px; box-sizing: border-box;">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: rgba(15, 23, 42, 0.9); border-radius: 12px; margin-bottom: 10px; border: 1.5px solid rgba(255,255,255,0.15); box-shadow: 0 8px 24px rgba(0,0,0,0.5); flex-wrap: wrap; gap: 8px;">
+        <div style="color: #f8fafc; font-weight: 800; font-size: 0.92rem; display: flex; align-items: center; gap: 8px;">
           <span>📸</span> <span id="lightboxPhotoCaption">Bukti Foto Aduan Lingkungan</span>
         </div>
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <button type="button" onclick="window.app && window.app.openPhotoInNewWindow()" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600;">
+        <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+          <!-- Kontrol Zoom Presisi -->
+          <div style="display: inline-flex; align-items: center; background: rgba(255,255,255,0.12); border-radius: 8px; padding: 2px 4px; border: 1px solid rgba(255,255,255,0.2);">
+            <button type="button" id="btnLightboxZoomOut" title="Perkecil (Zoom Out)" style="background: transparent; color: #fff; border: none; width: 28px; height: 28px; cursor: pointer; font-size: 1.1rem; font-weight: 800; border-radius: 4px; display: flex; align-items: center; justify-content: center;">−</button>
+            <span id="lightboxZoomLevel" style="font-size: 0.76rem; font-weight: 800; color: #34d399; min-width: 44px; text-align: center; font-family: monospace;">100%</span>
+            <button type="button" id="btnLightboxZoomIn" title="Perbesar (Zoom In)" style="background: transparent; color: #fff; border: none; width: 28px; height: 28px; cursor: pointer; font-size: 1.1rem; font-weight: 800; border-radius: 4px; display: flex; align-items: center; justify-content: center;">+</button>
+            <button type="button" id="btnLightboxZoomReset" title="Reset Ukuran (100%)" style="background: rgba(255,255,255,0.1); color: #cbd5e1; border: none; padding: 3px 6px; cursor: pointer; font-size: 0.72rem; font-weight: 700; border-radius: 4px; margin-left: 2px;">↺ 1:1</button>
+          </div>
+
+          <!-- Navigasi Multi-Foto (Jika ada lebih dari 1 foto) -->
+          <div id="lightboxNavControls" style="display: none; align-items: center; gap: 4px;">
+            <button type="button" id="btnLightboxPrev" title="Foto Sebelumnya (◀)" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center;">◀</button>
+            <span id="lightboxPhotoCounter" style="font-size: 0.74rem; font-weight: 700; color: #e2e8f0; padding: 0 4px; font-family: monospace;">1/1</span>
+            <button type="button" id="btnLightboxNext" title="Foto Berikutnya (▶)" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center;">▶</button>
+          </div>
+
+          <button type="button" onclick="window.app && window.app.openPhotoInNewWindow()" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600;">
             ↗ Tab Baru
           </button>
-          <button type="button" onclick="window.app && window.app.downloadCurrentPhoto()" style="background: #059669; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.8rem; font-weight: 600;">
+          <button type="button" onclick="window.app && window.app.downloadCurrentPhoto()" style="background: #059669; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600;">
             ⬇️ Unduh
           </button>
-          <button type="button" onclick="window.app && window.app.closeLightbox()" style="background: #ef4444; color: #fff; border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 1.2rem; line-height: 1; display: flex; align-items: center; justify-content: center;">
+          <button type="button" onclick="window.app && window.app.closeLightbox()" style="background: #ef4444; color: #fff; border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 1.3rem; line-height: 1; display: flex; align-items: center; justify-content: center; font-weight: 800;">
             &times;
           </button>
         </div>
       </div>
-      <div style="flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; background: rgba(0,0,0,0.6); border-radius: 12px; border: 1px solid rgba(255,255,255,0.08); position: relative; padding: 10px;" onclick="window.app && window.app.closeLightbox()">
-        <img id="lightboxPhotoImg" src="" alt="Bukti Foto Penuh" style="max-width: 100%; max-height: 100%; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); cursor: zoom-in; transition: transform 0.2s;" onclick="event.stopPropagation(); window.app && window.app.toggleZoomPhoto(this)">
+
+      <!-- Viewport Gambar Interaktif dengan Pan & Zoom -->
+      <div id="lightboxViewport" style="flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #020617; border-radius: 12px; border: 1.5px solid rgba(255,255,255,0.1); position: relative; user-select: none; touch-action: none; cursor: default;">
+        <div id="lightboxTransformContainer" style="position: absolute; transform-origin: center center; will-change: transform; transition: transform 0.08s ease-out; display: flex; align-items: center; justify-content: center;">
+          <img id="lightboxPhotoImg" src="" alt="Bukti Foto Penuh" style="max-width: 88vw; max-height: 72vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.85); pointer-events: auto; user-select: none; -webkit-user-drag: none;">
+        </div>
       </div>
-      <div style="text-align: center; color: #94a3b8; font-size: 0.75rem; margin-top: 8px;">
-        💡 Klik gambar untuk memperbesar (Zoom In / Out) &bull; Klik area gelap atau tombol &times; untuk menutup
+      <div style="display: flex; justify-content: space-between; align-items: center; color: #94a3b8; font-size: 0.74rem; margin-top: 8px; padding: 0 4px; flex-wrap: wrap; gap: 4px;">
+        <span>🔍 Scroll mouse atau gunakan tombol <strong>+ / −</strong> untuk zoom &bull; Klik &amp; geser gambar untuk menggeser (Pan)</span>
+        <span>💡 Dobel-klik untuk zoom cepat 2×</span>
       </div>
     </div>
   </div>

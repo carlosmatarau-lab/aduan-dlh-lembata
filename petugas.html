@@ -2834,31 +2834,51 @@
   </div>
 
   <!-- ===================================================================
-       MODAL LIGHTBOX: LIHAT BUKTI FOTO UKURAN PENUH & ZOOM
+       MODAL LIGHTBOX: LIHAT BUKTI FOTO UKURAN PENUH & ZOOM INTERAKTIF
        =================================================================== -->
-  <div class="modal-backdrop modal-lightbox" id="modalPhotoLightbox" style="z-index: 999999; background: rgba(11, 17, 32, 0.96); backdrop-filter: blur(8px);">
-    <div style="position: relative; width: 100%; max-width: 960px; max-height: 94vh; margin: auto; display: flex; flex-direction: column; padding: 12px; box-sizing: border-box;">
-      <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 18px; background: #1e293b; border-radius: 12px; margin-bottom: 12px; border: 1.5px solid #334155; box-shadow: 0 4px 12px rgba(0,0,0,0.4);">
-        <div style="color: #f8fafc; font-weight: 800; font-size: 0.98rem; display: flex; align-items: center; gap: 8px;">
+  <div class="modal-backdrop modal-lightbox" id="modalPhotoLightbox" style="z-index: 999999; background: rgba(11, 17, 32, 0.96); backdrop-filter: blur(10px);">
+    <div style="position: relative; width: 100%; max-width: 980px; height: 92vh; margin: auto; display: flex; flex-direction: column; padding: 12px; box-sizing: border-box;">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: rgba(15, 23, 42, 0.9); border-radius: 12px; margin-bottom: 10px; border: 1.5px solid rgba(255,255,255,0.15); box-shadow: 0 8px 24px rgba(0,0,0,0.5); flex-wrap: wrap; gap: 8px;">
+        <div style="color: #f8fafc; font-weight: 800; font-size: 0.92rem; display: flex; align-items: center; gap: 8px;">
           <span>📸</span> <span id="lightboxPhotoCaption">Bukti Foto Aduan Lingkungan</span>
         </div>
-        <div style="display: flex; gap: 8px; align-items: center;">
-          <button type="button" onclick="window.portal && window.portal.openPhotoInNewWindow()" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 0.82rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
-            <span>↗</span> Tab Baru
+        <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+          <!-- Kontrol Zoom Presisi -->
+          <div style="display: inline-flex; align-items: center; background: rgba(255,255,255,0.12); border-radius: 8px; padding: 2px 4px; border: 1px solid rgba(255,255,255,0.2);">
+            <button type="button" id="btnLightboxZoomOut" title="Perkecil (Zoom Out)" style="background: transparent; color: #fff; border: none; width: 28px; height: 28px; cursor: pointer; font-size: 1.1rem; font-weight: 800; border-radius: 4px; display: flex; align-items: center; justify-content: center;">−</button>
+            <span id="lightboxZoomLevel" style="font-size: 0.76rem; font-weight: 800; color: #34d399; min-width: 44px; text-align: center; font-family: monospace;">100%</span>
+            <button type="button" id="btnLightboxZoomIn" title="Perbesar (Zoom In)" style="background: transparent; color: #fff; border: none; width: 28px; height: 28px; cursor: pointer; font-size: 1.1rem; font-weight: 800; border-radius: 4px; display: flex; align-items: center; justify-content: center;">+</button>
+            <button type="button" id="btnLightboxZoomReset" title="Reset Ukuran (100%)" style="background: rgba(255,255,255,0.1); color: #cbd5e1; border: none; padding: 3px 6px; cursor: pointer; font-size: 0.72rem; font-weight: 700; border-radius: 4px; margin-left: 2px;">↺ 1:1</button>
+          </div>
+
+          <!-- Navigasi Multi-Foto -->
+          <div id="lightboxNavControls" style="display: none; align-items: center; gap: 4px;">
+            <button type="button" id="btnLightboxPrev" title="Foto Sebelumnya (◀)" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center;">◀</button>
+            <span id="lightboxPhotoCounter" style="font-size: 0.74rem; font-weight: 700; color: #e2e8f0; padding: 0 4px; font-family: monospace;">1/1</span>
+            <button type="button" id="btnLightboxNext" title="Foto Berikutnya (▶)" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center;">▶</button>
+          </div>
+
+          <button type="button" onclick="window.portal && window.portal.openPhotoInNewWindow()" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600;">
+            ↗ Tab Baru
           </button>
-          <button type="button" onclick="window.portal && window.portal.downloadCurrentPhoto()" style="background: #059669; color: #fff; border: none; padding: 7px 14px; border-radius: 8px; cursor: pointer; font-size: 0.82rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
-            <span>⬇️</span> Unduh Foto
+          <button type="button" onclick="window.portal && window.portal.downloadCurrentPhoto()" style="background: #059669; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600;">
+            ⬇️ Unduh
           </button>
-          <button type="button" onclick="window.portal && window.portal.closeLightbox()" style="background: #ef4444; color: #fff; border: none; width: 34px; height: 34px; border-radius: 8px; cursor: pointer; font-size: 1.3rem; line-height: 1; display: flex; align-items: center; justify-content: center; font-weight: 800;">
+          <button type="button" onclick="window.portal && window.portal.closeLightbox()" style="background: #ef4444; color: #fff; border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 1.3rem; line-height: 1; display: flex; align-items: center; justify-content: center; font-weight: 800;">
             &times;
           </button>
         </div>
       </div>
-      <div style="flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #020617; border-radius: 12px; border: 1.5px solid #334155; position: relative; padding: 14px; min-height: 400px;" onclick="window.portal && window.portal.closeLightbox()">
-        <img id="lightboxPhotoImg" src="" alt="Bukti Foto Penuh" style="max-width: 100%; max-height: 75vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.8); cursor: zoom-in; transition: transform 0.2s;" onclick="event.stopPropagation(); window.portal && window.portal.toggleZoomPhoto(this)">
+
+      <!-- Viewport Gambar Interaktif dengan Pan & Zoom -->
+      <div id="lightboxViewport" style="flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #020617; border-radius: 12px; border: 1.5px solid rgba(255,255,255,0.1); position: relative; user-select: none; touch-action: none; cursor: default;">
+        <div id="lightboxTransformContainer" style="position: absolute; transform-origin: center center; will-change: transform; transition: transform 0.08s ease-out; display: flex; align-items: center; justify-content: center;">
+          <img id="lightboxPhotoImg" src="" alt="Bukti Foto Penuh" style="max-width: 88vw; max-height: 72vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.85); pointer-events: auto; user-select: none; -webkit-user-drag: none;">
+        </div>
       </div>
-      <div style="text-align: center; color: #94a3b8; font-size: 0.78rem; margin-top: 10px;">
-        💡 Klik gambar untuk memperbesar (Zoom In / Out) &bull; Klik area gelap atau tombol &times; untuk menutup
+      <div style="display: flex; justify-content: space-between; align-items: center; color: #94a3b8; font-size: 0.74rem; margin-top: 8px; padding: 0 4px; flex-wrap: wrap; gap: 4px;">
+        <span>🔍 Scroll mouse atau gunakan tombol <strong>+ / −</strong> untuk zoom &bull; Klik &amp; geser gambar untuk menggeser (Pan)</span>
+        <span>💡 Dobel-klik untuk zoom cepat 2× &bull; Tombol Esc untuk keluar</span>
       </div>
     </div>
   </div>
@@ -3758,19 +3778,15 @@
           });
         }
 
-        // Periksa jika ada foto tersimpan di cache lokal yang belum masuk ke citizenPhotos
-        for (let cIdx = 0; cIdx < 5; cIdx++) {
+        // Sinkronkan cache lokal HANYA untuk indeks foto yang memang valid (TIDAK menyisipkan foto hantu/lama)
+        for (let cIdx = 0; cIdx < citizenPhotos.length; cIdx++) {
           try {
             const cVal = localStorage.getItem('dlh_photo_cache_' + cleanAduanId + '_' + cIdx) ||
                          localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + cIdx) ||
                          (cIdx === 0 ? (localStorage.getItem('dlh_photo_cache_' + cleanAduanId) || localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase())) : null);
             if (cVal && cVal.startsWith('data:image')) {
-              if (cIdx < citizenPhotos.length) {
-                if (!citizenPhotos[cIdx] || !citizenPhotos[cIdx].startsWith('data:image')) {
-                  citizenPhotos[cIdx] = cVal;
-                }
-              } else {
-                citizenPhotos.push(cVal);
+              if (!citizenPhotos[cIdx] || !citizenPhotos[cIdx].startsWith('data:image')) {
+                citizenPhotos[cIdx] = cVal;
               }
             }
           } catch (e) {}
@@ -4092,37 +4108,243 @@
       }
 
       openLightboxByIndex(type, index) {
-        const list = (type === 'officer') ? (this._currentOfficerPhotos || []) : (this._currentCitizenPhotos || []);
-        let src = list[index];
+        const rawList = (type === 'officer') ? (this._currentOfficerPhotos || []) : (this._currentCitizenPhotos || []);
         const cleanAduanId = (this._currentModalItem && this._currentModalItem.id) ? String(this._currentModalItem.id).trim().toUpperCase() : '';
-        const domId = (type === 'officer') ? `imgPetugasOfficer_${cleanAduanId}_${index}` : `imgPetugasCitizen_${cleanAduanId}_${index}`;
-        const el = document.getElementById(domId);
-        if (el && el.src && el.style.display !== 'none') {
-          src = el.src;
-        }
-        if (!src) return;
-        const caption = (type === 'officer' ? 'Dokumentasi Petugas' : 'Bukti Foto Pelapor') + ' #' + (index + 1) + (this._currentModalItem ? ' • ' + this._currentModalItem.id : '');
-        this.openLightbox(src, caption);
+        
+        // Buat daftar URL foto yang sudah terformat dan terhubung dengan elemen DOM jika ada
+        const resolvedList = rawList.map((raw, i) => {
+          const domId = (type === 'officer') ? `imgPetugasOfficer_${cleanAduanId}_${i}` : `imgPetugasCitizen_${cleanAduanId}_${i}`;
+          const el = document.getElementById(domId);
+          if (el && el.src && el.style.display !== 'none' && !el.src.includes('error-placeholder')) {
+            return el.src;
+          }
+          return this.formatPhotoUrl(raw) || raw;
+        }).filter(Boolean);
+
+        const safeIndex = Math.max(0, Math.min(index, resolvedList.length - 1));
+        const currentSrc = resolvedList[safeIndex] || '';
+        const baseCaption = (type === 'officer' ? 'Dokumentasi Petugas' : 'Bukti Foto Pelapor') + (this._currentModalItem ? ' • ' + this._currentModalItem.id : '');
+        
+        this.openLightbox(currentSrc, baseCaption, resolvedList, safeIndex);
       }
 
-      openLightbox(src, caption = 'Bukti Foto Aduan Lingkungan') {
+      openLightbox(src, caption = 'Bukti Foto Aduan Lingkungan', photoList = [], activeIndex = 0) {
         this.currentLightboxSrc = src;
         this.currentLightboxCaption = caption;
+        this.lightboxPhotos = (Array.isArray(photoList) && photoList.length > 0) ? photoList : [src];
+        this.lightboxCurrentIndex = Math.max(0, Math.min(activeIndex, this.lightboxPhotos.length - 1));
+
+        this.lightboxScale = 1;
+        this.lightboxTranslateX = 0;
+        this.lightboxTranslateY = 0;
+        this.isPanningLightbox = false;
+
         const modal = document.getElementById('modalPhotoLightbox');
         const img = document.getElementById('lightboxPhotoImg');
         const cap = document.getElementById('lightboxPhotoCaption');
+        const counter = document.getElementById('lightboxPhotoCounter');
+        const navControls = document.getElementById('lightboxNavControls');
+
         if (img) {
           img.referrerPolicy = 'no-referrer';
-          img.src = this.formatPhotoUrl(src) || src;
-          img.style.transform = 'scale(1)';
-          img.style.cursor = 'zoom-in';
+          img.src = this.formatPhotoUrl(this.lightboxPhotos[this.lightboxCurrentIndex]) || this.lightboxPhotos[this.lightboxCurrentIndex];
         }
-        if (cap) cap.textContent = caption;
+
+        if (cap) {
+          const numLabel = this.lightboxPhotos.length > 1 ? ` #${this.lightboxCurrentIndex + 1}` : '';
+          cap.textContent = `${caption}${numLabel}`;
+        }
+
+        if (counter) {
+          counter.textContent = `${this.lightboxCurrentIndex + 1}/${this.lightboxPhotos.length}`;
+        }
+
+        if (navControls) {
+          navControls.style.display = this.lightboxPhotos.length > 1 ? 'inline-flex' : 'none';
+        }
+
+        this.updateLightboxTransform();
+
         if (modal) {
           modal.style.zIndex = '999999';
           modal.style.display = 'flex';
           modal.classList.add('show');
         }
+
+        this.setupLightboxInteractions();
+      }
+
+      updateLightboxTransform() {
+        const container = document.getElementById('lightboxTransformContainer');
+        const zoomBadge = document.getElementById('lightboxZoomLevel');
+        const viewport = document.getElementById('lightboxViewport');
+
+        if (container) {
+          container.style.transform = `translate(${this.lightboxTranslateX}px, ${this.lightboxTranslateY}px) scale(${this.lightboxScale})`;
+        }
+        if (zoomBadge) {
+          zoomBadge.textContent = `${Math.round(this.lightboxScale * 100)}%`;
+        }
+        if (viewport) {
+          if (this.lightboxScale > 1) {
+            viewport.style.cursor = this.isPanningLightbox ? 'grabbing' : 'grab';
+          } else {
+            viewport.style.cursor = 'default';
+          }
+        }
+      }
+
+      zoomInLightbox(step = 0.25) {
+        this.lightboxScale = Math.min(5, Number((this.lightboxScale + step).toFixed(2)));
+        this.updateLightboxTransform();
+      }
+
+      zoomOutLightbox(step = 0.25) {
+        this.lightboxScale = Math.max(0.5, Number((this.lightboxScale - step).toFixed(2)));
+        if (this.lightboxScale <= 1) {
+          this.lightboxTranslateX = 0;
+          this.lightboxTranslateY = 0;
+        }
+        this.updateLightboxTransform();
+      }
+
+      resetZoomLightbox() {
+        this.lightboxScale = 1;
+        this.lightboxTranslateX = 0;
+        this.lightboxTranslateY = 0;
+        this.updateLightboxTransform();
+      }
+
+      nextLightboxPhoto() {
+        if (!this.lightboxPhotos || this.lightboxPhotos.length <= 1) return;
+        this.lightboxCurrentIndex = (this.lightboxCurrentIndex + 1) % this.lightboxPhotos.length;
+        this.displayCurrentLightboxPhoto();
+      }
+
+      prevLightboxPhoto() {
+        if (!this.lightboxPhotos || this.lightboxPhotos.length <= 1) return;
+        this.lightboxCurrentIndex = (this.lightboxCurrentIndex - 1 + this.lightboxPhotos.length) % this.lightboxPhotos.length;
+        this.displayCurrentLightboxPhoto();
+      }
+
+      displayCurrentLightboxPhoto() {
+        const img = document.getElementById('lightboxPhotoImg');
+        const cap = document.getElementById('lightboxPhotoCaption');
+        const counter = document.getElementById('lightboxPhotoCounter');
+
+        this.currentLightboxSrc = this.lightboxPhotos[this.lightboxCurrentIndex];
+        if (img) {
+          img.src = this.formatPhotoUrl(this.currentLightboxSrc) || this.currentLightboxSrc;
+        }
+        if (counter) {
+          counter.textContent = `${this.lightboxCurrentIndex + 1}/${this.lightboxPhotos.length}`;
+        }
+        if (cap) {
+          const baseCap = (this.currentLightboxCaption || 'Bukti Foto').replace(/\s*#\d+.*$/, '');
+          const idInfo = this._currentModalItem ? ` • ${this._currentModalItem.id}` : '';
+          cap.textContent = `${baseCap} #${this.lightboxCurrentIndex + 1}${idInfo}`;
+        }
+        this.resetZoomLightbox();
+      }
+
+      setupLightboxInteractions() {
+        if (this._lightboxListenersBound) return;
+        this._lightboxListenersBound = true;
+
+        const btnZoomIn = document.getElementById('btnLightboxZoomIn');
+        const btnZoomOut = document.getElementById('btnLightboxZoomOut');
+        const btnReset = document.getElementById('btnLightboxZoomReset');
+        const btnPrev = document.getElementById('btnLightboxPrev');
+        const btnNext = document.getElementById('btnLightboxNext');
+        const viewport = document.getElementById('lightboxViewport');
+        const img = document.getElementById('lightboxPhotoImg');
+
+        if (btnZoomIn) btnZoomIn.onclick = () => this.zoomInLightbox();
+        if (btnZoomOut) btnZoomOut.onclick = () => this.zoomOutLightbox();
+        if (btnReset) btnReset.onclick = () => this.resetZoomLightbox();
+        if (btnPrev) btnPrev.onclick = () => this.prevLightboxPhoto();
+        if (btnNext) btnNext.onclick = () => this.nextLightboxPhoto();
+
+        // Dobel klik untuk zoom cepat 2.5x atau reset 1x
+        if (img) {
+          img.ondblclick = (e) => {
+            e.stopPropagation();
+            if (this.lightboxScale > 1) {
+              this.resetZoomLightbox();
+            } else {
+              this.lightboxScale = 2.5;
+              this.updateLightboxTransform();
+            }
+          };
+        }
+
+        // Roda mouse untuk zoom halus
+        if (viewport) {
+          viewport.onwheel = (e) => {
+            e.preventDefault();
+            const delta = e.deltaY < 0 ? 0.25 : -0.25;
+            if (delta > 0) {
+              this.zoomInLightbox(0.2);
+            } else {
+              this.zoomOutLightbox(0.2);
+            }
+          };
+
+          // Drag / Pan interaktif (Pointer Events untuk mouse & touch)
+          let startX = 0, startY = 0;
+          let initialTranslateX = 0, initialTranslateY = 0;
+
+          viewport.onpointerdown = (e) => {
+            if (this.lightboxScale <= 1) return;
+            this.isPanningLightbox = true;
+            startX = e.clientX;
+            startY = e.clientY;
+            initialTranslateX = this.lightboxTranslateX;
+            initialTranslateY = this.lightboxTranslateY;
+            viewport.setPointerCapture(e.pointerId);
+            this.updateLightboxTransform();
+          };
+
+          viewport.onpointermove = (e) => {
+            if (!this.isPanningLightbox) return;
+            const dx = e.clientX - startX;
+            const dy = e.clientY - startY;
+            this.lightboxTranslateX = initialTranslateX + dx;
+            this.lightboxTranslateY = initialTranslateY + dy;
+            this.updateLightboxTransform();
+          };
+
+          const endPan = (e) => {
+            if (this.isPanningLightbox) {
+              this.isPanningLightbox = false;
+              try { viewport.releasePointerCapture(e.pointerId); } catch(err) {}
+              this.updateLightboxTransform();
+            }
+          };
+
+          viewport.onpointerup = endPan;
+          viewport.onpointercancel = endPan;
+        }
+
+        // Keyboard navigation (Esc, +, -, Panah Kiri, Panah Kanan)
+        window.addEventListener('keydown', (e) => {
+          const modal = document.getElementById('modalPhotoLightbox');
+          if (!modal || !modal.classList.contains('show')) return;
+
+          if (e.key === 'Escape') {
+            this.closeLightbox();
+          } else if (e.key === 'ArrowRight') {
+            this.nextLightboxPhoto();
+          } else if (e.key === 'ArrowLeft') {
+            this.prevLightboxPhoto();
+          } else if (e.key === '+' || e.key === '=') {
+            this.zoomInLightbox();
+          } else if (e.key === '-' || e.key === '_') {
+            this.zoomOutLightbox();
+          } else if (e.key === '0') {
+            this.resetZoomLightbox();
+          }
+        });
       }
 
       closeLightbox() {
@@ -4131,16 +4353,15 @@
           modal.classList.remove('show');
           modal.style.display = 'none';
         }
+        this.resetZoomLightbox();
       }
 
       toggleZoomPhoto(imgElem) {
-        if (!imgElem) return;
-        if (imgElem.style.transform === 'scale(1.8)') {
-          imgElem.style.transform = 'scale(1)';
-          imgElem.style.cursor = 'zoom-in';
+        if (this.lightboxScale > 1) {
+          this.resetZoomLightbox();
         } else {
-          imgElem.style.transform = 'scale(1.8)';
-          imgElem.style.cursor = 'zoom-out';
+          this.lightboxScale = 2;
+          this.updateLightboxTransform();
         }
       }
 
@@ -4785,15 +5006,15 @@
         // Helper regex extraction
         const clean = (val) => (val || '').replace(/[\*\_]/g, '').trim();
 
-        // 1. Ekstrak Nomor Register (misal ADU-LMB-2026-480)
+        // 1. Ekstrak Nomor Register (misal ADU-LMB-2026-1017-8K4F atau ADU-LMB-2026-480)
         let id = '';
-        const matchId = raw.match(/NOMOR\s+REGISTER:\s*([A-Za-z0-9\-]+)/i) || raw.match(/(ADU-LMB-\d{4}-\d+)/i);
+        const matchId = raw.match(/NOMOR\s+REGISTER:\s*([A-Za-z0-9\-]+)/i) || raw.match(/(ADU-LMB-[A-Za-z0-9\-]+)/i);
         if (matchId && matchId[1]) {
           id = clean(matchId[1]).toUpperCase();
         } else {
           id = (window.aduanStore && typeof window.aduanStore.generateNewId === 'function')
             ? window.aduanStore.generateNewId()
-            : `ADU-LMB-${new Date().getFullYear()}-009`;
+            : `ADU-LMB-${new Date().getFullYear()}-${Date.now().toString(36).toUpperCase()}`;
         }
 
         // 2. Ekstrak Nama Pelapor
@@ -4832,11 +5053,14 @@
         const matchLok = raw.match(/Patokan\s+Lokasi\s+Detail:\s*([^\n\r]+)/i) || raw.match(/Lokasi\s+Detail:\s*([^\n\r]+)/i);
         if (matchLok && matchLok[1]) lokasiDetail = clean(matchLok[1]);
 
-        // 8. Ekstrak Titik Koordinat GPS
+        // 8. Ekstrak Titik Koordinat GPS (Dukungan URL Google Maps & Titik Satelit Presisi)
         let lat = null;
         let lng = null;
-        const matchGps = raw.match(/Titik\s+Koordinat\s+GPS:\s*(-?[0-9\.]+)\s*,\s*([0-9\.]+)/i) ||
-                         raw.match(/maps\.google\.com\/\?q=(-?[0-9\.]+),([0-9\.]+)/i);
+        const matchGps = raw.match(/Titik\s+Koordinat(?:\s+GPS)?:\s*(-?[0-9\.]+)\s*,\s*([0-9\.]+)/i) ||
+                         raw.match(/maps\.google\.com\/(?:maps)?\?q=(-?[0-9\.]+),([0-9\.]+)/i) ||
+                         raw.match(/google\.com\/maps\?q=(-?[0-9\.]+),([0-9\.]+)/i) ||
+                         raw.match(/@(-?[0-9\.]+),([0-9\.]+)/i) ||
+                         raw.match(/(-?8\.[0-9]+)\s*,\s*(12[3-4]\.[0-9]+)/i);
         if (matchGps && matchGps[1] && matchGps[2]) {
           lat = parseFloat(matchGps[1]);
           lng = parseFloat(matchGps[2]);

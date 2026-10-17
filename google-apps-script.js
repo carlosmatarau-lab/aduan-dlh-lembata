@@ -325,30 +325,32 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
     linkFoto = webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(id) + '&photoIdx=0';
   }
 
-  // Ekstrak seluruh foto pelapor (Mendukung satu tautan, multi-tautan koma, dan cadangan Foto_Storage)
-  const allRawLinks = linkFoto.split(',').map(s => s.trim()).filter(Boolean);
+  // Ekstrak seluruh foto pelapor tanpa merusak Base64
   const resolvedCitizenPhotos = [];
+  if (typeof linkFoto === 'string' && linkFoto.trim() && linkFoto.trim() !== '-') {
+    const matches = linkFoto.match(/(data:image\/[a-zA-Z0-9\+\/\-\.]+;base64,[A-Za-z0-9\+\/\=]+|https?:\/\/[^\s,]+)/g);
+    if (matches && matches.length > 0) {
+      matches.forEach((rawLink, idx) => {
+        let cleanLink = rawLink.trim();
+        if (cleanLink.startsWith('=HYPERLINK')) {
+          const match = cleanLink.match(/=HYPERLINK\("([^"]+)"/i);
+          if (match) cleanLink = match[1];
+        }
+        if (cleanLink.includes('Buka') && cleanLink.includes('Foto Bukti')) {
+          cleanLink = webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(id) + '&photoIdx=' + idx;
+        }
+        const dMatch = cleanLink.match(/(?:\/file\/d\/|[?&]id=)([a-zA-Z0-9-_]+)/);
+        if (dMatch && !cleanLink.startsWith('data:image')) {
+          cleanLink = 'https://lh3.googleusercontent.com/d/' + dMatch[1];
+        }
+        if (cleanLink && !cleanLink.includes('#ERROR') && !resolvedCitizenPhotos.includes(cleanLink)) {
+          resolvedCitizenPhotos.push(cleanLink);
+        }
+      });
+    }
+  }
 
-  allRawLinks.forEach((rawLink, idx) => {
-    let cleanLink = rawLink;
-    if (cleanLink.startsWith('=HYPERLINK')) {
-      const match = cleanLink.match(/=HYPERLINK\("([^"]+)"/i);
-      if (match) cleanLink = match[1];
-    }
-    if (cleanLink.includes('Buka') && cleanLink.includes('Foto Bukti')) {
-      cleanLink = webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(id) + '&photoIdx=' + idx;
-    }
-    const dMatch = cleanLink.match(/(?:\/file\/d\/|[?&]id=)([a-zA-Z0-9-_]+)/);
-    if (dMatch && !cleanLink.startsWith('data:image')) {
-      cleanLink = 'https://lh3.googleusercontent.com/d/' + dMatch[1];
-    }
-    // Pastikan hanya link gambar valid (http atau data:image) yang dimasukkan
-    if (cleanLink && (cleanLink.startsWith('http') || cleanLink.startsWith('data:image')) && !cleanLink.includes('#ERROR') && !resolvedCitizenPhotos.includes(cleanLink)) {
-      resolvedCitizenPhotos.push(cleanLink);
-    }
-  });
-
-  // Prioritaskan cadangan data gambar asli dari sheet Foto_Storage agar foto selalu tampil jernih & bebas rusak
+  // Prioritaskan cadangan data gambar asli dari sheet Foto_Storage HANYA untuk foto yang memang ada di rekaman
   const storageLookup = fotoStorageMap || {};
   const baseKey = id.trim().toUpperCase();
 
@@ -362,16 +364,14 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
     }
   }
 
-  // Foto 2 s/d 6
+  // Foto 2 s/d 6: Gantikan HANYA index yang memang ADA di resolvedCitizenPhotos (Anti-Ghost Photo)
   for (let idx = 2; idx <= 6; idx++) {
-    const multiKey = baseKey + '_FOTO_' + idx;
-    const multiBackup = storageLookup[multiKey] || storageLookup[baseKey + '_' + idx];
-    if (multiBackup && typeof multiBackup === 'string' && multiBackup.startsWith('data:image')) {
-      const targetIdx = idx - 1;
-      if (resolvedCitizenPhotos.length > targetIdx) {
+    const targetIdx = idx - 1;
+    if (targetIdx < resolvedCitizenPhotos.length) {
+      const multiKey = baseKey + '_FOTO_' + idx;
+      const multiBackup = storageLookup[multiKey] || storageLookup[baseKey + '_' + idx];
+      if (multiBackup && typeof multiBackup === 'string' && multiBackup.startsWith('data:image')) {
         resolvedCitizenPhotos[targetIdx] = multiBackup;
-      } else if (!resolvedCitizenPhotos.includes(multiBackup)) {
-        resolvedCitizenPhotos.push(multiBackup);
       }
     }
   }
@@ -440,29 +440,31 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
 }
 
 /**
- * Generate ID aduan baru secara berurutan: ADU-LMB-YYYY-NNN
- * Menjamin tidak terjadi tumpang tindih antar nomor aduan.
+ * Generate ID aduan baru unik bebas tumpang tindih: ADU-LMB-YYYY-MMDD-XXXX
+ * Menjamin tidak terjadi tumpang tindih antar nomor aduan di seluruh perangkat.
  */
 function generateNewId(sheet) {
-  const year = new Date().getFullYear();
-  const data = sheet.getDataRange().getValues();
-  let maxSeq = 0;
+  const now = new Date();
+  const year = Utilities.formatDate(now, Session.getScriptTimeZone(), 'yyyy');
+  const dateStr = Utilities.formatDate(now, Session.getScriptTimeZone(), 'MMdd');
+  const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+  let entropy = '';
+  for (let i = 0; i < 4; i++) {
+    entropy += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  const candidateId = 'ADU-LMB-' + year + '-' + dateStr + '-' + entropy;
 
-  for (let i = 1; i < data.length; i++) {
-    const rawId = String(data[i][0] || '').trim();
-    const regex = new RegExp('^ADU-LMB-' + year + '-(\\d+)$', 'i');
-    const match = rawId.match(regex);
-    if (match) {
-      const seq = parseInt(match[1], 10);
-      if (!isNaN(seq) && seq > maxSeq) {
-        maxSeq = seq;
+  // Pastikan kandidat ID belum pernah dipakai di sheet
+  if (sheet) {
+    const data = sheet.getDataRange().getValues();
+    for (let i = 1; i < data.length; i++) {
+      if (String(data[i][0] || '').trim().toUpperCase() === candidateId) {
+        const extra = chars.charAt(Math.floor(Math.random() * chars.length));
+        return candidateId + extra;
       }
     }
   }
-
-  const nextNum = maxSeq + 1;
-  const padded = String(nextNum).padStart(3, '0');
-  return 'ADU-LMB-' + year + '-' + padded;
+  return candidateId;
 }
 
 /**
@@ -768,11 +770,10 @@ function purgeFotoStorage(idAduan) {
     const storageSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_FOTO);
     if (!storageSheet || storageSheet.getLastRow() <= 1) return;
     const target = String(idAduan).trim().toUpperCase();
-    const targetPetugas = target + '_PETUGAS';
     const sData = storageSheet.getDataRange().getValues();
     for (let i = sData.length - 1; i >= 1; i--) {
       const rowId = String(sData[i][0] || '').trim().toUpperCase();
-      if (rowId === target || rowId === targetPetugas) {
+      if (rowId === target || rowId.startsWith(target + '_')) {
         storageSheet.deleteRow(i + 1);
       }
     }
@@ -823,35 +824,37 @@ function saveBase64ImageToDrive(base64Data, idAduan) {
 // HANDLER AKSI: TAMBAH ADUAN BARU (POST)
 // ==================================================================================
 function handleAddAduan(formData) {
-  const sheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
-
-  // Gunakan ID dari formulir jika ada, atau generate baru
-  const newId = (formData.id && String(formData.id).trim()) ? String(formData.id).trim() : generateNewId(sheet);
-
-  // Pencegahan Duplikasi: Jika ID sudah ada di sheet Data_Aduan, jangan buat baris ganda
-  const existingValues = sheet.getDataRange().getValues();
-  const colIdIndex = HEADERS_ADUAN.indexOf('ID_Aduan');
-  if (colIdIndex !== -1 && existingValues.length > 1) {
-    for (let r = 1; r < existingValues.length; r++) {
-      if (String(existingValues[r][colIdIndex]).trim().toUpperCase() === newId.toUpperCase()) {
-        Logger.log('Duplikasi terdeteksi untuk ID ' + newId + ' - mencegah baris ganda.');
-        return {
-          success: true,
-          duplicate: true,
-          message: 'Aduan ' + newId + ' sudah tercatat sebelumnya di Google Spreadsheet.',
-          data: {
-            id: newId,
-            timestamp: existingValues[r][1] || '',
-            status: existingValues[r][HEADERS_ADUAN.indexOf('Status')] || 'Baru'
-          }
-        };
-      }
-    }
+  const lock = LockService.getScriptLock();
+  try {
+    lock.waitLock(20000); // Tunggu hingga 20 detik jika ada proses bersamaan
+  } catch (e) {
+    Logger.log('Lock wait timeout: ' + e.message);
   }
 
-  // Hapus sisa foto/cache lama jika ada ID yang sama sebelumnya (Zero Ghost Photos)
-  purgeFotoStorage(newId);
-  deleteDriveFilesForId(newId);
+  try {
+    const sheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
+
+    // Gunakan ID unik dari formulir jika ada, atau generate baru
+    let newId = (formData.id && String(formData.id).trim()) ? String(formData.id).trim() : generateNewId(sheet);
+
+    // Pencegahan Duplikasi: Jika ID sudah ada di sheet Data_Aduan, tambahkan suffix unik agar aduan baru tidak hilang
+    const existingValues = sheet.getDataRange().getValues();
+    const colIdIndex = HEADERS_ADUAN.indexOf('ID_Aduan');
+    if (colIdIndex !== -1 && existingValues.length > 1) {
+      for (let r = 1; r < existingValues.length; r++) {
+        if (String(existingValues[r][colIdIndex]).trim().toUpperCase() === newId.toUpperCase()) {
+          const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+          let extra = '';
+          for (let k = 0; k < 3; k++) extra += chars.charAt(Math.floor(Math.random() * chars.length));
+          newId = newId + '-' + extra;
+          break;
+        }
+      }
+    }
+
+    // Hapus sisa foto/cache lama jika ada ID yang sama sebelumnya (Zero Ghost Photos)
+    purgeFotoStorage(newId);
+    deleteDriveFilesForId(newId);
 
   // Generate timestamp saat ini
   const now = Utilities.formatDate(
@@ -874,10 +877,10 @@ function handleAddAduan(formData) {
   };
 
   const kecCoord = KECAMATAN_COORDS[formData.kecamatan] || { lat: -8.375, lng: 123.55 };
-  const lat = formData.lat ? parseFloat(formData.lat) : (kecCoord.lat + (Math.random() - 0.5) * 0.02);
-  const lng = formData.lng ? parseFloat(formData.lng) : (kecCoord.lng + (Math.random() - 0.5) * 0.02);
+  const lat = (formData.lat !== undefined && formData.lat !== '' && !isNaN(parseFloat(formData.lat))) ? parseFloat(formData.lat) : kecCoord.lat;
+  const lng = (formData.lng !== undefined && formData.lng !== '' && !isNaN(parseFloat(formData.lng))) ? parseFloat(formData.lng) : kecCoord.lng;
 
-  // Kelola Seluruh Foto Bukti (Mendukung Multi-Foto Lapangan)
+  // Kelola Seluruh Foto Bukti (Mendukung Multi-Foto Lapangan secara aman tanpa shredding Base64)
   let rawPhotos = [];
   if (Array.isArray(formData.buktiFotoList) && formData.buktiFotoList.length > 0) {
     formData.buktiFotoList.forEach(p => {
@@ -887,8 +890,9 @@ function handleAddAduan(formData) {
   } else {
     const rawVal = formData.fotoBukti || formData.linkFotoBukti || formData.linkFoto || '';
     if (typeof rawVal === 'string' && rawVal.trim() && rawVal.trim() !== '-') {
-      if (rawVal.includes(',') && !rawVal.startsWith('data:')) {
-        rawVal.split(',').forEach(s => { if (s.trim()) rawPhotos.push(s.trim()); });
+      const matches = rawVal.match(/(data:image\/[a-zA-Z0-9\+\/\-\.]+;base64,[A-Za-z0-9\+\/\=]+|https?:\/\/[^\s,]+)/g);
+      if (matches && matches.length > 0) {
+        matches.forEach(s => { if (s.trim()) rawPhotos.push(s.trim()); });
       } else {
         rawPhotos.push(rawVal.trim());
       }
@@ -1004,19 +1008,24 @@ function handleAddAduan(formData) {
   // Tulis log
   writeLog('ADUAN_BARU', 'ID: ' + newId + ' | Pelapor: ' + (formData.namaPelapor || 'Anonim') + ' | Kec: ' + (formData.kecamatan || '-') + ' | Total Foto: ' + targetUrls.length);
 
-  return {
-    success: true,
-    message: 'Aduan berhasil disimpan ke Google Spreadsheet.',
-    data: {
-      id: newId,
-      timestamp: now,
-      status: 'Baru',
-      linkFoto: primaryUrl,
-      fotoBukti: primaryUrl,
-      linkFotoClickable: cellFotoValue,
-      buktiFotoList: targetUrls
-    }
-  };
+    return {
+      success: true,
+      message: 'Aduan berhasil disimpan ke Google Spreadsheet.',
+      data: {
+        id: newId,
+        timestamp: now,
+        status: 'Baru',
+        linkFoto: primaryUrl,
+        fotoBukti: primaryUrl,
+        linkFotoClickable: cellFotoValue,
+        buktiFotoList: targetUrls
+      }
+    };
+  } finally {
+    try {
+      lock.releaseLock();
+    } catch (e) {}
+  }
 }
 
 

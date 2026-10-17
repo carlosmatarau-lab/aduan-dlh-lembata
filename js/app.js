@@ -118,6 +118,15 @@ class DLHApp {
       window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
+    // Refresh pin map pemilih lokasi jika masuk ke tab form
+    if (tabName === 'form') {
+      setTimeout(() => {
+        if (typeof this.initCitizenPinMap === 'function') {
+          this.initCitizenPinMap();
+        }
+      }, 150);
+    }
+
     // Refresh mini map jika kembali ke tab beranda
     if (tabName === 'beranda' && window.lembataMap && window.lembataMap.miniMapInstance) {
       setTimeout(() => {
@@ -299,8 +308,133 @@ class DLHApp {
   }
 
   /* ===================================================================
-     3. GPS DETECTION
+     3. GPS DETECTION & INTERACTIVE PIN LOCATION MAP
      =================================================================== */
+  initCitizenPinMap() {
+    const mapContainer = document.getElementById('citizenPinMap');
+    if (!mapContainer || typeof L === 'undefined') return;
+
+    if (this.citizenPinMap) {
+      try {
+        this.citizenPinMap.invalidateSize();
+      } catch (e) {}
+      return;
+    }
+
+    const latInput = document.getElementById('inputLat');
+    const lngInput = document.getElementById('inputLng');
+    const badge = document.getElementById('pinCoordsBadge');
+
+    let initialLat = parseFloat(latInput?.value) || -8.368200;
+    let initialLng = parseFloat(lngInput?.value) || 123.558300;
+
+    this.citizenPinMap = L.map('citizenPinMap', {
+      zoomControl: true,
+      scrollWheelZoom: true
+    }).setView([initialLat, initialLng], 14);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      maxZoom: 19,
+      attribution: '&copy; OpenStreetMap'
+    }).addTo(this.citizenPinMap);
+
+    const pinIcon = L.divIcon({
+      className: 'custom-citizen-pin',
+      html: `
+        <div style="position: relative; width: 34px; height: 34px; transform: translate(-50%, -100%);">
+          <div style="background: #ef4444; width: 34px; height: 34px; border-radius: 50% 50% 50% 0; transform: rotate(-45deg); display: flex; align-items: center; justify-content: center; box-shadow: 0 4px 10px rgba(0,0,0,0.4); border: 2.5px solid #ffffff;">
+            <div style="width: 10px; height: 10px; background: #ffffff; border-radius: 50%; transform: rotate(45deg);"></div>
+          </div>
+        </div>
+      `,
+      iconSize: [34, 34],
+      iconAnchor: [17, 34]
+    });
+
+    this.citizenPinMarker = L.marker([initialLat, initialLng], {
+      draggable: true,
+      icon: pinIcon
+    }).addTo(this.citizenPinMap);
+
+    const updateCoords = (lat, lng, doPan = false) => {
+      const fixedLat = Number(lat.toFixed(6));
+      const fixedLng = Number(lng.toFixed(6));
+      if (latInput) latInput.value = fixedLat;
+      if (lngInput) lngInput.value = fixedLng;
+      if (badge) badge.textContent = `${fixedLat}, ${fixedLng}`;
+      if (doPan && this.citizenPinMap) {
+        this.citizenPinMap.setView([fixedLat, fixedLng], Math.max(this.citizenPinMap.getZoom(), 15));
+      }
+    };
+
+    updateCoords(initialLat, initialLng);
+
+    this.citizenPinMarker.on('drag', (e) => {
+      const pos = e.target.getLatLng();
+      updateCoords(pos.lat, pos.lng, false);
+    });
+
+    this.citizenPinMarker.on('dragend', (e) => {
+      const pos = e.target.getLatLng();
+      updateCoords(pos.lat, pos.lng, false);
+      const gpsMsg = document.getElementById('gpsStatusMessage');
+      if (gpsMsg) {
+        gpsMsg.style.display = 'block';
+        gpsMsg.style.color = '#15803d';
+        gpsMsg.textContent = `📍 Pin digeser ke titik: ${pos.lat.toFixed(6)}, ${pos.lng.toFixed(6)}`;
+      }
+    });
+
+    this.citizenPinMap.on('click', (e) => {
+      this.citizenPinMarker.setLatLng(e.latlng);
+      updateCoords(e.latlng.lat, e.latlng.lng, false);
+      const gpsMsg = document.getElementById('gpsStatusMessage');
+      if (gpsMsg) {
+        gpsMsg.style.display = 'block';
+        gpsMsg.style.color = '#15803d';
+        gpsMsg.textContent = `📍 Titik ditandai di: ${e.latlng.lat.toFixed(6)}, ${e.latlng.lng.toFixed(6)}`;
+      }
+    });
+
+    // Sinkronisasi saat dropdown kecamatan diubah
+    const selectKec = document.getElementById('inputKecamatan');
+    if (selectKec) {
+      selectKec.addEventListener('change', () => {
+        const kec = selectKec.value;
+        const coordsMap = {
+          'Nubatukan': [-8.368200, 123.558300],
+          'Ile Ape': [-8.271400, 123.518100],
+          'Ile Ape Timur': [-8.283100, 123.597500],
+          'Lebatukan': [-8.396700, 123.688100],
+          'Nagawutung': [-8.489200, 123.364400],
+          'Wulandoni': [-8.528300, 123.477200],
+          'Atadei': [-8.461100, 123.633900],
+          'Omesuri': [-8.243900, 123.778900],
+          'Buyasuri': [-8.212800, 123.864700]
+        };
+        const target = coordsMap[kec];
+        if (target) {
+          this.citizenPinMarker.setLatLng(target);
+          this.citizenPinMap.setView(target, 13);
+          updateCoords(target[0], target[1]);
+        }
+      });
+    }
+
+    // Input manual koordinat
+    const handleManualCoordInput = () => {
+      const latVal = parseFloat(latInput?.value);
+      const lngVal = parseFloat(lngInput?.value);
+      if (!isNaN(latVal) && !isNaN(lngVal)) {
+        this.citizenPinMarker.setLatLng([latVal, lngVal]);
+        this.citizenPinMap.panTo([latVal, lngVal]);
+        if (badge) badge.textContent = `${latVal.toFixed(6)}, ${lngVal.toFixed(6)}`;
+      }
+    };
+    if (latInput) latInput.addEventListener('input', handleManualCoordInput);
+    if (lngInput) lngInput.addEventListener('input', handleManualCoordInput);
+  }
+
   setupGPSDetection() {
     const btnGps = document.getElementById('btnDetectGps');
     const gpsMsg = document.getElementById('gpsStatusMessage');
@@ -311,47 +445,105 @@ class DLHApp {
         if (gpsMsg) {
           gpsMsg.style.display = 'block';
           gpsMsg.style.color = '#e11d48';
-          gpsMsg.textContent = 'Perangkat Anda belum mendukung deteksi GPS.';
+          gpsMsg.textContent = 'Perangkat Anda belum mendukung sensor satelit GPS.';
         }
         return;
       }
 
       btnGps.disabled = true;
-      btnGps.textContent = '⏳ Mengakses Titik Satelit GPS...';
+      btnGps.innerHTML = '<span>⏳</span> Mengunci Satelit GPS Presisi Tinggi...';
       if (gpsMsg) {
         gpsMsg.style.display = 'block';
         gpsMsg.style.color = '#0284c7';
-        gpsMsg.textContent = 'Sedang mencari koordinat akurat di lokasi Anda...';
+        gpsMsg.textContent = 'Menghubungkan satelit GPS & meningkatkan ketepatan koordinat...';
       }
 
-      navigator.geolocation.getCurrentPosition(
-        (pos) => {
-          const lat = Number(pos.coords.latitude.toFixed(6));
-          const lng = Number(pos.coords.longitude.toFixed(6));
-          
-          document.getElementById('inputLat').value = lat;
-          document.getElementById('inputLng').value = lng;
+      let bestPosition = null;
+      let watchId = null;
 
-          btnGps.disabled = false;
-          btnGps.textContent = '✅ Titik Lokasi GPS Terkunci';
-          btnGps.style.background = '#dcfce7';
-          btnGps.style.borderColor = '#16a34a';
+      const finishGps = (pos) => {
+        if (watchId !== null) {
+          navigator.geolocation.clearWatch(watchId);
+          watchId = null;
+        }
 
-          if (gpsMsg) {
-            gpsMsg.style.color = '#15803d';
-            gpsMsg.textContent = `Akurat! Koordinat: ${lat}, ${lng} (Akurasi: ±${Math.round(pos.coords.accuracy)}m)`;
+        const lat = Number(pos.coords.latitude.toFixed(6));
+        const lng = Number(pos.coords.longitude.toFixed(6));
+        const accuracy = Math.round(pos.coords.accuracy || 10);
+
+        document.getElementById('inputLat').value = lat;
+        document.getElementById('inputLng').value = lng;
+
+        const badge = document.getElementById('pinCoordsBadge');
+        if (badge) badge.textContent = `${lat}, ${lng}`;
+
+        if (this.citizenPinMarker && this.citizenPinMap) {
+          this.citizenPinMarker.setLatLng([lat, lng]);
+          this.citizenPinMap.setView([lat, lng], 16);
+          try { this.citizenPinMap.invalidateSize(); } catch(e) {}
+        } else if (typeof this.initCitizenPinMap === 'function') {
+          this.initCitizenPinMap();
+          if (this.citizenPinMarker && this.citizenPinMap) {
+            this.citizenPinMarker.setLatLng([lat, lng]);
+            this.citizenPinMap.setView([lat, lng], 16);
           }
-        },
-        (err) => {
-          btnGps.disabled = false;
-          btnGps.textContent = '📍 Dapatkan Titik Lokasi GPS Saya Saat Ini';
-          if (gpsMsg) {
-            gpsMsg.style.color = '#d97706';
-            gpsMsg.textContent = 'Izin lokasi tidak diberikan atau offline. Titik default kecamatan akan digunakan.';
-          }
-        },
-        { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
-      );
+        }
+
+        btnGps.disabled = false;
+        btnGps.innerHTML = '<span>✅</span> Titik GPS Terkunci';
+        btnGps.style.background = '#dcfce7';
+        btnGps.style.borderColor = '#16a34a';
+        btnGps.style.color = '#15803d';
+
+        if (gpsMsg) {
+          gpsMsg.style.color = '#15803d';
+          gpsMsg.textContent = `🎯 Sangat Akurat! Koordinat: ${lat}, ${lng} (Tingkat Presisi: ±${accuracy} meter)`;
+        }
+      };
+
+      // Coba watchPosition selama 4.5 detik untuk mengambil sinyal akurasi terbaik
+      try {
+        watchId = navigator.geolocation.watchPosition(
+          (pos) => {
+            if (!bestPosition || (pos.coords.accuracy && pos.coords.accuracy < bestPosition.coords.accuracy)) {
+              bestPosition = pos;
+            }
+            if (pos.coords.accuracy && pos.coords.accuracy <= 15) {
+              finishGps(pos);
+            }
+          },
+          (err) => {
+            console.warn('GPS watch error:', err);
+          },
+          { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
+        );
+      } catch (e) {}
+
+      setTimeout(() => {
+        if (bestPosition) {
+          finishGps(bestPosition);
+        } else {
+          // Fallback ke getCurrentPosition satu kali
+          navigator.geolocation.getCurrentPosition(
+            (pos) => {
+              finishGps(pos);
+            },
+            (err) => {
+              if (watchId !== null) navigator.geolocation.clearWatch(watchId);
+              btnGps.disabled = false;
+              btnGps.innerHTML = '<span>🎯</span> Kunci GPS Presisi Tinggi';
+              btnGps.style.background = '';
+              btnGps.style.borderColor = '';
+              btnGps.style.color = '';
+              if (gpsMsg) {
+                gpsMsg.style.color = '#d97706';
+                gpsMsg.textContent = 'Sinyal satelit belum terkunci atau izin lokasi ditolak. Anda tetap dapat menggeser pin merah di peta untuk menentukan lokasi persis.';
+              }
+            },
+            { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+          );
+        }
+      }, 3500);
     });
   }
 
@@ -1657,24 +1849,15 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
 
     extractPhotos(item.buktiFotoList);
     if (photoList.length === 0) {
-      ['fotoBukti', 'linkFotoBukti', 'buktiFoto', 'linkFoto'].forEach(field => {
-        extractPhotos(item[field]);
-      });
-    }
-
-    // Periksa jika ada foto tersimpan di cache lokal yang belum masuk ke photoList
-    for (let cIdx = 0; cIdx < 5; cIdx++) {
+    // Sinkronkan cache lokal HANYA untuk indeks foto yang memang valid (TIDAK menyisipkan foto hantu/lama)
+    for (let cIdx = 0; cIdx < photoList.length; cIdx++) {
       try {
         const cVal = localStorage.getItem('dlh_photo_cache_' + cleanAduanId + '_' + cIdx) ||
                      localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + cIdx) ||
                      (cIdx === 0 ? (localStorage.getItem('dlh_photo_cache_' + cleanAduanId) || localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase())) : null);
         if (cVal && cVal.startsWith('data:image')) {
-          if (cIdx < photoList.length) {
-            if (!photoList[cIdx] || !photoList[cIdx].startsWith('data:image')) {
-              photoList[cIdx] = cVal;
-            }
-          } else {
-            photoList.push(cVal);
+          if (!photoList[cIdx] || !photoList[cIdx].startsWith('data:image')) {
+            photoList[cIdx] = cVal;
           }
         }
       } catch (e) {}
@@ -1714,6 +1897,10 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         return rawP;
       });
     }
+
+    this._currentModalItem = item;
+    this._currentCitizenPhotos = photoList;
+    this._currentOfficerPhotos = officerPhotos;
 
     const mapsUrl = (item.lat && item.lng) ? `https://maps.google.com/?q=${item.lat},${item.lng}` : '';
 
@@ -1769,11 +1956,11 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
               const photoDomId = `imgDetailCitizen_${cleanAduanId}_${i}`;
               return `
                 <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 6px;">
-                  <div onclick="window.app.openLightboxFromElement('${photoDomId}', '${safeSrc}', 'Bukti Foto Pelapor #${i+1} &bull; ${item.id}')"
+                  <div onclick="window.app.openLightboxByIndex('citizen', ${i})"
                        style="cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid #059669; background: #0f172a; position: relative; height: 125px; transition: transform 0.2s;"
                        onmouseover="this.style.transform='scale(1.02)';"
                        onmouseout="this.style.transform='scale(1)';"
-                       title="Klik foto untuk melihat ukuran penuh">
+                       title="Klik foto untuk melihat ukuran penuh & perbesar">
                     <img id="${photoDomId}"
                          src="${displaySrc}"
                          data-original="${origSafe}"
@@ -1789,13 +1976,13 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
                       <span style="font-size: 0.72rem; font-weight: 700; color: #34d399; margin-top: 4px;">Buka di Google Drive</span>
                     </div>
                     <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 4px; text-align: center; pointer-events: none;">
-                      ðŸ” Klik Perbesar
+                      🔍 Klik Perbesar
                     </div>
                   </div>
-                  <button type="button" onclick="window.app.openLightboxFromElement('${photoDomId}', '${safeSrc}', 'Bukti Foto Pelapor #${i+1} &bull; ${item.id}')"
+                  <button type="button" onclick="window.app.openLightboxByIndex('citizen', ${i})"
                           style="width: 100%; background: #059669; color: #ffffff; border: none; border-radius: 6px; padding: 5px 8px; font-size: 0.74rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;"
                           title="Buka foto ukuran penuh">
-                    <span>ðŸ” Buka Foto</span>
+                    <span>🔍 Buka Foto</span>
                   </button>
                 </div>
               `;
@@ -1818,11 +2005,11 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
               const photoDomId = `imgDetailOfficer_${cleanAduanId}_${i}`;
               return `
                 <div style="background: #ffffff; border: 1.5px solid #86efac; border-radius: 10px; padding: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 6px;">
-                  <div onclick="window.app.openLightboxFromElement('${photoDomId}', '${safeSrc}', 'Foto Fisik Petugas #${i+1} &bull; ${item.id}')"
+                  <div onclick="window.app.openLightboxByIndex('officer', ${i})"
                        style="cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid #16a34a; background: #0f172a; position: relative; height: 125px; transition: transform 0.2s;"
                        onmouseover="this.style.transform='scale(1.02)';"
                        onmouseout="this.style.transform='scale(1)';"
-                       title="Klik foto untuk melihat ukuran penuh">
+                       title="Klik foto untuk melihat ukuran penuh & perbesar">
                     <img id="${photoDomId}"
                          src="${displaySrc}"
                          data-original="${origSafe}"
@@ -1838,19 +2025,12 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
                       <span style="font-size: 0.72rem; font-weight: 700; color: #4ade80; margin-top: 4px;">Buka di Google Drive</span>
                     </div>
                     <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; font-size: 0.7rem; font-weight: 700; padding: 4px; text-align: center; pointer-events: none;">
-                      ðŸ” Klik Perbesar
+                      🔍 Klik Perbesar
                     </div>
                   </div>
-                  <button type="button" onclick="window.app.openLightboxFromElement('${photoDomId}', '${safeSrc}', 'Foto Fisik Petugas #${i+1} &bull; ${item.id}')"
+                  <button type="button" onclick="window.app.openLightboxByIndex('officer', ${i})"
                           style="width: 100%; background: #16a34a; color: #ffffff; border: none; border-radius: 6px; padding: 5px 8px; font-size: 0.74rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;"
-                          title="Buka foto ukuran penuh">
-                    <span>ðŸ” Buka Foto</span>
-                  </button>
-                </div>
-              `;
-            }).join('')}
-          </div>
-        </div>
+                          title="Buka        </div>
       ` : ''}
 
       <div style="margin-top: 14px; text-align: right;">
@@ -1863,33 +2043,253 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
     modal.classList.add('show');
   }
 
+  openLightboxByIndex(type, index) {
+    const rawList = (type === 'officer') ? (this._currentOfficerPhotos || []) : (this._currentCitizenPhotos || []);
+    const cleanAduanId = (this._currentModalItem && this._currentModalItem.id) ? String(this._currentModalItem.id).trim().toUpperCase() : '';
+    
+    // Buat daftar URL foto yang sudah terformat dan terhubung dengan elemen DOM jika ada
+    const resolvedList = rawList.map((raw, i) => {
+      const domId = (type === 'officer') ? `imgDetailOfficer_${cleanAduanId}_${i}` : `imgDetailCitizen_${cleanAduanId}_${i}`;
+      const el = document.getElementById(domId);
+      if (el && el.src && el.style.display !== 'none' && !el.src.includes('error-placeholder')) {
+        return el.src;
+      }
+      return this.formatPhotoUrl(raw) || raw;
+    }).filter(Boolean);
+
+    const safeIndex = Math.max(0, Math.min(index, resolvedList.length - 1));
+    const currentSrc = resolvedList[safeIndex] || '';
+    const baseCaption = (type === 'officer' ? 'Dokumentasi Petugas' : 'Bukti Foto Pelapor') + (this._currentModalItem ? ' • ' + this._currentModalItem.id : '');
+    
+    this.openLightbox(currentSrc, baseCaption, resolvedList, safeIndex);
+  }
+
   openLightboxFromElement(imgId, fallbackSrc, caption) {
     let chosenSrc = fallbackSrc;
     const el = document.getElementById(imgId);
     if (el && el.src && el.style.display !== 'none') {
       chosenSrc = el.src;
     }
-    this.openLightbox(chosenSrc, caption);
+    this.openLightbox(chosenSrc, caption, [chosenSrc], 0);
   }
 
-  openLightbox(src, caption = 'Bukti Foto Aduan Lingkungan') {
+  openLightbox(src, caption = 'Bukti Foto Aduan Lingkungan', photoList = [], activeIndex = 0) {
     this.currentLightboxSrc = src;
     this.currentLightboxCaption = caption;
+    this.lightboxPhotos = (Array.isArray(photoList) && photoList.length > 0) ? photoList : [src];
+    this.lightboxCurrentIndex = Math.max(0, Math.min(activeIndex, this.lightboxPhotos.length - 1));
+
+    this.lightboxScale = 1;
+    this.lightboxTranslateX = 0;
+    this.lightboxTranslateY = 0;
+    this.isPanningLightbox = false;
+
     const modal = document.getElementById('modalPhotoLightbox');
     const img = document.getElementById('lightboxPhotoImg');
     const cap = document.getElementById('lightboxPhotoCaption');
+    const counter = document.getElementById('lightboxPhotoCounter');
+    const navControls = document.getElementById('lightboxNavControls');
+
     if (img) {
       img.referrerPolicy = 'no-referrer';
-      img.src = this.formatPhotoUrl(src) || src;
-      img.style.transform = 'scale(1)';
-      img.style.cursor = 'zoom-in';
+      img.src = this.formatPhotoUrl(this.lightboxPhotos[this.lightboxCurrentIndex]) || this.lightboxPhotos[this.lightboxCurrentIndex];
     }
-    if (cap) cap.textContent = caption;
+
+    if (cap) {
+      const numLabel = this.lightboxPhotos.length > 1 ? ` #${this.lightboxCurrentIndex + 1}` : '';
+      cap.textContent = `${caption}${numLabel}`;
+    }
+
+    if (counter) {
+      counter.textContent = `${this.lightboxCurrentIndex + 1}/${this.lightboxPhotos.length}`;
+    }
+
+    if (navControls) {
+      navControls.style.display = this.lightboxPhotos.length > 1 ? 'inline-flex' : 'none';
+    }
+
+    this.updateLightboxTransform();
+
     if (modal) {
       modal.style.zIndex = '999999';
       modal.style.display = 'flex';
       modal.classList.add('show');
     }
+
+    this.setupLightboxInteractions();
+  }
+
+  updateLightboxTransform() {
+    const container = document.getElementById('lightboxTransformContainer');
+    const zoomBadge = document.getElementById('lightboxZoomLevel');
+    const viewport = document.getElementById('lightboxViewport');
+
+    if (container) {
+      container.style.transform = `translate(${this.lightboxTranslateX}px, ${this.lightboxTranslateY}px) scale(${this.lightboxScale})`;
+    }
+    if (zoomBadge) {
+      zoomBadge.textContent = `${Math.round(this.lightboxScale * 100)}%`;
+    }
+    if (viewport) {
+      if (this.lightboxScale > 1) {
+        viewport.style.cursor = this.isPanningLightbox ? 'grabbing' : 'grab';
+      } else {
+        viewport.style.cursor = 'default';
+      }
+    }
+  }
+
+  zoomInLightbox(step = 0.25) {
+    this.lightboxScale = Math.min(5, Number((this.lightboxScale + step).toFixed(2)));
+    this.updateLightboxTransform();
+  }
+
+  zoomOutLightbox(step = 0.25) {
+    this.lightboxScale = Math.max(0.5, Number((this.lightboxScale - step).toFixed(2)));
+    if (this.lightboxScale <= 1) {
+      this.lightboxTranslateX = 0;
+      this.lightboxTranslateY = 0;
+    }
+    this.updateLightboxTransform();
+  }
+
+  resetZoomLightbox() {
+    this.lightboxScale = 1;
+    this.lightboxTranslateX = 0;
+    this.lightboxTranslateY = 0;
+    this.updateLightboxTransform();
+  }
+
+  nextLightboxPhoto() {
+    if (!this.lightboxPhotos || this.lightboxPhotos.length <= 1) return;
+    this.lightboxCurrentIndex = (this.lightboxCurrentIndex + 1) % this.lightboxPhotos.length;
+    this.displayCurrentLightboxPhoto();
+  }
+
+  prevLightboxPhoto() {
+    if (!this.lightboxPhotos || this.lightboxPhotos.length <= 1) return;
+    this.lightboxCurrentIndex = (this.lightboxCurrentIndex - 1 + this.lightboxPhotos.length) % this.lightboxPhotos.length;
+    this.displayCurrentLightboxPhoto();
+  }
+
+  displayCurrentLightboxPhoto() {
+    const img = document.getElementById('lightboxPhotoImg');
+    const cap = document.getElementById('lightboxPhotoCaption');
+    const counter = document.getElementById('lightboxPhotoCounter');
+
+    this.currentLightboxSrc = this.lightboxPhotos[this.lightboxCurrentIndex];
+    if (img) {
+      img.src = this.formatPhotoUrl(this.currentLightboxSrc) || this.currentLightboxSrc;
+    }
+    if (counter) {
+      counter.textContent = `${this.lightboxCurrentIndex + 1}/${this.lightboxPhotos.length}`;
+    }
+    if (cap) {
+      const baseCap = (this.currentLightboxCaption || 'Bukti Foto').replace(/\s*#\d+.*$/, '');
+      const idInfo = this._currentModalItem ? ` • ${this._currentModalItem.id}` : '';
+      cap.textContent = `${baseCap} #${this.lightboxCurrentIndex + 1}${idInfo}`;
+    }
+    this.resetZoomLightbox();
+  }
+
+  setupLightboxInteractions() {
+    if (this._lightboxListenersBound) return;
+    this._lightboxListenersBound = true;
+
+    const btnZoomIn = document.getElementById('btnLightboxZoomIn');
+    const btnZoomOut = document.getElementById('btnLightboxZoomOut');
+    const btnReset = document.getElementById('btnLightboxZoomReset');
+    const btnPrev = document.getElementById('btnLightboxPrev');
+    const btnNext = document.getElementById('btnLightboxNext');
+    const viewport = document.getElementById('lightboxViewport');
+    const img = document.getElementById('lightboxPhotoImg');
+
+    if (btnZoomIn) btnZoomIn.onclick = () => this.zoomInLightbox();
+    if (btnZoomOut) btnZoomOut.onclick = () => this.zoomOutLightbox();
+    if (btnReset) btnReset.onclick = () => this.resetZoomLightbox();
+    if (btnPrev) btnPrev.onclick = () => this.prevLightboxPhoto();
+    if (btnNext) btnNext.onclick = () => this.nextLightboxPhoto();
+
+    // Dobel klik untuk zoom cepat 2.5x atau reset 1x
+    if (img) {
+      img.ondblclick = (e) => {
+        e.stopPropagation();
+        if (this.lightboxScale > 1) {
+          this.resetZoomLightbox();
+        } else {
+          this.lightboxScale = 2.5;
+          this.updateLightboxTransform();
+        }
+      };
+    }
+
+    // Roda mouse untuk zoom halus
+    if (viewport) {
+      viewport.onwheel = (e) => {
+        e.preventDefault();
+        const delta = e.deltaY < 0 ? 0.25 : -0.25;
+        if (delta > 0) {
+          this.zoomInLightbox(0.2);
+        } else {
+          this.zoomOutLightbox(0.2);
+        }
+      };
+
+      // Drag / Pan interaktif (Pointer Events untuk mouse & touch)
+      let startX = 0, startY = 0;
+      let initialTranslateX = 0, initialTranslateY = 0;
+
+      viewport.onpointerdown = (e) => {
+        if (this.lightboxScale <= 1) return;
+        this.isPanningLightbox = true;
+        startX = e.clientX;
+        startY = e.clientY;
+        initialTranslateX = this.lightboxTranslateX;
+        initialTranslateY = this.lightboxTranslateY;
+        viewport.setPointerCapture(e.pointerId);
+        this.updateLightboxTransform();
+      };
+
+      viewport.onpointermove = (e) => {
+        if (!this.isPanningLightbox) return;
+        const dx = e.clientX - startX;
+        const dy = e.clientY - startY;
+        this.lightboxTranslateX = initialTranslateX + dx;
+        this.lightboxTranslateY = initialTranslateY + dy;
+        this.updateLightboxTransform();
+      };
+
+      const endPan = (e) => {
+        if (this.isPanningLightbox) {
+          this.isPanningLightbox = false;
+          try { viewport.releasePointerCapture(e.pointerId); } catch(err) {}
+          this.updateLightboxTransform();
+        }
+      };
+
+      viewport.onpointerup = endPan;
+      viewport.onpointercancel = endPan;
+    }
+
+    // Keyboard navigation (Esc, +, -, Panah Kiri, Panah Kanan)
+    window.addEventListener('keydown', (e) => {
+      const modal = document.getElementById('modalPhotoLightbox');
+      if (!modal || !modal.classList.contains('show')) return;
+
+      if (e.key === 'Escape') {
+        this.closeLightbox();
+      } else if (e.key === 'ArrowRight') {
+        this.nextLightboxPhoto();
+      } else if (e.key === 'ArrowLeft') {
+        this.prevLightboxPhoto();
+      } else if (e.key === '+' || e.key === '=') {
+        this.zoomInLightbox();
+      } else if (e.key === '-' || e.key === '_') {
+        this.zoomOutLightbox();
+      } else if (e.key === '0') {
+        this.resetZoomLightbox();
+      }
+    });
   }
 
   closeLightbox() {
@@ -1898,16 +2298,15 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       modal.classList.remove('show');
       modal.style.display = 'none';
     }
+    this.resetZoomLightbox();
   }
 
   toggleZoomPhoto(imgElem) {
-    if (!imgElem) return;
-    if (imgElem.style.transform === 'scale(1.8)') {
-      imgElem.style.transform = 'scale(1)';
-      imgElem.style.cursor = 'zoom-in';
+    if (this.lightboxScale > 1) {
+      this.resetZoomLightbox();
     } else {
-      imgElem.style.transform = 'scale(1.8)';
-      imgElem.style.cursor = 'zoom-out';
+      this.lightboxScale = 2;
+      this.updateLightboxTransform();
     }
   }
 
