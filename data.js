@@ -500,6 +500,64 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
 
   const isUnverified = (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima' || remoteItem.status === 'Verifikasi Administrasi' || remoteItem.status === '-');
 
+  // Multi-foto dokumentasi fisik riil petugas
+  let resolvedOfficerPhotos = [];
+  if (Array.isArray(remoteItem.fotoVerifikasiList) && remoteItem.fotoVerifikasiList.length > 0) {
+    remoteItem.fotoVerifikasiList.forEach(p => {
+      const s = (p && p.dataUrl) ? p.dataUrl : (typeof p === 'string' ? p : '');
+      if (s && s.trim() && s.trim() !== '-' && !resolvedOfficerPhotos.includes(s.trim())) {
+        resolvedOfficerPhotos.push(s.trim());
+      }
+    });
+  } else if (remoteItem.fotoKondisiRiil && remoteItem.fotoKondisiRiil !== '-') {
+    const rawRiil = String(remoteItem.fotoKondisiRiil).trim();
+    const matchesRiil = rawRiil.match(/(data:image\/[a-zA-Z0-9\+\/\-\.]+;base64,[A-Za-z0-9\+\/\=]+|https?:\/\/[^\s,]+)/g);
+    if (matchesRiil && matchesRiil.length > 0) {
+      matchesRiil.forEach(s => {
+        if (s.trim() && !resolvedOfficerPhotos.includes(s.trim())) resolvedOfficerPhotos.push(s.trim());
+      });
+    } else if (rawRiil) {
+      resolvedOfficerPhotos.push(rawRiil);
+    }
+  }
+
+  // Jika item lokal sebelumnya memiliki foto petugas yang lebih lengkap, pertahankan
+  if (existing && Array.isArray(existing.fotoVerifikasiList) && existing.fotoVerifikasiList.length > resolvedOfficerPhotos.length) {
+    existing.fotoVerifikasiList.forEach(p => {
+      if (p && !resolvedOfficerPhotos.includes(p)) resolvedOfficerPhotos.push(p);
+    });
+  }
+
+  // Cek cache foto lokal petugas jika ada Base64
+  for (let k = 0; k < 6; k++) {
+    try {
+      const cached = localStorage.getItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + k) ||
+                     localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_PETUGAS_' + k) ||
+                     (k === 0 ? localStorage.getItem('dlh_photo_cache_' + cleanId + '_PETUGAS') : null);
+      if (cached && cached.startsWith('data:image')) {
+        if (k < resolvedOfficerPhotos.length) {
+          if (!resolvedOfficerPhotos[k] || !resolvedOfficerPhotos[k].startsWith('http')) {
+            resolvedOfficerPhotos[k] = cached;
+          }
+        } else if (!resolvedOfficerPhotos.includes(cached)) {
+          resolvedOfficerPhotos.push(cached);
+        }
+      }
+    } catch (e) {}
+  }
+
+  // Simpan / perbarui cache lokal foto petugas yang berupa Base64
+  for (let i = 0; i < resolvedOfficerPhotos.length; i++) {
+    if (resolvedOfficerPhotos[i] && resolvedOfficerPhotos[i].startsWith('data:image')) {
+      try {
+        localStorage.setItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + i, resolvedOfficerPhotos[i]);
+        if (i === 0) localStorage.setItem('dlh_photo_cache_' + cleanId + '_PETUGAS', resolvedOfficerPhotos[i]);
+      } catch (e) {}
+    }
+  }
+
+  const finalOfficerPhotos = isUnverified ? [] : resolvedOfficerPhotos;
+
   return {
     id: cleanId,
     timestamp: remoteItem.timestamp || '-',
@@ -526,8 +584,8 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     tanggalSelesai: isUnverified ? '-' : (remoteItem.tanggalSelesai || '-'),
     nomorBeritaAcara: isUnverified ? '' : (remoteItem.nomorBeritaAcara || ''),
     catatanBeritaAcara: isUnverified ? '' : (remoteItem.catatanBeritaAcara || ''),
-    fotoKondisiRiil: isUnverified ? '' : (remoteItem.fotoKondisiRiil || ''),
-    fotoVerifikasiList: isUnverified ? [] : (Array.isArray(remoteItem.fotoVerifikasiList) && remoteItem.fotoVerifikasiList.length > 0 ? remoteItem.fotoVerifikasiList : (remoteItem.fotoKondisiRiil ? [remoteItem.fotoKondisiRiil] : [])),
+    fotoKondisiRiil: isUnverified ? '' : (finalOfficerPhotos[0] || ''),
+    fotoVerifikasiList: finalOfficerPhotos,
     rekamTindakanTerakhir: rekamTerakhir,
     riwayatTindakan: Array.isArray(remoteItem.riwayatTindakan) ? remoteItem.riwayatTindakan : (rekamTerakhir ? [rekamTerakhir] : [])
   };
@@ -1204,6 +1262,64 @@ class AduanDataStore {
 
     const isUnverified = (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima' || remoteItem.status === 'Verifikasi Administrasi' || remoteItem.status === '-');
 
+    // Multi-foto dokumentasi fisik riil petugas
+    let resolvedOfficerPhotos = [];
+    if (Array.isArray(remoteItem.fotoVerifikasiList) && remoteItem.fotoVerifikasiList.length > 0) {
+      remoteItem.fotoVerifikasiList.forEach(p => {
+        const s = (p && p.dataUrl) ? p.dataUrl : (typeof p === 'string' ? p : '');
+        if (s && s.trim() && s.trim() !== '-' && !resolvedOfficerPhotos.includes(s.trim())) {
+          resolvedOfficerPhotos.push(s.trim());
+        }
+      });
+    } else if (remoteItem.fotoKondisiRiil && remoteItem.fotoKondisiRiil !== '-') {
+      const rawRiil = String(remoteItem.fotoKondisiRiil).trim();
+      const matchesRiil = rawRiil.match(/(data:image\/[a-zA-Z0-9\+\/\-\.]+;base64,[A-Za-z0-9\+\/\=]+|https?:\/\/[^\s,]+)/g);
+      if (matchesRiil && matchesRiil.length > 0) {
+        matchesRiil.forEach(s => {
+          if (s.trim() && !resolvedOfficerPhotos.includes(s.trim())) resolvedOfficerPhotos.push(s.trim());
+        });
+      } else if (rawRiil) {
+        resolvedOfficerPhotos.push(rawRiil);
+      }
+    }
+
+    // Jika item lokal sebelumnya memiliki foto petugas yang lebih lengkap, pertahankan
+    if (existing && Array.isArray(existing.fotoVerifikasiList) && existing.fotoVerifikasiList.length > resolvedOfficerPhotos.length) {
+      existing.fotoVerifikasiList.forEach(p => {
+        if (p && !resolvedOfficerPhotos.includes(p)) resolvedOfficerPhotos.push(p);
+      });
+    }
+
+    // Cek cache foto lokal petugas jika ada Base64
+    for (let k = 0; k < 6; k++) {
+      try {
+        const cached = localStorage.getItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + k) ||
+                       localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_PETUGAS_' + k) ||
+                       (k === 0 ? localStorage.getItem('dlh_photo_cache_' + cleanId + '_PETUGAS') : null);
+        if (cached && cached.startsWith('data:image')) {
+          if (k < resolvedOfficerPhotos.length) {
+            if (!resolvedOfficerPhotos[k] || !resolvedOfficerPhotos[k].startsWith('http')) {
+              resolvedOfficerPhotos[k] = cached;
+            }
+          } else if (!resolvedOfficerPhotos.includes(cached)) {
+            resolvedOfficerPhotos.push(cached);
+          }
+        }
+      } catch (e) {}
+    }
+
+    // Simpan / perbarui cache lokal foto petugas yang berupa Base64
+    for (let i = 0; i < resolvedOfficerPhotos.length; i++) {
+      if (resolvedOfficerPhotos[i] && resolvedOfficerPhotos[i].startsWith('data:image')) {
+        try {
+          localStorage.setItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + i, resolvedOfficerPhotos[i]);
+          if (i === 0) localStorage.setItem('dlh_photo_cache_' + cleanId + '_PETUGAS', resolvedOfficerPhotos[i]);
+        } catch (e) {}
+      }
+    }
+
+    const finalOfficerPhotos = isUnverified ? [] : resolvedOfficerPhotos;
+
     const mappedObj = {
       id: cleanId,
       timestamp: remoteItem.timestamp || '-',
@@ -1230,10 +1346,8 @@ class AduanDataStore {
       tanggalSelesai: isUnverified ? '-' : (remoteItem.tanggalSelesai || '-'),
       nomorBeritaAcara: isUnverified ? '' : (remoteItem.nomorBeritaAcara || ''),
       catatanBeritaAcara: isUnverified ? '' : (remoteItem.catatanBeritaAcara || ''),
-      fotoKondisiRiil: isUnverified ? '' : (remoteItem.fotoKondisiRiil || ''),
-      fotoVerifikasiList: isUnverified ? [] : (Array.isArray(remoteItem.fotoVerifikasiList) && remoteItem.fotoVerifikasiList.length > 0
-        ? remoteItem.fotoVerifikasiList
-        : (remoteItem.fotoKondisiRiil ? [remoteItem.fotoKondisiRiil] : [])),
+      fotoKondisiRiil: isUnverified ? '' : (finalOfficerPhotos[0] || ''),
+      fotoVerifikasiList: finalOfficerPhotos,
       rekamTindakanTerakhir: rekamTerakhir,
       riwayatTindakan: Array.isArray(remoteItem.riwayatTindakan) ? remoteItem.riwayatTindakan : (rekamTerakhir ? [rekamTerakhir] : [])
     };
@@ -1538,6 +1652,22 @@ class AduanDataStore {
       timestampSelesai: timestampSelesai,
       _pendingOfficerSync: true
     };
+
+    // Simpan salinan cadangan foto Base64 petugas ke cache lokal
+    fotoList.forEach((photoStr, idx) => {
+      if (photoStr && typeof photoStr === 'string' && photoStr.startsWith('data:image')) {
+        try {
+          localStorage.setItem('dlh_photo_cache_' + id + '_PETUGAS_' + idx, photoStr);
+          if (idx === 0) localStorage.setItem('dlh_photo_cache_' + id + '_PETUGAS', photoStr);
+        } catch (e) {}
+      }
+    });
+    for (let i = fotoList.length; i < 6; i++) {
+      try {
+        localStorage.removeItem('dlh_photo_cache_' + id + '_PETUGAS_' + i);
+        localStorage.removeItem('dlh_photo_cache_' + id.toLowerCase() + '_PETUGAS_' + i);
+      } catch (e) {}
+    }
 
     this.save();
 

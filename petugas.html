@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -2774,7 +2774,7 @@
     <div class="modal-card" style="max-width: 490px;">
       <div class="modal-header" style="background: linear-gradient(135deg, #065f46 0%, #047857 100%); color: #ffffff;">
         <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 1.4rem;">📞</span>
+          <span style="font-size: 1.4rem;">📸</span>
           <div>
             <h3 class="modal-title" style="color: #ffffff; font-size: 1.05rem;">Bantuan Pemulihan Kata Sandi</h3>
             <div style="font-size: 0.74rem; color: #a7f3d0;">Hubungi Administrator Resmi DLH Kabupaten Lembata</div>
@@ -3826,6 +3826,25 @@
           if (item.fotoKondisiRiil && item.fotoKondisiRiil !== '-' && !officerPhotos.includes(item.fotoKondisiRiil)) {
             officerPhotos.push(item.fotoKondisiRiil);
           }
+          officerPhotos = officerPhotos.map((rawP, pIdx) => {
+            if (typeof rawP === 'string' && rawP.startsWith('data:image')) return rawP;
+            try {
+              const cached = localStorage.getItem('dlh_photo_cache_' + cleanAduanId + '_PETUGAS_' + pIdx) ||
+                             localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_PETUGAS_' + pIdx) ||
+                             (pIdx === 0 ? localStorage.getItem('dlh_photo_cache_' + cleanAduanId + '_PETUGAS') : null);
+              if (cached && cached.startsWith('data:image')) return cached;
+            } catch (e) {}
+            return rawP;
+          });
+          for (let k = officerPhotos.length; k < 6; k++) {
+            try {
+              const cached = localStorage.getItem('dlh_photo_cache_' + cleanAduanId + '_PETUGAS_' + k) ||
+                             localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_PETUGAS_' + k);
+              if (cached && cached.startsWith('data:image') && !officerPhotos.includes(cached)) {
+                officerPhotos.push(cached);
+              }
+            } catch (e) {}
+          }
         }
 
         this._currentModalItem = item;
@@ -4032,11 +4051,11 @@
                              onerror="window.handleAduanPhotoError(this, '${cleanAduanId}', ${i});"
                              style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
                         <div style="display: none; width: 100%; height: 100%; background: #0f172a; color: #f8fafc; flex-direction: column; align-items: center; justify-content: center; padding: 8px; text-align: center;">
-                          <span style="font-size: 1.4rem;">ðŸ“¸</span>
+                          <span style="font-size: 1.4rem;">📸</span>
                           <span style="font-size: 0.72rem; font-weight: 700; color: #34d399; margin-top: 4px;">Buka di Google Drive</span>
                         </div>
                         <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 4px; text-align: center; pointer-events: none;">
-                          ðŸ” Klik Perbesar
+                          🔍  Klik Perbesar
                         </div>
                       </div>
                       <button type="button" onclick="window.portal.openLightboxByIndex('officer', ${i})"
@@ -4044,7 +4063,7 @@
                               onmouseover="this.style.background='#047857';"
                               onmouseout="this.style.background='#059669';"
                               title="Buka foto ukuran penuh">
-                        <span>ðŸ” Buka Foto</span>
+                        <span>🔍 Buka Foto</span>
                       </button>
                     </div>
                   `;
@@ -4086,11 +4105,11 @@
                              onerror="window.handleAduanPhotoError(this, '${cleanAduanId}', ${i});"
                              style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
                         <div style="display: none; width: 100%; height: 100%; background: #0f172a; color: #f8fafc; flex-direction: column; align-items: center; justify-content: center; padding: 8px; text-align: center;">
-                          <span style="font-size: 1.4rem;">ðŸ“¸</span>
+                          <span style="font-size: 1.4rem;">📸</span>
                           <span style="font-size: 0.72rem; font-weight: 700; color: #34d399; margin-top: 4px;">Buka di Google Drive</span>
                         </div>
                         <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 4px; text-align: center; pointer-events: none;">
-                          ðŸ” Klik Perbesar
+                          🔍  Klik Perbesar
                         </div>
                       </div>
                       <button type="button" onclick="window.portal.openLightboxByIndex('citizen', ${i})"
@@ -4098,7 +4117,7 @@
                               onmouseover="this.style.background='#047857';"
                               onmouseout="this.style.background='#059669';"
                               title="Buka foto ukuran penuh">
-                        <span>ðŸ” Buka Foto</span>
+                        <span>🔍 Buka Foto</span>
                       </button>
                     </div>
                   `;

@@ -393,31 +393,61 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
 
   const fotoDirect = resolvedCitizenPhotos[0] || (linkFoto !== '-' && linkFoto.startsWith('http') ? linkFoto : '');
 
-  // Cek foto kondisi riil petugas
-  let linkFotoRiil = String(row['Foto_Kondisi_Riil'] || '');
-  if (linkFotoRiil.startsWith('=HYPERLINK')) {
-    const match = linkFotoRiil.match(/=HYPERLINK\("([^"]+)"/i);
-    if (match) linkFotoRiil = match[1];
+  // Ekstrak seluruh foto kondisi riil petugas lapangan (Mendukung Multi-Foto Petugas)
+  const resolvedOfficerPhotos = [];
+  let rawLinkRiil = String(row['Foto_Kondisi_Riil'] || '');
+  if (typeof rawLinkRiil === 'string' && rawLinkRiil.trim() && rawLinkRiil.trim() !== '-') {
+    const matchesRiil = rawLinkRiil.match(/(data:image\/[a-zA-Z0-9\+\/\-\.]+;base64,[A-Za-z0-9\+\/\=]+|https?:\/\/[^\s,]+)/g);
+    if (matchesRiil && matchesRiil.length > 0) {
+      matchesRiil.forEach((rawLink, idx) => {
+        let cleanLink = rawLink.trim();
+        if (cleanLink.startsWith('=HYPERLINK')) {
+          const match = cleanLink.match(/=HYPERLINK\("([^"]+)"/i);
+          if (match) cleanLink = match[1];
+        }
+        if (cleanLink.includes('Buka') && cleanLink.includes('Foto Petugas')) {
+          cleanLink = webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(id + '_PETUGAS') + '&photoIdx=' + idx;
+        }
+        const dMatch = cleanLink.match(/(?:\/file\/d\/|[?&]id=)([a-zA-Z0-9-_]+)/);
+        if (dMatch && !cleanLink.startsWith('data:image')) {
+          cleanLink = 'https://lh3.googleusercontent.com/d/' + dMatch[1];
+        }
+        if (cleanLink && !cleanLink.includes('#ERROR') && !resolvedOfficerPhotos.includes(cleanLink)) {
+          resolvedOfficerPhotos.push(cleanLink);
+        }
+      });
+    }
   }
-  let fotoRiilDirect = linkFotoRiil;
-  const dMatchRiil = linkFotoRiil.match(/(?:\/file\/d\/|[?&]id=)([a-zA-Z0-9-_]+)/);
-  if (dMatchRiil && !linkFotoRiil.startsWith('data:image')) {
-    fotoRiilDirect = 'https://lh3.googleusercontent.com/d/' + dMatchRiil[1];
+
+  // Prioritaskan / gabungkan cadangan foto petugas dari Foto_Storage
+  const officerBaseKey = (id.trim() + '_PETUGAS').toUpperCase();
+  const backupFotoRiil1 = storageLookup[officerBaseKey] || storageLookup[officerBaseKey + '_1'];
+  if (backupFotoRiil1 && typeof backupFotoRiil1 === 'string' && (backupFotoRiil1.startsWith('data:image') || backupFotoRiil1.startsWith('http'))) {
+    if (resolvedOfficerPhotos.length > 0) {
+      resolvedOfficerPhotos[0] = backupFotoRiil1;
+    } else {
+      resolvedOfficerPhotos.push(backupFotoRiil1);
+    }
   }
-  const isDirectOfficerImage = fotoRiilDirect && (fotoRiilDirect.startsWith('data:image') || fotoRiilDirect.includes('drive.google.com/thumbnail') || fotoRiilDirect.match(/\.(jpeg|jpg|png|webp|gif)/i));
-  if (!isDirectOfficerImage) {
-    const officerPhotoKey = (id.trim() + '_PETUGAS').toUpperCase();
-    const backupFotoRiil = (fotoStorageMap || {})[officerPhotoKey];
-    if (backupFotoRiil && typeof backupFotoRiil === 'string' && backupFotoRiil.startsWith('data:image')) {
-      fotoRiilDirect = backupFotoRiil;
+
+  // Foto Petugas 2 s/d 6 dari Foto_Storage
+  for (let idx = 2; idx <= 6; idx++) {
+    const multiKey = officerBaseKey + '_' + idx;
+    const multiBackup = storageLookup[multiKey];
+    if (multiBackup && typeof multiBackup === 'string' && (multiBackup.startsWith('data:image') || multiBackup.startsWith('http'))) {
+      const targetIdx = idx - 1;
+      if (targetIdx < resolvedOfficerPhotos.length) {
+        resolvedOfficerPhotos[targetIdx] = multiBackup;
+      } else {
+        resolvedOfficerPhotos.push(multiBackup);
+      }
     }
   }
 
   const currentStatus = String(row['Status'] || 'Baru').trim();
   const isUnverified = (currentStatus === 'Baru' || currentStatus === 'Aduan Diterima' || currentStatus === 'Verifikasi Administrasi' || currentStatus === '-');
-  if (isUnverified) {
-    fotoRiilDirect = '';
-  }
+  const finalOfficerPhotos = isUnverified ? [] : resolvedOfficerPhotos;
+  const fotoRiilDirect = finalOfficerPhotos[0] || '';
 
   return {
     id: id,
@@ -446,8 +476,8 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
     tanggalSelesai: isUnverified ? '-' : String(row['Tanggal_Selesai'] || '-'),
     nomorBeritaAcara: isUnverified ? '' : String(row['Nomor_Berita_Acara'] || ''),
     catatanBeritaAcara: isUnverified ? '' : String(row['Catatan_Berita_Acara'] || ''),
-    fotoKondisiRiil: isUnverified ? '' : fotoRiilDirect,
-    fotoVerifikasiList: (isUnverified || !fotoRiilDirect) ? [] : [fotoRiilDirect],
+    fotoKondisiRiil: fotoRiilDirect,
+    fotoVerifikasiList: finalOfficerPhotos,
     timestampVerifikasi: isUnverified ? '' : String(row['Timestamp_Verifikasi'] || ''),
     timestampTindakLanjut: isUnverified ? '' : String(row['Timestamp_Tindak_Lanjut'] || ''),
     timestampSelesai: isUnverified ? '' : String(row['Timestamp_Selesai'] || '')
@@ -463,7 +493,7 @@ function generateNewId(sheet) {
   const year = Utilities.formatDate(now, Session.getScriptTimeZone(), 'yyyy');
   const dateStr = Utilities.formatDate(now, Session.getScriptTimeZone(), 'MMdd');
   const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-  
+
   let candidateId = '';
   let exists = true;
   let attempts = 0;
@@ -1241,61 +1271,122 @@ function handleUpdateVerifikasi(updateData) {
     if (colCatatanBA !== -1) sheet.getRange(targetRowIndex, colCatatanBA + 1).setValue('');
     purgeFotoStorage(officerPhotoId);
     deleteDriveFilesForId(officerPhotoId);
+    for (let k = 1; k <= 6; k++) {
+      purgeFotoStorage(officerPhotoId + '_' + k);
+      deleteDriveFilesForId(officerPhotoId + '_' + k);
+    }
   } else {
-    let rawFotoRiil = updateData.fotoKondisiRiil || (Array.isArray(updateData.fotoVerifikasiList) ? updateData.fotoVerifikasiList[0] : '') || '';
-    if (rawFotoRiil && typeof rawFotoRiil === 'string' && rawFotoRiil.trim() && colFotoRiil !== -1) {
-      const trimmedRiil = rawFotoRiil.trim();
-      let targetRiilUrl = '';
+    // Kumpulkan seluruh foto kondisi riil verifikasi petugas (Mendukung Multi-Foto Lapangan)
+    let rawOfficerPhotos = [];
+    if (Array.isArray(updateData.fotoVerifikasiList) && updateData.fotoVerifikasiList.length > 0) {
+      updateData.fotoVerifikasiList.forEach(p => {
+        const s = (p && p.dataUrl) ? p.dataUrl : (typeof p === 'string' ? p : '');
+        if (s && s.trim() && s.trim() !== '-' && !rawOfficerPhotos.includes(s.trim())) {
+          rawOfficerPhotos.push(s.trim());
+        }
+      });
+    } else if (updateData.fotoKondisiRiil && typeof updateData.fotoKondisiRiil === 'string' && updateData.fotoKondisiRiil.trim() && updateData.fotoKondisiRiil.trim() !== '-') {
+      rawOfficerPhotos.push(updateData.fotoKondisiRiil.trim());
+    }
 
+    if (rawOfficerPhotos.length > 0 && colFotoRiil !== -1) {
       // Bersihkan foto petugas lama sebelum menyimpan foto baru
       purgeFotoStorage(officerPhotoId);
       deleteDriveFilesForId(officerPhotoId);
-
-      if (trimmedRiil.startsWith('http')) {
-        targetRiilUrl = trimmedRiil;
-      } else if (trimmedRiil.startsWith('data:image')) {
-        const webAppUrl = getWebAppUrl();
-        let driveUrl = '';
-        try {
-          driveUrl = saveBase64ImageToDrive(trimmedRiil, officerPhotoId);
-        } catch (e) { }
-
-        targetRiilUrl = (driveUrl && driveUrl.startsWith('http'))
-          ? driveUrl
-          : (webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(officerPhotoId));
-
-        // Simpan cadangan data gambar petugas ke Foto_Storage dengan chunking aman
-        try {
-          const storageSheet = getOrCreateSheet(SHEET_NAME_FOTO, ['ID_Aduan', 'Timestamp', 'Link_Buka_Foto', 'Base64_Data']);
-          const nowStr = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm');
-          const CHUNK_SIZE = 40000;
-          const rowData = [officerPhotoId, nowStr, targetRiilUrl];
-          for (let k = 0; k < trimmedRiil.length; k += CHUNK_SIZE) {
-            rowData.push(trimmedRiil.substring(k, k + CHUNK_SIZE));
-          }
-          storageSheet.appendRow(rowData);
-          const lastRow = storageSheet.getLastRow();
-          const cell = storageSheet.getRange(lastRow, 3);
-          const richText = SpreadsheetApp.newRichTextValue()
-            .setText("📸 Buka Foto Petugas (" + targetId + ")")
-            .setLinkUrl(targetRiilUrl)
-            .build();
-          cell.setRichTextValue(richText);
-        } catch (e) {
-          Logger.log('Officer storage backup error: ' + e.message);
-        }
+      for (let k = 1; k <= 6; k++) {
+        purgeFotoStorage(officerPhotoId + '_' + k);
+        deleteDriveFilesForId(officerPhotoId + '_' + k);
       }
 
-      if (targetRiilUrl) {
-        const cellRiil = sheet.getRange(targetRowIndex, colFotoRiil + 1);
+      const webAppUrl = getWebAppUrl();
+      const targetRiilUrls = [];
+      const nowStr = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm');
+      let storageSheet = null;
+
+      rawOfficerPhotos.forEach((photoStr, idx) => {
+        if (!photoStr || typeof photoStr !== 'string') return;
+        const trimmed = photoStr.trim();
+        const photoKey = (idx === 0) ? officerPhotoId : (officerPhotoId + '_' + (idx + 1));
+
+        if (trimmed.startsWith('http')) {
+          targetRiilUrls.push(trimmed);
+        } else if (trimmed.startsWith('data:image')) {
+          let driveUrl = '';
+          try {
+            driveUrl = saveBase64ImageToDrive(trimmed, photoKey);
+          } catch (e) {
+            Logger.log('Drive error foto petugas ' + idx + ': ' + e.message);
+          }
+
+          const viewUrl = (driveUrl && driveUrl.startsWith('http'))
+            ? driveUrl
+            : (webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(photoKey));
+          targetRiilUrls.push(viewUrl);
+
+          // Simpan cadangan data gambar petugas ke Foto_Storage dengan chunking aman
+          try {
+            if (!storageSheet) {
+              storageSheet = getOrCreateSheet(SHEET_NAME_FOTO, ['ID_Aduan', 'Timestamp', 'Link_Buka_Foto', 'Base64_Data']);
+            }
+            const CHUNK_SIZE = 40000;
+            const rowData = [photoKey, nowStr, viewUrl];
+            for (let k = 0; k < trimmed.length; k += CHUNK_SIZE) {
+              rowData.push(trimmed.substring(k, k + CHUNK_SIZE));
+            }
+            storageSheet.appendRow(rowData);
+
+            // Jika foto pertama (idx === 0), simpan juga dengan alias _PETUGAS_1
+            if (idx === 0) {
+              const aliasRow = [officerPhotoId + '_1', nowStr, viewUrl];
+              for (let k = 0; k < trimmed.length; k += CHUNK_SIZE) {
+                aliasRow.push(trimmed.substring(k, k + CHUNK_SIZE));
+              }
+              storageSheet.appendRow(aliasRow);
+            }
+
+            const lastRow = storageSheet.getLastRow();
+            const cell = storageSheet.getRange(lastRow, 3);
+            const richText = SpreadsheetApp.newRichTextValue()
+              .setText("📸 Buka Foto Petugas (" + photoKey + ")")
+              .setLinkUrl(viewUrl)
+              .build();
+            cell.setRichTextValue(richText);
+          } catch (e) {
+            Logger.log('Officer storage backup error: ' + e.message);
+          }
+        }
+      });
+
+      // Simpan hyperlink visual ke sheet Data_Aduan kolom Foto_Kondisi_Riil
+      if (targetRiilUrls.length === 1) {
         try {
           const richText = SpreadsheetApp.newRichTextValue()
             .setText("📸 Buka Foto Petugas (" + targetId + ")")
-            .setLinkUrl(targetRiilUrl)
+            .setLinkUrl(targetRiilUrls[0])
             .build();
-          cellRiil.setRichTextValue(richText);
+          sheet.getRange(targetRowIndex, colFotoRiil + 1).setRichTextValue(richText);
         } catch (e) {
-          cellRiil.setValue(targetRiilUrl);
+          sheet.getRange(targetRowIndex, colFotoRiil + 1).setValue(targetRiilUrls[0]);
+        }
+      } else if (targetRiilUrls.length > 1) {
+        try {
+          let displayText = "📸 Buka Foto Petugas (" + targetRiilUrls.length + "): ";
+          const links = [];
+          targetRiilUrls.forEach((u, idx) => {
+            const label = "Foto " + (idx + 1);
+            const start = displayText.length;
+            displayText += label;
+            const end = displayText.length;
+            links.push({ start: start, end: end, url: u });
+            if (idx < targetRiilUrls.length - 1) displayText += " | ";
+          });
+          const richTextBuilder = SpreadsheetApp.newRichTextValue().setText(displayText);
+          links.forEach(l => {
+            richTextBuilder.setLinkUrl(l.start, l.end, l.url);
+          });
+          sheet.getRange(targetRowIndex, colFotoRiil + 1).setRichTextValue(richTextBuilder.build());
+        } catch (e) {
+          sheet.getRange(targetRowIndex, colFotoRiil + 1).setValue(targetRiilUrls.join(', '));
         }
       }
     }
