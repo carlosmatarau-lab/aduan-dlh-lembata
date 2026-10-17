@@ -1849,6 +1849,11 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
 
     extractPhotos(item.buktiFotoList);
     if (photoList.length === 0) {
+      ['fotoBukti', 'linkFotoBukti', 'buktiFoto', 'linkFoto'].forEach(field => {
+        extractPhotos(item[field]);
+      });
+    }
+
     // Sinkronkan cache lokal HANYA untuk indeks foto yang memang valid (TIDAK menyisipkan foto hantu/lama)
     for (let cIdx = 0; cIdx < photoList.length; cIdx++) {
       try {
@@ -2030,7 +2035,14 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
                   </div>
                   <button type="button" onclick="window.app.openLightboxByIndex('officer', ${i})"
                           style="width: 100%; background: #16a34a; color: #ffffff; border: none; border-radius: 6px; padding: 5px 8px; font-size: 0.74rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px;"
-                          title="Buka        </div>
+                          title="Buka foto ukuran penuh">
+                    <span>🔍 Buka Foto</span>
+                  </button>
+                </div>
+              `;
+            }).join('')}
+          </div>
+        </div>
       ` : ''}
 
       <div style="margin-top: 14px; text-align: right;">
