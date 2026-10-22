@@ -1,0 +1,4686 @@
+<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>ECOADU LEMBATA - Ekosistem Digital Aduan Lingkungan Lembata</title>
+  <meta name="description"
+    content="ECOADU LEMBATA — Ekosistem Digital Aduan Lingkungan Lembata Dinas Lingkungan Hidup Kabupaten Lembata. Cepat, mudah, dan transparan.">
+  <link rel="canonical" href="https://aduan-dlh-lembata.vercel.app/">
+  <meta name="theme-color" content="#064e3b">
+
+  <!-- Open Graph / WhatsApp Preview Meta Tags -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://aduan-dlh-lembata.vercel.app/">
+  <meta property="og:title" content="ECOADU LEMBATA - Ekosistem Digital Aduan Lingkungan Lembata">
+  <meta property="og:description"
+    content="ECOADU LEMBATA — Ekosistem Digital Aduan Lingkungan Lembata Dinas Lingkungan Hidup Kabupaten Lembata. Cepat, mudah, dan transparan.">
+  <meta property="og:locale" content="id_ID">
+  <meta property="og:site_name" content="ECOADU LEMBATA">
+  <meta property="og:image" content="assets/logo-ecoadu-full.png">
+  <meta property="og:image:alt" content="Logo Resmi ECOADU LEMBATA">
+  <link rel="icon" type="image/png" href="assets/logo-ecoadu.png">
+  <link rel="apple-touch-icon" href="assets/logo-ecoadu.png">
+
+  <!-- Google Fonts: Inter & Outfit -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- Leaflet Map CSS -->
+  <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+    integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+
+  <!-- Main CSS -->
+  <!-- Main CSS (Embedded directly for 100% fail-proof rendering on Vercel, Netlify & GitHub) -->
+  <link rel="stylesheet" href="css/style.css">
+  <style>
+    /* ===================================================================
+   SILAPOR DLH KABUPATEN LEMBATA — ULTRA-LIGHTWEIGHT & MOBILE-FIRST CSS
+   =================================================================== */
+
+    :root {
+      --primary: #059669;
+      --primary-dark: #064e3b;
+      --primary-light: #10b981;
+      --primary-soft: #ecfdf5;
+      --accent: #d97706;
+      --bg-body: #f8fafc;
+      --card-bg: #ffffff;
+      --text-main: #0f172a;
+      --text-muted: #64748b;
+      --border: #e2e8f0;
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 20px;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06);
+      --shadow-md: 0 4px 12px -2px rgba(0, 0, 0, 0.08);
+      --shadow-lg: 0 12px 24px -4px rgba(0, 0, 0, 0.12);
+    }
+
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      background-color: #f0fdf4;
+      background-image:
+        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.16) 0px, transparent 50%),
+        radial-gradient(at 100% 0%, rgba(5, 150, 105, 0.18) 0px, transparent 50%),
+        radial-gradient(at 50% 20%, rgba(52, 211, 153, 0.12) 0px, transparent 60%),
+        radial-gradient(at 100% 100%, rgba(6, 78, 59, 0.14) 0px, transparent 55%),
+        radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
+        url("data:image/svg+xml,%3Csvg width='70' height='70' viewBox='0 0 70 70' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M35 6 C44 14 50 26 42 38 C34 50 20 44 18 32 C16 20 24 10 35 6 Z M35 64 C26 56 20 44 28 32 C36 20 50 26 52 38 C54 50 46 60 35 64 Z' fill='%23059669' fill-opacity='0.035' fill-rule='evenodd'/%3E%3C/svg%3E");
+      background-attachment: fixed;
+      color: var(--text-main);
+      line-height: 1.5;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      -webkit-font-smoothing: antialiased;
+    }
+
+    /* Top Nature Accent Ribbon */
+    .nature-top-ribbon {
+      height: 4px;
+      width: 100%;
+      background: linear-gradient(90deg, #022c22 0%, #064e3b 25%, #10b981 50%, #064e3b 75%, #022c22 100%);
+      position: sticky;
+      top: 0;
+      z-index: 101;
+    }
+
+    /* ===================================================================
+   HEADER
+   =================================================================== */
+    .app-header {
+      background: rgba(255, 255, 255, 0.88);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-bottom: 1px solid rgba(16, 185, 129, 0.2);
+      box-shadow: 0 4px 20px -2px rgba(6, 78, 59, 0.05);
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
+
+    .header-inner {
+      max-width: 1080px;
+      margin: 0 auto;
+      padding: 12px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+
+    .brand-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .brand-crest-logo {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.12));
+    }
+
+    .brand-lh-logo {
+      width: 48px;
+      height: 48px;
+      object-fit: contain;
+      flex-shrink: 0;
+      filter: drop-shadow(0 3px 10px rgba(5, 150, 105, 0.45));
+      transition: transform 0.3s cubic-bezier(0.16, 1, 0.3, 1), filter 0.3s ease;
+      animation: ecoGlobeFloat 3.6s ease-in-out infinite alternate;
+      background: transparent;
+    }
+
+    @keyframes ecoGlobeFloat {
+      0% {
+        transform: translateY(0) scale(1) rotate(0deg);
+        filter: drop-shadow(0 3px 8px rgba(5, 150, 105, 0.35));
+      }
+      50% {
+        transform: translateY(-3px) scale(1.05) rotate(1.5deg);
+        filter: drop-shadow(0 6px 16px rgba(16, 185, 129, 0.6)) drop-shadow(0 0 10px rgba(52, 211, 153, 0.45));
+      }
+      100% {
+        transform: translateY(1px) scale(0.98) rotate(-1deg);
+        filter: drop-shadow(0 3px 8px rgba(4, 120, 87, 0.4));
+      }
+    }
+
+    .brand-lh-logo:hover {
+      transform: scale(1.14) rotate(4deg);
+      filter: drop-shadow(0 8px 20px rgba(16, 185, 129, 0.75));
+    }
+
+    /* Model Animasi Baru: Eco Emerald Biosphere Stream & Nature Pulse */
+    @keyframes ecoEmeraldStream {
+      0% {
+        background-position: 0% 50%;
+      }
+      50% {
+        background-position: 100% 50%;
+      }
+      100% {
+        background-position: 0% 50%;
+      }
+    }
+
+    @keyframes ecoNatureAura {
+      0%, 100% {
+        filter: drop-shadow(0 1px 3px rgba(6, 78, 59, 0.25)) drop-shadow(0 0 6px rgba(16, 185, 129, 0.2));
+      }
+      50% {
+        filter: drop-shadow(0 2px 8px rgba(5, 150, 105, 0.45)) drop-shadow(0 0 18px rgba(52, 211, 153, 0.55));
+      }
+    }
+
+    .brand-title-instansi {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 900;
+      letter-spacing: 0.6px;
+      line-height: 1.15;
+      margin: 0;
+      display: inline-block;
+      /* Gradien Dinamis Hijau Ekosistem Bumi */
+      background: linear-gradient(
+        110deg,
+        #064e3b 0%,
+        #047857 15%,
+        #059669 30%,
+        #10b981 45%,
+        #6ee7b7 52%,
+        #a7f3d0 58%,
+        #10b981 68%,
+        #047857 85%,
+        #064e3b 100%
+      );
+      background-size: 240% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: ecoEmeraldStream 4.5s ease-in-out infinite, ecoNatureAura 3s ease-in-out infinite;
+    }
+
+    .brand-sub-kab {
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: #475569;
+      letter-spacing: 0.2px;
+      line-height: 1.25;
+      max-width: 520px;
+    }
+
+    .header-right-portal {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+    }
+
+    .lentera-badge-wrap {
+      display: inline-flex;
+      align-items: center;
+    }
+
+    .lentera-dlh-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(5, 150, 105, 0.08);
+      border: 1px solid rgba(5, 150, 105, 0.28);
+      color: #065f46;
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 5px 12px;
+      border-radius: 999px;
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+    }
+
+    /* Footer Brand - Bebas Animasi (Seperti Semula) */
+    .footer-lh-logo {
+      width: 44px;
+      height: 54px;
+      object-fit: contain;
+      flex-shrink: 0;
+      filter: drop-shadow(0 2px 6px rgba(0, 0, 0, 0.35));
+      animation: none !important;
+      transform: none !important;
+      border-radius: 0 !important;
+      box-shadow: none !important;
+      background: transparent !important;
+    }
+
+    .footer-brand-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #ffffff !important;
+      letter-spacing: 0.3px;
+      line-height: 1.15;
+      margin: 0;
+      background: none !important;
+      -webkit-text-fill-color: #ffffff !important;
+      animation: none !important;
+      filter: none !important;
+      text-shadow: none !important;
+    }
+
+    .btn-cloud-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #f1f5f9;
+      border: 1px solid var(--border);
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+
+    .btn-cloud-badge:hover {
+      background: #e2e8f0;
+    }
+
+    .dot-indicator {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.2);
+    }
+
+    .btn-wa-header {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: linear-gradient(135deg, #25d366 0%, #16a34a 100%);
+      color: white;
+      text-decoration: none;
+      font-size: 0.78rem;
+      font-weight: 700;
+      padding: 7px 14px;
+      border-radius: 999px;
+      box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
+      transition: all 0.2s;
+    }
+
+    .btn-wa-header:hover {
+      background: #20ba5a;
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 600px) {
+      .btn-wa-header span {
+        display: none;
+      }
+    }
+
+    /* ===================================================================
+   NAVIGATION BAR (TABS)
+   =================================================================== */
+    .nav-bar {
+      background: rgba(255, 255, 255, 0.86);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      border-bottom: 1px solid rgba(16, 185, 129, 0.16);
+      position: sticky;
+      top: 65px;
+      z-index: 90;
+      box-shadow: 0 2px 10px rgba(6, 78, 59, 0.03);
+    }
+
+    .nav-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+      padding: 6px 12px;
+      gap: 6px;
+    }
+
+    .nav-inner::-webkit-scrollbar {
+      display: none;
+    }
+
+    .nav-tab-btn {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      padding: 8px 18px;
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #1e293b;
+      cursor: pointer;
+      text-decoration: none;
+      white-space: nowrap;
+      border-radius: 999px;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
+    }
+
+    .nav-tab-btn:hover {
+      background: #f1f5f9;
+      color: #065f46;
+      border-color: #059669;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(5, 150, 105, 0.12);
+    }
+
+    .nav-tab-btn.nav-tab-wa {
+      background: #ecfdf5;
+      border-color: #6ee7b7;
+      color: #047857;
+    }
+
+    .nav-tab-btn.nav-tab-wa:hover {
+      background: #d1fae5;
+      color: #064e3b;
+      border-color: #10b981;
+    }
+
+    /* ===================================================================
+   MAIN CONTAINER & TABS
+   =================================================================== */
+    .main-wrap {
+      flex: 1;
+      max-width: 960px;
+      width: 100%;
+      margin: 0 auto;
+      padding: 24px 16px 60px 16px;
+    }
+
+    .tab-content {
+      display: none;
+      animation: fadeIn 0.25s ease-out forwards;
+    }
+
+    .tab-content.active {
+      display: block;
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(6px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    /* ===================================================================
+       HERO BANNER ELEGAN & SIMPEL (PENDEK & MEMIKAT)
+       =================================================================== */
+    .hero-banner-clean {
+      background: linear-gradient(135deg, #022c22 0%, #064e3b 60%, #047857 100%);
+      color: white;
+      border-radius: 20px;
+      padding: 24px 22px;
+      margin-bottom: 18px;
+      box-shadow: 0 14px 32px -10px rgba(6, 78, 59, 0.35), 0 0 0 1px rgba(52, 211, 153, 0.25);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero-banner-clean::before {
+      content: "";
+      position: absolute;
+      top: -50px;
+      right: -50px;
+      width: 190px;
+      height: 190px;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.28) 0%, transparent 70%);
+      border-radius: 50%;
+      pointer-events: none;
+    }
+
+    .hero-pill-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      padding: 4px 12px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      color: #a7f3d0;
+      letter-spacing: 0.4px;
+      margin-bottom: 8px;
+      backdrop-filter: blur(4px);
+    }
+
+    .hero-headline {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.55rem;
+      font-weight: 800;
+      line-height: 1.25;
+      color: #ffffff;
+      margin-bottom: 8px;
+      letter-spacing: -0.2px;
+    }
+
+    .hero-tagline {
+      font-size: 0.92rem;
+      color: #d1fae5;
+      line-height: 1.55;
+      max-width: 680px;
+      margin: 0;
+    }
+
+    /* ===================================================================
+       HERO CONTAINER & STATS PANEL (SESUAI GAMBAR 2)
+       =================================================================== */
+    .silapor-hero-container {
+      display: grid;
+      grid-template-columns: 1fr 290px;
+      gap: 16px;
+      margin-bottom: 18px;
+    }
+
+    .hero-left-banner {
+      background: #194a36;
+      border-radius: 16px;
+      padding: 28px 32px;
+      color: #ffffff;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      box-shadow: 0 8px 24px -4px rgba(6, 78, 59, 0.25);
+    }
+
+    .hero-main-heading {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.65rem;
+      font-weight: 800;
+      line-height: 1.25;
+      color: #ffffff;
+      margin-bottom: 6px;
+      letter-spacing: -0.2px;
+    }
+
+    .hero-sub-heading {
+      font-size: 0.95rem;
+      color: #d1fae5;
+      margin-bottom: 24px;
+      font-weight: 500;
+    }
+
+    .hero-actions-row {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    .btn-hero-action {
+      background: #ffffff;
+      border: none;
+      border-radius: 14px;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      text-align: left;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    }
+
+    .btn-hero-action:hover {
+      background: #f0fdf4;
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+    }
+
+    .btn-hero-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      background: #ecfdf5;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .btn-hero-tag {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: #059669;
+      letter-spacing: 0.3px;
+    }
+
+    .btn-hero-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.15;
+    }
+
+    .hero-right-stats {
+      background: #e3ebe4;
+      border-radius: 16px;
+      padding: 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border: 1px solid rgba(16, 185, 129, 0.15);
+    }
+
+    .hero-stat-pill {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: #1e293b;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .hero-stat-row {
+      background: #ffffff;
+      border-radius: 10px;
+      padding: 9px 12px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+    }
+
+    .stat-row-icon {
+      width: 34px;
+      height: 34px;
+      border-radius: 8px;
+      background: #f1f5f9;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .stat-row-lbl {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #64748b;
+      line-height: 1.1;
+    }
+
+    .stat-row-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.25rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.1;
+      margin-top: 1px;
+    }
+
+    /* ===================================================================
+       DUA KARTU BAWAH: ALUR PENGADUAN & PETA SEBARAN (SESUAI GAMBAR 2)
+       =================================================================== */
+    .silapor-bottom-grid {
+      display: grid;
+      grid-template-columns: 1.4fr 1fr;
+      gap: 16px;
+      margin-bottom: 20px;
+    }
+
+    .bottom-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 16px;
+      padding: 18px 20px;
+      box-shadow: 0 4px 16px rgba(6, 78, 59, 0.04);
+      display: flex;
+      flex-direction: column;
+    }
+
+    .bottom-card-header {
+      display: flex;
+      align-items: center;
+      margin-bottom: 12px;
+    }
+
+    .bottom-card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: #0f172a;
+      letter-spacing: 0.4px;
+      margin: 0;
+    }
+
+    .alur-steps-track {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      position: relative;
+      margin-top: 10px;
+      padding: 0 4px;
+    }
+
+    .alur-step-item {
+      flex: 1;
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      position: relative;
+      z-index: 2;
+    }
+
+    .alur-step-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #ecfdf5;
+      border: 2px solid #a7f3d0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 8px;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15);
+      transition: all 0.2s;
+    }
+
+    .alur-step-item:hover .alur-step-icon {
+      transform: scale(1.08);
+      background: #d1fae5;
+    }
+
+    .alur-step-label {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1.2;
+      margin-bottom: 2px;
+    }
+
+    .alur-step-sub {
+      font-size: 0.7rem;
+      color: #64748b;
+      font-weight: 500;
+      line-height: 1.2;
+    }
+
+    .alur-step-line {
+      flex: 0.6;
+      height: 2px;
+      background: #cbd5e1;
+      margin-top: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .mini-map-container {
+      height: 160px;
+      border-radius: 10px;
+      overflow: hidden;
+      position: relative;
+      border: 1.5px solid #059669;
+      margin: 8px 0 12px 0;
+      background: #0d2238;
+      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    .mini-map-canvas {
+      width: 100%;
+      height: 100%;
+    }
+
+    .btn-expand-mini-map {
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      z-index: 400;
+      background: rgba(255, 255, 255, 0.92);
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      width: 26px;
+      height: 26px;
+      font-size: 14px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      color: #334155;
+    }
+
+    .btn-expand-mini-map:hover {
+      background: #ffffff;
+      color: #059669;
+    }
+
+    .mini-map-actions-row {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .btn-buka-peta-spasial {
+      background: #194a36;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 9px 14px;
+      font-weight: 700;
+      font-size: 0.78rem;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.2s;
+    }
+
+    .btn-buka-peta-spasial:hover {
+      background: #0f3d2b;
+      transform: translateY(-1px);
+    }
+
+    .btn-wa-helpline-hubungi {
+      background: #25d366;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 0.76rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      font-weight: 700;
+      margin-left: auto;
+      box-shadow: 0 2px 8px rgba(37, 211, 102, 0.3);
+      transition: all 0.2s;
+    }
+
+    .btn-wa-helpline-hubungi:hover {
+      background: #20ba5a;
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 860px) {
+      .silapor-hero-container {
+        grid-template-columns: 1fr;
+      }
+      .silapor-bottom-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+
+    /* ===================================================================
+       DASHBOARD MASYARAKAT: METRIK, LIVE TRACKER & PILAR ISU
+       =================================================================== */
+    .community-dashboard {
+      background: #ffffff;
+      border: 1px solid rgba(16, 185, 129, 0.22);
+      border-radius: 18px;
+      padding: 18px 20px;
+      margin-bottom: 22px;
+      box-shadow: 0 4px 20px rgba(6, 78, 59, 0.05);
+    }
+
+    .community-dash-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .community-dash-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .community-metrics-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 10px;
+      margin-bottom: 14px;
+    }
+
+    .c-metric-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 10px 12px;
+      text-align: center;
+      transition: all 0.2s ease;
+    }
+
+    .c-metric-card:hover {
+      background: #f0fdf4;
+      border-color: #86efac;
+      transform: translateY(-2px);
+    }
+
+    .c-metric-val {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.4rem;
+      font-weight: 800;
+      color: #059669;
+      line-height: 1.1;
+    }
+
+    .c-metric-label {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #64748b;
+      margin-top: 3px;
+    }
+
+    /* Live Ticket Quick-Tracker */
+    .quick-track-box {
+      background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+      border: 1.5px solid #a7f3d0;
+      border-radius: 14px;
+      padding: 14px 16px;
+      margin-bottom: 14px;
+    }
+
+    .track-input-group {
+      display: flex;
+      gap: 8px;
+      margin-top: 6px;
+    }
+
+    .track-input {
+      flex: 1;
+      padding: 10px 14px;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      font-size: 0.88rem;
+      font-family: monospace;
+      outline: none;
+      background: white;
+      transition: all 0.2s;
+    }
+
+    .track-input:focus {
+      border-color: #059669;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18);
+    }
+
+    .btn-track {
+      background: #059669;
+      color: white;
+      border: none;
+      border-radius: 10px;
+      padding: 10px 18px;
+      font-weight: 700;
+      font-size: 0.86rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: background 0.2s;
+      box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
+    }
+
+    .btn-track:hover {
+      background: #047857;
+      transform: translateY(-1px);
+    }
+
+    .track-result-card {
+      margin-top: 10px;
+      background: white;
+      border: 1px solid #86efac;
+      border-radius: 10px;
+      padding: 12px;
+      display: none;
+      animation: fadeIn 0.25s ease-out;
+    }
+
+    /* Kategori Visual Interaktif (Klik Otomatis ke Form) */
+    .quick-category-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 8px;
+    }
+
+    .quick-cat-btn {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px 8px;
+      text-align: center;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .quick-cat-btn:hover {
+      border-color: #10b981;
+      background: #f0fdf4;
+      transform: translateY(-2px);
+      box-shadow: 0 6px 14px rgba(16, 185, 129, 0.15);
+    }
+
+    .quick-cat-icon {
+      font-size: 1.45rem;
+    }
+
+    .quick-cat-name {
+      font-size: 0.76rem;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.2;
+    }
+
+    /* ===================================================================
+       ANIMASI PENGIRIMAN LAPORAN (SUBMISSION LAUNCH & PULSE OVERLAY)
+       =================================================================== */
+    .submit-anim-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 9999;
+      background: rgba(6, 78, 59, 0.94);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease;
+      color: white;
+      text-align: center;
+      padding: 24px;
+    }
+
+    .submit-anim-overlay.active {
+      opacity: 1;
+      pointer-events: auto;
+    }
+
+    .plane-launch-wrap {
+      width: 120px;
+      height: 120px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .flying-plane {
+      font-size: 58px;
+      display: inline-block;
+      animation: planeFly 1.5s cubic-bezier(0.2, 0.8, 0.2, 1) infinite;
+    }
+
+    @keyframes planeFly {
+      0% {
+        transform: translateY(24px) scale(0.7) rotate(-20deg);
+        opacity: 0;
+      }
+      50% {
+        transform: translateY(-8px) scale(1.1) rotate(5deg);
+        opacity: 1;
+      }
+      100% {
+        transform: translateY(-60px) translateX(45px) scale(0.85) rotate(25deg);
+        opacity: 0;
+      }
+    }
+
+    .pulse-ring {
+      position: absolute;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 3px solid #34d399;
+      animation: pulseWave 1.8s ease-out infinite;
+    }
+
+    @keyframes pulseWave {
+      0% {
+        transform: scale(0.5);
+        opacity: 1;
+      }
+      100% {
+        transform: scale(1.7);
+        opacity: 0;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .quick-category-grid {
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .track-input-group {
+        flex-direction: column;
+      }
+    }
+
+    /* Environmental Footer */
+    .app-footer {
+      background: #022c22;
+      color: #a7f3d0;
+      border-top: 3px solid #10b981;
+      padding: 36px 16px 24px 16px;
+      margin-top: auto;
+    }
+
+    .footer-inner {
+      max-width: 960px;
+      margin: 0 auto;
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    .footer-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+      flex-wrap: wrap;
+    }
+
+    .footer-brand {
+      max-width: 480px;
+    }
+
+    .footer-brand h4 {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .footer-brand p {
+      font-size: 0.82rem;
+      color: #94a3b8;
+      line-height: 1.5;
+      margin: 0;
+    }
+
+    .footer-links {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+    }
+
+    .footer-link-btn {
+      color: #ecfdf5;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      padding: 8px 14px;
+      border-radius: 8px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      text-decoration: none;
+      transition: all 0.2s;
+    }
+
+    .footer-link-btn:hover {
+      background: #059669;
+      color: #ffffff;
+      border-color: #10b981;
+    }
+
+    .footer-bottom {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 16px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 0.78rem;
+      color: #6ee7b7;
+    }
+
+    /* ===================================================================
+   FORMULIR ADUAN UTAMA
+   =================================================================== */
+    .form-card {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      box-shadow: var(--shadow-sm);
+      overflow: hidden;
+    }
+
+    .form-card-header {
+      padding: 20px 24px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .form-card-badge {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--primary);
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .form-card-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 800;
+      color: var(--text-main);
+    }
+
+    .form-card-desc {
+      font-size: 0.82rem;
+      color: var(--text-muted);
+    }
+
+    .aduan-form {
+      padding: 24px;
+    }
+
+    .form-section-title {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin: 18px 0 14px 0;
+      padding-bottom: 6px;
+      border-bottom: 2px solid var(--primary-soft);
+    }
+
+    .form-section-title:first-child {
+      margin-top: 0;
+    }
+
+    .form-section-title span {
+      width: 22px;
+      height: 22px;
+      background: var(--primary);
+      color: white;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+
+    .form-row-2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 14px;
+    }
+
+    @media (max-width: 640px) {
+      .form-row-2 {
+        grid-template-columns: 1fr;
+        gap: 12px;
+      }
+    }
+
+    .form-field {
+      margin-bottom: 16px;
+    }
+
+    .field-label {
+      display: block;
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #334155;
+      margin-bottom: 6px;
+    }
+
+    .req {
+      color: #e11d48;
+    }
+
+    .input-text,
+    .input-select,
+    .input-textarea {
+      width: 100%;
+      padding: 10px 14px;
+      border-radius: var(--radius-md);
+      border: 1px solid var(--border);
+      background: #ffffff;
+      font-size: 0.9rem;
+      font-family: inherit;
+      color: var(--text-main);
+      outline: none;
+      transition: all 0.2s ease;
+    }
+
+    .input-text:focus,
+    .input-select:focus,
+    .input-textarea:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(5, 150, 105, 0.15);
+    }
+
+    .input-sm {
+      padding: 6px 10px;
+      font-size: 0.82rem;
+      background: #f8fafc;
+    }
+
+    /* Validation Styles & Loading Spinner */
+    .input-text.input-invalid {
+      border-color: #ef4444 !important;
+      background-color: #fef2f2 !important;
+      box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.15) !important;
+    }
+
+    .input-text.input-valid {
+      border-color: #10b981 !important;
+      background-color: #f0fdf4 !important;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
+    }
+
+    .input-validation-msg {
+      font-size: 0.78rem;
+      margin-top: 5px;
+      font-weight: 600;
+      line-height: 1.4;
+      transition: all 0.2s ease;
+    }
+
+    .input-validation-msg.msg-error {
+      color: #dc2626;
+      display: block;
+    }
+
+    .input-validation-msg.msg-success {
+      color: #059669;
+      display: block;
+    }
+
+    .btn-spinner {
+      display: inline-block;
+      width: 18px;
+      height: 18px;
+      border: 2.5px solid rgba(255, 255, 255, 0.35);
+      border-radius: 50%;
+      border-top-color: #ffffff;
+      animation: spinLoading 0.75s linear infinite;
+      vertical-align: middle;
+      flex-shrink: 0;
+    }
+
+    @keyframes spinLoading {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* Category Selection Chips */
+    .category-chips {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .chip-item {
+      display: flex;
+      align-items: center;
+      padding: 10px 14px;
+      background: #f8fafc;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      font-size: 0.85rem;
+      font-weight: 600;
+      color: var(--text-main);
+      transition: all 0.2s;
+    }
+
+    .chip-item input[type="radio"] {
+      display: none;
+    }
+
+    .chip-item:hover {
+      background: var(--primary-soft);
+      border-color: #86efac;
+    }
+
+    .chip-item.active {
+      background: #dcfce7;
+      border-color: var(--primary);
+      color: #065f46;
+      box-shadow: 0 2px 6px rgba(5, 150, 105, 0.15);
+    }
+
+    /* GPS Button Box */
+    .gps-box {
+      margin-bottom: 12px;
+    }
+
+    .btn-gps {
+      width: 100%;
+      padding: 10px 16px;
+      background: #f0fdf4;
+      border: 1px solid #86efac;
+      color: #059669;
+      border-radius: var(--radius-md);
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn-gps:hover {
+      background: #dcfce7;
+    }
+
+    .gps-status-msg {
+      font-size: 0.78rem;
+      margin-top: 6px;
+      display: none;
+    }
+
+    /* Main Submit Button */
+    .btn-submit-main {
+      width: 100%;
+      padding: 14px 20px;
+      background: linear-gradient(135deg, var(--primary) 0%, #047857 100%);
+      color: white;
+      border: none;
+      border-radius: var(--radius-md);
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      cursor: pointer;
+      box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);
+      transition: all 0.2s;
+      margin-top: 10px;
+    }
+
+    .btn-submit-main:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(5, 150, 105, 0.4);
+    }
+
+    .submit-note {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      text-align: center;
+      margin-top: 10px;
+    }
+
+
+
+    /* ===================================================================
+   MAP TAB
+   =================================================================== */
+    .map-card-box {
+      background: var(--card-bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      overflow: hidden;
+      box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+    }
+
+    .map-header-bar {
+      padding: 18px 24px;
+      background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .map-header-info {
+      flex: 1;
+      min-width: 280px;
+    }
+
+    .map-badge-live {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1px solid #a7f3d0;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.6px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      margin-bottom: 6px;
+    }
+
+    .map-main-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: #064e3b;
+      margin: 0 0 4px 0;
+      line-height: 1.3;
+    }
+
+    .map-sub-title {
+      font-size: 0.85rem;
+      color: #64748b;
+      margin: 0;
+      line-height: 1.45;
+    }
+
+    /* Basemap Switcher Buttons */
+    .map-basemap-buttons {
+      display: flex;
+      gap: 6px;
+      background: #e2e8f0;
+      padding: 4px;
+      border-radius: 10px;
+    }
+
+    .btn-basemap {
+      background: transparent;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .btn-basemap:hover {
+      color: #0f172a;
+    }
+
+    .btn-basemap.active {
+      background: white;
+      color: #065f46;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+    }
+
+    /* Mini KPI Strip Above Map */
+    .map-stats-strip {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+      gap: 12px;
+      padding: 12px 24px;
+      background: #f1f5f9;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .map-stat-chip {
+      background: white;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+    }
+
+    .mstat-icon {
+      font-size: 1.4rem;
+      line-height: 1;
+    }
+
+    .mstat-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1;
+    }
+
+    .mstat-lbl {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: #64748b;
+      margin-top: 2px;
+    }
+
+    .chip-amber .mstat-num {
+      color: #d97706;
+    }
+
+    .chip-blue .mstat-num {
+      color: #2563eb;
+    }
+
+    .chip-green .mstat-num {
+      color: #059669;
+    }
+
+    /* Filter Toolbar */
+    .map-toolbar {
+      padding: 12px 24px;
+      background: #ffffff;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+    }
+
+    .map-filter-group {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .map-filter-label {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #475569;
+      white-space: nowrap;
+    }
+
+    /* Quick Region Pills */
+    .map-region-pills {
+      padding: 10px 24px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      overflow-x: auto;
+      scrollbar-width: thin;
+    }
+
+    .region-pills-label {
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #64748b;
+      text-transform: uppercase;
+      white-space: nowrap;
+      margin-right: 4px;
+    }
+
+    .pill-region {
+      background: white;
+      border: 1px solid #cbd5e1;
+      padding: 4px 11px;
+      border-radius: 999px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #334155;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .pill-region:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+      color: #0f172a;
+    }
+
+    .pill-region.active {
+      background: #059669;
+      border-color: #059669;
+      color: white;
+      box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
+    }
+
+    /* Map Canvas Container */
+    .map-container-relative {
+      position: relative;
+      width: 100%;
+    }
+
+    .map-render-container {
+      height: 540px;
+      width: 100%;
+      background: #e0f2fe;
+    }
+
+    /* Floating Interactive Legend Box */
+    .map-legend-box {
+      position: absolute;
+      bottom: 24px;
+      left: 20px;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(226, 232, 240, 0.9);
+      border-radius: 12px;
+      padding: 12px 14px;
+      box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.15);
+      z-index: 1000;
+      max-width: 260px;
+      transition: all 0.2s ease;
+    }
+
+    .legend-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.8rem;
+      color: #0f172a;
+      margin-bottom: 8px;
+      font-weight: 700;
+    }
+
+    .legend-toggle {
+      background: none;
+      border: none;
+      font-size: 13px;
+      color: #64748b;
+      cursor: pointer;
+      padding: 0 4px;
+    }
+
+    .legend-items {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.75rem;
+      color: #334155;
+      padding: 4px 6px;
+      border-radius: 6px;
+      cursor: pointer;
+      transition: background 0.15s ease;
+    }
+
+    .legend-item:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .legend-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
+    }
+
+    .legend-text {
+      font-weight: 600;
+    }
+
+    /* Custom Marker Styling */
+    .custom-leaflet-marker {
+      position: relative;
+      width: 32px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .marker-pin {
+      width: 30px;
+      height: 30px;
+      border-radius: 50% 50% 50% 0;
+      transform: rotate(-45deg);
+      border: 2px solid #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+      transition: transform 0.18s cubic-bezier(0.34, 1.56, 0.64, 1);
+      cursor: pointer;
+    }
+
+    .marker-pin .marker-icon {
+      transform: rotate(45deg);
+      font-size: 13px;
+      line-height: 1;
+    }
+
+    .custom-leaflet-marker:hover .marker-pin {
+      transform: rotate(-45deg) scale(1.18);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.4);
+    }
+
+    .marker-pulse-ring {
+      position: absolute;
+      top: 1px;
+      left: 1px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 2px solid;
+      opacity: 0.8;
+      animation: markerHalo 2.2s infinite;
+      pointer-events: none;
+    }
+
+    @keyframes markerHalo {
+      0% {
+        transform: scale(0.8);
+        opacity: 0.9;
+      }
+
+      100% {
+        transform: scale(2.4);
+        opacity: 0;
+      }
+    }
+
+    /* Leaflet Tooltip */
+    .leaflet-tooltip.custom-map-tooltip {
+      background: rgba(15, 23, 42, 0.94);
+      backdrop-filter: blur(6px);
+      border: 1px solid #334155;
+      border-radius: 10px;
+      color: white;
+      padding: 10px 14px;
+      box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.5);
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      max-width: 260px;
+    }
+
+    .leaflet-tooltip-top:before {
+      border-top-color: rgba(15, 23, 42, 0.94);
+    }
+
+    .map-tooltip-content .tt-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 4px;
+      gap: 8px;
+    }
+
+    .map-tooltip-content .tt-id {
+      font-family: monospace;
+      font-weight: 800;
+      font-size: 0.75rem;
+      color: #34d399;
+    }
+
+    .map-tooltip-content .tt-status {
+      font-size: 0.68rem;
+      padding: 1px 6px;
+      border-radius: 4px;
+      font-weight: 700;
+    }
+
+    .map-tooltip-content .tt-title {
+      font-size: 0.85rem;
+      font-weight: 700;
+      color: #f8fafc;
+      margin-bottom: 2px;
+    }
+
+    .map-tooltip-content .tt-loc {
+      font-size: 0.74rem;
+      color: #cbd5e1;
+      margin-bottom: 6px;
+    }
+
+    .map-tooltip-content .tt-desc {
+      font-size: 0.72rem;
+      color: #94a3b8;
+      line-height: 1.35;
+      margin-bottom: 6px;
+    }
+
+    .map-tooltip-content .tt-hint {
+      font-size: 0.68rem;
+      color: #6ee7b7;
+      font-weight: 600;
+      border-top: 1px solid #334155;
+      padding-top: 4px;
+    }
+
+    /* Leaflet Popup Card (Sesuai Gambar 1) */
+    .map-popup-card {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      min-width: 270px;
+      max-width: 320px;
+      padding: 4px;
+    }
+
+    .popup-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .popup-id {
+      font-family: monospace;
+      font-weight: 800;
+      color: #065f46;
+      font-size: 0.98rem;
+    }
+
+    .popup-cat {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      font-size: 0.96rem;
+      font-weight: 800;
+      color: #047857;
+      margin-bottom: 10px;
+    }
+
+    .popup-location {
+      font-size: 0.84rem;
+      color: #334155;
+      margin-bottom: 10px;
+      background: #f8fafc;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid #f1f5f9;
+      line-height: 1.4;
+    }
+
+    .popup-detail-loc {
+      font-size: 0.78rem;
+      color: #64748b;
+      margin-top: 3px;
+    }
+
+    .popup-coords {
+      font-family: monospace;
+      font-size: 0.78rem;
+      color: #0d9488;
+      font-weight: 700;
+      margin-top: 5px;
+    }
+
+    .popup-chronology {
+      font-size: 0.84rem;
+      color: #1e293b;
+      line-height: 1.45;
+      margin-bottom: 10px;
+    }
+
+    .popup-chronology p {
+      margin: 3px 0 0 0;
+      color: #475569;
+    }
+
+    .popup-dlh-status {
+      background: #ecfdf5;
+      border-left: 3.5px solid #10b981;
+      padding: 8px 10px;
+      border-radius: 4px;
+      font-size: 0.8rem;
+      color: #065f46;
+      margin-bottom: 12px;
+      line-height: 1.4;
+    }
+
+    .popup-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    /* Map Cards Feed (Below Map) */
+    .map-cards-section {
+      padding: 20px 24px;
+      background: #ffffff;
+      border-top: 1px solid var(--border);
+    }
+
+    .map-cards-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 16px;
+    }
+
+    .map-aduan-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      gap: 14px;
+    }
+
+    .map-aduan-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 14px;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+    }
+
+    .map-aduan-card:hover {
+      background: white;
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.06);
+      transform: translateY(-2px);
+    }
+
+    .mac-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+
+    .mac-id {
+      font-family: monospace;
+      font-weight: 800;
+      color: #065f46;
+      font-size: 0.85rem;
+    }
+
+    .mac-title {
+      font-size: 0.92rem;
+      font-weight: 700;
+      color: #0f172a;
+      margin-bottom: 4px;
+    }
+
+    .mac-loc {
+      font-size: 0.78rem;
+      color: #64748b;
+      margin-bottom: 6px;
+    }
+
+    .mac-desc {
+      font-size: 0.78rem;
+      color: #475569;
+      line-height: 1.4;
+      margin-bottom: 12px;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+    }
+
+    .mac-actions {
+      display: flex;
+      gap: 6px;
+    }
+
+    /* ===================================================================
+   DATA & TABLE TAB
+   =================================================================== */
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
+    }
+
+    .kpi-box {
+      background: white;
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 14px 18px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .kpi-label {
+      font-size: 0.72rem;
+      font-weight: 800;
+      color: var(--text-muted);
+      letter-spacing: 0.5px;
+    }
+
+    .kpi-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.7rem;
+      font-weight: 900;
+      color: var(--text-main);
+      margin-top: 2px;
+    }
+
+    .kpi-baru .kpi-num {
+      color: #e11d48;
+    }
+
+    .kpi-proses .kpi-num {
+      color: #d97706;
+    }
+
+    .kpi-selesai .kpi-num {
+      color: #059669;
+    }
+
+    .table-card {
+      background: var(--card-bg);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+    }
+
+    .table-toolbar {
+      padding: 16px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .search-box {
+      flex: 1;
+      min-width: 260px;
+    }
+
+    .table-responsive {
+      overflow-x: auto;
+    }
+
+    .data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 0.85rem;
+    }
+
+    .data-table th {
+      background: #f1f5f9;
+      color: #475569;
+      font-weight: 700;
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+      white-space: nowrap;
+    }
+
+    .data-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .data-table tr:hover {
+      background: #f8fafc;
+    }
+
+    .table-footer-info {
+      padding: 12px 16px;
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      background: #f8fafc;
+      border-top: 1px solid var(--border);
+    }
+
+    /* Status Badges */
+    .badge {
+      display: inline-block;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      text-transform: uppercase;
+    }
+
+    .badge-baru,
+    .badge-aduan-diterima {
+      background: #fef3c7;
+      color: #b45309;
+    }
+
+    .badge-verifikasi-administrasi {
+      background: #fef9c3;
+      color: #854d0e;
+    }
+
+    .badge-menunggu-verifikasi-lapangan {
+      background: #ffedd5;
+      color: #c2410c;
+    }
+
+    .badge-sedang-diverifikasi,
+    .badge-diverifikasi {
+      background: #f3e8ff;
+      color: #7e22ce;
+    }
+
+    .badge-dalam-penanganan,
+    .badge-ditindaklanjuti {
+      background: #dbeafe;
+      color: #1d4ed8;
+    }
+
+    .badge-selesai {
+      background: #dcfce7;
+      color: #15803d;
+    }
+
+    .badge-ditolak {
+      background: #f1f5f9;
+      color: #64748b;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      padding: 8px 16px;
+      border-radius: var(--radius-sm);
+      font-size: 0.85rem;
+      font-weight: 600;
+      cursor: pointer;
+      text-decoration: none;
+      border: 1px solid transparent;
+      transition: all 0.2s;
+    }
+
+    .btn-primary {
+      background: var(--primary);
+      color: white;
+    }
+
+    .btn-primary:hover {
+      background: #047857;
+    }
+
+    .btn-secondary {
+      background: #e2e8f0;
+      color: #334155;
+    }
+
+    .btn-secondary:hover {
+      background: #cbd5e1;
+    }
+
+    .btn-outline {
+      background: white;
+      border-color: var(--border);
+      color: #334155;
+    }
+
+    .btn-outline:hover {
+      background: #f1f5f9;
+    }
+
+    .btn-sm {
+      padding: 4px 8px;
+      font-size: 0.78rem;
+    }
+
+    /* ===================================================================
+   MODAL WINDOWS
+   =================================================================== */
+    .modal-backdrop {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(5px);
+      -webkit-backdrop-filter: blur(5px);
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+    }
+
+    .modal-backdrop.show {
+      display: flex;
+    }
+
+    .modal-dialog {
+      background: #ffffff !important;
+      width: 100%;
+      max-width: 600px;
+      max-height: 90vh;
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow-lg);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      border: 1px solid var(--border);
+    }
+
+    .modal-header {
+      padding: 16px 20px;
+      background: #f8fafc;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+    }
+
+    .modal-header h3,
+    .modal-title {
+      font-size: 1.1rem;
+      font-weight: 800;
+      color: var(--text-main);
+      margin: 0;
+    }
+
+    .modal-subtitle {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+    }
+
+    .modal-close {
+      background: none;
+      border: none;
+      font-size: 1.4rem;
+      color: var(--text-muted);
+      cursor: pointer;
+    }
+
+    .modal-body {
+      padding: 20px;
+      overflow-y: auto;
+      flex: 1;
+    }
+
+    .modal-footer {
+      padding: 14px 20px;
+      background: #f8fafc;
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: flex-end;
+      gap: 8px;
+    }
+
+    /* Toast */
+    .toast-container {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      z-index: 11000;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      max-width: 360px;
+    }
+
+    .toast {
+      background: #0f172a;
+      color: white;
+      padding: 12px 16px;
+      border-radius: var(--radius-md);
+      font-size: 0.85rem;
+      box-shadow: var(--shadow-lg);
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      animation: slideUp 0.3s ease-out;
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(20px);
+        opacity: 0;
+      }
+
+      to {
+        transform: translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .toast-success {
+      border-left: 4px solid #10b981;
+    }
+
+    .toast-warning {
+      border-left: 4px solid #f59e0b;
+    }
+
+    .toast-info {
+      border-left: 4px solid #3b82f6;
+    }
+
+    /* Floating WhatsApp Button */
+    .floating-wa-btn {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 999;
+      display: inline-flex;
+      align-items: center;
+      background: #25d366;
+      color: white;
+      border-radius: 999px;
+      padding: 12px;
+      box-shadow: 0 6px 16px rgba(37, 211, 102, 0.4);
+      text-decoration: none;
+      transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .floating-wa-icon {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .floating-wa-text {
+      max-width: 0;
+      overflow: hidden;
+      white-space: nowrap;
+      font-weight: 700;
+      font-size: 0.85rem;
+      opacity: 0;
+      transition: all 0.25s ease;
+    }
+
+    .floating-wa-btn:hover {
+      padding: 12px 18px;
+      gap: 8px;
+      transform: translateY(-2px);
+    }
+
+    .floating-wa-btn:hover .floating-wa-text {
+      max-width: 140px;
+      opacity: 1;
+    }
+
+    /* ===================================================================
+   MOBILE-FIRST PERFECTION & OVERFLOW SHIELD (< 520px)
+   =================================================================== */
+    /* ===================================================================
+       MOBILE-FIRST PERFECTION & RESPONSIVE DESIGN SYSTEM (< 768px & < 440px)
+       =================================================================== */
+    html,
+    body {
+      width: 100%;
+      max-width: 100vw;
+      overflow-x: hidden !important;
+      -webkit-text-size-adjust: 100%;
+      -webkit-tap-highlight-color: transparent;
+      scroll-behavior: smooth;
+    }
+
+    /* Standard Segmented Tab for QR Code */
+    .nav-tab-qr {
+      text-decoration: none;
+      color: #047857;
+      background: #ecfdf5;
+      font-weight: 700;
+      border: 1px solid #a7f3d0;
+      border-radius: 999px;
+      margin-left: auto;
+    }
+
+    .nav-tab-qr:hover {
+      background: #d1fae5;
+      color: #064e3b;
+    }
+
+    /* Structured Submit Button Typography */
+    .btn-submit-icon {
+      font-size: 1.35rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+
+    .btn-submit-text-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      line-height: 1.25;
+    }
+
+    .btn-submit-title {
+      font-size: 1.05rem;
+      font-weight: 800;
+      letter-spacing: 0.4px;
+    }
+
+    .btn-submit-sub {
+      font-size: 0.72rem;
+      font-weight: 600;
+      opacity: 0.92;
+      letter-spacing: 0.2px;
+      margin-top: 2px;
+    }
+
+    @media (max-width: 768px) {
+      /* Header & Branding di HP */
+      .app-header {
+        position: sticky;
+        top: 0;
+        z-index: 100;
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+        border-bottom: 1px solid rgba(16, 185, 129, 0.16);
+        box-shadow: 0 2px 10px rgba(6, 78, 59, 0.05);
+      }
+
+      .header-inner {
+        padding: 8px 12px;
+        gap: 8px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+
+      .brand-group {
+        gap: 8px;
+        min-width: 0;
+        flex: 1;
+      }
+
+      .brand-lh-logo {
+        width: 36px;
+        height: 36px;
+        flex-shrink: 0;
+      }
+
+      .brand-text-block {
+        min-width: 0;
+      }
+
+      .brand-title-instansi {
+        font-size: 0.95rem;
+        font-weight: 800;
+        line-height: 1.2;
+        color: #064e3b;
+        white-space: normal;
+      }
+
+      .brand-sub-kab {
+        font-size: 0.64rem;
+        font-weight: 600;
+        color: #475569;
+        letter-spacing: 0.2px;
+        line-height: 1.25;
+      }
+
+      .lentera-dlh-pill {
+        font-size: 0.68rem;
+        padding: 4px 8px;
+      }
+
+      /* Segmented Navigation Bar di HP (Mudah Diklik dengan Jempol) */
+      .nav-bar {
+        position: sticky;
+        top: 53px;
+        z-index: 95;
+        background: rgba(255, 255, 255, 0.96);
+        backdrop-filter: blur(12px);
+        -webkit-backdrop-filter: blur(12px);
+        border-bottom: 1px solid rgba(16, 185, 129, 0.15);
+        box-shadow: 0 3px 8px rgba(0, 0, 0, 0.03);
+      }
+
+      .nav-inner {
+        padding: 6px 10px;
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        width: 100%;
+        overflow-x: visible;
+      }
+
+      .nav-tab-btn {
+        width: 100%;
+        margin: 0 !important;
+        padding: 9px 6px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        justify-content: center;
+        text-align: center;
+        border-radius: 10px;
+        border: 1.5px solid #cbd5e1;
+        transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+        white-space: nowrap;
+        min-height: 40px;
+        background: #f8fafc;
+        color: #1e293b;
+      }
+
+      .nav-tab-btn.nav-tab-wa {
+        background: #ecfdf5;
+        border-color: #6ee7b7;
+        color: #047857;
+      }
+
+      .nav-tab-btn:active {
+        transform: scale(0.97);
+      }
+
+      /* Kontainer Utama */
+      .main-wrap {
+        padding: 10px 10px 70px 10px;
+      }
+
+      /* Hero Section HP: Ringkas, Tegas & Terpadu */
+      .silapor-hero-container {
+        grid-template-columns: 1fr;
+        gap: 10px;
+        margin-bottom: 14px;
+      }
+
+      .hero-left-banner {
+        padding: 18px 16px;
+        border-radius: 16px;
+        background: linear-gradient(145deg, #133a2a 0%, #064e3b 60%, #047857 100%);
+        box-shadow: 0 6px 18px rgba(6, 78, 59, 0.2);
+      }
+
+      .hero-main-heading {
+        font-size: 1.22rem;
+        font-weight: 800;
+        line-height: 1.25;
+        margin-bottom: 4px;
+        color: #ffffff;
+      }
+
+      .hero-sub-heading {
+        font-size: 0.8rem;
+        color: #a7f3d0;
+        margin-bottom: 14px;
+        font-weight: 600;
+      }
+
+      .hero-actions-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+      }
+
+      .btn-hero-action {
+        padding: 10px 12px;
+        border-radius: 12px;
+        gap: 8px;
+        background: #ffffff;
+        border: 1.5px solid transparent;
+        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+        min-height: 52px;
+        text-align: left;
+      }
+
+      .btn-hero-action:active {
+        transform: scale(0.97);
+        background: #f0fdf4;
+      }
+
+      .btn-hero-icon {
+        width: 32px;
+        height: 32px;
+        border-radius: 8px;
+        background: #ecfdf5;
+      }
+
+      .btn-hero-icon svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .btn-hero-tag {
+        font-size: 0.62rem;
+        font-weight: 800;
+        color: #059669;
+        letter-spacing: 0.3px;
+      }
+
+      .btn-hero-title {
+        font-size: 0.8rem;
+        font-weight: 800;
+        color: #0f172a;
+        line-height: 1.15;
+      }
+
+      /* Hero Stat Card -> Strip 3-Kolom Elegan & Rapi */
+      .hero-right-stats {
+        background: #ffffff;
+        border: 1.5px solid #d1fae5;
+        border-radius: 14px;
+        padding: 10px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        box-shadow: 0 4px 12px rgba(6, 78, 59, 0.05);
+      }
+
+      .hero-stat-pill {
+        grid-column: 1 / -1;
+        padding: 5px 8px;
+        justify-content: center;
+        font-size: 0.72rem;
+        gap: 6px;
+        background: #ecfdf5;
+        border: 1px solid #a7f3d0;
+        border-radius: 8px;
+        margin-bottom: 2px;
+        font-weight: 700;
+        color: #065f46;
+      }
+
+      .hero-stat-row {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        padding: 8px 4px;
+        gap: 2px;
+        border-radius: 10px;
+        background: #f8fafc;
+        border: 1px solid #f1f5f9;
+      }
+
+      .stat-row-icon {
+        width: 26px;
+        height: 26px;
+        border-radius: 6px;
+      }
+
+      .stat-row-icon svg {
+        width: 15px;
+        height: 15px;
+      }
+
+      .stat-row-lbl {
+        font-size: 0.62rem;
+        font-weight: 700;
+        color: #64748b;
+      }
+
+      .stat-row-val {
+        font-size: 1.12rem;
+        font-weight: 900;
+        color: #0f172a;
+      }
+
+      /* Bottom Cards Stacking Mobile */
+      .silapor-bottom-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+        margin-bottom: 14px;
+      }
+
+      .bottom-card {
+        padding: 14px 12px;
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .bottom-card-title {
+        font-size: 0.88rem;
+      }
+
+      /* PENTING: Sembunyikan garis alur agar grid 2x2 rapi dan tidak ada celah kosong */
+      .alur-step-line {
+        display: none !important;
+      }
+
+      .alur-steps-track {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 8px;
+        margin-top: 8px;
+        padding: 0;
+      }
+
+      .alur-step-item {
+        background: #f8fafc;
+        border: 1.5px solid #e2e8f0;
+        border-radius: 12px;
+        padding: 12px 8px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+        transition: transform 0.15s ease;
+      }
+
+      .alur-step-item:active {
+        transform: scale(0.97);
+        background: #f0fdf4;
+        border-color: #86efac;
+      }
+
+      .alur-step-icon {
+        width: 36px;
+        height: 36px;
+        margin-bottom: 6px;
+        border-width: 1.5px;
+      }
+
+      .alur-step-icon svg {
+        width: 18px;
+        height: 18px;
+      }
+
+      .alur-step-label {
+        font-size: 0.76rem;
+        font-weight: 800;
+        color: #0f172a;
+        margin-bottom: 2px;
+        line-height: 1.2;
+      }
+
+      .alur-step-sub {
+        font-size: 0.65rem;
+        color: #059669;
+        font-weight: 700;
+        line-height: 1.2;
+      }
+
+      /* Mini Map Preview */
+      .mini-map-container {
+        height: 170px;
+        border-radius: 10px;
+        margin: 8px 0 10px 0;
+      }
+
+      #miniMapPreview {
+        height: 170px !important;
+      }
+
+      .mini-map-actions-row {
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .btn-buka-peta-spasial,
+      .btn-wa-helpline-hubungi {
+        width: 100%;
+        justify-content: center;
+        text-align: center;
+        padding: 10px 14px;
+        min-height: 42px;
+        border-radius: 10px;
+        font-size: 0.8rem;
+      }
+
+      /* Quick Tracker Box Mobile */
+      .quick-track-box {
+        padding: 14px 12px;
+        border-radius: 14px;
+        margin-bottom: 14px;
+        border: 1.5px solid #a7f3d0;
+      }
+
+      .track-input-group {
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .track-input {
+        width: 100%;
+        min-height: 46px;
+        font-size: 16px !important;
+        padding: 10px 12px;
+        border-radius: 10px;
+      }
+
+      .btn-track {
+        width: 100%;
+        min-height: 44px;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 0.88rem;
+      }
+
+      /* Form Pengaduan Warga di Mobile */
+      .form-card {
+        border-radius: 16px;
+        border: 1px solid #e2e8f0;
+      }
+
+      .form-card-header {
+        padding: 16px 14px 12px 14px;
+      }
+
+      .form-card-badge {
+        font-size: 0.72rem;
+        padding: 3px 8px;
+      }
+
+      .form-card-title {
+        font-size: 1.15rem;
+        margin: 6px 0 2px 0;
+      }
+
+      .form-card-desc {
+        font-size: 0.78rem;
+        color: #64748b;
+      }
+
+      .aduan-form {
+        padding: 14px 12px 20px 12px;
+      }
+
+      .form-section-title {
+        font-size: 0.86rem;
+        padding: 8px 10px;
+        margin: 16px 0 10px 0;
+        border-radius: 8px;
+        gap: 8px;
+      }
+
+      .form-section-title span {
+        width: 22px;
+        height: 22px;
+        font-size: 0.76rem;
+      }
+
+      .form-row-2 {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+
+      .form-field {
+        margin-bottom: 10px;
+      }
+
+      .field-label {
+        font-size: 0.82rem;
+        margin-bottom: 4px;
+      }
+
+      /* Input Fields 16px Mencegah Auto-Zoom di Safari iOS */
+      .input-text,
+      .input-select,
+      .input-textarea {
+        font-size: 16px !important;
+        padding: 11px 12px;
+        border-radius: 10px;
+        min-height: 46px;
+        border: 1.5px solid #cbd5e1;
+      }
+
+      .input-textarea {
+        min-height: 96px;
+        line-height: 1.4;
+      }
+
+      /* Upload Tombol Kamera & Galeri di Layar HP */
+      .upload-zone {
+        padding: 12px;
+        border-radius: 12px;
+      }
+
+      .upload-actions-group {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .btn-camera-trigger {
+        width: 100%;
+        min-height: 46px;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 0.86rem;
+        background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      }
+
+      .btn-upload-trigger {
+        width: 100%;
+        min-height: 44px;
+        justify-content: center;
+        border-radius: 10px;
+        font-size: 0.84rem;
+        background: #ffffff;
+        border: 1.5px solid #cbd5e1;
+      }
+
+      .upload-hint {
+        font-size: 0.72rem;
+        margin-top: 6px;
+      }
+
+      .upload-preview-list {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 6px;
+        margin-top: 10px;
+      }
+
+      .upload-preview-item {
+        width: 100%;
+        height: 72px;
+        border-radius: 8px;
+      }
+
+      .upload-preview-item .btn-remove-preview {
+        width: 22px;
+        height: 22px;
+        font-size: 13px;
+      }
+
+      /* GPS Detection Button */
+      .gps-box {
+        margin-bottom: 10px;
+      }
+
+      .btn-gps {
+        width: 100%;
+        min-height: 46px;
+        padding: 11px 12px;
+        font-size: 0.84rem;
+        border-radius: 10px;
+        border: 1.5px solid #86efac;
+        justify-content: center;
+      }
+
+      /* Koordinat Lat/Lng Tetap 2 Kolom Seimbang */
+      .form-row-2.coords-row {
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+        margin-bottom: 12px;
+      }
+
+      /* Kategori Pilihan Cepat 2-Kolom */
+      .category-chips {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+
+      .chip-item {
+        padding: 8px 8px;
+        font-size: 0.78rem;
+        border-radius: 10px;
+        min-height: 44px;
+        justify-content: center;
+        text-align: center;
+        border: 1.5px solid #e2e8f0;
+      }
+
+      /* Tombol Kirim Aduan Utama */
+      .btn-submit-main {
+        width: 100%;
+        min-height: 54px;
+        padding: 12px 16px !important;
+        border-radius: 12px;
+        margin-top: 12px;
+        box-shadow: 0 6px 18px rgba(5, 150, 105, 0.35);
+      }
+
+      .btn-submit-main:active {
+        transform: scale(0.98);
+      }
+
+      .btn-submit-title {
+        font-size: 0.98rem;
+      }
+
+      .btn-submit-sub {
+        font-size: 0.68rem;
+      }
+
+      .submit-note {
+        font-size: 0.72rem;
+        margin-top: 8px;
+        line-height: 1.35;
+      }
+
+      /* Peta Spasial Tab di Layar HP */
+      .map-render-container {
+        height: 60vh !important;
+        min-height: 380px;
+        border-radius: 14px;
+      }
+
+      .map-header-bar {
+        padding: 12px 12px;
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+      }
+
+      .map-main-title {
+        font-size: 1.15rem;
+      }
+
+      .map-sub-title {
+        font-size: 0.78rem;
+      }
+
+      .map-stats-strip {
+        grid-template-columns: 1fr 1fr;
+        padding: 8px 10px;
+        gap: 6px;
+      }
+
+      .map-toolbar {
+        padding: 8px 10px;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .map-filter-group {
+        width: 100%;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .map-filter-group select {
+        width: 100%;
+        min-height: 44px;
+        font-size: 16px !important;
+      }
+
+      /* Legenda Keterangan Warna Pin di Layar HP (Kompak, Rapi, & Bebas Menutupi Peta) */
+      .map-legend-box {
+        bottom: 10px !important;
+        left: 10px !important;
+        right: 10px !important;
+        max-width: none !important;
+        padding: 6px 12px !important;
+        border-radius: 10px !important;
+        background: rgba(255, 255, 255, 0.94) !important;
+        backdrop-filter: blur(10px) !important;
+        -webkit-backdrop-filter: blur(10px) !important;
+        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22) !important;
+        border: 1px solid rgba(226, 232, 240, 0.95) !important;
+      }
+
+      .map-legend-box .legend-header {
+        margin-bottom: 0 !important;
+        font-size: 0.72rem !important;
+        cursor: pointer;
+        user-select: none;
+      }
+
+      .map-legend-box .legend-items {
+        display: none;
+        flex-direction: row !important;
+        flex-wrap: wrap !important;
+        gap: 4px 8px !important;
+        margin-top: 6px !important;
+        padding-top: 6px !important;
+        border-top: 1px solid #e2e8f0 !important;
+      }
+
+      .map-legend-box.expanded .legend-items {
+        display: flex !important;
+      }
+
+      .map-legend-box .legend-item {
+        padding: 2px 6px !important;
+        font-size: 0.68rem !important;
+        background: #f8fafc;
+        border-radius: 6px;
+      }
+
+      .map-legend-box .legend-dot {
+        width: 8px !important;
+        height: 8px !important;
+      }
+
+      .map-legend-box .legend-text {
+        font-size: 0.68rem !important;
+        font-weight: 600 !important;
+      }
+
+      /* Floating WhatsApp Button HP */
+      .floating-wa-btn {
+        bottom: 16px;
+        right: 16px;
+        padding: 10px;
+      }
+
+      /* Modal Dialogs di Layar HP */
+      .modal-backdrop {
+        padding: 10px;
+      }
+
+      .modal-dialog {
+        width: 100% !important;
+        max-width: 100% !important;
+        max-height: 90vh;
+        border-radius: 18px !important;
+      }
+
+      .camera-viewport-wrap {
+        height: 260px;
+        border-radius: 10px;
+      }
+    }
+
+    @media (max-width: 440px) {
+      .hero-actions-row {
+        grid-template-columns: 1fr;
+        gap: 8px;
+      }
+
+      .btn-hero-action {
+        width: 100%;
+      }
+
+      .header-inner {
+        padding: 8px 10px;
+      }
+
+      .brand-title-instansi {
+        font-size: 0.88rem;
+      }
+
+      .brand-sub-kab {
+        font-size: 0.62rem;
+      }
+
+      .brand-lh-logo {
+        width: 32px;
+        height: 32px;
+      }
+
+      .lentera-dlh-pill {
+        display: none;
+      }
+
+      .nav-inner {
+        padding: 4px 6px;
+        gap: 6px;
+      }
+
+      .nav-tab-btn {
+        font-size: 0.74rem !important;
+        padding: 8px 4px !important;
+      }
+
+      .category-chips {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    /* ===================================================================
+   UPLOAD ZONE STYLES
+   =================================================================== */
+    .upload-zone {
+      border: 2px dashed #cbd5e1;
+      border-radius: var(--radius-md);
+      padding: 18px;
+      text-align: center;
+      background: #f8fafc;
+      transition: all 0.2s ease;
+    }
+
+    .upload-zone:hover,
+    .upload-zone.dragover {
+      border-color: var(--primary);
+      background: #f0fdf4;
+    }
+
+    .btn-upload-trigger {
+      background: white;
+      border: 1px solid #cbd5e1;
+      padding: 9px 18px;
+      border-radius: var(--radius-sm);
+      color: #334155;
+      font-weight: 600;
+      font-size: 0.88rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-upload-trigger:hover {
+      background: #f1f5f9;
+      border-color: #94a3b8;
+      color: #0f172a;
+    }
+
+    .upload-hint {
+      font-size: 0.78rem;
+      color: #64748b;
+      margin-top: 8px;
+      margin-bottom: 0;
+    }
+
+    .upload-preview-list {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 14px;
+      justify-content: center;
+    }
+
+    .upload-preview-item {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      border-radius: 8px;
+      overflow: hidden;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .upload-preview-item img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .upload-preview-item .file-icon {
+      font-size: 24px;
+    }
+
+    .upload-preview-item .btn-remove-preview {
+      position: absolute;
+      top: 2px;
+      right: 2px;
+      background: rgba(0, 0, 0, 0.65);
+      color: white;
+      border: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      font-size: 11px;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      line-height: 1;
+    }
+
+    /* ===================================================================
+   CAMERA CAPTURE STYLES
+   =================================================================== */
+    .upload-actions-group {
+      display: flex;
+      gap: 10px;
+      justify-content: center;
+      flex-wrap: wrap;
+      margin-bottom: 6px;
+    }
+
+    .btn-camera-trigger {
+      background: #059669;
+      color: white;
+      border: 1px solid #047857;
+      padding: 10px 18px;
+      border-radius: var(--radius-sm);
+      font-weight: 700;
+      font-size: 0.88rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
+      transition: all 0.2s ease;
+    }
+
+    .btn-camera-trigger:hover {
+      background: #047857;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 10px rgba(5, 150, 105, 0.35);
+    }
+
+    .modal-camera-dialog {
+      max-width: 480px;
+      width: 95%;
+    }
+
+    .camera-viewport-wrap {
+      position: relative;
+      width: 100%;
+      height: 320px;
+      background: #090d16;
+      border-radius: 12px;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    #cameraVideoView {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    .camera-target-grid {
+      position: absolute;
+      top: 12%;
+      left: 12%;
+      right: 12%;
+      bottom: 12%;
+      border: 2px dashed rgba(255, 255, 255, 0.45);
+      border-radius: 8px;
+      pointer-events: none;
+      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.25);
+    }
+
+    .camera-footer-controls {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .btn-shutter {
+      background: #dc2626 !important;
+      border-color: #b91c1c !important;
+      font-size: 0.95rem !important;
+      padding: 10px 22px !important;
+      font-weight: 800 !important;
+      border-radius: 999px !important;
+      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4) !important;
+      transition: all 0.15s ease !important;
+    }
+
+    .btn-shutter:hover {
+      background: #b91c1c !important;
+      transform: scale(1.04);
+    }
+
+    /* ===================================================================
+       ANIMASI UPLOAD BUKTI FOTO & STATUS SUKSES (PREMIUM)
+       =================================================================== */
+    .upload-anim-card {
+      background: linear-gradient(135deg, #f0fdf4 0%, #ecfdf5 100%);
+      border: 1.5px solid #6ee7b7;
+      border-radius: 12px;
+      padding: 14px 16px;
+      margin: 12px 0;
+      box-shadow: 0 4px 14px rgba(5, 150, 105, 0.12);
+      transition: all 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: fadeInSlideDown 0.3s ease-out;
+    }
+
+    @keyframes fadeInSlideDown {
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .upload-anim-header {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .upload-anim-icon-wrap {
+      position: relative;
+      width: 38px;
+      height: 38px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: #ffffff;
+      border-radius: 50%;
+      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      border: 2px solid #10b981;
+    }
+
+    .upload-anim-spinner {
+      position: absolute;
+      inset: -3px;
+      border: 2.5px solid transparent;
+      border-top-color: #059669;
+      border-right-color: #10b981;
+      border-radius: 50%;
+      animation: animSpin 0.9s linear infinite;
+    }
+
+    @keyframes animSpin {
+      100% { transform: rotate(360deg); }
+    }
+
+    .upload-anim-icon {
+      font-size: 1.15rem;
+    }
+
+    .upload-anim-text-wrap {
+      flex: 1;
+    }
+
+    .upload-anim-title {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      font-size: 0.92rem;
+      color: #065f46;
+    }
+
+    .upload-anim-step {
+      font-size: 0.76rem;
+      color: #047857;
+      margin-top: 1px;
+    }
+
+    .upload-anim-percent {
+      font-family: monospace;
+      font-weight: 800;
+      font-size: 1.05rem;
+      color: #059669;
+      background: #ffffff;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid #a7f3d0;
+    }
+
+    .upload-progress-track {
+      width: 100%;
+      height: 8px;
+      background: #d1fae5;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 8px;
+      position: relative;
+    }
+
+    .upload-progress-fill {
+      height: 100%;
+      background: linear-gradient(90deg, #10b981, #059669, #047857);
+      background-size: 200% 100%;
+      border-radius: 999px;
+      transition: width 0.25s ease-out;
+      animation: gradientShift 2s ease infinite;
+    }
+
+    @keyframes gradientShift {
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
+    }
+
+    .upload-anim-footer {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.74rem;
+      color: #065f46;
+      font-weight: 600;
+    }
+
+    .upload-pulse-dot {
+      width: 7px;
+      height: 7px;
+      background: #10b981;
+      border-radius: 50%;
+      animation: pulseDot 1.2s infinite;
+    }
+
+    @keyframes pulseDot {
+      0% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.7; }
+    }
+
+    .upload-success-banner {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #ecfdf5;
+      border: 1.5px solid #10b981;
+      border-radius: 10px;
+      padding: 10px 14px;
+      margin: 10px 0;
+      animation: popIn 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes popIn {
+      0% { transform: scale(0.95); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
+    }
+
+    .usb-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .usb-check {
+      width: 26px;
+      height: 26px;
+      background: #10b981;
+      color: white;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 900;
+      font-size: 0.85rem;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.4);
+    }
+
+    .usb-title {
+      font-size: 0.86rem;
+      color: #065f46;
+      display: block;
+    }
+
+    .usb-desc {
+      font-size: 0.75rem;
+      color: #047857;
+    }
+
+    .usb-badge {
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.5px;
+      background: #d1fae5;
+      color: #065f46;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid #6ee7b7;
+    }
+
+    .upload-preview-item {
+      position: relative;
+      animation: popIn 0.3s ease-out;
+    }
+
+    .upload-preview-badge-success {
+      position: absolute;
+      top: 4px;
+      left: 4px;
+      background: #10b981;
+      color: white;
+      font-size: 0.64rem;
+      font-weight: 800;
+      padding: 2px 5px;
+      border-radius: 4px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+      pointer-events: none;
+      z-index: 2;
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- Top Nature Accent Ribbon -->
+  <div class="nature-top-ribbon"></div>
+
+  <!-- ===================================================================
+       HEADER RESMI ECOADU LEMBATA (TANPA TAB ATAS)
+       =================================================================== -->
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand-group">
+        <img src="assets/logo-ecoadu.png" alt="Logo ECOADU LEMBATA" class="brand-lh-logo" onerror="this.onerror=null; this.src='assets/logo-pemkab-lembata.png';" title="ECOADU LEMBATA - Dinas Lingkungan Hidup Kabupaten Lembata">
+        <div class="brand-text-block">
+          <h1 class="brand-title-instansi">ECOADU LEMBATA</h1>
+          <div class="brand-sub-kab">Ekosistem Digital Aduan Lingkungan Lembata</div>
+        </div>
+      </div>
+
+      <div class="header-right-portal">
+        <div class="lentera-badge-wrap" title="Dinas Lingkungan Hidup Kabupaten Lembata">
+          <span class="lentera-dlh-pill">🏛️ DLH KAB. LEMBATA</span>
+        </div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ===================================================================
+       MAIN CONTAINER
+       =================================================================== -->
+  <main class="main-wrap">
+
+    <!-- ===============================================================
+         TAB 1: BERANDA LAYANAN (BEBAS BEBAN GULIR)
+         =============================================================== -->
+    <section class="tab-content active" id="pane-beranda">
+
+      <!-- ===============================================================
+           HERO SECTION: LAYANAN PENGADUAN (SESUAI GAMBAR 2)
+           =============================================================== -->
+      <section class="silapor-hero-container">
+        <!-- Kolom Kiri: Banner Hijau Tua dengan 2 Tombol Aksi Utama -->
+        <div class="hero-left-banner">
+          <div>
+            <h2 class="hero-main-heading">Layanan Pengaduan Lingkungan Hidup</h2>
+            <p class="hero-sub-heading">Jaga Kelestarian Alam Lewotana Lembata</p>
+          </div>
+
+          <div class="hero-actions-row">
+            <button type="button" class="btn-hero-action" id="btnHeroAjukan" onclick="window.app && window.app.switchTab('form')">
+              <span class="btn-hero-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#064e3b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                  <polyline points="14 2 14 8 20 8"></polyline>
+                  <line x1="16" y1="13" x2="8" y2="13"></line>
+                  <line x1="16" y1="17" x2="8" y2="17"></line>
+                </svg>
+              </span>
+              <div class="btn-hero-text">
+                <div class="btn-hero-tag">✏️ AJUKAN</div>
+                <div class="btn-hero-title">ADUAN BARU</div>
+              </div>
+            </button>
+
+            <button type="button" class="btn-hero-action" id="btnHeroLacak" onclick="window.app && window.app.switchTab('lacak')">
+              <span class="btn-hero-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#064e3b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="11" cy="11" r="8"></circle>
+                  <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                </svg>
+              </span>
+              <div class="btn-hero-text">
+                <div class="btn-hero-tag">🔍 LACAK</div>
+                <div class="btn-hero-title">STATUS ADUAN</div>
+              </div>
+            </button>
+          </div>
+        </div>
+
+        <!-- Kolom Kanan: Panel Statistik Kartu Sage -->
+        <div class="hero-right-stats">
+          <div class="hero-stat-row">
+            <div class="stat-row-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2">
+                <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+                <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+              </svg>
+            </div>
+            <div>
+              <div class="stat-row-lbl">Total Aduan</div>
+              <div class="stat-row-val" id="heroStatTotal">1</div>
+            </div>
+          </div>
+
+          <div class="hero-stat-row">
+            <div class="stat-row-icon">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2">
+                <circle cx="11" cy="11" r="8"></circle>
+                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+              </svg>
+            </div>
+            <div>
+              <div class="stat-row-lbl">Dalam Penanganan</div>
+              <div class="stat-row-val" id="heroStatProses">1</div>
+            </div>
+          </div>
+
+          <div class="hero-stat-row">
+            <div class="stat-row-icon" style="background: #dcfce7;">
+              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5">
+                <polyline points="20 6 9 17 4 12"></polyline>
+              </svg>
+            </div>
+            <div>
+              <div class="stat-row-lbl">Selesai</div>
+              <div class="stat-row-val" id="heroStatSelesai">0</div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ===============================================================
+           DUA KARTU BAWAH: ALUR PENGADUAN DIGITAL & PETA SEBARAN (GAMBAR 2)
+           =============================================================== -->
+      <section class="silapor-bottom-grid">
+        <!-- Kartu Kiri: Alur Pengaduan Digital (Sesuai Aturan) -->
+        <div class="bottom-card card-alur">
+          <div class="bottom-card-header">
+            <h3 class="bottom-card-title">ALUR PENGADUAN DIGITAL</h3>
+          </div>
+
+          <div class="alur-steps-track">
+            <!-- Step 1: Pengisian Data Pelapor -->
+            <div class="alur-step-item">
+              <div class="alur-step-icon" title="Data Pelapor dijamin 100% rahasia">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
+                  <circle cx="12" cy="7" r="4"></circle>
+                </svg>
+              </div>
+              <div class="alur-step-label">1. Isi Data Pelapor</div>
+              <div class="alur-step-sub">Kerahasiaan Terjamin</div>
+            </div>
+
+            <div class="alur-step-line"></div>
+
+            <!-- Step 2: Ambil Foto & Lokasi -->
+            <div class="alur-step-item">
+              <div class="alur-step-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+                  <circle cx="12" cy="13" r="4"></circle>
+                </svg>
+              </div>
+              <div class="alur-step-label">2. Foto &amp; Lokasi</div>
+              <div class="alur-step-sub">GPS &amp; Bukti Faktual</div>
+            </div>
+
+            <div class="alur-step-line"></div>
+
+            <!-- Step 3: Kirim Laporan -->
+            <div class="alur-step-item">
+              <div class="alur-step-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <line x1="22" y1="2" x2="11" y2="13"></line>
+                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                </svg>
+              </div>
+              <div class="alur-step-label">3. Kirim Laporan</div>
+              <div class="alur-step-sub">Uraian Pencemaran</div>
+            </div>
+
+            <div class="alur-step-line"></div>
+
+            <!-- Step 4: Verifikasi & Penanganan -->
+            <div class="alur-step-item">
+              <div class="alur-step-icon">
+                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
+                  <path d="m9 12 2 2 4-4"></path>
+                </svg>
+              </div>
+              <div class="alur-step-label">4. Penanganan DLH</div>
+              <div class="alur-step-sub">Verifikasi Lapangan</div>
+            </div>
+          </div>
+
+          <div style="margin-top: 14px; text-align: center;">
+            <button type="button" class="btn-buka-peta-spasial" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);" onclick="window.app && window.app.switchTab('form')">
+              ✍️ Mulai Buat Aduan Sekarang ➔
+            </button>
+          </div>
+        </div>
+
+        <!-- Kartu Kanan: Peta Sebaran Aduan (Mini Preview) -->
+        <div class="bottom-card card-peta-mini">
+          <div class="bottom-card-header" style="justify-content: space-between;">
+            <h3 class="bottom-card-title">PETA SEBARAN ADUAN</h3>
+            <span style="font-size: 0.72rem; color: #047857; font-weight: 700; background: #ecfdf5; padding: 2px 8px; border-radius: 999px;">🏝️ Pulau Lembata</span>
+          </div>
+
+          <div class="mini-map-container" id="miniMapContainer">
+            <div id="miniMapPreview" class="mini-map-canvas"></div>
+            <button type="button" class="btn-expand-mini-map" onclick="window.app && window.app.switchTab('peta')" title="Buka Peta Spasial Penuh">
+              ⛶
+            </button>
+          </div>
+
+          <div class="mini-map-actions-row">
+            <button type="button" class="btn-buka-peta-spasial" onclick="window.app && window.app.switchTab('peta')">
+              Buka Peta Spasial ↗
+            </button>
+            <a href="https://wa.me/6282234582769?text=Halo%20Dinas%20Lingkungan%20Hidup%20Kabupaten%20Lembata,%20saya%20warga%20ingin%20berkonsultasi%20layanan%20pengaduan" target="_blank" class="btn-wa-helpline-hubungi">
+              <span>💬 Hubungi DLH</span>
+              <strong>0822-3458-2769</strong>
+            </a>
+          </div>
+        </div>
+      </section>
+
+    </section>
+
+    <!-- ===============================================================
+         TAB 2: FORMULIR ADUAN UTAMA (TERBUKA KETIKA MEMILIH TAB)
+         =============================================================== -->
+    <section class="tab-content" id="pane-form">
+
+      <!-- Tombol Kembali ke Beranda -->
+      <div style="margin-bottom: 12px;">
+        <button type="button" class="btn-back-beranda" onclick="window.app && window.app.switchTab('beranda')" style="background: #ffffff; border: 1.5px solid #cbd5e1; color: #1e293b; font-weight: 700; font-size: 0.84rem; padding: 7px 16px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all 0.2s;">
+          ← Kembali ke Beranda
+        </button>
+      </div>
+
+      <!-- Form Box Card -->
+      <div class="form-card">
+        <div class="form-card-header">
+          <div class="form-card-badge">📝 FORMULIR PENGADUAN DIGITAL</div>
+          <h3 class="form-card-title">Data Laporan Kejadian</h3>
+          <p class="form-card-desc">Identitas pelapor dijamin kerahasiaannya oleh DLH Lembata.</p>
+        </div>
+
+        <form id="formAduanWarga" class="aduan-form">
+
+          <!-- Banner Kerahasiaan Data Pelapor -->
+          <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 12px 14px; margin-bottom: 18px; font-size: 0.84rem; color: #166534; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 6px rgba(16, 185, 129, 0.08);">
+            <span style="font-size: 1.4rem; line-height: 1;">🔒</span>
+            <div>
+              <strong style="color: #065f46; display: block; font-size: 0.86rem; margin-bottom: 2px;">Kerahasiaan Data Pelapor Dijamin 100%</strong>
+              <span>Identitas dan kontak Anda tidak akan ditampilkan pada peta sebaran publik atau pihak luar guna melindungi privasi &amp; keamanan pelapor.</span>
+            </div>
+          </div>
+
+          <!-- Bagian 1: Data Diri Pelapor -->
+          <div class="form-section-title">
+            <span>1</span> Identitas Pelapor (Rahasia &amp; Terlindungi)
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-field">
+              <label class="field-label">Nama Lengkap Pelapor <span class="req">*</span></label>
+              <input type="text" id="inputNama" class="input-text" required placeholder="Contoh: Fransiskus Kedang">
+            </div>
+            <div class="form-field">
+              <label class="field-label" for="inputNoHp">Nomor WhatsApp / HP Aktif <span class="req">*</span></label>
+              <input type="tel" id="inputNoHp" class="input-text" required placeholder="Contoh: 081234567890" maxlength="16" autocomplete="tel">
+              <div id="noHpValidationMsg" class="input-validation-msg" style="display: none;"></div>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">Alamat Domisili Pelapor</label>
+            <input type="text" id="inputAlamat" class="input-text" placeholder="Contoh: Kelurahan Selandoro, Nubatukan">
+          </div>
+
+          <!-- Bagian 2: Upload Bukti Foto/Video Kejadian -->
+          <div class="form-section-title">
+            <span>2</span> Bukti Foto / Video Kejadian
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">📷 Unggah Foto / Video Lapangan (Kamera / Galeri)</label>
+            <div class="upload-zone" id="uploadZone">
+
+              <!-- Hidden Inputs -->
+              <input type="file" id="inputBuktiFoto" accept="image/*,video/*" multiple style="display: none;">
+              <input type="file" id="inputCameraCapture" accept="image/*" capture="environment" style="display: none;">
+
+              <!-- Action Buttons -->
+              <div class="upload-actions-group">
+                <button type="button" class="btn-camera-trigger" id="btnOpenLiveCamera">
+                  📸 Ambil Foto Langsung (Kamera)
+                </button>
+                <button type="button" class="btn-upload-trigger" id="btnUploadFoto">
+                  📁 Pilih File dari Galeri / Dokumen
+                </button>
+              </div>
+
+              <p class="upload-hint">Maks. 5 foto/video (JPG, PNG, MP4). Mengambil foto langsung di lokasi kejadian
+                sangat membantu ketepatan verifikasi tim DLH.</p>
+
+              <!-- Upload Progress & Animation Card -->
+              <div id="uploadAnimationCard" class="upload-anim-card" style="display: none;">
+                <div class="upload-anim-header">
+                  <div class="upload-anim-icon-wrap">
+                    <span class="upload-anim-spinner"></span>
+                    <span class="upload-anim-icon" id="uploadAnimIcon">📤</span>
+                  </div>
+                  <div class="upload-anim-text-wrap">
+                    <div class="upload-anim-title" id="uploadAnimTitle">Mengunggah Bukti Foto...</div>
+                    <div class="upload-anim-step" id="uploadAnimStep">Menyiapkan berkas...</div>
+                  </div>
+                  <div class="upload-anim-percent" id="uploadAnimPercent">0%</div>
+                </div>
+                <div class="upload-progress-track">
+                  <div class="upload-progress-fill" id="uploadProgressFill" style="width: 0%;"></div>
+                </div>
+                <div class="upload-anim-footer" id="uploadAnimFooter">
+                  <span class="upload-pulse-dot"></span>
+                  <span id="uploadAnimSubtext">Sedang memproses & mengoptimasi kualitas foto...</span>
+                </div>
+              </div>
+
+              <!-- Status Sukses Banner -->
+              <div id="uploadSuccessBanner" class="upload-success-banner" style="display: none;">
+                <div class="usb-left">
+                  <span class="usb-check">✓</span>
+                  <div>
+                    <strong class="usb-title">Status: Upload Sukses!</strong>
+                    <div class="usb-desc" id="uploadSuccessDesc">Bukti foto siap dilampirkan ke laporan aduan.</div>
+                  </div>
+                </div>
+                <span class="usb-badge">TERVERIFIKASI</span>
+              </div>
+
+              <!-- Preview Thumbnails -->
+              <div id="uploadPreviewList" class="upload-preview-list"></div>
+            </div>
+          </div>
+
+          <!-- Bagian 3: Lokasi Pencemaran di Lembata -->
+          <div class="form-section-title">
+            <span>3</span> Lokasi Kejadian (Kabupaten Lembata)
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-field">
+              <label class="field-label">Kecamatan <span class="req">*</span></label>
+              <select id="inputKecamatan" class="input-select" required onchange="if(window.populateDesaDropdown) window.populateDesaDropdown(this.value);">
+                <option value="Nubatukan">Nubatukan (Lewoleba)</option>
+                <option value="Ile Ape">Ile Ape (Waipukang)</option>
+                <option value="Ile Ape Timur">Ile Ape Timur (Lamagute)</option>
+                <option value="Lebatukan">Lebatukan (Hadakewa)</option>
+                <option value="Nagawutung">Nagawutung (Loang)</option>
+                <option value="Wulandoni">Wulandoni</option>
+                <option value="Atadei">Atadei (Kalikasa)</option>
+                <option value="Omesuri">Omesuri (Balauring)</option>
+                <option value="Buyasuri">Buyasuri (Wairiang)</option>
+              </select>
+            </div>
+            <div class="form-field">
+              <label class="field-label">Nama Desa / Kelurahan <span class="req">*</span></label>
+              <select id="inputDesa" class="input-select" required onchange="if(window.updateCitizenPinForLocation) window.updateCitizenPinForLocation(document.getElementById('inputKecamatan').value, this.value);">
+                <option value="">-- Pilih Desa / Kelurahan --</option>
+                <option value="Lewoleba (Kelurahan)">Lewoleba (Kelurahan)</option>
+                <option value="Lewoleba Barat (Kelurahan)">Lewoleba Barat (Kelurahan)</option>
+                <option value="Lewoleba Selatan (Kelurahan)">Lewoleba Selatan (Kelurahan)</option>
+                <option value="Lewoleba Tengah (Kelurahan)">Lewoleba Tengah (Kelurahan)</option>
+                <option value="Lewoleba Timur (Kelurahan)">Lewoleba Timur (Kelurahan)</option>
+                <option value="Lewoleba Utara (Kelurahan)">Lewoleba Utara (Kelurahan)</option>
+                <option value="Selandoro (Kelurahan)">Selandoro (Kelurahan)</option>
+                <option value="Bakalerek">Bakalerek</option>
+                <option value="Baolangu">Baolangu</option>
+                <option value="Belobatang">Belobatang</option>
+                <option value="Bour">Bour</option>
+                <option value="Lite Ulumado">Lite Ulumado</option>
+                <option value="Nubamado">Nubamado</option>
+                <option value="Nubatukan">Nubatukan</option>
+                <option value="Pada">Pada</option>
+                <option value="Paubokol">Paubokol</option>
+                <option value="Udak Melomata">Udak Melomata</option>
+                <option value="Waijarang">Waijarang</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">Patokan / Keterangan Lokasi Spesifik <span class="req">*</span></label>
+            <input type="text" id="inputLokasiDetail" class="input-text" required
+              placeholder="Contoh: Tepi pantai dekat dermaga jeti / samping pasar ikan / aliran kali">
+          </div>
+
+          <!-- GPS Detection & Interactive Pin Location Map -->
+          <div class="gps-box" style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 14px; margin-bottom: 14px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 10px;">
+              <div>
+                <strong style="color: #14532d; font-size: 0.9rem;">📍 Titik Lokasi &amp; Pin Presisi GPS</strong>
+                <p style="font-size: 0.76rem; color: #166534; margin: 2px 0 0 0;">Dapatkan koordinat satelit otomatis atau geser pin di peta untuk ketepatan maksimal.</p>
+              </div>
+              <button type="button" class="btn-gps" id="btnDetectGps" style="padding: 9px 16px; font-size: 0.84rem; font-weight: 700; border-radius: 8px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
+                <span>🎯</span> Kunci GPS Presisi Tinggi
+              </button>
+            </div>
+            
+            <div id="gpsStatusMessage" class="gps-status-msg" style="margin-bottom: 10px; font-size: 0.82rem; font-weight: 600;"></div>
+
+            <!-- Mini Interactive Map Pin Picker -->
+            <div id="citizenPinPickerContainer" style="position: relative; width: 100%; height: 260px; border-radius: 10px; overflow: hidden; border: 2px solid #059669; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
+              <div id="citizenPinMap" style="width: 100%; height: 100%;"></div>
+              <div style="position: absolute; bottom: 8px; left: 8px; right: 8px; z-index: 1000; background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(4px); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 0.74rem; display: flex; justify-content: space-between; align-items: center;">
+                <span>💡 <strong>Tips:</strong> Geser pin merah atau ketuk peta untuk memindahkan titik lokasi</span>
+                <span id="pinCoordsBadge" style="font-family: monospace; font-weight: 700; color: #34d399;">-8.375000, 123.418000</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="form-row-2 coords-row" style="margin-bottom: 20px;">
+            <div class="form-field">
+              <label class="field-label" style="font-size: 0.8rem; color: #64748b;">Latitude (Koordinat Presisi)</label>
+              <input type="number" step="any" id="inputLat" class="input-text input-sm" placeholder="-8.3750">
+            </div>
+            <div class="form-field">
+              <label class="field-label" style="font-size: 0.8rem; color: #64748b;">Longitude (Koordinat Presisi)</label>
+              <input type="number" step="any" id="inputLng" class="input-text input-sm" placeholder="123.4180">
+            </div>
+          </div>
+
+          <!-- Bagian 4: Detail Dugaan Pencemaran -->
+          <div class="form-section-title">
+            <span>4</span> Rincian Pencemaran &amp; Kirim Aduan
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">Jenis Pencemaran Lingkungan <span class="req">*</span></label>
+            <div class="category-chips" id="categoryChips">
+              <label class="chip-item active">
+                <input type="radio" name="radioJenis" value="Laut & Pesisir" checked>
+                <span>🌊 Laut &amp; Pesisir</span>
+              </label>
+              <label class="chip-item">
+                <input type="radio" name="radioJenis" value="Sampah Ilegal & Bau">
+                <span>🗑️ Sampah Ilegal &amp; Bau</span>
+              </label>
+              <label class="chip-item">
+                <input type="radio" name="radioJenis" value="Pencemaran Air & Sungai">
+                <span>💧 Air &amp; Sungai</span>
+              </label>
+              <label class="chip-item">
+                <input type="radio" name="radioJenis" value="Udara & Asap">
+                <span>💨 Udara &amp; Asap</span>
+              </label>
+              <label class="chip-item">
+                <input type="radio" name="radioJenis" value="Limbah B3 & Kimia">
+                <span>☣️ Limbah B3 / Medis</span>
+              </label>
+              <label class="chip-item">
+                <input type="radio" name="radioJenis" value="Kerusakan Lingkungan & Tanah">
+                <span>🌳 Kerusakan Lingkungan</span>
+              </label>
+            </div>
+          </div>
+
+          <div class="form-row-2">
+            <div class="form-field">
+              <label class="field-label">Tanggal Pertama Kali Diketahui <span class="req">*</span></label>
+              <input type="date" id="inputTanggalKejadian" class="input-text" required>
+            </div>
+            <div class="form-field">
+              <label class="field-label">Dugaan Sumber / Pelaku Pencemaran (Opsional)</label>
+              <input type="text" id="inputSumberDugaan" class="input-text" placeholder="Usaha/oknum/pabrik/bengkel">
+            </div>
+          </div>
+
+          <div class="form-field">
+            <label class="field-label">Uraian / Kronologi Masalah Pencemaran <span class="req">*</span></label>
+            <textarea id="inputUraian" class="input-textarea" rows="4" required
+              placeholder="Jelaskan kondisi pencemaran yang terjadi, dampaknya pada masyarakat/lingkungan sekitar, bau, perubahan warna air, dll..."></textarea>
+          </div>
+
+          <!-- Submit Button -->
+          <button type="submit" class="btn-submit-main" id="btnSubmitAduan">
+            <span class="btn-submit-icon">📲</span>
+            <span class="btn-submit-text-wrap">
+              <span class="btn-submit-title">KIRIM PENGADUAN SEKARANG</span>
+              <span class="btn-submit-sub">Diteruskan Langsung ke Kontak Tim DLH Lembata</span>
+            </span>
+          </button>
+          <div class="submit-note"
+            style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-top: 10px; font-weight: 600; color: #065f46;">
+            <span>💬</span> Laporan kejadian &amp; bukti foto Anda akan langsung diteruskan ke nomor kontak layanan pengaduan (+62 822-3458-2769).
+          </div>
+
+        </form>
+      </div>
+
+    </section>
+
+    <!-- ===============================================================
+         TAB 3: LACAK TIKET ADUAN (TERBUKA KETIKA MEMILIH TAB)
+         =============================================================== -->
+    <section class="tab-content" id="pane-lacak">
+
+      <!-- Tombol Kembali ke Beranda -->
+      <div style="margin-bottom: 12px;">
+        <button type="button" class="btn-back-beranda" onclick="window.app && window.app.switchTab('beranda')" style="background: #ffffff; border: 1.5px solid #cbd5e1; color: #1e293b; font-weight: 700; font-size: 0.84rem; padding: 7px 16px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all 0.2s;">
+          ← Kembali ke Beranda
+        </button>
+      </div>
+
+      <div class="form-card" style="margin-bottom: 24px;">
+        <div class="form-card-header">
+          <div class="form-card-badge">🔍 PELACAKAN STATUS TIKET</div>
+          <h3 class="form-card-title">Cek Status Laporan Aduan Anda</h3>
+          <p class="form-card-desc">Ketahui perkembangan verifikasi lapangan &amp; penanganan tindak lanjut DLH secara transparan.</p>
+        </div>
+
+        <!-- Quick Tracker: Lacak Status Tiket Instan -->
+        <div class="quick-track-box" id="quickTrackSection" style="margin-bottom: 20px;">
+          <div style="font-size: 0.88rem; font-weight: 800; color: #065f46; display: flex; align-items: center; gap: 8px;">
+            <span>🔎</span> Masukkan ID Register Tiket Aduan Anda
+          </div>
+          <div class="track-input-group" style="margin-top: 10px;">
+            <input type="text" id="quickTrackInput" class="track-input" placeholder="Masukkan ID Tiket (misal: ADU-LMB-2026-001)" autocomplete="off">
+            <button type="button" class="btn-track" id="btnQuickTrack">
+              <span>Lacak Tiket</span>
+            </button>
+          </div>
+          <!-- Hasil Lacak Cepat -->
+          <div id="quickTrackResult" class="track-result-card"></div>
+        </div>
+
+        <!-- Panduan Tahapan Status Penanganan Aduan -->
+        <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 14px; padding: 18px 16px;">
+          <h4 style="font-size: 0.88rem; font-weight: 800; color: #0f172a; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+            <span>ℹ️</span> Tahapan Status Pengaduan DLH Lembata
+          </h4>
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
+              <span class="badge badge-aduan-diterima" style="display: inline-block; margin-bottom: 4px;">Aduan Diterima</span>
+              <p style="font-size: 0.76rem; color: #64748b; margin: 0; line-height: 1.4;">Laporan teregistrasi ke database dan menunggu telaah dokumen.</p>
+            </div>
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
+              <span class="badge badge-diverifikasi" style="display: inline-block; margin-bottom: 4px;">Diverifikasi</span>
+              <p style="font-size: 0.76rem; color: #64748b; margin: 0; line-height: 1.4;">Tim Pengawas DLH turun langsung memeriksa fisik di lapangan.</p>
+            </div>
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
+              <span class="badge badge-ditindaklanjuti" style="display: inline-block; margin-bottom: 4px;">Ditindaklanjuti</span>
+              <p style="font-size: 0.76rem; color: #64748b; margin: 0; line-height: 1.4;">Langkah penanganan, teguran, atau pembersihan lokasi sedang berjalan.</p>
+            </div>
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
+              <span class="badge badge-selesai" style="display: inline-block; margin-bottom: 4px;">Selesai</span>
+              <p style="font-size: 0.76rem; color: #64748b; margin: 0; line-height: 1.4;">Aduan telah tuntas diselesaikan dan berita acara diarsipkan.</p>
+            </div>
+          </div>
+
+          <div style="margin-top: 14px; padding-top: 12px; border-top: 1px dashed #cbd5e1; font-size: 0.8rem; color: #475569; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <span>Lupa atau kehilangan nomor tiket aduan?</span>
+            <a href="https://wa.me/6282234582769?text=Halo%20DLH%20Lembata,%20saya%20ingin%20menanyakan%20nomor%20tiket%20aduan%20saya" target="_blank" style="color: #047857; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px;">
+              💬 Hubungi Helpline WhatsApp DLH ➔
+            </a>
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+    <!-- ===============================================================
+         TAB 4: PETA SPASIAL SEBARAN
+         =============================================================== -->
+    <section class="tab-content" id="pane-peta">
+
+      <!-- Tombol Kembali ke Beranda -->
+      <div style="margin-bottom: 12px;">
+        <button type="button" class="btn-back-beranda" onclick="window.app && window.app.switchTab('beranda')" style="background: #ffffff; border: 1.5px solid #cbd5e1; color: #1e293b; font-weight: 700; font-size: 0.84rem; padding: 7px 16px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all 0.2s;">
+          ← Kembali ke Beranda
+        </button>
+      </div>
+
+      <div class="map-card-box">
+
+        <!-- Header & Info Edukasi -->
+        <div class="map-header-bar">
+          <div class="map-header-info">
+            <div class="map-badge-live">🟢 PEMANTAUAN SPASIAL LIVE</div>
+            <h2 class="map-main-title">🗺️ Peta Sebaran Titik Aduan Lingkungan Lembata</h2>
+            <p class="map-sub-title">
+              Visualisasi terbuka dan transparan aduan masyarakat di 9 kecamatan. Gunakan tombol wilayah, filter, atau
+              klik pin untuk melihat kondisi faktual dan tindakan DLH.
+            </p>
+          </div>
+
+          <!-- Quick Basemap Toggle Buttons -->
+          <div class="map-basemap-buttons">
+            <button type="button" class="btn-basemap" id="btnBaseOsm" title="Tampilan Peta Standar">
+              🗺️ Peta Standar
+            </button>
+            <button type="button" class="btn-basemap active" id="btnBaseSat" title="Tampilan Citra Satelit Nyata">
+              🛰️ Citra Satelit
+            </button>
+            <button type="button" class="btn-basemap" id="btnBaseTopo" title="Tampilan Relief Topografi">
+              ⛰️ Topografi
+            </button>
+          </div>
+        </div>
+
+        <!-- Mini KPI Bar Khusus Peta -->
+        <div class="map-stats-strip">
+          <div class="map-stat-chip">
+            <span class="mstat-icon">📍</span>
+            <div>
+              <div class="mstat-num" id="mapStatTotal">0</div>
+              <div class="mstat-lbl">Titik Terpantau</div>
+            </div>
+          </div>
+          <div class="map-stat-chip chip-amber">
+            <span class="mstat-icon">🟠</span>
+            <div>
+              <div class="mstat-num" id="mapStatBaru">0</div>
+              <div class="mstat-lbl">Aduan Masuk</div>
+            </div>
+          </div>
+          <div class="map-stat-chip chip-blue">
+            <span class="mstat-icon">🔷</span>
+            <div>
+              <div class="mstat-num" id="mapStatProses">0</div>
+              <div class="mstat-lbl">Dalam Penanganan</div>
+            </div>
+          </div>
+          <div class="map-stat-chip chip-green">
+            <span class="mstat-icon">🟢</span>
+            <div>
+              <div class="mstat-num" id="mapStatSelesai">0</div>
+              <div class="mstat-lbl">Tuntas Selesai</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Filter Controls Bar -->
+        <div class="map-toolbar">
+          <div class="map-filter-group">
+            <label class="map-filter-label" for="mapFilterKecamatan">Kecamatan:</label>
+            <select id="mapFilterKecamatan" class="input-select select-sm">
+              <option value="all">Semua Kecamatan (9 Kecamatan)</option>
+              <option value="Nubatukan">Nubatukan (Lewoleba)</option>
+              <option value="Ile Ape">Ile Ape (Waipukang)</option>
+              <option value="Ile Ape Timur">Ile Ape Timur (Lamagute)</option>
+              <option value="Lebatukan">Lebatukan (Hadakewa)</option>
+              <option value="Nagawutung">Nagawutung (Loang)</option>
+              <option value="Wulandoni">Wulandoni</option>
+              <option value="Atadei">Atadei (Kalikasa)</option>
+              <option value="Omesuri">Omesuri (Balauring)</option>
+              <option value="Buyasuri">Buyasuri (Wairiang)</option>
+            </select>
+          </div>
+
+          <div class="map-filter-group">
+            <label class="map-filter-label" for="mapFilterStatus">Status Penanganan:</label>
+            <select id="mapFilterStatus" class="input-select select-sm">
+              <option value="all">Semua Status</option>
+              <option value="Aduan Diterima">🟠 Aduan Diterima</option>
+              <option value="Verifikasi Administrasi">🟡 Verifikasi Administrasi</option>
+              <option value="Menunggu Verifikasi Lapangan">🔵 Menunggu Verifikasi Lapangan</option>
+              <option value="Sedang Diverifikasi">🟣 Sedang Diverifikasi</option>
+              <option value="Dalam Penanganan">🔷 Dalam Penanganan</option>
+              <option value="Selesai">🟢 Selesai Ditangani</option>
+              <option value="Ditolak">⚪ Ditolak / Tidak Terbukti</option>
+            </select>
+          </div>
+
+          <div class="map-filter-group">
+            <label class="map-filter-label" for="mapFilterJenis">Jenis Pencemaran:</label>
+            <select id="mapFilterJenis" class="input-select select-sm">
+              <option value="all">Semua Jenis Pencemaran</option>
+              <option value="Laut & Pesisir">🌊 Laut &amp; Pesisir</option>
+              <option value="Sampah Ilegal & Bau">🗑️ Sampah Ilegal &amp; Bau</option>
+              <option value="Pencemaran Air">💧 Pencemaran Air &amp; Sungai</option>
+              <option value="Udara & Asap">💨 Udara &amp; Asap</option>
+              <option value="Limbah B3 & Kimia">☣️ Limbah B3 / Kimia</option>
+              <option value="Kerusakan Lingkungan & Tanah">🌳 Kerusakan Lingkungan</option>
+            </select>
+          </div>
+
+          <button type="button" class="btn btn-outline btn-sm" id="btnResetMapFilters"
+            title="Kembalikan semua filter ke awal">
+            🔄 Reset Filter
+          </button>
+        </div>
+
+        <!-- Quick Region Navigator (Pills) -->
+        <div class="map-region-pills">
+          <span class="region-pills-label">Pusatkan Wilayah:</span>
+          <button type="button" class="pill-region active" data-region="all">🏝️ Seluruh Lembata</button>
+          <button type="button" class="pill-region" data-region="Nubatukan">🏢 Lewoleba</button>
+          <button type="button" class="pill-region" data-region="Ile Ape">🌋 Ile Ape</button>
+          <button type="button" class="pill-region" data-region="Ile Ape Timur">🌅 Ile Ape Timur</button>
+          <button type="button" class="pill-region" data-region="Lebatukan">🐟 Lebatukan</button>
+          <button type="button" class="pill-region" data-region="Kedang">🌿 Kedang (Omesuri/Buyasuri)</button>
+          <button type="button" class="pill-region" data-region="Selatan">🌊 Wulandoni &amp; Atadei</button>
+          <button type="button" class="pill-region" data-region="Nagawutung">🌾 Nagawutung</button>
+        </div>
+
+        <!-- Map Leaflet Render Area -->
+        <div class="map-container-relative">
+          <div id="map" class="map-render-container"></div>
+
+          <!-- Floating Legend di Sudut Peta -->
+          <div class="map-legend-box" id="mapLegendBox">
+            <div class="legend-header">
+              <span>📌 <strong>Keterangan Warna Pin</strong></span>
+              <button type="button" class="legend-toggle" id="btnToggleLegend"
+                title="Perkecil/Perbesar Legenda">▾</button>
+            </div>
+            <div class="legend-items" id="legendItemsList">
+              <div class="legend-item" data-status-filter="Aduan Diterima" title="Klik untuk saring status ini">
+                <span class="legend-dot" style="background: #f59e0b;"></span>
+                <span class="legend-text">Aduan Diterima / Menunggu</span>
+              </div>
+              <div class="legend-item" data-status-filter="Sedang Diverifikasi" title="Klik untuk saring status ini">
+                <span class="legend-dot" style="background: #8b5cf6;"></span>
+                <span class="legend-text">Sedang Diverifikasi Tim DLH</span>
+              </div>
+              <div class="legend-item" data-status-filter="Dalam Penanganan" title="Klik untuk saring status ini">
+                <span class="legend-dot" style="background: #2563eb;"></span>
+                <span class="legend-text">Dalam Tindakan Penanganan</span>
+              </div>
+              <div class="legend-item" data-status-filter="Selesai" title="Klik untuk saring status ini">
+                <span class="legend-dot" style="background: #059669;"></span>
+                <span class="legend-text">Selesai / Pulih Tuntas</span>
+              </div>
+              <div class="legend-item" data-status-filter="Ditolak" title="Klik untuk saring status ini">
+                <span class="legend-dot" style="background: #64748b;"></span>
+                <span class="legend-text">Ditolak / Tidak Terbukti</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Daftar Kartu Titik Aduan Terpilih (Feed / List View di Bawah Peta) -->
+        <div class="map-cards-section">
+          <div class="map-cards-header">
+            <div>
+              <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a;">
+                📋 Daftar Titik Aduan di Wilayah Terpilih
+              </h3>
+              <p style="font-size: 0.8rem; color: #64748b; margin: 0;">
+                Klik tombol "🎯 Sorot di Peta" untuk memusatkan tampilan ke koordinat lokasi kejadian
+              </p>
+            </div>
+            <span class="badge badge-sedang-diverifikasi" id="mapFilteredCountBadge">Memuat data...</span>
+          </div>
+
+          <div class="map-aduan-grid" id="mapAduanGrid">
+            <!-- Render dinamis kartu aduan -->
+          </div>
+        </div>
+
+      </div>
+
+    </section>
+
+  </main>
+
+  <!-- ===================================================================
+       MODAL: ANIMASI LOADING UPLOAD BUKTI FOTO & PENGIRIMAN
+       =================================================================== -->
+  <div class="modal-backdrop" id="modalSubmittingUpload" style="z-index: 999998; background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(8px); display: none; align-items: center; justify-content: center;">
+    <div class="modal-dialog" style="max-width: 460px; width: 92%; background: #ffffff; border-radius: 18px; padding: 26px 22px; text-align: center; box-shadow: 0 25px 60px rgba(0,0,0,0.4); border: 2px solid #86efac; animation: fadeInSlideDown 0.3s ease-out;">
+      <div style="position: relative; width: 68px; height: 68px; margin: 0 auto 16px; display: flex; align-items: center; justify-content: center; background: #ecfdf5; border-radius: 50%; border: 3px solid #10b981;">
+        <span class="upload-anim-spinner" style="border-width: 3.5px; border-top-color: #059669; border-right-color: #34d399;"></span>
+        <span id="submitUploadIcon" style="font-size: 2rem;">📤</span>
+      </div>
+      <h3 id="submitUploadTitle" style="font-family: 'Outfit', sans-serif; font-size: 1.15rem; font-weight: 800; color: #065f46; margin-bottom: 6px;">
+        Mengunggah Bukti Foto &amp; Mengirim Aduan...
+      </h3>
+      <p id="submitUploadStep" style="font-size: 0.84rem; color: #047857; margin-bottom: 16px; font-weight: 600;">
+        Menghubungkan berkas ke server DLH Lembata...
+      </p>
+      <div class="upload-progress-track" style="height: 10px; background: #e2e8f0; border-radius: 999px; overflow: hidden; margin-bottom: 12px;">
+        <div id="submitUploadProgressFill" class="upload-progress-fill" style="width: 0%; height: 100%; background: linear-gradient(90deg, #10b981, #059669); border-radius: 999px; transition: width 0.1s linear;"></div>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; font-size: 0.78rem; font-weight: 700; color: #64748b;">
+        <span id="submitUploadSubtext">Memproses resolusi visual...</span>
+        <span id="submitUploadPercent" style="font-family: monospace; font-size: 0.95rem; color: #059669; background: #ecfdf5; padding: 2px 8px; border-radius: 6px; border: 1px solid #a7f3d0;">0%</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL: SUKSES KIRIM ADUAN
+       =================================================================== -->
+  <div class="modal-backdrop" id="modalSuccessAduan">
+    <div class="modal-dialog"
+      style="max-width: 520px; text-align: center; border-radius: 20px; overflow: hidden; border: 2px solid #86efac; box-shadow: 0 20px 45px -10px rgba(6, 78, 59, 0.3);">
+      <div
+        style="background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #059669 100%); color: white; padding: 22px 20px; text-align: center; position: relative;">
+        <span style="font-size: 40px; display: block; margin-bottom: 4px;">📲</span>
+        <h3 style="color: white; font-size: 1.25rem; font-weight: 800; margin: 0; line-height: 1.3;">Layanan Pengaduan Lingkungan Masyarakat Kabupaten Lembata</h3>
+        <p style="color: #a7f3d0; font-size: 0.85rem; margin-top: 4px; margin-bottom: 0;">Penerimaan Laporan &amp; Aduan Cepat Warga Kab. Lembata</p>
+      </div>
+
+      <div class="modal-body" style="padding: 24px 22px;">
+        <p style="font-size: 0.92rem; color: #334155; margin-bottom: 16px; line-height: 1.5;">
+          Data laporan kejadian Anda telah disusun rapi dan siap dikirim ke <strong>Nomor Kontak Layanan Pengaduan</strong>: <strong>+62 822-3458-2769</strong>.
+        </p>
+
+        <!-- Nomor Tiket -->
+        <div
+          style="background: #f0fdf4; border: 2px dashed #86efac; border-radius: 14px; padding: 14px; margin-bottom: 16px;">
+          <div style="font-size: 0.75rem; color: #166534; font-weight: 800; letter-spacing: 0.5px;">NOMOR REGISTER TIKET
+            ADUAN:</div>
+          <div id="successTicketId"
+            style="font-family: monospace; font-size: 1.65rem; font-weight: 900; color: #059669; margin: 3px 0;">
+            ADU-LMB-2026-001
+          </div>
+          <div style="font-size: 0.78rem; color: #15803d;">Simpan nomor tiket ini untuk bukti pengaduan Anda.</div>
+        </div>
+
+        <!-- Bukti Foto Preview & Status Lampiran -->
+        <div id="waPhotoAttachmentBox"
+          style="display: none; background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 14px; padding: 14px; margin-bottom: 16px; text-align: left;">
+          <div
+            style="font-size: 0.85rem; font-weight: 800; color: #065f46; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+            <span>📸 Bukti Foto Terlampir (<span id="waPhotoCount">0</span> foto):</span>
+            <span
+              style="font-size: 0.72rem; color: #047857; font-weight: 800; background: #dcfce7; padding: 3px 8px; border-radius: 6px;">Siap Dikirim</span>
+          </div>
+          <div id="waPhotoThumbContainer" style="display: flex; gap: 8px; overflow-x: auto; padding-bottom: 6px;"></div>
+          <div style="font-size: 0.82rem; color: #166534; margin-top: 8px; line-height: 1.45; font-weight: 600; background: #dcfce7; border-radius: 8px; padding: 8px 10px; display: flex; align-items: flex-start; gap: 6px;">
+            <span>✨</span> <span><strong>Penting:</strong> Untuk memunculkan foto langsung di room chat WhatsApp bersama teks, gunakan tombol <strong>Kirim Foto &amp; Laporan</strong> di bawah lalu pilih kontak layanan pengaduan.</span>
+          </div>
+        </div>
+
+        <!-- Konfirmasi Arsip Database Sistem DLH -->
+        <div
+          style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 14px; padding: 12px 14px; margin-bottom: 16px; font-size: 0.82rem; color: #334155; display: flex; align-items: flex-start; gap: 10px; text-align: left;">
+          <span style="font-size: 1.3rem; line-height: 1;">💾</span>
+          <div>
+            <strong style="color: #065f46;">Arsip Resmi Terdata di Database:</strong>
+            <div style="font-size: 0.78rem; color: #64748b; margin-top: 2px; line-height: 1.4;">
+              Laporan otomatis tersimpan di database sistem DLH Lembata (Bidang Pengendalian Pencemaran &amp; Kerusakan LH) &amp; siap diverifikasi petugas lapangan.
+            </div>
+          </div>
+        </div>
+
+        <!-- Aksi Utama -->
+        <div style="display: flex; flex-direction: column; gap: 10px;">
+          <button type="button" id="btnWaConfirmation" class="btn btn-primary"
+            style="background: linear-gradient(135deg, #16a34a 0%, #15803d 100%); font-size: 1.05rem; font-weight: 800; padding: 15px; border-radius: 12px; box-shadow: 0 4px 14px rgba(22, 163, 74, 0.4); text-decoration: none; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; color: white; cursor: pointer;">
+            <span>📸</span> Kirim Foto &amp; Laporan ke Kontak Layanan Pengaduan (Foto Terlihat di Chat)
+          </button>
+          <button type="button" id="btnWaDirectRoom" class="btn btn-outline"
+            style="border-color: #10b981; color: #047857; font-weight: 700; font-size: 0.88rem; padding: 12px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #ecfdf5; cursor: pointer;">
+            <span>💬</span> Buka Langsung Room Chat Kontak Layanan Pengaduan (+62 822-3458-2769)
+          </button>
+          <button type="button" class="btn btn-outline"
+            style="border-color: #059669; color: #065f46; font-weight: 700; font-size: 0.88rem; padding: 11px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; background: #f0fdf4; cursor: pointer;"
+            onclick="document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('show')); const tid = document.getElementById('successTicketId')?.textContent?.trim(); window.app && window.app.switchTab('lacak'); if (tid) { const q = document.getElementById('quickTrackInput'); if (q) { q.value = tid; setTimeout(() => document.getElementById('btnQuickTrack')?.click(), 200); } }">
+            <span>🔍</span> Lacak Perkembangan Tiket Ini Langsung
+          </button>
+          <button type="button" class="btn btn-outline btn-close-modal" style="font-size: 0.9rem; padding: 11px; border-radius: 10px; font-weight: 600; color: #64748b; border-color: #e2e8f0;">
+            Tutup &amp; Buat Aduan Baru
+          </button>
+        </div>
+
+        <!-- Notifikasi Loading Pengalihan WhatsApp -->
+        <div id="waRedirectLoadingNotice"
+          style="display: none; background: #ecfdf5; border: 1.5px solid #6ee7b7; border-radius: 12px; padding: 12px 14px; margin-top: 12px; text-align: center; color: #065f46; font-size: 0.85rem; font-weight: 700;">
+          <span class="btn-spinner" style="border-top-color: #059669; border-color: rgba(5,150,105,0.25); margin-right: 8px;"></span>
+          <span id="waRedirectNoticeText">Mengarahkan Anda ke Room Chat WhatsApp Layanan Pengaduan...</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL: DETAIL LENGKAP ADUAN
+       =================================================================== -->
+  <div class="modal-backdrop" id="modalDetailAduan">
+    <div class="modal-dialog">
+      <div class="modal-header">
+        <h3>📄 Rincian Lengkap Aduan Lingkungan</h3>
+        <button class="modal-close" aria-label="Tutup">&times;</button>
+      </div>
+      <div class="modal-body" id="detailModalContent"></div>
+      <div class="modal-footer">
+        <button type="button" class="btn btn-secondary btn-close-modal">Tutup</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================================================================
+       MODAL LIGHTBOX: LIHAT BUKTI FOTO UKURAN PENUH & ZOOM
+       =================================================================== -->
+  <!-- ===================================================================
+       MODAL LIGHTBOX: LIHAT BUKTI FOTO UKURAN PENUH & ZOOM
+       =================================================================== -->
+  <div class="modal-backdrop modal-lightbox" id="modalPhotoLightbox" style="z-index: 99999; background: rgba(11, 17, 32, 0.96); backdrop-filter: blur(10px);">
+    <div style="position: relative; width: 100%; max-width: 980px; height: 92vh; margin: auto; display: flex; flex-direction: column; padding: 12px; box-sizing: border-box;">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: rgba(15, 23, 42, 0.9); border-radius: 12px; margin-bottom: 10px; border: 1.5px solid rgba(255,255,255,0.15); box-shadow: 0 8px 24px rgba(0,0,0,0.5); flex-wrap: wrap; gap: 8px;">
+        <div style="color: #f8fafc; font-weight: 800; font-size: 0.92rem; display: flex; align-items: center; gap: 8px;">
+          <span>📸</span> <span id="lightboxPhotoCaption">Bukti Foto Aduan Lingkungan</span>
+        </div>
+        <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
+          <!-- Kontrol Zoom Presisi -->
+          <div style="display: inline-flex; align-items: center; background: rgba(255,255,255,0.12); border-radius: 8px; padding: 2px 4px; border: 1px solid rgba(255,255,255,0.2);">
+            <button type="button" id="btnLightboxZoomOut" title="Perkecil (Zoom Out)" style="background: transparent; color: #fff; border: none; width: 28px; height: 28px; cursor: pointer; font-size: 1.1rem; font-weight: 800; border-radius: 4px; display: flex; align-items: center; justify-content: center;">−</button>
+            <span id="lightboxZoomLevel" style="font-size: 0.76rem; font-weight: 800; color: #34d399; min-width: 44px; text-align: center; font-family: monospace;">100%</span>
+            <button type="button" id="btnLightboxZoomIn" title="Perbesar (Zoom In)" style="background: transparent; color: #fff; border: none; width: 28px; height: 28px; cursor: pointer; font-size: 1.1rem; font-weight: 800; border-radius: 4px; display: flex; align-items: center; justify-content: center;">+</button>
+            <button type="button" id="btnLightboxZoomReset" title="Reset Ukuran (100%)" style="background: rgba(255,255,255,0.1); color: #cbd5e1; border: none; padding: 3px 6px; cursor: pointer; font-size: 0.72rem; font-weight: 700; border-radius: 4px; margin-left: 2px;">↺ 1:1</button>
+          </div>
+
+          <!-- Navigasi Multi-Foto (Jika ada lebih dari 1 foto) -->
+          <div id="lightboxNavControls" style="display: none; align-items: center; gap: 4px;">
+            <button type="button" id="btnLightboxPrev" title="Foto Sebelumnya (◀)" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center;">◀</button>
+            <span id="lightboxPhotoCounter" style="font-size: 0.74rem; font-weight: 700; color: #e2e8f0; padding: 0 4px; font-family: monospace;">1/1</span>
+            <button type="button" id="btnLightboxNext" title="Foto Berikutnya (▶)" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center;">▶</button>
+          </div>
+
+          <button type="button" onclick="window.app && window.app.openPhotoInNewWindow()" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600;">
+            ↗ Tab Baru
+          </button>
+          <button type="button" onclick="window.app && window.app.downloadCurrentPhoto()" style="background: #059669; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600;">
+            ⬇️ Unduh
+          </button>
+          <button type="button" onclick="window.app && window.app.closeLightbox()" style="background: #ef4444; color: #fff; border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 1.3rem; line-height: 1; display: flex; align-items: center; justify-content: center; font-weight: 800;">
+            &times;
+          </button>
+        </div>
+      </div>
+
+      <!-- Viewport Gambar Interaktif dengan Pan & Zoom -->
+      <div id="lightboxViewport" style="flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #020617; border-radius: 12px; border: 1.5px solid rgba(255,255,255,0.1); position: relative; user-select: none; touch-action: none; cursor: default;">
+        <div id="lightboxTransformContainer" style="position: absolute; transform-origin: center center; will-change: transform; transition: transform 0.08s ease-out; display: flex; align-items: center; justify-content: center;">
+          <img id="lightboxPhotoImg" src="" alt="Bukti Foto Penuh" style="max-width: 88vw; max-height: 72vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.85); pointer-events: auto; user-select: none; -webkit-user-drag: none;">
+        </div>
+      </div>
+      <div style="display: flex; justify-content: space-between; align-items: center; color: #94a3b8; font-size: 0.74rem; margin-top: 8px; padding: 0 4px; flex-wrap: wrap; gap: 4px;">
+        <span>🔍 Scroll mouse atau gunakan tombol <strong>+ / −</strong> untuk zoom &bull; Klik &amp; geser gambar untuk menggeser (Pan)</span>
+        <span>💡 Dobel-klik untuk zoom cepat 2×</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===============================================================
+       MODAL: KAMERA LANGSUNG AMBIL BUKTI FOTO
+       =============================================================== -->
+  <div class="modal-backdrop" id="modalLiveCamera">
+    <div class="modal-dialog modal-camera-dialog">
+      <div class="modal-header">
+        <h3>📸 Ambil Bukti Foto Lapangan</h3>
+        <button class="modal-close btn-close-camera" aria-label="Tutup">&times;</button>
+      </div>
+      <div class="modal-body" style="padding: 16px; text-align: center;">
+        <div class="camera-viewport-wrap">
+          <video id="cameraVideoView" autoplay playsinline muted></video>
+          <canvas id="cameraCanvasSnap" style="display: none;"></canvas>
+          <div class="camera-target-grid"></div>
+        </div>
+        <div id="cameraStatusMsg" style="font-size: 0.8rem; color: #64748b; margin-top: 8px;">
+          Arahkan kamera ke objek atau lokasi pencemaran lingkungan.
+        </div>
+      </div>
+      <div class="modal-footer camera-footer-controls">
+        <button type="button" class="btn btn-outline btn-sm" id="btnSwitchCameraDirection">
+          🔄 Ganti Kamera
+        </button>
+        <button type="button" class="btn btn-primary btn-shutter" id="btnSnapPhoto">
+          📸 Jepret Foto
+        </button>
+        <button type="button" class="btn btn-secondary btn-close-camera">
+          Batal
+        </button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===============================================================
+       FOOTER RESMI DINAS LINGKUNGAN HIDUP KABUPATEN LEMBATA
+       =============================================================== -->
+  <footer class="app-footer">
+    <div class="footer-inner">
+      <div class="footer-top">
+        <div class="footer-brand">
+          <div class="brand-group" style="display: flex; align-items: center; gap: 12px; margin-bottom: 12px;">
+            <img src="assets/logo-pemkab-lembata.png" alt="Logo Resmi Pemerintah Kabupaten Lembata" class="footer-lh-logo" title="Pemerintah Kabupaten Lembata - Dinas Lingkungan Hidup">
+            <div class="brand-text-block">
+              <div class="footer-brand-title">DINAS LINGKUNGAN HIDUP</div>
+              <div class="brand-sub-kab" style="font-size: 0.78rem; font-weight: 700; color: #a7f3d0; letter-spacing: 0.5px; line-height: 1.2;">KABUPATEN LEMBATA</div>
+            </div>
+          </div>
+          <p>
+            ECOADU LEMBATA — Ekosistem Digital Aduan Lingkungan Lembata.
+            Mewujudkan pelayanan publik yang cepat, akurat, dan transparan demi kelestarian alam Lewotana Lembata.
+          </p>
+          <div style="margin-top: 10px; font-size: 0.8rem; color: #a7f3d0;">
+            📍 Kantor DLH Lembata: Jl. Trans Atadei, Lewoleba, Kabupaten Lembata, NTT &bull; ☎️ Helpline: 0822-3458-2769
+          </div>
+        </div>
+
+        <div class="footer-links">
+          <a href="petugas.html" class="footer-link-btn" style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.4) 100%); border: 1.5px solid #34d399; color: #ffffff; font-weight: 800;" title="Buka Dashboard Khusus Petugas Verifikator DLH Lembata">🛡️ Dashboard Petugas</a>
+          <a href="https://wa.me/6282234582769" target="_blank" class="footer-link-btn"
+            style="background: linear-gradient(135deg, #10b981 0%, #059669 100%); border: 1.5px solid #6ee7b7; color: #ffffff; font-weight: 800; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.3);">💬 WhatsApp Helpline DLH ↗</a>
+        </div>
+      </div>
+
+      <div class="footer-bottom">
+        <div>
+          &copy; 2026 Pemerintah Kabupaten Lembata &bull; Dinas Lingkungan Hidup.
+        </div>
+        <div style="display: flex; gap: 16px;">
+          <span>🌱 Gerakan Lewotana Lestari</span>
+          <span>⚡ Respons Cepat Lapangan</span>
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <!-- ===============================================================
+       OVERLAY ANIMASI PENGIRIMAN LAPORAN (SUBMISSION FLIGHT ANIMATION)
+       =============================================================== -->
+  <div class="submit-anim-overlay" id="submitAnimOverlay">
+    <div class="plane-launch-wrap">
+      <div class="pulse-ring"></div>
+      <span class="flying-plane">🚀</span>
+    </div>
+    <h3 style="font-family: 'Outfit', sans-serif; font-size: 1.45rem; font-weight: 800; margin-bottom: 6px;">
+      Menerbangkan Laporan Anda...
+    </h3>
+    <p style="font-size: 0.9rem; color: #a7f3d0; max-width: 380px; margin: 0 auto; line-height: 1.5;">
+      Menyinkronkan data GPS, bukti visual, dan menerbitkan nomor registrasi resmi ke sistem DLH Lembata.
+    </p>
+  </div>
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toastContainer"></div>
+
+  <!-- Floating WhatsApp Helpline Warga -->
+  <a href="https://wa.me/6282234582769?text=Halo%20DLH%20Lembata,%20saya%20warga%20Lembata%20ingin%20berkonsultasi%20pengaduan"
+    target="_blank" class="floating-wa-btn" title="Hubungi WhatsApp DLH Lembata (0822-3458-2769)">
+    <span class="floating-wa-icon">
+      <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24" fill="currentColor">
+        <path
+          d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.695.248-1.29.173-1.414z" />
+      </svg>
+    </span>
+    <span class="floating-wa-text">WhatsApp DLH</span>
+  </a>
+
+  <!-- Leaflet JS -->
+  <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+    integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+
+  <!-- Application Logic -->
+  <script charset="UTF-8" src="js/data.js?v=20261022_sat_03"></script>
+  <script charset="UTF-8" src="js/map.js?v=20261022_sat_03"></script>
+  <script charset="UTF-8" src="js/app.js?v=20261022_sat_03"></script>
+</body>
+
+</html>
