@@ -3337,6 +3337,10 @@
             <span id="vNamaPelapor" style="font-weight: 700;">-</span>
           </div>
           <div class="info-summary-row">
+            <span class="info-summary-label">Kontak WhatsApp:</span>
+            <span id="vKontakPelapor" style="font-family: monospace; display: inline-flex; align-items: center; gap: 8px;">-</span>
+          </div>
+          <div class="info-summary-row">
             <span class="info-summary-label">Lokasi:</span>
             <span id="vLokasi">-</span>
           </div>
@@ -3891,7 +3895,16 @@
             id: String(remoteItem.id).trim().toUpperCase(),
             timestamp: remoteItem.timestamp || '-',
             namaPelapor: remoteItem.namaPelapor || 'Masyarakat',
-            noHp: remoteItem.noHp || '-',
+            noHp: (typeof window.normalizeIndonesianPhoneNumber === 'function') ? window.normalizeIndonesianPhoneNumber(remoteItem.noHp) : (function(val) {
+              if (!val || val === '-') return '-';
+              let s = String(val).replace(/^'/, '').trim();
+              const d = s.replace(/[^0-9]/g, '');
+              if (d.startsWith('8') && d.length >= 9 && d.length <= 13) return '0' + d;
+              if (d.startsWith('628') && d.length >= 11 && d.length <= 15) return '0' + d.slice(2);
+              if (d.startsWith('6208')) return '0' + d.slice(4);
+              if (d.startsWith('08')) return d;
+              return s || '-';
+            })(remoteItem.noHp),
             alamatPelapor: remoteItem.alamatPelapor || '-',
             kecamatan: remoteItem.kecamatan || 'Nubatukan',
             desa: remoteItem.desa || '-',
@@ -4410,6 +4423,13 @@
               marker.recordId = item.id;
               this.markersById[item.id] = marker;
 
+              const mapWaPhone = this.formatWhatsAppPhone(item.noHp);
+              const mapDisplayPhone = this.formatPhoneDisplay(item.noHp);
+              const mapWaText = encodeURIComponent(
+                `Halo Bapak/Ibu ${item.namaPelapor}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata mengonfirmasi laporan Anda dengan No. Register: ${item.id} terkait dugaan ${item.jenisPencemaran} di Desa ${item.desa || '-'}, Kec. ${item.kecamatan || '-'}. Mohon informasi tambahan terkait laporan ini.`
+              );
+              const mapWaUrl = mapWaPhone ? `https://wa.me/${mapWaPhone}?text=${mapWaText}` : '';
+
               const popupHtml = `
                 <div style="font-family: inherit; font-size: 0.82rem; min-width: 220px; line-height: 1.45;">
                   <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px; border-bottom: 1px solid #e2e8f0; padding-bottom: 4px;">
@@ -4419,9 +4439,17 @@
                   <div style="font-weight: 800; color: #0f172a; margin-bottom: 2px;">${item.namaPelapor}</div>
                   <div style="color: #64748b; font-size: 0.76rem; margin-bottom: 4px;">📍 Kec. ${item.kecamatan}, Desa ${item.desa || '-'}</div>
                   <div style="color: #047857; font-weight: 700; margin-bottom: 6px;">🏷️ ${item.jenisPencemaran}</div>
-                  <div style="color: #475569; font-size: 0.76rem; margin-bottom: 10px; max-height: 44px; overflow: hidden; text-overflow: ellipsis;">
+                  <div style="color: #475569; font-size: 0.76rem; margin-bottom: 8px; max-height: 44px; overflow: hidden; text-overflow: ellipsis;">
                     "${(item.uraian || '').substring(0, 75)}..."
                   </div>
+                  ${mapWaUrl ? `
+                    <div style="margin-bottom: 8px;">
+                      <a href="${mapWaUrl}" target="_blank" rel="noopener noreferrer" 
+                         style="display: flex; align-items: center; justify-content: center; gap: 5px; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; border-radius: 6px; padding: 4px 8px; font-size: 0.74rem; font-weight: 700; text-decoration: none;">
+                        💬 Hubungi Pelapor (${mapDisplayPhone})
+                      </a>
+                    </div>
+                  ` : ''}
                   <div style="display: flex; gap: 6px;">
                     <button type="button" class="btn-tbl btn-tbl-detail" style="flex: 1; padding: 5px; font-size: 0.74rem;" onclick="window.portal.showDetailModal('${item.id}')">
                       🔍 Rincian
@@ -4962,6 +4990,26 @@
         document.getElementById('vLokasi').textContent = `Kec. ${item.kecamatan}, Desa ${item.desa || '-'}`;
         document.getElementById('vJenisPencemaran').textContent = item.jenisPencemaran;
 
+        const vKontakEl = document.getElementById('vKontakPelapor');
+        if (vKontakEl) {
+          const vWaPhone = this.formatWhatsAppPhone(item.noHp);
+          const vDisplayPhone = this.formatPhoneDisplay(item.noHp);
+          if (vWaPhone) {
+            const vWaText = encodeURIComponent(
+              `Halo Bapak/Ibu ${item.namaPelapor}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata mengonfirmasi laporan Anda dengan No. Register: ${item.id} terkait dugaan ${item.jenisPencemaran} di Desa ${item.desa || '-'}, Kec. ${item.kecamatan || '-'}. Mohon informasi tambahan terkait verifikasi lapangan.`
+            );
+            vKontakEl.innerHTML = `
+              <strong style="color: #0f172a;">${vDisplayPhone}</strong>
+              <a href="https://wa.me/${vWaPhone}?text=${vWaText}" target="_blank" rel="noopener noreferrer"
+                 style="background: #16a34a; color: white; padding: 2px 8px; border-radius: 5px; font-size: 0.72rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(22, 163, 74, 0.25);">
+                💬 Chat WA
+              </a>
+            `;
+          } else {
+            vKontakEl.textContent = vDisplayPhone;
+          }
+        }
+
         // Set form fields
         document.getElementById('vStatusSelect').value = item.status || 'Diverifikasi';
         document.getElementById('vPetugasInput').value = (item.petugasVerifikasi && item.petugasVerifikasi !== '-') ? item.petugasVerifikasi : 'Tim Verifikasi Lapangan DLH Lembata';
@@ -5288,8 +5336,26 @@
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px;">
               <div style="color: #64748b; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">👤 IDENTITAS PELAPOR</div>
               <div style="font-weight: 800; color: #0f172a; font-size: 0.95rem;">${item.namaPelapor}</div>
-              <div style="color: #475569; font-size: 0.82rem; margin-top: 2px;">No. WhatsApp: <strong>${item.noHp || '-'}</strong></div>
-              <div style="color: #64748b; font-size: 0.8rem; margin-top: 2px;">Domisili: ${item.alamatPelapor || '-'}</div>
+              <div style="color: #475569; font-size: 0.82rem; margin-top: 4px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+                <div>No. WhatsApp: <strong style="font-family: monospace; color: #0f172a;">${this.formatPhoneDisplay(item.noHp)}</strong></div>
+                ${(function(portalInst) {
+                  const dWaPhone = portalInst.formatWhatsAppPhone(item.noHp);
+                  if (!dWaPhone) return '';
+                  const dWaText = encodeURIComponent(
+                    `Halo Bapak/Ibu ${item.namaPelapor}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata mengonfirmasi laporan Anda dengan No. Register: ${item.id} terkait dugaan ${item.jenisPencemaran} di Desa ${item.desa || '-'}, Kec. ${item.kecamatan || '-'}. Mohon informasi tambahan terkait laporan ini.`
+                  );
+                  return `
+                    <a href="https://wa.me/${dWaPhone}?text=${dWaText}" target="_blank" rel="noopener noreferrer" 
+                       style="background: #16a34a; color: white; padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(22,163,74,0.3); transition: background 0.2s;"
+                       onmouseover="this.style.background='#15803d';"
+                       onmouseout="this.style.background='#16a34a';"
+                       title="Buka Chat WhatsApp Resmi Pelapor (${portalInst.formatPhoneDisplay(item.noHp)})">
+                      💬 Hubungi Pelapor
+                    </a>
+                  `;
+                })(this)}
+              </div>
+              <div style="color: #64748b; font-size: 0.8rem; margin-top: 4px;">Domisili: ${item.alamatPelapor || '-'}</div>
             </div>
 
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px;">
@@ -5812,6 +5878,78 @@
         return `<span class="badge ${cssClass}">● ${label}</span>`;
       }
 
+      /**
+       * Normalisasi nomor telepon pelapor ke format internasional WhatsApp resmi (E.164 tanpa tanda +)
+       * Menghasilkan format: 628xxxxxxxxxx
+       * Mencegah salah deteksi kode negara WhatsApp (seperti +82 Korea Selatan)
+       */
+      formatWhatsAppPhone(rawPhone) {
+        if (!rawPhone || rawPhone === '-') return '';
+        let digits = String(rawPhone).trim().replace(/[^0-9]/g, '');
+        if (!digits) return '';
+
+        // Tangani awalan 0062
+        if (digits.startsWith('0062')) {
+          digits = digits.slice(2);
+        }
+        // Tangani kesalahan input +6208...
+        if (digits.startsWith('620')) {
+          digits = '62' + digits.slice(3);
+        }
+        // Tangani nomor lokal diawali 0 (contoh: 082234582769)
+        if (digits.startsWith('0')) {
+          digits = '62' + digits.replace(/^0+/, '');
+        }
+        // Tangani nomor yang kehilangan angka 0 di depan (contoh: 82234582769 dari spreadsheet)
+        else if (digits.startsWith('8')) {
+          digits = '62' + digits;
+        }
+
+        // Nomor seluler Indonesia harus diawali 628 dengan panjang 11-15 digit
+        if (digits.startsWith('628') && digits.length >= 11 && digits.length <= 15) {
+          return digits;
+        }
+
+        // Format internasional lain yang valid (panjang minimal 10 digit, bukan lokal 0)
+        if (digits.length >= 10 && !digits.startsWith('0')) {
+          return digits;
+        }
+
+        return '';
+      }
+
+      /**
+       * Format nomor telepon untuk tampilan yang rapi dan mudah dibaca (08xx-xxxx-xxxx)
+       */
+      formatPhoneDisplay(rawPhone) {
+        if (!rawPhone || rawPhone === '-') return '-';
+        let s = String(rawPhone).replace(/^'/, '').trim();
+        const digits = s.replace(/[^0-9]/g, '');
+        if (!digits) return s;
+
+        let local = digits;
+        if (local.startsWith('00628')) {
+          local = '0' + local.slice(4);
+        } else if (local.startsWith('6208')) {
+          local = '0' + local.slice(3);
+        } else if (local.startsWith('628')) {
+          local = '0' + local.slice(2);
+        } else if (local.startsWith('8') && local.length >= 9 && local.length <= 13) {
+          local = '0' + local;
+        }
+
+        if (local.startsWith('08') && local.length >= 10 && local.length <= 13) {
+          if (local.length === 11) {
+            return `${local.slice(0, 4)}-${local.slice(4, 7)}-${local.slice(7)}`;
+          } else if (local.length === 12) {
+            return `${local.slice(0, 4)}-${local.slice(4, 8)}-${local.slice(8)}`;
+          } else if (local.length === 13) {
+            return `${local.slice(0, 4)}-${local.slice(4, 8)}-${local.slice(8)}`;
+          }
+        }
+        return local;
+      }
+
       showToast(message, type = 'info') {
         const container = document.getElementById('toastContainer');
         if (!container) return;
@@ -5973,6 +6111,13 @@
             : 'Tim Verifikasi Lapangan DLH Lembata';
           const mapsUrl = (item.lat && item.lng) ? `https://maps.google.com/?q=${item.lat},${item.lng}` : '';
 
+          const rowWaPhone = this.formatWhatsAppPhone(item.noHp);
+          const rowDisplayPhone = this.formatPhoneDisplay(item.noHp);
+          const rowWaText = encodeURIComponent(
+            `Halo Bapak/Ibu ${item.namaPelapor}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata mengonfirmasi laporan Anda dengan No. Register: ${item.id} terkait dugaan ${item.jenisPencemaran} di Desa ${item.desa || '-'}, Kec. ${item.kecamatan || '-'}. Mohon informasi tambahan terkait laporan ini.`
+          );
+          const rowWaUrl = rowWaPhone ? `https://wa.me/${rowWaPhone}?text=${rowWaText}` : '';
+
           return `
             <tr>
               <td>
@@ -5986,7 +6131,17 @@
               </td>
               <td>
                 <div style="font-weight: 700; color: #0f172a;">${item.namaPelapor}</div>
-                <div style="font-size: 0.76rem; color: #64748b; font-family: monospace;">📞 ${item.noHp || '-'}</div>
+                <div style="margin-top: 3px;">
+                  ${rowWaUrl ? `
+                    <a href="${rowWaUrl}" target="_blank" rel="noopener noreferrer" 
+                       style="font-size: 0.75rem; color: #059669; font-weight: 700; text-decoration: none; font-family: monospace; display: inline-flex; align-items: center; gap: 4px; background: #ecfdf5; padding: 2px 6px; border-radius: 4px; border: 1px solid #a7f3d0;"
+                       title="Klik untuk langsung chat WhatsApp Pelapor (${rowDisplayPhone})">
+                      <span style="font-size: 0.82rem;">💬</span> ${rowDisplayPhone}
+                    </a>
+                  ` : `
+                    <span style="font-size: 0.76rem; color: #64748b; font-family: monospace;">📞 ${rowDisplayPhone}</span>
+                  `}
+                </div>
               </td>
               <td>
                 <div style="font-weight: 600;">Kec. ${item.kecamatan}</div>
@@ -6060,8 +6215,8 @@
         this._activeDropdownId = id;
 
         // Siapkan tautan WhatsApp Pelapor
-        const cleanPhone = (item.noHp || '').replace(/[^0-9]/g, '');
-        const waPhone = cleanPhone.startsWith('0') ? '62' + cleanPhone.slice(1) : cleanPhone;
+        const waPhone = this.formatWhatsAppPhone(item.noHp);
+        const displayPhone = this.formatPhoneDisplay(item.noHp);
         const waTextPelapor = encodeURIComponent(
           `Halo Bapak/Ibu ${item.namaPelapor}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata mengonfirmasi laporan Anda dengan No. Register: ${item.id} terkait dugaan ${item.jenisPencemaran} di Desa ${item.desa || '-'}, Kec. ${item.kecamatan || '-'}. Mohon informasi tambahan terkait laporan ini.`
         );
@@ -6083,10 +6238,11 @@
           ${waUrl ? `
             <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="dropdown-item" onclick="window.portal.closeActionDropdown()">
               <span class="dropdown-icon">💬</span>
-              <span>Hubungi Pelapor (WA)</span>
+              <span style="flex: 1;">Hubungi Pelapor (WA)</span>
+              <small style="font-size: 0.72rem; color: #059669; font-weight: 700; font-family: monospace;">${displayPhone}</small>
             </a>
           ` : `
-            <button type="button" class="dropdown-item disabled" title="Nomor WhatsApp pelapor belum dicantumkan" disabled>
+            <button type="button" class="dropdown-item disabled" title="Nomor WhatsApp pelapor belum dicantumkan atau tidak valid" disabled>
               <span class="dropdown-icon">💬</span>
               <span style="opacity: 0.5;">Hubungi Pelapor (WA)</span>
             </button>
@@ -6607,7 +6763,13 @@
         // 3. Ekstrak Nomor WhatsApp / HP
         let noHp = '';
         const matchHp = raw.match(/Nomor\s+WhatsApp(?:\s*\/\s*HP)?:\s*([^\n\r]+)/i) || raw.match(/No\s*HP:\s*([^\n\r]+)/i);
-        if (matchHp && matchHp[1]) noHp = clean(matchHp[1]);
+        if (matchHp && matchHp[1]) {
+          noHp = clean(matchHp[1]);
+          const dHp = noHp.replace(/[^0-9]/g, '');
+          if (dHp.startsWith('8') && dHp.length >= 9 && dHp.length <= 13) noHp = '0' + dHp;
+          else if (dHp.startsWith('628') && dHp.length >= 11 && dHp.length <= 15) noHp = '0' + dHp.slice(2);
+          else if (dHp.startsWith('08')) noHp = dHp;
+        }
 
         // 4. Ekstrak Alamat Domisili
         let alamat = '';
