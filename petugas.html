@@ -5669,30 +5669,41 @@
           checklistArr = item.checklistVerifikasi.split(',').map(s => s.trim()).filter(Boolean);
         }
         if (checklistArr.length > 0) {
-          checklistHtml = '<ul style="margin: 0 0 0 14px; padding: 0;">' + 
+          checklistHtml = '<ul style="margin: 2px 0 0 16px; padding: 0;">' + 
             checklistArr.map(chk => `<li>☑ ${escapeHtml(chk)}</li>`).join('') + 
             '</ul>';
         }
 
         const latLngText = (item.lat && item.lng) ? `${item.lat}, ${item.lng}` : '-';
+        
+        // Memanggil logo Pemkab Lembata asli secara langsung
         const logoUrl = new URL('assets/logo-pemkab-lembata.png', window.location.href).href;
+        
         const noBA = escapeHtml(item.nomorBeritaAcara || '-');
         const regId = escapeHtml(item.id || '-');
         
+        const NAMA_HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
         const NAMA_BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+        
         let tglObj = new Date();
         if (item.tanggalVerifikasi && item.tanggalVerifikasi !== '-') {
           const parsed = new Date(item.tanggalVerifikasi);
           if (!isNaN(parsed.getTime())) tglObj = parsed;
         }
+        
+        const hariStr = NAMA_HARI[tglObj.getDay()];
         const tglStr = `${tglObj.getDate()} ${NAMA_BULAN[tglObj.getMonth()]} ${tglObj.getFullYear()}`;
+        const tglVerifSingkat = item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' 
+              ? escapeHtml(item.tanggalVerifikasi) 
+              : `${tglObj.getDate()} ${NAMA_BULAN[tglObj.getMonth()]} ${tglObj.getFullYear()}`;
+
         const petugasVerif = item.petugasVerifikasi && item.petugasVerifikasi !== '-' 
           ? escapeHtml(item.petugasVerifikasi) 
           : 'Tim Verifikasi Lapangan DLH Kab. Lembata';
 
         const printWin = window.open('', '_blank');
         if (!printWin) {
-          this.showToast('Gagal membuka jendela cetak. Pastikan pop-up diizinkan.', 'warning');
+          this.showToast('Gagal membuka jendela cetak. Pastikan pop-up diizinkan pada browser Anda.', 'warning');
           return;
         }
 
@@ -5702,41 +5713,48 @@
   <meta charset="UTF-8">
   <title>Berita Acara - ${regId}</title>
   <style>
-    @page { size: A4; margin: 10mm 12mm; }
+    @page { size: A4; margin: 15mm 15mm; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Times New Roman', Times, serif; font-size: 9pt; line-height: 1.25; color: #000; background: #fff; padding: 0; }
-    .kop-surat { display: flex; align-items: center; justify-content: center; gap: 14px; padding-bottom: 6px; border-bottom: 3px double #000; margin-bottom: 8px; text-align: center; }
-    .kop-logo { width: 60px; height: auto; object-fit: contain; }
-    .kop-text h3 { font-size: 12pt; font-weight: bold; text-transform: uppercase; margin: 0; }
-    .kop-text h2 { font-size: 14pt; font-weight: 900; text-transform: uppercase; margin: 2px 0; }
-    .kop-text p { font-size: 8.5pt; margin: 0; font-style: italic; }
+    body { font-family: 'Times New Roman', Times, serif; font-size: 10pt; line-height: 1.4; color: #000; background: #fff; padding: 10px 15px; }
+    .kop-surat { display: flex; align-items: center; justify-content: center; gap: 16px; padding-bottom: 8px; border-bottom: 3px double #000; margin-bottom: 12px; text-align: center; }
     
-    .doc-header { text-align: center; margin-bottom: 8px; }
-    .doc-header h1 { font-size: 10.5pt; font-weight: bold; text-transform: uppercase; text-decoration: underline; margin-bottom: 3px; }
-    .doc-meta { font-size: 9pt; font-weight: bold; }
+    /* Gambar logo dan foto tidak di-filter, akan tetap FULL COLOR */
+    .kop-logo { width: 70px; height: auto; object-fit: contain; }
+    .photo-images-wrap img { max-width: 100%; height: 140px; object-fit: contain; border: 1px solid #000; }
     
-    .section-title { font-weight: bold; font-size: 9pt; text-transform: uppercase; margin: 8px 0 3px 0; }
-    table.data-table { width: 100%; border-collapse: collapse; font-size: 9pt; margin-bottom: 4px; }
-    table.data-table th, table.data-table td { border: 1px solid #000; padding: 3px 6px; vertical-align: top; background: transparent; }
-    table.data-table th { font-weight: normal; text-align: left; width: 32%; }
+    .kop-text h3 { font-size: 14pt; font-weight: bold; text-transform: uppercase; margin: 0; letter-spacing: 0.5px; }
+    .kop-text h2 { font-size: 16pt; font-weight: 900; text-transform: uppercase; margin: 2px 0; letter-spacing: 1px; }
+    .kop-text p { font-size: 10pt; margin: 0; font-style: normal; }
+    .doc-header { text-align: center; margin-bottom: 12px; }
+    .doc-header h1 { font-size: 12pt; font-weight: bold; text-transform: uppercase; text-decoration: underline; margin-bottom: 4px; }
+    .doc-meta { font-size: 10pt; font-weight: bold; }
+    .intro-text { text-align: justify; margin-bottom: 12px; text-indent: 30px; font-size: 10pt; }
     
-    .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 6px; margin-top: 4px; }
-    .photo-col { border: 1px solid #000; padding: 4px; text-align: center; }
-    .photo-col-title { font-size: 8.5pt; font-weight: bold; margin-bottom: 4px; text-decoration: underline; }
-    .photo-images-wrap { display: flex; flex-wrap: wrap; gap: 4px; justify-content: center; }
-    .photo-images-wrap img { max-width: 100%; height: 95px; object-fit: contain; border: 1px solid #000; }
-    .no-photos { font-size: 8.5pt; font-style: italic; padding: 20px 0; }
+    /* Tabel Hitam Putih (Tanpa warna background) */
+    .section-box { border: 1px solid #000; margin-bottom: 12px; page-break-inside: avoid; }
+    .section-title { font-weight: bold; border-bottom: 1px solid #000; padding: 4px 8px; text-transform: uppercase; font-size: 10pt; }
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 9.5pt; }
+    table.data-table th, table.data-table td { border-bottom: 1px solid #000; padding: 4px 8px; vertical-align: top; background: transparent; }
+    table.data-table tr:last-child th, table.data-table tr:last-child td { border-bottom: none; }
+    table.data-table th { font-weight: normal; text-align: left; width: 35%; border-right: 1px solid #000; }
     
-    .signature-section { margin-top: 12px; float: right; text-align: center; font-size: 9pt; width: 250px; page-break-inside: avoid; }
-    .signature-space { height: 50px; }
+    .photo-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 0; }
+    .photo-col { padding: 8px; border-right: 1px solid #000; }
+    .photo-col:last-child { border-right: none; }
+    .photo-col-title { font-size: 9pt; font-weight: bold; margin-bottom: 6px; text-decoration: underline; }
+    .photo-images-wrap { display: flex; flex-wrap: wrap; gap: 8px; justify-content: flex-start; }
+    .no-photos { font-size: 9pt; font-style: italic; }
+    .closing-text { margin-bottom: 20px; text-align: justify; text-indent: 30px; }
+    .signature-grid { display: grid; grid-template-columns: 1fr 1fr; margin-top: 10px; page-break-inside: avoid; }
+    .signature-box { text-align: center; font-size: 10pt; }
+    .signature-space { height: 70px; }
     .signature-name { font-weight: bold; text-decoration: underline; }
-    
     @media print { body { padding: 0; } .no-print { display: none !important; } }
   </style>
 </head>
 <body>
   <div class="no-print" style="margin-bottom: 10px; text-align: right;">
-    <button onclick="window.print()" style="padding: 6px 12px; background: #000; color: #fff; border: none; font-weight: bold; cursor: pointer; font-size: 11pt;">🖨️ Cetak Dokumen</button>
+    <button onclick="window.print()" style="padding: 6px 14px; background: #000; color: #fff; border: none; font-weight: bold; cursor: pointer; font-size: 12pt;">🖨️ Cetak Dokumen</button>
   </div>
 
   <div class="kop-surat">
@@ -5744,59 +5762,101 @@
     <div class="kop-text">
       <h3>PEMERINTAH KABUPATEN LEMBATA</h3>
       <h2>DINAS LINGKUNGAN HIDUP</h2>
-      <p>Jl. Trans Atadei, Lewoleba, Kabupaten Lembata, NTT</p>
+      <p>Jalan Trans Atadei, Lewoleba, Kabupaten Lembata, Nusa Tenggara Timur</p>
     </div>
   </div>
 
   <div class="doc-header">
-    <h1>BERITA ACARA PEMERIKSAAN & VERIFIKASI PENGADUAN LINGKUNGAN HIDUP</h1>
-    <div class="doc-meta">Nomor BA: ${noBA} | No. Register: ${regId}</div>
+    <h1>BERITA ACARA PEMERIKSAAN DAN VERIFIKASI PENGADUAN LINGKUNGAN HIDUP</h1>
+    <div class="doc-meta">Nomor: ${noBA}</div>
   </div>
 
-  <div class="section-title">A. DATA PELAPOR & LOKASI KEJADIAN</div>
-  <table class="data-table">
-    <tr><th>Nama Pelapor</th><td>${escapeHtml(item.namaPelapor)}</td></tr>
-    <tr><th>No. Telepon / WhatsApp</th><td>${escapeHtml(item.noHp)}</td></tr>
-    <tr><th>Kecamatan</th><td>${escapeHtml(item.kecamatan)}</td></tr>
-    <tr><th>Desa / Kelurahan</th><td>${escapeHtml(item.desa)}</td></tr>
-    <tr><th>Lokasi Detail / Patokan</th><td>${escapeHtml(item.lokasiDetail)}</td></tr>
-    <tr><th>Titik Koordinat GPS</th><td>${escapeHtml(latLngText)}</td></tr>
-    <tr><th>Jenis Dugaan Pencemaran</th><td>${escapeHtml(item.jenisPencemaran)}</td></tr>
-    <tr><th>Uraian Kejadian</th><td style="white-space: pre-wrap;">${escapeHtml(item.uraian)}</td></tr>
-  </table>
+  <p class="intro-text">
+    Pada hari ini, <strong>${hariStr}</strong>, tanggal <strong>${tglStr}</strong>, kami yang bertanda tangan di bawah ini, Tim Verifikasi Lapangan Dinas Lingkungan Hidup Kabupaten Lembata, telah melaksanakan pemeriksaan dan verifikasi lapangan atas pengaduan dugaan pencemaran lingkungan hidup dengan rincian sebagai berikut:
+  </p>
 
-  <div class="section-title">B. HASIL VERIFIKASI & TINDAK LANJUT LAPANGAN</div>
-  <table class="data-table">
-    <tr><th>Checklist Verifikasi Lapangan</th><td>${checklistHtml}</td></tr>
-    <tr><th>Hasil Temuan Lapangan</th><td style="white-space: pre-wrap;">${escapeHtml(item.hasilVerifikasi)}</td></tr>
-    <tr><th>Tindakan DLH</th><td>${escapeHtml(item.tindakanDLH)}</td></tr>
-    <tr><th>Catatan Berita Acara</th><td>${escapeHtml(item.catatanBeritaAcara)}</td></tr>
-  </table>
+  <div class="section-box">
+    <div class="section-title">A. IDENTITAS PENGADUAN</div>
+    <table class="data-table">
+      <tr><th>1. Nomor registrasi pengaduan</th><td>${regId}</td></tr>
+      <tr><th>2. Tanggal pengaduan diterima</th><td>${escapeHtml(item.timestamp || item.tanggalKejadian || '-')}</td></tr>
+      <tr><th>3. Nama pelapor</th><td>${escapeHtml(item.namaPelapor)}</td></tr>
+      <tr><th>4. No. Telepon / WhatsApp</th><td>${escapeHtml(item.noHp)}</td></tr>
+      <tr><th>5. Kecamatan</th><td>${escapeHtml(item.kecamatan)}</td></tr>
+      <tr><th>6. Desa / Kelurahan</th><td>${escapeHtml(item.desa)}</td></tr>
+      <tr><th>7. Lokasi detail kejadian</th><td>${escapeHtml(item.lokasiDetail)}</td></tr>
+      <tr><th>8. Koordinat GPS</th><td>${escapeHtml(latLngText)}</td></tr>
+      <tr><th>9. Jenis dugaan pencemaran</th><td>${escapeHtml(item.jenisPencemaran)}</td></tr>
+      <tr><th>10. Uraian singkat pengaduan</th><td style="white-space: pre-wrap; text-align: justify;">${escapeHtml(item.uraian)}</td></tr>
+    </table>
+  </div>
 
-  <div class="section-title">C. DOKUMENTASI FOTO LAPANGAN (SEBELUM & SESUDAH)</div>
-  <div class="photo-grid">
-    <div class="photo-col">
-      <div class="photo-col-title">BUKTI FOTO WARGA PELAPOR (KONDISI AWAL)</div>
-      ${citizenFormatted.length > 0 
-        ? `<div class="photo-images-wrap">${citizenFormatted.map(src => `<img src="${src}">`).join('')}</div>`
-        : `<div class="no-photos">Tidak ada foto pelapor</div>`
-      }
-    </div>
-    <div class="photo-col">
-      <div class="photo-col-title">FOTO KONDISI RIIL PETUGAS VERIFIKATOR</div>
-      ${officerFormatted.length > 0 
-        ? `<div class="photo-images-wrap">${officerFormatted.map(src => `<img src="${src}">`).join('')}</div>`
-        : `<div class="no-photos">Belum ada foto petugas</div>`
-      }
+  <div class="section-box">
+    <div class="section-title">B. IDENTITAS PETUGAS VERIFIKATOR</div>
+    <table class="data-table">
+      <tr><th>1. Nama Petugas / Jabatan</th><td>${petugasVerif}</td></tr>
+      <tr><th>2. Tanggal & Waktu Pemeriksaan</th><td>${tglVerifSingkat}</td></tr>
+      <tr><th>3. Instansi</th><td>Dinas Lingkungan Hidup Kabupaten Lembata</td></tr>
+    </table>
+  </div>
+
+  <div class="section-box">
+    <div class="section-title">C. HASIL PEMERIKSAAN DAN KESIMPULAN</div>
+    <table class="data-table">
+      <tr><th>1. Checklist Verifikasi Lapangan</th><td>${checklistHtml}</td></tr>
+      <tr><th>2. Uraian Hasil Temuan Lapangan</th><td style="white-space: pre-wrap; text-align: justify;">${escapeHtml(item.hasilVerifikasi)}</td></tr>
+      <tr><th>3. Kesimpulan Status Aduan</th><td style="font-weight: bold;">${escapeHtml(item.status)}</td></tr>
+    </table>
+  </div>
+
+  <div class="section-box">
+    <div class="section-title">D. TINDAKAN DAN RENCANA TINDAK LANJUT</div>
+    <table class="data-table">
+      <tr><th>1. Tindakan / Rekomendasi DLH</th><td style="white-space: pre-wrap; text-align: justify;">${escapeHtml(item.tindakanDLH)}</td></tr>
+      <tr><th>2. Catatan Berita Acara (BAST)</th><td style="white-space: pre-wrap; text-align: justify;">${escapeHtml(item.catatanBeritaAcara)}</td></tr>
+    </table>
+  </div>
+
+  <div class="section-box">
+    <div class="section-title">E. DOKUMENTASI FOTO LAPANGAN</div>
+    <div class="photo-grid">
+      <div class="photo-col">
+        <div class="photo-col-title">1. Kondisi Awal (Bukti Warga Pelapor)</div>
+        ${citizenFormatted.length > 0 
+          ? `<div class="photo-images-wrap">${citizenFormatted.map(src => `<img src="${src}">`).join('')}</div>`
+          : `<div class="no-photos">Tidak ada lampiran foto warga pelapor</div>`
+        }
+      </div>
+      <div class="photo-col">
+        <div class="photo-col-title">2. Kondisi Saat Verifikasi (Oleh Petugas)</div>
+        ${officerFormatted.length > 0 
+          ? `<div class="photo-images-wrap">${officerFormatted.map(src => `<img src="${src}">`).join('')}</div>`
+          : `<div class="no-photos">Belum ada lampiran foto petugas</div>`
+        }
+      </div>
     </div>
   </div>
 
-  <div class="signature-section">
-    <div>Lewoleba, ${tglStr}</div>
-    <div>Petugas Verifikator,</div>
-    <div class="signature-space"></div>
-    <div class="signature-name">${petugasVerif}</div>
-    <div style="font-size: 8pt; margin-top: 2px;">Tim Verifikasi Lapangan DLH Lembata</div>
+  <div class="section-title" style="border:none; border-bottom:1px solid #000; margin-bottom:8px;">F. PENUTUP</div>
+  <p class="closing-text">
+    Demikian Berita Acara Pemeriksaan dan Verifikasi Pengaduan Lingkungan Hidup ini dibuat berdasarkan hasil pemeriksaan faktual di lapangan untuk dapat dipergunakan sebagaimana mestinya.
+  </p>
+
+  <div class="signature-grid">
+    <div class="signature-box">
+      <div><br></div>
+      <div><strong>Pelapor / Saksi Lapangan</strong></div>
+      <div class="signature-space"></div>
+      <div class="signature-name">${escapeHtml(item.namaPelapor)}</div>
+      <div>Warga / Masyarakat</div>
+    </div>
+    <div class="signature-box">
+      <div>Lewoleba, ${tglVerifSingkat}</div>
+      <div><strong>Petugas Verifikator DLH</strong></div>
+      <div class="signature-space"></div>
+      <div class="signature-name">${petugasVerif}</div>
+      <div>Dinas Lingkungan Hidup Kab. Lembata</div>
+    </div>
   </div>
 
   <script>
