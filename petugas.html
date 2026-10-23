@@ -4094,12 +4094,9 @@
           'petugas',
           'petugas2026',
           'petugasdlh2026',
-          'admin',
           'admindlh2026',
           'lembata',
-          'lembata2026',
-          '123456',
-          '1234'
+          'lembata2026'
         ];
         const customPass = localStorage.getItem('dlh_petugas_password') || localStorage.getItem('dlh_custom_pin');
         if (customPass) validPasswords.push(customPass.toLowerCase());
@@ -4588,12 +4585,12 @@
         // Buka mode split-screen jika belum aktif di layar desktop agar peta langsung terlihat
         const ccLayout = document.getElementById('commandCenterLayout');
         if (ccLayout && !ccLayout.classList.contains('split-mode') && window.innerWidth >= 1024) {
-          const btnSplit = document.getElementById('btnToggleSplitMode');
+          const btnSplit = document.getElementById('btnToggleSplitScreen');
           if (btnSplit) btnSplit.click();
         }
 
         // Gulir halus ke arah peta jika tertutup
-        const mapSection = document.getElementById('mapSection') || document.getElementById('petugasMap');
+        const mapSection = document.getElementById('officerMapCard') || document.getElementById('petugasMap');
         if (mapSection) {
           mapSection.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
         }
@@ -4969,9 +4966,10 @@
 
       generateNoBA() {
         const year = new Date().getFullYear();
-        const month = String(new Date().getMonth() + 1).padStart(2, '0');
+        const romanMonths = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+        const romanMonth = romanMonths[new Date().getMonth()];
         const randomNum = String(Math.floor(Math.random() * 900) + 100);
-        const autoNo = `BA-DLH/LMB/${year}/${month}/${randomNum}`;
+        const autoNo = `BA-${randomNum}/DLH-LMB/${romanMonth}/${year}`;
         const input = document.getElementById('vNomorBA');
         if (input) input.value = autoNo;
         this.showToast(`Nomor BA ${autoNo} digenerate otomatis.`, 'info');
@@ -5566,7 +5564,8 @@
           ` : ''}
 
           <!-- Tombol Aksi Cepat Modal -->
-          <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px;">
+          <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; flex-wrap: wrap;">
+            <button type="button" class="btn-action-tool" onclick="window.portal.printBeritaAcara('${item.id}')" style="background: #0284c7; color: white; border-color: #0369a1;">🖨️ Cetak Berita Acara (PDF)</button>
             <button type="button" class="btn-action-tool" onclick="window.portal.closeAllModals(); window.portal.openVerifikasiModal('${item.id}')" style="background: #059669; color: white; border-color: #047857;">
               📋 Perbarui Verifikasi Petugas
             </button>
@@ -5574,6 +5573,437 @@
         `;
 
         modal.classList.add('show');
+      }
+
+      printBeritaAcara(id) {
+        const item = window.aduanStore ? window.aduanStore.getById(id) : null;
+        if (!item) {
+          this.showToast(`Data aduan ${id} tidak ditemukan.`, 'warning');
+          return;
+        }
+
+        const cleanAduanId = String(item.id || '').trim().toUpperCase();
+
+        // Ekstraksi Foto Bukti Warga Pelapor
+        let citizenPhotos = [];
+        const extractPhotos = (val) => {
+          if (!val) return;
+          if (Array.isArray(val)) {
+            val.forEach(extractPhotos);
+            return;
+          }
+          if (typeof val === 'object' && val.dataUrl) {
+            extractPhotos(val.dataUrl);
+            return;
+          }
+          if (typeof val === 'string') {
+            const trimmed = val.trim();
+            if (!trimmed || trimmed === '-' || trimmed.includes('#ERROR')) return;
+            if (trimmed.startsWith('[') && trimmed.endsWith(']')) {
+              try {
+                const parsed = JSON.parse(trimmed);
+                if (Array.isArray(parsed)) {
+                  parsed.forEach(extractPhotos);
+                  return;
+                }
+              } catch(e) {}
+            }
+            if (trimmed.includes('Buka') && trimmed.includes('Foto Bukti')) return;
+            if (trimmed.startsWith('📸')) return;
+            const matches = trimmed.match(/(data:image\/[^;]+;base64,[^,\s]+|https?:\/\/[^\s,]+)/g);
+            if (matches && matches.length > 0) {
+              matches.forEach(m => {
+                const cleanM = m.trim();
+                if (cleanM && !citizenPhotos.includes(cleanM)) citizenPhotos.push(cleanM);
+              });
+            } else if ((trimmed.startsWith('data:image') || trimmed.startsWith('http')) && !citizenPhotos.includes(trimmed)) {
+              citizenPhotos.push(trimmed);
+            }
+          }
+        };
+
+        extractPhotos(item.buktiFotoList);
+        if (citizenPhotos.length === 0) {
+          ['fotoBukti', 'linkFotoBukti', 'buktiFoto', 'linkFoto'].forEach(field => {
+            extractPhotos(item[field]);
+          });
+        }
+        for (let cIdx = 0; cIdx < citizenPhotos.length; cIdx++) {
+          try {
+            const cVal = localStorage.getItem('dlh_photo_cache_' + cleanAduanId + '_' + cIdx) ||
+                         localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + cIdx) ||
+                         (cIdx === 0 ? (localStorage.getItem('dlh_photo_cache_' + cleanAduanId) || localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase())) : null);
+            if (cVal && cVal.startsWith('data:image')) {
+              citizenPhotos[cIdx] = cVal;
+            }
+          } catch (e) {}
+        }
+        for (let extraIdx = citizenPhotos.length; extraIdx < 6; extraIdx++) {
+          try {
+            const extraVal = localStorage.getItem('dlh_photo_cache_' + cleanAduanId + '_' + extraIdx) ||
+                             localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + extraIdx);
+            if (extraVal && extraVal.startsWith('data:image') && !citizenPhotos.includes(extraVal)) {
+              citizenPhotos.push(extraVal);
+            }
+          } catch (e) {}
+        }
+
+        // Ekstraksi Foto Pemeriksaan Fisik Petugas
+        let officerPhotos = [];
+        if (Array.isArray(item.fotoVerifikasiList)) {
+          item.fotoVerifikasiList.forEach(p => {
+            if (p && typeof p === 'string' && p.trim() && p !== '-' && !officerPhotos.includes(p.trim())) {
+              officerPhotos.push(p.trim());
+            }
+          });
+        }
+        if (officerPhotos.length === 0 && item.fotoKondisiRiil && item.fotoKondisiRiil !== '-' && typeof item.fotoKondisiRiil === 'string') {
+          officerPhotos.push(item.fotoKondisiRiil.trim());
+        }
+        for (let oIdx = 0; oIdx < 6; oIdx++) {
+          try {
+            const cachedOff = localStorage.getItem(`dlh_officer_photo_${cleanAduanId}_${oIdx}`) ||
+                              localStorage.getItem(`dlh_officer_photo_${cleanAduanId.toLowerCase()}_${oIdx}`);
+            if (cachedOff && cachedOff.startsWith('data:image') && !officerPhotos.includes(cachedOff)) {
+              officerPhotos.push(cachedOff);
+            }
+          } catch (e) {}
+        }
+
+        const citizenFormatted = citizenPhotos.map(p => this.formatPhotoUrl(p) || p).filter(Boolean);
+        const officerFormatted = officerPhotos.map(p => this.formatPhotoUrl(p) || p).filter(Boolean);
+
+        const escapeHtml = (str) => {
+          if (!str && str !== 0) return '-';
+          return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+        };
+
+        let checklistHtml = '-';
+        let checklistArr = [];
+        if (Array.isArray(item.checklistVerifikasi)) {
+          checklistArr = item.checklistVerifikasi;
+        } else if (typeof item.checklistVerifikasi === 'string' && item.checklistVerifikasi.trim() && item.checklistVerifikasi !== '-') {
+          checklistArr = item.checklistVerifikasi.split(',').map(s => s.trim()).filter(Boolean);
+        }
+        if (checklistArr.length > 0) {
+          checklistHtml = '<ul style="margin: 2px 0 0 16px; padding: 0;">' + 
+            checklistArr.map(chk => `<li>✓ ${escapeHtml(chk)}</li>`).join('') + 
+            '</ul>';
+        }
+
+        const latLngText = (item.lat && item.lng) ? `${item.lat}, ${item.lng}` : '-';
+        const logoUrl = new URL('assets/logo-pemkab-lembata.png', window.location.href).href;
+        const noBA = escapeHtml(item.nomorBeritaAcara || '-');
+        const regId = escapeHtml(item.id || '-');
+        const tglVerif = item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' 
+          ? escapeHtml(item.tanggalVerifikasi) 
+          : new Date().toLocaleDateString('id-ID', { day: 'numeric', month: 'long', year: 'numeric' });
+        const petugasVerif = item.petugasVerifikasi && item.petugasVerifikasi !== '-' 
+          ? escapeHtml(item.petugasVerifikasi) 
+          : 'Tim Verifikasi DLH Lembata';
+
+        const printWin = window.open('', '_blank');
+        if (!printWin) {
+          this.showToast('Gagal membuka jendela cetak. Pastikan pop-up diizinkan pada browser Anda.', 'warning');
+          return;
+        }
+
+        const printHtml = `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Berita Acara - ${regId}</title>
+  <base href="${window.location.href}">
+  <style>
+    @page {
+      size: A4;
+      margin: 12mm 15mm 15mm 15mm;
+    }
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    body {
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 10.5pt;
+      line-height: 1.4;
+      color: #111;
+      background: #fff;
+      padding: 10px 15px;
+    }
+    .kop-surat {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      padding-bottom: 8px;
+      border-bottom: 3px double #000;
+      margin-bottom: 12px;
+      text-align: center;
+    }
+    .kop-logo {
+      width: 68px;
+      height: auto;
+      max-height: 85px;
+      object-fit: contain;
+    }
+    .kop-text h3 {
+      font-size: 13pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin: 0;
+    }
+    .kop-text h2 {
+      font-size: 15pt;
+      font-weight: 900;
+      text-transform: uppercase;
+      letter-spacing: 1px;
+      margin: 2px 0;
+    }
+    .kop-text p {
+      font-size: 9pt;
+      margin: 0;
+      font-style: italic;
+    }
+    .doc-header {
+      text-align: center;
+      margin-bottom: 14px;
+    }
+    .doc-header h1 {
+      font-size: 12pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      text-decoration: underline;
+      margin-bottom: 4px;
+    }
+    .doc-meta {
+      font-size: 10pt;
+      font-weight: 600;
+    }
+    .section-title {
+      font-size: 10pt;
+      font-weight: bold;
+      text-transform: uppercase;
+      margin: 10px 0 4px 0;
+      padding-bottom: 2px;
+      border-bottom: 1px solid #333;
+    }
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 10px;
+      font-size: 9.5pt;
+    }
+    table.data-table th, table.data-table td {
+      border: 1px solid #444;
+      padding: 4px 8px;
+      vertical-align: top;
+    }
+    table.data-table th {
+      background-color: #f8fafc;
+      font-weight: bold;
+      text-align: left;
+      width: 28%;
+    }
+    .photo-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 10px;
+      margin-top: 6px;
+      margin-bottom: 12px;
+    }
+    .photo-col {
+      border: 1px solid #555;
+      border-radius: 4px;
+      padding: 6px;
+      background: #fafafa;
+    }
+    .photo-col-title {
+      font-size: 8.5pt;
+      font-weight: bold;
+      text-align: center;
+      margin-bottom: 6px;
+      padding-bottom: 4px;
+      border-bottom: 1px dashed #999;
+      text-transform: uppercase;
+    }
+    .photo-images-wrap {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      justify-content: center;
+    }
+    .photo-images-wrap img {
+      max-width: 100%;
+      height: 110px;
+      object-fit: cover;
+      border: 1px solid #ccc;
+      border-radius: 2px;
+    }
+    .no-photos {
+      font-size: 8pt;
+      color: #666;
+      font-style: italic;
+      text-align: center;
+      padding: 16px 0;
+    }
+    .signature-wrap {
+      margin-top: 18px;
+      display: flex;
+      justify-content: flex-end;
+      page-break-inside: avoid;
+    }
+    .signature-box {
+      text-align: center;
+      width: 250px;
+      font-size: 10pt;
+    }
+    .signature-space {
+      height: 60px;
+    }
+    .signature-name {
+      font-weight: bold;
+      text-decoration: underline;
+    }
+    @media print {
+      body {
+        padding: 0;
+      }
+      .no-print {
+        display: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="no-print" style="margin-bottom: 10px; text-align: right;">
+    <button onclick="window.print()" style="padding: 6px 14px; background: #0284c7; color: #fff; border: none; border-radius: 6px; font-weight: bold; cursor: pointer; font-size: 12px;">🖨️ Cetak / Simpan PDF</button>
+  </div>
+
+  <div class="kop-surat">
+    <img src="${logoUrl}" alt="Logo Pemkab Lembata" class="kop-logo" onerror="this.src='assets/logo-pemkab-lembata.png'">
+    <div class="kop-text">
+      <h3>PEMERINTAH KABUPATEN LEMBATA</h3>
+      <h2>DINAS LINGKUNGAN HIDUP</h2>
+      <p>Jl. Trans Atadei, Lewoleba, Kabupaten Lembata, NTT</p>
+    </div>
+  </div>
+
+  <div class="doc-header">
+    <h1>BERITA ACARA PEMERIKSAAN &amp; VERIFIKASI PENGADUAN LINGKUNGAN HIDUP</h1>
+    <div class="doc-meta">
+      Nomor BA: ${noBA} &nbsp;|&nbsp; No. Register: ${regId}
+    </div>
+  </div>
+
+  <div class="section-title">A. Data Pelapor &amp; Lokasi Kejadian</div>
+  <table class="data-table">
+    <tr>
+      <th>Nama Pelapor</th>
+      <td>${escapeHtml(item.namaPelapor)}</td>
+    </tr>
+    <tr>
+      <th>No. Telepon / WhatsApp</th>
+      <td>${escapeHtml(item.noHp)}</td>
+    </tr>
+    <tr>
+      <th>Kecamatan</th>
+      <td>${escapeHtml(item.kecamatan)}</td>
+    </tr>
+    <tr>
+      <th>Desa / Kelurahan</th>
+      <td>${escapeHtml(item.desa)}</td>
+    </tr>
+    <tr>
+      <th>Lokasi Detail / Patokan</th>
+      <td>${escapeHtml(item.lokasiDetail)}</td>
+    </tr>
+    <tr>
+      <th>Titik Koordinat GPS</th>
+      <td>${escapeHtml(latLngText)}</td>
+    </tr>
+    <tr>
+      <th>Jenis Dugaan Pencemaran</th>
+      <td>${escapeHtml(item.jenisPencemaran)}</td>
+    </tr>
+    <tr>
+      <th>Uraian Kejadian</th>
+      <td style="white-space: pre-wrap;">${escapeHtml(item.uraian)}</td>
+    </tr>
+  </table>
+
+  <div class="section-title">B. Hasil Verifikasi &amp; Tindak Lanjut Lapangan</div>
+  <table class="data-table">
+    <tr>
+      <th>Checklist Verifikasi Lapangan</th>
+      <td>${checklistHtml}</td>
+    </tr>
+    <tr>
+      <th>Hasil Temuan Lapangan</th>
+      <td style="white-space: pre-wrap;">${escapeHtml(item.hasilVerifikasi)}</td>
+    </tr>
+    <tr>
+      <th>Tindakan DLH</th>
+      <td style="white-space: pre-wrap;">${escapeHtml(item.tindakanDLH)}</td>
+    </tr>
+    <tr>
+      <th>Catatan Berita Acara</th>
+      <td style="white-space: pre-wrap;">${escapeHtml(item.catatanBeritaAcara)}</td>
+    </tr>
+  </table>
+
+  <div class="section-title">C. Dokumentasi Foto Lapangan (Sebelum &amp; Sesudah)</div>
+  <div class="photo-grid">
+    <div class="photo-col">
+      <div class="photo-col-title">Bukti Foto Warga Pelapor (Kondisi Awal)</div>
+      ${citizenFormatted.length > 0 
+        ? `<div class="photo-images-wrap">${citizenFormatted.map((src, i) => `<img src="${src}" alt="Bukti Pelapor ${i+1}" onerror="this.style.display='none';">`).join('')}</div>`
+        : `<div class="no-photos">Tidak ada lampiran foto warga pelapor</div>`
+      }
+    </div>
+    <div class="photo-col">
+      <div class="photo-col-title">Foto Kondisi Riil Petugas Verifikator</div>
+      ${officerFormatted.length > 0 
+        ? `<div class="photo-images-wrap">${officerFormatted.map((src, i) => `<img src="${src}" alt="Foto Petugas ${i+1}" onerror="this.style.display='none';">`).join('')}</div>`
+        : `<div class="no-photos">Belum ada lampiran foto pemeriksaan fisik petugas</div>`
+      }
+    </div>
+  </div>
+
+  <div class="signature-wrap">
+    <div class="signature-box">
+      <div>Lewoleba, ${tglVerif}</div>
+      <div style="margin-top: 4px;">Petugas Verifikator,</div>
+      <div class="signature-space"></div>
+      <div class="signature-name">${petugasVerif}</div>
+      <div style="font-size: 8.5pt; color: #444; margin-top: 2px;">Dinas Lingkungan Hidup Kab. Lembata</div>
+    </div>
+  </div>
+
+  <script>
+    function triggerPrint() {
+      window.focus();
+      window.print();
+    }
+    if (document.readyState === 'complete') {
+      setTimeout(triggerPrint, 500);
+    } else {
+      window.addEventListener('load', () => setTimeout(triggerPrint, 500));
+    }
+  <\/script>
+</body>
+</html>`;
+
+        printWin.document.open();
+        printWin.document.write(printHtml);
+        printWin.document.close();
       }
 
       openLightboxByIndex(type, index) {
@@ -6119,7 +6549,7 @@
           const rowWaUrl = rowWaPhone ? `https://wa.me/${rowWaPhone}?text=${rowWaText}` : '';
 
           return `
-            <tr>
+            <tr data-id="${item.id}">
               <td>
                 <span class="ticket-badge" onclick="window.portal.showDetailModal('${item.id}')" title="Klik untuk rincian lengkap">
                   ${item.id}
@@ -6630,7 +7060,7 @@
           return;
         }
 
-        const authCode = prompt('🔒 PENGAMANAN DATABASE:\n\nTindakan ini akan mengosongkan seluruh basis data aduan menjadi 0 laporan.\nUntuk konfirmasi eksekusi, ketik kata "RESET" atau masukkan PIN Petugas ("1999"):');
+        const authCode = prompt('🔒 PENGAMANAN DATABASE:\n\nTindakan ini akan mengosongkan seluruh basis data aduan menjadi 0 laporan.\nUntuk konfirmasi eksekusi, ketik kata "RESET" atau masukkan PIN Petugas:');
         if (!authCode) {
           this.showToast('Operasi pengosongan database dibatalkan.', 'info');
           return;
