@@ -464,7 +464,17 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
     id: id,
     timestamp: String(row['Timestamp'] || ''),
     namaPelapor: String(row['Nama_Pelapor'] || ''),
-    noHp: String(row['No_HP'] || ''),
+    noHp: (function(val) {
+      if (!val || val === '-') return '-';
+      let s = String(val).replace(/^'/, '').trim();
+      const d = s.replace(/[^0-9]/g, '');
+      if (d.startsWith('00628')) return '0' + d.slice(4);
+      if (d.startsWith('6208')) return '0' + d.slice(3);
+      if (d.startsWith('8') && d.length >= 9 && d.length <= 13) return '0' + d;
+      if (d.startsWith('628') && d.length >= 11 && d.length <= 15) return '0' + d.slice(2);
+      if (d.startsWith('08')) return d;
+      return s || '-';
+    })(row['No_HP']),
     alamatPelapor: String(row['Alamat_Pelapor'] || ''),
     kecamatan: String(row['Kecamatan'] || ''),
     desa: String(row['Desa_Kelurahan'] || ''),
@@ -1120,7 +1130,7 @@ function handleAddAduan(formData) {
       newId,                                                  // ID_Aduan
       now,                                                    // Timestamp
       formData.namaPelapor || 'Anonim',                       // Nama_Pelapor
-      formData.noHp || '-',                                   // No_HP
+      formData.noHp ? ("'" + String(formData.noHp).replace(/^'/, '').trim()) : '-', // No_HP (Apostrof mencegah spreadsheet menghapus angka 0 di depan)
       formData.alamatPelapor || '-',                          // Alamat_Pelapor
       formData.kecamatan || 'Nubatukan',                      // Kecamatan
       formData.desa || '-',                                   // Desa_Kelurahan

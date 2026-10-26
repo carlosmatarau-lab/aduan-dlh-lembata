@@ -5,6 +5,12 @@
  * ===================================================================
  */
 
+// Konfigurasi Domain Web Aplikasi untuk Tautan Lacak Otomatis WhatsApp
+const DOMAIN_WEB = (typeof window !== 'undefined' && window.location && window.location.origin && window.location.origin !== 'null' && !window.location.origin.startsWith('file'))
+  ? window.location.origin
+  : "https://aduan-dlh-lembata.vercel.app"; // Sesuaikan dengan domain Anda
+const APP_BASE_URL = DOMAIN_WEB;
+
 class DLHApp {
   constructor() {
     this.currentTab = 'beranda';
@@ -58,7 +64,7 @@ class DLHApp {
     // Buka otomatis detail/foto aduan jika dibuka dari tautan WhatsApp (?lihatFoto=ADU-LMB-...)
     try {
       const urlParams = new URLSearchParams(window.location.search);
-      const targetFoto = urlParams.get('lihatFoto') || urlParams.get('foto') || urlParams.get('tiket');
+      const targetFoto = urlParams.get('lihatFoto') || urlParams.get('foto');
       if (targetFoto) {
         setTimeout(async () => {
           let item = window.aduanStore.getById(targetFoto);
@@ -251,12 +257,13 @@ class DLHApp {
     // Bersihkan spasi, tanda strip, titik, dan kurung
     const clean = phoneStr.trim().replace(/[\s\-\.\(\)]/g, '');
 
-    // Cek apakah diawali 08, +628, atau 628
+    // Cek apakah diawali 08, +628, 628, atau 8 (seluler Indonesia)
     const startsWith08 = /^08\d+$/.test(clean);
     const startsWithPlus62 = /^\+628\d+$/.test(clean);
     const startsWith62 = /^628\d+$/.test(clean);
+    const startsWith8 = /^8\d+$/.test(clean);
 
-    if (!startsWith08 && !startsWithPlus62 && !startsWith62) {
+    if (!startsWith08 && !startsWithPlus62 && !startsWith62 && !startsWith8) {
       return {
         valid: false,
         message: 'Nomor wajib diawali angka 08 atau +62 (contoh: 081234567890)'
@@ -265,10 +272,11 @@ class DLHApp {
 
     // Hitung total digit angka murni
     const digitsOnly = clean.replace(/\D/g, '');
-    if (digitsOnly.length < 10) {
+    const minDigits = startsWith8 ? 9 : 10;
+    if (digitsOnly.length < minDigits) {
       return {
         valid: false,
-        message: `Nomor terlalu pendek (${digitsOnly.length} digit). Minimal 10 digit angka.`
+        message: `Nomor terlalu pendek (${digitsOnly.length} digit). Minimal ${minDigits} digit angka.`
       };
     }
 
@@ -1383,7 +1391,17 @@ class DLHApp {
         const jenisPencemaran = selectedRadio ? selectedRadio.value : 'Lainnya';
 
         const namaPelapor = (document.getElementById('inputNama')?.value || '').trim();
-        const noHp = (document.getElementById('inputNoHp')?.value || '').trim();
+        let noHp = (document.getElementById('inputNoHp')?.value || '').trim();
+        const dHp = noHp.replace(/[^0-9]/g, '');
+        if (dHp.startsWith('8') && dHp.length >= 9 && dHp.length <= 13) {
+          noHp = '0' + dHp;
+        } else if (dHp.startsWith('628') && dHp.length >= 11 && dHp.length <= 15) {
+          noHp = '0' + dHp.slice(2);
+        } else if (dHp.startsWith('6208')) {
+          noHp = '0' + dHp.slice(4);
+        } else if (dHp.startsWith('08')) {
+          noHp = dHp;
+        }
         const alamatPelapor = (document.getElementById('inputAlamat')?.value || '').trim();
         const kecamatan = document.getElementById('inputKecamatan')?.value || 'Nubatukan';
         const desa = (document.getElementById('inputDesa')?.value || '').trim();
@@ -1475,6 +1493,7 @@ class DLHApp {
 --------------------------------------------------
 📌 *NOMOR REGISTER:* ${newRecord.id}
 📅 *WAKTU LAPOR:* ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+🔍 TAUTAN LACAK OTOMATIS: ${DOMAIN_WEB}/?tiket=${encodeURIComponent(newRecord.id)}
 
 👤 *DATA PELAPOR:*
 • *Nama Pelapor:* ${namaPelapor}
@@ -1579,6 +1598,12 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         if (redirectNotice) redirectNotice.style.display = 'none';
 
         if (ticketDisplay) ticketDisplay.textContent = newRecord.id;
+        const trackingUrlEl = document.getElementById('successTrackingUrl');
+        if (trackingUrlEl) {
+          const directTrackUrl = `${DOMAIN_WEB}/?tiket=${encodeURIComponent(newRecord.id)}`;
+          trackingUrlEl.href = directTrackUrl;
+          trackingUrlEl.textContent = directTrackUrl;
+        }
 
         // Tombol 1 di Modal: Kirim Foto & Laporan ke WhatsApp
         if (btnWa) {
@@ -1710,7 +1735,17 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
 
         // Susun Format Lengkap agar pesan WhatsApp TIDAK PERNAH BERUBAH meskipun offline
         const fallbackNama = (document.getElementById('inputNama')?.value || '').trim() || 'Warga Lembata';
-        const fallbackNoHp = (document.getElementById('inputNoHp')?.value || '').trim();
+        let fallbackNoHp = (document.getElementById('inputNoHp')?.value || '').trim();
+        const fbDigits = fallbackNoHp.replace(/[^0-9]/g, '');
+        if (fbDigits.startsWith('8') && fbDigits.length >= 9 && fbDigits.length <= 13) {
+          fallbackNoHp = '0' + fbDigits;
+        } else if (fbDigits.startsWith('628') && fbDigits.length >= 11 && fbDigits.length <= 15) {
+          fallbackNoHp = '0' + fbDigits.slice(2);
+        } else if (fbDigits.startsWith('6208')) {
+          fallbackNoHp = '0' + fbDigits.slice(4);
+        } else if (fbDigits.startsWith('08')) {
+          fallbackNoHp = fbDigits;
+        }
         const fallbackAlamat = (document.getElementById('inputAlamat')?.value || '').trim();
         const fallbackKec = document.getElementById('inputKecamatan')?.value || 'Nubatukan';
         const fallbackDesa = (document.getElementById('inputDesa')?.value || '').trim();
@@ -1730,6 +1765,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
 --------------------------------------------------
 📌 *NOMOR REGISTER:* ${fallbackId}
 📅 *WAKTU LAPOR:* ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+🔍 TAUTAN LACAK OTOMATIS: ${DOMAIN_WEB}/?tiket=${encodeURIComponent(fallbackId)}
 
 👤 *DATA PELAPOR:*
 • *Nama Pelapor:* ${fallbackNama}
@@ -1945,6 +1981,37 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         setTimeout(() => { input.style.boxShadow = ''; }, 2200);
       }, 300);
     }
+  }
+
+  /**
+   * Controller Pencarian & Pelacakan Status Aduan via ID Tiket
+   * @param {string} ticketId - Nomor ID registrasi tiket aduan (misal: ADU-LMB-2026-001)
+   */
+  lacakTiket(ticketId) {
+    if (!ticketId) return;
+    this.switchTab('lacak');
+    const inputTrack = document.getElementById('quickTrackInput');
+    const btnTrack = document.getElementById('btnQuickTrack');
+    if (inputTrack) {
+      inputTrack.value = ticketId.trim();
+    }
+    if (btnTrack) {
+      btnTrack.click();
+    }
+    const targetSection = document.getElementById('quickTrackSection') || document.getElementById('pane-lacak');
+    if (targetSection && typeof targetSection.scrollIntoView === 'function') {
+      setTimeout(() => {
+        try {
+          targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (e) {
+          targetSection.scrollIntoView();
+        }
+      }, 250);
+    }
+  }
+
+  cariAduan(ticketId) {
+    return this.lacakTiket(ticketId);
   }
 
   /* ===================================================================
@@ -2773,4 +2840,84 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', startDLHApp);
 } else {
   startDLHApp();
+}
+
+/* ===================================================================
+   7. AUTO-HYDRATION & AUTOMATED TRACKING VIA URL PARAMETER (?tiket=)
+   Terisolasi secara mandiri & aman dari proses initialization modul lain.
+   =================================================================== */
+window.addEventListener('DOMContentLoaded', () => {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const tiketParam = (urlParams.get('tiket') || urlParams.get('id') || '').trim();
+
+    if (!tiketParam) return;
+
+    // Tunggu jeda singkat agar seluruh komponen DOM & modul selesai terinisialisasi
+    setTimeout(() => {
+      // 1. Arahkan tab aktif ke antarmuka Pelacakan Tiket ('lacak')
+      if (window.app && typeof window.app.switchTab === 'function') {
+        window.app.switchTab('lacak');
+      } else {
+        const tabBtn = document.querySelector('.nav-tab-btn[data-tab="lacak"]');
+        if (tabBtn) tabBtn.click();
+      }
+
+      // 2. Cari elemen input pencarian nomor tiket di halaman
+      const inputElement = document.getElementById('quickTrackInput')
+        || document.getElementById('cari-tiket')
+        || document.querySelector('input[name="tiket"]')
+        || document.getElementById('tableSearch');
+
+      if (inputElement) {
+        inputElement.value = tiketParam;
+        inputElement.dispatchEvent(new Event('input', { bubbles: true }));
+      }
+
+      // Sinkronkan juga ke input pencarian tabel jika tersedia
+      const tableSearchInput = document.getElementById('tableSearch');
+      if (tableSearchInput && tableSearchInput !== inputElement) {
+        tableSearchInput.value = tiketParam;
+        if (window.app && window.app.tableFilters) {
+          window.app.tableFilters.search = tiketParam.toLowerCase();
+          if (typeof window.app.renderTable === 'function') {
+            window.app.renderTable();
+          }
+        }
+      }
+
+      // 3. Trigger otomatis tombol cari / pelacakan status tiket
+      const btnCari = document.getElementById('btnQuickTrack')
+        || document.getElementById('btn-cari')
+        || document.querySelector('.btn-track');
+
+      if (window.app && typeof window.app.lacakTiket === 'function') {
+        window.app.lacakTiket(tiketParam);
+      } else if (btnCari) {
+        btnCari.click();
+      }
+
+      // 4. Scroll otomatis ke bagian kontainer hasil pelacakan tiket
+      const targetScroll = document.getElementById('quickTrackResult')
+        || document.getElementById('quickTrackSection')
+        || document.getElementById('pane-lacak');
+
+      if (targetScroll && typeof targetScroll.scrollIntoView === 'function') {
+        setTimeout(() => {
+          try {
+            targetScroll.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } catch (e) {
+            targetScroll.scrollIntoView();
+          }
+        }, 200);
+      }
+    }, 200);
+  } catch (err) {
+    console.warn('Gagal memproses auto-hydration tiket via URL:', err);
+  }
+});
+
+// Fallback jika skrip dimuat saat DOM sudah ready
+if (document.readyState === 'interactive' || document.readyState === 'complete') {
+  window.dispatchEvent(new Event('DOMContentLoaded'));
 }

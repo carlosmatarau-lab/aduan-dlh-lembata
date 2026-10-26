@@ -535,7 +535,7 @@ function parseCsvToAduan(csvText) {
       id: id,
       timestamp: item.Timestamp || item.timestamp || '-',
       namaPelapor: item.Nama_Pelapor || item.namaPelapor || 'Masyarakat',
-      noHp: item.No_HP || item.noHp || '-',
+      noHp: normalizeIndonesianPhoneNumber(item.No_HP || item.noHp),
       alamatPelapor: item.Alamat_Pelapor || item.alamatPelapor || '-',
       kecamatan: item.Kecamatan || item.kecamatan || 'Nubatukan',
       desa: item.Desa_Kelurahan || item.desa || '-',
@@ -582,6 +582,23 @@ function parseCsvToAduan(csvText) {
     });
   }
   return result;
+}
+
+// Helper normalisasi nomor telepon seluler Indonesia (08xx / 628xx / 8xx)
+function normalizeIndonesianPhoneNumber(val) {
+  if (!val || val === '-') return '-';
+  let s = String(val).replace(/^'/, '').trim();
+  const d = s.replace(/[^0-9]/g, '');
+  if (!d) return s || '-';
+  if (d.startsWith('00628')) return '0' + d.slice(4);
+  if (d.startsWith('6208')) return '0' + d.slice(3);
+  if (d.startsWith('8') && d.length >= 9 && d.length <= 13) return '0' + d;
+  if (d.startsWith('628') && d.length >= 11 && d.length <= 15) return '0' + d.slice(2);
+  if (d.startsWith('08')) return d;
+  return s || '-';
+}
+if (typeof window !== 'undefined') {
+  window.normalizeIndonesianPhoneNumber = normalizeIndonesianPhoneNumber;
 }
 
 // Helper pemetaan aduan remote Google Spreadsheet ke model data aplikasi
@@ -821,7 +838,7 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     id: cleanId,
     timestamp: remoteItem.timestamp || '-',
     namaPelapor: remoteItem.namaPelapor || 'Masyarakat',
-    noHp: remoteItem.noHp || '-',
+    noHp: normalizeIndonesianPhoneNumber(remoteItem.noHp),
     alamatPelapor: remoteItem.alamatPelapor || '-',
     kecamatan: kecStr,
     desa: remoteItem.desa || '-',
@@ -1651,7 +1668,7 @@ class AduanDataStore {
       id: newId,
       timestamp: formattedDate,
       namaPelapor: formData.namaPelapor || (existingItem ? existingItem.namaPelapor : 'Masyarakat (Anonim)'),
-      noHp: formData.noHp || (existingItem ? existingItem.noHp : '-'),
+      noHp: normalizeIndonesianPhoneNumber(formData.noHp || (existingItem ? existingItem.noHp : '-')),
       alamatPelapor: formData.alamatPelapor || (existingItem ? existingItem.alamatPelapor : '-'),
       kecamatan: formData.kecamatan || (existingItem ? existingItem.kecamatan : 'Nubatukan'),
       desa: formData.desa || (existingItem ? existingItem.desa : '-'),
