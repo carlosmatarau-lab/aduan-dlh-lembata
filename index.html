@@ -1423,6 +1423,128 @@
       display: none;
     }
 
+    /* Riwayat Pengaduan Instansi (Mobile-Friendly Card Layout) */
+    .riwayat-cards-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-top: 6px;
+    }
+
+    .riwayat-card-item {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px 14px;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+
+    .riwayat-card-item:hover,
+    .riwayat-card-item:focus-within {
+      background: #ffffff;
+      border-color: #10b981;
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.08);
+    }
+
+    .riwayat-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px dashed #e2e8f0;
+    }
+
+    .riwayat-card-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .riwayat-badge-num {
+      width: 22px;
+      height: 22px;
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      color: #ffffff;
+      font-size: 0.75rem;
+      font-weight: 800;
+      border-radius: 50%;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 5px rgba(5, 150, 105, 0.25);
+    }
+
+    .riwayat-badge-title {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: #334155;
+      letter-spacing: 0.2px;
+    }
+
+    .riwayat-badge-hint {
+      font-size: 0.72rem;
+      font-weight: 600;
+      color: #94a3b8;
+      background: #f1f5f9;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid #e2e8f0;
+    }
+
+    .riwayat-card-body {
+      display: grid;
+      grid-template-columns: 1fr 210px;
+      gap: 12px;
+      align-items: flex-end;
+    }
+
+    .riwayat-field-group {
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .riwayat-sublabel {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #475569;
+      margin: 0;
+    }
+
+    .riwayat-card-body .input-text {
+      margin: 0;
+      width: 100%;
+      padding: 9px 12px;
+      font-size: 0.86rem;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+    }
+
+    .riwayat-footnote {
+      display: block;
+      margin-top: 8px;
+      font-size: 0.76rem;
+      color: #64748b;
+      line-height: 1.45;
+    }
+
+    @media (max-width: 640px) {
+      .riwayat-card-body {
+        grid-template-columns: 1fr;
+        gap: 10px;
+      }
+      .riwayat-card-item {
+        padding: 12px;
+      }
+      .riwayat-card-body .input-text {
+        font-size: 16px !important;
+        min-height: 44px;
+      }
+    }
+
     /* Main Submit Button */
     .btn-submit-main {
       width: 100%;
@@ -4120,48 +4242,75 @@
 
           <div class="form-field" style="margin-bottom: 22px;">
             <label class="field-label">Riwayat Penyampaian Pengaduan ke Pihak / Instansi Lain</label>
-            <div class="instansi-table-wrap" style="overflow-x: auto; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 4px; box-shadow: 0 1px 3px rgba(0,0,0,0.04);">
-              <table style="width: 100%; border-collapse: collapse; font-size: 0.85rem; min-width: 440px;">
-                <thead>
-                  <tr style="background: #f8fafc; border-bottom: 1.5px solid #e2e8f0; color: #475569; text-align: left;">
-                    <th style="padding: 10px 12px; width: 44px; text-align: center; font-weight: 700;">No</th>
-                    <th style="padding: 10px 12px; font-weight: 700;">Nama Instansi</th>
-                    <th style="padding: 10px 12px; width: 190px; font-weight: 700;">Tanggal / Bulan / Tahun</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr style="border-bottom: 1px solid #f1f5f9;">
-                    <td style="padding: 8px 12px; text-align: center; font-weight: 700; color: #64748b;">1.</td>
-                    <td style="padding: 6px 8px;">
-                      <input type="text" id="inputInstansi1" class="input-text riwayat-instansi-nama" placeholder="Contoh: Kantor Desa / Polsek / DLH Provinsi" style="margin: 0; padding: 8px 10px; font-size: 0.84rem;">
-                    </td>
-                    <td style="padding: 6px 8px;">
-                      <input type="date" id="inputTglInstansi1" class="input-text riwayat-instansi-tgl" style="margin: 0; padding: 8px 10px; font-size: 0.84rem;">
-                    </td>
-                  </tr>
-                  <tr style="border-bottom: 1px solid #f1f5f9;">
-                    <td style="padding: 8px 12px; text-align: center; font-weight: 700; color: #64748b;">2.</td>
-                    <td style="padding: 6px 8px;">
-                      <input type="text" id="inputInstansi2" class="input-text riwayat-instansi-nama" placeholder="Nama instansi kedua (jika ada)" style="margin: 0; padding: 8px 10px; font-size: 0.84rem;">
-                    </td>
-                    <td style="padding: 6px 8px;">
-                      <input type="date" id="inputTglInstansi2" class="input-text riwayat-instansi-tgl" style="margin: 0; padding: 8px 10px; font-size: 0.84rem;">
-                    </td>
-                  </tr>
-                  <tr>
-                    <td style="padding: 8px 12px; text-align: center; font-weight: 700; color: #64748b;">3.</td>
-                    <td style="padding: 6px 8px;">
-                      <input type="text" id="inputInstansi3" class="input-text riwayat-instansi-nama" placeholder="Nama instansi ketiga (jika ada)" style="margin: 0; padding: 8px 10px; font-size: 0.84rem;">
-                    </td>
-                    <td style="padding: 6px 8px;">
-                      <input type="date" id="inputTglInstansi3" class="input-text riwayat-instansi-tgl" style="margin: 0; padding: 8px 10px; font-size: 0.84rem;">
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
+
+            <!-- Susunan Kartu Isian Mobile-Friendly -->
+            <div class="riwayat-cards-container">
+              <!-- Kartu 1 -->
+              <div class="riwayat-card-item">
+                <div class="riwayat-card-header">
+                  <div class="riwayat-card-badge">
+                    <span class="riwayat-badge-num">1</span>
+                    <span class="riwayat-badge-title">Instansi Pertama</span>
+                  </div>
+                  <span class="riwayat-badge-hint">Opsional</span>
+                </div>
+                <div class="riwayat-card-body">
+                  <div class="riwayat-field-group riwayat-field-instansi">
+                    <label class="riwayat-sublabel" for="inputInstansi1">Nama Instansi</label>
+                    <input type="text" id="inputInstansi1" class="input-text riwayat-instansi-nama riwayat-instansi" placeholder="Contoh: Kantor Desa / Polsek / DLH Provinsi">
+                  </div>
+                  <div class="riwayat-field-group riwayat-field-tanggal">
+                    <label class="riwayat-sublabel" for="inputTglInstansi1">Tanggal / Bulan / Tahun</label>
+                    <input type="date" id="inputTglInstansi1" class="input-text riwayat-instansi-tgl riwayat-tanggal">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Kartu 2 -->
+              <div class="riwayat-card-item">
+                <div class="riwayat-card-header">
+                  <div class="riwayat-card-badge">
+                    <span class="riwayat-badge-num">2</span>
+                    <span class="riwayat-badge-title">Instansi Kedua</span>
+                  </div>
+                  <span class="riwayat-badge-hint">Opsional</span>
+                </div>
+                <div class="riwayat-card-body">
+                  <div class="riwayat-field-group riwayat-field-instansi">
+                    <label class="riwayat-sublabel" for="inputInstansi2">Nama Instansi</label>
+                    <input type="text" id="inputInstansi2" class="input-text riwayat-instansi-nama riwayat-instansi" placeholder="Nama instansi kedua (jika ada)">
+                  </div>
+                  <div class="riwayat-field-group riwayat-field-tanggal">
+                    <label class="riwayat-sublabel" for="inputTglInstansi2">Tanggal / Bulan / Tahun</label>
+                    <input type="date" id="inputTglInstansi2" class="input-text riwayat-instansi-tgl riwayat-tanggal">
+                  </div>
+                </div>
+              </div>
+
+              <!-- Kartu 3 -->
+              <div class="riwayat-card-item">
+                <div class="riwayat-card-header">
+                  <div class="riwayat-card-badge">
+                    <span class="riwayat-badge-num">3</span>
+                    <span class="riwayat-badge-title">Instansi Ketiga</span>
+                  </div>
+                  <span class="riwayat-badge-hint">Opsional</span>
+                </div>
+                <div class="riwayat-card-body">
+                  <div class="riwayat-field-group riwayat-field-instansi">
+                    <label class="riwayat-sublabel" for="inputInstansi3">Nama Instansi</label>
+                    <input type="text" id="inputInstansi3" class="input-text riwayat-instansi-nama riwayat-instansi" placeholder="Nama instansi ketiga (jika ada)">
+                  </div>
+                  <div class="riwayat-field-group riwayat-field-tanggal">
+                    <label class="riwayat-sublabel" for="inputTglInstansi3">Tanggal / Bulan / Tahun</label>
+                    <input type="date" id="inputTglInstansi3" class="input-text riwayat-instansi-tgl riwayat-tanggal">
+                  </div>
+                </div>
+              </div>
             </div>
-            <small style="display: block; margin-top: 6px; font-size: 0.76rem; color: #64748b; line-height: 1.4;">
-              * Kosongkan tabel jika ini adalah laporan pertama kali atau belum pernah menyampaikan pengaduan ke pihak lain sebelumnya.
+
+            <small class="riwayat-footnote">
+              * Kosongkan jika ini adalah laporan pertama kali atau belum pernah menyampaikan pengaduan ke pihak lain sebelumnya.
             </small>
           </div>
 
@@ -4745,9 +4894,9 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Application Logic -->
-  <script charset="UTF-8" src="js/data.js?v=20261026_field_04"></script>
-  <script charset="UTF-8" src="js/map.js?v=20261026_field_04"></script>
-  <script charset="UTF-8" src="js/app.js?v=20261026_field_04"></script>
+  <script charset="UTF-8" src="js/data.js?v=20261026_field_05"></script>
+  <script charset="UTF-8" src="js/map.js?v=20261026_field_05"></script>
+  <script charset="UTF-8" src="js/app.js?v=20261026_field_05"></script>
 </body>
 
 </html>

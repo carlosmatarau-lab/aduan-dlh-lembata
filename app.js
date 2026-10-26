@@ -1411,9 +1411,9 @@ class DLHApp {
         const uraian = (document.getElementById('inputUraian')?.value || '').trim();
         const penyelesaian = (document.getElementById('inputPenyelesaian')?.value || '').trim();
 
-        // Riwayat Pernah Menyampaikan Pengaduan (Bagian F)
-        const instansiRows = document.querySelectorAll('.riwayat-instansi-nama');
-        const tglRows = document.querySelectorAll('.riwayat-instansi-tgl');
+        // Riwayat Pernah Menyampaikan Pengaduan (Bagian 6)
+        const instansiRows = document.querySelectorAll('.riwayat-instansi-nama, .riwayat-instansi');
+        const tglRows = document.querySelectorAll('.riwayat-instansi-tgl, .riwayat-tanggal');
         const riwayatList = [];
         instansiRows.forEach((el, idx) => {
           const nm = (el?.value || '').trim();
@@ -1603,8 +1603,8 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         if (previewList) previewList.innerHTML = '';
         const inputPenyelesaianEl = document.getElementById('inputPenyelesaian');
         if (inputPenyelesaianEl) inputPenyelesaianEl.value = '';
-        document.querySelectorAll('.riwayat-instansi-nama').forEach(el => { el.value = ''; });
-        document.querySelectorAll('.riwayat-instansi-tgl').forEach(el => { el.value = ''; });
+        document.querySelectorAll('.riwayat-instansi-nama, .riwayat-instansi').forEach(el => { el.value = ''; });
+        document.querySelectorAll('.riwayat-instansi-tgl, .riwayat-tanggal').forEach(el => { el.value = ''; });
         const dateInput = document.getElementById('inputTanggalKejadian');
         if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
         if (this.populateDesaDropdown) this.populateDesaDropdown('Nubatukan');
@@ -1795,8 +1795,8 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         const fallbackSumber = (document.getElementById('inputSumberDugaan')?.value || '').trim();
         const fallbackUraian = (document.getElementById('inputUraian')?.value || '').trim();
         const fallbackPenyelesaian = (document.getElementById('inputPenyelesaian')?.value || '').trim();
-        const fbInstansiRows = document.querySelectorAll('.riwayat-instansi-nama');
-        const fbTglRows = document.querySelectorAll('.riwayat-instansi-tgl');
+        const fbInstansiRows = document.querySelectorAll('.riwayat-instansi-nama, .riwayat-instansi');
+        const fbTglRows = document.querySelectorAll('.riwayat-instansi-tgl, .riwayat-tanggal');
         const fbRiwayatList = [];
         fbInstansiRows.forEach((el, idx) => {
           const nm = (el?.value || '').trim();
