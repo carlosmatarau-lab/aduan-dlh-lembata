@@ -5,6 +5,11 @@
  * ===================================================================
  */
 
+// Konfigurasi URL Base Aplikasi untuk Dynamic Deep Link Tracking
+const APP_BASE_URL = (typeof window !== 'undefined' && window.location && window.location.origin && window.location.origin !== 'null')
+  ? window.location.origin
+  : 'https://aduan-dlh-lembata.vercel.app';
+
 class DLHApp {
   constructor() {
     this.currentTab = 'beranda';
@@ -58,7 +63,7 @@ class DLHApp {
     // Buka otomatis detail/foto aduan jika dibuka dari tautan WhatsApp (?lihatFoto=ADU-LMB-...)
     try {
       const urlParams = new URLSearchParams(window.location.search);
-      const targetFoto = urlParams.get('lihatFoto') || urlParams.get('foto') || urlParams.get('tiket');
+      const targetFoto = urlParams.get('lihatFoto') || urlParams.get('foto');
       if (targetFoto) {
         setTimeout(async () => {
           let item = window.aduanStore.getById(targetFoto);
@@ -1482,10 +1487,12 @@ class DLHApp {
           : 'Koordinat belum disetel';
 
         // Susun Format Pesan WhatsApp: LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA
+        const trackingLink = `${APP_BASE_URL}/?tiket=${encodeURIComponent(newRecord.id)}`;
         const waMessage = 
 `*LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA*
 --------------------------------------------------
 📌 *NOMOR REGISTER:* ${newRecord.id}
+🔍 *LINK PELACAKAN RESMI:* ${trackingLink}
 📅 *WAKTU LAPOR:* ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
 
 👤 *DATA PELAPOR:*
@@ -1746,11 +1753,13 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         const fallbackLng = (document.getElementById('inputLng')?.value || '').trim();
         const fallbackMapsLink = (fallbackLat && fallbackLng) ? `https://maps.google.com/?q=${fallbackLat},${fallbackLng}` : 'Koordinat belum disetel';
         const fallbackId = `ADU-LMB-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`;
+        const fallbackTrackingLink = `${APP_BASE_URL}/?tiket=${encodeURIComponent(fallbackId)}`;
 
         const safeWaMessage = 
 `*LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA*
 --------------------------------------------------
 📌 *NOMOR REGISTER:* ${fallbackId}
+🔍 *LINK PELACAKAN RESMI:* ${fallbackTrackingLink}
 📅 *WAKTU LAPOR:* ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
 
 👤 *DATA PELAPOR:*
@@ -1967,6 +1976,37 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         setTimeout(() => { input.style.boxShadow = ''; }, 2200);
       }, 300);
     }
+  }
+
+  /**
+   * Controller Pencarian & Pelacakan Status Aduan via ID Tiket
+   * @param {string} ticketId - Nomor ID registrasi tiket aduan (misal: ADU-LMB-2026-001)
+   */
+  lacakTiket(ticketId) {
+    if (!ticketId) return;
+    this.switchTab('lacak');
+    const inputTrack = document.getElementById('quickTrackInput');
+    const btnTrack = document.getElementById('btnQuickTrack');
+    if (inputTrack) {
+      inputTrack.value = ticketId.trim();
+    }
+    if (btnTrack) {
+      btnTrack.click();
+    }
+    const targetSection = document.getElementById('quickTrackSection') || document.getElementById('pane-lacak');
+    if (targetSection && typeof targetSection.scrollIntoView === 'function') {
+      setTimeout(() => {
+        try {
+          targetSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+        } catch (e) {
+          targetSection.scrollIntoView();
+        }
+      }, 250);
+    }
+  }
+
+  cariAduan(ticketId) {
+    return this.lacakTiket(ticketId);
   }
 
   /* ===================================================================
@@ -2795,4 +2835,74 @@ if (document.readyState === 'loading') {
   document.addEventListener('DOMContentLoaded', startDLHApp);
 } else {
   startDLHApp();
+}
+
+/* ===================================================================
+   7. AUTO-HYDRATION & AUTOMATED TRACKING VIA URL PARAMETER (?tiket= / ?id=)
+   Terisolasi secara mandiri & aman dari proses initialization modul lain.
+   =================================================================== */
+function handleUrlTrackingAutoHydration() {
+  try {
+    const urlParams = new URLSearchParams(window.location.search);
+    const ticketParam = (urlParams.get('tiket') || urlParams.get('id') || '').trim();
+
+    if (!ticketParam) return;
+
+    // Tunggu jeda singkat agar seluruh komponen DOM & listener aplikasi selesai terinisialisasi
+    setTimeout(() => {
+      // 1. Arahkan tab aktif ke antarmuka Pelacakan Tiket ('lacak')
+      if (window.app && typeof window.app.switchTab === 'function') {
+        window.app.switchTab('lacak');
+      } else {
+        const tabBtn = document.querySelector('.nav-tab-btn[data-tab="lacak"]');
+        if (tabBtn) tabBtn.click();
+      }
+
+      // 2. Isi nilai input field pencarian tiket di DOM
+      const inputElement = document.getElementById('quickTrackInput');
+      if (inputElement) {
+        inputElement.value = ticketParam;
+      }
+
+      // Sinkronkan juga ke input pencarian tabel jika tersedia
+      const tableSearchInput = document.getElementById('tableSearch');
+      if (tableSearchInput) {
+        tableSearchInput.value = ticketParam;
+        if (window.app && window.app.tableFilters) {
+          window.app.tableFilters.search = ticketParam.toLowerCase();
+          if (typeof window.app.renderTable === 'function') {
+            window.app.renderTable();
+          }
+        }
+      }
+
+      // 3. Trigger controller pencarian / tombol lacak tiket
+      const btnTrack = document.getElementById('btnQuickTrack');
+      if (window.app && typeof window.app.lacakTiket === 'function') {
+        window.app.lacakTiket(ticketParam);
+      } else if (btnTrack) {
+        btnTrack.click();
+      }
+
+      // 4. Smooth scroll terarah ke kontainer hasil pelacakan
+      const scrollTarget = document.getElementById('quickTrackSection') || document.getElementById('quickTrackResult') || document.getElementById('pane-lacak');
+      if (scrollTarget && typeof scrollTarget.scrollIntoView === 'function') {
+        setTimeout(() => {
+          try {
+            scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          } catch (e) {
+            scrollTarget.scrollIntoView();
+          }
+        }, 200);
+      }
+    }, 200);
+  } catch (err) {
+    console.warn('Gagal melakukan auto-hydration parameter pelacakan:', err);
+  }
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', handleUrlTrackingAutoHydration);
+} else {
+  handleUrlTrackingAutoHydration();
 }
