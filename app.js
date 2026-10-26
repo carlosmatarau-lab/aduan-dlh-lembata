@@ -5,10 +5,11 @@
  * ===================================================================
  */
 
-// Konfigurasi URL Base Aplikasi untuk Dynamic Deep Link Tracking
-const APP_BASE_URL = (typeof window !== 'undefined' && window.location && window.location.origin && window.location.origin !== 'null')
+// Konfigurasi Domain Web Aplikasi untuk Tautan Lacak Otomatis WhatsApp
+const DOMAIN_WEB = (typeof window !== 'undefined' && window.location && window.location.origin && window.location.origin !== 'null' && !window.location.origin.startsWith('file'))
   ? window.location.origin
-  : 'https://aduan-dlh-lembata.vercel.app';
+  : "https://pengaduan-lembata.vercel.app"; // Sesuaikan dengan domain Anda
+const APP_BASE_URL = DOMAIN_WEB;
 
 class DLHApp {
   constructor() {
@@ -1487,13 +1488,12 @@ class DLHApp {
           : 'Koordinat belum disetel';
 
         // Susun Format Pesan WhatsApp: LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA
-        const trackingLink = `${APP_BASE_URL}/?tiket=${encodeURIComponent(newRecord.id)}`;
         const waMessage = 
 `*LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA*
 --------------------------------------------------
 📌 *NOMOR REGISTER:* ${newRecord.id}
-🔍 *LINK PELACAKAN RESMI:* ${trackingLink}
 📅 *WAKTU LAPOR:* ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+🔍 TAUTAN LACAK OTOMATIS: ${DOMAIN_WEB}/?tiket=${encodeURIComponent(newRecord.id)}
 
 👤 *DATA PELAPOR:*
 • *Nama Pelapor:* ${namaPelapor}
@@ -1753,14 +1753,13 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         const fallbackLng = (document.getElementById('inputLng')?.value || '').trim();
         const fallbackMapsLink = (fallbackLat && fallbackLng) ? `https://maps.google.com/?q=${fallbackLat},${fallbackLng}` : 'Koordinat belum disetel';
         const fallbackId = `ADU-LMB-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`;
-        const fallbackTrackingLink = `${APP_BASE_URL}/?tiket=${encodeURIComponent(fallbackId)}`;
 
         const safeWaMessage = 
 `*LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA*
 --------------------------------------------------
 📌 *NOMOR REGISTER:* ${fallbackId}
-🔍 *LINK PELACAKAN RESMI:* ${fallbackTrackingLink}
 📅 *WAKTU LAPOR:* ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+🔍 TAUTAN LACAK OTOMATIS: ${DOMAIN_WEB}/?tiket=${encodeURIComponent(fallbackId)}
 
 👤 *DATA PELAPOR:*
 • *Nama Pelapor:* ${fallbackNama}
@@ -2838,17 +2837,17 @@ if (document.readyState === 'loading') {
 }
 
 /* ===================================================================
-   7. AUTO-HYDRATION & AUTOMATED TRACKING VIA URL PARAMETER (?tiket= / ?id=)
+   7. AUTO-HYDRATION & AUTOMATED TRACKING VIA URL PARAMETER (?tiket=)
    Terisolasi secara mandiri & aman dari proses initialization modul lain.
    =================================================================== */
-function handleUrlTrackingAutoHydration() {
+window.addEventListener('DOMContentLoaded', () => {
   try {
     const urlParams = new URLSearchParams(window.location.search);
-    const ticketParam = (urlParams.get('tiket') || urlParams.get('id') || '').trim();
+    const tiketParam = (urlParams.get('tiket') || urlParams.get('id') || '').trim();
 
-    if (!ticketParam) return;
+    if (!tiketParam) return;
 
-    // Tunggu jeda singkat agar seluruh komponen DOM & listener aplikasi selesai terinisialisasi
+    // Tunggu jeda singkat agar seluruh komponen DOM & modul selesai terinisialisasi
     setTimeout(() => {
       // 1. Arahkan tab aktif ke antarmuka Pelacakan Tiket ('lacak')
       if (window.app && typeof window.app.switchTab === 'function') {
@@ -2858,51 +2857,61 @@ function handleUrlTrackingAutoHydration() {
         if (tabBtn) tabBtn.click();
       }
 
-      // 2. Isi nilai input field pencarian tiket di DOM
-      const inputElement = document.getElementById('quickTrackInput');
+      // 2. Cari elemen input pencarian nomor tiket di halaman
+      const inputElement = document.getElementById('quickTrackInput')
+        || document.getElementById('cari-tiket')
+        || document.querySelector('input[name="tiket"]')
+        || document.getElementById('tableSearch');
+
       if (inputElement) {
-        inputElement.value = ticketParam;
+        inputElement.value = tiketParam;
+        inputElement.dispatchEvent(new Event('input', { bubbles: true }));
       }
 
       // Sinkronkan juga ke input pencarian tabel jika tersedia
       const tableSearchInput = document.getElementById('tableSearch');
-      if (tableSearchInput) {
-        tableSearchInput.value = ticketParam;
+      if (tableSearchInput && tableSearchInput !== inputElement) {
+        tableSearchInput.value = tiketParam;
         if (window.app && window.app.tableFilters) {
-          window.app.tableFilters.search = ticketParam.toLowerCase();
+          window.app.tableFilters.search = tiketParam.toLowerCase();
           if (typeof window.app.renderTable === 'function') {
             window.app.renderTable();
           }
         }
       }
 
-      // 3. Trigger controller pencarian / tombol lacak tiket
-      const btnTrack = document.getElementById('btnQuickTrack');
+      // 3. Trigger otomatis tombol cari / pelacakan status tiket
+      const btnCari = document.getElementById('btnQuickTrack')
+        || document.getElementById('btn-cari')
+        || document.querySelector('.btn-track');
+
       if (window.app && typeof window.app.lacakTiket === 'function') {
-        window.app.lacakTiket(ticketParam);
-      } else if (btnTrack) {
-        btnTrack.click();
+        window.app.lacakTiket(tiketParam);
+      } else if (btnCari) {
+        btnCari.click();
       }
 
-      // 4. Smooth scroll terarah ke kontainer hasil pelacakan
-      const scrollTarget = document.getElementById('quickTrackSection') || document.getElementById('quickTrackResult') || document.getElementById('pane-lacak');
-      if (scrollTarget && typeof scrollTarget.scrollIntoView === 'function') {
+      // 4. Scroll otomatis ke bagian kontainer hasil pelacakan tiket
+      const targetScroll = document.getElementById('quickTrackResult')
+        || document.getElementById('quickTrackSection')
+        || document.getElementById('pane-lacak');
+
+      if (targetScroll && typeof targetScroll.scrollIntoView === 'function') {
         setTimeout(() => {
           try {
-            scrollTarget.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            targetScroll.scrollIntoView({ behavior: 'smooth', block: 'start' });
           } catch (e) {
-            scrollTarget.scrollIntoView();
+            targetScroll.scrollIntoView();
           }
         }, 200);
       }
     }, 200);
   } catch (err) {
-    console.warn('Gagal melakukan auto-hydration parameter pelacakan:', err);
+    console.warn('Gagal memproses auto-hydration tiket via URL:', err);
   }
-}
+});
 
-if (document.readyState === 'loading') {
-  document.addEventListener('DOMContentLoaded', handleUrlTrackingAutoHydration);
-} else {
-  handleUrlTrackingAutoHydration();
+// Fallback jika skrip dimuat saat DOM sudah ready
+if (document.readyState === 'interactive' || document.readyState === 'complete') {
+  window.dispatchEvent(new Event('DOMContentLoaded'));
 }
