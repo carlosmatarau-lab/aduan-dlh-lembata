@@ -88,13 +88,8 @@
     }
 
     @keyframes ribbonFlow {
-      0% {
-        background-position: 0% 50%;
-      }
-
-      100% {
-        background-position: 200% 50%;
-      }
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
     }
 
     /* ===================================================================
@@ -811,7 +806,6 @@
         opacity: 0;
         transform: scale(0.96) translateY(-4px);
       }
-
       to {
         opacity: 1;
         transform: scale(1) translateY(0);
@@ -956,7 +950,6 @@
         opacity: 0;
         transform: translateY(10px) scale(0.98);
       }
-
       to {
         opacity: 1;
         transform: translateY(0) scale(1);
@@ -1149,7 +1142,6 @@
         opacity: 0;
         transform: translateY(12px);
       }
-
       to {
         opacity: 1;
         transform: translateY(0);
@@ -1240,15 +1232,8 @@
     }
 
     @keyframes authCardIn {
-      0% {
-        opacity: 0;
-        transform: scale(0.92) translateY(20px);
-      }
-
-      100% {
-        opacity: 1;
-        transform: scale(1) translateY(0);
-      }
+      0% { opacity: 0; transform: scale(0.92) translateY(20px); }
+      100% { opacity: 1; transform: scale(1) translateY(0); }
     }
 
     .auth-card.shaking {
@@ -1258,27 +1243,10 @@
     }
 
     @keyframes authShake {
-
-      10%,
-      90% {
-        transform: translate3d(-4px, 0, 0);
-      }
-
-      20%,
-      80% {
-        transform: translate3d(6px, 0, 0);
-      }
-
-      30%,
-      50%,
-      70% {
-        transform: translate3d(-7px, 0, 0);
-      }
-
-      40%,
-      60% {
-        transform: translate3d(7px, 0, 0);
-      }
+      10%, 90% { transform: translate3d(-4px, 0, 0); }
+      20%, 80% { transform: translate3d(6px, 0, 0); }
+      30%, 50%, 70% { transform: translate3d(-7px, 0, 0); }
+      40%, 60% { transform: translate3d(7px, 0, 0); }
     }
 
     .auth-card.unlocking {
@@ -1286,20 +1254,9 @@
     }
 
     @keyframes authUnlock {
-      0% {
-        transform: scale(1);
-      }
-
-      35% {
-        transform: scale(1.03);
-        border-color: #10b981;
-        box-shadow: 0 0 45px rgba(16, 185, 129, 0.45);
-      }
-
-      100% {
-        transform: scale(0.92) translateY(-18px);
-        opacity: 0;
-      }
+      0% { transform: scale(1); }
+      35% { transform: scale(1.03); border-color: #10b981; box-shadow: 0 0 45px rgba(16, 185, 129, 0.45); }
+      100% { transform: scale(0.92) translateY(-18px); opacity: 0; }
     }
 
     .auth-scanning-bar {
@@ -1319,13 +1276,8 @@
     }
 
     @keyframes scanProgress {
-      0% {
-        transform: translateX(-100%);
-      }
-
-      100% {
-        transform: translateX(100%);
-      }
+      0% { transform: translateX(-100%); }
+      100% { transform: translateX(100%); }
     }
 
     .auth-icon-badge {
@@ -1337,13 +1289,10 @@
     }
 
     @keyframes badgePulse {
-
-      0%,
-      100% {
+      0%, 100% {
         transform: translateY(0);
         box-shadow: 0 8px 24px rgba(5, 150, 105, 0.35), 0 0 0 0 rgba(16, 185, 129, 0.4);
       }
-
       50% {
         transform: translateY(-4px);
         box-shadow: 0 14px 28px rgba(5, 150, 105, 0.45), 0 0 0 10px rgba(16, 185, 129, 0);
@@ -1689,21 +1638,10 @@
       border-radius: 50%;
     }
 
-    .dot-red {
-      background: #e11d48;
-    }
-
-    .dot-yellow {
-      background: #f59e0b;
-    }
-
-    .dot-blue {
-      background: #2563eb;
-    }
-
-    .dot-green {
-      background: #10b981;
-    }
+    .dot-red { background: #e11d48; }
+    .dot-yellow { background: #f59e0b; }
+    .dot-blue { background: #2563eb; }
+    .dot-green { background: #10b981; }
 
     /* Custom Leaflet Marker Styling */
     .custom-marker-pin-wrap {
@@ -1749,15 +1687,8 @@
     }
 
     @keyframes pinPulse {
-      0% {
-        transform: scale(0.5);
-        opacity: 0.8;
-      }
-
-      100% {
-        transform: scale(1.6);
-        opacity: 0;
-      }
+      0% { transform: scale(0.5); opacity: 0.8; }
+      100% { transform: scale(1.6); opacity: 0; }
     }
 
     /* ===================================================================
@@ -2017,7 +1948,6 @@
        TAMPILAN WEB DESKTOP (> 768px) SAMA SEKALI TIDAK BERUBAH
        =================================================================== */
     @media (max-width: 768px) {
-
       /* Reset Container & Margin Aman Mobile */
       .portal-container {
         padding: 10px 10px 48px 10px !important;
@@ -2028,25 +1958,20 @@
         padding: 16px 12px !important;
         justify-content: center !important;
       }
-
       .login-brand-header {
         margin-bottom: 16px !important;
         gap: 8px !important;
       }
-
       .login-pemkab-logo {
         width: 60px !important;
         height: 78px !important;
       }
-
       .login-brand-title {
         font-size: 1.05rem !important;
       }
-
       .login-brand-sub {
         font-size: 0.76rem !important;
       }
-
       .auth-card {
         padding: 22px 16px !important;
         margin: 0 auto !important;
@@ -2054,30 +1979,24 @@
         border-radius: 18px !important;
         box-shadow: 0 12px 35px -6px rgba(0, 0, 0, 0.45) !important;
       }
-
       .auth-title {
         font-size: 1.15rem !important;
         margin-bottom: 4px !important;
       }
-
       .auth-subtitle {
         font-size: 0.78rem !important;
         margin-bottom: 12px !important;
       }
-
       .auth-hint-banner {
         padding: 8px 12px !important;
         font-size: 0.74rem !important;
         margin-bottom: 14px !important;
       }
-
       .auth-password-input {
-        font-size: 16px !important;
-        /* Mencegah auto-zoom iPhone / iOS Safari */
+        font-size: 16px !important; /* Mencegah auto-zoom iPhone / iOS Safari */
         padding: 12px 42px 12px 14px !important;
         border-radius: 10px !important;
       }
-
       #btnSubmitLogin {
         padding: 12px 16px !important;
         font-size: 0.92rem !important;
@@ -2094,7 +2013,6 @@
         -webkit-backdrop-filter: blur(8px) !important;
         border-bottom: 2px solid rgba(52, 211, 153, 0.4) !important;
       }
-
       .header-inner {
         padding: 8px 14px !important;
         gap: 8px !important;
@@ -2102,37 +2020,30 @@
         justify-content: space-between !important;
         align-items: center !important;
       }
-
       .brand-group {
         gap: 10px !important;
       }
-
       .brand-logo-badge {
         width: 38px !important;
         height: 46px !important;
         border-radius: 10px !important;
       }
-
       .brand-logo-img {
         width: 30px !important;
         height: 38px !important;
       }
-
       .brand-name {
         font-size: 1.05rem !important;
         color: #ffffff !important;
       }
-
       .brand-sub {
         font-size: 0.72rem !important;
         color: #a7f3d0 !important;
         margin-top: 1px !important;
       }
-
       .header-nav {
         gap: 6px !important;
       }
-
       .btn-header-link {
         padding: 6px 11px !important;
         font-size: 0.74rem !important;
@@ -2148,19 +2059,15 @@
         border-radius: 12px !important;
         margin-bottom: 12px !important;
       }
-
       .top-strip-title {
         font-size: 1rem !important;
       }
-
       .top-strip-sub {
         font-size: 0.74rem !important;
       }
-
       .top-strip-right {
         width: 100% !important;
       }
-
       .btn-cloud-compact {
         width: 100% !important;
         justify-content: space-between !important;
@@ -2175,25 +2082,21 @@
         gap: 8px !important;
         margin-bottom: 14px !important;
       }
-
       .kpi-card {
         padding: 9px 11px !important;
         gap: 8px !important;
         border-radius: 12px !important;
       }
-
       .kpi-icon-wrap {
         width: 32px !important;
         height: 32px !important;
         font-size: 1.1rem !important;
         border-radius: 8px !important;
       }
-
       .kpi-val {
         font-size: 1.25rem !important;
         margin-bottom: 1px !important;
       }
-
       .kpi-title {
         font-size: 0.68rem !important;
         line-height: 1.2 !important;
@@ -2204,22 +2107,18 @@
         border-radius: 14px !important;
         margin-bottom: 14px !important;
       }
-
       .map-card-header {
         padding: 10px 12px !important;
         flex-direction: column !important;
         align-items: flex-start !important;
         gap: 8px !important;
       }
-
       .map-card-title {
         font-size: 1rem !important;
       }
-
       .map-card-sub {
         font-size: 0.72rem !important;
       }
-
       .map-header-controls {
         width: 100% !important;
         display: flex !important;
@@ -2228,7 +2127,6 @@
         margin-top: 6px !important;
         overflow: visible !important;
       }
-
       .map-mode-pill-group {
         width: 100% !important;
         display: grid !important;
@@ -2240,7 +2138,6 @@
         gap: 4px !important;
         box-sizing: border-box !important;
       }
-
       .btn-map-mode {
         width: 100% !important;
         height: 36px !important;
@@ -2255,14 +2152,12 @@
         white-space: nowrap !important;
         box-sizing: border-box !important;
       }
-
       .map-action-row-group {
         display: flex !important;
         width: 100% !important;
         gap: 8px !important;
         align-items: center !important;
       }
-
       #mapBasemapSelect {
         flex: 1 1 auto !important;
         width: auto !important;
@@ -2277,7 +2172,6 @@
         color: #0f172a !important;
         box-sizing: border-box !important;
       }
-
       #btnResetMapCenter {
         flex: 0 0 auto !important;
         height: 38px !important;
@@ -2294,9 +2188,8 @@
         justify-content: center !important;
         gap: 4px !important;
         box-sizing: border-box !important;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04) !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.04) !important;
       }
-
       .map-filter-strip {
         padding: 10px 12px !important;
         flex-direction: column !important;
@@ -2304,18 +2197,15 @@
         gap: 8px !important;
         border-top: 1px solid #f1f5f9 !important;
       }
-
       .map-stat-indicator {
         font-size: 0.74rem !important;
       }
-
       .map-filter-group {
         display: grid !important;
         grid-template-columns: 1fr 1fr !important;
         gap: 6px !important;
         width: 100% !important;
       }
-
       .map-mini-select {
         width: 100% !important;
         height: 36px !important;
@@ -2324,12 +2214,10 @@
         border-radius: 8px !important;
         box-sizing: border-box !important;
       }
-
       .petugas-map-canvas {
         height: 270px !important;
         min-height: 250px !important;
       }
-
       .map-legend-footer {
         padding: 8px 12px !important;
         flex-direction: column !important;
@@ -2337,18 +2225,15 @@
         gap: 6px !important;
         font-size: 0.72rem !important;
       }
-
       .heatmap-legend-gradient {
         width: 100% !important;
         justify-content: space-between !important;
         gap: 6px !important;
       }
-
       .gradient-bar {
         width: 90px !important;
         height: 8px !important;
       }
-
       .map-legend-items {
         display: flex !important;
         flex-wrap: wrap !important;
@@ -2359,25 +2244,21 @@
       .table-container-card {
         border-radius: 14px !important;
       }
-
       .table-card-header {
         padding: 12px 14px !important;
         flex-direction: column !important;
         align-items: stretch !important;
         gap: 10px !important;
       }
-
       .table-card-title {
         font-size: 1.05rem !important;
         font-weight: 800 !important;
       }
-
       .table-card-sub {
         font-size: 0.74rem !important;
         color: #64748b !important;
         line-height: 1.35 !important;
       }
-
       .table-header-buttons {
         width: 100% !important;
         display: grid !important;
@@ -2388,7 +2269,6 @@
         overflow: visible !important;
         white-space: normal !important;
       }
-
       .table-header-buttons .btn-action-tool {
         width: 100% !important;
         height: 40px !important;
@@ -2402,10 +2282,9 @@
         text-align: center !important;
         gap: 6px !important;
         box-sizing: border-box !important;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+        box-shadow: 0 1px 3px rgba(0,0,0,0.05) !important;
         white-space: nowrap !important;
       }
-
       #btnResetOfficialData {
         grid-column: 1 / -1 !important;
         width: 100% !important;
@@ -2421,26 +2300,21 @@
         align-items: stretch !important;
         gap: 8px !important;
       }
-
       .search-box-wrap {
         width: 100% !important;
         min-width: 0 !important;
       }
-
       .search-input {
-        font-size: 16px !important;
-        /* Mencegah auto-zoom iPhone */
+        font-size: 16px !important; /* Mencegah auto-zoom iPhone */
         padding: 9px 12px 9px 36px !important;
         border-radius: 8px !important;
       }
-
       .filter-select {
         width: 100% !important;
         font-size: 0.82rem !important;
         padding: 9px 12px !important;
         border-radius: 8px !important;
       }
-
       .btn-reset-filter {
         width: 100% !important;
         text-align: center !important;
@@ -2454,60 +2328,49 @@
         -webkit-overflow-scrolling: touch !important;
         border-radius: 0 !important;
       }
-
       .table-responsive::-webkit-scrollbar {
         height: 6px !important;
       }
-
       .table-responsive::-webkit-scrollbar-track {
         background: #f1f5f9 !important;
       }
-
       .table-responsive::-webkit-scrollbar-thumb {
         background: #cbd5e1 !important;
         border-radius: 4px !important;
       }
-
       .officer-table th {
         padding: 7px 8px !important;
         font-size: 0.72rem !important;
         letter-spacing: 0.3px !important;
       }
-
       .officer-table td {
         padding: 6px 8px !important;
         font-size: 0.76rem !important;
         line-height: 1.3 !important;
       }
-
       .ticket-badge {
         font-size: 0.72rem !important;
         padding: 2px 5px !important;
       }
-
       .badge {
         font-size: 0.68rem !important;
         padding: 2px 6px !important;
       }
-
       .table-actions,
       .table-actions-compact {
         gap: 4px !important;
       }
-
       .btn-tbl {
         padding: 5px 8px !important;
         font-size: 0.72rem !important;
         border-radius: 6px !important;
         min-height: 28px !important;
       }
-
       .btn-tbl-more {
         width: 28px !important;
         height: 28px !important;
         font-size: 1rem !important;
       }
-
       .table-footer {
         padding: 10px 12px !important;
         flex-direction: column !important;
@@ -2522,7 +2385,6 @@
         align-items: center !important;
         justify-content: center !important;
       }
-
       .modal-dialog {
         width: calc(100% - 12px) !important;
         max-width: 100% !important;
@@ -2530,34 +2392,28 @@
         max-height: 92vh !important;
         border-radius: 16px !important;
       }
-
       .modal-card {
         width: calc(100% - 12px) !important;
         max-width: 100% !important;
         margin: 0 auto !important;
         border-radius: 16px !important;
       }
-
       .modal-header {
         padding: 12px 14px !important;
       }
-
       .modal-title {
         font-size: 0.98rem !important;
       }
-
       .modal-body {
         padding: 14px !important;
         max-height: calc(92vh - 125px) !important;
         -webkit-overflow-scrolling: touch !important;
       }
-
       .modal-footer {
         padding: 10px 14px !important;
         gap: 8px !important;
         flex-wrap: wrap !important;
       }
-
       .btn-modal-cancel,
       .btn-modal-submit,
       .btn-danger-confirm {
@@ -2569,37 +2425,29 @@
         font-size: 0.82rem !important;
         border-radius: 8px !important;
       }
-
       .form-group-modal {
         margin-bottom: 12px !important;
       }
-
       .form-label-modal {
         font-size: 0.78rem !important;
         margin-bottom: 4px !important;
       }
-
       .form-control-modal {
-        font-size: 16px !important;
-        /* Mencegah auto-zoom iPhone */
+        font-size: 16px !important; /* Mencegah auto-zoom iPhone */
         padding: 9px 12px !important;
         border-radius: 8px !important;
       }
-
       .upload-zone-verifikasi {
         padding: 12px 10px !important;
         border-radius: 10px !important;
       }
-
       .upload-preview-grid {
         gap: 6px !important;
       }
-
       .preview-thumb-box {
         width: 64px !important;
         height: 64px !important;
       }
-
       .berita-acara-card {
         padding: 12px !important;
         border-radius: 10px !important;
@@ -2607,19 +2455,17 @@
       }
 
       /* Modal Lightbox Foto pada Layar HP */
-      #modalPhotoLightbox>div {
+      #modalPhotoLightbox > div {
         padding: 4px !important;
         height: 96vh !important;
         width: 100% !important;
       }
-
       #modalPhotoLightbox .lightbox-header,
-      #modalPhotoLightbox>div>div:first-child {
+      #modalPhotoLightbox > div > div:first-child {
         padding: 8px 10px !important;
         border-radius: 10px !important;
         gap: 6px !important;
       }
-
       #lightboxPhotoCaption {
         font-size: 0.82rem !important;
       }
@@ -2630,7 +2476,6 @@
       .brand-group div div:first-child {
         font-size: 0.92rem !important;
       }
-
       .brand-sub {
         display: block !important;
         font-size: 0.68rem !important;
@@ -2640,34 +2485,27 @@
         line-height: 1.2 !important;
         white-space: nowrap !important;
       }
-
       .top-strip-sub {
         display: none !important;
       }
-
       .btn-header-link {
         padding: 5px 8px !important;
         font-size: 0.7rem !important;
       }
-
       .kpi-val {
         font-size: 1.15rem !important;
       }
-
       .kpi-title {
         font-size: 0.65rem !important;
       }
-
       .officer-table th,
       .officer-table td {
         padding: 5px 6px !important;
         font-size: 0.73rem !important;
       }
-
       .modal-footer {
         flex-direction: column !important;
       }
-
       .btn-modal-cancel,
       .btn-modal-submit,
       .btn-danger-confirm {
@@ -2690,15 +2528,8 @@
     }
 
     @keyframes fadeInSlideDown {
-      from {
-        opacity: 0;
-        transform: translateY(-8px);
-      }
-
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      from { opacity: 0; transform: translateY(-8px); }
+      to { opacity: 1; transform: translateY(0); }
     }
 
     .upload-anim-header {
@@ -2732,9 +2563,7 @@
     }
 
     @keyframes animSpin {
-      100% {
-        transform: rotate(360deg);
-      }
+      100% { transform: rotate(360deg); }
     }
 
     .upload-anim-icon {
@@ -2789,17 +2618,9 @@
     }
 
     @keyframes gradientShift {
-      0% {
-        background-position: 0% 50%;
-      }
-
-      50% {
-        background-position: 100% 50%;
-      }
-
-      100% {
-        background-position: 0% 50%;
-      }
+      0% { background-position: 0% 50%; }
+      50% { background-position: 100% 50%; }
+      100% { background-position: 0% 50%; }
     }
 
     .upload-anim-footer {
@@ -2820,20 +2641,9 @@
     }
 
     @keyframes pulseDot {
-      0% {
-        transform: scale(0.9);
-        opacity: 0.7;
-      }
-
-      50% {
-        transform: scale(1.3);
-        opacity: 1;
-      }
-
-      100% {
-        transform: scale(0.9);
-        opacity: 0.7;
-      }
+      0% { transform: scale(0.9); opacity: 0.7; }
+      50% { transform: scale(1.3); opacity: 1; }
+      100% { transform: scale(0.9); opacity: 0.7; }
     }
 
     .upload-success-banner {
@@ -2849,15 +2659,8 @@
     }
 
     @keyframes popIn {
-      0% {
-        transform: scale(0.95);
-        opacity: 0;
-      }
-
-      100% {
-        transform: scale(1);
-        opacity: 1;
-      }
+      0% { transform: scale(0.95); opacity: 0; }
+      100% { transform: scale(1); opacity: 1; }
     }
 
     .usb-left {
@@ -2917,7 +2720,7 @@
       font-weight: 800;
       padding: 1px 5px;
       border-radius: 4px;
-      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 2px 4px rgba(0,0,0,0.2);
       pointer-events: none;
       z-index: 2;
     }
@@ -3128,8 +2931,7 @@
        =================================================================== -->
   <div id="petugasLoginPage" class="petugas-login-page">
     <div class="login-brand-header">
-      <img src="assets/logo-pemkab-lembata.png" alt="Logo Resmi Pemerintah Kabupaten Lembata" class="login-pemkab-logo"
-        title="Pemerintah Kabupaten Lembata - Dinas Lingkungan Hidup">
+      <img src="assets/logo-pemkab-lembata.png" alt="Logo Resmi Pemerintah Kabupaten Lembata" class="login-pemkab-logo" title="Pemerintah Kabupaten Lembata - Dinas Lingkungan Hidup">
       <div class="login-brand-text">
         <div class="login-brand-title">DINAS LINGKUNGAN HIDUP</div>
         <div class="login-brand-sub">KABUPATEN LEMBATA</div>
@@ -3152,45 +2954,35 @@
       <!-- Alphanumeric / PIN Password Form -->
       <form id="formPetugasPin" onsubmit="event.preventDefault(); window.portal && window.portal.submitPin();">
         <div class="auth-password-wrapper">
-          <input type="password" id="inputPetugasPin" class="auth-password-input"
-            placeholder="Masukkan PIN atau kata sandi resmi..." autocomplete="current-password" autofocus>
-          <button type="button" class="btn-toggle-eye" id="btnTogglePassword"
-            onclick="window.portal && window.portal.togglePasswordVisibility()"
-            title="Tampilkan / Sembunyikan Kata Sandi">
+          <input type="password" id="inputPetugasPin" class="auth-password-input" placeholder="Masukkan PIN atau kata sandi resmi..." autocomplete="current-password" autofocus>
+          <button type="button" class="btn-toggle-eye" id="btnTogglePassword" onclick="window.portal && window.portal.togglePasswordVisibility()" title="Tampilkan / Sembunyikan Kata Sandi">
             👁️
           </button>
         </div>
 
-        <div id="capsLockWarning"
-          style="display: none; background: #fef2f2; border: 1px solid #fecdd3; color: #be123c; border-radius: 8px; padding: 6px 10px; font-size: 0.76rem; font-weight: 700; margin-bottom: 12px; text-align: left;">
+        <div id="capsLockWarning" style="display: none; background: #fef2f2; border: 1px solid #fecdd3; color: #be123c; border-radius: 8px; padding: 6px 10px; font-size: 0.76rem; font-weight: 700; margin-bottom: 12px; text-align: left;">
           ⚠️ Peringatan: Tombol Caps Lock sedang aktif!
         </div>
 
 
-        <div
-          style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 18px; font-size: 0.82rem; color: #475569;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 18px; font-size: 0.82rem; color: #475569;">
           <input type="checkbox" id="checkRememberPin" style="accent-color: #059669; cursor: pointer;">
           <label for="checkRememberPin" style="cursor: pointer;">Ingat sesi masuk di perangkat ini</label>
         </div>
 
-        <button type="submit" class="btn-modal-submit" id="btnSubmitLogin"
-          onclick="event.preventDefault(); window.portal ? window.portal.submitPin() : (startPetugasPortal(), window.portal && window.portal.submitPin());"
-          style="width: 100%; padding: 13px; font-size: 0.96rem; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; border-radius: 12px; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35); cursor: pointer;">
+        <button type="submit" class="btn-modal-submit" id="btnSubmitLogin" onclick="event.preventDefault(); window.portal ? window.portal.submitPin() : (startPetugasPortal(), window.portal && window.portal.submitPin());" style="width: 100%; padding: 13px; font-size: 0.96rem; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; border-radius: 12px; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35); cursor: pointer;">
           <span id="btnSubmitIcon">🔓</span> <span id="btnSubmitText">Buka Dashboard Petugas</span>
         </button>
 
         <div style="margin-top: 16px; text-align: center;">
-          <button type="button" id="btnForgotPin" onclick="window.portal && window.portal.openForgotModal()"
-            style="background: none; border: none; color: #047857; font-weight: 700; font-size: 0.86rem; cursor: pointer; text-decoration: underline; padding: 4px 8px; transition: color 0.2s;"
-            onmouseover="this.style.color='#065f46'" onmouseout="this.style.color='#047857'">
+          <button type="button" id="btnForgotPin" onclick="window.portal && window.portal.openForgotModal()" style="background: none; border: none; color: #047857; font-weight: 700; font-size: 0.86rem; cursor: pointer; text-decoration: underline; padding: 4px 8px; transition: color 0.2s;" onmouseover="this.style.color='#065f46'" onmouseout="this.style.color='#047857'">
             📞 Lupa Sandi? Hubungi Admin DLH
           </button>
         </div>
       </form>
 
       <div style="margin-top: 18px; padding-top: 12px; border-top: 1px solid #e2e8f0;">
-        <a href="index.html"
-          style="font-size: 0.82rem; color: #64748b; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+        <a href="index.html" style="font-size: 0.82rem; color: #64748b; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
           ← Kembali ke Formulir Warga
         </a>
       </div>
@@ -3204,345 +2996,323 @@
   <!-- ===================================================================
        WRAPPER UTAMA DASHBOARD PETUGAS (DITAMPILKAN HANYA SETELAH LOGIN)
        =================================================================== -->
-  <div id="dashboardAppWrapper">
-    <header class="app-header">
-      <div class="header-inner">
-        <div class="brand-group">
-          <div class="brand-logo-badge">
-            <img src="assets/logo-pemkab-lembata.png" alt="Logo Resmi Pemerintah Kabupaten Lembata"
-              class="brand-logo-img" title="Pemerintah Kabupaten Lembata - Dinas Lingkungan Hidup">
-          </div>
-          <div class="brand-text-block">
-            <div class="brand-title-wrap">
-              <h1 class="brand-name">Dashboard Petugas</h1>
-              <span class="badge-role-petugas">🌿 PPKLH</span>
-            </div>
-            <p class="brand-sub">
-              🌱 Dinas Lingkungan Hidup Kab. Lembata
-            </p>
-          </div>
+    <div id="dashboardAppWrapper">
+  <header class="app-header">
+    <div class="header-inner">
+      <div class="brand-group">
+        <div class="brand-logo-badge">
+          <img src="assets/logo-pemkab-lembata.png" alt="Logo Resmi Pemerintah Kabupaten Lembata" class="brand-logo-img" title="Pemerintah Kabupaten Lembata - Dinas Lingkungan Hidup">
         </div>
-
-        <nav class="header-nav">
-          <!-- Formulir Warga -->
-          <a href="index.html" class="btn-header-link btn-warga" title="Buka Halaman Formulir Pengaduan Masyarakat">
-            <span>📝</span> Formulir Warga
-          </a>
-
-          <!-- Kunci Dashboard -->
-          <button type="button" class="btn-header-link btn-lock-portal" id="btnLockPortal"
-            title="Kunci Sesi Dashboard Petugas">
-            <span>🔒</span> Kunci
-          </button>
-        </nav>
+        <div class="brand-text-block">
+          <div class="brand-title-wrap">
+            <h1 class="brand-name">Dashboard Petugas</h1>
+            <span class="badge-role-petugas">🌿 PPKLH</span>
+          </div>
+          <p class="brand-sub">
+            🌱 Dinas Lingkungan Hidup Kab. Lembata
+          </p>
+        </div>
       </div>
-    </header>
 
-    <!-- ===================================================================
+      <nav class="header-nav">
+        <!-- Formulir Warga -->
+        <a href="index.html" class="btn-header-link btn-warga" title="Buka Halaman Formulir Pengaduan Masyarakat">
+          <span>📝</span> Formulir Warga
+        </a>
+
+        <!-- Kunci Dashboard -->
+        <button type="button" class="btn-header-link btn-lock-portal" id="btnLockPortal" title="Kunci Sesi Dashboard Petugas">
+          <span>🔒</span> Kunci
+        </button>
+      </nav>
+    </div>
+  </header>
+
+  <!-- ===================================================================
        MAIN CONTAINER DASHBOARD PETUGAS
        =================================================================== -->
-    <main class="portal-container">
+  <main class="portal-container">
 
-      <!-- Compact Minimalist Top Strip -->
-      <section class="officer-top-strip">
-        <div class="top-strip-left">
-          <h2 class="top-strip-title">Pengawasan &amp; Verifikasi Aduan</h2>
-          <p class="top-strip-sub">Pemantauan lapangan dan rekapitulasi penanganan pencemaran lingkungan Lembata</p>
+    <!-- Compact Minimalist Top Strip -->
+    <section class="officer-top-strip">
+      <div class="top-strip-left">
+        <h2 class="top-strip-title">Pengawasan &amp; Verifikasi Aduan</h2>
+        <p class="top-strip-sub">Pemantauan lapangan dan rekapitulasi penanganan pencemaran lingkungan Lembata</p>
+      </div>
+
+      <div class="top-strip-right" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
+        <!-- Tombol Toggle Mode Command Center: Split-Screen vs Penuh -->
+        <button type="button" class="btn-toggle-split active" id="btnToggleSplitScreen" onclick="window.portal && window.portal.toggleSplitScreen()" title="Beralih antara Mode Split-Screen (Berdampingan) & Mode Penuh (Bertumpuk)">
+          <span id="splitScreenIcon">🖥️</span>
+          <span id="splitScreenText">Mode Split-Screen</span>
+        </button>
+
+        <!-- Status Indikator Cloud GAS -->
+        <button type="button" class="btn-cloud-compact" id="btnOpenCloudModal" title="Pengaturan &amp; Status Koneksi Google Apps Script">
+          <span class="status-dot-pulse" id="cloudStatusDot"></span>
+          <span class="cloud-status-title" id="cloudStatusText">Cloud GAS Aktif</span>
+          <span class="cloud-status-detail" id="cloudStatusDetail">• Google Apps Script</span>
+        </button>
+      </div>
+    </section>
+
+    <!-- KPI Summary Grid -->
+    <section class="kpi-grid">
+      <!-- Total -->
+      <div class="kpi-card kpi-card-total">
+        <div class="kpi-icon-wrap">📊</div>
+        <div class="kpi-info">
+          <div class="kpi-val" id="kpiTotal">0</div>
+          <div class="kpi-title">Total Aduan</div>
         </div>
+      </div>
 
-        <div class="top-strip-right" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
-          <!-- Tombol Toggle Mode Command Center: Split-Screen vs Penuh -->
-          <button type="button" class="btn-toggle-split active" id="btnToggleSplitScreen"
-            onclick="window.portal && window.portal.toggleSplitScreen()"
-            title="Beralih antara Mode Split-Screen (Berdampingan) & Mode Penuh (Bertumpuk)">
-            <span id="splitScreenIcon">🖥️</span>
-            <span id="splitScreenText">Mode Split-Screen</span>
-          </button>
-
-          <!-- Status Indikator Cloud GAS -->
-          <button type="button" class="btn-cloud-compact" id="btnOpenCloudModal"
-            title="Pengaturan &amp; Status Koneksi Google Apps Script">
-            <span class="status-dot-pulse" id="cloudStatusDot"></span>
-            <span class="cloud-status-title" id="cloudStatusText">Cloud GAS Aktif</span>
-            <span class="cloud-status-detail" id="cloudStatusDetail">• Google Apps Script</span>
-          </button>
+      <!-- Baru -->
+      <div class="kpi-card kpi-card-baru">
+        <div class="kpi-icon-wrap">⏳</div>
+        <div class="kpi-info">
+          <div class="kpi-val" id="kpiBaru">0</div>
+          <div class="kpi-title">Belum Verifikasi</div>
         </div>
-      </section>
+      </div>
 
-      <!-- KPI Summary Grid -->
-      <section class="kpi-grid">
-        <!-- Total -->
-        <div class="kpi-card kpi-card-total">
-          <div class="kpi-icon-wrap">📊</div>
-          <div class="kpi-info">
-            <div class="kpi-val" id="kpiTotal">0</div>
-            <div class="kpi-title">Total Aduan</div>
-          </div>
+      <!-- Proses / Ditindaklanjuti -->
+      <div class="kpi-card kpi-card-proses">
+        <div class="kpi-icon-wrap">⚙️</div>
+        <div class="kpi-info">
+          <div class="kpi-val" id="kpiProses">0</div>
+          <div class="kpi-title">Dalam Proses</div>
         </div>
+      </div>
 
-        <!-- Baru -->
-        <div class="kpi-card kpi-card-baru">
-          <div class="kpi-icon-wrap">⏳</div>
-          <div class="kpi-info">
-            <div class="kpi-val" id="kpiBaru">0</div>
-            <div class="kpi-title">Belum Verifikasi</div>
-          </div>
+      <!-- Selesai -->
+      <div class="kpi-card kpi-card-selesai">
+        <div class="kpi-icon-wrap">✅</div>
+        <div class="kpi-info">
+          <div class="kpi-val" id="kpiSelesai">0</div>
+          <div class="kpi-title">Tuntas Selesai</div>
         </div>
+      </div>
+    </section>
 
-        <!-- Proses / Ditindaklanjuti -->
-        <div class="kpi-card kpi-card-proses">
-          <div class="kpi-icon-wrap">⚙️</div>
-          <div class="kpi-info">
-            <div class="kpi-val" id="kpiProses">0</div>
-            <div class="kpi-title">Dalam Proses</div>
-          </div>
-        </div>
-
-        <!-- Selesai -->
-        <div class="kpi-card kpi-card-selesai">
-          <div class="kpi-icon-wrap">✅</div>
-          <div class="kpi-info">
-            <div class="kpi-val" id="kpiSelesai">0</div>
-            <div class="kpi-title">Tuntas Selesai</div>
-          </div>
-        </div>
-      </section>
-
-      <!-- ===================================================================
+    <!-- ===================================================================
          TATA LETAK COMMAND CENTER: SPLIT-SCREEN (DESKTOP) / VERTIKAL (HP)
          =================================================================== -->
-      <div class="command-center-layout split-mode" id="commandCenterLayout">
+    <div class="command-center-layout split-mode" id="commandCenterLayout">
 
-        <!-- ===================================================================
+      <!-- ===================================================================
            MAP & HEATMAP SECTION (PETA SPASIAL & PETA PANAS KOORDINAT ADUAN)
            =================================================================== -->
-        <section class="officer-map-card" id="officerMapCard">
-          <div class="map-card-header">
-            <div>
-              <h2 class="map-card-title">🗺️ Peta Titik Rawan &amp; Sebaran Aduan</h2>
-              <p class="map-card-sub">Visualisasi spasial titik koordinat GPS dan sebaran 9 kecamatan</p>
-            </div>
+      <section class="officer-map-card" id="officerMapCard">
+      <div class="map-card-header">
+        <div>
+          <h2 class="map-card-title">🗺️ Peta Titik Rawan &amp; Sebaran Aduan</h2>
+          <p class="map-card-sub">Visualisasi spasial titik koordinat GPS dan sebaran 9 kecamatan</p>
+        </div>
 
-            <div class="map-header-controls">
-              <!-- Toggle Mode: Marker GPS vs Heatmap vs Hybrid -->
-              <div class="map-mode-pill-group">
-                <button type="button" class="btn-map-mode active" id="btnModeMarkers"
-                  onclick="window.portal.setMapMode('markers')">
-                  📍 Marker GPS
-                </button>
-                <button type="button" class="btn-map-mode" id="btnModeHeatmap"
-                  onclick="window.portal.setMapMode('heatmap')">
-                  🔥 Heatmap
-                </button>
-                <button type="button" class="btn-map-mode" id="btnModeHybrid"
-                  onclick="window.portal.setMapMode('hybrid')">
-                  🎯 Gabungan
-                </button>
-              </div>
-
-              <div class="map-action-row-group">
-                <!-- Basemap Selector -->
-                <select id="mapBasemapSelect" class="filter-select map-basemap-select"
-                  onchange="window.portal.changeBasemap(this.value)">
-                  <option value="osm" selected>🗺️ Peta Jalan (OSM Standard)</option>
-                  <option value="esri_street">🛣️ Peta Jalan &amp; Kota (Esri)</option>
-                  <option value="sat">🛰️ Citra Satelit Nyata</option>
-                  <option value="topo">⛰️ Relief Topografi</option>
-                </select>
-
-                <!-- Reset Zoom ke Lembata -->
-                <button type="button" id="btnResetMapCenter" class="btn-action-tool btn-focus-lmb"
-                  onclick="window.portal.resetMapView()" title="Pusatkan kembali ke Pulau Lembata">
-                  🎯 Fokus Lembata
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <!-- Quick Filter Bar -->
-          <div class="map-filter-strip">
-            <div class="map-stat-indicator">
-              <span class="stat-indicator-dot"></span>
-              <span id="mapPointsSummary">Memuat titik koordinat GPS...</span>
-            </div>
-
-            <div class="map-filter-group">
-              <!-- Filter Kecamatan Peta -->
-              <select id="mapFilterKecamatan" class="map-mini-select" onchange="window.portal.onMapFilterChange()">
-                <option value="all">Semua Kecamatan (9)</option>
-                <option value="Nubatukan">Nubatukan</option>
-                <option value="Ile Ape">Ile Ape</option>
-                <option value="Ile Ape Timur">Ile Ape Timur</option>
-                <option value="Lebatukan">Lebatukan</option>
-                <option value="Nagawutung">Nagawutung</option>
-                <option value="Wulandoni">Wulandoni</option>
-                <option value="Atadei">Atadei</option>
-                <option value="Omesuri">Omesuri</option>
-                <option value="Buyasuri">Buyasuri</option>
-              </select>
-
-              <!-- Filter Status Peta -->
-              <select id="mapFilterStatus" class="map-mini-select" onchange="window.portal.onMapFilterChange()">
-                <option value="all">Semua Status</option>
-                <option value="Baru">Aduan Masuk / Baru</option>
-                <option value="Diverifikasi">Diverifikasi Lapangan</option>
-                <option value="Ditindaklanjuti">Dalam Penanganan</option>
-                <option value="Selesai">Tuntas / Selesai</option>
-              </select>
-            </div>
-          </div>
-
-          <!-- Canvas Peta Leaflet -->
-          <div id="petugasMap" class="petugas-map-canvas"></div>
-
-          <!-- Legend & Heatmap Scale Bar -->
-          <div class="map-legend-footer">
-            <div class="heatmap-legend-gradient">
-              <span style="font-weight: 700; color: #475569;">Intensitas Heatmap:</span>
-              <span>Rendah</span>
-              <div class="gradient-bar"></div>
-              <span style="font-weight: 700; color: #dc2626;">Tinggi (Konsentrasi Titik Rawan)</span>
-            </div>
-
-            <div class="map-legend-items">
-              <span class="legend-chip"><span class="chip-dot dot-red"></span> Baru</span>
-              <span class="legend-chip"><span class="chip-dot dot-yellow"></span> Sedang Diverifikasi</span>
-              <span class="legend-chip"><span class="chip-dot dot-blue"></span> Ditindaklanjuti</span>
-              <span class="legend-chip"><span class="chip-dot dot-green"></span> Tuntas</span>
-            </div>
-          </div>
-        </section>
-
-        <!-- Data Management & Table Card -->
-        <section class="table-container-card" id="tableContainerCard">
-          <div class="table-card-header">
-            <div>
-              <h2 class="table-card-title">
-                <span>📑</span> Rekapitulasi Data Aduan
-              </h2>
-              <p class="table-card-sub">
-                Sinkronisasi form pengaduan masyarakat &amp; Google Spreadsheet DLH Lembata
-              </p>
-            </div>
-
-            <div class="table-header-buttons">
-              <!-- Refresh / Sync Manual -->
-              <button type="button" class="btn-action-tool" id="btnManualSync"
-                onclick="if(window.portal) window.portal.manualSync();" title="Segarkan data dari penyimpanan">
-                <span id="syncIconSpin">🔄</span> Segarkan
-              </button>
-
-              <!-- Input / Impor Pesan WhatsApp -->
-              <button type="button" class="btn-action-tool btn-import-wa" id="btnOpenWaImportModal"
-                onclick="window.portal.openWaImportModal();"
-                style="background: #ecfdf5; border-color: #10b981; color: #047857; font-weight: 700;"
-                title="Salin &amp; Tempel Pesan Pengaduan dari WhatsApp">
-                <span>💬</span> Catat dari WA
-              </button>
-
-              <!-- Pengaturan Koneksi Cloud Google Spreadsheet -->
-              <button type="button" class="btn-action-tool" id="btnOpenCloudModalTable"
-                onclick="document.getElementById('btnOpenCloudModal').click();"
-                title="Pengaturan Database Google Spreadsheet"
-                style="background: #f0fdf4; border-color: #86efac; color: #166534; font-weight: 700;">
-                <span>☁️</span> Database Sheets
-              </button>
-
-              <!-- Ekspor CSV -->
-              <button type="button" class="btn-action-tool btn-export" id="btnExportCsv"
-                title="Unduh dataset lengkap dalam format CSV">
-                <span>📥</span> Ekspor CSV
-              </button>
-
-              <!-- Reset Standar Bersih: 0 Aduan Fresh Start -->
-              <button type="button" class="btn-action-tool" id="btnResetOfficialData"
-                onclick="if(window.portal) window.portal.resetOfficialData();"
-                title="Kosongkan seluruh data aduan menjadi 0 aduan (Fresh Start) di Google Spreadsheet, Laptop &amp; HP Petugas"
-                style="color: #b91c1c; background: #fef2f2; border-color: #fca5a5; font-weight: 700;">
-                <span>🧹</span> Reset ke 0
-              </button>
-            </div>
-          </div>
-
-          <!-- Filter Toolbar -->
-          <div class="filter-toolbar">
-            <!-- Search Box -->
-            <div class="search-box-wrap">
-              <span class="search-icon-pos">🔍</span>
-              <input type="text" id="tableSearch" class="search-input"
-                placeholder="Cari ID tiket, nama pelapor, kecamatan, desa, atau isi aduan...">
-            </div>
-
-            <!-- Filter Status -->
-            <select id="filterStatus" class="filter-select">
-              <option value="all">Semua Status</option>
-              <option value="Baru">Baru / Masuk</option>
-              <option value="Diverifikasi">Diverifikasi Lapangan</option>
-              <option value="Ditindaklanjuti">Dalam Penanganan</option>
-              <option value="Selesai">Selesai Ditangani</option>
-              <option value="Ditolak">Ditolak / Tidak Terbukti</option>
-            </select>
-
-            <!-- Filter Kecamatan -->
-            <select id="filterKecamatan" class="filter-select">
-              <option value="all">Semua Kecamatan (9)</option>
-              <option value="Nubatukan">Nubatukan</option>
-              <option value="Ile Ape">Ile Ape</option>
-              <option value="Ile Ape Timur">Ile Ape Timur</option>
-              <option value="Lebatukan">Lebatukan</option>
-              <option value="Nagawutung">Nagawutung</option>
-              <option value="Wulandoni">Wulandoni</option>
-              <option value="Atadei">Atadei</option>
-              <option value="Omesuri">Omesuri</option>
-              <option value="Buyasuri">Buyasuri</option>
-            </select>
-
-            <!-- Reset Button -->
-            <button type="button" id="btnResetFilters" class="btn-reset-filter" title="Reset semua filter">
-              Reset Filter
+        <div class="map-header-controls">
+          <!-- Toggle Mode: Marker GPS vs Heatmap vs Hybrid -->
+          <div class="map-mode-pill-group">
+            <button type="button" class="btn-map-mode active" id="btnModeMarkers" onclick="window.portal.setMapMode('markers')">
+              📍 Marker GPS
+            </button>
+            <button type="button" class="btn-map-mode" id="btnModeHeatmap" onclick="window.portal.setMapMode('heatmap')">
+              🔥 Heatmap
+            </button>
+            <button type="button" class="btn-map-mode" id="btnModeHybrid" onclick="window.portal.setMapMode('hybrid')">
+              🎯 Gabungan
             </button>
           </div>
 
-          <!-- Responsive Table -->
-          <div class="table-responsive">
-            <table class="officer-table">
-              <thead>
-                <tr>
-                  <th style="width: 130px;">No. Register</th>
-                  <th style="width: 105px;">Tanggal</th>
-                  <th>Pelapor &amp; Kontak</th>
-                  <th>Lokasi Kejadian</th>
-                  <th>Jenis Dugaan</th>
-                  <th>Status &amp; Verifikator</th>
-                  <th style="text-align: center; width: 140px;">Aksi Petugas</th>
-                </tr>
-              </thead>
-              <tbody id="aduanTableBody">
-                <!-- Data baris dirender secara dinamis oleh JavaScript -->
-                <tr>
-                  <td colspan="7" style="text-align: center; padding: 32px 16px; color: #64748b;">
-                    Memuat data aduan DLH Lembata...
-                  </td>
-                </tr>
-              </tbody>
-            </table>
+          <div class="map-action-row-group">
+            <!-- Basemap Selector -->
+            <select id="mapBasemapSelect" class="filter-select map-basemap-select" onchange="window.portal.changeBasemap(this.value)">
+              <option value="osm" selected>🗺️ Peta Jalan (OSM Standard)</option>
+              <option value="esri_street">🛣️ Peta Jalan &amp; Kota (Esri)</option>
+              <option value="sat">🛰️ Citra Satelit Nyata</option>
+              <option value="topo">⛰️ Relief Topografi</option>
+            </select>
+
+            <!-- Reset Zoom ke Lembata -->
+            <button type="button" id="btnResetMapCenter" class="btn-action-tool btn-focus-lmb" onclick="window.portal.resetMapView()" title="Pusatkan kembali ke Pulau Lembata">
+              🎯 Fokus Lembata
+            </button>
           </div>
+        </div>
+      </div>
 
-          <!-- Floating Action Dropdown Menu Container -->
-          <div id="tableActionDropdownMenu" class="action-dropdown-menu" style="display: none;" role="menu"></div>
+      <!-- Quick Filter Bar -->
+      <div class="map-filter-strip">
+        <div class="map-stat-indicator">
+          <span class="stat-indicator-dot"></span>
+          <span id="mapPointsSummary">Memuat titik koordinat GPS...</span>
+        </div>
 
-          <!-- Footer Info -->
-          <div class="table-footer">
-            <div id="tablePagination">Menampilkan 0 aduan</div>
-            <div style="font-size: 0.78rem;">
-              🌱 <em>DLH Lembata — Transparan &bull; Akuntabel &bull; Tanggap</em>
-            </div>
-          </div>
-        </section>
+        <div class="map-filter-group">
+          <!-- Filter Kecamatan Peta -->
+          <select id="mapFilterKecamatan" class="map-mini-select" onchange="window.portal.onMapFilterChange()">
+            <option value="all">Semua Kecamatan (9)</option>
+            <option value="Nubatukan">Nubatukan</option>
+            <option value="Ile Ape">Ile Ape</option>
+            <option value="Ile Ape Timur">Ile Ape Timur</option>
+            <option value="Lebatukan">Lebatukan</option>
+            <option value="Nagawutung">Nagawutung</option>
+            <option value="Wulandoni">Wulandoni</option>
+            <option value="Atadei">Atadei</option>
+            <option value="Omesuri">Omesuri</option>
+            <option value="Buyasuri">Buyasuri</option>
+          </select>
 
-      </div> <!-- /#commandCenterLayout (Split-Screen Wrapper) -->
+          <!-- Filter Status Peta -->
+          <select id="mapFilterStatus" class="map-mini-select" onchange="window.portal.onMapFilterChange()">
+            <option value="all">Semua Status</option>
+            <option value="Baru">Aduan Masuk / Baru</option>
+            <option value="Diverifikasi">Diverifikasi Lapangan</option>
+            <option value="Ditindaklanjuti">Dalam Penanganan</option>
+            <option value="Selesai">Tuntas / Selesai</option>
+          </select>
+        </div>
+      </div>
 
-    </main>
+      <!-- Canvas Peta Leaflet -->
+      <div id="petugasMap" class="petugas-map-canvas"></div>
+
+      <!-- Legend & Heatmap Scale Bar -->
+      <div class="map-legend-footer">
+        <div class="heatmap-legend-gradient">
+          <span style="font-weight: 700; color: #475569;">Intensitas Heatmap:</span>
+          <span>Rendah</span>
+          <div class="gradient-bar"></div>
+          <span style="font-weight: 700; color: #dc2626;">Tinggi (Konsentrasi Titik Rawan)</span>
+        </div>
+
+        <div class="map-legend-items">
+          <span class="legend-chip"><span class="chip-dot dot-red"></span> Baru</span>
+          <span class="legend-chip"><span class="chip-dot dot-yellow"></span> Sedang Diverifikasi</span>
+          <span class="legend-chip"><span class="chip-dot dot-blue"></span> Ditindaklanjuti</span>
+          <span class="legend-chip"><span class="chip-dot dot-green"></span> Tuntas</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Data Management & Table Card -->
+    <section class="table-container-card" id="tableContainerCard">
+      <div class="table-card-header">
+        <div>
+          <h2 class="table-card-title">
+            <span>📑</span> Rekapitulasi Data Aduan
+          </h2>
+          <p class="table-card-sub">
+            Sinkronisasi form pengaduan masyarakat &amp; Google Spreadsheet DLH Lembata
+          </p>
+        </div>
+
+        <div class="table-header-buttons">
+          <!-- Refresh / Sync Manual -->
+          <button type="button" class="btn-action-tool" id="btnManualSync" onclick="if(window.portal) window.portal.manualSync();" title="Segarkan data dari penyimpanan">
+            <span id="syncIconSpin">🔄</span> Segarkan
+          </button>
+
+          <!-- Input / Impor Pesan WhatsApp -->
+          <button type="button" class="btn-action-tool btn-import-wa" id="btnOpenWaImportModal" onclick="window.portal.openWaImportModal();" style="background: #ecfdf5; border-color: #10b981; color: #047857; font-weight: 700;" title="Salin &amp; Tempel Pesan Pengaduan dari WhatsApp">
+            <span>💬</span> Catat dari WA
+          </button>
+
+          <!-- Pengaturan Koneksi Cloud Google Spreadsheet -->
+          <button type="button" class="btn-action-tool" id="btnOpenCloudModalTable" onclick="document.getElementById('btnOpenCloudModal').click();" title="Pengaturan Database Google Spreadsheet" style="background: #f0fdf4; border-color: #86efac; color: #166534; font-weight: 700;">
+            <span>☁️</span> Database Sheets
+          </button>
+
+          <!-- Ekspor CSV -->
+          <button type="button" class="btn-action-tool btn-export" id="btnExportCsv" title="Unduh dataset lengkap dalam format CSV">
+            <span>📥</span> Ekspor CSV
+          </button>
+
+          <!-- Reset Standar Bersih: 0 Aduan Fresh Start -->
+          <button type="button" class="btn-action-tool" id="btnResetOfficialData" onclick="if(window.portal) window.portal.resetOfficialData();" title="Kosongkan seluruh data aduan menjadi 0 aduan (Fresh Start) di Google Spreadsheet, Laptop &amp; HP Petugas" style="color: #b91c1c; background: #fef2f2; border-color: #fca5a5; font-weight: 700;">
+            <span>🧹</span> Reset ke 0
+          </button>
+        </div>
+      </div>
+
+      <!-- Filter Toolbar -->
+      <div class="filter-toolbar">
+        <!-- Search Box -->
+        <div class="search-box-wrap">
+          <span class="search-icon-pos">🔍</span>
+          <input type="text" id="tableSearch" class="search-input" placeholder="Cari ID tiket, nama pelapor, kecamatan, desa, atau isi aduan...">
+        </div>
+
+        <!-- Filter Status -->
+        <select id="filterStatus" class="filter-select">
+          <option value="all">Semua Status</option>
+          <option value="Baru">Baru / Masuk</option>
+          <option value="Diverifikasi">Diverifikasi Lapangan</option>
+          <option value="Ditindaklanjuti">Dalam Penanganan</option>
+          <option value="Selesai">Selesai Ditangani</option>
+          <option value="Ditolak">Ditolak / Tidak Terbukti</option>
+        </select>
+
+        <!-- Filter Kecamatan -->
+        <select id="filterKecamatan" class="filter-select">
+          <option value="all">Semua Kecamatan (9)</option>
+          <option value="Nubatukan">Nubatukan</option>
+          <option value="Ile Ape">Ile Ape</option>
+          <option value="Ile Ape Timur">Ile Ape Timur</option>
+          <option value="Lebatukan">Lebatukan</option>
+          <option value="Nagawutung">Nagawutung</option>
+          <option value="Wulandoni">Wulandoni</option>
+          <option value="Atadei">Atadei</option>
+          <option value="Omesuri">Omesuri</option>
+          <option value="Buyasuri">Buyasuri</option>
+        </select>
+
+        <!-- Reset Button -->
+        <button type="button" id="btnResetFilters" class="btn-reset-filter" title="Reset semua filter">
+          Reset Filter
+        </button>
+      </div>
+
+      <!-- Responsive Table -->
+      <div class="table-responsive">
+        <table class="officer-table">
+          <thead>
+            <tr>
+              <th style="width: 130px;">No. Register</th>
+              <th style="width: 105px;">Tanggal</th>
+              <th>Pelapor &amp; Kontak</th>
+              <th>Lokasi Kejadian</th>
+              <th>Jenis Dugaan</th>
+              <th>Status &amp; Verifikator</th>
+              <th style="text-align: center; width: 140px;">Aksi Petugas</th>
+            </tr>
+          </thead>
+          <tbody id="aduanTableBody">
+            <!-- Data baris dirender secara dinamis oleh JavaScript -->
+            <tr>
+              <td colspan="7" style="text-align: center; padding: 32px 16px; color: #64748b;">
+                Memuat data aduan DLH Lembata...
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Floating Action Dropdown Menu Container -->
+      <div id="tableActionDropdownMenu" class="action-dropdown-menu" style="display: none;" role="menu"></div>
+
+      <!-- Footer Info -->
+      <div class="table-footer">
+        <div id="tablePagination">Menampilkan 0 aduan</div>
+        <div style="font-size: 0.78rem;">
+          🌱 <em>DLH Lembata — Transparan &bull; Akuntabel &bull; Tanggap</em>
+        </div>
+      </div>
+    </section>
+
+    </div> <!-- /#commandCenterLayout (Split-Screen Wrapper) -->
+
+  </main>
   </div> <!-- /#dashboardAppWrapper -->
 
   <!-- ===================================================================
@@ -3568,8 +3338,7 @@
           </div>
           <div class="info-summary-row">
             <span class="info-summary-label">Kontak WhatsApp:</span>
-            <span id="vKontakPelapor"
-              style="font-family: monospace; display: inline-flex; align-items: center; gap: 8px;">-</span>
+            <span id="vKontakPelapor" style="font-family: monospace; display: inline-flex; align-items: center; gap: 8px;">-</span>
           </div>
           <div class="info-summary-row">
             <span class="info-summary-label">Lokasi:</span>
@@ -3617,60 +3386,45 @@
 
           <!-- INSTRUMEN DAFTAR PERIKSA (CHECKLIST) VERIFIKASI LAPANGAN -->
           <div class="form-group-modal verification-checklist-box">
-            <div
-              style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; flex-wrap: wrap; gap: 6px;">
-              <label class="form-label-modal"
-                style="margin: 0; color: #065f46; font-size: 0.86rem; font-weight: 800; display: flex; align-items: center; gap: 6px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; flex-wrap: wrap; gap: 6px;">
+              <label class="form-label-modal" style="margin: 0; color: #065f46; font-size: 0.86rem; font-weight: 800; display: flex; align-items: center; gap: 6px;">
                 <span>📋</span> Daftar Periksa (Checklist) Verifikasi Lapangan
               </label>
               <span class="checklist-counter-badge" id="vChecklistCounter">0/5 Terpenuhi</span>
             </div>
             <p style="font-size: 0.74rem; color: #64748b; margin: 0 0 10px 0; line-height: 1.35;">
-              Instrumen pengawasan faktual Bidang PPKLH DLH Kabupaten Lembata. Centang indikator yang telah diverifikasi
-              di lapangan:
+              Instrumen pengawasan faktual Bidang PPKLH DLH Kabupaten Lembata. Centang indikator yang telah diverifikasi di lapangan:
             </p>
 
             <div class="verification-checklist-items" id="vChecklistContainer">
               <label class="chk-item-row" for="chkGpsFaktual">
-                <input type="checkbox" id="chkGpsFaktual" class="v-chk-input"
-                  value="Titik koordinat GPS sesuai dengan lokasi kejadian faktual"
-                  onchange="window.portal && window.portal.onChecklistChange()">
+                <input type="checkbox" id="chkGpsFaktual" class="v-chk-input" value="Titik koordinat GPS sesuai dengan lokasi kejadian faktual" onchange="window.portal && window.portal.onChecklistChange()">
                 <span class="chk-item-text">Titik koordinat GPS sesuai dengan lokasi kejadian faktual</span>
               </label>
 
               <label class="chk-item-row" for="chkVisualObjek">
-                <input type="checkbox" id="chkVisualObjek" class="v-chk-input"
-                  value="Bukti visual/objek dugaan pencemaran teridentifikasi di lapangan"
-                  onchange="window.portal && window.portal.onChecklistChange()">
+                <input type="checkbox" id="chkVisualObjek" class="v-chk-input" value="Bukti visual/objek dugaan pencemaran teridentifikasi di lapangan" onchange="window.portal && window.portal.onChecklistChange()">
                 <span class="chk-item-text">Bukti visual/objek dugaan pencemaran teridentifikasi di lapangan</span>
               </label>
 
               <label class="chk-item-row" for="chkSumberPelaku">
-                <input type="checkbox" id="chkSumberPelaku" class="v-chk-input"
-                  value="Sumber atau pelaku dugaan pencemaran telah diperiksa"
-                  onchange="window.portal && window.portal.onChecklistChange()">
+                <input type="checkbox" id="chkSumberPelaku" class="v-chk-input" value="Sumber atau pelaku dugaan pencemaran telah diperiksa" onchange="window.portal && window.portal.onChecklistChange()">
                 <span class="chk-item-text">Sumber atau pelaku dugaan pencemaran telah diperiksa</span>
               </label>
 
               <label class="chk-item-row" for="chkDokumenSampel">
-                <input type="checkbox" id="chkDokumenSampel" class="v-chk-input"
-                  value="Pengambilan dokumentasi fisik/sampel lapangan telah dilakukan"
-                  onchange="window.portal && window.portal.onChecklistChange()">
+                <input type="checkbox" id="chkDokumenSampel" class="v-chk-input" value="Pengambilan dokumentasi fisik/sampel lapangan telah dilakukan" onchange="window.portal && window.portal.onChecklistChange()">
                 <span class="chk-item-text">Pengambilan dokumentasi fisik/sampel lapangan telah dilakukan</span>
               </label>
 
               <label class="chk-item-row" for="chkKoordinasiAparat">
-                <input type="checkbox" id="chkKoordinasiAparat" class="v-chk-input"
-                  value="Koordinasi bersama aparat desa/kelurahan atau pihak terkait"
-                  onchange="window.portal && window.portal.onChecklistChange()">
+                <input type="checkbox" id="chkKoordinasiAparat" class="v-chk-input" value="Koordinasi bersama aparat desa/kelurahan atau pihak terkait" onchange="window.portal && window.portal.onChecklistChange()">
                 <span class="chk-item-text">Koordinasi bersama aparat desa/kelurahan atau pihak terkait</span>
               </label>
             </div>
 
             <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
-              <button type="button" class="btn-sync-checklist"
-                onclick="window.portal && window.portal.appendChecklistToHasil()"
-                title="Salin indikator checklist yang terpenuhi ke dalam kolom Hasil Temuan Lapangan">
+              <button type="button" class="btn-sync-checklist" onclick="window.portal && window.portal.appendChecklistToHasil()" title="Salin indikator checklist yang terpenuhi ke dalam kolom Hasil Temuan Lapangan">
                 <span>➕</span> Salin Checklist ke Catatan Temuan
               </button>
             </div>
@@ -3708,22 +3462,18 @@
                 Dapat mengambil langsung dari kamera HP atau memilih dari galeri perangkat.
               </p>
               <div style="display: flex; justify-content: center; gap: 8px; margin-top: 10px;">
-                <label class="btn-action-tool"
-                  style="cursor: pointer; background: #059669; color: white; border-color: #047857; margin: 0;">
+                <label class="btn-action-tool" style="cursor: pointer; background: #059669; color: white; border-color: #047857; margin: 0;">
                   📁 Pilih File Foto
                   <input type="file" id="vFotoRiilInput" accept="image/*" multiple style="display: none;">
                 </label>
-                <label class="btn-action-tool"
-                  style="cursor: pointer; background: #0284c7; color: white; border-color: #0369a1; margin: 0;">
+                <label class="btn-action-tool" style="cursor: pointer; background: #0284c7; color: white; border-color: #0369a1; margin: 0;">
                   📸 Kamera HP
-                  <input type="file" id="vFotoKameraInput" accept="image/*" capture="environment"
-                    style="display: none;">
+                  <input type="file" id="vFotoKameraInput" accept="image/*" capture="environment" style="display: none;">
                 </label>
               </div>
 
               <!-- Upload Progress & Animation Card -->
-              <div id="vUploadAnimCard" class="upload-anim-card"
-                style="display: none; margin-top: 14px; text-align: left;">
+              <div id="vUploadAnimCard" class="upload-anim-card" style="display: none; margin-top: 14px; text-align: left;">
                 <div class="upload-anim-header">
                   <div class="upload-anim-icon-wrap">
                     <span class="upload-anim-spinner"></span>
@@ -3745,14 +3495,12 @@
               </div>
 
               <!-- Status Sukses Banner -->
-              <div id="vUploadSuccessBanner" class="upload-success-banner"
-                style="display: none; margin-top: 12px; text-align: left;">
+              <div id="vUploadSuccessBanner" class="upload-success-banner" style="display: none; margin-top: 12px; text-align: left;">
                 <div class="usb-left">
                   <span class="usb-check">✓</span>
                   <div>
                     <strong class="usb-title">Status: Upload Sukses!</strong>
-                    <div class="usb-desc" id="vUploadSuccessDesc">Foto kondisi riil siap disimpan ke arsip resmi DLH.
-                    </div>
+                    <div class="usb-desc" id="vUploadSuccessDesc">Foto kondisi riil siap disimpan ke arsip resmi DLH.</div>
                   </div>
                 </div>
                 <span class="usb-badge">BERITA ACARA</span>
@@ -3761,20 +3509,13 @@
 
             <!-- Preview List Foto Fisik Riil -->
             <div class="upload-preview-grid" id="vFotoPreviewGrid"></div>
-            <div
-              style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px; flex-wrap: wrap; gap: 6px;">
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-top: 6px; flex-wrap: wrap; gap: 6px;">
               <div id="vFotoCountHint" style="font-size: 0.74rem; color: #64748b; font-weight: 600;"></div>
               <div style="display: flex; gap: 6px; align-items: center;">
-                <button type="button" id="vBtnReplacePhotos"
-                  onclick="window.portal && window.portal.replaceUploadedPhotos()"
-                  style="display: none; background: #e0f2fe; border: 1px solid #7dd3fc; color: #0369a1; font-size: 0.74rem; font-weight: 700; border-radius: 6px; padding: 4px 10px; cursor: pointer; transition: background 0.2s;"
-                  onmouseover="this.style.background='#bae6fd'" onmouseout="this.style.background='#e0f2fe'">
+                <button type="button" id="vBtnReplacePhotos" onclick="window.portal && window.portal.replaceUploadedPhotos()" style="display: none; background: #e0f2fe; border: 1px solid #7dd3fc; color: #0369a1; font-size: 0.74rem; font-weight: 700; border-radius: 6px; padding: 4px 10px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#bae6fd'" onmouseout="this.style.background='#e0f2fe'">
                   🔄 Ganti / Foto Ulang
                 </button>
-                <button type="button" id="vBtnClearPhotos"
-                  onclick="window.portal && window.portal.clearAllUploadedPhotos()"
-                  style="display: none; background: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; font-size: 0.74rem; font-weight: 700; border-radius: 6px; padding: 4px 10px; cursor: pointer; transition: background 0.2s;"
-                  onmouseover="this.style.background='#fecdd3'" onmouseout="this.style.background='#fee2e2'">
+                <button type="button" id="vBtnClearPhotos" onclick="window.portal && window.portal.clearAllUploadedPhotos()" style="display: none; background: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; font-size: 0.74rem; font-weight: 700; border-radius: 6px; padding: 4px 10px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#fecdd3'" onmouseout="this.style.background='#fee2e2'">
                   🗑️ Hapus Semua Foto Petugas
                 </button>
               </div>
@@ -3782,11 +3523,9 @@
           </div>
 
           <!-- Berita Acara Pemeriksaan Fisik Lapangan (BAST) -->
-          <div
-            style="background: #fefce8; border: 1px solid #fef08a; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+          <div style="background: #fefce8; border: 1px solid #fef08a; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <div
-                style="font-weight: 800; color: #854d0e; font-size: 0.88rem; display: flex; align-items: center; gap: 6px;">
+              <div style="font-weight: 800; color: #854d0e; font-size: 0.88rem; display: flex; align-items: center; gap: 6px;">
                 <span>📜</span> Berita Acara Pemeriksaan Fisik Lapangan (BA / BAST)
               </div>
               <button type="button" class="auto-ba-btn" id="btnGenerateNoBA" onclick="window.portal.generateNoBA()">
@@ -3861,8 +3600,7 @@
 
       <div class="modal-body">
         <p style="font-size: 0.88rem; color: #475569; margin-bottom: 16px; line-height: 1.5;">
-          Data aduan dan verifikasi petugas dapat tersinkronisasi dua arah secara otomatis dengan Google Spreadsheet
-          resmi Dinas Lingkungan Hidup Kabupaten Lembata melalui URL Web App Google Apps Script.
+          Data aduan dan verifikasi petugas dapat tersinkronisasi dua arah secara otomatis dengan Google Spreadsheet resmi Dinas Lingkungan Hidup Kabupaten Lembata melalui URL Web App Google Apps Script.
         </p>
 
         <div class="form-group-modal">
@@ -3873,36 +3611,29 @@
             placeholder="https://script.google.com/macros/s/AKfycbwuDJ9X5a27GnVuuiU1keHexKXzG3OITUxwOomwHGt-1S53DdqfAfguDInXwtbh9ljKMw/exec">
         </div>
 
-        <div
-          style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-top: 14px; font-size: 0.8rem; color: #64748b;">
-          💡 <strong>Tips:</strong> Jika URL dikosongkan, aplikasi akan beroperasi secara mandiri menggunakan
-          penyimpanan lokal browser (Local Storage) dengan dataset Kabupaten Lembata.
+        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-top: 14px; font-size: 0.8rem; color: #64748b;">
+          💡 <strong>Tips:</strong> Jika URL dikosongkan, aplikasi akan beroperasi secara mandiri menggunakan penyimpanan lokal browser (Local Storage) dengan dataset Kabupaten Lembata.
         </div>
 
-        <div
-          style="margin-top: 14px; padding: 12px 14px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
+        <div style="margin-top: 14px; padding: 12px 14px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
           <div>
             <div style="font-size: 0.82rem; font-weight: 600; color: #065f46;">Spreadsheet Baru Masih Kosong?</div>
-            <div style="font-size: 0.76rem; color: #047857; margin-top: 2px;">Unggah seluruh data aduan lokal saat ini
-              ke Google Spreadsheet agar langsung terisi.</div>
+            <div style="font-size: 0.76rem; color: #047857; margin-top: 2px;">Unggah seluruh data aduan lokal saat ini ke Google Spreadsheet agar langsung terisi.</div>
           </div>
-          <button type="button" class="btn-action-tool" id="btnUploadLocalToGas"
-            style="background: #059669; color: white; border-color: #047857; font-size: 0.78rem; padding: 7px 12px; white-space: nowrap;">
+          <button type="button" class="btn-action-tool" id="btnUploadLocalToGas" style="background: #059669; color: white; border-color: #047857; font-size: 0.78rem; padding: 7px 12px; white-space: nowrap;">
             📤 Unggah ke Sheets
           </button>
         </div>
       </div>
 
       <div class="modal-footer" style="justify-content: space-between;">
-        <button type="button" class="btn-modal-cancel" id="btnResetDefaultData"
-          style="color: #dc2626; font-weight: 700;" title="Kosongkan sistem menjadi 0 aduan (Fresh Start)">
+        <button type="button" class="btn-modal-cancel" id="btnResetDefaultData" style="color: #dc2626; font-weight: 700;" title="Kosongkan sistem menjadi 0 aduan (Fresh Start)">
           🧹 Reset ke 0 Aduan
         </button>
 
         <div style="display: flex; gap: 8px;">
           <button type="button" class="btn-modal-cancel" data-close-modal>Tutup</button>
-          <button type="button" class="btn-action-tool" id="btnTriggerSyncNow"
-            style="background: #0284c7; color: white; border-color: #0369a1;">
+          <button type="button" class="btn-action-tool" id="btnTriggerSyncNow" style="background: #0284c7; color: white; border-color: #0369a1;">
             🔄 Sinkronkan Sekarang
           </button>
           <button type="button" class="btn-modal-submit" id="btnSaveGasUrl">
@@ -3937,8 +3668,7 @@
         <div class="delete-warning-banner">
           <span style="font-size: 1.25rem;">⚠️</span>
           <div>
-            <strong>Perhatian:</strong> Tindakan ini bersifat permanen. Data akan dihapus dari sistem pengawasan DLH dan
-            dicatat ke blacklist log agar tidak dipulihkan.
+            <strong>Perhatian:</strong> Tindakan ini bersifat permanen. Data akan dihapus dari sistem pengawasan DLH dan dicatat ke blacklist log agar tidak dipulihkan.
           </div>
         </div>
       </div>
@@ -3966,34 +3696,26 @@
 
       <div class="modal-body">
         <p style="font-size: 0.86rem; color: #475569; margin-bottom: 12px; line-height: 1.45;">
-          Tempel (paste) teks format laporan aduan yang dikirim warga via WhatsApp (contoh: <em>ADU-LMB-2026-001</em>).
-          Sistem akan membaca Nomor Register, Pelapor, Titik GPS, dan Uraian secara otomatis.
+          Tempel (paste) teks format laporan aduan yang dikirim warga via WhatsApp (contoh: <em>ADU-LMB-2026-001</em>). Sistem akan membaca Nomor Register, Pelapor, Titik GPS, dan Uraian secara otomatis.
         </p>
 
         <div class="form-group-modal">
-          <label class="form-label-modal" for="inputWaRawText"
-            style="display: flex; justify-content: space-between; align-items: center;">
+          <label class="form-label-modal" for="inputWaRawText" style="display: flex; justify-content: space-between; align-items: center;">
             <span>Teks Pesan WhatsApp:</span>
-            <button type="button" class="auto-ba-btn" onclick="window.portal.pasteClipboardToWaImport()"
-              style="font-size: 0.72rem; padding: 2px 8px;">📋 Tempel dari Clipboard</button>
+            <button type="button" class="auto-ba-btn" onclick="window.portal.pasteClipboardToWaImport()" style="font-size: 0.72rem; padding: 2px 8px;">📋 Tempel dari Clipboard</button>
           </label>
-          <textarea id="inputWaRawText" class="form-control-modal" rows="8"
-            style="font-family: monospace; font-size: 0.82rem; line-height: 1.45;"
-            placeholder="Tempelkan pesan WhatsApp laporan pengaduan masyarakat di sini...&#10;&#10;Contoh:&#10;*LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA*&#10;📌 *NOMOR REGISTER:* ADU-LMB-2026-001&#10;👤 *DATA PELAPOR:*&#10;• *Nama Pelapor:* Fransiskus Kedang&#10;• *Nomor WhatsApp / HP:* 081234567890&#10;📍 *LOKASI KEJADIAN PENCEMARAN:*&#10;• *Kecamatan:* Nubatukan&#10;• *Desa / Kelurahan:* Lewoleba Tengah&#10;• *Titik Koordinat GPS:* -8.3615, 123.5512&#10;⚠️ *RINCIAN MASALAH:*&#10;• *Jenis Pencemaran:* Laut & Pesisir"></textarea>
+          <textarea id="inputWaRawText" class="form-control-modal" rows="8" style="font-family: monospace; font-size: 0.82rem; line-height: 1.45;" placeholder="Tempelkan pesan WhatsApp laporan pengaduan masyarakat di sini...&#10;&#10;Contoh:&#10;*LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA*&#10;📌 *NOMOR REGISTER:* ADU-LMB-2026-001&#10;👤 *DATA PELAPOR:*&#10;• *Nama Pelapor:* Fransiskus Kedang&#10;• *Nomor WhatsApp / HP:* 081234567890&#10;📍 *LOKASI KEJADIAN PENCEMARAN:*&#10;• *Kecamatan:* Nubatukan&#10;• *Desa / Kelurahan:* Lewoleba Tengah&#10;• *Titik Koordinat GPS:* -8.3615, 123.5512&#10;⚠️ *RINCIAN MASALAH:*&#10;• *Jenis Pencemaran:* Laut & Pesisir"></textarea>
         </div>
 
         <div style="margin-bottom: 14px;">
-          <button type="button" class="btn-action-tool" id="btnParseWaText" onclick="window.portal.parseWaText()"
-            style="width: 100%; background: #059669; color: white; border-color: #047857; justify-content: center; padding: 10px; font-weight: 700;">
+          <button type="button" class="btn-action-tool" id="btnParseWaText" onclick="window.portal.parseWaText()" style="width: 100%; background: #059669; color: white; border-color: #047857; justify-content: center; padding: 10px; font-weight: 700;">
             ⚡ Ekstrak &amp; Tinjau Data Aduan
           </button>
         </div>
 
         <!-- Hasil Ekstraksi Preview Card -->
-        <div id="waParsePreviewCard"
-          style="display: none; background: #f8fafc; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 14px; font-size: 0.84rem;">
-          <div
-            style="font-weight: 800; color: #065f46; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
+        <div id="waParsePreviewCard" style="display: none; background: #f8fafc; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 14px; font-size: 0.84rem;">
+          <div style="font-weight: 800; color: #065f46; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
             <span>🔍 Data Berhasil Diekstrak:</span>
             <span id="previewWaRegisterBadge" class="ticket-badge">-</span>
           </div>
@@ -4004,10 +3726,8 @@
             <div><strong>Desa:</strong> <span id="previewWaDesa">-</span></div>
             <div style="grid-column: 1 / -1;"><strong>Patokan Lokasi:</strong> <span id="previewWaLokasi">-</span></div>
             <div style="grid-column: 1 / -1;"><strong>Koordinat GPS:</strong> <span id="previewWaGps">-</span></div>
-            <div style="grid-column: 1 / -1;"><strong>Jenis Dugaan:</strong> <span id="previewWaJenis"
-                style="color: #059669; font-weight: 700;">-</span></div>
-            <div style="grid-column: 1 / -1;"><strong>Tanggal Kejadian:</strong> <span id="previewWaTanggal">-</span>
-            </div>
+            <div style="grid-column: 1 / -1;"><strong>Jenis Dugaan:</strong> <span id="previewWaJenis" style="color: #059669; font-weight: 700;">-</span></div>
+            <div style="grid-column: 1 / -1;"><strong>Tanggal Kejadian:</strong> <span id="previewWaTanggal">-</span></div>
           </div>
           <div style="margin-top: 6px; padding-top: 6px; border-top: 1px solid #e2e8f0; font-size: 0.82rem;">
             <strong>Uraian:</strong> <span id="previewWaUraian">-</span>
@@ -4017,8 +3737,7 @@
           <div id="waImportPhotoSection" style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cbd5e1;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
               <strong style="color: #065f46; font-size: 0.82rem;">📸 Foto Bukti Pelapor:</strong>
-              <label for="inputWaImportFiles"
-                style="cursor: pointer; background: #059669; color: white; padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 700;">
+              <label for="inputWaImportFiles" style="cursor: pointer; background: #059669; color: white; padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 700;">
                 ➕ Tambah Foto
               </label>
               <input type="file" id="inputWaImportFiles" accept="image/*" multiple style="display: none;">
@@ -4030,8 +3749,7 @@
 
       <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0;">
         <button type="button" class="btn-modal-cancel" data-close-modal>Batal</button>
-        <button type="button" class="btn-modal-submit" id="btnSaveWaImport" onclick="window.portal.saveWaImport()"
-          disabled style="background: #059669;">
+        <button type="button" class="btn-modal-submit" id="btnSaveWaImport" onclick="window.portal.saveWaImport()" disabled style="background: #059669;">
           💾 Simpan Aduan ke Dashboard Petugas
         </button>
       </div>
@@ -4055,27 +3773,20 @@
       </div>
 
       <div class="modal-body" style="padding: 22px;">
-        <div
-          style="background: #f0fdf4; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 14px; margin-bottom: 18px; font-size: 0.84rem; color: #166534; line-height: 1.5;">
+        <div style="background: #f0fdf4; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 14px; margin-bottom: 18px; font-size: 0.84rem; color: #166534; line-height: 1.5;">
           🛡️ <strong>Ketentuan Keamanan Akses:</strong><br>
-          Untuk menjamin validitas dan kerahasiaan data pengawasan aduan lingkungan hidup, pemulihan atau reset kata
-          sandi verifikator dilakukan langsung oleh <strong>Administrator Sistem Dinas Lingkungan Hidup Kabupaten
-            Lembata</strong>.
+          Untuk menjamin validitas dan kerahasiaan data pengawasan aduan lingkungan hidup, pemulihan atau reset kata sandi verifikator dilakukan langsung oleh <strong>Administrator Sistem Dinas Lingkungan Hidup Kabupaten Lembata</strong>.
         </div>
 
-        <div
-          style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 18px;">
-          <div
-            style="font-weight: 800; color: #0f172a; font-size: 0.88rem; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
+        <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 18px;">
+          <div style="font-weight: 800; color: #0f172a; font-size: 0.88rem; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
             <span>🏢</span> Kontak Pengelola / Administrator DLH:
           </div>
 
-          <div
-            style="font-size: 0.84rem; color: #334155; line-height: 1.6; display: flex; flex-direction: column; gap: 10px;">
+          <div style="font-size: 0.84rem; color: #334155; line-height: 1.6; display: flex; flex-direction: column; gap: 10px;">
             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
               <span style="font-weight: 700; color: #64748b;">WhatsApp Admin:</span>
-              <a href="https://wa.me/6282234582769?text=Halo%20Admin%20DLH%20Lembata,%20saya%20petugas%20verifikator%20ingin%20meminta%20bantuan%20reset%20kata%20sandi%20dashboard%20petugas."
-                target="_blank" style="color: #059669; font-weight: 800; text-decoration: underline;">
+              <a href="https://wa.me/6282234582769?text=Halo%20Admin%20DLH%20Lembata,%20saya%20petugas%20verifikator%20ingin%20meminta%20bantuan%20reset%20kata%20sandi%20dashboard%20petugas." target="_blank" style="color: #059669; font-weight: 800; text-decoration: underline;">
                 +62 822-3458-2769 ↗
               </a>
             </div>
@@ -4085,8 +3796,7 @@
             </div>
             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
               <span style="font-weight: 700; color: #64748b;">Email Resmi:</span>
-              <span
-                style="font-family: monospace; color: #047857; font-size: 0.8rem;">dlh.kabupatenlembata@gmail.com</span>
+              <span style="font-family: monospace; color: #047857; font-size: 0.8rem;">dlh.kabupatenlembata@gmail.com</span>
             </div>
             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
               <span style="font-weight: 700; color: #64748b;">Kantor Fisik:</span>
@@ -4094,21 +3804,17 @@
             </div>
             <div style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 4px;">
               <span style="font-weight: 700; color: #64748b;">Jam Pelayanan:</span>
-              <span style="font-size: 0.82rem; color: #059669; font-weight: 700;">Senin - Jumat, 08:00 - 16:00
-                WITA</span>
+              <span style="font-size: 0.82rem; color: #059669; font-weight: 700;">Senin - Jumat, 08:00 - 16:00 WITA</span>
             </div>
           </div>
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 10px;">
-          <a href="https://wa.me/6282234582769?text=Halo%20Admin%20DLH%20Lembata,%20saya%20petugas%20verifikator%20ingin%20meminta%20bantuan%20reset%20kata%20sandi%20dashboard%20petugas."
-            target="_blank" class="btn-modal-submit"
-            style="text-decoration: none; text-align: center; padding: 12px; background: #16a34a; font-size: 0.94rem; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; border-radius: 10px; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);">
+          <a href="https://wa.me/6282234582769?text=Halo%20Admin%20DLH%20Lembata,%20saya%20petugas%20verifikator%20ingin%20meminta%20bantuan%20reset%20kata%20sandi%20dashboard%20petugas." target="_blank" class="btn-modal-submit" style="text-decoration: none; text-align: center; padding: 12px; background: #16a34a; font-size: 0.94rem; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; border-radius: 10px; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);">
             <span>💬</span> Hubungi Admin via WhatsApp (+62 822-3458-2769)
           </a>
 
-          <button type="button" class="btn-modal-cancel" data-close-modal
-            style="width: 100%; padding: 10px; text-align: center;">
+          <button type="button" class="btn-modal-cancel" data-close-modal style="width: 100%; padding: 10px; text-align: center;">
             Tutup Dialog
           </button>
         </div>
@@ -4119,69 +3825,48 @@
   <!-- ===================================================================
        MODAL LIGHTBOX: LIHAT BUKTI FOTO UKURAN PENUH & ZOOM INTERAKTIF
        =================================================================== -->
-  <div class="modal-backdrop modal-lightbox" id="modalPhotoLightbox"
-    style="z-index: 999999; background: rgba(11, 17, 32, 0.96); backdrop-filter: blur(10px);">
-    <div
-      style="position: relative; width: 100%; max-width: 980px; height: 92vh; margin: auto; display: flex; flex-direction: column; padding: 12px; box-sizing: border-box;">
-      <div
-        style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: rgba(15, 23, 42, 0.9); border-radius: 12px; margin-bottom: 10px; border: 1.5px solid rgba(255,255,255,0.15); box-shadow: 0 8px 24px rgba(0,0,0,0.5); flex-wrap: wrap; gap: 8px;">
-        <div
-          style="color: #f8fafc; font-weight: 800; font-size: 0.92rem; display: flex; align-items: center; gap: 8px;">
+  <div class="modal-backdrop modal-lightbox" id="modalPhotoLightbox" style="z-index: 999999; background: rgba(11, 17, 32, 0.96); backdrop-filter: blur(10px);">
+    <div style="position: relative; width: 100%; max-width: 980px; height: 92vh; margin: auto; display: flex; flex-direction: column; padding: 12px; box-sizing: border-box;">
+      <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: rgba(15, 23, 42, 0.9); border-radius: 12px; margin-bottom: 10px; border: 1.5px solid rgba(255,255,255,0.15); box-shadow: 0 8px 24px rgba(0,0,0,0.5); flex-wrap: wrap; gap: 8px;">
+        <div style="color: #f8fafc; font-weight: 800; font-size: 0.92rem; display: flex; align-items: center; gap: 8px;">
           <span>📸</span> <span id="lightboxPhotoCaption">Bukti Foto Aduan Lingkungan</span>
         </div>
         <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
           <!-- Kontrol Zoom Presisi -->
-          <div
-            style="display: inline-flex; align-items: center; background: rgba(255,255,255,0.12); border-radius: 8px; padding: 2px 4px; border: 1px solid rgba(255,255,255,0.2);">
-            <button type="button" id="btnLightboxZoomOut" title="Perkecil (Zoom Out)"
-              style="background: transparent; color: #fff; border: none; width: 28px; height: 28px; cursor: pointer; font-size: 1.1rem; font-weight: 800; border-radius: 4px; display: flex; align-items: center; justify-content: center;">−</button>
-            <span id="lightboxZoomLevel"
-              style="font-size: 0.76rem; font-weight: 800; color: #34d399; min-width: 44px; text-align: center; font-family: monospace;">100%</span>
-            <button type="button" id="btnLightboxZoomIn" title="Perbesar (Zoom In)"
-              style="background: transparent; color: #fff; border: none; width: 28px; height: 28px; cursor: pointer; font-size: 1.1rem; font-weight: 800; border-radius: 4px; display: flex; align-items: center; justify-content: center;">+</button>
-            <button type="button" id="btnLightboxZoomReset" title="Reset Ukuran (100%)"
-              style="background: rgba(255,255,255,0.1); color: #cbd5e1; border: none; padding: 3px 6px; cursor: pointer; font-size: 0.72rem; font-weight: 700; border-radius: 4px; margin-left: 2px;">↺
-              1:1</button>
+          <div style="display: inline-flex; align-items: center; background: rgba(255,255,255,0.12); border-radius: 8px; padding: 2px 4px; border: 1px solid rgba(255,255,255,0.2);">
+            <button type="button" id="btnLightboxZoomOut" title="Perkecil (Zoom Out)" style="background: transparent; color: #fff; border: none; width: 28px; height: 28px; cursor: pointer; font-size: 1.1rem; font-weight: 800; border-radius: 4px; display: flex; align-items: center; justify-content: center;">−</button>
+            <span id="lightboxZoomLevel" style="font-size: 0.76rem; font-weight: 800; color: #34d399; min-width: 44px; text-align: center; font-family: monospace;">100%</span>
+            <button type="button" id="btnLightboxZoomIn" title="Perbesar (Zoom In)" style="background: transparent; color: #fff; border: none; width: 28px; height: 28px; cursor: pointer; font-size: 1.1rem; font-weight: 800; border-radius: 4px; display: flex; align-items: center; justify-content: center;">+</button>
+            <button type="button" id="btnLightboxZoomReset" title="Reset Ukuran (100%)" style="background: rgba(255,255,255,0.1); color: #cbd5e1; border: none; padding: 3px 6px; cursor: pointer; font-size: 0.72rem; font-weight: 700; border-radius: 4px; margin-left: 2px;">↺ 1:1</button>
           </div>
 
           <!-- Navigasi Multi-Foto -->
           <div id="lightboxNavControls" style="display: none; align-items: center; gap: 4px;">
-            <button type="button" id="btnLightboxPrev" title="Foto Sebelumnya (◀)"
-              style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center;">◀</button>
-            <span id="lightboxPhotoCounter"
-              style="font-size: 0.74rem; font-weight: 700; color: #e2e8f0; padding: 0 4px; font-family: monospace;">1/1</span>
-            <button type="button" id="btnLightboxNext" title="Foto Berikutnya (▶)"
-              style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center;">▶</button>
+            <button type="button" id="btnLightboxPrev" title="Foto Sebelumnya (◀)" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center;">◀</button>
+            <span id="lightboxPhotoCounter" style="font-size: 0.74rem; font-weight: 700; color: #e2e8f0; padding: 0 4px; font-family: monospace;">1/1</span>
+            <button type="button" id="btnLightboxNext" title="Foto Berikutnya (▶)" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center;">▶</button>
           </div>
 
-          <button type="button" onclick="window.portal && window.portal.openPhotoInNewWindow()"
-            style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600;">
+          <button type="button" onclick="window.portal && window.portal.openPhotoInNewWindow()" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600;">
             ↗ Tab Baru
           </button>
-          <button type="button" onclick="window.portal && window.portal.downloadCurrentPhoto()"
-            style="background: #059669; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600;">
+          <button type="button" onclick="window.portal && window.portal.downloadCurrentPhoto()" style="background: #059669; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600;">
             ⬇️ Unduh
           </button>
-          <button type="button" onclick="window.portal && window.portal.closeLightbox()"
-            style="background: #ef4444; color: #fff; border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 1.3rem; line-height: 1; display: flex; align-items: center; justify-content: center; font-weight: 800;">
+          <button type="button" onclick="window.portal && window.portal.closeLightbox()" style="background: #ef4444; color: #fff; border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 1.3rem; line-height: 1; display: flex; align-items: center; justify-content: center; font-weight: 800;">
             &times;
           </button>
         </div>
       </div>
 
       <!-- Viewport Gambar Interaktif dengan Pan & Zoom -->
-      <div id="lightboxViewport"
-        style="flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #020617; border-radius: 12px; border: 1.5px solid rgba(255,255,255,0.1); position: relative; user-select: none; touch-action: none; cursor: default;">
-        <div id="lightboxTransformContainer"
-          style="position: absolute; transform-origin: center center; will-change: transform; transition: transform 0.08s ease-out; display: flex; align-items: center; justify-content: center;">
-          <img id="lightboxPhotoImg" src="" alt="Bukti Foto Penuh"
-            style="max-width: 88vw; max-height: 72vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.85); pointer-events: auto; user-select: none; -webkit-user-drag: none;">
+      <div id="lightboxViewport" style="flex: 1; display: flex; align-items: center; justify-content: center; overflow: hidden; background: #020617; border-radius: 12px; border: 1.5px solid rgba(255,255,255,0.1); position: relative; user-select: none; touch-action: none; cursor: default;">
+        <div id="lightboxTransformContainer" style="position: absolute; transform-origin: center center; will-change: transform; transition: transform 0.08s ease-out; display: flex; align-items: center; justify-content: center;">
+          <img id="lightboxPhotoImg" src="" alt="Bukti Foto Penuh" style="max-width: 88vw; max-height: 72vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.85); pointer-events: auto; user-select: none; -webkit-user-drag: none;">
         </div>
       </div>
-      <div
-        style="display: flex; justify-content: space-between; align-items: center; color: #94a3b8; font-size: 0.74rem; margin-top: 8px; padding: 0 4px; flex-wrap: wrap; gap: 4px;">
-        <span>🔍 Scroll mouse atau gunakan tombol <strong>+ / −</strong> untuk zoom &bull; Klik &amp; geser gambar untuk
-          menggeser (Pan)</span>
+      <div style="display: flex; justify-content: space-between; align-items: center; color: #94a3b8; font-size: 0.74rem; margin-top: 8px; padding: 0 4px; flex-wrap: wrap; gap: 4px;">
+        <span>🔍 Scroll mouse atau gunakan tombol <strong>+ / −</strong> untuk zoom &bull; Klik &amp; geser gambar untuk menggeser (Pan)</span>
         <span>💡 Dobel-klik untuk zoom cepat 2× &bull; Tombol Esc untuk keluar</span>
       </div>
     </div>
@@ -4201,7 +3886,7 @@
     // Safeguard prototype jika browser masih memuat file js lama dari cache
     if (typeof AduanDataStore !== 'undefined') {
       if (typeof AduanDataStore.prototype.mapRemoteRecord !== 'function') {
-        AduanDataStore.prototype.mapRemoteRecord = function (remoteItem) {
+        AduanDataStore.prototype.mapRemoteRecord = function(remoteItem) {
           if (typeof window.mapRemoteAduanRecord === 'function') {
             return window.mapRemoteAduanRecord(remoteItem, this.aduanList, (id) => this.isDeleted ? this.isDeleted(id) : false);
           }
@@ -4210,7 +3895,7 @@
             id: String(remoteItem.id).trim().toUpperCase(),
             timestamp: remoteItem.timestamp || '-',
             namaPelapor: remoteItem.namaPelapor || 'Masyarakat',
-            noHp: (typeof window.normalizeIndonesianPhoneNumber === 'function') ? window.normalizeIndonesianPhoneNumber(remoteItem.noHp) : (function (val) {
+            noHp: (typeof window.normalizeIndonesianPhoneNumber === 'function') ? window.normalizeIndonesianPhoneNumber(remoteItem.noHp) : (function(val) {
               if (!val || val === '-') return '-';
               let s = String(val).replace(/^'/, '').trim();
               const d = s.replace(/[^0-9]/g, '');
@@ -4320,7 +4005,7 @@
         if (isAuthSession || isAuthRemember) {
           if (loginPage) loginPage.style.display = 'none';
           if (dashWrap) dashWrap.style.display = 'flex';
-          try { this.initSplitScreen(); } catch (e) { }
+          try { this.initSplitScreen(); } catch (e) {}
           if (this.map) {
             setTimeout(() => this.map.invalidateSize(), 300);
           }
@@ -4458,10 +4143,10 @@
           this.updateKPIs();
           this.renderTable();
           this.renderMapLayers();
-          try { this.initSplitScreen(); } catch (e) { }
+          try { this.initSplitScreen(); } catch (e) {}
           if (this.map) {
             setTimeout(() => {
-              try { this.map.invalidateSize(); } catch (e) { }
+              try { this.map.invalidateSize(); } catch (e) {}
             }, 100);
           } else {
             this.initMap();
@@ -5434,7 +5119,7 @@
                   parsed.forEach(extractPhotos);
                   return;
                 }
-              } catch (e) { }
+              } catch(e) {}
             }
             if (trimmed.includes('Buka') && trimmed.includes('Foto Bukti')) return;
             if (trimmed.startsWith('📸')) return;
@@ -5464,35 +5149,35 @@
         for (let cIdx = 0; cIdx < citizenPhotos.length; cIdx++) {
           try {
             const cVal = localStorage.getItem('dlh_photo_cache_' + cleanAduanId + '_' + cIdx) ||
-              localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + cIdx) ||
-              (cIdx === 0 ? (localStorage.getItem('dlh_photo_cache_' + cleanAduanId) || localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase())) : null);
+                         localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + cIdx) ||
+                         (cIdx === 0 ? (localStorage.getItem('dlh_photo_cache_' + cleanAduanId) || localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase())) : null);
             if (cVal && cVal.startsWith('data:image')) {
               if (!citizenPhotos[cIdx] || !citizenPhotos[cIdx].startsWith('data:image')) {
                 citizenPhotos[cIdx] = cVal;
               }
             }
-          } catch (e) { }
+          } catch (e) {}
         }
 
         // Periksa juga jika ada foto tambahan ke-2, ke-3, dst. yang tersimpan di cache lokal
         for (let extraIdx = citizenPhotos.length; extraIdx < 6; extraIdx++) {
           try {
             const extraVal = localStorage.getItem('dlh_photo_cache_' + cleanAduanId + '_' + extraIdx) ||
-              localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + extraIdx);
+                             localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + extraIdx);
             if (extraVal && extraVal.startsWith('data:image') && !citizenPhotos.includes(extraVal)) {
               citizenPhotos.push(extraVal);
             }
-          } catch (e) { }
+          } catch (e) {}
         }
 
         citizenPhotos = citizenPhotos.map((rawP, pIdx) => {
           if (typeof rawP === 'string' && rawP.startsWith('data:image')) return rawP;
           try {
             const cached = localStorage.getItem('dlh_photo_cache_' + cleanAduanId + '_' + pIdx) ||
-              localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + pIdx) ||
-              (pIdx === 0 ? localStorage.getItem('dlh_photo_cache_' + cleanAduanId) : null);
+                           localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + pIdx) ||
+                           (pIdx === 0 ? localStorage.getItem('dlh_photo_cache_' + cleanAduanId) : null);
             if (cached && cached.startsWith('data:image')) return cached;
-          } catch (e) { }
+          } catch (e) {}
           return rawP;
         });
 
@@ -5651,13 +5336,13 @@
               <div style="font-weight: 800; color: #0f172a; font-size: 0.95rem;">${item.namaPelapor}</div>
               <div style="color: #475569; font-size: 0.82rem; margin-top: 4px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
                 <div>No. WhatsApp: <strong style="font-family: monospace; color: #0f172a;">${this.formatPhoneDisplay(item.noHp)}</strong></div>
-                ${(function (portalInst) {
-            const dWaPhone = portalInst.formatWhatsAppPhone(item.noHp);
-            if (!dWaPhone) return '';
-            const dWaText = encodeURIComponent(
-              `Halo Bapak/Ibu ${item.namaPelapor}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata mengonfirmasi laporan Anda dengan No. Register: ${item.id} terkait dugaan ${item.jenisPencemaran} di Desa ${item.desa || '-'}, Kec. ${item.kecamatan || '-'}. Mohon informasi tambahan terkait laporan ini.`
-            );
-            return `
+                ${(function(portalInst) {
+                  const dWaPhone = portalInst.formatWhatsAppPhone(item.noHp);
+                  if (!dWaPhone) return '';
+                  const dWaText = encodeURIComponent(
+                    `Halo Bapak/Ibu ${item.namaPelapor}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata mengonfirmasi laporan Anda dengan No. Register: ${item.id} terkait dugaan ${item.jenisPencemaran} di Desa ${item.desa || '-'}, Kec. ${item.kecamatan || '-'}. Mohon informasi tambahan terkait laporan ini.`
+                  );
+                  return `
                     <a href="https://wa.me/${dWaPhone}?text=${dWaText}" target="_blank" rel="noopener noreferrer" 
                        style="background: #16a34a; color: white; padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(22,163,74,0.3); transition: background 0.2s;"
                        onmouseover="this.style.background='#15803d';"
@@ -5666,7 +5351,7 @@
                       💬 Hubungi Pelapor
                     </a>
                   `;
-          })(this)}
+                })(this)}
               </div>
               <div style="color: #64748b; font-size: 0.8rem; margin-top: 4px;">Domisili: ${item.alamatPelapor || '-'}</div>
             </div>
@@ -5769,10 +5454,10 @@
               </div>
               <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 12px;">
                 ${officerPhotos.map((rawSrc, i) => {
-            const displaySrc = this.formatPhotoUrl(rawSrc);
-            const origSafe = (rawSrc || '').replace(/'/g, "\\'");
-            const photoDomId = `imgPetugasOfficer_${cleanAduanId}_${i}`;
-            return `
+                  const displaySrc = this.formatPhotoUrl(rawSrc);
+                  const origSafe = (rawSrc || '').replace(/'/g, "\\'");
+                  const photoDomId = `imgPetugasOfficer_${cleanAduanId}_${i}`;
+                  return `
                     <div style="background: #f8fafc; border: 1.5px solid #a7f3d0; border-radius: 10px; padding: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 6px; position: relative;">
                       <div onclick="window.portal.openLightboxByIndex('officer', ${i})"
                            style="cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid #059669; background: #0f172a; position: relative; height: 125px; transition: transform 0.2s, box-shadow 0.2s;"
@@ -5784,14 +5469,14 @@
                              data-original="${origSafe}"
                              data-aduan-id="${cleanAduanId}"
                              data-photo-idx="${i}"
-                             alt="Foto Fisik Petugas ${i + 1}"
+                             alt="Foto Fisik Petugas ${i+1}"
                              referrerpolicy="no-referrer"
                              loading="eager"
                              data-is-officer="true"
                              onerror="window.handleAduanPhotoError(this, '${cleanAduanId}', ${i}, true);"
                              style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
                         <div style="position: absolute; top: 4px; left: 4px; background: rgba(5, 150, 105, 0.9); color: #fff; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; pointer-events: none;">
-                          Foto #${i + 1}
+                          Foto #${i+1}
                         </div>
                         <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; font-size: 0.70rem; font-weight: 700; padding: 4px; text-align: center; pointer-events: none;">
                           🔍 Klik Perbesar
@@ -5809,13 +5494,13 @@
                                 style="width: 100%; background: #ef4444; color: #ffffff; border: none; border-radius: 6px; padding: 5px 4px; font-size: 0.72rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 2px; transition: background 0.2s;"
                                 onmouseover="this.style.background='#dc2626';"
                                 onmouseout="this.style.background='#ef4444';"
-                                title="Hapus foto #${i + 1} dan sinkronkan ke spreadsheet">
+                                title="Hapus foto #${i+1} dan sinkronkan ke spreadsheet">
                           <span>🗑️ Hapus</span>
                         </button>
                       </div>
                     </div>
                   `;
-          }).join('')}
+                }).join('')}
               </div>
             </div>
           ` : `
@@ -5835,11 +5520,11 @@
               </div>
               <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px;">
                 ${citizenPhotos.map((rawSrc, i) => {
-            const displaySrc = this.formatPhotoUrl(rawSrc);
-            const safeSrc = (displaySrc || rawSrc).replace(/'/g, "\\'");
-            const origSafe = (rawSrc || '').replace(/'/g, "\\'");
-            const photoDomId = `imgPetugasCitizen_${cleanAduanId}_${i}`;
-            return `
+                  const displaySrc = this.formatPhotoUrl(rawSrc);
+                  const safeSrc = (displaySrc || rawSrc).replace(/'/g, "\\'");
+                  const origSafe = (rawSrc || '').replace(/'/g, "\\'");
+                  const photoDomId = `imgPetugasCitizen_${cleanAduanId}_${i}`;
+                  return `
                     <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 6px;">
                       <div onclick="window.portal.openLightboxByIndex('citizen', ${i})"
                            style="cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid #059669; background: #0f172a; position: relative; height: 125px; transition: transform 0.2s, box-shadow 0.2s;"
@@ -5851,7 +5536,7 @@
                              data-original="${origSafe}"
                              data-aduan-id="${cleanAduanId}"
                              data-photo-idx="${i}"
-                             alt="Bukti Pelapor ${i + 1}"
+                             alt="Bukti Pelapor ${i+1}"
                              referrerpolicy="no-referrer"
                              loading="eager"
                              onerror="window.handleAduanPhotoError(this, '${cleanAduanId}', ${i});"
@@ -5873,7 +5558,7 @@
                       </button>
                     </div>
                   `;
-          }).join('')}
+                }).join('')}
               </div>
             </div>
           ` : ''}
@@ -5912,7 +5597,7 @@
               try {
                 const parsed = JSON.parse(trimmed);
                 if (Array.isArray(parsed)) { parsed.forEach(extractPhotos); return; }
-              } catch (e) { }
+              } catch(e) {}
             }
             if (trimmed.includes('Buka') && trimmed.includes('Foto Bukti')) return;
             if (trimmed.startsWith('📸')) return;
@@ -5935,10 +5620,10 @@
         for (let cIdx = 0; cIdx < citizenPhotos.length; cIdx++) {
           try {
             const cVal = localStorage.getItem('dlh_photo_cache_' + cleanAduanId + '_' + cIdx) ||
-              localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + cIdx) ||
-              (cIdx === 0 ? (localStorage.getItem('dlh_photo_cache_' + cleanAduanId) || localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase())) : null);
+                         localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + cIdx) ||
+                         (cIdx === 0 ? (localStorage.getItem('dlh_photo_cache_' + cleanAduanId) || localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase())) : null);
             if (cVal && cVal.startsWith('data:image')) { citizenPhotos[cIdx] = cVal; }
-          } catch (e) { }
+          } catch (e) {}
         }
 
         // Ekstraksi Foto Pemeriksaan Fisik Petugas
@@ -5956,11 +5641,11 @@
         for (let oIdx = 0; oIdx < 6; oIdx++) {
           try {
             const cachedOff = localStorage.getItem(`dlh_officer_photo_${cleanAduanId}_${oIdx}`) ||
-              localStorage.getItem(`dlh_officer_photo_${cleanAduanId.toLowerCase()}_${oIdx}`);
+                              localStorage.getItem(`dlh_officer_photo_${cleanAduanId.toLowerCase()}_${oIdx}`);
             if (cachedOff && cachedOff.startsWith('data:image') && !officerPhotos.includes(cachedOff)) {
               officerPhotos.push(cachedOff);
             }
-          } catch (e) { }
+          } catch (e) {}
         }
 
         const citizenFormatted = citizenPhotos.map(p => this.formatPhotoUrl(p) || p).filter(Boolean);
@@ -5984,36 +5669,36 @@
           checklistArr = item.checklistVerifikasi.split(',').map(s => s.trim()).filter(Boolean);
         }
         if (checklistArr.length > 0) {
-          checklistHtml = '<ul style="margin: 2px 0 0 16px; padding: 0;">' +
-            checklistArr.map(chk => `<li>☑ ${escapeHtml(chk)}</li>`).join('') +
+          checklistHtml = '<ul style="margin: 2px 0 0 16px; padding: 0;">' + 
+            checklistArr.map(chk => `<li>☑ ${escapeHtml(chk)}</li>`).join('') + 
             '</ul>';
         }
 
         const latLngText = (item.lat && item.lng) ? `${item.lat}, ${item.lng}` : '-';
-
+        
         // Memanggil logo Pemkab Lembata asli secara langsung
         const logoUrl = new URL('assets/logo-pemkab-lembata.png', window.location.href).href;
-
+        
         const noBA = escapeHtml(item.nomorBeritaAcara || '-');
         const regId = escapeHtml(item.id || '-');
-
+        
         const NAMA_HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
         const NAMA_BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
-
+        
         let tglObj = new Date();
         if (item.tanggalVerifikasi && item.tanggalVerifikasi !== '-') {
           const parsed = new Date(item.tanggalVerifikasi);
           if (!isNaN(parsed.getTime())) tglObj = parsed;
         }
-
+        
         const hariStr = NAMA_HARI[tglObj.getDay()];
         const tglStr = `${tglObj.getDate()} ${NAMA_BULAN[tglObj.getMonth()]} ${tglObj.getFullYear()}`;
-        const tglVerifSingkat = item.tanggalVerifikasi && item.tanggalVerifikasi !== '-'
-          ? escapeHtml(item.tanggalVerifikasi)
-          : `${tglObj.getDate()} ${NAMA_BULAN[tglObj.getMonth()]} ${tglObj.getFullYear()}`;
+        const tglVerifSingkat = item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' 
+              ? escapeHtml(item.tanggalVerifikasi) 
+              : `${tglObj.getDate()} ${NAMA_BULAN[tglObj.getMonth()]} ${tglObj.getFullYear()}`;
 
-        const petugasVerif = item.petugasVerifikasi && item.petugasVerifikasi !== '-'
-          ? escapeHtml(item.petugasVerifikasi)
+        const petugasVerif = item.petugasVerifikasi && item.petugasVerifikasi !== '-' 
+          ? escapeHtml(item.petugasVerifikasi) 
           : 'Tim Verifikasi Lapangan DLH Kab. Lembata';
 
         const printWin = window.open('', '_blank');
@@ -6137,17 +5822,17 @@
     <div class="photo-grid">
       <div class="photo-col">
         <div class="photo-col-title">1. Kondisi Awal (Bukti Warga Pelapor)</div>
-        ${citizenFormatted.length > 0
-            ? `<div class="photo-images-wrap">${citizenFormatted.map(src => `<img src="${src}">`).join('')}</div>`
-            : `<div class="no-photos">Tidak ada lampiran foto warga pelapor</div>`
-          }
+        ${citizenFormatted.length > 0 
+          ? `<div class="photo-images-wrap">${citizenFormatted.map(src => `<img src="${src}">`).join('')}</div>`
+          : `<div class="no-photos">Tidak ada lampiran foto warga pelapor</div>`
+        }
       </div>
       <div class="photo-col">
         <div class="photo-col-title">2. Kondisi Saat Verifikasi (Oleh Petugas)</div>
-        ${officerFormatted.length > 0
-            ? `<div class="photo-images-wrap">${officerFormatted.map(src => `<img src="${src}">`).join('')}</div>`
-            : `<div class="no-photos">Belum ada lampiran foto petugas</div>`
-          }
+        ${officerFormatted.length > 0 
+          ? `<div class="photo-images-wrap">${officerFormatted.map(src => `<img src="${src}">`).join('')}</div>`
+          : `<div class="no-photos">Belum ada lampiran foto petugas</div>`
+        }
       </div>
     </div>
   </div>
@@ -6190,7 +5875,7 @@
       openLightboxByIndex(type, index) {
         const rawList = (type === 'officer') ? (this._currentOfficerPhotos || []) : (this._currentCitizenPhotos || []);
         const cleanAduanId = (this._currentModalItem && this._currentModalItem.id) ? String(this._currentModalItem.id).trim().toUpperCase() : '';
-
+        
         // Buat daftar URL foto yang sudah terformat dan terhubung dengan elemen DOM jika ada
         const resolvedList = rawList.map((raw, i) => {
           const domId = (type === 'officer') ? `imgPetugasOfficer_${cleanAduanId}_${i}` : `imgPetugasCitizen_${cleanAduanId}_${i}`;
@@ -6204,7 +5889,7 @@
         const safeIndex = Math.max(0, Math.min(index, resolvedList.length - 1));
         const currentSrc = resolvedList[safeIndex] || '';
         const baseCaption = (type === 'officer' ? 'Dokumentasi Petugas' : 'Bukti Foto Pelapor') + (this._currentModalItem ? ' • ' + this._currentModalItem.id : '');
-
+        
         this.openLightbox(currentSrc, baseCaption, resolvedList, safeIndex);
       }
 
@@ -6397,7 +6082,7 @@
           const endPan = (e) => {
             if (this.isPanningLightbox) {
               this.isPanningLightbox = false;
-              try { viewport.releasePointerCapture(e.pointerId); } catch (err) { }
+              try { viewport.releasePointerCapture(e.pointerId); } catch(err) {}
               this.updateLightboxTransform();
             }
           };
@@ -6471,7 +6156,7 @@
         document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('show'));
       }
 
-      getStatusBadgeHtml(status) {
+            getStatusBadgeHtml(status) {
         const clean = (status || 'Baru').toLowerCase();
         let cssClass = 'badge-baru';
         let label = status || 'Baru';
@@ -6684,7 +6369,7 @@
             if (!isNaN(d.getTime())) {
               return `${d.getDate()} ${BULAN_PENDEK[d.getMonth()]} ${d.getFullYear()}`;
             }
-          } catch (e) { }
+          } catch(e) {}
           const str = String(raw).trim();
           const matchIso = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})/);
           if (matchIso) {
@@ -6707,7 +6392,7 @@
               const pad = (n) => String(n).padStart(2, '0');
               return `${pad(d.getHours())}:${pad(d.getMinutes())}`;
             }
-          } catch (e) { }
+          } catch(e) {}
           const parts = String(raw).split(' ');
           if (parts[1] && parts[1].includes(':')) return parts[1].substring(0, 5);
           return '';
@@ -6717,8 +6402,8 @@
           const formattedDate = formatCompactDate(item.timestamp || item.tanggalKejadian);
           const timeOnly = formatAduanTime(item.timestamp || item.tanggalKejadian);
           const verifDateFormatted = item.tanggalVerifikasi ? formatCompactDate(item.tanggalVerifikasi) : formatCompactDate(item.timestamp || item.tanggalKejadian);
-          const verifName = (item.petugasVerifikasi && item.petugasVerifikasi !== '-')
-            ? item.petugasVerifikasi
+          const verifName = (item.petugasVerifikasi && item.petugasVerifikasi !== '-') 
+            ? item.petugasVerifikasi 
             : 'Tim Verifikasi Lapangan DLH Lembata';
           const mapsUrl = (item.lat && item.lng) ? `https://maps.google.com/?q=${item.lat},${item.lng}` : '';
 
@@ -7411,10 +7096,10 @@
         let lat = null;
         let lng = null;
         const matchGps = raw.match(/Titik\s+Koordinat(?:\s+GPS)?:\s*(-?[0-9\.]+)\s*,\s*([0-9\.]+)/i) ||
-          raw.match(/maps\.google\.com\/(?:maps)?\?q=(-?[0-9\.]+),([0-9\.]+)/i) ||
-          raw.match(/google\.com\/maps\?q=(-?[0-9\.]+),([0-9\.]+)/i) ||
-          raw.match(/@(-?[0-9\.]+),([0-9\.]+)/i) ||
-          raw.match(/(-?8\.[0-9]+)\s*,\s*(12[3-4]\.[0-9]+)/i);
+                         raw.match(/maps\.google\.com\/(?:maps)?\?q=(-?[0-9\.]+),([0-9\.]+)/i) ||
+                         raw.match(/google\.com\/maps\?q=(-?[0-9\.]+),([0-9\.]+)/i) ||
+                         raw.match(/@(-?[0-9\.]+),([0-9\.]+)/i) ||
+                         raw.match(/(-?8\.[0-9]+)\s*,\s*(12[3-4]\.[0-9]+)/i);
         if (matchGps && matchGps[1] && matchGps[2]) {
           lat = parseFloat(matchGps[1]);
           lng = parseFloat(matchGps[2]);
@@ -7493,7 +7178,7 @@
             preservedPhotos.forEach((src, idx) => {
               const div = document.createElement('div');
               div.style.cssText = 'position: relative; width: 55px; height: 55px; border-radius: 6px; overflow: hidden; border: 1.5px solid #10b981; flex-shrink: 0;';
-              div.innerHTML = `<img src="${src}" alt="Foto ${idx + 1}" style="width: 100%; height: 100%; object-fit: cover;">`;
+              div.innerHTML = `<img src="${src}" alt="Foto ${idx+1}" style="width: 100%; height: 100%; object-fit: cover;">`;
               photoContainer.appendChild(div);
             });
           } else {
@@ -7517,7 +7202,7 @@
                       this.currentParsedWaData.buktiFotoList.push(b64);
                       this.currentParsedWaData.fotoBukti = this.currentParsedWaData.buktiFotoList[0];
                       this.currentParsedWaData.linkFotoBukti = this.currentParsedWaData.buktiFotoList.join(', ');
-
+                      
                       const c = document.getElementById('previewWaPhotosContainer');
                       if (c) {
                         const div = document.createElement('div');
