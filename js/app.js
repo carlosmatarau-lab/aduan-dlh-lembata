@@ -1811,12 +1811,23 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         const modalSuccess = document.getElementById('modalSuccessAduan');
         const ticketDisplay = document.getElementById('successTicketId');
         const btnWa = document.getElementById('btnWaConfirmation');
-        const btnDirectRoom = document.getElementById('btnWaDirectRoom');
-        const photoBox = document.getElementById('waPhotoAttachmentBox');
-        const photoThumbContainer = document.getElementById('waPhotoThumbContainer');
-        const photoCountBadge = document.getElementById('waPhotoCount');
+        const btnCopyTicket = document.getElementById('btnCopyTicket');
+        const btnSuccessTrack = document.getElementById('btnSuccessTrack');
         const redirectNotice = document.getElementById('waRedirectLoadingNotice');
         if (redirectNotice) redirectNotice.style.display = 'none';
+
+        // Batalkan pengalihan otomatis dari laporan sebelumnya (jika masih menunggu)
+        if (this._waRedirectTimer) {
+          clearTimeout(this._waRedirectTimer);
+          this._waRedirectTimer = null;
+        }
+        const cancelAutoRedirect = () => {
+          if (this._waRedirectTimer) {
+            clearTimeout(this._waRedirectTimer);
+            this._waRedirectTimer = null;
+          }
+          if (redirectNotice) redirectNotice.style.display = 'none';
+        };
 
         if (ticketDisplay) ticketDisplay.textContent = newRecord.id;
         const trackingUrlEl = document.getElementById('successTrackingUrl');
@@ -1826,10 +1837,57 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
           trackingUrlEl.textContent = directTrackUrl;
         }
 
-        // Tombol 1 di Modal: Kirim Foto & Laporan ke WhatsApp
+        // Tombol Salin Nomor Tiket
+        if (btnCopyTicket) {
+          btnCopyTicket.onclick = async (evt) => {
+            if (evt) evt.preventDefault();
+            const ticketText = String(newRecord.id || '');
+            let copied = false;
+            try {
+              if (navigator.clipboard && navigator.clipboard.writeText) {
+                await navigator.clipboard.writeText(ticketText);
+                copied = true;
+              }
+            } catch (clipErr) {}
+            if (!copied) {
+              try {
+                const ta = document.createElement('textarea');
+                ta.value = ticketText;
+                ta.setAttribute('readonly', '');
+                ta.style.position = 'fixed';
+                ta.style.opacity = '0';
+                document.body.appendChild(ta);
+                ta.select();
+                copied = document.execCommand('copy');
+                document.body.removeChild(ta);
+              } catch (copyErr) {}
+            }
+            const origCopyLabel = '📋 Salin Nomor Tiket';
+            btnCopyTicket.textContent = copied ? '✓ Nomor Tiket Disalin' : 'Tekan lama nomor tiket untuk menyalin';
+            setTimeout(() => { btnCopyTicket.textContent = origCopyLabel; }, 2200);
+          };
+        }
+
+        // Tombol Lacak Tiket
+        if (btnSuccessTrack) {
+          btnSuccessTrack.onclick = (evt) => {
+            if (evt) evt.preventDefault();
+            cancelAutoRedirect();
+            document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('show'));
+            this.switchTab('lacak');
+            const quickInput = document.getElementById('quickTrackInput');
+            if (quickInput) {
+              quickInput.value = newRecord.id;
+              setTimeout(() => document.getElementById('btnQuickTrack')?.click(), 200);
+            }
+          };
+        }
+
+        // Tombol manual: Buka WhatsApp Sekarang (cadangan bila pengalihan otomatis diblokir browser)
         if (btnWa) {
           btnWa.onclick = async (evt) => {
             if (evt) evt.preventDefault();
+            cancelAutoRedirect();
             btnWa.disabled = true;
             const origText = btnWa.innerHTML;
             btnWa.innerHTML = '<span class="btn-spinner"></span> <span>Membuka WhatsApp...</span>';
@@ -1888,43 +1946,6 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
           };
         }
 
-        // Tombol 2 di Modal: Buka Langsung Room Chat
-        if (btnDirectRoom) {
-          btnDirectRoom.onclick = (evt) => {
-            if (evt) evt.preventDefault();
-            btnDirectRoom.disabled = true;
-            const origDirect = btnDirectRoom.innerHTML;
-            btnDirectRoom.innerHTML = '<span class="btn-spinner" style="border-top-color: #059669; border-color: rgba(5,150,105,0.25);"></span> <span>Membuka Chat Room WhatsApp...</span>';
-            if (redirectNotice) {
-              redirectNotice.style.display = 'block';
-              const noticeText = document.getElementById('waRedirectNoticeText');
-              if (noticeText) noticeText.textContent = 'Membuka room chat WhatsApp nomor +62 822-3458-2769...';
-            }
-            setTimeout(() => {
-              window.location.href = waUrl;
-              setTimeout(() => {
-                btnDirectRoom.disabled = false;
-                btnDirectRoom.innerHTML = origDirect;
-              }, 2500);
-            }, 300);
-          };
-        }
-
-        // Tampilkan Bukti Foto di Modal WhatsApp
-        if (photoBox && photoThumbContainer) {
-          if (buktiList.length > 0) {
-            photoBox.style.display = 'block';
-            if (photoCountBadge) photoCountBadge.textContent = buktiList.length;
-
-            photoThumbContainer.innerHTML = buktiList.map((foto, idx) => `
-              <div style="position: relative; flex-shrink: 0; width: 68px; height: 68px; border-radius: 8px; overflow: hidden; border: 2px solid #10b981; box-shadow: 0 2px 5px rgba(0,0,0,0.1);">
-                <img src="${foto}" alt="Bukti ${idx + 1}" style="width: 100%; height: 100%; object-fit: cover;">
-              </div>
-            `).join('');
-          } else {
-            photoBox.style.display = 'none';
-          }
-        }
 
         // Kembalikan tombol submit ke posisi aktif semula
         if (btnSubmit) {
@@ -1935,15 +1956,29 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         // Buka modal konfirmasi sukses
         if (modalSuccess) modalSuccess.classList.add('show');
 
-        // Arahkan ke WhatsApp resmi (langsung membuka aplikasi WhatsApp di HP & desktop)
-        this.showToast('✅ Laporan tersimpan! Membuka WhatsApp...', 'success');
-        setTimeout(() => {
+        // Jeda ~1,8 detik agar warga sempat membaca "Laporan Sudah Masuk" & melihat nomor tiket,
+        // lalu arahkan otomatis ke WhatsApp petugas. Dibatalkan jika modal ditutup / tombol manual diklik.
+        if (redirectNotice) {
+          redirectNotice.style.display = 'block';
+          const noticeText = document.getElementById('waRedirectNoticeText');
+          if (noticeText) noticeText.textContent = 'Membuka WhatsApp petugas...';
+        }
+        this._waRedirectTimer = setTimeout(() => {
+          this._waRedirectTimer = null;
+          if (!modalSuccess || !modalSuccess.classList.contains('show')) return;
           try {
             window.location.href = waUrl;
           } catch (e) {
             window.open(waUrl, '_blank');
           }
-        }, 500);
+          // Bila WhatsApp tidak terbuka (mis. diblokir), ubah pesan agar warga memakai tombol manual
+          setTimeout(() => {
+            const noticeText = document.getElementById('waRedirectNoticeText');
+            if (noticeText && redirectNotice && redirectNotice.style.display !== 'none') {
+              noticeText.textContent = 'Jika WhatsApp belum terbuka, tekan tombol "Buka WhatsApp Sekarang" di bawah.';
+            }
+          }, 2500);
+        }, 1800);
 
       } catch (submitErr) {
         if (animProgressInterval) clearInterval(animProgressInterval);
@@ -2346,15 +2381,28 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
      7. MODALS
      =================================================================== */
   setupModals() {
+    const clearWaRedirect = () => {
+      if (this._waRedirectTimer) {
+        clearTimeout(this._waRedirectTimer);
+        this._waRedirectTimer = null;
+      }
+      const notice = document.getElementById('waRedirectLoadingNotice');
+      if (notice) notice.style.display = 'none';
+    };
+
     document.querySelectorAll('.modal-close, .btn-close-modal').forEach(btn => {
       btn.addEventListener('click', () => {
+        clearWaRedirect();
         document.querySelectorAll('.modal-backdrop').forEach(modal => modal.classList.remove('show'));
       });
     });
 
     document.querySelectorAll('.modal-backdrop').forEach(backdrop => {
       backdrop.addEventListener('click', (e) => {
-        if (e.target === backdrop) backdrop.classList.remove('show');
+        if (e.target === backdrop) {
+          clearWaRedirect();
+          backdrop.classList.remove('show');
+        }
       });
     });
   }
