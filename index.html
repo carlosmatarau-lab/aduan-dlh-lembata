@@ -4227,25 +4227,31 @@
             
             <div id="gpsStatusMessage" class="gps-status-msg" style="margin-bottom: 10px; font-size: 0.82rem; font-weight: 600;"></div>
 
+            <p style="font-size: 13px; color: #64748b; margin: 0 0 8px 0;">
+              Geser pin atau klik pada peta untuk menentukan lokasi kejadian.
+            </p>
+
             <!-- Mini Interactive Map Pin Picker -->
             <div id="citizenPinPickerContainer" style="position: relative; width: 100%; height: 260px; border-radius: 10px; overflow: hidden; border: 2px solid #059669; box-shadow: 0 4px 12px rgba(0,0,0,0.08);">
               <div id="citizenPinMap" style="width: 100%; height: 100%;"></div>
-              <div style="position: absolute; bottom: 8px; left: 8px; right: 8px; z-index: 1000; background: rgba(15, 23, 42, 0.88); backdrop-filter: blur(4px); color: #fff; padding: 6px 12px; border-radius: 6px; font-size: 0.74rem; display: flex; justify-content: space-between; align-items: center;">
-                <span>💡 <strong>Tips:</strong> Geser pin merah atau ketuk peta untuk memindahkan titik lokasi</span>
-                <span id="pinCoordsBadge" style="font-family: monospace; font-weight: 700; color: #34d399;">-8.375000, 123.418000</span>
-              </div>
             </div>
-          </div>
 
-          <div class="form-row-2 coords-row" style="margin-bottom: 20px;">
-            <div class="form-field">
-              <label class="field-label" style="font-size: 0.8rem; color: #64748b;">Latitude (Koordinat Presisi)</label>
-              <input type="number" step="any" id="inputLat" class="input-text input-sm" placeholder="-8.3750">
-            </div>
-            <div class="form-field">
-              <label class="field-label" style="font-size: 0.8rem; color: #64748b;">Longitude (Koordinat Presisi)</label>
-              <input type="number" step="any" id="inputLng" class="input-text input-sm" placeholder="123.4180">
-            </div>
+            <details style="margin-top: 10px; font-size: 13px; color: #64748b;">
+              <summary style="cursor: pointer; font-weight: 500;">👁️ Lihat detail koordinat (teknis)</summary>
+              <div style="margin-top: 8px;">
+                <div class="form-row-2 coords-row" style="margin-bottom: 0;">
+                  <div class="form-field">
+                    <label class="field-label" style="font-size: 0.8rem; color: #64748b;">Latitude (Koordinat Presisi)</label>
+                    <input type="number" step="any" id="inputLat" class="input-text input-sm" placeholder="-8.3750">
+                  </div>
+                  <div class="form-field">
+                    <label class="field-label" style="font-size: 0.8rem; color: #64748b;">Longitude (Koordinat Presisi)</label>
+                    <input type="number" step="any" id="inputLng" class="input-text input-sm" placeholder="123.4180">
+                  </div>
+                </div>
+                <span id="pinCoordsBadge" style="display: none;">-8.375000, 123.418000</span>
+              </div>
+            </details>
           </div>
 
           <!-- Bagian 4: Detail Dugaan Pencemaran -->
