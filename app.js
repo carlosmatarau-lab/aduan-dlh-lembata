@@ -642,8 +642,12 @@ class DLHApp {
 
     if (rawDesa && rawDesa !== '-- Pilih Desa / Kelurahan --' && !rawDesa.startsWith('--')) {
       const lowerRaw = rawDesa.toLowerCase();
+      const scopedKey = String(kec || '').trim().toLowerCase() + '::' + lowerRaw;
+      // 0. Kunci terikat kecamatan (menghindari tabrakan nama desa yang sama di kecamatan berbeda)
+      if (desaDict[scopedKey]) {
+        target = [desaDict[scopedKey].lat, desaDict[scopedKey].lng];
       // 1. Exact match ke DESA_COORDINATES terlebih dahulu (tanpa .includes())
-      if (desaDict[lowerRaw]) {
+      } else if (desaDict[lowerRaw]) {
         target = [desaDict[lowerRaw].lat, desaDict[lowerRaw].lng];
       } else if (cleanDesa && desaDict[cleanDesa]) {
         target = [desaDict[cleanDesa].lat, desaDict[cleanDesa].lng];

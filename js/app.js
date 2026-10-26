@@ -187,14 +187,14 @@ class DLHApp {
     // Sumber data wilayah komprehensif 9 Kecamatan Kabupaten Lembata (fail-safe)
     const LEMBATA_VILLAGES_FALLBACK = {
       'Nubatukan': ['Bakalerek', 'Baolangu', 'Belobatang', 'Bour', 'Lewoleba (Kelurahan)', 'Lewoleba Barat (Kelurahan)', 'Lewoleba Selatan (Kelurahan)', 'Lewoleba Tengah (Kelurahan)', 'Lewoleba Timur (Kelurahan)', 'Lewoleba Utara (Kelurahan)', 'Lite Ulumado', 'Nubamado', 'Nubatukan', 'Pada', 'Paubokol', 'Selandoro (Kelurahan)', 'Udak Melomata', 'Waijarang'],
-      'Ile Ape': ['Amakaka', 'Beutaran', 'Bungamuda', 'Dulitukan', 'Kolipadan', 'Kolontobo', 'Lamawara', 'Laranwuntun', 'Muruona', 'Napasabok', 'Palilolon', 'Petuntawa', 'Riangbao', 'Tagawiti', 'Tanjung Batu', 'Waowala', 'Watodiri'],
+      'Ile Ape': ['Amakaka', 'Beutaran', 'Bungamuda', 'Dulitukan', 'Kolipadan', 'Kolontobo', 'Lamawara', 'Laranwutun', 'Muruona', 'Napasabok', 'Palilolon', 'Petuntawa', 'Riangbao', 'Tagawiti', 'Tanjung Batu', 'Waipukang', 'Waowala', 'Watodiri'],
       'Ile Ape Timur': ['Aulesa', 'Bao Lai Duli', 'Jontona', 'Lamaau', 'Lamagute', 'Lamatokan', 'Lamawolo', 'Todanara', 'Waimatan'],
-      'Lebatukan': ['Atakore', 'Balurebong', 'Baopana', 'Belobao', 'Dikesare', 'Hadakewa', 'Lamalela', 'Lamatuka', 'Lerahinga', 'Lewoeleng', 'Lodoblolong', 'Merdeka', 'Seranggorang', 'Tapobaran', 'Tapolangu', 'Waikomo', 'Wangatoa'],
-      'Nagawutung': ['Babokerong', 'Boba', 'Duablolong', 'Ile Bale', 'Labalimut', 'Liwulagang', 'Loang', 'Pasir Putih', 'Penikene', 'Sinunmang', 'Tewowutung', 'Warawatung'],
-      'Wulandoni': ['Alap Atadei', 'Atakera', 'Belobao', 'Imulolong', 'Lamalera A', 'Lamalera B', 'Lelata', 'Leworaja', 'Puuor A', 'Puuor B', 'South Puuor', 'Tapobali', 'Wulandoni'],
-      'Atadei': ['Atakore', 'Dulir', 'Ile Kimok', 'Katakeja', 'Lerek', 'Lusilame', 'Mogoteta', 'Nogodoni', 'Nubahaeraka', 'Tubuk Rajan', 'Watuwawer'],
-      'Omesuri': ['Balauring', 'Dolulolong', 'Hingalamamengi', 'Hoelea', 'Hoelea II', 'Leuwayang', 'Leubatang', 'Meluwiting', 'Nualela', 'Peusawa', 'Roma', 'Unleurn', 'Usun Manu', 'Walangsawa', 'Wowong'],
-      'Buyasuri': ['Atulaleng', 'Atuwalupang', 'Bareng', 'Bean', 'Benikoor', 'Boli Bean', 'Buriwutung', 'Kalikur', 'Kalikur WL', 'Kaohua', 'Leuburi', 'Loyobohor', 'Mampir', 'Panama', 'Roho', 'Rumang', 'Tobotani', 'Tuwago', 'Umaleu', 'Wairiang']
+      'Lebatukan': ['Atakore', 'Balurebong', 'Baopana', 'Belobao', 'Dikesare', 'Hadakewa', 'Lamalela', 'Lamatuka', 'Lerahinga', 'Lewoeleng', 'Lodoblolong', 'Merdeka', 'Seranggorang', 'Tapobaran', 'Tapolangu', 'Waienga', 'Wangatoa'],
+      'Nagawutung': ['Babokerong', 'Baobolak', 'Belabaja', 'Boli Bean', 'Duawutun', 'Idalolong', 'Ileboli', 'Labalimut', 'Liwulagang', 'Lolong', 'Lusilame', 'Pasir Putih', 'Penikene', 'Riabao', 'Tewaowutung', 'Warawatung', 'Wuakerong'],
+      'Wulandoni': ['Alap Atadei', 'Ataili', 'Atakera', 'Belobao', 'Imulolong', 'Lamalera A', 'Lamalera B', 'Leworaja', 'Mulankera', 'Pantai Harapan', 'Pora', 'Posiwatu', 'Puor', 'Puor B', 'Tapobali', 'Wulandoni'],
+      'Atadei': ['Atalojo', 'Doripewut', 'Dulir', 'Ile Kerbau', 'Ile Kimok', 'Kalikasa', 'Katakeja', 'Lebewala', 'Lerek', 'Lewogroma', 'Lusilame', 'Nogo Doni', 'Nubahaeraka', 'Tubuk Rajan', 'Watuwawer'],
+      'Omesuri': ['Aramaba', 'Balauring', 'Dolulolong', 'Hingalamamengi', 'Hoelea I', 'Hoelea II', 'Lebewala', 'Leubatang', 'Leudanung', 'Leuwayang', 'Mahal I', 'Mahal II', 'Meluwiting', 'Meluwiting I', 'Nilanapo', 'Normal', 'Normal I', 'Peusawa', 'Roma', 'Wailolong', 'Walangsawa', 'Wowong'],
+      'Buyasuri': ['Atulaleng', 'Atuwalupang', 'Bareng', 'Bean', 'Benihading I', 'Benihading II', 'Buriwutung', 'Kalikur', 'Kalikur WL', 'Kaohua', 'Leuburi', 'Leuwohung', 'Loyobohor', 'Mampir', 'Panama', 'Roho', 'Rumang', 'Tobotani', 'Tubungwalang', 'Umaleu', 'Wairiang']
     };
 
     this.populateDesaDropdown = (kecamatanName, selectedDesa = '') => {
@@ -210,6 +210,11 @@ class DLHApp {
       }
 
       if (Array.isArray(desaList) && desaList.length > 0) {
+        // Otomatis pilih desa pertama di kecamatan tersebut jika belum ada desa yang dipilih
+        if (!selectedDesa || selectedDesa === '' || selectedDesa === '-- Pilih Desa / Kelurahan --' || selectedDesa.startsWith('--')) {
+          selectedDesa = desaList[0];
+        }
+
         desaList.forEach(namaDesa => {
           const opt = document.createElement('option');
           opt.value = namaDesa;
@@ -219,6 +224,8 @@ class DLHApp {
           }
           desaSelect.appendChild(opt);
         });
+
+        desaSelect.value = selectedDesa;
       }
 
       // Langsung sesuaikan pin lokasi peta ke kecamatan atau desa terpilih
@@ -625,7 +632,7 @@ class DLHApp {
       'Buyasuri': [-8.192400, 123.820400]
     };
 
-    const desaDict = (typeof window !== 'undefined' && window.DESA_COORDINATES) ? window.DESA_COORDINATES : {};
+    const desaDict = (typeof window !== 'undefined' && window.DESA_COORDINATES) ? window.DESA_COORDINATES : (typeof DESA_COORDINATES !== 'undefined' ? DESA_COORDINATES : {});
     const rawDesa = String(desa || '').trim();
     const cleanDesa = rawDesa.toLowerCase().replace(/\s*\(kelurahan\)|\s*\(desa\)/gi, '').trim();
 
@@ -634,12 +641,18 @@ class DLHApp {
     let targetZoom = 14;
 
     if (rawDesa && rawDesa !== '-- Pilih Desa / Kelurahan --' && !rawDesa.startsWith('--')) {
-      if (desaDict[rawDesa.toLowerCase()]) {
-        target = [desaDict[rawDesa.toLowerCase()].lat, desaDict[rawDesa.toLowerCase()].lng];
+      const lowerRaw = rawDesa.toLowerCase();
+      const scopedKey = String(kec || '').trim().toLowerCase() + '::' + lowerRaw;
+      // 0. Kunci terikat kecamatan (menghindari tabrakan nama desa yang sama di kecamatan berbeda)
+      if (desaDict[scopedKey]) {
+        target = [desaDict[scopedKey].lat, desaDict[scopedKey].lng];
+      // 1. Exact match ke DESA_COORDINATES terlebih dahulu (tanpa .includes())
+      } else if (desaDict[lowerRaw]) {
+        target = [desaDict[lowerRaw].lat, desaDict[lowerRaw].lng];
       } else if (cleanDesa && desaDict[cleanDesa]) {
         target = [desaDict[cleanDesa].lat, desaDict[cleanDesa].lng];
       } else {
-        // Cek pencarian parsial jika ada variasi nama
+        // Fallback parsial HANYA jika exact match benar-benar tidak ditemukan
         for (const [key, val] of Object.entries(desaDict)) {
           if (cleanDesa && (key.includes(cleanDesa) || cleanDesa.includes(key))) {
             target = [val.lat, val.lng];
@@ -647,6 +660,7 @@ class DLHApp {
           }
         }
       }
+
       if (target) {
         locationLabel = `Desa/Kel. ${rawDesa}, Kec. ${kec || 'Lembata'}`;
         targetZoom = 16; // Tingkat ketelitian sangat tinggi (skala desa)
@@ -689,7 +703,11 @@ class DLHApp {
 
     if (this.citizenPinMap) {
       if (this.citizenPinMarker) {
-        try { this.citizenPinMarker.setLatLng([fixedLat, fixedLng]); } catch (e) {}
+        try {
+          this.citizenPinMarker.setLatLng([fixedLat, fixedLng]);
+          const popupHtml = `<div style="font-family: inherit; font-size: 12px; font-weight: 700; color: #064e3b; text-align: center; padding: 2px 4px;">📍 ${locationLabel}</div>`;
+          this.citizenPinMarker.bindPopup(popupHtml).openPopup();
+        } catch (e) {}
       }
       try {
         const size = this.citizenPinMap.getSize();
