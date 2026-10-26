@@ -1409,6 +1409,32 @@ class DLHApp {
         const tanggalKejadian = document.getElementById('inputTanggalKejadian')?.value || new Date().toISOString().split('T')[0];
         const sumberDugaan = (document.getElementById('inputSumberDugaan')?.value || '').trim();
         const uraian = (document.getElementById('inputUraian')?.value || '').trim();
+        const penyelesaian = (document.getElementById('inputPenyelesaian')?.value || '').trim();
+
+        // Riwayat Pernah Menyampaikan Pengaduan (Bagian F)
+        const instansiRows = document.querySelectorAll('.riwayat-instansi-nama');
+        const tglRows = document.querySelectorAll('.riwayat-instansi-tgl');
+        const riwayatList = [];
+        instansiRows.forEach((el, idx) => {
+          const nm = (el?.value || '').trim();
+          const tg = (tglRows[idx]?.value || '').trim();
+          if (nm || tg) {
+            riwayatList.push({
+              no: idx + 1,
+              instansi: nm || '-',
+              tanggal: tg || '-'
+            });
+          }
+        });
+
+        const riwayatSummary = riwayatList.length > 0
+          ? riwayatList.map(r => `${r.no}. ${r.instansi} (${r.tanggal !== '-' ? r.tanggal : 'Tanggal tdk dicantumkan'})`).join('; ')
+          : 'Belum pernah';
+
+        const riwayatWaText = riwayatList.length > 0
+          ? riwayatList.map(r => `• ${r.no}. ${r.instansi} (${r.tanggal !== '-' ? r.tanggal : 'Tanggal tidak dicantumkan'})`).join('\n')
+          : 'Belum pernah';
+
         const lat = (document.getElementById('inputLat')?.value || '').trim();
         const lng = (document.getElementById('inputLng')?.value || '').trim();
 
@@ -1423,6 +1449,9 @@ class DLHApp {
           tanggalKejadian: tanggalKejadian,
           sumberDugaan: sumberDugaan,
           uraian: uraian,
+          penyelesaian: penyelesaian || '-',
+          riwayatPengaduan: riwayatSummary,
+          riwayatPengaduanList: riwayatList,
           lat: lat,
           lng: lng,
           fotoBukti: buktiList[0] || '',
@@ -1515,6 +1544,12 @@ class DLHApp {
 📝 *URAIAN KRONOLOGI:*
 ${uraian}
 
+*PENYELESAIAN YANG DIINGINKAN:*
+${penyelesaian || 'Sesuai dengan ketentuan peraturan perundang-undangan lingkungan hidup yang berlaku.'}
+
+*PERNAH MENYAMPAIKAN PENGADUAN:*
+${riwayatWaText}
+
 📸 *BUKTI FOTO KEJADIAN:*
 ${buktiList.length > 0 
   ? `• Status: ${buktiList.length} Foto Bukti Terlampir Bersama Laporan Ini` 
@@ -1566,6 +1601,10 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         if (cameraInput) cameraInput.value = '';
         const previewList = document.getElementById('uploadPreviewList');
         if (previewList) previewList.innerHTML = '';
+        const inputPenyelesaianEl = document.getElementById('inputPenyelesaian');
+        if (inputPenyelesaianEl) inputPenyelesaianEl.value = '';
+        document.querySelectorAll('.riwayat-instansi-nama').forEach(el => { el.value = ''; });
+        document.querySelectorAll('.riwayat-instansi-tgl').forEach(el => { el.value = ''; });
         const dateInput = document.getElementById('inputTanggalKejadian');
         if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
         if (this.populateDesaDropdown) this.populateDesaDropdown('Nubatukan');
@@ -1755,6 +1794,21 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         const fallbackTgl = document.getElementById('inputTanggalKejadian')?.value || new Date().toISOString().split('T')[0];
         const fallbackSumber = (document.getElementById('inputSumberDugaan')?.value || '').trim();
         const fallbackUraian = (document.getElementById('inputUraian')?.value || '').trim();
+        const fallbackPenyelesaian = (document.getElementById('inputPenyelesaian')?.value || '').trim();
+        const fbInstansiRows = document.querySelectorAll('.riwayat-instansi-nama');
+        const fbTglRows = document.querySelectorAll('.riwayat-instansi-tgl');
+        const fbRiwayatList = [];
+        fbInstansiRows.forEach((el, idx) => {
+          const nm = (el?.value || '').trim();
+          const tg = (fbTglRows[idx]?.value || '').trim();
+          if (nm || tg) {
+            fbRiwayatList.push({ no: idx + 1, instansi: nm || '-', tanggal: tg || '-' });
+          }
+        });
+        const fallbackRiwayatWaText = fbRiwayatList.length > 0
+          ? fbRiwayatList.map(r => `• ${r.no}. ${r.instansi} (${r.tanggal !== '-' ? r.tanggal : 'Tanggal tidak dicantumkan'})`).join('\n')
+          : 'Belum pernah';
+
         const fallbackLat = (document.getElementById('inputLat')?.value || '').trim();
         const fallbackLng = (document.getElementById('inputLng')?.value || '').trim();
         const fallbackMapsLink = (fallbackLat && fallbackLng) ? `https://maps.google.com/?q=${fallbackLat},${fallbackLng}` : 'Koordinat belum disetel';
@@ -1786,6 +1840,12 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
 
 📝 *URAIAN KRONOLOGI:*
 ${fallbackUraian || 'Laporan pengaduan warga via portal web.'}
+
+*PENYELESAIAN YANG DIINGINKAN:*
+${fallbackPenyelesaian || 'Sesuai dengan ketentuan peraturan perundang-undangan lingkungan hidup yang berlaku.'}
+
+*PERNAH MENYAMPAIKAN PENGADUAN:*
+${fallbackRiwayatWaText}
 --------------------------------------------------
 _Laporan resmi dikirim melalui formulir Layanan Pengaduan Lingkungan Masyarakat Kabupaten Lembata._
 _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
@@ -2275,6 +2335,18 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px; border-radius: 8px; margin-bottom: 14px; font-size: 0.88rem; color: #14532d;">
         <strong>Uraian Aduan:</strong><br>${item.uraian}
       </div>
+
+      ${(item.penyelesaian && item.penyelesaian !== '-') ? `
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; margin-bottom: 14px; font-size: 0.85rem; color: #1e293b;">
+          <strong>⚖️ Harapan / Penyelesaian yang Diinginkan:</strong><br>${item.penyelesaian}
+        </div>
+      ` : ''}
+
+      ${(item.riwayatPengaduan && item.riwayatPengaduan !== 'Belum pernah' && item.riwayatPengaduan !== '-') ? `
+        <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; margin-bottom: 14px; font-size: 0.85rem; color: #1e293b;">
+          <strong>🏛️ Riwayat Pengaduan ke Instansi Lain:</strong><br>${item.riwayatPengaduan}
+        </div>
+      ` : ''}
 
       ${(!isUnverified && ((item.hasilVerifikasi && item.hasilVerifikasi !== '-') || (item.tindakanDLH && item.tindakanDLH !== '-') || item.nomorBeritaAcara)) ? `
         <div style="background: #f0fdf4; border: 1.5px solid #86efac; padding: 14px; border-radius: 10px; margin-bottom: 14px; font-size: 0.86rem; color: #14532d;">

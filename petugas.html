@@ -5388,6 +5388,20 @@
             <p style="line-height: 1.5; white-space: pre-wrap;">${item.uraian || 'Tidak ada uraian detail.'}</p>
           </div>
 
+          <!-- Penyelesaian yang Diinginkan & Riwayat Instansi (Jika ada) -->
+          ${(item.penyelesaian && item.penyelesaian !== '-') ? `
+            <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px 14px; border-radius: 10px; margin-bottom: 14px; font-size: 0.86rem;">
+              <strong style="color: #0f172a; font-size: 0.82rem; text-transform: uppercase; display: block; margin-bottom: 3px;">⚖️ Harapan / Penyelesaian yang Diinginkan:</strong>
+              <div style="color: #334155; line-height: 1.45;">${escapeHtml(item.penyelesaian)}</div>
+            </div>
+          ` : ''}
+          ${(item.riwayatPengaduan && item.riwayatPengaduan !== 'Belum pernah' && item.riwayatPengaduan !== '-') ? `
+            <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px 14px; border-radius: 10px; margin-bottom: 14px; font-size: 0.86rem;">
+              <strong style="color: #0f172a; font-size: 0.82rem; text-transform: uppercase; display: block; margin-bottom: 3px;">🏛️ Riwayat Pengaduan ke Instansi Lain:</strong>
+              <div style="color: #334155; line-height: 1.45;">${escapeHtml(item.riwayatPengaduan)}</div>
+            </div>
+          ` : ''}
+
           <!-- Hasil Temuan Lapangan & Instrumen Checklist Verifikasi PPKLH -->
           ${((item.hasilVerifikasi && item.hasilVerifikasi !== '-') || (Array.isArray(item.checklistVerifikasi) && item.checklistVerifikasi.length > 0)) ? `
             <div style="background: #f0fdf4; border: 1.5px solid #86efac; padding: 14px; border-radius: 10px; margin-bottom: 16px; font-size: 0.86rem; color: #14532d;">
@@ -7122,12 +7136,26 @@
 
         // 12. Ekstrak Uraian Kronologi
         let uraian = '';
-        const matchUraian = raw.match(/URAIAN\s+KRONOLOGI:\s*([\s\S]*?)(?=(?:📸|BUKTI\s+FOTO|Status:\s*Pelapor|----------------|_Laporan|$))/i);
+        const matchUraian = raw.match(/URAIAN\s+KRONOLOGI:\s*([\s\S]*?)(?=(?:⚖️|🏛️|PENYELESAIAN|PERNAH|📸|BUKTI\s+FOTO|Status:\s*Pelapor|----------------|_Laporan|$))/i);
         if (matchUraian && matchUraian[1]) {
           uraian = clean(matchUraian[1]);
         }
         if (!uraian || uraian === '-') {
           uraian = `Pengaduan masuk dari warga via pesan WhatsApp resmi mengenai dugaan ${jenisPencemaran} di wilayah Desa ${desa || '-'}, Kecamatan ${kecamatan}.`;
+        }
+
+        // 13. Ekstrak Penyelesaian yang Diinginkan
+        let penyelesaian = '-';
+        const matchPenyelesaian = raw.match(/PENYELESAIAN\s+YANG\s+DIINGINKAN:\s*([\s\S]*?)(?=(?:🏛️|PERNAH|📸|BUKTI\s+FOTO|----------------|_Laporan|$))/i);
+        if (matchPenyelesaian && matchPenyelesaian[1]) {
+          penyelesaian = clean(matchPenyelesaian[1]);
+        }
+
+        // 14. Ekstrak Pernah Menyampaikan Pengaduan
+        let riwayatPengaduan = 'Belum pernah';
+        const matchRiwayat = raw.match(/PERNAH\s+MENYAMPAIKAN\s+PENGADUAN:\s*([\s\S]*?)(?=(?:📸|BUKTI\s+FOTO|----------------|_Laporan|$))/i);
+        if (matchRiwayat && matchRiwayat[1]) {
+          riwayatPengaduan = clean(matchRiwayat[1]);
         }
 
         const now = new Date();
@@ -7157,6 +7185,8 @@
           lng: lng,
           jenisPencemaran: jenisPencemaran,
           uraian: uraian,
+          penyelesaian: penyelesaian,
+          riwayatPengaduan: riwayatPengaduan,
           sumberDugaan: sumberDugaan,
           tanggalKejadian: tanggalKejadian,
           status: 'Aduan Diterima',
