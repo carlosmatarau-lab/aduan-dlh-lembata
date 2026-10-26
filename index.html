@@ -1531,6 +1531,78 @@
       line-height: 1.45;
     }
 
+    .riwayat-count-hint {
+      font-size: 0.74rem;
+      font-weight: 600;
+      color: #64748b;
+    }
+
+    .btn-add-riwayat {
+      width: 100%;
+      padding: 10px 16px;
+      background: #f0fdf4;
+      border: 1.5px dashed #10b981;
+      color: #047857;
+      border-radius: 10px;
+      font-weight: 700;
+      font-size: 0.84rem;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      transition: all 0.2s ease;
+      box-shadow: 0 1px 3px rgba(16, 185, 129, 0.06);
+    }
+
+    .btn-add-riwayat:hover {
+      background: #dcfce7;
+      border-color: #059669;
+      color: #064e3b;
+      transform: translateY(-1px);
+      box-shadow: 0 3px 8px rgba(16, 185, 129, 0.15);
+    }
+
+    .btn-add-riwayat:active {
+      transform: translateY(0);
+    }
+
+    .btn-remove-riwayat {
+      background: #fef2f2;
+      border: 1px solid #fca5a5;
+      color: #dc2626;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 3px 9px;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+    }
+
+    .btn-remove-riwayat:hover {
+      background: #fee2e2;
+      border-color: #ef4444;
+      color: #991b1b;
+    }
+
+    .animate-card-in {
+      animation: riwayatCardSlideIn 0.25s ease-out forwards;
+    }
+
+    @keyframes riwayatCardSlideIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
     @media (max-width: 640px) {
       .riwayat-card-body {
         grid-template-columns: 1fr;
@@ -1542,6 +1614,10 @@
       .riwayat-card-body .input-text {
         font-size: 16px !important;
         min-height: 44px;
+      }
+      .btn-add-riwayat {
+        padding: 11px 16px;
+        font-size: 0.85rem;
       }
     }
 
@@ -4241,18 +4317,24 @@
           </div>
 
           <div class="form-field" style="margin-bottom: 22px;">
-            <label class="field-label">Riwayat Penyampaian Pengaduan ke Pihak / Instansi Lain</label>
+            <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-bottom: 6px;">
+              <label class="field-label" style="margin-bottom: 0;">Riwayat Penyampaian Pengaduan ke Pihak / Instansi Lain</label>
+              <span id="riwayatCountHint" class="riwayat-count-hint">Dapat menambahkan hingga 5 instansi</span>
+            </div>
 
-            <!-- Susunan Kartu Isian Mobile-Friendly -->
-            <div class="riwayat-cards-container">
-              <!-- Kartu 1 -->
+            <!-- Kontainer Kartu Dinamis (+ Tambah / Hapus Instansi) -->
+            <div class="riwayat-cards-container" id="riwayatCardsContainer">
+              <!-- Kartu 1 (Default Awal) -->
               <div class="riwayat-card-item">
                 <div class="riwayat-card-header">
                   <div class="riwayat-card-badge">
                     <span class="riwayat-badge-num">1</span>
                     <span class="riwayat-badge-title">Instansi Pertama</span>
                   </div>
-                  <span class="riwayat-badge-hint">Opsional</span>
+                  <div style="display: flex; align-items: center; gap: 8px;">
+                    <button type="button" class="btn-remove-riwayat" title="Hapus baris instansi ini" style="display: none;">✕ Hapus</button>
+                    <span class="riwayat-badge-hint">Opsional</span>
+                  </div>
                 </div>
                 <div class="riwayat-card-body">
                   <div class="riwayat-field-group riwayat-field-instansi">
@@ -4265,48 +4347,13 @@
                   </div>
                 </div>
               </div>
+            </div>
 
-              <!-- Kartu 2 -->
-              <div class="riwayat-card-item">
-                <div class="riwayat-card-header">
-                  <div class="riwayat-card-badge">
-                    <span class="riwayat-badge-num">2</span>
-                    <span class="riwayat-badge-title">Instansi Kedua</span>
-                  </div>
-                  <span class="riwayat-badge-hint">Opsional</span>
-                </div>
-                <div class="riwayat-card-body">
-                  <div class="riwayat-field-group riwayat-field-instansi">
-                    <label class="riwayat-sublabel" for="inputInstansi2">Nama Instansi</label>
-                    <input type="text" id="inputInstansi2" class="input-text riwayat-instansi-nama riwayat-instansi" placeholder="Nama instansi kedua (jika ada)">
-                  </div>
-                  <div class="riwayat-field-group riwayat-field-tanggal">
-                    <label class="riwayat-sublabel" for="inputTglInstansi2">Tanggal / Bulan / Tahun</label>
-                    <input type="date" id="inputTglInstansi2" class="input-text riwayat-instansi-tgl riwayat-tanggal">
-                  </div>
-                </div>
-              </div>
-
-              <!-- Kartu 3 -->
-              <div class="riwayat-card-item">
-                <div class="riwayat-card-header">
-                  <div class="riwayat-card-badge">
-                    <span class="riwayat-badge-num">3</span>
-                    <span class="riwayat-badge-title">Instansi Ketiga</span>
-                  </div>
-                  <span class="riwayat-badge-hint">Opsional</span>
-                </div>
-                <div class="riwayat-card-body">
-                  <div class="riwayat-field-group riwayat-field-instansi">
-                    <label class="riwayat-sublabel" for="inputInstansi3">Nama Instansi</label>
-                    <input type="text" id="inputInstansi3" class="input-text riwayat-instansi-nama riwayat-instansi" placeholder="Nama instansi ketiga (jika ada)">
-                  </div>
-                  <div class="riwayat-field-group riwayat-field-tanggal">
-                    <label class="riwayat-sublabel" for="inputTglInstansi3">Tanggal / Bulan / Tahun</label>
-                    <input type="date" id="inputTglInstansi3" class="input-text riwayat-instansi-tgl riwayat-tanggal">
-                  </div>
-                </div>
-              </div>
+            <!-- Tombol Tambah Riwayat Instansi Dinamis -->
+            <div class="riwayat-actions-wrap" style="margin-top: 10px;">
+              <button type="button" class="btn-add-riwayat" id="btnAddRiwayat">
+                <span>➕</span> Tambah Riwayat Instansi Lain
+              </button>
             </div>
 
             <small class="riwayat-footnote">
@@ -4894,9 +4941,9 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Application Logic -->
-  <script charset="UTF-8" src="js/data.js?v=20261026_field_05"></script>
-  <script charset="UTF-8" src="js/map.js?v=20261026_field_05"></script>
-  <script charset="UTF-8" src="js/app.js?v=20261026_field_05"></script>
+  <script charset="UTF-8" src="js/data.js?v=20261026_field_06"></script>
+  <script charset="UTF-8" src="js/map.js?v=20261026_field_06"></script>
+  <script charset="UTF-8" src="js/app.js?v=20261026_field_06"></script>
 </body>
 
 </html>

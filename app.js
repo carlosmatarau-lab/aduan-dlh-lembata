@@ -26,6 +26,7 @@ class DLHApp {
     try { this.setupCategoryChips(); } catch (e) { console.warn('setupCategoryChips error:', e); }
     try { this.setupKecamatanDesaSync(); } catch (e) { console.warn('setupKecamatanDesaSync error:', e); }
     try { this.setupPhoneValidation(); } catch (e) { console.warn('setupPhoneValidation error:', e); }
+    try { this.setupDynamicRiwayatInstansi(); } catch (e) { console.warn('setupDynamicRiwayatInstansi error:', e); }
     try { this.setupFormSubmissions(); } catch (e) { console.warn('setupFormSubmissions error:', e); }
     try { this.setupGPSDetection(); } catch (e) { console.warn('setupGPSDetection error:', e); }
     try { this.setupUploadPreview(); } catch (e) { console.warn('setupUploadPreview error:', e); }
@@ -335,6 +336,158 @@ class DLHApp {
 
     inputNoHp.addEventListener('input', () => runValidation(false));
     inputNoHp.addEventListener('blur', () => runValidation(true));
+  }
+
+  /* ===================================================================
+     2D. SISTEM DINAMIS RIWAYAT PENGADUAN INSTANSI (+ TAMBAH / HAPUS)
+     =================================================================== */
+  setupDynamicRiwayatInstansi() {
+    const container = document.getElementById('riwayatCardsContainer');
+    const btnAdd = document.getElementById('btnAddRiwayat');
+    const countHint = document.getElementById('riwayatCountHint');
+    if (!container || !btnAdd) return;
+
+    const MAX_RIWAYAT = 5;
+
+    const getCardTitle = (idx) => {
+      if (idx === 1) return 'Instansi Pertama';
+      if (idx === 2) return 'Instansi Kedua';
+      if (idx === 3) return 'Instansi Ketiga';
+      if (idx === 4) return 'Instansi Keempat';
+      if (idx === 5) return 'Instansi Kelima';
+      return `Instansi Ke-${idx}`;
+    };
+
+    const updateState = () => {
+      const cards = container.querySelectorAll('.riwayat-card-item');
+      const count = cards.length;
+
+      cards.forEach((card, idx) => {
+        const num = idx + 1;
+        const badgeNum = card.querySelector('.riwayat-badge-num');
+        const badgeTitle = card.querySelector('.riwayat-badge-title');
+        const removeBtn = card.querySelector('.btn-remove-riwayat');
+        const nameInput = card.querySelector('.riwayat-instansi-nama');
+        const tglInput = card.querySelector('.riwayat-instansi-tgl');
+
+        if (badgeNum) badgeNum.textContent = num;
+        if (badgeTitle) badgeTitle.textContent = getCardTitle(num);
+        if (nameInput) {
+          nameInput.id = `inputInstansi${num}`;
+          nameInput.placeholder = num === 1
+            ? 'Contoh: Kantor Desa / Polsek / DLH Provinsi'
+            : `Nama instansi ke-${num} (jika ada)`;
+        }
+        if (tglInput) tglInput.id = `inputTglInstansi${num}`;
+
+        // Kartu pertama tidak menampilkan tombol hapus
+        if (removeBtn) {
+          removeBtn.style.display = (num > 1) ? 'inline-flex' : 'none';
+        }
+      });
+
+      if (countHint) {
+        if (count >= MAX_RIWAYAT) {
+          countHint.textContent = `Maksimal ${MAX_RIWAYAT} instansi tercapai`;
+          countHint.style.color = '#059669';
+        } else {
+          countHint.textContent = `Dapat menambahkan hingga ${MAX_RIWAYAT} instansi (${count}/${MAX_RIWAYAT})`;
+          countHint.style.color = '#64748b';
+        }
+      }
+
+      if (btnAdd) {
+        if (count >= MAX_RIWAYAT) {
+          btnAdd.style.display = 'none';
+        } else {
+          btnAdd.style.display = 'inline-flex';
+          btnAdd.disabled = false;
+        }
+      }
+    };
+
+    this.addRiwayatCard = () => {
+      const currentCards = container.querySelectorAll('.riwayat-card-item');
+      if (currentCards.length >= MAX_RIWAYAT) return;
+
+      const newIndex = currentCards.length + 1;
+      const cardEl = document.createElement('div');
+      cardEl.className = 'riwayat-card-item animate-card-in';
+      cardEl.innerHTML = `
+        <div class="riwayat-card-header">
+          <div class="riwayat-card-badge">
+            <span class="riwayat-badge-num">${newIndex}</span>
+            <span class="riwayat-badge-title">${getCardTitle(newIndex)}</span>
+          </div>
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <button type="button" class="btn-remove-riwayat" title="Hapus baris instansi ini">✕ Hapus</button>
+            <span class="riwayat-badge-hint">Opsional</span>
+          </div>
+        </div>
+        <div class="riwayat-card-body">
+          <div class="riwayat-field-group riwayat-field-instansi">
+            <label class="riwayat-sublabel" for="inputInstansi${newIndex}">Nama Instansi</label>
+            <input type="text" id="inputInstansi${newIndex}" class="input-text riwayat-instansi-nama riwayat-instansi" placeholder="Nama instansi ke-${newIndex} (jika ada)">
+          </div>
+          <div class="riwayat-field-group riwayat-field-tanggal">
+            <label class="riwayat-sublabel" for="inputTglInstansi${newIndex}">Tanggal / Bulan / Tahun</label>
+            <input type="date" id="inputTglInstansi${newIndex}" class="input-text riwayat-instansi-tgl riwayat-tanggal">
+          </div>
+        </div>
+      `;
+
+      const removeBtn = cardEl.querySelector('.btn-remove-riwayat');
+      if (removeBtn) {
+        removeBtn.addEventListener('click', (e) => {
+          e.preventDefault();
+          cardEl.remove();
+          updateState();
+        });
+      }
+
+      container.appendChild(cardEl);
+      updateState();
+
+      // Focus ke input instansi baru
+      setTimeout(() => {
+        const input = cardEl.querySelector('.riwayat-instansi-nama');
+        if (input) input.focus();
+      }, 50);
+    };
+
+    btnAdd.addEventListener('click', (e) => {
+      e.preventDefault();
+      this.addRiwayatCard();
+    });
+
+    // Pasang listener pada remove button kartu bawaan jika ada
+    container.querySelectorAll('.btn-remove-riwayat').forEach(btn => {
+      btn.addEventListener('click', (e) => {
+        e.preventDefault();
+        const card = btn.closest('.riwayat-card-item');
+        if (card) {
+          card.remove();
+          updateState();
+        }
+      });
+    });
+
+    this.resetRiwayatCards = () => {
+      const cards = container.querySelectorAll('.riwayat-card-item');
+      cards.forEach((card, idx) => {
+        if (idx === 0) {
+          const nm = card.querySelector('.riwayat-instansi-nama');
+          const tg = card.querySelector('.riwayat-instansi-tgl');
+          if (nm) nm.value = '';
+          if (tg) tg.value = '';
+        } else {
+          card.remove();
+        }
+      });
+      updateState();
+    };
+
+    updateState();
   }
 
   /* ===================================================================
@@ -1251,6 +1404,12 @@ class DLHApp {
     const form = document.getElementById('formAduanWarga');
     if (!form) return;
 
+    form.addEventListener('reset', () => {
+      if (typeof this.resetRiwayatCards === 'function') {
+        this.resetRiwayatCards();
+      }
+    });
+
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
@@ -1418,10 +1577,11 @@ class DLHApp {
         instansiRows.forEach((el, idx) => {
           const nm = (el?.value || '').trim();
           const tg = (tglRows[idx]?.value || '').trim();
-          if (nm || tg) {
+          // Abaikan baris yang input "Nama Instansi"-nya kosong
+          if (nm) {
             riwayatList.push({
-              no: idx + 1,
-              instansi: nm || '-',
+              no: riwayatList.length + 1,
+              instansi: nm,
               tanggal: tg || '-'
             });
           }
@@ -1603,8 +1763,12 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         if (previewList) previewList.innerHTML = '';
         const inputPenyelesaianEl = document.getElementById('inputPenyelesaian');
         if (inputPenyelesaianEl) inputPenyelesaianEl.value = '';
-        document.querySelectorAll('.riwayat-instansi-nama, .riwayat-instansi').forEach(el => { el.value = ''; });
-        document.querySelectorAll('.riwayat-instansi-tgl, .riwayat-tanggal').forEach(el => { el.value = ''; });
+        if (typeof this.resetRiwayatCards === 'function') {
+          this.resetRiwayatCards();
+        } else {
+          document.querySelectorAll('.riwayat-instansi-nama, .riwayat-instansi').forEach(el => { el.value = ''; });
+          document.querySelectorAll('.riwayat-instansi-tgl, .riwayat-tanggal').forEach(el => { el.value = ''; });
+        }
         const dateInput = document.getElementById('inputTanggalKejadian');
         if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
         if (this.populateDesaDropdown) this.populateDesaDropdown('Nubatukan');
@@ -1801,8 +1965,8 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         fbInstansiRows.forEach((el, idx) => {
           const nm = (el?.value || '').trim();
           const tg = (fbTglRows[idx]?.value || '').trim();
-          if (nm || tg) {
-            fbRiwayatList.push({ no: idx + 1, instansi: nm || '-', tanggal: tg || '-' });
+          if (nm) {
+            fbRiwayatList.push({ no: fbRiwayatList.length + 1, instansi: nm, tanggal: tg || '-' });
           }
         });
         const fallbackRiwayatWaText = fbRiwayatList.length > 0
