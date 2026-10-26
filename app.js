@@ -8,7 +8,7 @@
 // Konfigurasi Domain Web Aplikasi untuk Tautan Lacak Otomatis WhatsApp
 const DOMAIN_WEB = (typeof window !== 'undefined' && window.location && window.location.origin && window.location.origin !== 'null' && !window.location.origin.startsWith('file'))
   ? window.location.origin
-  : "https://pengaduan-lembata.vercel.app"; // Sesuaikan dengan domain Anda
+  : "https://aduan-dlh-lembata.vercel.app"; // Sesuaikan dengan domain Anda
 const APP_BASE_URL = DOMAIN_WEB;
 
 class DLHApp {
@@ -1598,6 +1598,12 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         if (redirectNotice) redirectNotice.style.display = 'none';
 
         if (ticketDisplay) ticketDisplay.textContent = newRecord.id;
+        const trackingUrlEl = document.getElementById('successTrackingUrl');
+        if (trackingUrlEl) {
+          const directTrackUrl = `${DOMAIN_WEB}/?tiket=${encodeURIComponent(newRecord.id)}`;
+          trackingUrlEl.href = directTrackUrl;
+          trackingUrlEl.textContent = directTrackUrl;
+        }
 
         // Tombol 1 di Modal: Kirim Foto & Laporan ke WhatsApp
         if (btnWa) {
