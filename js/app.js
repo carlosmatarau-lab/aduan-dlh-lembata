@@ -1274,7 +1274,7 @@ class DLHApp {
           this.selectedMediaFiles.push(mediaItem);
           addedCount++;
         } else {
-          this.showToast('Batas maksimal 5 bukti foto/video tercapai.', 'warning');
+          this.showToast('Batas maksimal 5 foto bukti tercapai.', 'warning');
         }
       });
 
@@ -1320,7 +1320,7 @@ class DLHApp {
 
     const startCamera = async () => {
       if (this.selectedMediaFiles.length >= 5) {
-        this.showToast('Maksimal 5 foto/video sudah tercapai.', 'warning');
+        this.showToast('Maksimal 5 foto bukti sudah tercapai.', 'warning');
         return;
       }
 

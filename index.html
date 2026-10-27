@@ -1247,6 +1247,34 @@
       font-size: 0.75rem;
     }
 
+    .form-section-title span.badge-disarankan {
+      width: auto !important;
+      height: auto !important;
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      border-radius: 9999px !important;
+      padding: 2px 10px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.02em;
+      margin-left: 4px;
+      display: inline-flex;
+      align-items: center;
+      line-height: 1.4;
+    }
+
+    .upload-area-instruction {
+      font-size: 0.9rem;
+      font-weight: 700;
+      color: #1e293b;
+      margin-bottom: 12px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
     .form-row-2 {
       display: grid;
       grid-template-columns: 1fr 1fr;
@@ -4092,31 +4120,34 @@
             <input type="text" id="inputAlamat" class="input-text" placeholder="Contoh: Kelurahan Selandoro, Nubatukan">
           </div>
 
-          <!-- Bagian 2: Upload Bukti Foto/Video Kejadian -->
+          <!-- Bagian 2: Upload Bukti Foto Kejadian -->
           <div class="form-section-title">
-            <span>2</span> Bukti Foto / Video Kejadian
+            <span>2</span> Bukti Foto Kejadian <span class="badge-disarankan">(Sangat Disarankan)</span>
           </div>
 
           <div class="form-field">
-            <label class="field-label">📷 Unggah Foto / Video Lapangan (Kamera / Galeri)</label>
             <div class="upload-zone" id="uploadZone">
 
               <!-- Hidden Inputs -->
-              <input type="file" id="inputBuktiFoto" accept="image/*,video/*" multiple style="display: none;">
+              <input type="file" id="inputBuktiFoto" accept="image/*" multiple style="display: none;">
               <input type="file" id="inputCameraCapture" accept="image/*" capture="environment" style="display: none;">
+
+              <!-- Petunjuk Tombol / Pilihan Pengunggahan -->
+              <div class="upload-area-instruction">
+                <span>Ambil Foto Kamera / Pilih dari Galeri</span>
+              </div>
 
               <!-- Action Buttons -->
               <div class="upload-actions-group">
                 <button type="button" class="btn-camera-trigger" id="btnOpenLiveCamera">
-                  📸 Ambil Foto Langsung (Kamera)
+                  📸 Ambil Foto Kamera
                 </button>
                 <button type="button" class="btn-upload-trigger" id="btnUploadFoto">
-                  📁 Pilih File dari Galeri / Dokumen
+                  📁 Pilih dari Galeri
                 </button>
               </div>
 
-              <p class="upload-hint">Maks. 5 foto/video (JPG, PNG, MP4). Mengambil foto langsung di lokasi kejadian
-                sangat membantu ketepatan verifikasi tim DLH.</p>
+              <p class="upload-hint">Melampirkan foto sangat disarankan agar petugas dapat mengidentifikasi lokasi dan jenis pencemaran secara cepat dan akurat.</p>
 
               <!-- Upload Progress & Animation Card -->
               <div id="uploadAnimationCard" class="upload-anim-card" style="display: none;">
