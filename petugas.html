@@ -3122,6 +3122,99 @@
         align-items: center !important;
         justify-content: center !important;
       }
+
+      /* 4. Rapikan & Padatkan Header serta Tombol Pengaturan Peta Sebaran Aduan di Mobile */
+      .officer-map-card .map-card-header {
+        padding: 8px 10px !important;
+        gap: 6px !important;
+      }
+      .officer-map-card .map-card-title {
+        font-size: 0.94rem !important;
+        font-weight: 800 !important;
+        line-height: 1.2 !important;
+      }
+      .officer-map-card .map-card-sub,
+      .officer-map-card .map-btn-sub-txt {
+        display: none !important;
+      }
+      .officer-map-card .map-header-controls {
+        display: flex !important;
+        flex-direction: row !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 4px !important;
+        margin-top: 2px !important;
+        width: 100% !important;
+      }
+      .officer-map-card .map-mode-pill-group {
+        display: inline-flex !important;
+        flex: 0 0 auto !important;
+        width: auto !important;
+        padding: 2px !important;
+        gap: 2px !important;
+        border-radius: 8px !important;
+        background: #f1f5f9 !important;
+        border: 1px solid #cbd5e1 !important;
+      }
+      .officer-map-card .btn-map-mode {
+        width: auto !important;
+        height: 26px !important;
+        padding: 0 6px !important;
+        font-size: 0.62rem !important;
+        font-weight: 700 !important;
+        border-radius: 6px !important;
+        gap: 2px !important;
+        white-space: nowrap !important;
+      }
+      .officer-map-card .map-action-row-group {
+        display: flex !important;
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        width: auto !important;
+        gap: 4px !important;
+        align-items: center !important;
+      }
+      .officer-map-card #mapBasemapSelect {
+        flex: 1 1 0 !important;
+        min-width: 0 !important;
+        width: 100% !important;
+        height: 28px !important;
+        font-size: 0.64rem !important;
+        padding: 0 4px !important;
+        border-radius: 7px !important;
+        text-overflow: ellipsis !important;
+      }
+      .officer-map-card #btnResetMapCenter {
+        flex: 0 0 auto !important;
+        height: 28px !important;
+        padding: 0 7px !important;
+        font-size: 0.64rem !important;
+        border-radius: 7px !important;
+        gap: 2px !important;
+      }
+      .officer-map-card .map-filter-strip {
+        padding: 6px 10px !important;
+        gap: 5px !important;
+      }
+      .officer-map-card .map-stat-indicator {
+        font-size: 0.68rem !important;
+        gap: 5px !important;
+      }
+      .officer-map-card .map-filter-group {
+        gap: 5px !important;
+      }
+      .officer-map-card .map-mini-select {
+        height: 28px !important;
+        font-size: 0.68rem !important;
+        padding: 0 6px !important;
+        border-radius: 7px !important;
+      }
+      .officer-map-card .map-legend-footer {
+        padding: 6px 10px !important;
+        gap: 4px !important;
+        font-size: 0.66rem !important;
+      }
     }
 
     /* ===================================================================
@@ -3717,7 +3810,7 @@
       <section class="officer-map-card" id="officerMapCard">
       <div class="map-card-header">
         <div>
-          <h2 class="map-card-title">🗺️ Peta Titik Rawan &amp; Sebaran Aduan</h2>
+          <h2 class="map-card-title">🗺️ Peta Sebaran Aduan</h2>
           <p class="map-card-sub">Visualisasi spasial titik koordinat GPS dan sebaran 9 kecamatan</p>
         </div>
 
@@ -3725,7 +3818,7 @@
           <!-- Toggle Mode: Marker GPS vs Heatmap vs Hybrid -->
           <div class="map-mode-pill-group">
             <button type="button" class="btn-map-mode active" id="btnModeMarkers" onclick="window.portal.setMapMode('markers')">
-              📍 Marker GPS
+              📍 Marker<span class="map-btn-sub-txt">&nbsp;GPS</span>
             </button>
             <button type="button" class="btn-map-mode" id="btnModeHeatmap" onclick="window.portal.setMapMode('heatmap')">
               🔥 Heatmap
@@ -3746,7 +3839,7 @@
 
             <!-- Reset Zoom ke Lembata -->
             <button type="button" id="btnResetMapCenter" class="btn-action-tool btn-focus-lmb" onclick="window.portal.resetMapView()" title="Pusatkan kembali ke Pulau Lembata">
-              🎯 Fokus Lembata
+              🎯 Fokus<span class="map-btn-sub-txt">&nbsp;Lembata</span>
             </button>
           </div>
         </div>
