@@ -2188,7 +2188,16 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       return;
     }
 
-    tbody.innerHTML = filtered.map(item => `
+    // Urutkan data tabel agar aduan terbaru berada di baris teratas
+    const sortedFiltered = [...filtered].reverse().sort((a, b) => {
+      const timeA = Date.parse(a.timestamp || '') || 0;
+      const timeB = Date.parse(b.timestamp || '') || 0;
+      if (timeA && timeB && timeA !== timeB) return timeB - timeA;
+      if (a.id && b.id && a.id !== b.id) return String(b.id).localeCompare(String(a.id), undefined, { numeric: true });
+      return 0;
+    });
+
+    tbody.innerHTML = sortedFiltered.map(item => `
       <tr>
         <td><strong style="color: #065f46; font-family: monospace;">${item.id}</strong></td>
         <td style="color: #64748b; font-size: 0.8rem; white-space: nowrap;">${item.timestamp.split(' ')[0]}</td>

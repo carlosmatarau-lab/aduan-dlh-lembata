@@ -395,7 +395,7 @@ class LembataMapEngine {
     const container = document.getElementById('mapAduanGrid');
     if (!container) return;
 
-    if (filteredData.length === 0) {
+    if (!filteredData || filteredData.length === 0) {
       container.innerHTML = `
         <div style="grid-column: 1/-1; text-align: center; padding: 32px 16px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; color: #64748b;">
           <div style="font-size: 28px; margin-bottom: 6px;">🔍</div>
@@ -406,7 +406,36 @@ class LembataMapEngine {
       return;
     }
 
-    container.innerHTML = filteredData.map(item => {
+    // Helper parser timestamp/tanggal aduan yang fleksibel
+    const parseTime = (item) => {
+      if (!item) return 0;
+      const tStr = item.timestamp || item.waktuLapor || item.tanggal || item.tanggalKejadian;
+      if (!tStr || tStr === '-') return 0;
+      const parsed = Date.parse(tStr);
+      if (!isNaN(parsed)) return parsed;
+      // Dukung format DD/MM/YYYY atau DD-MM-YYYY
+      const parts = String(tStr).match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
+      if (parts) {
+        return new Date(`${parts[3]}-${parts[2].padStart(2, '0')}-${parts[1].padStart(2, '0')}`).getTime() || 0;
+      }
+      return 0;
+    };
+
+    // Urutkan kartu aduan agar yang paling baru diterima selalu berada di posisi paling depan (paling kiri/atas)
+    const listAduanTerbaru = [...filteredData].reverse().sort((a, b) => {
+      const timeA = parseTime(a);
+      const timeB = parseTime(b);
+      if (timeA && timeB && timeA !== timeB) {
+        return timeB - timeA; // Descending: waktu terbaru di urutan pertama
+      }
+      // Jika waktu sama atau tidak ada, gunakan Nomor Register / ID secara descending (misal ADU-LMB-2026-025 di depan 024)
+      if (a.id && b.id && a.id !== b.id) {
+        return String(b.id).localeCompare(String(a.id), undefined, { numeric: true });
+      }
+      return 0;
+    });
+
+    container.innerHTML = listAduanTerbaru.map(item => {
       const catIcon = this.getCategoryIcon(item.jenisPencemaran);
       const badgeClass = (item.status || 'baru').toLowerCase().replace(/[^a-z0-9]/g, '-');
 
