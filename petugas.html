@@ -2951,12 +2951,23 @@
         gap: 0 !important;
       }
       .app-header .brand-name {
-        font-size: 1.02rem !important;
+        font-size: 0.98rem !important;
+        line-height: 1.15 !important;
         white-space: nowrap !important;
         overflow: hidden !important;
         text-overflow: ellipsis !important;
       }
-      .app-header .brand-sub,
+      .app-header .brand-sub {
+        display: block !important;
+        font-size: 0.64rem !important;
+        font-weight: 700 !important;
+        color: #a7f3d0 !important;
+        line-height: 1.2 !important;
+        margin-top: 2px !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
       .app-header .badge-role-petugas {
         display: none !important;
       }
@@ -2985,7 +2996,9 @@
       }
       .table-card-header {
         padding: 12px 12px !important;
+        display: flex !important;
         flex-direction: row !important;
+        flex-wrap: nowrap !important;
         align-items: center !important;
         justify-content: space-between !important;
         gap: 8px !important;
@@ -2997,28 +3010,31 @@
         min-width: 0 !important;
       }
       .table-card-title {
-        font-size: 0.96rem !important;
+        font-size: 0.94rem !important;
         font-weight: 800 !important;
         white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
       }
       .table-card-sub {
-        font-size: 0.68rem !important;
+        font-size: 0.66rem !important;
         line-height: 1.25 !important;
         margin-top: 2px !important;
       }
       .table-header-actions-wrap {
         position: relative !important;
-        flex-shrink: 0 !important;
+        flex: 0 0 auto !important;
+        margin-left: auto !important;
       }
       .btn-mobile-opsi-data {
         display: inline-flex !important;
         align-items: center !important;
         justify-content: center !important;
-        gap: 5px !important;
+        gap: 4px !important;
         height: 34px !important;
-        padding: 0 11px !important;
+        padding: 0 10px !important;
         border-radius: 9px !important;
-        font-size: 0.74rem !important;
+        font-size: 0.73rem !important;
         font-weight: 800 !important;
         background: #ecfdf5 !important;
         color: #065f46 !important;
@@ -3042,14 +3058,16 @@
         position: absolute !important;
         top: calc(100% + 6px) !important;
         right: 0 !important;
-        width: 220px !important;
+        left: auto !important;
+        width: 215px !important;
+        max-width: calc(100vw - 32px) !important;
         background: #ffffff !important;
         border: 1.5px solid #cbd5e1 !important;
         border-radius: 12px !important;
         padding: 6px !important;
         gap: 5px !important;
         box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.24), 0 4px 10px rgba(15, 23, 42, 0.08) !important;
-        z-index: 300 !important;
+        z-index: 500 !important;
         margin-top: 0 !important;
       }
       .table-header-buttons.mobile-opsi-open .btn-action-tool,
@@ -3713,7 +3731,7 @@
             <span class="badge-role-petugas">🌿 PPKLH</span>
           </div>
           <p class="brand-sub">
-            🌱 Dinas Lingkungan Hidup Kab. Lembata
+            🌱 Dinas Lingkungan Hidup Kabupaten Lembata
           </p>
         </div>
       </div>
