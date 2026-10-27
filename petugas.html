@@ -2910,6 +2910,220 @@
       }
     }
 
+    /* Default Desktop (> 768px): sembunyikan tombol pemicu dropdown Opsi Data mobile */
+    .btn-mobile-opsi-data {
+      display: none;
+    }
+
+    /* ===================================================================
+       OPTIMASI TATA LETAK ATAS KHUSUS MOBILE (<= 768px):
+       1. Header Utama Ramping 1 Baris + Tombol Navigasi Ikon Ringkas
+       2. Tombol Aksi Tabel Diringkas ke Menu Dropdown "⚙️ Opsi Data"
+       3. Filter Toolbar Padat 2 Baris Grid
+       =================================================================== */
+    @media (max-width: 768px) {
+      /* 1. Header Utama Lebih Ramping (.app-header) */
+      .app-header .header-inner {
+        flex-wrap: nowrap !important;
+        padding: 8px 12px !important;
+        gap: 8px !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+      }
+      .app-header .brand-group {
+        gap: 9px !important;
+        min-width: 0 !important;
+        flex: 1 1 auto !important;
+        align-items: center !important;
+      }
+      .app-header .brand-logo-badge {
+        width: 34px !important;
+        height: 40px !important;
+        border-radius: 9px !important;
+        flex-shrink: 0 !important;
+      }
+      .app-header .brand-logo-img {
+        width: 26px !important;
+        height: 32px !important;
+      }
+      .app-header .brand-title-wrap {
+        flex-wrap: nowrap !important;
+        gap: 0 !important;
+      }
+      .app-header .brand-name {
+        font-size: 1.02rem !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+      }
+      .app-header .brand-sub,
+      .app-header .badge-role-petugas {
+        display: none !important;
+      }
+      .app-header .header-nav {
+        flex-wrap: nowrap !important;
+        gap: 6px !important;
+        flex-shrink: 0 !important;
+      }
+      .app-header .btn-header-link {
+        width: 34px !important;
+        height: 34px !important;
+        padding: 0 !important;
+        border-radius: 10px !important;
+        justify-content: center !important;
+        align-items: center !important;
+        font-size: 0.95rem !important;
+        gap: 0 !important;
+      }
+      .app-header .btn-header-link .btn-header-text {
+        display: none !important;
+      }
+
+      /* 2. Ringkas Semua Tombol Aksi Tabel ke Menu "⚙️ Opsi Data" */
+      .table-container-card {
+        overflow: visible !important;
+      }
+      .table-card-header {
+        padding: 12px 12px !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 8px !important;
+        position: relative !important;
+        border-radius: 14px 14px 0 0 !important;
+      }
+      .table-card-header > div:first-child {
+        flex: 1 1 auto !important;
+        min-width: 0 !important;
+      }
+      .table-card-title {
+        font-size: 0.96rem !important;
+        font-weight: 800 !important;
+        white-space: nowrap !important;
+      }
+      .table-card-sub {
+        font-size: 0.68rem !important;
+        line-height: 1.25 !important;
+        margin-top: 2px !important;
+      }
+      .table-header-actions-wrap {
+        position: relative !important;
+        flex-shrink: 0 !important;
+      }
+      .btn-mobile-opsi-data {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 5px !important;
+        height: 34px !important;
+        padding: 0 11px !important;
+        border-radius: 9px !important;
+        font-size: 0.74rem !important;
+        font-weight: 800 !important;
+        background: #ecfdf5 !important;
+        color: #065f46 !important;
+        border: 1.5px solid #10b981 !important;
+        box-shadow: 0 2px 6px rgba(5, 150, 105, 0.14) !important;
+        cursor: pointer !important;
+        white-space: nowrap !important;
+        transition: all 0.18s ease !important;
+      }
+      .btn-mobile-opsi-data.active {
+        background: #059669 !important;
+        color: #ffffff !important;
+        border-color: #047857 !important;
+      }
+      .table-header-buttons {
+        display: none !important;
+      }
+      .table-header-buttons.mobile-opsi-open {
+        display: flex !important;
+        flex-direction: column !important;
+        position: absolute !important;
+        top: calc(100% + 6px) !important;
+        right: 0 !important;
+        width: 220px !important;
+        background: #ffffff !important;
+        border: 1.5px solid #cbd5e1 !important;
+        border-radius: 12px !important;
+        padding: 6px !important;
+        gap: 5px !important;
+        box-shadow: 0 12px 28px -4px rgba(15, 23, 42, 0.24), 0 4px 10px rgba(15, 23, 42, 0.08) !important;
+        z-index: 300 !important;
+        margin-top: 0 !important;
+      }
+      .table-header-buttons.mobile-opsi-open .btn-action-tool,
+      .table-header-buttons.mobile-opsi-open #btnResetOfficialData {
+        width: 100% !important;
+        height: 36px !important;
+        padding: 0 11px !important;
+        font-size: 0.76rem !important;
+        font-weight: 700 !important;
+        border-radius: 8px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: flex-start !important;
+        text-align: left !important;
+        gap: 8px !important;
+        margin: 0 !important;
+        grid-column: auto !important;
+      }
+
+      /* 3. Padatkan Kotak Pencarian & Filter (.filter-toolbar) menjadi 2 Baris Grid */
+      .filter-toolbar {
+        display: grid !important;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto !important;
+        gap: 6px !important;
+        padding: 10px 12px !important;
+        align-items: center !important;
+      }
+      .filter-toolbar .search-box-wrap {
+        grid-column: 1 / -1 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+      }
+      .filter-toolbar .search-input {
+        height: 38px !important;
+        font-size: 16px !important;
+        padding: 6px 10px 6px 34px !important;
+        border-radius: 8px !important;
+        box-sizing: border-box !important;
+      }
+      .filter-toolbar #filterStatus {
+        grid-column: 1 / 2 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        height: 36px !important;
+        font-size: 0.74rem !important;
+        padding: 0 8px !important;
+        border-radius: 8px !important;
+        box-sizing: border-box !important;
+      }
+      .filter-toolbar #filterKecamatan {
+        grid-column: 2 / 3 !important;
+        width: 100% !important;
+        min-width: 0 !important;
+        height: 36px !important;
+        font-size: 0.74rem !important;
+        padding: 0 8px !important;
+        border-radius: 8px !important;
+        box-sizing: border-box !important;
+      }
+      .filter-toolbar #btnResetFilters {
+        grid-column: 3 / 4 !important;
+        width: auto !important;
+        height: 36px !important;
+        padding: 0 10px !important;
+        font-size: 0.72rem !important;
+        font-weight: 700 !important;
+        border-radius: 8px !important;
+        white-space: nowrap !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+      }
+    }
+
     /* ===================================================================
        ANIMASI UPLOAD BUKTI FOTO & STATUS SUKSES (PETUGAS)
        =================================================================== */
@@ -3414,12 +3628,12 @@
       <nav class="header-nav">
         <!-- Formulir Warga -->
         <a href="index.html" class="btn-header-link btn-warga" title="Buka Halaman Formulir Pengaduan Masyarakat">
-          <span>📝</span> Formulir Warga
+          <span>📝</span> <span class="btn-header-text">Formulir Warga</span>
         </a>
 
         <!-- Kunci Dashboard -->
         <button type="button" class="btn-header-link btn-lock-portal" id="btnLockPortal" title="Kunci Sesi Dashboard Petugas">
-          <span>🔒</span> Kunci
+          <span>🔒</span> <span class="btn-header-text">Kunci</span>
         </button>
       </nav>
     </div>
@@ -3604,31 +3818,38 @@
           </p>
         </div>
 
-        <div class="table-header-buttons">
-          <!-- Refresh / Sync Manual -->
-          <button type="button" class="btn-action-tool" id="btnManualSync" onclick="if(window.portal) window.portal.manualSync();" title="Segarkan data dari penyimpanan">
-            <span id="syncIconSpin">🔄</span> Segarkan
+        <div class="table-header-actions-wrap">
+          <!-- Tombol Ringkas Menu Opsi Data (Khusus Layar Mobile <= 768px) -->
+          <button type="button" class="btn-mobile-opsi-data" id="btnToggleMobileOpsi" onclick="window.portal && window.portal.toggleMobileOpsiMenu(event)" title="Menu Opsi Data Aduan" aria-expanded="false">
+            <span>⚙️</span> Opsi Data <span>▾</span>
           </button>
 
-          <!-- Input / Impor Pesan WhatsApp -->
-          <button type="button" class="btn-action-tool btn-import-wa" id="btnOpenWaImportModal" onclick="window.portal.openWaImportModal();" style="background: #ecfdf5; border-color: #10b981; color: #047857; font-weight: 700;" title="Salin &amp; Tempel Pesan Pengaduan dari WhatsApp">
-            <span>💬</span> Catat dari WA
-          </button>
+          <div class="table-header-buttons" id="tableHeaderButtonsMenu">
+            <!-- Refresh / Sync Manual -->
+            <button type="button" class="btn-action-tool" id="btnManualSync" onclick="if(window.portal) window.portal.manualSync();" title="Segarkan data dari penyimpanan">
+              <span id="syncIconSpin">🔄</span> Segarkan
+            </button>
 
-          <!-- Pengaturan Koneksi Cloud Google Spreadsheet -->
-          <button type="button" class="btn-action-tool" id="btnOpenCloudModalTable" onclick="document.getElementById('btnOpenCloudModal').click();" title="Pengaturan Database Google Spreadsheet" style="background: #f0fdf4; border-color: #86efac; color: #166534; font-weight: 700;">
-            <span>☁️</span> Database Sheets
-          </button>
+            <!-- Input / Impor Pesan WhatsApp -->
+            <button type="button" class="btn-action-tool btn-import-wa" id="btnOpenWaImportModal" onclick="window.portal.openWaImportModal();" style="background: #ecfdf5; border-color: #10b981; color: #047857; font-weight: 700;" title="Salin &amp; Tempel Pesan Pengaduan dari WhatsApp">
+              <span>💬</span> Catat dari WA
+            </button>
 
-          <!-- Ekspor CSV -->
-          <button type="button" class="btn-action-tool btn-export" id="btnExportCsv" title="Unduh dataset lengkap dalam format CSV">
-            <span>📥</span> Ekspor CSV
-          </button>
+            <!-- Pengaturan Koneksi Cloud Google Spreadsheet -->
+            <button type="button" class="btn-action-tool" id="btnOpenCloudModalTable" onclick="document.getElementById('btnOpenCloudModal').click();" title="Pengaturan Database Google Spreadsheet" style="background: #f0fdf4; border-color: #86efac; color: #166534; font-weight: 700;">
+              <span>☁️</span> Database Sheets
+            </button>
 
-          <!-- Reset Standar Bersih: 0 Aduan Fresh Start -->
-          <button type="button" class="btn-action-tool" id="btnResetOfficialData" onclick="if(window.portal) window.portal.resetOfficialData();" title="Kosongkan seluruh data aduan menjadi 0 aduan (Fresh Start) di Google Spreadsheet, Laptop &amp; HP Petugas" style="color: #b91c1c; background: #fef2f2; border-color: #fca5a5; font-weight: 700;">
-            <span>🧹</span> Reset ke 0
-          </button>
+            <!-- Ekspor CSV -->
+            <button type="button" class="btn-action-tool btn-export" id="btnExportCsv" title="Unduh dataset lengkap dalam format CSV">
+              <span>📥</span> Ekspor CSV
+            </button>
+
+            <!-- Reset Standar Bersih: 0 Aduan Fresh Start -->
+            <button type="button" class="btn-action-tool" id="btnResetOfficialData" onclick="if(window.portal) window.portal.resetOfficialData();" title="Kosongkan seluruh data aduan menjadi 0 aduan (Fresh Start) di Google Spreadsheet, Laptop &amp; HP Petugas" style="color: #b91c1c; background: #fef2f2; border-color: #fca5a5; font-weight: 700;">
+              <span>🧹</span> Reset ke 0
+            </button>
+          </div>
         </div>
       </div>
 
@@ -7136,8 +7357,33 @@
         }
       }
 
+      toggleMobileOpsiMenu(event) {
+        if (event) {
+          event.stopPropagation();
+          event.preventDefault();
+        }
+        const menu = document.getElementById('tableHeaderButtonsMenu');
+        const btn = document.getElementById('btnToggleMobileOpsi');
+        if (!menu) return;
+        const isOpen = menu.classList.toggle('mobile-opsi-open');
+        if (btn) {
+          btn.classList.toggle('active', isOpen);
+          btn.setAttribute('aria-expanded', isOpen ? 'true' : 'false');
+        }
+      }
+
+      closeMobileOpsiMenu() {
+        const menu = document.getElementById('tableHeaderButtonsMenu');
+        const btn = document.getElementById('btnToggleMobileOpsi');
+        if (menu) menu.classList.remove('mobile-opsi-open');
+        if (btn) {
+          btn.classList.remove('active');
+          btn.setAttribute('aria-expanded', 'false');
+        }
+      }
+
       bindEvents() {
-        // Auto-close Action Dropdown saat klik di luar
+        // Auto-close Action Dropdown & Mobile Opsi Menu saat klik di luar
         document.addEventListener('click', (e) => {
           const menu = document.getElementById('tableActionDropdownMenu');
           if (menu && menu.style.display === 'block') {
@@ -7145,13 +7391,26 @@
               this.closeActionDropdown();
             }
           }
+
+          const opsiMenu = document.getElementById('tableHeaderButtonsMenu');
+          if (opsiMenu && opsiMenu.classList.contains('mobile-opsi-open')) {
+            if (!e.target.closest('#btnToggleMobileOpsi')) {
+              this.closeMobileOpsiMenu();
+            }
+          }
         });
 
         // Close dropdown on window resize, scroll, or Escape key
-        window.addEventListener('resize', () => this.closeActionDropdown());
+        window.addEventListener('resize', () => {
+          this.closeActionDropdown();
+          this.closeMobileOpsiMenu();
+        });
         window.addEventListener('scroll', () => this.closeActionDropdown(), true);
         document.addEventListener('keydown', (e) => {
-          if (e.key === 'Escape') this.closeActionDropdown();
+          if (e.key === 'Escape') {
+            this.closeActionDropdown();
+            this.closeMobileOpsiMenu();
+          }
         });
 
         // Modal close buttons
