@@ -2689,6 +2689,8 @@
         width: auto !important;
       }
       .officer-table thead th.col-status {
+        padding-left: 4px !important;
+        padding-right: 4px !important;
         text-align: center !important;
         width: 1% !important;
         white-space: nowrap !important;
@@ -2711,11 +2713,19 @@
         width: auto !important;
       }
       .aduan-main-row > td.col-status {
-        padding-left: 3px !important;
-        padding-right: 3px !important;
+        padding-left: 4px !important;
+        padding-right: 4px !important;
         text-align: center !important;
         width: 1% !important;
         white-space: nowrap !important;
+      }
+      .aduan-main-row > td.col-status .status-cell-inner {
+        display: flex !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+        width: 100% !important;
       }
       .aduan-main-row > td.col-aksi {
         padding-left: 3px !important;
@@ -2740,26 +2750,36 @@
         display: inline-block !important;
       }
       .mobile-reg-subtext {
-        display: -webkit-box !important;
-        -webkit-box-orient: vertical !important;
-        -webkit-line-clamp: 2 !important;
-        overflow: hidden !important;
-        font-size: 0.65rem !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 1px !important;
+        font-size: 0.64rem !important;
         line-height: 1.22 !important;
         margin-top: 3px !important;
-        color: #64748b !important;
+        color: #475569 !important;
         white-space: normal !important;
         word-break: break-word !important;
       }
-      .mobile-reg-subtext .mobile-jenis-tag { color: #047857 !important; }
+      .mobile-reg-subtext .mobile-loc-line {
+        font-weight: 600 !important;
+        color: #475569 !important;
+      }
+      .mobile-reg-subtext .mobile-jenis-tag {
+        color: #047857 !important;
+        font-weight: 700 !important;
+      }
 
-      /* Badge status ringkas & proporsional */
+      /* Badge status ringkas, simetris & lurus vertikal dengan header STATUS */
       .officer-table td.col-status .badge {
         font-size: 0.55rem !important;
         font-weight: 800 !important;
-        padding: 2.5px 5.5px !important;
+        padding: 2.5px 6px !important;
         letter-spacing: 0px !important;
         line-height: 1.15 !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        margin: 0 auto !important;
       }
 
       /* Aksi: panah + tombol Verifikasi kompak & utuh 100% */
@@ -6861,7 +6881,8 @@
                   ${item.id}
                 </span>
                 <div class="mobile-reg-subtext">
-                  Kec. ${item.kecamatan || '-'} &bull; <span class="mobile-jenis-tag">${item.jenisPencemaran || '-'}</span>
+                  <div class="mobile-loc-line">Desa ${item.desa || '-'}, Kec. ${item.kecamatan || '-'}</div>
+                  <div class="mobile-jenis-tag">&bull; ${item.jenisPencemaran || '-'}</div>
                 </div>
               </td>
               <td class="col-date">
@@ -6891,7 +6912,7 @@
                 <span style="font-weight: 700; color: #059669; font-size: 0.8rem;">${item.jenisPencemaran}</span>
               </td>
               <td class="col-status">
-                <div style="display: flex; flex-direction: column; gap: 3px; align-items: flex-start;">
+                <div class="status-cell-inner" style="display: flex; flex-direction: column; gap: 3px; align-items: flex-start;">
                   <div>${this.getStatusBadgeHtml(item.status)}</div>
                   <div class="desktop-verif-meta" style="font-size: 0.78rem; font-weight: 700; color: #1e293b; line-height: 1.25;">
                     ${verifName}
