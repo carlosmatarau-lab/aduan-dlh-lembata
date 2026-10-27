@@ -367,11 +367,28 @@
       gap: 12px;
       box-shadow: 0 1px 4px rgba(0, 0, 0, 0.03);
       transition: all 0.2s ease;
+      cursor: pointer;
+      user-select: none;
     }
 
     .kpi-card:hover {
       transform: translateY(-1px);
       box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+      border-color: #a7f3d0;
+    }
+
+    .kpi-card.active-kpi {
+      border: 2px solid #059669 !important;
+      background: #ecfdf5 !important;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.16) !important;
+      transform: translateY(-1px);
+    }
+
+    /* Elemen khusus Mobile Accordion disembunyikan di Desktop (> 768px) */
+    .mobile-reg-subtext,
+    .btn-tbl-accordion,
+    .aduan-accordion-row {
+      display: none;
     }
 
     .kpi-icon-wrap {
@@ -2323,53 +2340,207 @@
         border-radius: 8px !important;
       }
 
-      /* Tabel Data Responsif Touch */
+      /* Tabel Data Responsif Touch — Model Expandable Accordion Table Row (Tanpa Geser Horizontal) */
       .table-responsive {
+        overflow-x: hidden !important;
         -webkit-overflow-scrolling: touch !important;
         border-radius: 0 !important;
       }
-      .table-responsive::-webkit-scrollbar {
-        height: 6px !important;
-      }
-      .table-responsive::-webkit-scrollbar-track {
-        background: #f1f5f9 !important;
-      }
-      .table-responsive::-webkit-scrollbar-thumb {
-        background: #cbd5e1 !important;
-        border-radius: 4px !important;
+      .officer-table {
+        width: 100% !important;
+        table-layout: auto !important;
+        border-collapse: collapse !important;
       }
       .officer-table th {
-        padding: 7px 8px !important;
-        font-size: 0.72rem !important;
-        letter-spacing: 0.3px !important;
+        padding: 8px 8px !important;
+        font-size: 0.7rem !important;
+        letter-spacing: 0.25px !important;
       }
       .officer-table td {
-        padding: 6px 8px !important;
+        padding: 8px 8px !important;
         font-size: 0.76rem !important;
         line-height: 1.3 !important;
+        vertical-align: middle !important;
+      }
+      /* Sembunyikan kolom Tanggal, Pelapor, Lokasi detail, Jenis, dan Verifikator di baris utama HP */
+      .officer-table th.col-date,
+      .officer-table td.col-date,
+      .officer-table th.col-pelapor,
+      .officer-table td.col-pelapor,
+      .officer-table th.col-lokasi,
+      .officer-table td.col-lokasi,
+      .officer-table th.col-jenis,
+      .officer-table td.col-jenis,
+      .desktop-verif-meta,
+      .th-desktop-only,
+      .officer-table .btn-tbl-more {
+        display: none !important;
+      }
+      .officer-table th.col-reg,
+      .officer-table td.col-reg {
+        width: auto !important;
+      }
+      .officer-table th.col-status,
+      .officer-table td.col-status {
+        width: 1% !important;
+        white-space: nowrap !important;
+      }
+      .officer-table th.col-aksi,
+      .officer-table td.col-aksi {
+        width: 1% !important;
+        white-space: nowrap !important;
+        text-align: right !important;
+      }
+      .aduan-main-row {
+        cursor: pointer !important;
+      }
+      .aduan-main-row.expanded {
+        background: #f0fdf4 !important;
+      }
+      .aduan-main-row.expanded > td {
+        border-bottom-color: #a7f3d0 !important;
       }
       .ticket-badge {
         font-size: 0.72rem !important;
-        padding: 2px 5px !important;
+        padding: 2px 6px !important;
+      }
+      .mobile-reg-subtext {
+        display: block !important;
+        font-size: 0.68rem !important;
+        color: #475569 !important;
+        margin-top: 3px !important;
+        line-height: 1.25 !important;
+        font-weight: 600 !important;
+        white-space: normal !important;
+      }
+      .mobile-reg-subtext .mobile-jenis-tag {
+        color: #059669 !important;
+        font-weight: 700 !important;
       }
       .badge {
-        font-size: 0.68rem !important;
-        padding: 2px 6px !important;
+        font-size: 0.65rem !important;
+        padding: 3px 6px !important;
       }
       .table-actions,
       .table-actions-compact {
         gap: 4px !important;
+        justify-content: flex-end !important;
       }
       .btn-tbl {
         padding: 5px 8px !important;
-        font-size: 0.72rem !important;
+        font-size: 0.71rem !important;
         border-radius: 6px !important;
         min-height: 28px !important;
       }
-      .btn-tbl-more {
+      .btn-tbl-accordion {
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
         width: 28px !important;
         height: 28px !important;
-        font-size: 1rem !important;
+        padding: 0 !important;
+        border-radius: 6px !important;
+        border: 1px solid #cbd5e1 !important;
+        background: #f8fafc !important;
+        color: #334155 !important;
+        font-size: 0.72rem !important;
+        font-weight: 800 !important;
+        cursor: pointer !important;
+        transition: all 0.2s ease !important;
+        flex-shrink: 0 !important;
+      }
+      .btn-tbl-accordion .acc-arrow {
+        display: inline-block !important;
+        transition: transform 0.2s ease !important;
+      }
+      .aduan-main-row.expanded .btn-tbl-accordion {
+        background: #ecfdf5 !important;
+        border-color: #10b981 !important;
+        color: #065f46 !important;
+      }
+      .aduan-main-row.expanded .btn-tbl-accordion .acc-arrow {
+        transform: rotate(180deg) !important;
+      }
+      /* Baris Lipatan Detail (Accordion Row) Khusus HP */
+      .aduan-accordion-row {
+        display: none !important;
+        background: #f8fafc !important;
+      }
+      .aduan-accordion-row.open {
+        display: table-row !important;
+      }
+      .aduan-accordion-cell {
+        padding: 10px 10px 12px 10px !important;
+        background: #f8fafc !important;
+        border-left: 3px solid #059669 !important;
+        border-bottom: 2px solid #cbd5e1 !important;
+      }
+      .acc-detail-grid {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 6px 10px !important;
+        margin-bottom: 8px !important;
+        font-size: 0.73rem !important;
+        color: #1e293b !important;
+      }
+      .acc-detail-item {
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 2px !important;
+      }
+      .acc-detail-item.acc-full {
+        grid-column: 1 / -1 !important;
+      }
+      .acc-detail-label {
+        font-size: 0.64rem !important;
+        font-weight: 800 !important;
+        text-transform: uppercase !important;
+        color: #64748b !important;
+        letter-spacing: 0.2px !important;
+      }
+      .acc-detail-val {
+        font-size: 0.74rem !important;
+        font-weight: 700 !important;
+        color: #0f172a !important;
+        display: flex !important;
+        align-items: center !important;
+        flex-wrap: wrap !important;
+        gap: 6px !important;
+      }
+      .acc-actions-bar {
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        padding-top: 8px !important;
+        border-top: 1px dashed #cbd5e1 !important;
+        flex-wrap: wrap !important;
+      }
+      .acc-actions-bar .btn-acc-act {
+        flex: 1 1 auto !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 4px !important;
+        padding: 6px 8px !important;
+        border-radius: 6px !important;
+        font-size: 0.71rem !important;
+        font-weight: 700 !important;
+        cursor: pointer !important;
+        text-decoration: none !important;
+        border: 1px solid #cbd5e1 !important;
+        background: #ffffff !important;
+        color: #334155 !important;
+      }
+      .acc-actions-bar .btn-acc-act.btn-acc-map {
+        background: #f0fdf4 !important;
+        border-color: #86efac !important;
+        color: #065f46 !important;
+      }
+      .acc-actions-bar .btn-acc-act.btn-acc-del {
+        flex: 0 0 auto !important;
+        background: #fff1f2 !important;
+        border-color: #fecdd3 !important;
+        color: #e11d48 !important;
       }
       .table-footer {
         padding: 10px 12px !important;
@@ -3059,7 +3230,7 @@
     <!-- KPI Summary Grid -->
     <section class="kpi-grid">
       <!-- Total -->
-      <div class="kpi-card kpi-card-total">
+      <div class="kpi-card kpi-card-total active-kpi" data-status="all" onclick="window.portal && window.portal.filterByKpi('all')" title="Klik untuk menampilkan Semua Aduan">
         <div class="kpi-icon-wrap">📊</div>
         <div class="kpi-info">
           <div class="kpi-val" id="kpiTotal">0</div>
@@ -3068,7 +3239,7 @@
       </div>
 
       <!-- Baru -->
-      <div class="kpi-card kpi-card-baru">
+      <div class="kpi-card kpi-card-baru" data-status="Baru" onclick="window.portal && window.portal.filterByKpi('Baru')" title="Klik untuk memfilter status Belum Verifikasi">
         <div class="kpi-icon-wrap">⏳</div>
         <div class="kpi-info">
           <div class="kpi-val" id="kpiBaru">0</div>
@@ -3077,7 +3248,7 @@
       </div>
 
       <!-- Proses / Ditindaklanjuti -->
-      <div class="kpi-card kpi-card-proses">
+      <div class="kpi-card kpi-card-proses" data-status="Ditindaklanjuti" onclick="window.portal && window.portal.filterByKpi('Ditindaklanjuti')" title="Klik untuk memfilter status Dalam Proses">
         <div class="kpi-icon-wrap">⚙️</div>
         <div class="kpi-info">
           <div class="kpi-val" id="kpiProses">0</div>
@@ -3086,7 +3257,7 @@
       </div>
 
       <!-- Selesai -->
-      <div class="kpi-card kpi-card-selesai">
+      <div class="kpi-card kpi-card-selesai" data-status="Selesai" onclick="window.portal && window.portal.filterByKpi('Selesai')" title="Klik untuk memfilter status Tuntas Selesai">
         <div class="kpi-icon-wrap">✅</div>
         <div class="kpi-info">
           <div class="kpi-val" id="kpiSelesai">0</div>
@@ -3278,13 +3449,13 @@
         <table class="officer-table">
           <thead>
             <tr>
-              <th style="width: 130px;">No. Register</th>
-              <th style="width: 105px;">Tanggal</th>
-              <th>Pelapor &amp; Kontak</th>
-              <th>Lokasi Kejadian</th>
-              <th>Jenis Dugaan</th>
-              <th>Status &amp; Verifikator</th>
-              <th style="text-align: center; width: 140px;">Aksi Petugas</th>
+              <th class="col-reg" style="width: 130px;">No. Register</th>
+              <th class="col-date" style="width: 105px;">Tanggal</th>
+              <th class="col-pelapor">Pelapor &amp; Kontak</th>
+              <th class="col-lokasi">Lokasi Kejadian</th>
+              <th class="col-jenis">Jenis Dugaan</th>
+              <th class="col-status">Status <span class="th-desktop-only">&amp; Verifikator</span></th>
+              <th class="col-aksi" style="text-align: center; width: 140px;">Aksi <span class="th-desktop-only">Petugas</span></th>
             </tr>
           </thead>
           <tbody id="aduanTableBody">
@@ -3965,6 +4136,7 @@
         this.centerCoords = [-8.380, 123.575]; // Pusat Geografis Lembata
         this.pendingDeleteId = null;
         this.tempUploadedPhotos = [];
+        this.expandedMobileRows = new Set();
       }
 
       async init() {
@@ -6296,9 +6468,61 @@
         if (elSelesai) elSelesai.textContent = stats.selesai;
       }
 
+      filterByKpi(status) {
+        const targetStatus = status || 'all';
+        this.filters.status = targetStatus;
+
+        const statusFilter = document.getElementById('filterStatus');
+        if (statusFilter) {
+          statusFilter.value = targetStatus;
+        }
+
+        this.syncKpiActiveState(targetStatus);
+        this.renderTable();
+      }
+
+      syncKpiActiveState(status) {
+        const activeStatus = status || this.filters.status || 'all';
+        document.querySelectorAll('.kpi-grid .kpi-card').forEach(card => {
+          const cardStatus = card.getAttribute('data-status');
+          card.classList.toggle('active-kpi', cardStatus === activeStatus);
+        });
+      }
+
+      toggleMobileAccordion(id, event) {
+        if (event) {
+          event.stopPropagation();
+        }
+        if (!id) return;
+        const mainRow = document.querySelector(`.aduan-main-row[data-id="${id}"]`);
+        const accRow = document.getElementById(`accRow_${id}`);
+        if (!mainRow || !accRow) return;
+
+        const isExpanded = this.expandedMobileRows.has(id);
+        if (isExpanded) {
+          this.expandedMobileRows.delete(id);
+          mainRow.classList.remove('expanded');
+          accRow.classList.remove('open');
+        } else {
+          this.expandedMobileRows.add(id);
+          mainRow.classList.add('expanded');
+          accRow.classList.add('open');
+        }
+      }
+
+      handleMobileRowClick(event, id) {
+        // Hanya jalankan buka-tutup lipatan (accordion) pada layar HP (<= 768px)
+        if (window.innerWidth > 768) return;
+        // Abaikan jika yang diketuk adalah tombol aksi atau link
+        if (event && event.target && event.target.closest('button, a')) return;
+        this.toggleMobileAccordion(id, event);
+      }
+
       renderTable() {
         const tbody = document.getElementById('aduanTableBody');
         if (!tbody) return;
+
+        this.syncKpiActiveState(this.filters.status);
 
         const data = window.aduanStore ? [...window.aduanStore.getAll()] : [];
 
@@ -6331,7 +6555,13 @@
           let matchStatus = true;
           if (st !== 'all') {
             const itemSt = (item.status || 'Baru').toLowerCase();
-            matchStatus = itemSt.includes(st.toLowerCase());
+            if (st === 'Baru') {
+              matchStatus = itemSt.includes('baru') || itemSt === 'aduan diterima';
+            } else if (st === 'Ditindaklanjuti') {
+              matchStatus = itemSt.includes('tindak') || itemSt.includes('penanganan') || itemSt.includes('verif') || itemSt.includes('proses');
+            } else {
+              matchStatus = itemSt.includes(st.toLowerCase());
+            }
           }
 
           // Filter Kecamatan
@@ -6427,19 +6657,23 @@
             `Halo Bapak/Ibu ${item.namaPelapor}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata mengonfirmasi laporan Anda dengan No. Register: ${item.id} terkait dugaan ${item.jenisPencemaran} di Desa ${item.desa || '-'}, Kec. ${item.kecamatan || '-'}. Mohon informasi tambahan terkait laporan ini.`
           );
           const rowWaUrl = rowWaPhone ? `https://wa.me/${rowWaPhone}?text=${rowWaText}` : '';
+          const isExpanded = this.expandedMobileRows && this.expandedMobileRows.has(item.id);
 
           return `
-            <tr data-id="${item.id}">
-              <td>
-                <span class="ticket-badge" onclick="window.portal.showDetailModal('${item.id}')" title="Klik untuk rincian lengkap">
+            <tr class="aduan-main-row ${isExpanded ? 'expanded' : ''}" data-id="${item.id}" onclick="window.portal.handleMobileRowClick(event, '${item.id}')">
+              <td class="col-reg">
+                <span class="ticket-badge" onclick="if(window.innerWidth > 768) { event.stopPropagation(); window.portal.showDetailModal('${item.id}'); }" title="Klik untuk rincian lengkap">
                   ${item.id}
                 </span>
+                <div class="mobile-reg-subtext">
+                  Kec. ${item.kecamatan || '-'} &bull; <span class="mobile-jenis-tag">${item.jenisPencemaran || '-'}</span>
+                </div>
               </td>
-              <td>
+              <td class="col-date">
                 <strong style="font-size: 0.8rem; color: #1e293b; white-space: nowrap;">${formattedDate}</strong>
                 ${timeOnly ? `<div style="font-size: 0.7rem; color: #64748b; font-weight: 500;">${timeOnly} WITA</div>` : ''}
               </td>
-              <td>
+              <td class="col-pelapor">
                 <div style="font-weight: 700; color: #0f172a;">${item.namaPelapor}</div>
                 <div style="margin-top: 3px;">
                   ${rowWaUrl ? `
@@ -6453,35 +6687,82 @@
                   `}
                 </div>
               </td>
-              <td>
+              <td class="col-lokasi">
                 <div style="font-weight: 600;">Kec. ${item.kecamatan}</div>
                 <div style="font-size: 0.76rem; color: #64748b;">Desa ${item.desa || '-'}</div>
                 ${mapsUrl ? `<a href="${mapsUrl}" target="_blank" style="font-size: 0.72rem; color: #0284c7; text-decoration: underline; font-weight: 600;">📍 Titik GPS</a>` : ''}
               </td>
-              <td>
+              <td class="col-jenis">
                 <span style="font-weight: 700; color: #059669; font-size: 0.8rem;">${item.jenisPencemaran}</span>
               </td>
-              <td>
+              <td class="col-status">
                 <div style="display: flex; flex-direction: column; gap: 3px; align-items: flex-start;">
                   <div>${this.getStatusBadgeHtml(item.status)}</div>
-                  <div style="font-size: 0.78rem; font-weight: 700; color: #1e293b; line-height: 1.25;">
+                  <div class="desktop-verif-meta" style="font-size: 0.78rem; font-weight: 700; color: #1e293b; line-height: 1.25;">
                     ${verifName}
                   </div>
-                  <div style="font-size: 0.71rem; color: #64748b; font-weight: 500;">
+                  <div class="desktop-verif-meta" style="font-size: 0.71rem; color: #64748b; font-weight: 500;">
                     Tgl: ${verifDateFormatted}
                   </div>
                 </div>
               </td>
-              <td style="text-align: center;">
+              <td class="col-aksi" style="text-align: center;">
                 <div class="table-actions-compact">
+                  <!-- Tombol Panah Lipat (Khusus Layar HP <= 768px) -->
+                  <button type="button" class="btn-tbl-accordion" onclick="window.portal.toggleMobileAccordion('${item.id}', event)" title="Buka/Tutup Rincian Baris" aria-label="Buka Lipatan">
+                    <span class="acc-arrow">▼</span>
+                  </button>
+
                   <!-- Tombol Utama: Verifikasi -->
-                  <button type="button" class="btn-tbl btn-tbl-verify" onclick="window.portal.openVerifikasiModal('${item.id}')" title="Input Hasil Verifikasi Lapangan">
+                  <button type="button" class="btn-tbl btn-tbl-verify" onclick="event.stopPropagation(); window.portal.openVerifikasiModal('${item.id}')" title="Input Hasil Verifikasi Lapangan">
                     <span>📋</span> Verifikasi
                   </button>
 
-                  <!-- Tombol Dropdown: Aksi Lanjutan -->
+                  <!-- Tombol Dropdown: Aksi Lanjutan (Desktop > 768px) -->
                   <button type="button" class="btn-tbl btn-tbl-more" onclick="window.portal.toggleActionDropdown(event, '${item.id}')" title="Menu Aksi Lanjutan" aria-label="Aksi Lainnya">
                     ⋮
+                  </button>
+                </div>
+              </td>
+            </tr>
+            <tr class="aduan-accordion-row ${isExpanded ? 'open' : ''}" id="accRow_${item.id}" data-parent-id="${item.id}">
+              <td colspan="7" class="aduan-accordion-cell">
+                <div class="acc-detail-grid">
+                  <div class="acc-detail-item">
+                    <span class="acc-detail-label">👤 Pelapor &amp; Kontak</span>
+                    <div class="acc-detail-val">
+                      <span>${item.namaPelapor || '-'}</span>
+                      ${rowWaUrl ? `
+                        <a href="${rowWaUrl}" target="_blank" rel="noopener noreferrer"
+                           style="font-size: 0.7rem; color: #059669; font-weight: 700; text-decoration: none; font-family: monospace; display: inline-flex; align-items: center; gap: 3px; background: #ecfdf5; padding: 2px 6px; border-radius: 4px; border: 1px solid #a7f3d0;">
+                          💬 ${rowDisplayPhone}
+                        </a>
+                      ` : `<span style="font-size: 0.7rem; color: #64748b; font-family: monospace;">📞 ${rowDisplayPhone}</span>`}
+                    </div>
+                  </div>
+                  <div class="acc-detail-item">
+                    <span class="acc-detail-label">📅 Tanggal Lapor</span>
+                    <div class="acc-detail-val">
+                      <span>${formattedDate}${timeOnly ? ` • ${timeOnly} WITA` : ''}</span>
+                    </div>
+                  </div>
+                  <div class="acc-detail-item acc-full">
+                    <span class="acc-detail-label">📍 Desa &amp; Titik Koordinat GPS</span>
+                    <div class="acc-detail-val">
+                      <span>Desa ${item.desa || '-'}, Kec. ${item.kecamatan || '-'}</span>
+                      ${mapsUrl ? `<a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" style="font-size: 0.7rem; color: #0284c7; text-decoration: underline; font-weight: 700;">📍 Titik GPS ↗</a>` : ''}
+                    </div>
+                  </div>
+                </div>
+                <div class="acc-actions-bar">
+                  <button type="button" class="btn-acc-act" onclick="window.portal.showDetailModal('${item.id}')">
+                    🔍 Rincian
+                  </button>
+                  <button type="button" class="btn-acc-act btn-acc-map" onclick="window.portal.highlightOnMap('${item.id}')">
+                    📍 Sorot Peta
+                  </button>
+                  <button type="button" class="btn-acc-act btn-acc-del" onclick="window.portal.confirmDeleteAduan('${item.id}')">
+                    🗑️ Hapus
                   </button>
                 </div>
               </td>
