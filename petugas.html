@@ -2642,6 +2642,145 @@
       }
     }
 
+    /* ===================================================================
+       POLISH MOBILE (<= 768px): Tabel Accordion & KPI lebih rapi
+       Hanya CSS tampilan — tidak menyentuh fungsi / data
+       =================================================================== */
+    @media (max-width: 768px) {
+      /* KPI: kartu tap-friendly, ikon di atas angka rapat */
+      .kpi-grid { gap: 8px !important; }
+      .kpi-card {
+        min-height: 56px !important;
+        -webkit-tap-highlight-color: transparent;
+      }
+      .kpi-card:active { transform: scale(0.97) !important; }
+      .kpi-card.active-kpi {
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18) !important;
+        transform: none !important;
+      }
+      .kpi-title { font-weight: 700 !important; }
+
+      /* Header tabel ringkas */
+      .officer-table thead th {
+        background: #f1f5f9 !important;
+        font-size: 0.64rem !important;
+        padding: 7px 8px !important;
+        position: static !important;
+      }
+      .officer-table th.col-aksi { text-align: right !important; width: auto !important; }
+
+      /* Baris utama: tiga kolom padat, tinggi seragam */
+      .aduan-main-row > td {
+        padding: 9px 8px !important;
+        vertical-align: middle !important;
+      }
+      .aduan-main-row > td.col-reg { padding-left: 10px !important; }
+      .aduan-main-row > td.col-aksi { padding-right: 8px !important; }
+
+      /* Nomor register: satu baris, tidak terpotong 3 baris */
+      .officer-table td.col-reg .ticket-badge {
+        white-space: nowrap !important;
+        font-size: 0.66rem !important;
+        letter-spacing: -0.2px !important;
+        padding: 3px 6px !important;
+        border-radius: 6px !important;
+        max-width: 100% !important;
+        display: inline-block !important;
+      }
+      .mobile-reg-subtext {
+        display: -webkit-box !important;
+        -webkit-box-orient: vertical !important;
+        -webkit-line-clamp: 2 !important;
+        overflow: hidden !important;
+        font-size: 0.68rem !important;
+        margin-top: 4px !important;
+        color: #64748b !important;
+      }
+      .mobile-reg-subtext .mobile-jenis-tag { color: #047857 !important; }
+
+      /* Badge status ringkas, rata kiri, tidak melebar */
+      .officer-table td.col-status .badge {
+        font-size: 0.6rem !important;
+        padding: 3px 7px !important;
+        letter-spacing: 0.2px !important;
+      }
+
+      /* Aksi: panah + tombol Verifikasi kompak */
+      .officer-table td.col-aksi .table-actions-compact {
+        display: inline-flex !important;
+        align-items: center !important;
+        gap: 5px !important;
+        flex-wrap: nowrap !important;
+      }
+      .btn-tbl-accordion {
+        width: 30px !important;
+        height: 32px !important;
+        border-radius: 8px !important;
+      }
+      .officer-table td.col-aksi .btn-tbl-verify {
+        height: 32px !important;
+        min-height: 32px !important;
+        padding: 0 9px !important;
+        font-size: 0.68rem !important;
+        border-radius: 8px !important;
+        white-space: nowrap !important;
+        gap: 3px !important;
+      }
+
+      /* Baris lipatan: panel detail bersih dengan tombol besar */
+      .aduan-accordion-cell {
+        padding: 10px 12px 12px !important;
+        background: linear-gradient(180deg, #f0fdf4 0%, #f8fafc 100%) !important;
+        border-left: 3px solid #10b981 !important;
+        border-bottom: 1px solid #cbd5e1 !important;
+      }
+      .acc-detail-grid {
+        grid-template-columns: 1fr !important;
+        gap: 8px !important;
+        background: #ffffff !important;
+        border: 1px solid #e2e8f0 !important;
+        border-radius: 10px !important;
+        padding: 10px 12px !important;
+        margin-bottom: 10px !important;
+      }
+      .acc-detail-item {
+        flex-direction: row !important;
+        align-items: flex-start !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
+        padding-bottom: 7px !important;
+        border-bottom: 1px dashed #e2e8f0 !important;
+      }
+      .acc-detail-item:last-child { border-bottom: none !important; padding-bottom: 0 !important; }
+      .acc-detail-label {
+        flex: 0 0 38% !important;
+        font-size: 0.62rem !important;
+      }
+      .acc-detail-val {
+        flex: 1 1 auto !important;
+        justify-content: flex-end !important;
+        text-align: right !important;
+        font-size: 0.74rem !important;
+      }
+      .acc-actions-bar {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr 1fr !important;
+        gap: 8px !important;
+        border-top: none !important;
+        padding-top: 0 !important;
+      }
+      .acc-actions-bar .btn-acc-act,
+      .acc-actions-bar .btn-acc-act.btn-acc-del {
+        flex: none !important;
+        width: 100% !important;
+        min-height: 38px !important;
+        padding: 6px 4px !important;
+        border-radius: 9px !important;
+        font-size: 0.7rem !important;
+        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
+      }
+    }
+
     /* Penyesuaian Ponsel Layar Kecil (<= 480px) */
     @media (max-width: 480px) {
       .brand-group div div:first-child {
