@@ -506,13 +506,13 @@ function mapSheetRowToFrontend(row, fotoStorageMap) {
 }
 
 /**
- * Generate ID aduan baru unik bebas tumpang tindih: ADU-LMB-YYYY-MMDD-XXXX
- * Menjamin tidak terjadi tumpang tindih antar nomor aduan di seluruh perangkat.
+ * Generate ID aduan baru unik, simpel & profesional: ADU-[2 Digit Tahun]-[4 Karakter Alfanumerik Acak]
+ * Contoh: ADU-26-K8M4
+ * Menggunakan 32 karakter alfanumerik no-ambiguity (tanpa angka 0, huruf O, angka 1, huruf I).
  */
 function generateNewId(sheet) {
   const now = new Date();
-  const year = Utilities.formatDate(now, Session.getScriptTimeZone(), 'yyyy');
-  const dateStr = Utilities.formatDate(now, Session.getScriptTimeZone(), 'MMdd');
+  const yr = Utilities.formatDate(now, Session.getScriptTimeZone(), 'yy');
   const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
 
   let candidateId = '';
@@ -521,11 +521,11 @@ function generateNewId(sheet) {
 
   while (exists && attempts < 20) {
     attempts++;
-    let entropy = '';
+    let code = '';
     for (let i = 0; i < 4; i++) {
-      entropy += chars.charAt(Math.floor(Math.random() * chars.length));
+      code += chars.charAt(Math.floor(Math.random() * chars.length));
     }
-    candidateId = 'ADU-LMB-' + year + '-' + dateStr + '-' + entropy;
+    candidateId = 'ADU-' + yr + '-' + code;
     exists = false;
 
     if (sheet) {

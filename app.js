@@ -1678,22 +1678,13 @@ class DLHApp {
           const now = new Date();
           const year = now.getFullYear();
           const formattedDate = `${year}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
-          let maxSeq = 8;
-          let arr = [];
-          try {
-            const rawStored = localStorage.getItem('dlh_lembata_aduan_v2') || localStorage.getItem('dlh_lembata_aduan_v1');
-            arr = rawStored ? JSON.parse(rawStored) : [];
-            arr.forEach(x => {
-              if (x && x.id) {
-                const m = String(x.id).match(new RegExp(`ADU-LMB-${year}-(\\d+)`, 'i'));
-                if (m) {
-                  const n = parseInt(m[1], 10);
-                  if (!isNaN(n) && n > maxSeq) maxSeq = n;
-                }
-              }
-            });
-          } catch(e) {}
-          const newId = `ADU-LMB-${year}-${String(maxSeq + 1).padStart(3, '0')}`;
+          const yr = String(year).slice(-2);
+          const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+          let code = '';
+          for (let i = 0; i < 4; i++) {
+            code += chars.charAt(Math.floor(Math.random() * chars.length));
+          }
+          const newId = `ADU-${yr}-${code}`;
           newRecord = {
             id: newId,
             timestamp: formattedDate,
@@ -2068,7 +2059,13 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         const fallbackLat = (document.getElementById('inputLat')?.value || '').trim();
         const fallbackLng = (document.getElementById('inputLng')?.value || '').trim();
         const fallbackMapsLink = (fallbackLat && fallbackLng) ? `https://maps.google.com/?q=${fallbackLat},${fallbackLng}` : 'Koordinat belum disetel';
-        const fallbackId = `ADU-LMB-${new Date().getFullYear()}-${Math.floor(100 + Math.random() * 900)}`;
+        const fbChars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+        let fbCode = '';
+        for (let i = 0; i < 4; i++) {
+          fbCode += fbChars.charAt(Math.floor(Math.random() * fbChars.length));
+        }
+        const fbYr = String(new Date().getFullYear()).slice(-2);
+        const fallbackId = `ADU-${fbYr}-${fbCode}`;
 
         const safeWaMessage = 
 `*LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA*
@@ -2373,7 +2370,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
           <div style="text-align: center; padding: 12px 8px; color: #64748b;">
             <div style="font-size: 1.5rem; margin-bottom: 4px;">🔍</div>
             <strong style="color: #334155; font-size: 0.9rem;">Tiket "${q}" Belum Ditemukan</strong>
-            <p style="font-size: 0.78rem; margin-top: 4px; color: #64748b;">Pastikan nomor ID tiket sudah tepat (contoh: ADU-LMB-2026-001) atau laporan baru saja dibuat dan sedang disinkronkan.</p>
+            <p style="font-size: 0.78rem; margin-top: 4px; color: #64748b;">Pastikan nomor ID tiket sudah tepat (contoh: ADU-26-K8M4) atau laporan baru saja dibuat dan sedang disinkronkan.</p>
           </div>
         `;
         return;

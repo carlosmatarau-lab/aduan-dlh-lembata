@@ -4686,7 +4686,7 @@
 
       <div class="modal-body">
         <p style="font-size: 0.86rem; color: #475569; margin-bottom: 12px; line-height: 1.45;">
-          Tempel (paste) teks format laporan aduan yang dikirim warga via WhatsApp (contoh: <em>ADU-LMB-2026-001</em>). Sistem akan membaca Nomor Register, Pelapor, Titik GPS, dan Uraian secara otomatis.
+          Tempel (paste) teks format laporan aduan yang dikirim warga via WhatsApp (contoh: <em>ADU-26-K8M4</em>). Sistem akan membaca Nomor Register, Pelapor, Titik GPS, dan Uraian secara otomatis.
         </p>
 
         <div class="form-group-modal">
@@ -4694,7 +4694,7 @@
             <span>Teks Pesan WhatsApp:</span>
             <button type="button" class="auto-ba-btn" onclick="window.portal.pasteClipboardToWaImport()" style="font-size: 0.72rem; padding: 2px 8px;">📋 Tempel dari Clipboard</button>
           </label>
-          <textarea id="inputWaRawText" class="form-control-modal" rows="8" style="font-family: monospace; font-size: 0.82rem; line-height: 1.45;" placeholder="Tempelkan pesan WhatsApp laporan pengaduan masyarakat di sini...&#10;&#10;Contoh:&#10;*LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA*&#10;📌 *NOMOR REGISTER:* ADU-LMB-2026-001&#10;👤 *DATA PELAPOR:*&#10;• *Nama Pelapor:* Fransiskus Kedang&#10;• *Nomor WhatsApp / HP:* 081234567890&#10;📍 *LOKASI KEJADIAN PENCEMARAN:*&#10;• *Kecamatan:* Nubatukan&#10;• *Desa / Kelurahan:* Lewoleba Tengah&#10;• *Titik Koordinat GPS:* -8.3615, 123.5512&#10;⚠️ *RINCIAN MASALAH:*&#10;• *Jenis Pencemaran:* Laut & Pesisir"></textarea>
+          <textarea id="inputWaRawText" class="form-control-modal" rows="8" style="font-family: monospace; font-size: 0.82rem; line-height: 1.45;" placeholder="Tempelkan pesan WhatsApp laporan pengaduan masyarakat di sini...&#10;&#10;Contoh:&#10;*LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA*&#10;📌 *NOMOR REGISTER:* ADU-26-K8M4&#10;👤 *DATA PELAPOR:*&#10;• *Nama Pelapor:* Fransiskus Kedang&#10;• *Nomor WhatsApp / HP:* 081234567890&#10;📍 *LOKASI KEJADIAN PENCEMARAN:*&#10;• *Kecamatan:* Nubatukan&#10;• *Desa / Kelurahan:* Lewoleba Tengah&#10;• *Titik Koordinat GPS:* -8.3615, 123.5512&#10;⚠️ *RINCIAN MASALAH:*&#10;• *Jenis Pencemaran:* Laut & Pesisir"></textarea>
         </div>
 
         <div style="margin-bottom: 14px;">
@@ -8363,15 +8363,20 @@
         // Helper regex extraction
         const clean = (val) => (val || '').replace(/[\*\_]/g, '').trim();
 
-        // 1. Ekstrak Nomor Register (misal ADU-LMB-2026-1017-8K4F atau ADU-LMB-2026-480)
+        // 1. Ekstrak Nomor Register (misal ADU-26-K8M4, ADU-LMB-2026-1017-8K4F, atau ADU-LMB-2026-001)
         let id = '';
-        const matchId = raw.match(/NOMOR\s+REGISTER:\s*([A-Za-z0-9\-]+)/i) || raw.match(/(ADU-LMB-[A-Za-z0-9\-]+)/i);
+        const matchId = raw.match(/NOMOR\s+REGISTER:\s*([A-Za-z0-9\-]+)/i) || raw.match(/(ADU-[A-Za-z0-9\-]+)/i);
         if (matchId && matchId[1]) {
           id = clean(matchId[1]).toUpperCase();
         } else {
           id = (window.aduanStore && typeof window.aduanStore.generateNewId === 'function')
             ? window.aduanStore.generateNewId()
-            : `ADU-LMB-${new Date().getFullYear()}-${Date.now().toString(36).toUpperCase()}`;
+            : (function() {
+                const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+                let code = '';
+                for (let i = 0; i < 4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+                return `ADU-${String(new Date().getFullYear()).slice(-2)}-${code}`;
+              })();
         }
 
         // 2. Ekstrak Nama Pelapor

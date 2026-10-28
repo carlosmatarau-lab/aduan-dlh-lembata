@@ -1715,9 +1715,9 @@ class AduanDataStore {
       const cid = String(item.id).trim().toUpperCase();
       if (this.isDeleted(cid) || seen.has(cid)) return false;
 
-      // Cek apakah ID memiliki suffix tambahan dari retry lama (seperti ADU-LMB-YYYY-MMDD-XXXX-YYY)
+      // Cek apakah ID memiliki suffix tambahan dari retry lama
       // dan base ID aslinya sudah tercatat di list
-      const baseMatch = cid.match(/^(ADU-LMB-\d{4}-\d{4}-[A-Z0-9]{4,5})-[A-Z0-9]{3,}$/);
+      const baseMatch = cid.match(/^(ADU(?:-LMB)?-[A-Z0-9\-]+)-[A-Z0-9]{3,}$/);
       if (baseMatch) {
         const baseId = baseMatch[1];
         if (seen.has(baseId)) {
@@ -1805,26 +1805,23 @@ class AduanDataStore {
   }
 
   /**
-   * Generate Nomor Tiket Unik Bebas Tumpang Tindih
-   * Format: ADU-LMB-YYYY-MMDD-XXXX (contoh: ADU-LMB-2026-1017-8K4F)
-   * Menjamin keunikan 100% antar perangkat, offline/online, dan bebas tubrukan
+   * Generate Nomor Register Tiket Aduan Unik & Simpel
+   * Format: ADU-[2 Digit Tahun]-[4 Karakter Alfanumerik Acak] (contoh: ADU-26-K8M4)
+   * Menggunakan 32 karakter alfanumerik no-ambiguity (tanpa angka 0, huruf O, angka 1, huruf I).
    */
   generateNewId() {
-    const now = new Date();
-    const year = now.getFullYear();
-    const month = String(now.getMonth() + 1).padStart(2, '0');
-    const day = String(now.getDate()).padStart(2, '0');
     const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
-    let entropy = '';
-    for (let i = 0; i < 4; i++) {
-      entropy += chars.charAt(Math.floor(Math.random() * chars.length));
-    }
-    const candidateId = `ADU-LMB-${year}-${month}${day}-${entropy}`;
-    const exists = (this.aduanList || []).some(x => x && x.id && x.id.toUpperCase() === candidateId);
-    if (exists) {
-      const extra = chars.charAt(Math.floor(Math.random() * chars.length));
-      return `ADU-LMB-${year}-${month}${day}-${entropy}${extra}`;
-    }
+    const yr = String(new Date().getFullYear()).slice(-2);
+    let candidateId = '';
+    let attempts = 0;
+    do {
+      let code = '';
+      for (let i = 0; i < 4; i++) {
+        code += chars.charAt(Math.floor(Math.random() * chars.length));
+      }
+      candidateId = `ADU-${yr}-${code}`;
+      attempts++;
+    } while (attempts < 10 && (this.aduanList || []).some(x => x && x.id && x.id.toUpperCase() === candidateId));
     return candidateId;
   }
 
