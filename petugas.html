@@ -4381,12 +4381,50 @@
               placeholder="Contoh: Tim Pengawasan LH (Yohanes B. &amp; Maria K.)">
           </div>
 
-          <!-- Tanggal Verifikasi -->
-          <div class="form-group-modal">
-            <label class="form-label-modal" for="vTanggalVerifikasi">
-              Tanggal Pemeriksaan Lapangan
+          <!-- Penjadwalan Kunjungan & Pemeriksaan Lapangan Mandiri Petugas -->
+          <div class="form-group-modal" style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 12px 14px;">
+            <label class="form-label-modal" style="color: #065f46; font-weight: 800; font-size: 0.88rem; display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
+              <span>🗓️</span> Jadwal Kunjungan Lapangan Tim DLH
             </label>
-            <input type="date" id="vTanggalVerifikasi" class="form-control-modal">
+            
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
+              <div>
+                <label class="form-label-modal" for="vTanggalVerifikasi" style="font-size: 0.78rem; font-weight: 700; color: #166534; margin-bottom: 4px;">
+                  Tanggal Kunjungan
+                </label>
+                <input type="date" id="vTanggalVerifikasi" class="form-control-modal">
+              </div>
+              <div>
+                <label class="form-label-modal" for="vJamKunjungan" style="font-size: 0.78rem; font-weight: 700; color: #166534; margin-bottom: 4px;">
+                  Waktu / Jam (WITA)
+                </label>
+                <input type="time" id="vJamKunjungan" class="form-control-modal">
+              </div>
+            </div>
+
+            <div>
+              <label class="form-label-modal" for="vCatatanJadwal" style="font-size: 0.78rem; font-weight: 700; color: #166534; margin-bottom: 4px;">
+                Catatan Jadwal (Opsional)
+              </label>
+              <input type="text" id="vCatatanJadwal" class="form-control-modal" placeholder="Contoh: Koordinasi bersama aparat desa setempat pukul 09:30 WITA">
+            </div>
+            <small style="font-size: 0.73rem; color: #047857; margin-top: 6px; display: block;">
+              Petugas menentukan jadwal kunjungan secara mandiri berdasarkan kesiapan tim lapangan.
+            </small>
+          </div>
+
+          <!-- Target Waktu Penanganan (Hari Kerja) Mandiri Petugas -->
+          <div class="form-group-modal">
+            <label class="form-label-modal" for="vTargetHariInput">
+              ⏱️ Target Waktu Penanganan (Hari Kerja) <span style="color: #e11d48;">*</span>
+            </label>
+            <div style="display: flex; align-items: center; gap: 10px;">
+              <input type="number" id="vTargetHariInput" class="form-control-modal" min="1" max="60" placeholder="Contoh: 3" style="max-width: 140px;">
+              <span style="font-size: 0.85rem; color: #475569; font-weight: 600;">Hari Kerja</span>
+            </div>
+            <small style="font-size: 0.74rem; color: #64748b; margin-top: 4px; display: block;">
+              Tentukan estimasi waktu penyelesaian berdasarkan tingkat kesulitan dan kebutuhan armada di lapangan.
+            </small>
           </div>
 
           <!-- INSTRUMEN DAFTAR PERIKSA (CHECKLIST) VERIFIKASI LAPANGAN -->
@@ -5428,9 +5466,7 @@
 
               const mapWaPhone = this.formatWhatsAppPhone(item.noHp);
               const mapDisplayPhone = this.formatPhoneDisplay(item.noHp);
-              const mapWaText = encodeURIComponent(
-                `Halo Bapak/Ibu ${item.namaPelapor}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata mengonfirmasi laporan Anda dengan No. Register: ${item.id} terkait dugaan ${item.jenisPencemaran} di Desa ${item.desa || '-'}, Kec. ${item.kecamatan || '-'}. Mohon informasi tambahan terkait laporan ini.`
-              );
+              const mapWaText = encodeURIComponent(this.generateWaMessage(item));
               const mapWaUrl = mapWaPhone ? `https://wa.me/${mapWaPhone}?text=${mapWaText}` : '';
 
               const popupHtml = `
@@ -5999,9 +6035,7 @@
           const vWaPhone = this.formatWhatsAppPhone(item.noHp);
           const vDisplayPhone = this.formatPhoneDisplay(item.noHp);
           if (vWaPhone) {
-            const vWaText = encodeURIComponent(
-              `Halo Bapak/Ibu ${item.namaPelapor}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata mengonfirmasi laporan Anda dengan No. Register: ${item.id} terkait dugaan ${item.jenisPencemaran} di Desa ${item.desa || '-'}, Kec. ${item.kecamatan || '-'}. Mohon informasi tambahan terkait verifikasi lapangan.`
-            );
+            const vWaText = encodeURIComponent(this.generateWaMessage(item));
             vKontakEl.innerHTML = `
               <strong style="color: #0f172a;">${vDisplayPhone}</strong>
               <a href="https://wa.me/${vWaPhone}?text=${vWaText}" target="_blank" rel="noopener noreferrer"
@@ -6017,7 +6051,41 @@
         // Set form fields
         document.getElementById('vStatusSelect').value = item.status || 'Diverifikasi';
         document.getElementById('vPetugasInput').value = (item.petugasVerifikasi && item.petugasVerifikasi !== '-') ? item.petugasVerifikasi : 'Tim Verifikasi Lapangan DLH Lembata';
-        document.getElementById('vTanggalVerifikasi').value = item.tanggalVerifikasi || new Date().toISOString().split('T')[0];
+        
+        // Tanggal & Jam Kunjungan Mandiri Petugas
+        let defaultTgl = '';
+        if (item.tanggalVerifikasi && item.tanggalVerifikasi !== '-') {
+          defaultTgl = item.tanggalVerifikasi;
+        } else if (item.jadwalKunjungan) {
+          defaultTgl = String(item.jadwalKunjungan).split(' ')[0] || '';
+        } else {
+          // Default ke tanggal hari berikutnya (besok)
+          const tomorrow = new Date();
+          tomorrow.setDate(tomorrow.getDate() + 1);
+          defaultTgl = tomorrow.toISOString().split('T')[0];
+        }
+        document.getElementById('vTanggalVerifikasi').value = defaultTgl;
+
+        const elJam = document.getElementById('vJamKunjungan');
+        if (elJam) {
+          let defaultJam = item.jamKunjungan || '';
+          if (!defaultJam && item.jadwalKunjungan && item.jadwalKunjungan.includes(' ')) {
+            defaultJam = item.jadwalKunjungan.split(' ')[1] || '';
+          }
+          elJam.value = defaultJam || '09:00';
+        }
+
+        const elCatatanJadwal = document.getElementById('vCatatanJadwal');
+        if (elCatatanJadwal) {
+          elCatatanJadwal.value = item.catatanJadwal || '';
+        }
+
+        // Target Waktu Penanganan (Hari Kerja) Mandiri Petugas
+        const elTargetHari = document.getElementById('vTargetHariInput');
+        if (elTargetHari) {
+          elTargetHari.value = (item.targetHari && !isNaN(item.targetHari)) ? item.targetHari : '';
+        }
+
         document.getElementById('vHasilVerifikasi').value = item.hasilVerifikasi && item.hasilVerifikasi !== '-' ? item.hasilVerifikasi : '';
         document.getElementById('vTindakanDLH').value = item.tindakanDLH && item.tindakanDLH !== '-' ? item.tindakanDLH : '';
         document.getElementById('vTanggalSelesai').value = item.tanggalSelesai && item.tanggalSelesai !== '-' ? item.tanggalSelesai : '';
@@ -6400,6 +6468,36 @@
             </div>
           </div>
 
+          <!-- JADWAL KUNJUNGAN & TARGET WAKTU PENANGANAN MANDIRI PETUGAS -->
+          <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 14px 16px; margin-bottom: 18px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
+              <div style="font-weight: 800; color: #065f46; font-size: 0.88rem; display: flex; align-items: center; gap: 6px;">
+                <span>🗓️</span> Jadwal Kunjungan &amp; Target Penanganan Petugas
+              </div>
+              <div>${this.getSlaBadgeHtml(item)}</div>
+            </div>
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;">
+              <div style="background: #ffffff; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px;">
+                <span style="font-size: 0.72rem; color: #166534; font-weight: 800; text-transform: uppercase; display: block; margin-bottom: 3px;">
+                  Jadwal Pemeriksaan Lapangan
+                </span>
+                <strong style="color: #0f172a; font-size: 0.92rem; display: block;">
+                  ${item.jadwalKunjungan ? `🗓️ ${this.escHtml(this.formatJadwalKunjungan(item.jadwalKunjungan, item.jamKunjungan))}` : 'Menunggu Verifikasi Petugas'}
+                </strong>
+                ${item.catatanJadwal ? `<div style="font-size: 0.76rem; color: #475569; margin-top: 4px;">📌 ${this.escHtml(item.catatanJadwal)}</div>` : ''}
+              </div>
+              <div style="background: #ffffff; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px;">
+                <span style="font-size: 0.72rem; color: #166534; font-weight: 800; text-transform: uppercase; display: block; margin-bottom: 3px;">
+                  Target Waktu (SLA) &amp; Tenggat
+                </span>
+                <strong style="color: #0f172a; font-size: 0.92rem; display: block;">
+                  ${item.targetHari ? `⏱️ ${item.targetHari} Hari Kerja` : 'Belum Ditentukan'}
+                </strong>
+                ${item.tenggatWaktu ? `<div style="font-size: 0.76rem; color: #475569; margin-top: 4px;">Tenggat: <strong>${item.tenggatWaktu}</strong></div>` : ''}
+              </div>
+            </div>
+          </div>
+
           <!-- Grid Info Pelapor & Lokasi -->
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px;">
@@ -6410,9 +6508,7 @@
                 ${(function(portalInst) {
                   const dWaPhone = portalInst.formatWhatsAppPhone(item.noHp);
                   if (!dWaPhone) return '';
-                  const dWaText = encodeURIComponent(
-                    `Halo Bapak/Ibu ${item.namaPelapor}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata mengonfirmasi laporan Anda dengan No. Register: ${item.id} terkait dugaan ${item.jenisPencemaran} di Desa ${item.desa || '-'}, Kec. ${item.kecamatan || '-'}. Mohon informasi tambahan terkait laporan ini.`
-                  );
+                  const dWaText = encodeURIComponent(portalInst.generateWaMessage(item));
                   return `
                     <a href="https://wa.me/${dWaPhone}?text=${dWaText}" target="_blank" rel="noopener noreferrer" 
                        style="background: #16a34a; color: white; padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(22,163,74,0.3); transition: background 0.2s;"
@@ -7589,6 +7685,98 @@
       }
 
       /**
+       * Format tampilan jadwal kunjungan lapangan DLH Lembata
+       */
+      formatJadwalKunjungan(jadwalRaw, jamRaw) {
+        if (!jadwalRaw || jadwalRaw === '-') return '';
+        const str = String(jadwalRaw).trim();
+        const parts = str.split(' ');
+        const datePart = parts[0];
+        const timePart = jamRaw || parts[1] || '';
+
+        const d = this.parseAduanDate(datePart);
+        if (!d) return str;
+
+        const HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const BULAN_PENDEK = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+
+        const hariStr = HARI[d.getDay()];
+        const tglStr = `${d.getDate()} ${BULAN_PENDEK[d.getMonth()]} ${d.getFullYear()}`;
+
+        if (timePart) {
+          return `${hariStr}, ${tglStr} • ${timePart} WITA`;
+        }
+        return `${hariStr}, ${tglStr}`;
+      }
+
+      /**
+       * Badge status target waktu penanganan (SLA mandiri petugas)
+       */
+      getSlaBadgeHtml(item) {
+        if (!item || !item.targetHari) {
+          const isUnverified = (!item.status || item.status === 'Baru' || item.status === 'Aduan Diterima');
+          if (isUnverified) {
+            return `<span style="font-size: 0.72rem; color: #64748b; background: #f1f5f9; padding: 2px 8px; border-radius: 999px; font-weight: 600;">Menunggu Verifikasi Petugas</span>`;
+          }
+          return '';
+        }
+
+        const targetHari = parseInt(item.targetHari, 10);
+        let isOverdue = false;
+
+        if (item.status !== 'Selesai' && item.tenggatWaktu) {
+          const tenggatDate = this.parseAduanDate(item.tenggatWaktu);
+          if (tenggatDate) {
+            const now = new Date();
+            const nowUtc = now.getTime() + (now.getTimezoneOffset() * 60000);
+            const nowWita = new Date(nowUtc + (8 * 3600000));
+            const targetUtc = tenggatDate.getTime() + (tenggatDate.getTimezoneOffset() * 60000);
+            const targetWita = new Date(targetUtc + (8 * 3600000));
+
+            const nowDateOnly = new Date(nowWita.getFullYear(), nowWita.getMonth(), nowWita.getDate()).getTime();
+            const targetDateOnly = new Date(targetWita.getFullYear(), targetWita.getMonth(), targetWita.getDate()).getTime();
+
+            if (nowDateOnly > targetDateOnly) {
+              isOverdue = true;
+            }
+          }
+        }
+
+        if (isOverdue) {
+          return `<span style="background: #fee2e2; color: #b91c1c; font-size: 0.74rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; border: 1px solid #fca5a5; display: inline-flex; align-items: center; gap: 3px;" title="Target penanganan telah melampaui ${targetHari} hari kerja sejak diverifikasi">⚠️ Melewati Target (${targetHari} Hari)</span>`;
+        }
+
+        return `<span style="background: #eff6ff; color: #1d4ed8; font-size: 0.74rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; border: 1px solid #bfdbfe; display: inline-flex; align-items: center; gap: 3px;">⏱️ Target: ${targetHari} Hari</span>`;
+      }
+
+      /**
+       * Generate template pesan WhatsApp ke pelapor (menyertakan jadwal kunjungan jika telah ditentukan)
+       */
+      generateWaMessage(item) {
+        if (!item) return '';
+        const desaKel = this.formatDesaKelurahan(item.desa);
+        const kec = item.kecamatan || '-';
+        const nama = item.namaPelapor || 'Bapak/Ibu';
+        const id = item.id || '';
+        const jenis = item.jenisPencemaran || 'lingkungan';
+
+        if (item.jadwalKunjungan) {
+          const jadwalFormatted = this.formatJadwalKunjungan(item.jadwalKunjungan, item.jamKunjungan);
+          let msg = `Halo Bapak/Ibu ${nama}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata. Laporan Anda dengan No. Register: ${id} terkait dugaan ${jenis} di ${desaKel}, Kec. ${kec} telah kami verifikasi.\n\n🗓️ Tim DLH dijadwalkan turun ke lokasi pemeriksaan pada ${jadwalFormatted}.`;
+          if (item.catatanJadwal) {
+            msg += `\n📌 Catatan Jadwal: ${item.catatanJadwal}`;
+          }
+          if (item.targetHari) {
+            msg += `\n⏱️ Target estimasi waktu penanganan: ${item.targetHari} hari kerja.`;
+          }
+          msg += `\n\nMohon kesediaannya saat tim kami tiba di lokasi. Terima kasih atas kepedulian Anda terhadap kelestarian lingkungan Kabupaten Lembata.`;
+          return msg;
+        }
+
+        return `Halo Bapak/Ibu ${nama}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata mengonfirmasi laporan Anda dengan No. Register: ${id} terkait dugaan ${jenis} di ${desaKel}, Kec. ${kec}. Mohon informasi tambahan terkait laporan ini.`;
+      }
+
+      /**
        * Render Daftar Ringkas khusus tampilan mobile (<= 768px)
        */
       renderCompactList(filtered, data) {
@@ -7648,6 +7836,7 @@
           }
 
           const iconSvg = this.getJenisPencemaranIcon(jenis);
+          const jadwalRingkas = item.jadwalKunjungan ? this.formatJadwalKunjungan(item.jadwalKunjungan, item.jamKunjungan) : '';
 
           return `
             <div class="rk-row"
@@ -7662,6 +7851,8 @@
               <div class="rk-center-col">
                 <div class="rk-title ${isBaru ? 'rk-title-bold' : ''}">${this.escHtml(jenis)}</div>
                 <div class="rk-sub">${this.escHtml(pelapor)} &bull; ${this.escHtml(desaLabel)}</div>
+                ${jadwalRingkas ? `<div style="font-size: 11px; color: #047857; font-weight: 700; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">🗓️ ${this.escHtml(jadwalRingkas)}</div>` : ''}
+                ${item.targetHari ? `<div style="margin-top: 3px;">${this.getSlaBadgeHtml(item)}</div>` : ''}
               </div>
               <div class="rk-right-col">
                 <div class="rk-meta-top">${rightTopHtml}</div>
@@ -7815,11 +8006,10 @@
 
           const rowWaPhone = this.formatWhatsAppPhone(item.noHp);
           const rowDisplayPhone = this.formatPhoneDisplay(item.noHp);
-          const rowWaText = encodeURIComponent(
-            `Halo Bapak/Ibu ${item.namaPelapor}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata mengonfirmasi laporan Anda dengan No. Register: ${item.id} terkait dugaan ${item.jenisPencemaran} di ${desaKelLabel}, Kec. ${item.kecamatan || '-'}. Mohon informasi tambahan terkait laporan ini.`
-          );
+          const rowWaText = encodeURIComponent(this.generateWaMessage(item));
           const rowWaUrl = rowWaPhone ? `https://wa.me/${rowWaPhone}?text=${rowWaText}` : '';
           const isExpanded = this.expandedMobileRows && this.expandedMobileRows.has(item.id);
+          const jadwalKunjunganText = item.jadwalKunjungan ? this.formatJadwalKunjungan(item.jadwalKunjungan, item.jamKunjungan) : '';
 
           return `
             <tr class="aduan-main-row ${isExpanded ? 'expanded' : ''}" data-id="${item.id}" onclick="window.portal.handleMobileRowClick(event, '${item.id}')">
@@ -7861,6 +8051,8 @@
               <td class="col-status">
                 <div class="status-cell-inner" style="display: flex; flex-direction: column; gap: 3px; align-items: flex-start;">
                   <div>${this.getStatusBadgeHtml(item.status)}</div>
+                  ${jadwalKunjunganText ? `<div style="font-size: 0.74rem; color: #047857; font-weight: 700; line-height: 1.25;">🗓️ ${this.escHtml(jadwalKunjunganText)}</div>` : ''}
+                  <div>${this.getSlaBadgeHtml(item)}</div>
                   <div class="desktop-verif-meta" style="font-size: 0.78rem; font-weight: 700; color: #1e293b; line-height: 1.25;">
                     ${verifName}
                   </div>
@@ -7907,6 +8099,13 @@
                     <span class="acc-detail-label">📅 Tanggal Lapor</span>
                     <div class="acc-detail-val">
                       <span>${formattedDate}${timeOnly ? ` • ${timeOnly} WITA` : ''}</span>
+                    </div>
+                  </div>
+                  <div class="acc-detail-item acc-full">
+                    <span class="acc-detail-label">🗓️ Jadwal Kunjungan Lapangan &amp; Target SLA</span>
+                    <div class="acc-detail-val" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+                      <span>${jadwalKunjunganText ? `🗓️ ${this.escHtml(jadwalKunjunganText)}` : 'Menunggu Verifikasi Petugas'}</span>
+                      <div>${this.getSlaBadgeHtml(item)}</div>
                     </div>
                   </div>
                   <div class="acc-detail-item acc-full">
@@ -7974,9 +8173,7 @@
         // Siapkan tautan WhatsApp Pelapor
         const waPhone = this.formatWhatsAppPhone(item.noHp);
         const displayPhone = this.formatPhoneDisplay(item.noHp);
-        const waTextPelapor = encodeURIComponent(
-          `Halo Bapak/Ibu ${item.namaPelapor}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata mengonfirmasi laporan Anda dengan No. Register: ${item.id} terkait dugaan ${item.jenisPencemaran} di Desa ${item.desa || '-'}, Kec. ${item.kecamatan || '-'}. Mohon informasi tambahan terkait laporan ini.`
-        );
+        const waTextPelapor = encodeURIComponent(this.generateWaMessage(item));
         const waUrl = waPhone ? `https://wa.me/${waPhone}?text=${waTextPelapor}` : '';
 
         menu.innerHTML = `
@@ -8244,10 +8441,33 @@
               const isUnverifiedStatus = (selectedStatus === 'Baru' || selectedStatus === 'Aduan Diterima');
               const checkedChecklist = Array.from(document.querySelectorAll('.v-chk-input:checked')).map(i => i.value);
 
+              const tglKunjungan = document.getElementById('vTanggalVerifikasi').value;
+              const jamKunjungan = document.getElementById('vJamKunjungan') ? document.getElementById('vJamKunjungan').value : '';
+              const catatanJadwal = document.getElementById('vCatatanJadwal') ? document.getElementById('vCatatanJadwal').value.trim() : '';
+              const jadwalKunjungan = tglKunjungan ? (jamKunjungan ? `${tglKunjungan} ${jamKunjungan}` : tglKunjungan) : '';
+
+              const targetHariInputEl = document.getElementById('vTargetHariInput');
+              const targetHariVal = targetHariInputEl ? parseInt(targetHariInputEl.value, 10) : null;
+              const targetHari = (!isNaN(targetHariVal) && targetHariVal > 0) ? targetHariVal : null;
+
+              let tenggatWaktu = '';
+              if (targetHari && tglKunjungan) {
+                const baseDate = new Date(tglKunjungan);
+                if (!isNaN(baseDate.getTime())) {
+                  baseDate.setDate(baseDate.getDate() + targetHari);
+                  tenggatWaktu = baseDate.toISOString().split('T')[0];
+                }
+              }
+
               const updateData = {
                 status: selectedStatus,
                 petugasVerifikasi: isUnverifiedStatus ? '-' : document.getElementById('vPetugasInput').value.trim(),
-                tanggalVerifikasi: document.getElementById('vTanggalVerifikasi').value,
+                tanggalVerifikasi: tglKunjungan,
+                jadwalKunjungan: isUnverifiedStatus ? '' : jadwalKunjungan,
+                jamKunjungan: isUnverifiedStatus ? '' : jamKunjungan,
+                catatanJadwal: isUnverifiedStatus ? '' : catatanJadwal,
+                targetHari: isUnverifiedStatus ? null : targetHari,
+                tenggatWaktu: isUnverifiedStatus ? '' : tenggatWaktu,
                 hasilVerifikasi: document.getElementById('vHasilVerifikasi').value.trim(),
                 checklistVerifikasi: isUnverifiedStatus ? [] : checkedChecklist,
                 tindakanDLH: document.getElementById('vTindakanDLH').value.trim(),
