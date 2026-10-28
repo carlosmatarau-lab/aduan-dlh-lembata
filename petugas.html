@@ -6197,33 +6197,6 @@
 
         const mapsUrl = (item.lat && item.lng) ? `https://maps.google.com/?q=${item.lat},${item.lng}` : '';
 
-        const formatDisplayTimestamp = (raw) => {
-          if (!raw || raw === '-') return '';
-          const str = String(raw).trim();
-          if (!str) return '';
-          if (/^\d{4}-\d{2}-\d{2}(\s\d{2}:\d{2})?$/.test(str)) return str;
-          const d = new Date(str);
-          if (!isNaN(d.getTime())) {
-            const y = d.getFullYear();
-            const m = String(d.getMonth() + 1).padStart(2, '0');
-            const day = String(d.getDate()).padStart(2, '0');
-            const h = String(d.getHours()).padStart(2, '0');
-            const min = String(d.getMinutes()).padStart(2, '0');
-            return `${y}-${m}-${day} ${h}:${min}`;
-          }
-          return str;
-        };
-
-        // Hitung siklus timestamp akuntabilitas
-        const timeMasuk = formatDisplayTimestamp(item.timestamp) || item.tanggalKejadian || 'Tercatat';
-        const timeVerif = formatDisplayTimestamp(item.timestampVerifikasi) || (item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' ? `${formatDisplayTimestamp(item.tanggalVerifikasi).split(' ')[0]} 09:30` : '');
-        const timeTindak = formatDisplayTimestamp(item.timestampTindakLanjut) || ((item.status === 'Ditindaklanjuti' || item.status === 'Dalam Penanganan' || item.status === 'Selesai') && item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' ? `${formatDisplayTimestamp(item.tanggalVerifikasi).split(' ')[0]} 14:00` : '');
-        const timeSelesai = formatDisplayTimestamp(item.timestampSelesai) || (item.tanggalSelesai && item.tanggalSelesai !== '-' ? `${formatDisplayTimestamp(item.tanggalSelesai).split(' ')[0]} 16:30` : '');
-
-        const isVerifDone = !!(timeVerif || item.tanggalVerifikasi && item.tanggalVerifikasi !== '-');
-        const isTindakDone = !!(timeTindak || item.status === 'Ditindaklanjuti' || item.status === 'Dalam Penanganan' || item.status === 'Selesai');
-        const isSelesaiDone = item.status === 'Selesai';
-
         const stNorm = this.normalizeStatus(item.status);
 
         let progressBarHtml = '';
@@ -6277,12 +6250,13 @@
         }
 
         body.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 8px;">
+          <!-- A. Header Ringkas (No. Register & Status) -->
+          <div style="display: flex; justify-content: space-between; align-items: center; padding-bottom: 8px; margin-bottom: 8px; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 6px;">
             <div>
-              <span style="font-size: 0.72rem; color: #64748b; font-weight: 800; text-transform: uppercase;">NO. REGISTER ADUAN RESMI:</span>
-              <h2 style="font-size: 1.35rem; color: #065f46; font-weight: 800; font-family: monospace; margin: 0;">${this.escHtml(item.id)}</h2>
+              <span style="font-size: 0.68rem; color: #64748b; font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; display: block;">NO. REGISTER:</span>
+              <h2 style="font-size: 1.25rem; color: #065f46; font-weight: 800; font-family: monospace; margin: 0; line-height: 1.2;">${this.escHtml(item.id)}</h2>
             </div>
-            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+            <div style="display: flex; align-items: center; gap: 6px;">
               ${this.getStatusBadgeHtml(item.status)}
             </div>
           </div>
@@ -6290,360 +6264,222 @@
           <!-- Bar Progres Tahapan Siklus Penanganan Aduan -->
           ${progressBarHtml}
 
-          <!-- ==============================================================
-               LOG TIMESTAMP AKUNTABILITAS KINERJA BULANAN DLH
-               ============================================================== -->
-          <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 12px; padding: 16px; margin-bottom: 18px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-              <div style="font-weight: 800; color: #0f172a; font-size: 0.88rem; display: flex; align-items: center; gap: 6px;">
-                <span>⏱️</span> Akuntabilitas Kinerja &bull; Log Timestamp Siklus Penanganan
+          <!-- B. Kartu Identitas & Lokasi (Grid 2 Kolom Kompak) -->
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
+            <!-- Kolom Kiri: Pelapor -->
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 10px; border-radius: 8px;">
+              <div style="color: #64748b; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; margin-bottom: 2px;">👤 PELAPOR</div>
+              <div style="font-weight: 700; color: #0f172a; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${this.escHtml(item.namaPelapor || '-')}">
+                ${this.escHtml(item.namaPelapor || 'Warga')}
               </div>
-              <span style="font-size: 0.72rem; background: #e2e8f0; color: #334155; font-weight: 700; padding: 2px 8px; border-radius: 999px;">
-                Standar SPM DLH
-              </span>
-            </div>
-
-            <div class="timeline-accountability">
-              <!-- Tahap 1: Masuk -->
-              <div class="timeline-node done">
-                <div class="timeline-dot">✓</div>
-                <div class="timeline-content-card">
-                  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <strong style="color: #0f172a;">1. Laporan Masuk &amp; Registrasi Sistem</strong>
-                    <span class="timeline-time-badge">${timeMasuk}</span>
-                  </div>
-                  <div style="color: #64748b; font-size: 0.76rem; margin-top: 2px;">
-                    Aduan masyarakat berhasil didata dan nomor tiket diterbitkan.
-                  </div>
-                </div>
+              <div style="font-size: 0.76rem; color: #475569; font-family: monospace; margin-top: 2px;">
+                📞 ${this.formatPhoneDisplay(item.noHp)}
               </div>
-
-              <!-- Tahap 2: Verifikasi Lapangan -->
-              <div class="timeline-node ${isVerifDone ? 'done' : 'active'}">
-                <div class="timeline-dot">${isVerifDone ? '✓' : '2'}</div>
-                <div class="timeline-content-card">
-                  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <strong style="color: #0f172a;">2. Pemeriksaan Fisik &amp; Verifikasi Faktual</strong>
-                    <span class="timeline-time-badge">${timeVerif ? timeVerif : 'Sedang Dijadwalkan'}</span>
-                  </div>
-                  <div style="color: #64748b; font-size: 0.76rem; margin-top: 2px;">
-                    Verifikator: <strong>${item.petugasVerifikasi && item.petugasVerifikasi !== '-' ? item.petugasVerifikasi : 'Menunggu penugasan tim DLH'}</strong>
-                  </div>
-                </div>
-              </div>
-
-              <!-- Tahap 3: Tindak Lanjut Teknis -->
-              <div class="timeline-node ${isTindakDone ? 'done' : (isVerifDone ? 'active' : '')}">
-                <div class="timeline-dot">${isTindakDone ? '✓' : '3'}</div>
-                <div class="timeline-content-card">
-                  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <strong style="color: #0f172a;">3. Penanganan &amp; Rekomendasi Nyata DLH</strong>
-                    <span class="timeline-time-badge">${timeTindak ? timeTindak : (isVerifDone ? 'Dalam Penanganan' : 'Antrean')}</span>
-                  </div>
-                  <div style="color: #64748b; font-size: 0.76rem; margin-top: 2px;">
-                    Tindakan: ${(item.tindakanDLH && item.tindakanDLH !== '-') ? item.tindakanDLH : 'Pengangkutan / teguran / koordinasi desa'}
-                  </div>
-                </div>
-              </div>
-
-              <!-- Tahap 4: Tuntas Selesai -->
-              <div class="timeline-node ${isSelesaiDone ? 'done' : ''}">
-                <div class="timeline-dot">${isSelesaiDone ? '✓' : '4'}</div>
-                <div class="timeline-content-card">
-                  <div style="display: flex; justify-content: space-between; align-items: flex-start;">
-                    <strong style="color: #0f172a;">4. Perkara Lingkungan Dinyatakan Tuntas</strong>
-                    <span class="timeline-time-badge">${isSelesaiDone ? (timeSelesai || 'Tuntas') : 'Belum Ditutup'}</span>
-                  </div>
-                  <div style="color: #64748b; font-size: 0.76rem; margin-top: 2px;">
-                    ${isSelesaiDone ? 'Telah diverifikasi tuntas & didokumentasikan ke laporan akuntabilitas DLH.' : 'Kasus masih berjalan dalam pengawasan DLH Lembata.'}
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <!-- SLA & Compliance Metric Box -->
-            <div class="sla-metric-box">
-              <div style="font-size: 0.8rem; color: #1e3a8a;">
-                <strong>📊 Indikator Kinerja Pelayanan:</strong>
-                <div style="font-size: 0.75rem; color: #3b82f6; margin-top: 2px;">
-                  Target Respons Verifikasi: &le; 24 Jam &bull; Target Penyelesaian: &le; 3 Hari Kerja
-                </div>
-              </div>
-              <span style="font-size: 0.75rem; font-weight: 800; background: #dcfce7; color: #15803d; padding: 4px 10px; border-radius: 999px; border: 1px solid #bbf7d0;">
-                🌱 ${isSelesaiDone ? 'SOP Terpenuhi &bull; Akuntabel' : 'Dalam Pemantauan DLH'}
-              </span>
-            </div>
-          </div>
-
-          <!-- Grid Info Pelapor & Lokasi -->
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 16px;">
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px;">
-              <div style="color: #64748b; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">👤 IDENTITAS PELAPOR</div>
-              <div style="font-weight: 800; color: #0f172a; font-size: 0.95rem;">${item.namaPelapor}</div>
-              <div style="color: #475569; font-size: 0.82rem; margin-top: 4px; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
-                <div>No. WhatsApp: <strong style="font-family: monospace; color: #0f172a;">${this.formatPhoneDisplay(item.noHp)}</strong></div>
-                ${(function(portalInst) {
-                  const dWaPhone = portalInst.formatWhatsAppPhone(item.noHp);
-                  if (!dWaPhone) return '';
-                  const dWaText = encodeURIComponent(
-                    `Halo Bapak/Ibu ${item.namaPelapor}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata mengonfirmasi laporan Anda dengan No. Register: ${item.id} terkait dugaan ${item.jenisPencemaran} di Desa ${item.desa || '-'}, Kec. ${item.kecamatan || '-'}. Mohon informasi tambahan terkait laporan ini.`
-                  );
-                  return `
-                    <a href="https://wa.me/${dWaPhone}?text=${dWaText}" target="_blank" rel="noopener noreferrer" 
-                       style="background: #16a34a; color: white; padding: 3px 8px; border-radius: 6px; font-size: 0.74rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(22,163,74,0.3); transition: background 0.2s;"
-                       onmouseover="this.style.background='#15803d';"
-                       onmouseout="this.style.background='#16a34a';"
-                       title="Buka Chat WhatsApp Resmi Pelapor (${portalInst.formatPhoneDisplay(item.noHp)})">
-                      💬 Hubungi Pelapor
+              ${(function(portalInst) {
+                const dWaPhone = portalInst.formatWhatsAppPhone(item.noHp);
+                if (!dWaPhone) return '';
+                const dWaText = encodeURIComponent(
+                  `Halo Bapak/Ibu ${item.namaPelapor || ''}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata mengonfirmasi laporan Anda dengan No. Register: ${item.id} terkait dugaan ${item.jenisPencemaran || 'lingkungan'} di Desa ${item.desa || '-'}, Kec. ${item.kecamatan || '-'}.`
+                );
+                return `
+                  <div style="margin-top: 5px;">
+                    <a href="https://wa.me/${dWaPhone}?text=${dWaText}" target="_blank" rel="noopener noreferrer"
+                       style="background: #16a34a; color: white; padding: 2px 8px; border-radius: 5px; font-size: 0.72rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 3px; box-shadow: 0 1px 2px rgba(22,163,74,0.25);"
+                       title="Hubungi Pelapor via WhatsApp">
+                      💬 Hubungi WA
                     </a>
-                  `;
-                })(this)}
-              </div>
-              <div style="color: #64748b; font-size: 0.8rem; margin-top: 4px;">Domisili: ${item.alamatPelapor || '-'}</div>
+                  </div>
+                `;
+              })(this)}
             </div>
 
-            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px;">
-              <div style="color: #64748b; font-size: 0.72rem; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;">📍 LOKASI KEJADIAN</div>
-              <div style="font-weight: 800; color: #0f172a; font-size: 0.95rem;">Kec. ${item.kecamatan}</div>
-              <div style="color: #475569; font-size: 0.82rem; margin-top: 2px;">Desa/Kelurahan: <strong>${item.desa || '-'}</strong></div>
-              <div style="color: #64748b; font-size: 0.8rem; margin-top: 2px;">Patokan: ${item.lokasiDetail || '-'}</div>
+            <!-- Kolom Kanan: Lokasi -->
+            <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 10px; border-radius: 8px;">
+              <div style="color: #64748b; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; margin-bottom: 2px;">📍 LOKASI</div>
+              <div style="font-weight: 700; color: #0f172a; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="Kec. ${this.escHtml(item.kecamatan || '-')}">
+                Kec. ${this.escHtml(item.kecamatan || '-')}
+              </div>
+              <div style="font-size: 0.78rem; color: #475569; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${this.escHtml(this.formatDesaKelurahan(item.desa))}">
+                ${this.escHtml(this.formatDesaKelurahan(item.desa))}
+              </div>
+              ${mapsUrl ? `
+                <div style="margin-top: 5px;">
+                  <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer"
+                     style="color: #0284c7; font-size: 0.72rem; font-weight: 700; text-decoration: underline; display: inline-flex; align-items: center; gap: 2px;">
+                    📍 Buka Peta ↗
+                  </a>
+                </div>
+              ` : `
+                <div style="margin-top: 5px; font-size: 0.72rem; color: #94a3b8;">
+                  📍 Titik GPS (-)
+                </div>
+              `}
             </div>
           </div>
 
-          <!-- Dugaan & Koordinat GPS -->
-          <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 12px; border-radius: 10px; margin-bottom: 16px; font-size: 0.86rem;">
-            <div style="margin-bottom: 6px;">
-              <strong style="color: #334155;">Jenis Dugaan Pencemaran:</strong> 
-              <span style="color: #059669; font-weight: 800;">${item.jenisPencemaran}</span>
+          <!-- C. Detail Masalah & Kronologi -->
+          <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 10px; margin-bottom: 10px;">
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 4px; font-size: 0.82rem; margin-bottom: 6px; padding-bottom: 5px; border-bottom: 1px dashed #e2e8f0;">
+              <div>
+                <span style="color: #64748b; font-weight: 600;">Dugaan:</span> 
+                <strong style="color: #059669;">${this.escHtml(item.jenisPencemaran || '-')}</strong>
+              </div>
+              ${item.sumberDugaan ? `
+                <div style="font-size: 0.78rem; color: #475569;">
+                  <span style="color: #64748b;">Sumber:</span> <strong>${this.escHtml(item.sumberDugaan)}</strong>
+                </div>
+              ` : ''}
             </div>
-            ${item.sumberDugaan ? `
-              <div style="margin-bottom: 6px;">
-                <strong style="color: #334155;">Dugaan Sumber / Pelaku:</strong> ${item.sumberDugaan}
+
+            <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 6px 8px; font-size: 0.82rem; color: #14532d; line-height: 1.45;">
+              <div style="font-weight: 700; font-size: 0.75rem; color: #047857; margin-bottom: 2px;">📝 Kronologi Aduan Warga:</div>
+              <div style="white-space: pre-wrap;">${this.escHtml(item.uraian || 'Tidak ada uraian detail.')}</div>
+            </div>
+
+            ${((item.hasilVerifikasi && item.hasilVerifikasi !== '-') || (Array.isArray(item.checklistVerifikasi) && item.checklistVerifikasi.length > 0) || item.nomorBeritaAcara) ? `
+              <div style="margin-top: 6px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 8px; font-size: 0.8rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; flex-wrap: wrap; gap: 4px;">
+                  <span style="font-weight: 700; color: #065f46; font-size: 0.75rem;">📋 Hasil Pemeriksaan Lapangan:</span>
+                  ${item.nomorBeritaAcara ? `<span style="font-family: monospace; font-size: 0.7rem; font-weight: 700; background: #fef08a; padding: 1px 5px; border-radius: 3px;">BAST: ${this.escHtml(item.nomorBeritaAcara)}</span>` : ''}
+                </div>
+                ${item.hasilVerifikasi && item.hasilVerifikasi !== '-' ? `<div style="color: #334155; line-height: 1.4; white-space: pre-wrap;">${this.escHtml(item.hasilVerifikasi)}</div>` : ''}
+                ${(item.tindakanDLH && item.tindakanDLH !== '-') ? `<div style="color: #047857; font-size: 0.76rem; margin-top: 3px;"><strong>Tindakan DLH:</strong> ${this.escHtml(item.tindakanDLH)}</div>` : ''}
               </div>
             ` : ''}
-            <div>
-              <strong style="color: #334155;">Titik Koordinat GPS:</strong> 
-              <span style="font-family: monospace; color: #065f46;">${item.lat || '-'}, ${item.lng || '-'}</span>
-              ${mapsUrl ? ` &bull; <a href="${mapsUrl}" target="_blank" style="color: #0284c7; text-decoration: underline; font-weight: 700;">Buka Google Maps ↗</a>` : ''}
-            </div>
           </div>
 
-          <!-- Uraian Kronologi Warga -->
-          <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 14px; border-radius: 10px; margin-bottom: 16px; font-size: 0.88rem; color: #14532d;">
-            <div style="font-weight: 800; margin-bottom: 6px;">📝 Uraian Kronologi Aduan dari Warga:</div>
-            <p style="line-height: 1.5; white-space: pre-wrap;">${item.uraian || 'Tidak ada uraian detail.'}</p>
-          </div>
-
-          <!-- Penyelesaian yang Diinginkan & Riwayat Instansi (Jika ada) -->
-          ${(item.penyelesaian && item.penyelesaian !== '-') ? `
-            <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px 14px; border-radius: 10px; margin-bottom: 14px; font-size: 0.86rem;">
-              <strong style="color: #0f172a; font-size: 0.82rem; text-transform: uppercase; display: block; margin-bottom: 3px;">⚖️ Harapan / Penyelesaian yang Diinginkan:</strong>
-              <div style="color: #334155; line-height: 1.45;">${escapeHtml(item.penyelesaian)}</div>
-            </div>
-          ` : ''}
-          ${(item.riwayatPengaduan && item.riwayatPengaduan !== 'Belum pernah' && item.riwayatPengaduan !== '-') ? `
-            <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px 14px; border-radius: 10px; margin-bottom: 14px; font-size: 0.86rem;">
-              <strong style="color: #0f172a; font-size: 0.82rem; text-transform: uppercase; display: block; margin-bottom: 3px;">🏛️ Riwayat Pengaduan ke Instansi Lain:</strong>
-              <div style="color: #334155; line-height: 1.45;">${escapeHtml(item.riwayatPengaduan)}</div>
-            </div>
-          ` : ''}
-
-          <!-- Hasil Temuan Lapangan & Instrumen Checklist Verifikasi PPKLH -->
-          ${((item.hasilVerifikasi && item.hasilVerifikasi !== '-') || (Array.isArray(item.checklistVerifikasi) && item.checklistVerifikasi.length > 0)) ? `
-            <div style="background: #f0fdf4; border: 1.5px solid #86efac; padding: 14px; border-radius: 10px; margin-bottom: 16px; font-size: 0.86rem; color: #14532d;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
-                <strong style="color: #065f46; font-size: 0.9rem;">📋 HASIL VERIFIKASI FAKTUAL &amp; PEMERIKSAAN LAPANGAN</strong>
-                ${Array.isArray(item.checklistVerifikasi) && item.checklistVerifikasi.length > 0 ? `
-                  <span style="font-size: 0.74rem; font-weight: 800; background: #059669; color: white; padding: 2px 8px; border-radius: 999px;">
-                    ${item.checklistVerifikasi.length}/5 Indikator Terpenuhi
-                  </span>
-                ` : ''}
+          <!-- D. Galeri Bukti Foto (Grid Thumbnail Proporsional 60px–75px) -->
+          <div style="margin-bottom: 12px;">
+            <!-- Foto Bukti Warga -->
+            <div style="margin-bottom: 8px;">
+              <div style="font-size: 0.74rem; font-weight: 800; color: #334155; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;">
+                <span>📸 Foto Warga (${citizenPhotos.length})</span>
+                ${citizenPhotos.length > 0 ? `<span style="font-size: 0.68rem; color: #059669; font-weight: 600;">Klik untuk perbesar</span>` : ''}
               </div>
-              ${Array.isArray(item.checklistVerifikasi) && item.checklistVerifikasi.length > 0 ? `
-                <div style="background: #ffffff; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px; margin-bottom: 8px;">
-                  <div style="font-size: 0.74rem; font-weight: 800; color: #047857; text-transform: uppercase; margin-bottom: 4px;">Daftar Periksa Lapangan Terpenuhi:</div>
-                  <ul style="margin: 0 0 0 16px; padding: 0; font-size: 0.8rem; color: #166534; line-height: 1.45;">
-                    ${item.checklistVerifikasi.map(chk => `<li>✓ ${chk}</li>`).join('')}
-                  </ul>
-                </div>
-              ` : ''}
-              ${item.hasilVerifikasi && item.hasilVerifikasi !== '-' ? `
-                <div style="font-size: 0.82rem; line-height: 1.5; color: #1e293b; background: #ffffff; border: 1px solid #d1fae5; border-radius: 8px; padding: 10px;">
-                  <strong style="color: #065f46; font-size: 0.76rem; text-transform: uppercase; display: block; margin-bottom: 2px;">Catatan Temuan Lapangan:</strong>
-                  <p style="white-space: pre-wrap; margin: 0;">${item.hasilVerifikasi}</p>
-                </div>
-              ` : ''}
-            </div>
-          ` : ''}
-
-          <!-- Berita Acara Pemeriksaan Fisik Lapangan (Jika ada) -->
-          ${(item.nomorBeritaAcara || item.catatanBeritaAcara) ? `
-            <div class="berita-acara-card">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
-                <strong style="font-size: 0.9rem; color: #854d0e;">📜 BERITA ACARA PEMERIKSAAN FISIK LAPANGAN (BAST)</strong>
-                <span style="font-family: monospace; font-size: 0.78rem; font-weight: 800; background: #fef08a; padding: 2px 8px; border-radius: 4px;">
-                  ${item.nomorBeritaAcara || 'Nomor BA Tersimpan'}
-                </span>
-              </div>
-              <div style="font-size: 0.82rem; line-height: 1.5; color: #713f12;">
-                ${item.catatanBeritaAcara ? `<p style="white-space: pre-wrap; margin-bottom: 6px;">${item.catatanBeritaAcara}</p>` : ''}
-                <div style="font-size: 0.76rem; color: #a16207;">
-                  Verifikator Resmi: <strong>${item.petugasVerifikasi || 'Tim Lapangan DLH'}</strong> &bull; Tanggal: ${item.tanggalVerifikasi || '-'}
-                </div>
-              </div>
-            </div>
-          ` : ''}
-
-          <!-- Foto Kondisi Riil Pemeriksaan Fisik Petugas -->
-          ${officerPhotos.length > 0 ? `
-            <div style="background: #ffffff; border: 1.5px solid #059669; padding: 16px; border-radius: 12px; margin-bottom: 16px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
-                <div style="font-size: 0.84rem; font-weight: 800; color: #065f46; display: flex; align-items: center; gap: 6px;">
-                  <span>📸</span> DOKUMENTASI FISIK RIIL PETUGAS DI LOKASI (${officerPhotos.length} Foto Riil):
-                </div>
-                <div style="display: flex; align-items: center; gap: 8px;">
-                  <span style="font-size: 0.72rem; color: #059669; font-weight: 700;">🔍 Klik untuk perbesar</span>
-                  <button type="button" onclick="window.portal.confirmClearAllOfficerPhotos('${cleanAduanId}')"
-                          style="background: #fee2e2; color: #b91c1c; border: 1px solid #f87171; border-radius: 6px; padding: 4px 10px; font-size: 0.72rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; gap: 4px; transition: all 0.2s;"
-                          onmouseover="this.style.background='#fecaca';"
-                          onmouseout="this.style.background='#fee2e2';"
-                          title="Hapus seluruh foto petugas sekaligus dari laporan ini">
-                    🗑️ Hapus Semua (${officerPhotos.length})
-                  </button>
-                </div>
-              </div>
-              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(135px, 1fr)); gap: 12px;">
-                ${officerPhotos.map((rawSrc, i) => {
-                  const displaySrc = this.formatPhotoUrl(rawSrc);
-                  const origSafe = (rawSrc || '').replace(/'/g, "\\'");
-                  const photoDomId = `imgPetugasOfficer_${cleanAduanId}_${i}`;
-                  return `
-                    <div style="background: #f8fafc; border: 1.5px solid #a7f3d0; border-radius: 10px; padding: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 6px; position: relative;">
-                      <div onclick="window.portal.openLightboxByIndex('officer', ${i})"
-                           style="cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid #059669; background: #0f172a; position: relative; height: 125px; transition: transform 0.2s, box-shadow 0.2s;"
-                           onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 12px rgba(5,150,105,0.25)';"
-                           onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';"
-                           title="Klik foto untuk melihat ukuran penuh">
-                        <img id="${photoDomId}"
-                             src="${displaySrc}"
-                             data-original="${origSafe}"
-                             data-aduan-id="${cleanAduanId}"
-                             data-photo-idx="${i}"
-                             alt="Foto Fisik Petugas ${i+1}"
-                             referrerpolicy="no-referrer"
-                             loading="eager"
-                             data-is-officer="true"
-                             onerror="window.handleAduanPhotoError(this, '${cleanAduanId}', ${i}, true);"
-                             style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
-                        <div style="position: absolute; top: 4px; left: 4px; background: rgba(5, 150, 105, 0.9); color: #fff; font-size: 0.65rem; font-weight: 800; padding: 2px 6px; border-radius: 4px; pointer-events: none;">
-                          Foto #${i+1}
-                        </div>
-                        <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; font-size: 0.70rem; font-weight: 700; padding: 4px; text-align: center; pointer-events: none;">
-                          🔍 Klik Perbesar
-                        </div>
-                      </div>
-                      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px;">
-                        <button type="button" onclick="window.portal.openLightboxByIndex('officer', ${i})"
-                                style="width: 100%; background: #059669; color: #ffffff; border: none; border-radius: 6px; padding: 5px 4px; font-size: 0.72rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 2px; transition: background 0.2s;"
-                                onmouseover="this.style.background='#047857';"
-                                onmouseout="this.style.background='#059669';"
-                                title="Buka foto ukuran penuh">
-                          <span>🔍 Buka</span>
-                        </button>
-                        <button type="button" onclick="window.portal.confirmDeleteOfficerPhoto('${cleanAduanId}', ${i})"
-                                style="width: 100%; background: #ef4444; color: #ffffff; border: none; border-radius: 6px; padding: 5px 4px; font-size: 0.72rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 2px; transition: background 0.2s;"
-                                onmouseover="this.style.background='#dc2626';"
-                                onmouseout="this.style.background='#ef4444';"
-                                title="Hapus foto #${i+1} dan sinkronkan ke spreadsheet">
-                          <span>🗑️ Hapus</span>
-                        </button>
-                      </div>
-                    </div>
-                  `;
-                }).join('')}
-              </div>
-            </div>
-          ` : `
-            <div style="background: #f8fafc; border: 1.5px dashed #cbd5e1; padding: 14px; border-radius: 12px; margin-bottom: 16px; text-align: center; color: #64748b; font-size: 0.82rem;">
-              📷 Belum ada foto kondisi riil petugas yang terlampir. Anda dapat mengunggahnya melalui formulir <strong>📋 Verifikasi</strong>.
-            </div>
-          `}
-
-          <!-- Foto Bukti Lampiran Pelapor -->
-          ${citizenPhotos.length > 0 ? `
-            <div style="background: #ffffff; border: 1.5px solid #cbd5e1; padding: 16px; border-radius: 12px; margin-bottom: 16px;">
-              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
-                <div style="font-size: 0.84rem; font-weight: 800; color: #1e293b; display: flex; align-items: center; gap: 6px;">
-                  <span>📸</span> BUKTI FOTO DARI WARGA PELAPOR (${citizenPhotos.length} Foto):
-                </div>
-                <span style="font-size: 0.72rem; color: #059669; font-weight: 700;">🔍 Klik foto untuk memperbesar</span>
-              </div>
-              <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px;">
-                ${citizenPhotos.map((rawSrc, i) => {
-                  const displaySrc = this.formatPhotoUrl(rawSrc);
-                  const safeSrc = (displaySrc || rawSrc).replace(/'/g, "\\'");
-                  const origSafe = (rawSrc || '').replace(/'/g, "\\'");
-                  const photoDomId = `imgPetugasCitizen_${cleanAduanId}_${i}`;
-                  return `
-                    <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 6px;">
+              ${citizenPhotos.length > 0 ? `
+                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                  ${citizenPhotos.map((rawSrc, i) => {
+                    const displaySrc = this.formatPhotoUrl(rawSrc);
+                    const origSafe = (rawSrc || '').replace(/'/g, "\\'");
+                    const photoDomId = `imgPetugasCitizen_${cleanAduanId}_${i}`;
+                    return `
                       <div onclick="window.portal.openLightboxByIndex('citizen', ${i})"
-                           style="cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid #059669; background: #0f172a; position: relative; height: 125px; transition: transform 0.2s, box-shadow 0.2s;"
-                           onmouseover="this.style.transform='scale(1.02)'; this.style.boxShadow='0 4px 12px rgba(5,150,105,0.25)';"
-                           onmouseout="this.style.transform='scale(1)'; this.style.boxShadow='none';"
-                           title="Klik foto untuk melihat ukuran penuh">
+                           style="width: 68px; height: 68px; border-radius: 6px; overflow: hidden; border: 1.5px solid #cbd5e1; background: #0f172a; cursor: pointer; position: relative; flex-shrink: 0; box-shadow: 0 1px 3px rgba(0,0,0,0.08);"
+                           title="Foto Warga #${i+1} (Klik perbesar)">
                         <img id="${photoDomId}"
                              src="${displaySrc}"
                              data-original="${origSafe}"
                              data-aduan-id="${cleanAduanId}"
                              data-photo-idx="${i}"
-                             alt="Bukti Pelapor ${i+1}"
+                             alt="Bukti ${i+1}"
                              referrerpolicy="no-referrer"
                              loading="eager"
                              onerror="window.handleAduanPhotoError(this, '${cleanAduanId}', ${i});"
                              style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
-                        <div style="display: none; width: 100%; height: 100%; background: #0f172a; color: #f8fafc; flex-direction: column; align-items: center; justify-content: center; padding: 8px; text-align: center;">
-                          <span style="font-size: 1.4rem;">📸</span>
-                          <span style="font-size: 0.72rem; font-weight: 700; color: #34d399; margin-top: 4px;">Buka di Google Drive</span>
-                        </div>
-                        <div style="position: absolute; bottom: 0; left: 0; right: 0; background: linear-gradient(transparent, rgba(0,0,0,0.85)); color: #fff; font-size: 0.72rem; font-weight: 700; padding: 4px; text-align: center; pointer-events: none;">
-                          🔍  Klik Perbesar
-                        </div>
                       </div>
-                      <button type="button" onclick="window.portal.openLightboxByIndex('citizen', ${i})"
-                              style="width: 100%; background: #059669; color: #ffffff; border: none; border-radius: 6px; padding: 5px 8px; font-size: 0.74rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: background 0.2s;"
-                              onmouseover="this.style.background='#047857';"
-                              onmouseout="this.style.background='#059669';"
-                              title="Buka foto ukuran penuh">
-                        <span>🔍 Buka Foto</span>
-                      </button>
-                    </div>
-                  `;
-                }).join('')}
-              </div>
+                    `;
+                  }).join('')}
+                </div>
+              ` : `
+                <div style="font-size: 0.74rem; color: #94a3b8; font-style: italic;">Tidak ada lampiran foto warga.</div>
+              `}
             </div>
-          ` : ''}
 
-          <!-- Tombol Aksi Modal (Verifikasi, Cetak BAST, Sorot di Peta, dan Hapus Destruktif) -->
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 16px; border-top: 1px solid #e2e8f0; flex-wrap: wrap; gap: 10px;">
-            <button type="button" onclick="window.portal.confirmDeleteAduan('${this.escHtml(item.id)}')"
-                    style="background: #ffffff; color: #dc2626; border: 1.5px solid #fca5a5; border-radius: 8px; padding: 7px 14px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s;"
-                    onmouseover="this.style.background='#fef2f2';"
-                    onmouseout="this.style.background='#ffffff';"
-                    title="Hapus laporan ini secara permanen">
-              🗑️ Hapus
+            <!-- Foto Kondisi Riil Petugas -->
+            <div>
+              <div style="font-size: 0.74rem; font-weight: 800; color: #065f46; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;">
+                <span>📸 Foto Lapangan Petugas (${officerPhotos.length})</span>
+                ${officerPhotos.length > 0 ? `
+                  <div style="display: flex; align-items: center; gap: 6px;">
+                    <span style="font-size: 0.68rem; color: #059669; font-weight: 600;">Klik perbesar</span>
+                    <button type="button" onclick="window.portal.confirmClearAllOfficerPhotos('${cleanAduanId}')"
+                            style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; border-radius: 4px; padding: 1px 6px; font-size: 0.68rem; font-weight: 700; cursor: pointer;"
+                            title="Hapus seluruh foto petugas">
+                      🗑️ Hapus Semua
+                    </button>
+                  </div>
+                ` : ''}
+              </div>
+              ${officerPhotos.length > 0 ? `
+                <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+                  ${officerPhotos.map((rawSrc, i) => {
+                    const displaySrc = this.formatPhotoUrl(rawSrc);
+                    const origSafe = (rawSrc || '').replace(/'/g, "\\'");
+                    const photoDomId = `imgPetugasOfficer_${cleanAduanId}_${i}`;
+                    return `
+                      <div style="position: relative; width: 68px; height: 68px; flex-shrink: 0;">
+                        <div onclick="window.portal.openLightboxByIndex('officer', ${i})"
+                             style="width: 100%; height: 100%; border-radius: 6px; overflow: hidden; border: 1.5px solid #059669; background: #0f172a; cursor: pointer; box-shadow: 0 1px 3px rgba(0,0,0,0.08);"
+                             title="Foto Petugas #${i+1} (Klik perbesar)">
+                          <img id="${photoDomId}"
+                               src="${displaySrc}"
+                               data-original="${origSafe}"
+                               data-aduan-id="${cleanAduanId}"
+                               data-photo-idx="${i}"
+                               alt="Petugas ${i+1}"
+                               referrerpolicy="no-referrer"
+                               loading="eager"
+                               data-is-officer="true"
+                               onerror="window.handleAduanPhotoError(this, '${cleanAduanId}', ${i}, true);"
+                               style="width: 100%; height: 100%; object-fit: cover; pointer-events: none;">
+                        </div>
+                        <button type="button" onclick="event.stopPropagation(); window.portal.confirmDeleteOfficerPhoto('${cleanAduanId}', ${i})"
+                                style="position: absolute; top: -4px; right: -4px; width: 18px; height: 18px; border-radius: 50%; background: #ef4444; color: white; border: 1px solid white; font-size: 10px; line-height: 1; display: flex; align-items: center; justify-content: center; cursor: pointer; padding: 0;"
+                                title="Hapus foto #${i+1}">
+                          ×
+                        </button>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              ` : `
+                <div style="font-size: 0.74rem; color: #94a3b8; font-style: italic;">Belum ada foto pemeriksaan fisik petugas.</div>
+              `}
+            </div>
+          </div>
+
+          <!-- E. Tata Letak Tombol Aksi Bawah -->
+          <div style="margin-top: 14px; padding-top: 12px; border-top: 1px solid #e2e8f0; display: flex; flex-direction: column; gap: 8px;">
+            <!-- Baris 1: Tombol Utama (Lebar Penuh, Hijau DLH #059669, Tinggi 40px) -->
+            <button type="button"
+                    onclick="window.portal.closeAllModals(); window.portal.openVerifikasiModal('${this.escHtml(item.id)}')"
+                    style="width: 100%; height: 40px; background: #059669; color: #ffffff; border: none; border-radius: 8px; font-size: 0.88rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; box-shadow: 0 2px 4px rgba(5,150,105,0.25); transition: background 0.2s;"
+                    onmouseover="this.style.background='#047857';"
+                    onmouseout="this.style.background='#059669';"
+                    title="Input Hasil Verifikasi Lapangan">
+              <span>📋</span> Verifikasi / Tindak Lanjut
             </button>
-            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
-              <button type="button" class="btn-action-tool" onclick="window.portal.closeAllModals(); window.portal.highlightOnMap('${this.escHtml(item.id)}')"
-                      style="background: #0d9488; color: white; border-color: #0f766e;" title="Tampilkan dan sorot lokasi di peta">
-                📍 Sorot di Peta
+
+            <!-- Baris 2: Tombol Pendukung (Grid 3 Kolom Seimbang) -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px;">
+              <!-- 1. Sorot Peta (Teal) -->
+              <button type="button"
+                      onclick="window.portal.closeAllModals(); window.portal.highlightOnMap('${this.escHtml(item.id)}')"
+                      style="height: 36px; background: #0d9488; color: #ffffff; border: none; border-radius: 7px; font-size: 0.78rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: background 0.2s;"
+                      onmouseover="this.style.background='#0f766e';"
+                      onmouseout="this.style.background='#0d9488';"
+                      title="Tampilkan dan sorot lokasi kejadian di peta">
+                <span>📍</span> Sorot Peta
               </button>
-              <button type="button" class="btn-action-tool" onclick="window.portal.printBeritaAcara('${this.escHtml(item.id)}')"
-                      style="background: #0284c7; color: white; border-color: #0369a1;" title="Cetak Berita Acara Pemeriksaan Fisik Lapangan">
-                🖨️ Cetak BAST (PDF)
+
+              <!-- 2. Cetak BAST (Biru Lembut) -->
+              <button type="button"
+                      onclick="window.portal.printBeritaAcara('${this.escHtml(item.id)}')"
+                      style="height: 36px; background: #0284c7; color: #ffffff; border: none; border-radius: 7px; font-size: 0.78rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: background 0.2s;"
+                      onmouseover="this.style.background='#0369a1';"
+                      onmouseout="this.style.background='#0284c7';"
+                      title="Cetak Berita Acara Pemeriksaan Fisik Lapangan">
+                <span>🖨️</span> Cetak BAST
               </button>
-              <button type="button" class="btn-action-tool" onclick="window.portal.closeAllModals(); window.portal.openVerifikasiModal('${this.escHtml(item.id)}')"
-                      style="background: #059669; color: white; border-color: #047857;" title="Input Hasil Verifikasi Lapangan">
-                📋 Verifikasi
+
+              <!-- 3. Hapus (Merah Lembut #fef2f2, teks #dc2626) -->
+              <button type="button"
+                      onclick="window.portal.confirmDeleteAduan('${this.escHtml(item.id)}')"
+                      style="height: 36px; background: #fef2f2; color: #dc2626; border: 1px solid #fecaca; border-radius: 7px; font-size: 0.78rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: background 0.2s;"
+                      onmouseover="this.style.background='#fee2e2';"
+                      onmouseout="this.style.background='#fef2f2';"
+                      title="Hapus laporan ini secara permanen">
+                <span>🗑️</span> Hapus
               </button>
             </div>
           </div>
