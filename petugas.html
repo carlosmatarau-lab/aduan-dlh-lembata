@@ -3813,21 +3813,6 @@
       background: currentColor;
     }
 
-    /* Chip Keterlambatan SLA */
-    .rk-chip-sla {
-      background: #fee2e2;
-      color: #b91c1c;
-      font-size: 12px;
-      font-weight: 600;
-      border-radius: 999px;
-      padding: 2px 8px;
-      display: inline-flex;
-      align-items: center;
-      gap: 3px;
-      white-space: nowrap;
-      line-height: 1.25;
-    }
-
     /* Palet Warna Status */
     .rk-st-baru { color: var(--st-baru-text); }
     .rk-st-diverifikasi { color: var(--st-verif-text); }
@@ -6239,16 +6224,7 @@
         const isTindakDone = !!(timeTindak || item.status === 'Ditindaklanjuti' || item.status === 'Dalam Penanganan' || item.status === 'Selesai');
         const isSelesaiDone = item.status === 'Selesai';
 
-        const SLA_BARU_HARI = 2;
         const stNorm = this.normalizeStatus(item.status);
-        const isBaru = stNorm.key === 'baru';
-        const aduanDate = this.parseAduanDate(item.timestamp || item.tanggalKejadian);
-        const diffDays = this.getWitaCalendarDayDiff(aduanDate);
-        const isOverdue = isBaru && diffDays >= SLA_BARU_HARI;
-
-        const overdueChipHtml = isOverdue
-          ? `<span class="rk-chip-sla" style="font-size: 0.74rem; padding: 3px 10px;">⏳ Menunggu ${diffDays} hari</span>`
-          : '';
 
         let progressBarHtml = '';
         if (stNorm.key === 'ditolak') {
@@ -6307,7 +6283,6 @@
               <h2 style="font-size: 1.35rem; color: #065f46; font-weight: 800; font-family: monospace; margin: 0;">${this.escHtml(item.id)}</h2>
             </div>
             <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
-              ${overdueChipHtml}
               ${this.getStatusBadgeHtml(item.status)}
             </div>
           </div>
@@ -7490,25 +7465,6 @@
       }
 
       /**
-       * Menghitung selisih hari kalender lokal WITA (UTC+8) Kabupaten Lembata
-       */
-      getWitaCalendarDayDiff(date) {
-        if (!date) return 0;
-        const now = new Date();
-        const nowUtc = now.getTime() + (now.getTimezoneOffset() * 60000);
-        const nowWita = new Date(nowUtc + (8 * 3600000));
-
-        const targetUtc = date.getTime() + (date.getTimezoneOffset() * 60000);
-        const targetWita = new Date(targetUtc + (8 * 3600000));
-
-        const nowDateOnly = new Date(nowWita.getFullYear(), nowWita.getMonth(), nowWita.getDate()).getTime();
-        const targetDateOnly = new Date(targetWita.getFullYear(), targetWita.getMonth(), targetWita.getDate()).getTime();
-
-        const diffDays = Math.floor((nowDateOnly - targetDateOnly) / 86400000);
-        return diffDays < 0 ? 0 : diffDays;
-      }
-
-      /**
        * Format tanggal singkat untuk baris tahapan progres modal (contoh: '28 Okt')
        */
       formatShortStepDate(raw) {
@@ -7617,8 +7573,6 @@
           return;
         }
 
-        const SLA_BARU_HARI = 2;
-
         rkList.innerHTML = filtered.map(item => {
           const id = item.id || '';
           const jenis = item.jenisPencemaran || 'Laporan Lingkungan';
@@ -7627,25 +7581,9 @@
           const stNorm = this.normalizeStatus(item.status);
           const isBaru = stNorm.key === 'baru';
 
-          const aduanDate = this.parseAduanDate(item.timestamp || item.tanggalKejadian);
-          const diffDays = this.getWitaCalendarDayDiff(aduanDate);
-
-          let rightTopHtml = '';
-          if (isBaru && diffDays >= SLA_BARU_HARI) {
-            rightTopHtml = `<span class="rk-chip-sla">⏳ Menunggu ${diffDays} hari</span>`;
-          } else {
-            let relDateText = '';
-            if (aduanDate === null) {
-              relDateText = item.timestamp || '-';
-            } else if (diffDays === 0) {
-              relDateText = 'Hari ini';
-            } else if (diffDays === 1) {
-              relDateText = 'Kemarin';
-            } else {
-              relDateText = `${diffDays} hari lalu`;
-            }
-            rightTopHtml = `<span>${this.escHtml(relDateText)}</span>`;
-          }
+          const rawDate = item.timestamp || item.tanggalKejadian || '';
+          const dateStr = this.formatShortStepDate(rawDate) || rawDate || '-';
+          const rightTopHtml = `<span>${this.escHtml(dateStr)}</span>`;
 
           const iconSvg = this.getJenisPencemaranIcon(jenis);
 
