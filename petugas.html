@@ -4384,46 +4384,33 @@
           <!-- Penjadwalan Kunjungan & Pemeriksaan Lapangan Mandiri Petugas -->
           <div class="form-group-modal" style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 10px; padding: 12px 14px;">
             <label class="form-label-modal" style="color: #065f46; font-weight: 800; font-size: 0.88rem; display: flex; align-items: center; gap: 6px; margin-bottom: 8px;">
-              <span>🗓️</span> Jadwal Kunjungan Lapangan Tim DLH
+              <span>🗓️</span> Jadwal Kunjungan Petugas ke Lapangan
             </label>
             
             <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 10px;">
               <div>
-                <label class="form-label-modal" for="vTanggalVerifikasi" style="font-size: 0.78rem; font-weight: 700; color: #166534; margin-bottom: 4px;">
+                <label class="form-label-modal" for="vTanggalKunjungan" style="font-size: 0.78rem; font-weight: 700; color: #166534; margin-bottom: 4px;">
                   Tanggal Kunjungan
                 </label>
-                <input type="date" id="vTanggalVerifikasi" class="form-control-modal">
+                <input type="date" id="vTanggalKunjungan" class="form-control-modal">
+                <input type="hidden" id="vTanggalVerifikasi">
               </div>
               <div>
                 <label class="form-label-modal" for="vJamKunjungan" style="font-size: 0.78rem; font-weight: 700; color: #166534; margin-bottom: 4px;">
-                  Waktu / Jam (WITA)
+                  Jam / Waktu (WITA)
                 </label>
                 <input type="time" id="vJamKunjungan" class="form-control-modal">
               </div>
             </div>
 
             <div>
-              <label class="form-label-modal" for="vCatatanJadwal" style="font-size: 0.78rem; font-weight: 700; color: #166534; margin-bottom: 4px;">
-                Catatan Jadwal (Opsional)
+              <label class="form-label-modal" for="vCatatanKunjungan" style="font-size: 0.78rem; font-weight: 700; color: #166534; margin-bottom: 4px;">
+                Catatan Kunjungan (Opsional)
               </label>
-              <input type="text" id="vCatatanJadwal" class="form-control-modal" placeholder="Contoh: Koordinasi bersama aparat desa setempat pukul 09:30 WITA">
+              <input type="text" id="vCatatanKunjungan" class="form-control-modal" placeholder="Contoh: Koordinasi bersama Kepala Desa">
             </div>
             <small style="font-size: 0.73rem; color: #047857; margin-top: 6px; display: block;">
-              Petugas menentukan jadwal kunjungan secara mandiri berdasarkan kesiapan tim lapangan.
-            </small>
-          </div>
-
-          <!-- Target Waktu Penanganan (Hari Kerja) Mandiri Petugas -->
-          <div class="form-group-modal">
-            <label class="form-label-modal" for="vTargetHariInput">
-              ⏱️ Target Waktu Penanganan (Hari Kerja) <span style="color: #e11d48;">*</span>
-            </label>
-            <div style="display: flex; align-items: center; gap: 10px;">
-              <input type="number" id="vTargetHariInput" class="form-control-modal" min="1" max="60" placeholder="Contoh: 3" style="max-width: 140px;">
-              <span style="font-size: 0.85rem; color: #475569; font-weight: 600;">Hari Kerja</span>
-            </div>
-            <small style="font-size: 0.74rem; color: #64748b; margin-top: 4px; display: block;">
-              Tentukan estimasi waktu penyelesaian berdasarkan tingkat kesulitan dan kebutuhan armada di lapangan.
+              Petugas menentukan tanggal dan jam kunjungan fisik langsung ke lokasi aduan.
             </small>
           </div>
 
@@ -6053,37 +6040,46 @@
         document.getElementById('vPetugasInput').value = (item.petugasVerifikasi && item.petugasVerifikasi !== '-') ? item.petugasVerifikasi : 'Tim Verifikasi Lapangan DLH Lembata';
         
         // Tanggal & Jam Kunjungan Mandiri Petugas
-        let defaultTgl = '';
+        const toYmd = (dateObj) => {
+          if (!dateObj || isNaN(dateObj.getTime())) return '';
+          const y = dateObj.getFullYear();
+          const m = String(dateObj.getMonth() + 1).padStart(2, '0');
+          const d = String(dateObj.getDate()).padStart(2, '0');
+          return `${y}-${m}-${d}`;
+        };
+
+        let rawTgl = '';
         if (item.tanggalVerifikasi && item.tanggalVerifikasi !== '-') {
-          defaultTgl = item.tanggalVerifikasi;
-        } else if (item.jadwalKunjungan) {
-          defaultTgl = String(item.jadwalKunjungan).split(' ')[0] || '';
-        } else {
-          // Default ke tanggal hari berikutnya (besok)
-          const tomorrow = new Date();
-          tomorrow.setDate(tomorrow.getDate() + 1);
-          defaultTgl = tomorrow.toISOString().split('T')[0];
+          if (/^\d{4}-\d{2}-\d{2}$/.test(item.tanggalVerifikasi)) {
+            rawTgl = item.tanggalVerifikasi;
+          } else {
+            const d = this.parseAduanDate(item.tanggalVerifikasi);
+            if (d) rawTgl = toYmd(d);
+          }
         }
-        document.getElementById('vTanggalVerifikasi').value = defaultTgl;
+        if (!rawTgl && item.jadwalKunjungan) {
+          const d = this.parseAduanDate(item.jadwalKunjungan);
+          if (d) rawTgl = toYmd(d);
+        }
+
+        const elTglKunjungan = document.getElementById('vTanggalKunjungan') || document.getElementById('vTanggalVerifikasi');
+        if (elTglKunjungan) elTglKunjungan.value = rawTgl || '';
+        const elTglLegacy = document.getElementById('vTanggalVerifikasi');
+        if (elTglLegacy) elTglLegacy.value = rawTgl || '';
 
         const elJam = document.getElementById('vJamKunjungan');
         if (elJam) {
-          let defaultJam = item.jamKunjungan || '';
-          if (!defaultJam && item.jadwalKunjungan && item.jadwalKunjungan.includes(' ')) {
-            defaultJam = item.jadwalKunjungan.split(' ')[1] || '';
+          let rawJam = item.jamKunjungan || '';
+          if (!rawJam && item.jadwalKunjungan) {
+            const matchTime = String(item.jadwalKunjungan).match(/(\d{1,2}:\d{2})/);
+            if (matchTime) rawJam = matchTime[1];
           }
-          elJam.value = defaultJam || '09:00';
+          elJam.value = rawJam || '';
         }
 
-        const elCatatanJadwal = document.getElementById('vCatatanJadwal');
-        if (elCatatanJadwal) {
-          elCatatanJadwal.value = item.catatanJadwal || '';
-        }
-
-        // Target Waktu Penanganan (Hari Kerja) Mandiri Petugas
-        const elTargetHari = document.getElementById('vTargetHariInput');
-        if (elTargetHari) {
-          elTargetHari.value = (item.targetHari && !isNaN(item.targetHari)) ? item.targetHari : '';
+        const elCatatanKunjungan = document.getElementById('vCatatanKunjungan') || document.getElementById('vCatatanJadwal');
+        if (elCatatanKunjungan) {
+          elCatatanKunjungan.value = item.catatanKunjungan || item.catatanJadwal || '';
         }
 
         document.getElementById('vHasilVerifikasi').value = item.hasilVerifikasi && item.hasilVerifikasi !== '-' ? item.hasilVerifikasi : '';
@@ -6468,34 +6464,15 @@
             </div>
           </div>
 
-          <!-- JADWAL KUNJUNGAN & TARGET WAKTU PENANGANAN MANDIRI PETUGAS -->
-          <div style="background: #f0fdf4; border: 1.5px solid #86efac; border-radius: 12px; padding: 14px 16px; margin-bottom: 18px;">
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; flex-wrap: wrap; gap: 8px;">
-              <div style="font-weight: 800; color: #065f46; font-size: 0.88rem; display: flex; align-items: center; gap: 6px;">
-                <span>🗓️</span> Jadwal Kunjungan &amp; Target Penanganan Petugas
-              </div>
-              <div>${this.getSlaBadgeHtml(item)}</div>
+          <!-- JADWAL KUNJUNGAN PETUGAS KE LAPANGAN -->
+          <div style="background: #f0fdf4; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+            <div style="font-weight: 800; color: #065f46; font-size: 0.88rem; margin-bottom: 6px; display: flex; align-items: center; gap: 6px;">
+              <span>🗓️</span> Jadwal Kunjungan Petugas ke Lapangan
             </div>
-            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 10px;">
-              <div style="background: #ffffff; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px;">
-                <span style="font-size: 0.72rem; color: #166534; font-weight: 800; text-transform: uppercase; display: block; margin-bottom: 3px;">
-                  Jadwal Pemeriksaan Lapangan
-                </span>
-                <strong style="color: #0f172a; font-size: 0.92rem; display: block;">
-                  ${item.jadwalKunjungan ? `🗓️ ${this.escHtml(this.formatJadwalKunjungan(item.jadwalKunjungan, item.jamKunjungan))}` : 'Menunggu Verifikasi Petugas'}
-                </strong>
-                ${item.catatanJadwal ? `<div style="font-size: 0.76rem; color: #475569; margin-top: 4px;">📌 ${this.escHtml(item.catatanJadwal)}</div>` : ''}
-              </div>
-              <div style="background: #ffffff; border: 1px solid #bbf7d0; border-radius: 8px; padding: 10px;">
-                <span style="font-size: 0.72rem; color: #166534; font-weight: 800; text-transform: uppercase; display: block; margin-bottom: 3px;">
-                  Target Waktu (SLA) &amp; Tenggat
-                </span>
-                <strong style="color: #0f172a; font-size: 0.92rem; display: block;">
-                  ${item.targetHari ? `⏱️ ${item.targetHari} Hari Kerja` : 'Belum Ditentukan'}
-                </strong>
-                ${item.tenggatWaktu ? `<div style="font-size: 0.76rem; color: #475569; margin-top: 4px;">Tenggat: <strong>${item.tenggatWaktu}</strong></div>` : ''}
-              </div>
+            <div style="font-size: 1rem; font-weight: 800; color: #047857;">
+              ${item.jadwalKunjungan ? this.escHtml(this.formatJadwalKunjungan(item.jadwalKunjungan, item.jamKunjungan)) : '<span style="color: #64748b; font-weight: 500; font-size: 0.86rem;">Menunggu Penjadwalan Petugas</span>'}
             </div>
+            ${(item.catatanKunjungan || item.catatanJadwal) ? `<div style="font-size: 0.78rem; color: #475569; margin-top: 4px;">Catatan: ${this.escHtml(item.catatanKunjungan || item.catatanJadwal)}</div>` : ''}
           </div>
 
           <!-- Grid Info Pelapor & Lokasi -->
@@ -7580,6 +7557,19 @@
           return isNaN(d.getTime()) ? null : d;
         }
 
+        // Format Indonesia teks: misal "Kamis, 29 Okt 2026 • 09:30 WITA" atau "29 Okt 2026"
+        const matchIndo = str.match(/(\d{1,2})\s+(Jan|Feb|Mar|Apr|Mei|Jun|Jul|Agu|Sep|Okt|Nov|Des)[a-z]*\s+(\d{4})(?:.*?(\d{1,2}):(\d{1,2}))?/i);
+        if (matchIndo) {
+          const day = parseInt(matchIndo[1], 10);
+          const monthMap = { jan: 0, feb: 1, mar: 2, apr: 3, mei: 4, jun: 5, jul: 6, agu: 7, sep: 8, okt: 9, nov: 10, des: 11 };
+          const month = monthMap[matchIndo[2].toLowerCase()] ?? 0;
+          const year = parseInt(matchIndo[3], 10);
+          const hour = matchIndo[4] ? parseInt(matchIndo[4], 10) : 0;
+          const min = matchIndo[5] ? parseInt(matchIndo[5], 10) : 0;
+          const d = new Date(year, month, day, hour, min, 0);
+          return isNaN(d.getTime()) ? null : d;
+        }
+
         // Fallback standar Date()
         const fallback = new Date(str);
         return isNaN(fallback.getTime()) ? null : fallback;
@@ -7690,9 +7680,19 @@
       formatJadwalKunjungan(jadwalRaw, jamRaw) {
         if (!jadwalRaw || jadwalRaw === '-') return '';
         const str = String(jadwalRaw).trim();
-        const parts = str.split(' ');
-        const datePart = parts[0];
-        const timePart = jamRaw || parts[1] || '';
+        if (str.includes('WITA') || str.includes('•')) return str;
+
+        let datePart = str;
+        let timePart = jamRaw || '';
+        if (str.includes('T')) {
+          const tParts = str.split('T');
+          datePart = tParts[0];
+          if (!timePart && tParts[1]) timePart = tParts[1].substring(0, 5);
+        } else if (str.includes(' ')) {
+          const parts = str.split(' ');
+          datePart = parts[0];
+          if (!timePart && parts[1]) timePart = parts[1];
+        }
 
         const d = this.parseAduanDate(datePart);
         if (!d) return str;
@@ -7710,43 +7710,10 @@
       }
 
       /**
-       * Badge status target waktu penanganan (SLA mandiri petugas)
+       * Placeholder kompatibilitas SLA (Target Waktu telah dihapus sesuai instruksi)
        */
       getSlaBadgeHtml(item) {
-        if (!item || !item.targetHari) {
-          const isUnverified = (!item.status || item.status === 'Baru' || item.status === 'Aduan Diterima');
-          if (isUnverified) {
-            return `<span style="font-size: 0.72rem; color: #64748b; background: #f1f5f9; padding: 2px 8px; border-radius: 999px; font-weight: 600;">Menunggu Verifikasi Petugas</span>`;
-          }
-          return '';
-        }
-
-        const targetHari = parseInt(item.targetHari, 10);
-        let isOverdue = false;
-
-        if (item.status !== 'Selesai' && item.tenggatWaktu) {
-          const tenggatDate = this.parseAduanDate(item.tenggatWaktu);
-          if (tenggatDate) {
-            const now = new Date();
-            const nowUtc = now.getTime() + (now.getTimezoneOffset() * 60000);
-            const nowWita = new Date(nowUtc + (8 * 3600000));
-            const targetUtc = tenggatDate.getTime() + (tenggatDate.getTimezoneOffset() * 60000);
-            const targetWita = new Date(targetUtc + (8 * 3600000));
-
-            const nowDateOnly = new Date(nowWita.getFullYear(), nowWita.getMonth(), nowWita.getDate()).getTime();
-            const targetDateOnly = new Date(targetWita.getFullYear(), targetWita.getMonth(), targetWita.getDate()).getTime();
-
-            if (nowDateOnly > targetDateOnly) {
-              isOverdue = true;
-            }
-          }
-        }
-
-        if (isOverdue) {
-          return `<span style="background: #fee2e2; color: #b91c1c; font-size: 0.74rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; border: 1px solid #fca5a5; display: inline-flex; align-items: center; gap: 3px;" title="Target penanganan telah melampaui ${targetHari} hari kerja sejak diverifikasi">⚠️ Melewati Target (${targetHari} Hari)</span>`;
-        }
-
-        return `<span style="background: #eff6ff; color: #1d4ed8; font-size: 0.74rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; border: 1px solid #bfdbfe; display: inline-flex; align-items: center; gap: 3px;">⏱️ Target: ${targetHari} Hari</span>`;
+        return '';
       }
 
       /**
@@ -7762,12 +7729,10 @@
 
         if (item.jadwalKunjungan) {
           const jadwalFormatted = this.formatJadwalKunjungan(item.jadwalKunjungan, item.jamKunjungan);
+          const catatan = item.catatanKunjungan || item.catatanJadwal || '';
           let msg = `Halo Bapak/Ibu ${nama}, kami dari Tim Verifikasi Dinas Lingkungan Hidup Kabupaten Lembata. Laporan Anda dengan No. Register: ${id} terkait dugaan ${jenis} di ${desaKel}, Kec. ${kec} telah kami verifikasi.\n\n🗓️ Tim DLH dijadwalkan turun ke lokasi pemeriksaan pada ${jadwalFormatted}.`;
-          if (item.catatanJadwal) {
-            msg += `\n📌 Catatan Jadwal: ${item.catatanJadwal}`;
-          }
-          if (item.targetHari) {
-            msg += `\n⏱️ Target estimasi waktu penanganan: ${item.targetHari} hari kerja.`;
+          if (catatan) {
+            msg += `\n📌 Catatan Kunjungan: ${catatan}`;
           }
           msg += `\n\nMohon kesediaannya saat tim kami tiba di lokasi. Terima kasih atas kepedulian Anda terhadap kelestarian lingkungan Kabupaten Lembata.`;
           return msg;
@@ -7851,8 +7816,7 @@
               <div class="rk-center-col">
                 <div class="rk-title ${isBaru ? 'rk-title-bold' : ''}">${this.escHtml(jenis)}</div>
                 <div class="rk-sub">${this.escHtml(pelapor)} &bull; ${this.escHtml(desaLabel)}</div>
-                ${jadwalRingkas ? `<div style="font-size: 11px; color: #047857; font-weight: 700; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">🗓️ ${this.escHtml(jadwalRingkas)}</div>` : ''}
-                ${item.targetHari ? `<div style="margin-top: 3px;">${this.getSlaBadgeHtml(item)}</div>` : ''}
+                ${jadwalRingkas ? `<div style="font-size: 11px; color: #047857; font-weight: 700; margin-top: 2px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">🗓️ Kunjungan: ${this.escHtml(jadwalRingkas)}</div>` : ''}
               </div>
               <div class="rk-right-col">
                 <div class="rk-meta-top">${rightTopHtml}</div>
@@ -8051,8 +8015,7 @@
               <td class="col-status">
                 <div class="status-cell-inner" style="display: flex; flex-direction: column; gap: 3px; align-items: flex-start;">
                   <div>${this.getStatusBadgeHtml(item.status)}</div>
-                  ${jadwalKunjunganText ? `<div style="font-size: 0.74rem; color: #047857; font-weight: 700; line-height: 1.25;">🗓️ ${this.escHtml(jadwalKunjunganText)}</div>` : ''}
-                  <div>${this.getSlaBadgeHtml(item)}</div>
+                  ${jadwalKunjunganText ? `<div style="font-size: 0.74rem; color: #047857; font-weight: 700; line-height: 1.25; background: #ecfdf5; padding: 2px 6px; border-radius: 4px; border: 1px solid #a7f3d0; margin-top: 2px;">🗓️ Kunjungan: ${this.escHtml(jadwalKunjunganText)}</div>` : ''}
                   <div class="desktop-verif-meta" style="font-size: 0.78rem; font-weight: 700; color: #1e293b; line-height: 1.25;">
                     ${verifName}
                   </div>
@@ -8102,10 +8065,10 @@
                     </div>
                   </div>
                   <div class="acc-detail-item acc-full">
-                    <span class="acc-detail-label">🗓️ Jadwal Kunjungan Lapangan &amp; Target SLA</span>
+                    <span class="acc-detail-label">🗓️ Jadwal Kunjungan Petugas ke Lapangan</span>
                     <div class="acc-detail-val" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
-                      <span>${jadwalKunjunganText ? `🗓️ ${this.escHtml(jadwalKunjunganText)}` : 'Menunggu Verifikasi Petugas'}</span>
-                      <div>${this.getSlaBadgeHtml(item)}</div>
+                      <span style="font-weight: 700; color: #047857;">${jadwalKunjunganText ? `🗓️ ${this.escHtml(jadwalKunjunganText)}` : '<span style="color: #64748b; font-weight: normal;">Menunggu Penjadwalan Petugas</span>'}</span>
+                      ${(item.catatanKunjungan || item.catatanJadwal) ? `<div style="font-size: 0.74rem; color: #475569;">Catatan: ${this.escHtml(item.catatanKunjungan || item.catatanJadwal)}</div>` : ''}
                     </div>
                   </div>
                   <div class="acc-detail-item acc-full">
@@ -8441,33 +8404,26 @@
               const isUnverifiedStatus = (selectedStatus === 'Baru' || selectedStatus === 'Aduan Diterima');
               const checkedChecklist = Array.from(document.querySelectorAll('.v-chk-input:checked')).map(i => i.value);
 
-              const tglKunjungan = document.getElementById('vTanggalVerifikasi').value;
+              const elTgl = document.getElementById('vTanggalKunjungan') || document.getElementById('vTanggalVerifikasi');
+              const tglKunjungan = elTgl ? elTgl.value : '';
               const jamKunjungan = document.getElementById('vJamKunjungan') ? document.getElementById('vJamKunjungan').value : '';
-              const catatanJadwal = document.getElementById('vCatatanJadwal') ? document.getElementById('vCatatanJadwal').value.trim() : '';
-              const jadwalKunjungan = tglKunjungan ? (jamKunjungan ? `${tglKunjungan} ${jamKunjungan}` : tglKunjungan) : '';
+              const elCatatan = document.getElementById('vCatatanKunjungan') || document.getElementById('vCatatanJadwal');
+              const catatanKunjungan = elCatatan ? elCatatan.value.trim() : '';
 
-              const targetHariInputEl = document.getElementById('vTargetHariInput');
-              const targetHariVal = targetHariInputEl ? parseInt(targetHariInputEl.value, 10) : null;
-              const targetHari = (!isNaN(targetHariVal) && targetHariVal > 0) ? targetHariVal : null;
-
-              let tenggatWaktu = '';
-              if (targetHari && tglKunjungan) {
-                const baseDate = new Date(tglKunjungan);
-                if (!isNaN(baseDate.getTime())) {
-                  baseDate.setDate(baseDate.getDate() + targetHari);
-                  tenggatWaktu = baseDate.toISOString().split('T')[0];
-                }
+              // Satukan tanggal & jam kunjungan menjadi format yang konsisten dan mudah dipahami manusia
+              let jadwalKunjungan = '';
+              if (!isUnverifiedStatus && tglKunjungan) {
+                jadwalKunjungan = this.formatJadwalKunjungan(tglKunjungan, jamKunjungan);
               }
 
               const updateData = {
                 status: selectedStatus,
                 petugasVerifikasi: isUnverifiedStatus ? '-' : document.getElementById('vPetugasInput').value.trim(),
-                tanggalVerifikasi: tglKunjungan,
+                tanggalVerifikasi: tglKunjungan || '-',
                 jadwalKunjungan: isUnverifiedStatus ? '' : jadwalKunjungan,
                 jamKunjungan: isUnverifiedStatus ? '' : jamKunjungan,
-                catatanJadwal: isUnverifiedStatus ? '' : catatanJadwal,
-                targetHari: isUnverifiedStatus ? null : targetHari,
-                tenggatWaktu: isUnverifiedStatus ? '' : tenggatWaktu,
+                catatanKunjungan: isUnverifiedStatus ? '' : catatanKunjungan,
+                catatanJadwal: isUnverifiedStatus ? '' : catatanKunjungan,
                 hasilVerifikasi: document.getElementById('vHasilVerifikasi').value.trim(),
                 checklistVerifikasi: isUnverifiedStatus ? [] : checkedChecklist,
                 tindakanDLH: document.getElementById('vTindakanDLH').value.trim(),
@@ -8484,7 +8440,7 @@
                 this.updateKPIs();
                 this.renderTable();
                 this.renderMapLayers();
-                this.showToast(`✅ Verifikasi & Foto tiket ${id} berhasil tersinkron ke cloud & seluruh perangkat!`, 'success');
+                this.showToast(`✅ Jadwal Kunjungan & Verifikasi tiket ${id} berhasil tersinkron!`, 'success');
               } else {
                 this.showToast('⚠️ Gagal menyimpan pembaruan verifikasi.', 'warning');
               }
