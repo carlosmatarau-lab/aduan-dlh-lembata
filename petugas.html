@@ -3648,6 +3648,271 @@
         display: none !important;
       }
     }
+
+    /* ===================================================================
+       DAFTAR RINGKAS MOBILE (<=768px) & BAR PROGRES MODAL
+       =================================================================== */
+    :root {
+      --st-baru-text: #b45309;
+      --st-baru-bg: #fef3c7;
+      --st-verif-text: #6d28d9;
+      --st-verif-bg: #ede9fe;
+      --st-proses-text: #1d4ed8;
+      --st-proses-bg: #dbeafe;
+      --st-selesai-text: #047857;
+      --st-selesai-bg: #d1fae5;
+      --st-tolak-text: #475569;
+      --st-tolak-bg: #e2e8f0;
+    }
+
+    /* Tampilan Bersyarat: Daftar Ringkas vs Tabel Desktop */
+    #rkList {
+      display: none;
+    }
+    @media (max-width: 768px) {
+      .table-responsive {
+        display: none !important;
+      }
+      #rkList {
+        display: block !important;
+      }
+    }
+    @media (min-width: 769px) {
+      .table-responsive {
+        display: block !important;
+      }
+      #rkList {
+        display: none !important;
+      }
+    }
+
+    /* Kontainer Daftar Ringkas */
+    .rk-container {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      overflow: hidden;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      margin-bottom: 8px;
+    }
+
+    /* Baris Daftar Ringkas (Grid 40px 1fr auto) */
+    .rk-row {
+      display: grid;
+      grid-template-columns: 40px 1fr auto;
+      gap: 12px;
+      padding: 12px 14px;
+      min-height: 60px;
+      align-items: center;
+      border-bottom: 1px solid #e2e8f0;
+      cursor: pointer;
+      background: #ffffff;
+      transition: background-color 0.15s ease;
+      outline: none;
+      -webkit-tap-highlight-color: transparent;
+      user-select: none;
+    }
+    .rk-row:last-child {
+      border-bottom: none;
+    }
+    .rk-row:hover,
+    .rk-row:focus-visible {
+      background: #f8fafc;
+    }
+    .rk-row:active {
+      background: #f1f5f9;
+    }
+
+    /* Kolom Kiri: Ikon Box 40px */
+    .rk-icon-box {
+      width: 40px;
+      height: 40px;
+      border-radius: 10px;
+      background: #e3f4eb;
+      color: #047857;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      flex-shrink: 0;
+    }
+    .rk-icon {
+      width: 20px;
+      height: 20px;
+      display: block;
+    }
+    .rk-new-dot {
+      position: absolute;
+      top: -2px;
+      right: -2px;
+      width: 11px;
+      height: 11px;
+      background: #ef4444;
+      border: 2px solid #ffffff;
+      border-radius: 50%;
+    }
+
+    /* Kolom Tengah */
+    .rk-center-col {
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+    }
+    .rk-title {
+      font-size: 15px;
+      font-weight: 600;
+      color: #0f172a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+    .rk-title.rk-title-bold {
+      font-weight: 800;
+    }
+    .rk-sub {
+      font-size: 12px;
+      color: #64748b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+
+    /* Kolom Kanan */
+    .rk-right-col {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 4px;
+      flex-shrink: 0;
+      text-align: right;
+    }
+    .rk-meta-top {
+      font-size: 12px;
+      color: #64748b;
+      font-weight: 500;
+      white-space: nowrap;
+      line-height: 1.25;
+    }
+    .rk-meta-bottom {
+      font-size: 12px;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      white-space: nowrap;
+      line-height: 1.25;
+    }
+    .rk-dot {
+      display: inline-block;
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      margin-right: 4px;
+      background: currentColor;
+    }
+
+    /* Chip Keterlambatan SLA */
+    .rk-chip-sla {
+      background: #fee2e2;
+      color: #b91c1c;
+      font-size: 12px;
+      font-weight: 600;
+      border-radius: 999px;
+      padding: 2px 8px;
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      white-space: nowrap;
+      line-height: 1.25;
+    }
+
+    /* Palet Warna Status */
+    .rk-st-baru { color: var(--st-baru-text); }
+    .rk-st-diverifikasi { color: var(--st-verif-text); }
+    .rk-st-ditindaklanjuti { color: var(--st-proses-text); }
+    .rk-st-selesai { color: var(--st-selesai-text); }
+    .rk-st-ditolak { color: var(--st-tolak-text); }
+
+    .rk-bg-baru { background-color: var(--st-baru-text); }
+    .rk-bg-diverifikasi { background-color: var(--st-verif-text); }
+    .rk-bg-ditindaklanjuti { background-color: var(--st-proses-text); }
+    .rk-bg-selesai { background-color: var(--st-selesai-text); }
+    .rk-bg-ditolak { background-color: var(--st-tolak-text); }
+
+    /* Keadaan Kosong Daftar Ringkas */
+    .rk-empty-card {
+      padding: 40px 20px;
+      text-align: center;
+      color: #64748b;
+      background: #ffffff;
+    }
+
+    /* Bar Progres Modal Detail */
+    .rk-modal-progress {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 16px;
+    }
+    .rk-prog-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .rk-prog-track {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      height: 7px;
+      margin-bottom: 8px;
+    }
+    .rk-prog-track-single {
+      display: block;
+      height: 7px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      overflow: hidden;
+      margin-bottom: 8px;
+    }
+    .rk-prog-seg {
+      height: 100%;
+      background: #e2e8f0;
+      border-radius: 999px;
+      transition: background-color 0.2s ease;
+    }
+    .rk-prog-labels {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 6px;
+      font-size: 0.72rem;
+    }
+    .rk-prog-lbl-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+    .rk-prog-lbl-name {
+      font-weight: 700;
+      color: #334155;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .rk-prog-lbl-date {
+      font-size: 0.68rem;
+      color: #64748b;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
   </style>
 </head>
 
@@ -4034,6 +4299,9 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Daftar Ringkas Khusus Layar HP (<= 768px) -->
+      <div id="rkList" class="rk-container" aria-label="Daftar Ringkas Aduan"></div>
 
       <!-- Floating Action Dropdown Menu Container -->
       <div id="tableActionDropdownMenu" class="action-dropdown-menu" style="display: none;" role="menu"></div>
@@ -5971,16 +6239,81 @@
         const isTindakDone = !!(timeTindak || item.status === 'Ditindaklanjuti' || item.status === 'Dalam Penanganan' || item.status === 'Selesai');
         const isSelesaiDone = item.status === 'Selesai';
 
+        const SLA_BARU_HARI = 2;
+        const stNorm = this.normalizeStatus(item.status);
+        const isBaru = stNorm.key === 'baru';
+        const aduanDate = this.parseAduanDate(item.timestamp || item.tanggalKejadian);
+        const diffDays = this.getWitaCalendarDayDiff(aduanDate);
+        const isOverdue = isBaru && diffDays >= SLA_BARU_HARI;
+
+        const overdueChipHtml = isOverdue
+          ? `<span class="rk-chip-sla" style="font-size: 0.74rem; padding: 3px 10px;">⏳ Menunggu ${diffDays} hari</span>`
+          : '';
+
+        let progressBarHtml = '';
+        if (stNorm.key === 'ditolak') {
+          progressBarHtml = `
+            <div class="rk-modal-progress">
+              <div class="rk-prog-header">
+                <span style="color: #475569; font-weight: 800;">Ditutup: laporan ditolak</span>
+                <span style="font-size: 0.72rem; color: #64748b; font-weight: 600;">Status Akhir</span>
+              </div>
+              <div class="rk-prog-track-single">
+                <div style="height: 100%; background: #64748b; border-radius: 999px;"></div>
+              </div>
+            </div>
+          `;
+        } else {
+          const currentStage = Math.max(1, Math.min(4, stNorm.stage));
+          const stageLabels = ['Baru', 'Diverifikasi', 'Ditindaklanjuti', 'Selesai'];
+          const dateTgl1 = this.formatShortStepDate(item.timestamp || item.tanggalKejadian);
+          const dateTgl2 = (currentStage >= 2) ? this.formatShortStepDate(item.timestampVerifikasi || item.tanggalVerifikasi) : '';
+          const dateTgl3 = (currentStage >= 3) ? this.formatShortStepDate(item.timestampTindakLanjut) : '';
+          const dateTgl4 = (currentStage >= 4) ? this.formatShortStepDate(item.timestampSelesai || item.tanggalSelesai) : '';
+          const stepDates = [dateTgl1, dateTgl2, dateTgl3, dateTgl4];
+
+          const segColors = [1, 2, 3, 4].map(idx => {
+            return idx <= currentStage ? `var(--st-${stNorm.key}-text)` : '#e2e8f0';
+          });
+
+          progressBarHtml = `
+            <div class="rk-modal-progress">
+              <div class="rk-prog-header">
+                <span style="color: var(--st-${stNorm.key}-text);">Tahap ${currentStage} dari 4 &bull; ${this.escHtml(stNorm.label)}</span>
+                <span style="font-size: 0.72rem; color: #64748b; font-weight: 600;">Progres Aduan</span>
+              </div>
+              <div class="rk-prog-track">
+                <div class="rk-prog-seg" style="background-color: ${segColors[0]};"></div>
+                <div class="rk-prog-seg" style="background-color: ${segColors[1]};"></div>
+                <div class="rk-prog-seg" style="background-color: ${segColors[2]};"></div>
+                <div class="rk-prog-seg" style="background-color: ${segColors[3]};"></div>
+              </div>
+              <div class="rk-prog-labels">
+                ${stageLabels.map((lbl, idx) => `
+                  <div class="rk-prog-lbl-item">
+                    <span class="rk-prog-lbl-name" style="${idx + 1 <= currentStage ? 'color: #0f172a; font-weight: 700;' : 'color: #94a3b8;'}">${lbl}</span>
+                    ${stepDates[idx] ? `<span class="rk-prog-lbl-date">${this.escHtml(stepDates[idx])}</span>` : ''}
+                  </div>
+                `).join('')}
+              </div>
+            </div>
+          `;
+        }
+
         body.innerHTML = `
-          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0;">
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; padding-bottom: 12px; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 8px;">
             <div>
               <span style="font-size: 0.72rem; color: #64748b; font-weight: 800; text-transform: uppercase;">NO. REGISTER ADUAN RESMI:</span>
-              <h2 style="font-size: 1.35rem; color: #065f46; font-weight: 800; font-family: monospace;">${item.id}</h2>
+              <h2 style="font-size: 1.35rem; color: #065f46; font-weight: 800; font-family: monospace; margin: 0;">${this.escHtml(item.id)}</h2>
             </div>
-            <div>
+            <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap;">
+              ${overdueChipHtml}
               ${this.getStatusBadgeHtml(item.status)}
             </div>
           </div>
+
+          <!-- Bar Progres Tahapan Siklus Penanganan Aduan -->
+          ${progressBarHtml}
 
           <!-- ==============================================================
                LOG TIMESTAMP AKUNTABILITAS KINERJA BULANAN DLH
@@ -6315,12 +6648,29 @@
             </div>
           ` : ''}
 
-          <!-- Tombol Aksi Cepat Modal -->
-          <div style="display: flex; justify-content: flex-end; gap: 8px; margin-top: 14px; flex-wrap: wrap;">
-            <button type="button" class="btn-action-tool" onclick="window.portal.printBeritaAcara('${item.id}')" style="background: #0284c7; color: white; border-color: #0369a1;">🖨️ Cetak Berita Acara (PDF)</button>
-            <button type="button" class="btn-action-tool" onclick="window.portal.closeAllModals(); window.portal.openVerifikasiModal('${item.id}')" style="background: #059669; color: white; border-color: #047857;">
-              📋 Perbarui Verifikasi Petugas
+          <!-- Tombol Aksi Modal (Verifikasi, Cetak BAST, Sorot di Peta, dan Hapus Destruktif) -->
+          <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 20px; padding-top: 16px; border-top: 1px solid #e2e8f0; flex-wrap: wrap; gap: 10px;">
+            <button type="button" onclick="window.portal.confirmDeleteAduan('${this.escHtml(item.id)}')"
+                    style="background: #ffffff; color: #dc2626; border: 1.5px solid #fca5a5; border-radius: 8px; padding: 7px 14px; font-size: 0.8rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 5px; transition: all 0.2s;"
+                    onmouseover="this.style.background='#fef2f2';"
+                    onmouseout="this.style.background='#ffffff';"
+                    title="Hapus laporan ini secara permanen">
+              🗑️ Hapus
             </button>
+            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+              <button type="button" class="btn-action-tool" onclick="window.portal.closeAllModals(); window.portal.highlightOnMap('${this.escHtml(item.id)}')"
+                      style="background: #0d9488; color: white; border-color: #0f766e;" title="Tampilkan dan sorot lokasi di peta">
+                📍 Sorot di Peta
+              </button>
+              <button type="button" class="btn-action-tool" onclick="window.portal.printBeritaAcara('${this.escHtml(item.id)}')"
+                      style="background: #0284c7; color: white; border-color: #0369a1;" title="Cetak Berita Acara Pemeriksaan Fisik Lapangan">
+                🖨️ Cetak BAST (PDF)
+              </button>
+              <button type="button" class="btn-action-tool" onclick="window.portal.closeAllModals(); window.portal.openVerifikasiModal('${this.escHtml(item.id)}')"
+                      style="background: #059669; color: white; border-color: #047857;" title="Input Hasil Verifikasi Lapangan">
+                📋 Verifikasi
+              </button>
+            </div>
           </div>
         `;
 
@@ -7084,6 +7434,247 @@
         this.toggleMobileAccordion(id, event);
       }
 
+      /**
+       * Sanitasi teks untuk mencegah XSS injection (Zero-Regression)
+       */
+      escHtml(str) {
+        if (str === null || str === undefined) return '';
+        return String(str)
+          .replace(/&/g, '&amp;')
+          .replace(/</g, '&lt;')
+          .replace(/>/g, '&gt;')
+          .replace(/"/g, '&quot;')
+          .replace(/'/g, '&#39;');
+      }
+
+      /**
+       * Parser tanggal aduan tangguh: mendukung ISO, dd/mm/yyyy, yyyy-mm-dd HH:mm, dan fallback Date
+       */
+      parseAduanDate(raw) {
+        if (!raw || raw === '-') return null;
+        if (raw instanceof Date) {
+          return isNaN(raw.getTime()) ? null : raw;
+        }
+        const str = String(raw).trim();
+        if (!str) return null;
+
+        // Format dd/mm/yyyy atau dd/mm/yyyy HH:mm[:ss]
+        const matchSlash = str.match(/^(\d{1,2})\/(\d{1,2})\/(\d{4})(?:\s+(\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?/);
+        if (matchSlash) {
+          const day = parseInt(matchSlash[1], 10);
+          const month = parseInt(matchSlash[2], 10) - 1;
+          const year = parseInt(matchSlash[3], 10);
+          const hour = matchSlash[4] ? parseInt(matchSlash[4], 10) : 0;
+          const min = matchSlash[5] ? parseInt(matchSlash[5], 10) : 0;
+          const sec = matchSlash[6] ? parseInt(matchSlash[6], 10) : 0;
+          const d = new Date(year, month, day, hour, min, sec);
+          return isNaN(d.getTime()) ? null : d;
+        }
+
+        // Format ISO: yyyy-mm-dd atau yyyy-mm-dd HH:mm[:ss]
+        const matchIso = str.match(/^(\d{4})-(\d{1,2})-(\d{1,2})(?:[T\s](\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?/);
+        if (matchIso) {
+          const year = parseInt(matchIso[1], 10);
+          const month = parseInt(matchIso[2], 10) - 1;
+          const day = parseInt(matchIso[3], 10);
+          const hour = matchIso[4] ? parseInt(matchIso[4], 10) : 0;
+          const min = matchIso[5] ? parseInt(matchIso[5], 10) : 0;
+          const sec = matchIso[6] ? parseInt(matchIso[6], 10) : 0;
+          const d = new Date(year, month, day, hour, min, sec);
+          return isNaN(d.getTime()) ? null : d;
+        }
+
+        // Fallback standar Date()
+        const fallback = new Date(str);
+        return isNaN(fallback.getTime()) ? null : fallback;
+      }
+
+      /**
+       * Menghitung selisih hari kalender lokal WITA (UTC+8) Kabupaten Lembata
+       */
+      getWitaCalendarDayDiff(date) {
+        if (!date) return 0;
+        const now = new Date();
+        const nowUtc = now.getTime() + (now.getTimezoneOffset() * 60000);
+        const nowWita = new Date(nowUtc + (8 * 3600000));
+
+        const targetUtc = date.getTime() + (date.getTimezoneOffset() * 60000);
+        const targetWita = new Date(targetUtc + (8 * 3600000));
+
+        const nowDateOnly = new Date(nowWita.getFullYear(), nowWita.getMonth(), nowWita.getDate()).getTime();
+        const targetDateOnly = new Date(targetWita.getFullYear(), targetWita.getMonth(), targetWita.getDate()).getTime();
+
+        const diffDays = Math.floor((nowDateOnly - targetDateOnly) / 86400000);
+        return diffDays < 0 ? 0 : diffDays;
+      }
+
+      /**
+       * Format tanggal singkat untuk baris tahapan progres modal (contoh: '28 Okt')
+       */
+      formatShortStepDate(raw) {
+        if (!raw || raw === '-') return '';
+        const d = this.parseAduanDate(raw);
+        if (!d) return '';
+        const BULAN_PENDEK = ['Jan', 'Feb', 'Mar', 'Apr', 'Mei', 'Jun', 'Jul', 'Agu', 'Sep', 'Okt', 'Nov', 'Des'];
+        return `${d.getDate()} ${BULAN_PENDEK[d.getMonth()]}`;
+      }
+
+      /**
+       * Normalisasi status aduan sesuai palet warna dan tahapan progres
+       */
+      normalizeStatus(status) {
+        const clean = (status || 'Baru').toLowerCase();
+        if (clean.includes('verif') || clean.includes('sedang')) {
+          return { key: 'diverifikasi', label: status || 'Diverifikasi', cssClass: 'rk-st-diverifikasi', bgClass: 'rk-bg-diverifikasi', stage: 2 };
+        }
+        if (clean.includes('tindak') || clean.includes('proses') || clean.includes('penanganan')) {
+          return { key: 'ditindaklanjuti', label: status || 'Ditindaklanjuti', cssClass: 'rk-st-ditindaklanjuti', bgClass: 'rk-bg-ditindaklanjuti', stage: 3 };
+        }
+        if (clean.includes('selesai') || clean.includes('tuntas')) {
+          return { key: 'selesai', label: status || 'Selesai', cssClass: 'rk-st-selesai', bgClass: 'rk-bg-selesai', stage: 4 };
+        }
+        if (clean.includes('tolak')) {
+          return { key: 'ditolak', label: status || 'Ditolak', cssClass: 'rk-st-ditolak', bgClass: 'rk-bg-ditolak', stage: 0 };
+        }
+        return { key: 'baru', label: status || 'Baru', cssClass: 'rk-st-baru', bgClass: 'rk-bg-baru', stage: 1 };
+      }
+
+      /**
+       * Format penamaan Desa vs Kelurahan di Kabupaten Lembata
+       */
+      formatDesaKelurahan(raw) {
+        if (!raw || raw === '-') return 'Desa -';
+        const str = String(raw).trim();
+        const hasKelMarker = /\b(kelurahan|kel\.?)\b/i.test(str);
+        const cleanName = str
+          .replace(/\(\s*(kelurahan|kel\.?|desa)\s*\)/gi, '')
+          .replace(/^(kelurahan|kel\.?|desa)\s+/i, '')
+          .trim();
+        if (!cleanName) return 'Desa -';
+        const KELURAHAN_LEMBATA = [
+          'lewoleba', 'lewoleba barat', 'lewoleba tengah', 'lewoleba timur',
+          'lewoleba selatan', 'lewoleba utara', 'selandoro'
+        ];
+        const isKelurahan = hasKelMarker || KELURAHAN_LEMBATA.includes(cleanName.toLowerCase());
+        return isKelurahan ? `Kelurahan ${cleanName}` : `Desa ${cleanName}`;
+      }
+
+      /**
+       * Ikon SVG inline 20px berdasarkan jenisPencemaran
+       */
+      getJenisPencemaranIcon(jenis) {
+        const j = (jenis || '').toLowerCase();
+        if (j.includes('udara') || j.includes('asap')) {
+          // Angin
+          return `<svg class="rk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9.59 4.59A2 2 0 1 1 11 8H2m10.59 11.41A2 2 0 1 0 14 16H2m15.73-8.27A2.5 2.5 0 1 1 19.5 12H2"/></svg>`;
+        }
+        if (j.includes('limbah') || j.includes('b3') || j.includes('kimia') || j.includes('medis')) {
+          // Labu
+          return `<svg class="rk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M10 2v7.527a2 2 0 0 1-.211.896L4.72 20.55a1 1 0 0 0 .9 1.45h12.76a1 1 0 0 0 .9-1.45l-5.069-10.127A2 2 0 0 1 14 9.527V2"/><path d="M8.5 2h7"/><path d="M7 16h10"/></svg>`;
+        }
+        if (j.includes('laut') || j.includes('pesisir') || j.includes('pantai') || j.includes('terumbu')) {
+          // Ombak
+          return `<svg class="rk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 6c.6.5 1.2 1 2.5 1C7 7 7 5 9.5 5c2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 12c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/><path d="M2 18c.6.5 1.2 1 2.5 1 2.5 0 2.5-2 5-2 2.6 0 2.4 2 5 2 2.5 0 2.5-2 5-2 1.3 0 1.9.5 2.5 1"/></svg>`;
+        }
+        if (j.includes('air') || j.includes('sungai') || j.includes('danau') || j.includes('mata air')) {
+          // Tetes
+          return `<svg class="rk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/></svg>`;
+        }
+        if (j.includes('sampah') || j.includes('bau') || j.includes('tps') || j.includes('kotor')) {
+          // Tempat Sampah
+          return `<svg class="rk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/><line x1="10" y1="11" x2="10" y2="17"/><line x1="14" y1="11" x2="14" y2="17"/></svg>`;
+        }
+        // Lainnya: Gunung
+        return `<svg class="rk-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="m8 3 4 8 5-5 5 15H2L8 3z"/></svg>`;
+      }
+
+      /**
+       * Render Daftar Ringkas khusus tampilan mobile (<= 768px)
+       */
+      renderCompactList(filtered, data) {
+        const rkList = document.getElementById('rkList');
+        if (!rkList) return;
+
+        if (!data || data.length === 0) {
+          rkList.innerHTML = `
+            <div class="rk-empty-card">
+              <div style="font-size: 2.2rem; margin-bottom: 8px;">✨</div>
+              <strong style="color: #0f172a; font-size: 1rem; display: block;">Belum ada aduan masuk (0 Aduan).</strong>
+              <p style="font-size: 0.85rem; color: #64748b; margin-top: 6px; margin-bottom: 0;">Sistem telah disegarkan dan bersih total. Siap menerima pengujian laporan baru dari formulir warga maupun WhatsApp.</p>
+            </div>
+          `;
+          return;
+        }
+
+        if (!filtered || filtered.length === 0) {
+          rkList.innerHTML = `
+            <div class="rk-empty-card">
+              <div style="font-size: 2rem; margin-bottom: 8px;">📭</div>
+              <strong style="color: #334155; font-size: 0.95rem; display: block;">Tidak ada data aduan yang sesuai dengan kriteria filter.</strong>
+              <p style="font-size: 0.8rem; margin-top: 4px; margin-bottom: 0;">Coba ubah kata kunci pencarian atau reset filter kecamatan/status.</p>
+            </div>
+          `;
+          return;
+        }
+
+        const SLA_BARU_HARI = 2;
+
+        rkList.innerHTML = filtered.map(item => {
+          const id = item.id || '';
+          const jenis = item.jenisPencemaran || 'Laporan Lingkungan';
+          const pelapor = item.namaPelapor || 'Warga';
+          const desaLabel = this.formatDesaKelurahan(item.desa);
+          const stNorm = this.normalizeStatus(item.status);
+          const isBaru = stNorm.key === 'baru';
+
+          const aduanDate = this.parseAduanDate(item.timestamp || item.tanggalKejadian);
+          const diffDays = this.getWitaCalendarDayDiff(aduanDate);
+
+          let rightTopHtml = '';
+          if (isBaru && diffDays >= SLA_BARU_HARI) {
+            rightTopHtml = `<span class="rk-chip-sla">⏳ Menunggu ${diffDays} hari</span>`;
+          } else {
+            let relDateText = '';
+            if (aduanDate === null) {
+              relDateText = item.timestamp || '-';
+            } else if (diffDays === 0) {
+              relDateText = 'Hari ini';
+            } else if (diffDays === 1) {
+              relDateText = 'Kemarin';
+            } else {
+              relDateText = `${diffDays} hari lalu`;
+            }
+            rightTopHtml = `<span>${this.escHtml(relDateText)}</span>`;
+          }
+
+          const iconSvg = this.getJenisPencemaranIcon(jenis);
+
+          return `
+            <div class="rk-row"
+                 role="button"
+                 tabindex="0"
+                 data-id="${this.escHtml(id)}"
+                 aria-label="Aduan ${this.escHtml(jenis)}, Status ${this.escHtml(stNorm.label)}">
+              <div class="rk-icon-box">
+                ${iconSvg}
+                ${isBaru ? '<span class="rk-new-dot" title="Aduan Baru"></span>' : ''}
+              </div>
+              <div class="rk-center-col">
+                <div class="rk-title ${isBaru ? 'rk-title-bold' : ''}">${this.escHtml(jenis)}</div>
+                <div class="rk-sub">${this.escHtml(pelapor)} &bull; ${this.escHtml(desaLabel)}</div>
+              </div>
+              <div class="rk-right-col">
+                <div class="rk-meta-top">${rightTopHtml}</div>
+                <div class="rk-meta-bottom ${stNorm.cssClass}">
+                  <span class="rk-dot"></span>
+                  <span>${this.escHtml(stNorm.label)}</span>
+                </div>
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
       renderTable() {
         const tbody = document.getElementById('aduanTableBody');
         if (!tbody) return;
@@ -7152,6 +7743,7 @@
           `;
           const footer = document.getElementById('tablePagination');
           if (footer) footer.textContent = `Menampilkan 0 dari 0 laporan aduan (Database Bersih / Fresh Start)`;
+          this.renderCompactList(filtered, data);
           return;
         }
 
@@ -7167,6 +7759,7 @@
           `;
           const footer = document.getElementById('tablePagination');
           if (footer) footer.textContent = `Menampilkan 0 dari total ${data.length} laporan aduan`;
+          this.renderCompactList(filtered, data);
           return;
         }
 
@@ -7208,22 +7801,7 @@
           return '';
         };
 
-        const KELURAHAN_LEMBATA = [
-          'lewoleba', 'lewoleba barat', 'lewoleba tengah', 'lewoleba timur',
-          'lewoleba selatan', 'lewoleba utara', 'selandoro'
-        ];
-        const formatDesaKelurahan = (raw) => {
-          if (!raw || raw === '-') return 'Desa -';
-          const str = String(raw).trim();
-          const hasKelMarker = /\b(kelurahan|kel\.?)\b/i.test(str);
-          const cleanName = str
-            .replace(/\(\s*(kelurahan|kel\.?|desa)\s*\)/gi, '')
-            .replace(/^(kelurahan|kel\.?|desa)\s+/i, '')
-            .trim();
-          if (!cleanName) return 'Desa -';
-          const isKelurahan = hasKelMarker || KELURAHAN_LEMBATA.includes(cleanName.toLowerCase());
-          return isKelurahan ? `Kelurahan ${cleanName}` : `Desa ${cleanName}`;
-        };
+        const formatDesaKelurahan = (raw) => this.formatDesaKelurahan(raw);
 
         tbody.innerHTML = filtered.map(item => {
           const formattedDate = formatCompactDate(item.timestamp || item.tanggalKejadian);
@@ -7354,6 +7932,9 @@
             </tr>
           `;
         }).join('');
+
+        // Render juga Daftar Ringkas khusus tampilan layar HP (<= 768px)
+        this.renderCompactList(filtered, data);
 
         const footer = document.getElementById('tablePagination');
         if (footer) {
@@ -7553,6 +8134,26 @@
         const btnExecDelete = document.getElementById('btnExecuteDelete');
         if (btnExecDelete) {
           btnExecDelete.addEventListener('click', () => this.executeDelete());
+        }
+
+        // Delegasi event tunggal untuk Daftar Ringkas Mobile (#rkList)
+        const rkList = document.getElementById('rkList');
+        if (rkList) {
+          rkList.addEventListener('click', (e) => {
+            const row = e.target.closest('[data-id]');
+            if (row && row.dataset.id) {
+              this.showDetailModal(row.dataset.id);
+            }
+          });
+          rkList.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+              const row = e.target.closest('[data-id]');
+              if (row && row.dataset.id) {
+                e.preventDefault();
+                this.showDetailModal(row.dataset.id);
+              }
+            }
+          });
         }
 
         // Search input
