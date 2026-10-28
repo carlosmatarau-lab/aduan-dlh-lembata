@@ -4903,6 +4903,8 @@
             lng: parseFloat(remoteItem.lng || 123.558),
             jenisPencemaran: remoteItem.jenisPencemaran || 'Lainnya',
             uraian: remoteItem.uraian || '-',
+            penyelesaian: remoteItem.penyelesaian || remoteItem.harapanPenyelesaian || '-',
+            riwayatPengaduan: remoteItem.riwayatPengaduan || remoteItem.riwayatInstansi || remoteItem.instansiLain || '-',
             sumberDugaan: remoteItem.sumberDugaan || '-',
             tanggalKejadian: remoteItem.tanggalKejadian || '-',
             fotoBukti: remoteItem.fotoBukti || remoteItem.linkFoto || '',
@@ -6195,6 +6197,19 @@
         this._currentCitizenPhotos = citizenPhotos;
         this._currentOfficerPhotos = officerPhotos;
 
+        const escapeHtml = (str) => {
+          if (str === null || str === undefined) return '';
+          return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+        };
+        if (typeof window.escapeHtml !== 'function') {
+          window.escapeHtml = escapeHtml;
+        }
+
         const mapsUrl = (item.lat && item.lng) ? `https://maps.google.com/?q=${item.lat},${item.lng}` : '';
 
         const stNorm = this.normalizeStatus(item.status);
@@ -6333,7 +6348,23 @@
 
             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 6px 8px; font-size: 0.82rem; color: #14532d; line-height: 1.45;">
               <div style="font-weight: 700; font-size: 0.75rem; color: #047857; margin-bottom: 2px;">📝 Kronologi Aduan Warga:</div>
-              <div style="white-space: pre-wrap;">${this.escHtml(item.uraian || 'Tidak ada uraian detail.')}</div>
+              <div style="white-space: pre-wrap;">${escapeHtml(item.uraian || 'Tidak ada uraian detail.')}</div>
+            </div>
+
+            <!-- Blok Poin 5: Penyelesaian yang Diinginkan -->
+            <div style="margin-top: 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px; font-size: 0.82rem; color: #1e293b; line-height: 1.45;">
+              <div style="font-weight: 700; font-size: 0.75rem; color: #334155; margin-bottom: 2px;">⚖️ Penyelesaian yang Diinginkan:</div>
+              ${(item.penyelesaian && item.penyelesaian !== '-' && String(item.penyelesaian).trim() !== '')
+                ? `<div style="white-space: pre-wrap; color: #0f172a;">${escapeHtml(item.penyelesaian)}</div>`
+                : `<div style="color: #94a3b8; font-style: italic; font-size: 0.78rem;">Tidak dicantumkan oleh pelapor</div>`}
+            </div>
+
+            <!-- Blok Poin 6: Riwayat Pengaduan ke Pihak Lain -->
+            <div style="margin-top: 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px; font-size: 0.82rem; color: #1e293b; line-height: 1.45;">
+              <div style="font-weight: 700; font-size: 0.75rem; color: #334155; margin-bottom: 2px;">🏛️ Riwayat Pengaduan ke Pihak Lain:</div>
+              ${(item.riwayatPengaduan && item.riwayatPengaduan !== '-' && String(item.riwayatPengaduan).trim() !== '' && String(item.riwayatPengaduan).toLowerCase() !== 'belum pernah')
+                ? `<div style="white-space: pre-wrap; color: #0f172a;">${escapeHtml(item.riwayatPengaduan)}</div>`
+                : `<div style="color: #94a3b8; font-style: italic; font-size: 0.78rem;">Tidak dicantumkan oleh pelapor</div>`}
             </div>
 
             ${((item.hasilVerifikasi && item.hasilVerifikasi !== '-') || (Array.isArray(item.checklistVerifikasi) && item.checklistVerifikasi.length > 0) || item.nomorBeritaAcara) ? `
@@ -8431,10 +8462,11 @@
         }
 
         // 14. Ekstrak Pernah Menyampaikan Pengaduan
-        let riwayatPengaduan = 'Belum pernah';
+        let riwayatPengaduan = '-';
         const matchRiwayat = raw.match(/PERNAH\s+MENYAMPAIKAN\s+PENGADUAN:\s*([\s\S]*?)(?=(?:📸|BUKTI\s+FOTO|----------------|_Laporan|$))/i);
         if (matchRiwayat && matchRiwayat[1]) {
-          riwayatPengaduan = clean(matchRiwayat[1]);
+          const cRiw = clean(matchRiwayat[1]);
+          riwayatPengaduan = (cRiw && cRiw.toLowerCase() !== 'belum pernah') ? cRiw : '-';
         }
 
         const now = new Date();

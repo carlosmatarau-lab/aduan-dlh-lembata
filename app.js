@@ -1589,28 +1589,54 @@ class DLHApp {
         const penyelesaian = (document.getElementById('inputPenyelesaian')?.value || '').trim();
 
         // Riwayat Pernah Menyampaikan Pengaduan (Bagian 6)
-        const instansiRows = document.querySelectorAll('.riwayat-instansi-nama, .riwayat-instansi');
-        const tglRows = document.querySelectorAll('.riwayat-instansi-tgl, .riwayat-tanggal');
-        const riwayatList = [];
-        instansiRows.forEach((el, idx) => {
-          const nm = (el?.value || '').trim();
-          const tg = (tglRows[idx]?.value || '').trim();
-          // Abaikan baris yang input "Nama Instansi"-nya kosong
-          if (nm) {
-            riwayatList.push({
-              no: riwayatList.length + 1,
-              instansi: nm,
-              tanggal: tg || '-'
-            });
+        const formatTglRiwayat = (tg) => {
+          if (!tg || tg === '-' || String(tg).trim() === '') return 'Tanggal tidak dicantumkan';
+          const str = String(tg).trim();
+          const parts = str.split('-');
+          if (parts.length === 3 && parts[0].length === 4) {
+            return `${parts[2]}/${parts[1]}/${parts[0]}`;
           }
-        });
+          return str;
+        };
+
+        const containerCards = document.querySelectorAll('#riwayatCardsContainer .riwayat-card-item');
+        const riwayatList = [];
+        if (containerCards && containerCards.length > 0) {
+          containerCards.forEach((card) => {
+            const nmEl = card.querySelector('.riwayat-instansi-nama, .riwayat-instansi');
+            const tgEl = card.querySelector('.riwayat-instansi-tgl, .riwayat-tanggal');
+            const nm = (nmEl?.value || '').trim();
+            const tg = (tgEl?.value || '').trim();
+            if (nm) {
+              riwayatList.push({
+                no: riwayatList.length + 1,
+                instansi: nm,
+                tanggal: tg || '-'
+              });
+            }
+          });
+        } else {
+          const instansiRows = document.querySelectorAll('.riwayat-instansi-nama, .riwayat-instansi');
+          const tglRows = document.querySelectorAll('.riwayat-instansi-tgl, .riwayat-tanggal');
+          instansiRows.forEach((el, idx) => {
+            const nm = (el?.value || '').trim();
+            const tg = (tglRows[idx]?.value || '').trim();
+            if (nm) {
+              riwayatList.push({
+                no: riwayatList.length + 1,
+                instansi: nm,
+                tanggal: tg || '-'
+              });
+            }
+          });
+        }
 
         const riwayatSummary = riwayatList.length > 0
-          ? riwayatList.map(r => `${r.no}. ${r.instansi} (${r.tanggal !== '-' ? r.tanggal : 'Tanggal tdk dicantumkan'})`).join('; ')
-          : 'Belum pernah';
+          ? riwayatList.map(r => `${r.no}. ${r.instansi} (${formatTglRiwayat(r.tanggal)})`).join('; ')
+          : '-';
 
         const riwayatWaText = riwayatList.length > 0
-          ? riwayatList.map(r => `• ${r.no}. ${r.instansi} (${r.tanggal !== '-' ? r.tanggal : 'Tanggal tidak dicantumkan'})`).join('\n')
+          ? riwayatList.map(r => `• ${r.no}. ${r.instansi} (${formatTglRiwayat(r.tanggal)})`).join('\n')
           : 'Belum pernah';
 
         const lat = (document.getElementById('inputLat')?.value || '').trim();
@@ -2012,18 +2038,31 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         const fallbackSumber = (document.getElementById('inputSumberDugaan')?.value || '').trim();
         const fallbackUraian = (document.getElementById('inputUraian')?.value || '').trim();
         const fallbackPenyelesaian = (document.getElementById('inputPenyelesaian')?.value || '').trim();
-        const fbInstansiRows = document.querySelectorAll('.riwayat-instansi-nama, .riwayat-instansi');
-        const fbTglRows = document.querySelectorAll('.riwayat-instansi-tgl, .riwayat-tanggal');
+        const fbContainerCards = document.querySelectorAll('#riwayatCardsContainer .riwayat-card-item');
         const fbRiwayatList = [];
-        fbInstansiRows.forEach((el, idx) => {
-          const nm = (el?.value || '').trim();
-          const tg = (fbTglRows[idx]?.value || '').trim();
-          if (nm) {
-            fbRiwayatList.push({ no: fbRiwayatList.length + 1, instansi: nm, tanggal: tg || '-' });
-          }
-        });
+        if (fbContainerCards && fbContainerCards.length > 0) {
+          fbContainerCards.forEach((card) => {
+            const nmEl = card.querySelector('.riwayat-instansi-nama, .riwayat-instansi');
+            const tgEl = card.querySelector('.riwayat-instansi-tgl, .riwayat-tanggal');
+            const nm = (nmEl?.value || '').trim();
+            const tg = (tgEl?.value || '').trim();
+            if (nm) {
+              fbRiwayatList.push({ no: fbRiwayatList.length + 1, instansi: nm, tanggal: tg || '-' });
+            }
+          });
+        } else {
+          const fbInstansiRows = document.querySelectorAll('.riwayat-instansi-nama, .riwayat-instansi');
+          const fbTglRows = document.querySelectorAll('.riwayat-instansi-tgl, .riwayat-tanggal');
+          fbInstansiRows.forEach((el, idx) => {
+            const nm = (el?.value || '').trim();
+            const tg = (fbTglRows[idx]?.value || '').trim();
+            if (nm) {
+              fbRiwayatList.push({ no: fbRiwayatList.length + 1, instansi: nm, tanggal: tg || '-' });
+            }
+          });
+        }
         const fallbackRiwayatWaText = fbRiwayatList.length > 0
-          ? fbRiwayatList.map(r => `• ${r.no}. ${r.instansi} (${r.tanggal !== '-' ? r.tanggal : 'Tanggal tidak dicantumkan'})`).join('\n')
+          ? fbRiwayatList.map(r => `• ${r.no}. ${r.instansi} (${formatTglRiwayat(r.tanggal)})`).join('\n')
           : 'Belum pernah';
 
         const fallbackLat = (document.getElementById('inputLat')?.value || '').trim();
