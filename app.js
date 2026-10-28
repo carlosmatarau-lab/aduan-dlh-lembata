@@ -1642,6 +1642,14 @@ class DLHApp {
         const lat = (document.getElementById('inputLat')?.value || '').trim();
         const lng = (document.getElementById('inputLng')?.value || '').trim();
 
+        // Sematkan data poin 5 dan poin 6 ke dalam teks uraian jika diisi oleh warga
+        const pVal = (penyelesaian && penyelesaian.trim() && penyelesaian.trim() !== '-') ? penyelesaian.trim() : '-';
+        const rVal = (riwayatSummary && riwayatSummary.trim() && riwayatSummary.trim() !== '-' && riwayatSummary.trim() !== 'Belum pernah') ? riwayatSummary.trim() : '-';
+        let combinedUraian = uraian;
+        if (pVal !== '-' || rVal !== '-') {
+          combinedUraian = `${uraian}\n\n---\n[PENYELESAIAN_DIINGINKAN]: ${pVal}\n[RIWAYAT_INSTANSI]: ${rVal}`;
+        }
+
         const formData = {
           namaPelapor: namaPelapor,
           noHp: noHp,
@@ -1652,9 +1660,9 @@ class DLHApp {
           jenisPencemaran: jenisPencemaran,
           tanggalKejadian: tanggalKejadian,
           sumberDugaan: sumberDugaan,
-          uraian: uraian,
-          penyelesaian: penyelesaian || '-',
-          riwayatPengaduan: riwayatSummary,
+          uraian: combinedUraian,
+          penyelesaian: pVal,
+          riwayatPengaduan: rVal,
           riwayatPengaduanList: riwayatList,
           lat: lat,
           lng: lng,
@@ -2573,6 +2581,29 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
 
     const mapsUrl = (item.lat && item.lng) ? `https://maps.google.com/?q=${item.lat},${item.lng}` : '';
 
+    // Ekstraksi teks utama kronologi, poin 5, dan poin 6 jika disematkan di uraian
+    let cleanUraian = (item.uraian || 'Tidak ada uraian detail.').trim();
+    let displayPenyelesaian = (item.penyelesaian && item.penyelesaian !== '-') ? String(item.penyelesaian).trim() : '';
+    let displayRiwayat = (item.riwayatPengaduan && item.riwayatPengaduan !== '-' && String(item.riwayatPengaduan).toLowerCase() !== 'belum pernah') ? String(item.riwayatPengaduan).trim() : '';
+
+    if (cleanUraian.includes('[PENYELESAIAN_DIINGINKAN]') || cleanUraian.includes('[RIWAYAT_INSTANSI]') || cleanUraian.includes('---')) {
+      const matchP = cleanUraian.match(/\[PENYELESAIAN_DIINGINKAN\]:\s*([\s\S]*?)(?=(?:\[RIWAYAT_INSTANSI\]|$))/i);
+      if (matchP && matchP[1]) {
+        const p = matchP[1].trim();
+        if (p && p !== '-') displayPenyelesaian = p;
+      }
+
+      const matchR = cleanUraian.match(/\[RIWAYAT_INSTANSI\]:\s*([\s\S]*?)$/i);
+      if (matchR && matchR[1]) {
+        const r = matchR[1].trim();
+        if (r && r !== '-' && r.toLowerCase() !== 'belum pernah') displayRiwayat = r;
+      }
+
+      cleanUraian = cleanUraian.split(/\n\s*---\s*\n/)[0].trim();
+      cleanUraian = cleanUraian.replace(/\[PENYELESAIAN_DIINGINKAN\]:[\s\S]*/i, '').trim();
+      if (!cleanUraian) cleanUraian = 'Tidak ada uraian detail.';
+    }
+
     body.innerHTML = `
       <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
         <div>
@@ -2608,18 +2639,18 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       </div>
 
       <div style="background: #f0fdf4; border: 1px solid #bbf7d0; padding: 12px; border-radius: 8px; margin-bottom: 14px; font-size: 0.88rem; color: #14532d;">
-        <strong>Uraian Aduan:</strong><br>${item.uraian}
+        <strong>Uraian Aduan:</strong><br>${cleanUraian}
       </div>
 
-      ${(item.penyelesaian && item.penyelesaian !== '-') ? `
+      ${(displayPenyelesaian && displayPenyelesaian !== '-') ? `
         <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; margin-bottom: 14px; font-size: 0.85rem; color: #1e293b;">
-          <strong>⚖️ Harapan / Penyelesaian yang Diinginkan:</strong><br>${item.penyelesaian}
+          <strong>⚖️ Harapan / Penyelesaian yang Diinginkan:</strong><br>${displayPenyelesaian}
         </div>
       ` : ''}
 
-      ${(item.riwayatPengaduan && item.riwayatPengaduan !== 'Belum pernah' && item.riwayatPengaduan !== '-') ? `
+      ${(displayRiwayat && displayRiwayat !== 'Belum pernah' && displayRiwayat !== '-') ? `
         <div style="background: #f8fafc; border: 1px solid #cbd5e1; padding: 12px; border-radius: 8px; margin-bottom: 14px; font-size: 0.85rem; color: #1e293b;">
-          <strong>🏛️ Riwayat Pengaduan ke Instansi Lain:</strong><br>${item.riwayatPengaduan}
+          <strong>🏛️ Riwayat Pengaduan ke Instansi Lain:</strong><br>${displayRiwayat}
         </div>
       ` : ''}
 

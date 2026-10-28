@@ -6212,6 +6212,29 @@
 
         const mapsUrl = (item.lat && item.lng) ? `https://maps.google.com/?q=${item.lat},${item.lng}` : '';
 
+        // Ekstraksi teks utama kronologi, poin 5, dan poin 6 jika disematkan di uraian
+        let cleanUraian = (item.uraian || 'Tidak ada uraian detail.').trim();
+        let displayPenyelesaian = (item.penyelesaian && item.penyelesaian !== '-') ? String(item.penyelesaian).trim() : '';
+        let displayRiwayat = (item.riwayatPengaduan && item.riwayatPengaduan !== '-' && String(item.riwayatPengaduan).toLowerCase() !== 'belum pernah') ? String(item.riwayatPengaduan).trim() : '';
+
+        if (cleanUraian.includes('[PENYELESAIAN_DIINGINKAN]') || cleanUraian.includes('[RIWAYAT_INSTANSI]') || cleanUraian.includes('---')) {
+          const matchP = cleanUraian.match(/\[PENYELESAIAN_DIINGINKAN\]:\s*([\s\S]*?)(?=(?:\[RIWAYAT_INSTANSI\]|$))/i);
+          if (matchP && matchP[1]) {
+            const p = matchP[1].trim();
+            if (p && p !== '-') displayPenyelesaian = p;
+          }
+
+          const matchR = cleanUraian.match(/\[RIWAYAT_INSTANSI\]:\s*([\s\S]*?)$/i);
+          if (matchR && matchR[1]) {
+            const r = matchR[1].trim();
+            if (r && r !== '-' && r.toLowerCase() !== 'belum pernah') displayRiwayat = r;
+          }
+
+          cleanUraian = cleanUraian.split(/\n\s*---\s*\n/)[0].trim();
+          cleanUraian = cleanUraian.replace(/\[PENYELESAIAN_DIINGINKAN\]:[\s\S]*/i, '').trim();
+          if (!cleanUraian) cleanUraian = 'Tidak ada uraian detail.';
+        }
+
         const stNorm = this.normalizeStatus(item.status);
 
         let progressBarHtml = '';
@@ -6348,22 +6371,22 @@
 
             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 6px 8px; font-size: 0.82rem; color: #14532d; line-height: 1.45;">
               <div style="font-weight: 700; font-size: 0.75rem; color: #047857; margin-bottom: 2px;">📝 Kronologi Aduan Warga:</div>
-              <div style="white-space: pre-wrap;">${escapeHtml(item.uraian || 'Tidak ada uraian detail.')}</div>
+              <div style="white-space: pre-wrap;">${escapeHtml(cleanUraian)}</div>
             </div>
 
             <!-- Blok Poin 5: Penyelesaian yang Diinginkan -->
             <div style="margin-top: 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px; font-size: 0.82rem; color: #1e293b; line-height: 1.45;">
               <div style="font-weight: 700; font-size: 0.75rem; color: #334155; margin-bottom: 2px;">⚖️ Penyelesaian yang Diinginkan:</div>
-              ${(item.penyelesaian && item.penyelesaian !== '-' && String(item.penyelesaian).trim() !== '')
-                ? `<div style="white-space: pre-wrap; color: #0f172a;">${escapeHtml(item.penyelesaian)}</div>`
+              ${(displayPenyelesaian && displayPenyelesaian !== '-' && displayPenyelesaian.trim() !== '')
+                ? `<div style="white-space: pre-wrap; color: #0f172a;">${escapeHtml(displayPenyelesaian)}</div>`
                 : `<div style="color: #94a3b8; font-style: italic; font-size: 0.78rem;">Tidak dicantumkan oleh pelapor</div>`}
             </div>
 
             <!-- Blok Poin 6: Riwayat Pengaduan ke Pihak Lain -->
             <div style="margin-top: 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px; font-size: 0.82rem; color: #1e293b; line-height: 1.45;">
               <div style="font-weight: 700; font-size: 0.75rem; color: #334155; margin-bottom: 2px;">🏛️ Riwayat Pengaduan ke Pihak Lain:</div>
-              ${(item.riwayatPengaduan && item.riwayatPengaduan !== '-' && String(item.riwayatPengaduan).trim() !== '' && String(item.riwayatPengaduan).toLowerCase() !== 'belum pernah')
-                ? `<div style="white-space: pre-wrap; color: #0f172a;">${escapeHtml(item.riwayatPengaduan)}</div>`
+              ${(displayRiwayat && displayRiwayat !== '-' && displayRiwayat.trim() !== '' && displayRiwayat.toLowerCase() !== 'belum pernah')
+                ? `<div style="white-space: pre-wrap; color: #0f172a;">${escapeHtml(displayRiwayat)}</div>`
                 : `<div style="color: #94a3b8; font-style: italic; font-size: 0.78rem;">Tidak dicantumkan oleh pelapor</div>`}
             </div>
 
@@ -8488,6 +8511,11 @@
           }
         }
 
+        let combinedWaUraian = uraian;
+        if ((penyelesaian && penyelesaian !== '-') || (riwayatPengaduan && riwayatPengaduan !== '-')) {
+          combinedWaUraian = `${uraian}\n\n---\n[PENYELESAIAN_DIINGINKAN]: ${penyelesaian}\n[RIWAYAT_INSTANSI]: ${riwayatPengaduan}`;
+        }
+
         this.currentParsedWaData = {
           id: id,
           timestamp: formattedTimestamp,
@@ -8500,7 +8528,7 @@
           lat: lat,
           lng: lng,
           jenisPencemaran: jenisPencemaran,
-          uraian: uraian,
+          uraian: combinedWaUraian,
           penyelesaian: penyelesaian,
           riwayatPengaduan: riwayatPengaduan,
           sumberDugaan: sumberDugaan,
