@@ -60,14 +60,8 @@
 
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: #f0fdf4;
-      background-image:
-        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.14) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(5, 150, 105, 0.16) 0px, transparent 50%),
-        radial-gradient(at 50% 20%, rgba(52, 211, 153, 0.10) 0px, transparent 60%),
-        radial-gradient(at 100% 100%, rgba(6, 78, 59, 0.12) 0px, transparent 55%),
-        radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.10) 0px, transparent 50%);
-      background-attachment: fixed;
+      background-color: #f8fafc;
+      background-image: none;
       color: var(--text-main);
       line-height: 1.5;
       min-height: 100vh;
@@ -77,30 +71,21 @@
     }
 
     .nature-top-ribbon {
-      height: 4px;
+      height: 3px;
       width: 100%;
-      background: linear-gradient(90deg, #059669 0%, #10b981 25%, #6ee7b7 50%, #10b981 75%, #059669 100%);
-      background-size: 200% 100%;
-      animation: ribbonFlow 6s linear infinite;
+      background: #047857;
       position: sticky;
       top: 0;
       z-index: 102;
     }
 
-    @keyframes ribbonFlow {
-      0% { background-position: 0% 50%; }
-      100% { background-position: 200% 50%; }
-    }
-
     /* ===================================================================
-       HEADER RESMI PETUGAS DLH — KHAS LINGKUNGAN HIDUP (DEEP FOREST ECO)
+       HEADER RESMI PETUGAS DLH — DEEP FOREST GREEN (STANDAR PEMKAB/SPBE)
        =================================================================== */
     .app-header {
-      background: linear-gradient(135deg, #032b1f 0%, #064e3b 42%, #0b5c46 82%, #04382a 100%);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 2px solid rgba(52, 211, 153, 0.4);
-      box-shadow: 0 4px 24px -2px rgba(3, 43, 31, 0.35);
+      background: #064e3b;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+      box-shadow: 0 2px 10px rgba(6, 78, 59, 0.15);
       position: sticky;
       top: 0;
       z-index: 100;
@@ -216,45 +201,40 @@
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 7px 15px;
-      border-radius: 999px;
+      padding: 6px 14px;
+      border-radius: 8px;
       font-size: 0.8rem;
-      font-weight: 800;
+      font-weight: 600;
       text-decoration: none;
-      transition: all 0.2s ease;
+      transition: all 0.15s ease;
       cursor: pointer;
-      backdrop-filter: blur(8px);
-      -webkit-backdrop-filter: blur(8px);
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.22);
     }
 
-    .btn-header-link.btn-warga {
-      background: rgba(16, 185, 129, 0.22);
-      color: #ecfdf5;
-      border: 1.5px solid #34d399;
-      box-shadow: 0 2px 8px rgba(5, 150, 105, 0.25);
+    .btn-header-link svg {
+      width: 15px;
+      height: 15px;
+      flex-shrink: 0;
     }
 
     .btn-header-link.btn-warga:hover {
-      background: #10b981;
+      background: rgba(255, 255, 255, 0.2);
+      border-color: rgba(255, 255, 255, 0.35);
       color: #ffffff;
-      border-color: #6ee7b7;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.45);
     }
 
     .btn-header-link.btn-lock-portal {
-      background: rgba(239, 68, 68, 0.2);
-      color: #fee2e2;
-      border: 1.5px solid #f87171;
-      box-shadow: 0 2px 8px rgba(220, 38, 38, 0.2);
+      background: rgba(255, 255, 255, 0.1);
+      color: #ffffff;
+      border: 1px solid rgba(255, 255, 255, 0.22);
     }
 
     .btn-header-link.btn-lock-portal:hover {
-      background: #ef4444;
-      color: #ffffff;
-      border-color: #fca5a5;
-      transform: translateY(-1px);
-      box-shadow: 0 4px 14px rgba(239, 68, 68, 0.4);
+      background: rgba(239, 68, 68, 0.25);
+      border-color: rgba(248, 113, 113, 0.45);
+      color: #fee2e2;
     }
 
     /* Main Container */
@@ -677,36 +657,45 @@
       white-space: nowrap;
     }
 
+    .badge-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: currentColor;
+      display: inline-block;
+      margin-right: 4px;
+    }
+
     .badge-baru {
-      background: #fef3c7;
-      color: #b45309;
-      border: 1px solid #fde68a;
+      background: #fffbeb !important;
+      color: #92400e !important;
+      border: 1px solid #fde68a !important;
     }
 
     .badge-diverifikasi,
     .badge-sedang-diverifikasi {
-      background: #f3e8ff;
-      color: #7e22ce;
-      border: 1px solid #e9d5ff;
+      background: #eef2ff !important;
+      color: #3730a3 !important;
+      border: 1px solid #c7d2fe !important;
     }
 
     .badge-ditindaklanjuti,
     .badge-dalam-penanganan {
-      background: #dbeafe;
-      color: #1d4ed8;
-      border: 1px solid #bfdbfe;
+      background: #eff6ff !important;
+      color: #1e40af !important;
+      border: 1px solid #bfdbfe !important;
     }
 
     .badge-selesai {
-      background: #dcfce7;
-      color: #15803d;
-      border: 1px solid #bbf7d0;
+      background: #ecfdf5 !important;
+      color: #065f46 !important;
+      border: 1px solid #a7f3d0 !important;
     }
 
     .badge-ditolak {
-      background: #f1f5f9;
-      color: #64748b;
-      border: 1px solid #e2e8f0;
+      background: #fff1f2 !important;
+      color: #9f1239 !important;
+      border: 1px solid #fecdd3 !important;
     }
 
     /* Table Action Buttons & Compact Action Group */
@@ -2400,24 +2389,35 @@
         font-size: 0.74rem !important;
       }
 
-      /* Dialog Modal pada Handphone */
+      /* Dialog Modal & Bottom Sheet pada Layar Ponsel (Mobile Ergonomics) */
       .modal-backdrop {
-        padding: 8px !important;
-        align-items: center !important;
+        padding: 0 !important;
+        align-items: flex-end !important;
         justify-content: center !important;
+        background: rgba(15, 23, 42, 0.45) !important;
+        backdrop-filter: blur(4px) !important;
+        -webkit-backdrop-filter: blur(4px) !important;
       }
-      .modal-dialog {
-        width: calc(100% - 12px) !important;
-        max-width: 100% !important;
-        margin: 0 auto !important;
-        max-height: 92vh !important;
-        border-radius: 16px !important;
-      }
+      .modal-dialog,
       .modal-card {
-        width: calc(100% - 12px) !important;
+        width: 100% !important;
         max-width: 100% !important;
-        margin: 0 auto !important;
-        border-radius: 16px !important;
+        margin: 0 !important;
+        max-height: 88vh !important;
+        border-radius: 20px 20px 0 0 !important;
+        border-bottom: none !important;
+        box-shadow: 0 -10px 25px -5px rgba(0, 0, 0, 0.15) !important;
+        animation: modalSlideUp 0.25s cubic-bezier(0.16, 1, 0.3, 1) !important;
+      }
+      @keyframes modalSlideUp {
+        from {
+          transform: translateY(100%);
+          opacity: 0.6;
+        }
+        to {
+          transform: translateY(0);
+          opacity: 1;
+        }
       }
       .modal-header {
         padding: 12px 14px !important;
@@ -2602,7 +2602,7 @@
     /* ===================================================================
        OPTIMASI TATA LETAK ATAS KHUSUS MOBILE (<= 768px):
        1. Header Utama Ramping 1 Baris + Tombol Navigasi Ikon Ringkas
-       2. Tombol Aksi Tabel Diringkas ke Menu Dropdown "⚙️ Opsi Data"
+       2. Tombol Aksi Tabel Diringkas ke Menu Dropdown Opsi Data
        3. Filter Toolbar Padat 2 Baris Grid
        =================================================================== */
     @media (max-width: 768px) {
@@ -2682,7 +2682,7 @@
         display: none !important;
       }
 
-      /* 2. Ringkas Semua Tombol Aksi Tabel ke Menu "⚙️ Opsi Data" */
+      /* 2. Ringkas Semua Tombol Aksi Tabel ke Menu Opsi Data */
       .table-container-card {
         overflow: visible !important;
       }
@@ -3370,215 +3370,336 @@
       }
     }
 
-    /* Kontainer Daftar Ringkas */
+    /* ===================================================================
+       STANDAR SPBE KARTU PENGADUAN MOBILE-FIRST (ECOADU LEMBATA)
+       =================================================================== */
     .rk-container {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 14px;
-      overflow: hidden;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      overflow: visible;
+      box-shadow: none;
       margin-bottom: 8px;
     }
 
-    /* Baris Daftar Ringkas (Grid 40px 1fr auto) */
+    .gov-card,
     .rk-row {
-      display: grid;
-      grid-template-columns: 40px 1fr auto;
-      gap: 12px;
-      padding: 12px 14px;
-      min-height: 60px;
-      align-items: center;
-      border-bottom: 1px solid #e2e8f0;
-      cursor: pointer;
       background: #ffffff;
-      transition: background-color 0.15s ease;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+      padding: 14px;
+      margin-bottom: 12px;
+      box-shadow: 0 1px 3px 0 rgba(15, 23, 42, 0.04);
+      transition: border-color 0.15s ease, box-shadow 0.15s ease, transform 0.15s ease;
+      cursor: pointer;
       outline: none;
       -webkit-tap-highlight-color: transparent;
       user-select: none;
+      display: block;
     }
-    .rk-row:last-child {
-      border-bottom: none;
-    }
+    .gov-card:hover,
     .rk-row:hover,
+    .gov-card:focus-visible,
     .rk-row:focus-visible {
-      background: #f8fafc;
+      border-color: #cbd5e1;
+      box-shadow: 0 4px 12px -2px rgba(15, 23, 42, 0.08);
+      transform: translateY(-1px);
+      background: #ffffff;
     }
+    .gov-card:active,
     .rk-row:active {
-      background: #f1f5f9;
+      background: #fafafa;
+      transform: none;
     }
 
-    /* Kolom Kiri: Ikon Box 40px */
-    .rk-icon-box {
-      width: 40px;
-      height: 40px;
+    .gov-card-header {
+      display: flex;
+      align-items: flex-start;
+      gap: 12px;
+      margin-bottom: 12px;
+    }
+
+    /* Wadah Ikon Kategori dengan Latar Belakang Pastel Lembut */
+    .gov-card-icon-box {
+      width: 44px;
+      height: 44px;
       border-radius: 10px;
-      background: #e3f4eb;
-      color: #047857;
       display: flex;
       align-items: center;
       justify-content: center;
       position: relative;
       flex-shrink: 0;
+      border: 1px solid transparent;
     }
-    .rk-icon {
-      width: 20px;
-      height: 20px;
-      display: block;
+    .gov-card-icon-box svg {
+      width: 22px;
+      height: 22px;
+      stroke-width: 1.75;
     }
-    .rk-new-dot {
+
+    /* Palet Pastel Kategori Aduan SPBE */
+    .cat-bg-udara {
+      background: #f0f9ff;
+      color: #0284c7;
+      border-color: #bae6fd;
+    }
+    .cat-bg-limbah {
+      background: #fffbeb;
+      color: #b45309;
+      border-color: #fde68a;
+    }
+    .cat-bg-pesisir {
+      background: #f0fdfa;
+      color: #0f766e;
+      border-color: #99f6e4;
+    }
+    .cat-bg-air {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-color: #bfdbfe;
+    }
+    .cat-bg-sampah {
+      background: #ecfdf5;
+      color: #047857;
+      border-color: #a7f3d0;
+    }
+    .cat-bg-default {
+      background: #f8fafc;
+      color: #475569;
+      border-color: #e2e8f0;
+    }
+
+    .gov-card-pulse-dot {
       position: absolute;
       top: -2px;
       right: -2px;
-      width: 11px;
-      height: 11px;
+      width: 10px;
+      height: 10px;
       background: #ef4444;
       border: 2px solid #ffffff;
       border-radius: 50%;
     }
 
-    /* Kolom Tengah */
-    .rk-center-col {
+    .gov-card-main {
+      flex: 1 1 auto;
       min-width: 0;
+    }
+    .gov-card-meta-top {
       display: flex;
-      flex-direction: column;
-      gap: 3px;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-bottom: 3px;
     }
-    .rk-title {
-      font-size: 15px;
-      font-weight: 600;
-      color: #0f172a;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      line-height: 1.3;
+    .gov-card-reg {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #475569;
+      letter-spacing: 0.3px;
+      background: #f1f5f9;
+      padding: 2px 6px;
+      border-radius: 4px;
+      border: 1px solid #e2e8f0;
     }
-    .rk-title.rk-title-bold {
-      font-weight: 800;
-    }
-    .rk-sub {
-      font-size: 12px;
-      color: #64748b;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      line-height: 1.3;
-    }
-
-    /* Kolom Kanan */
-    .rk-right-col {
-      display: flex;
-      flex-direction: column;
-      align-items: flex-end;
-      gap: 4px;
-      flex-shrink: 0;
-      text-align: right;
-    }
-    .rk-meta-top {
-      font-size: 12px;
+    .gov-card-date {
+      font-size: 0.72rem;
       color: #64748b;
       font-weight: 500;
       white-space: nowrap;
-      line-height: 1.25;
     }
-    .rk-meta-bottom {
-      font-size: 12px;
+    .gov-card-title {
+      font-size: 0.95rem;
       font-weight: 700;
+      color: #0f172a;
+      line-height: 1.3;
+      margin: 0 0 3px 0;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .gov-card-sub {
+      font-size: 0.78rem;
+      color: #64748b;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 4px;
+      line-height: 1.35;
+    }
+    .gov-card-pelapor {
+      font-weight: 600;
+      color: #334155;
+    }
+    .gov-card-dot-sep {
+      color: #cbd5e1;
+    }
+    .gov-card-loc {
+      color: #64748b;
+    }
+
+    .gov-card-badge-wrap {
+      flex-shrink: 0;
+    }
+    .gov-status-badge {
       display: inline-flex;
       align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 9999px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.2px;
       white-space: nowrap;
-      line-height: 1.25;
+      line-height: 1.2;
     }
-    .rk-dot {
-      display: inline-block;
-      width: 7px;
-      height: 7px;
+    .gov-badge-dot {
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      margin-right: 4px;
       background: currentColor;
     }
 
-    /* Tombol Aksi Cepat di Daftar Ringkas Mobile */
-    .rk-actions {
+    /* Dua Tombol Aksi Sentuh Ergonomis (Target Sentuh >= 40-44px) */
+    .gov-card-actions {
       display: flex;
-      gap: 5px;
       align-items: center;
-      margin-top: 2px;
+      gap: 8px;
+      padding-top: 10px;
+      border-top: 1px solid #f1f5f9;
     }
-    .rk-action-btn {
+    .btn-gov-card {
+      height: 42px;
+      min-height: 42px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 700;
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 30px;
-      height: 28px;
-      border-radius: 7px;
-      font-size: 0.78rem;
+      gap: 6px;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
+      text-decoration: none;
+      box-sizing: border-box;
+    }
+    .btn-gov-detail {
+      flex: 1 1 50%;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+    }
+    .btn-gov-detail:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+    .btn-gov-detail:active {
+      background: #f1f5f9;
+    }
+    .btn-gov-respond {
+      flex: 1 1 50%;
+      background: #064e3b;
+      border: 1px solid #064e3b;
+      color: #ffffff;
+      box-shadow: 0 1px 3px rgba(6, 78, 59, 0.25);
+    }
+    .btn-gov-respond:hover {
+      background: #047857;
+      border-color: #047857;
+    }
+    .btn-gov-respond:active {
+      background: #065f46;
+    }
+    .btn-gov-wa {
+      flex: 0 0 42px;
+      width: 42px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #047857;
+      padding: 0;
+    }
+    .btn-gov-wa:hover {
+      background: #d1fae5;
+      border-color: #6ee7b7;
+    }
+    .btn-gov-svg {
+      width: 17px;
+      height: 17px;
+      flex-shrink: 0;
+    }
+
+    /* Templat Respons Cepat Kedinasan pada Modal */
+    .gov-template-group {
+      margin-bottom: 12px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 12px;
+    }
+    .gov-template-label {
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #475569;
+      margin-bottom: 6px;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .gov-template-chips {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .btn-gov-chip {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #064e3b;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 0.74rem;
       font-weight: 700;
       cursor: pointer;
-      flex-shrink: 0;
-      text-decoration: none;
-      border: none;
-      line-height: 1;
-      -webkit-tap-highlight-color: transparent;
-      transition: opacity 0.15s ease, transform 0.1s ease;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
-    .rk-action-btn:active {
-      opacity: 0.75;
-      transform: scale(0.93);
+    .btn-gov-chip:hover {
+      background: #ecfdf5;
+      border-color: #10b981;
     }
-    .rk-action-verif {
-      background: #059669;
-      color: #ffffff;
-    }
-    .rk-action-wa {
-      background: #16a34a;
-      color: #ffffff;
+    .btn-gov-chip:active {
+      background: #d1fae5;
     }
 
-    /* Penyesuaian Daftar Ringkas untuk Layar HP Sangat Ramping (<= 480px) */
-    @media (max-width: 480px) {
-      .rk-row {
-        grid-template-columns: 36px 1fr auto;
-        gap: 8px;
-        padding: 10px 10px;
-      }
-      .rk-icon-box {
-        width: 36px;
-        height: 36px;
-        border-radius: 8px;
-      }
-      .rk-icon {
-        width: 18px;
-        height: 18px;
-      }
-      .rk-title {
-        font-size: 13.5px;
-      }
-      .rk-sub {
-        font-size: 11px;
-      }
-      .rk-meta-top,
-      .rk-meta-bottom {
-        font-size: 11px;
-      }
-      .rk-action-btn {
-        width: 28px;
-        height: 26px;
-        font-size: 0.72rem;
-      }
+    /* Palet Warna Status SPBE */
+    .rk-st-baru {
+      background: #fffbeb !important;
+      color: #92400e !important;
+      border: 1px solid #fde68a !important;
     }
-
-    /* Palet Warna Status */
-    .rk-st-baru { color: var(--st-baru-text); }
-    .rk-st-diverifikasi { color: var(--st-verif-text); }
-    .rk-st-ditindaklanjuti { color: var(--st-proses-text); }
-    .rk-st-selesai { color: var(--st-selesai-text); }
-    .rk-st-ditolak { color: var(--st-tolak-text); }
-
-    .rk-bg-baru { background-color: var(--st-baru-text); }
-    .rk-bg-diverifikasi { background-color: var(--st-verif-text); }
-    .rk-bg-ditindaklanjuti { background-color: var(--st-proses-text); }
-    .rk-bg-selesai { background-color: var(--st-selesai-text); }
-    .rk-bg-ditolak { background-color: var(--st-tolak-text); }
+    .rk-st-diverifikasi {
+      background: #eef2ff !important;
+      color: #3730a3 !important;
+      border: 1px solid #c7d2fe !important;
+    }
+    .rk-st-ditindaklanjuti {
+      background: #eff6ff !important;
+      color: #1e40af !important;
+      border: 1px solid #bfdbfe !important;
+    }
+    .rk-st-selesai {
+      background: #ecfdf5 !important;
+      color: #065f46 !important;
+      border: 1px solid #a7f3d0 !important;
+    }
+    .rk-st-ditolak {
+      background: #fff1f2 !important;
+      color: #9f1239 !important;
+      border: 1px solid #fecdd3 !important;
+    }
 
     /* Keadaan Kosong Daftar Ringkas */
     .rk-empty-card {
@@ -3586,6 +3707,15 @@
       text-align: center;
       color: #64748b;
       background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 14px;
+    }
+    .gov-empty-icon {
+      width: 48px;
+      height: 48px;
+      margin: 0 auto 10px auto;
+      color: #94a3b8;
+      display: block;
     }
 
     /* Bar Progres Modal Detail */
@@ -3679,8 +3809,9 @@
         <strong>Dinas Lingkungan Hidup Kabupaten Lembata</strong>
       </p>
 
-      <div class="auth-hint-banner">
-        🔐 Akses Terbatas: Masukkan PIN atau Kata Sandi Resmi Verifikator Bidang PPKLH DLH Kabupaten Lembata.
+      <div class="auth-hint-banner" style="display: flex; align-items: center; gap: 8px;">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 16px; height: 16px; flex-shrink: 0;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+        <span>Akses Terbatas: Masukkan PIN atau Kata Sandi Resmi Verifikator Bidang PPKLH DLH Kabupaten Lembata.</span>
       </div>
 
       <div id="authErrorMsg" class="auth-error-msg"></div>
@@ -3690,27 +3821,28 @@
         <div class="auth-password-wrapper">
           <input type="password" id="inputPetugasPin" class="auth-password-input" placeholder="Masukkan PIN atau kata sandi resmi..." autocomplete="current-password" autofocus>
           <button type="button" class="btn-toggle-eye" id="btnTogglePassword" onclick="window.portal && window.portal.togglePasswordVisibility()" title="Tampilkan / Sembunyikan Kata Sandi">
-            👁️
+            <svg id="eyeIconSvg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 17px; height: 17px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>
           </button>
         </div>
 
-        <div id="capsLockWarning" style="display: none; background: #fef2f2; border: 1px solid #fecdd3; color: #be123c; border-radius: 8px; padding: 6px 10px; font-size: 0.76rem; font-weight: 700; margin-bottom: 12px; text-align: left;">
-          ⚠️ Peringatan: Tombol Caps Lock sedang aktif!
+        <div id="capsLockWarning" style="display: none; background: #fef2f2; border: 1px solid #fecdd3; color: #be123c; border-radius: 8px; padding: 6px 10px; font-size: 0.76rem; font-weight: 700; margin-bottom: 12px; text-align: left; align-items: center; gap: 6px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 15px; height: 15px; flex-shrink: 0;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+          <span>Peringatan: Tombol Caps Lock sedang aktif!</span>
         </div>
-
 
         <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 18px; font-size: 0.82rem; color: #475569;">
           <input type="checkbox" id="checkRememberPin" style="accent-color: #059669; cursor: pointer;">
           <label for="checkRememberPin" style="cursor: pointer;">Ingat sesi masuk di perangkat ini</label>
         </div>
 
-        <button type="submit" class="btn-modal-submit" id="btnSubmitLogin" onclick="event.preventDefault(); window.portal ? window.portal.submitPin() : (startPetugasPortal(), window.portal && window.portal.submitPin());" style="width: 100%; padding: 13px; font-size: 0.96rem; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; border-radius: 12px; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35); cursor: pointer;">
-          <span id="btnSubmitIcon">🔓</span> <span id="btnSubmitText">Buka Dashboard Petugas</span>
+        <button type="submit" class="btn-modal-submit" id="btnSubmitLogin" onclick="event.preventDefault(); window.portal ? window.portal.submitPin() : (startPetugasPortal(), window.portal && window.portal.submitPin());" style="width: 100%; padding: 13px; font-size: 0.96rem; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; border-radius: 12px; background: #064e3b; color: #ffffff; box-shadow: 0 4px 14px rgba(6, 78, 59, 0.35); cursor: pointer; border: 1px solid #047857;">
+          <span id="btnSubmitIcon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 18px; height: 18px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg></span> <span id="btnSubmitText">Buka Dashboard Petugas</span>
         </button>
 
         <div style="margin-top: 16px; text-align: center;">
-          <button type="button" id="btnForgotPin" onclick="window.portal && window.portal.openForgotModal()" style="background: none; border: none; color: #047857; font-weight: 700; font-size: 0.86rem; cursor: pointer; text-decoration: underline; padding: 4px 8px; transition: color 0.2s;" onmouseover="this.style.color='#065f46'" onmouseout="this.style.color='#047857'">
-            📞 Lupa Sandi? Hubungi Admin DLH
+          <button type="button" id="btnForgotPin" onclick="window.portal && window.portal.openForgotModal()" style="background: none; border: none; color: #047857; font-weight: 700; font-size: 0.86rem; cursor: pointer; text-decoration: underline; padding: 4px 8px; transition: color 0.2s; display: inline-flex; align-items: center; gap: 5px;" onmouseover="this.style.color='#065f46'" onmouseout="this.style.color='#047857'">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="width: 15px; height: 15px;"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <span>Bantuan Akses / Hubungi Admin DLH</span>
           </button>
         </div>
       </form>
@@ -3740,10 +3872,10 @@
         <div class="brand-text-block">
           <div class="brand-title-wrap">
             <h1 class="brand-name">Dashboard Petugas</h1>
-            <span class="badge-role-petugas">🌿 PPKLH</span>
+            <span class="badge-role-petugas">PPKLH</span>
           </div>
           <p class="brand-sub">
-            🌱 Dinas Lingkungan Hidup Kabupaten Lembata
+            Dinas Lingkungan Hidup Kabupaten Lembata
           </p>
         </div>
       </div>
@@ -3751,12 +3883,14 @@
       <nav class="header-nav">
         <!-- Formulir Warga -->
         <a href="index.html" class="btn-header-link btn-warga" title="Buka Halaman Formulir Pengaduan Masyarakat">
-          <span>📝</span> <span class="btn-header-text">Formulir Warga</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+          <span class="btn-header-text">Formulir Warga</span>
         </a>
 
         <!-- Kunci Dashboard -->
         <button type="button" class="btn-header-link btn-lock-portal" id="btnLockPortal" title="Kunci Sesi Dashboard Petugas">
-          <span>🔒</span> <span class="btn-header-text">Kunci</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
+          <span class="btn-header-text">Kunci</span>
         </button>
       </nav>
     </div>
@@ -3777,8 +3911,8 @@
       <div class="top-strip-right" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
         <!-- Tombol Toggle Mode Command Center: Split-Screen vs Penuh -->
         <button type="button" class="btn-toggle-split active" id="btnToggleSplitScreen" onclick="window.portal && window.portal.toggleSplitScreen()" title="Beralih antara Mode Split-Screen (Berdampingan) & Mode Penuh (Bertumpuk)">
-          <span id="splitScreenIcon">🖥️</span>
-          <span id="splitScreenText">Mode Split-Screen</span>
+          <span id="splitScreenIcon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width: 15px; height: 15px; display: inline-block; vertical-align: middle;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg></span>
+          <span id="splitScreenText">Mode Berdampingan</span>
         </button>
 
         <!-- Status Indikator Cloud GAS -->
@@ -3794,7 +3928,9 @@
     <section class="kpi-grid">
       <!-- Total -->
       <div class="kpi-card kpi-card-total active-kpi" data-status="all" onclick="window.portal && window.portal.filterByKpi('all')" title="Klik untuk menampilkan Semua Aduan">
-        <div class="kpi-icon-wrap">📊</div>
+        <div class="kpi-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+        </div>
         <div class="kpi-info">
           <div class="kpi-val" id="kpiTotal">0</div>
           <div class="kpi-title">Total Aduan</div>
@@ -3803,7 +3939,9 @@
 
       <!-- Baru -->
       <div class="kpi-card kpi-card-baru" data-status="Baru" onclick="window.portal && window.portal.filterByKpi('Baru')" title="Klik untuk memfilter status Belum Verifikasi">
-        <div class="kpi-icon-wrap">⏳</div>
+        <div class="kpi-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+        </div>
         <div class="kpi-info">
           <div class="kpi-val" id="kpiBaru">0</div>
           <div class="kpi-title">Belum Verifikasi</div>
@@ -3812,7 +3950,9 @@
 
       <!-- Proses / Ditindaklanjuti -->
       <div class="kpi-card kpi-card-proses" data-status="Ditindaklanjuti" onclick="window.portal && window.portal.filterByKpi('Ditindaklanjuti')" title="Klik untuk memfilter status Dalam Proses">
-        <div class="kpi-icon-wrap">⚙️</div>
+        <div class="kpi-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg>
+        </div>
         <div class="kpi-info">
           <div class="kpi-val" id="kpiProses">0</div>
           <div class="kpi-title">Dalam Proses</div>
@@ -3821,7 +3961,9 @@
 
       <!-- Selesai -->
       <div class="kpi-card kpi-card-selesai" data-status="Selesai" onclick="window.portal && window.portal.filterByKpi('Selesai')" title="Klik untuk memfilter status Tuntas Selesai">
-        <div class="kpi-icon-wrap">✅</div>
+        <div class="kpi-icon-wrap">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>
+        </div>
         <div class="kpi-info">
           <div class="kpi-val" id="kpiSelesai">0</div>
           <div class="kpi-title">Tuntas Selesai</div>
@@ -3840,7 +3982,10 @@
       <section class="officer-map-card" id="officerMapCard">
       <div class="map-card-header">
         <div>
-          <h2 class="map-card-title">🗺️ Peta Sebaran Aduan</h2>
+          <h2 class="map-card-title">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle;"><polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"/><line x1="8" y1="2" x2="8" y2="18"/><line x1="16" y1="6" x2="16" y2="22"/></svg>
+            Peta Sebaran Aduan
+          </h2>
           <p class="map-card-sub">Visualisasi spasial titik koordinat GPS dan sebaran 9 kecamatan</p>
         </div>
 
@@ -3848,28 +3993,32 @@
           <!-- Toggle Mode: Marker GPS vs Heatmap vs Hybrid -->
           <div class="map-mode-pill-group">
             <button type="button" class="btn-map-mode active" id="btnModeMarkers" onclick="window.portal.setMapMode('markers')">
-              📍 Marker<span class="map-btn-sub-txt">&nbsp;GPS</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width: 13px; height: 13px; display: inline-block; vertical-align: middle;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+              Marker<span class="map-btn-sub-txt">&nbsp;GPS</span>
             </button>
             <button type="button" class="btn-map-mode" id="btnModeHeatmap" onclick="window.portal.setMapMode('heatmap')">
-              🔥 Heatmap
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width: 13px; height: 13px; display: inline-block; vertical-align: middle;"><path d="M12 2v20M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+              Heatmap
             </button>
             <button type="button" class="btn-map-mode" id="btnModeHybrid" onclick="window.portal.setMapMode('hybrid')">
-              🎯 Gabungan
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width: 13px; height: 13px; display: inline-block; vertical-align: middle;"><polygon points="12 2 2 7 12 12 22 7 12 2"/><polyline points="2 17 12 22 22 17"/><polyline points="2 12 12 17 22 12"/></svg>
+              Gabungan
             </button>
           </div>
 
           <div class="map-action-row-group">
             <!-- Basemap Selector -->
             <select id="mapBasemapSelect" class="filter-select map-basemap-select" onchange="window.portal.changeBasemap(this.value)">
-              <option value="osm" selected>🗺️ Peta Jalan (OSM Standard)</option>
-              <option value="esri_street">🛣️ Peta Jalan &amp; Kota (Esri)</option>
-              <option value="sat">🛰️ Citra Satelit Nyata</option>
-              <option value="topo">⛰️ Relief Topografi</option>
+              <option value="osm" selected>Peta Jalan (OSM Standard)</option>
+              <option value="esri_street">Peta Jalan &amp; Kota (Esri)</option>
+              <option value="sat">Citra Satelit Nyata</option>
+              <option value="topo">Relief Topografi</option>
             </select>
 
             <!-- Reset Zoom ke Lembata -->
             <button type="button" id="btnResetMapCenter" class="btn-action-tool btn-focus-lmb" onclick="window.portal.resetMapView()" title="Pusatkan kembali ke Pulau Lembata">
-              🎯 Fokus<span class="map-btn-sub-txt">&nbsp;Lembata</span>
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"><circle cx="12" cy="12" r="10"/><line x1="22" y1="12" x2="18" y2="12"/><line x1="6" y1="12" x2="2" y2="12"/><line x1="12" y1="6" x2="12" y2="2"/><line x1="12" y1="22" x2="12" y2="18"/></svg>
+              Fokus<span class="map-btn-sub-txt">&nbsp;Lembata</span>
             </button>
           </div>
         </div>
@@ -3934,7 +4083,8 @@
       <div class="table-card-header">
         <div>
           <h2 class="table-card-title">
-            <span>📑</span> Rekapitulasi Data Aduan
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+            Rekapitulasi Data Pengaduan
           </h2>
           <p class="table-card-sub">
             Sinkronisasi form pengaduan masyarakat &amp; Google Spreadsheet DLH Lembata
@@ -3944,33 +4094,40 @@
         <div class="table-header-actions-wrap">
           <!-- Tombol Ringkas Menu Opsi Data (Khusus Layar Mobile <= 768px) -->
           <button type="button" class="btn-mobile-opsi-data" id="btnToggleMobileOpsi" onclick="window.portal && window.portal.toggleMobileOpsiMenu(event)" title="Menu Opsi Data Aduan" aria-expanded="false">
-            <span>⚙️</span> Opsi Data <span>▾</span>
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width: 15px; height: 15px; display: inline-block; vertical-align: middle;"><line x1="4" y1="21" x2="4" y2="14"/><line x1="4" y1="10" x2="4" y2="3"/><line x1="12" y1="21" x2="12" y2="12"/><line x1="12" y1="8" x2="12" y2="3"/><line x1="20" y1="21" x2="20" y2="16"/><line x1="20" y1="12" x2="20" y2="3"/><line x1="1" y1="14" x2="7" y2="14"/><line x1="9" y1="8" x2="15" y2="8"/><line x1="17" y1="16" x2="23" y2="16"/></svg>
+            Opsi Data
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px; display: inline-block;"><polyline points="6 9 12 15 18 9"/></svg>
           </button>
 
           <div class="table-header-buttons" id="tableHeaderButtonsMenu">
             <!-- Refresh / Sync Manual -->
             <button type="button" class="btn-action-tool" id="btnManualSync" onclick="if(window.portal) window.portal.manualSync();" title="Segarkan data dari penyimpanan">
-              <span id="syncIconSpin">🔄</span> Segarkan
+              <span id="syncIconSpin"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"><path d="M21.5 2v6h-6M21.34 15.57a10 10 0 1 1-.57-8.38l5.67-5.67"/></svg></span>
+              Segarkan
             </button>
 
             <!-- Input / Impor Pesan WhatsApp -->
             <button type="button" class="btn-action-tool btn-import-wa" id="btnOpenWaImportModal" onclick="window.portal.openWaImportModal();" style="background: #ecfdf5; border-color: #10b981; color: #047857; font-weight: 700;" title="Salin &amp; Tempel Pesan Pengaduan dari WhatsApp">
-              <span>💬</span> Catat dari WA
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+              Catat dari WA
             </button>
 
             <!-- Pengaturan Koneksi Cloud Google Spreadsheet -->
             <button type="button" class="btn-action-tool" id="btnOpenCloudModalTable" onclick="document.getElementById('btnOpenCloudModal').click();" title="Pengaturan Database Google Spreadsheet" style="background: #f0fdf4; border-color: #86efac; color: #166534; font-weight: 700;">
-              <span>☁️</span> Database Sheets
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"><ellipse cx="12" cy="5" rx="9" ry="3"/><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/></svg>
+              Database Sheets
             </button>
 
             <!-- Ekspor CSV -->
             <button type="button" class="btn-action-tool btn-export" id="btnExportCsv" title="Unduh dataset lengkap dalam format CSV">
-              <span>📥</span> Ekspor CSV
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+              Ekspor CSV
             </button>
 
             <!-- Reset Standar Bersih: 0 Aduan Fresh Start -->
             <button type="button" class="btn-action-tool" id="btnResetOfficialData" onclick="if(window.portal) window.portal.resetOfficialData();" title="Kosongkan seluruh data aduan menjadi 0 aduan (Fresh Start) di Google Spreadsheet, Laptop &amp; HP Petugas" style="color: #b91c1c; background: #fef2f2; border-color: #fca5a5; font-weight: 700;">
-              <span>🧹</span> Reset ke 0
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+              Reset ke 0
             </button>
           </div>
         </div>
@@ -3980,7 +4137,9 @@
       <div class="filter-toolbar">
         <!-- Search Box -->
         <div class="search-box-wrap">
-          <span class="search-icon-pos">🔍</span>
+          <span class="search-icon-pos">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 15px; height: 15px; display: inline-block; vertical-align: middle;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          </span>
           <input type="text" id="tableSearch" class="search-input" placeholder="Cari ID tiket, nama pelapor, kecamatan, desa, atau isi aduan...">
         </div>
 
@@ -4048,8 +4207,9 @@
       <!-- Footer Info -->
       <div class="table-footer">
         <div id="tablePagination">Menampilkan 0 aduan</div>
-        <div style="font-size: 0.78rem;">
-          🌱 <em>DLH Lembata — Transparan &bull; Akuntabel &bull; Tanggap</em>
+        <div style="font-size: 0.78rem; display: flex; align-items: center; gap: 4px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2" style="width: 14px; height: 14px; display: inline-block;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <em>DLH Lembata — Transparan &bull; Akuntabel &bull; Tanggap</em>
         </div>
       </div>
     </section>
@@ -4065,7 +4225,10 @@
   <div class="modal-backdrop" id="modalVerifikasiPetugas">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3 class="modal-title">📋 Verifikasi &amp; Tindak Lanjut Aduan</h3>
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px; color: #047857;"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+          Verifikasi &amp; Tindak Lanjut Lapangan
+        </h3>
         <button type="button" class="modal-close" data-close-modal>&times;</button>
       </div>
 
@@ -4132,7 +4295,8 @@
           <div class="form-group-modal verification-checklist-box">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; flex-wrap: wrap; gap: 6px;">
               <label class="form-label-modal" style="margin: 0; color: #065f46; font-size: 0.86rem; font-weight: 800; display: flex; align-items: center; gap: 6px;">
-                <span>📋</span> Daftar Periksa (Checklist) Verifikasi Lapangan
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                Daftar Periksa (Checklist) Verifikasi Lapangan
               </label>
               <span class="checklist-counter-badge" id="vChecklistCounter">0/5 Terpenuhi</span>
             </div>
@@ -4169,8 +4333,24 @@
 
             <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
               <button type="button" class="btn-sync-checklist" onclick="window.portal && window.portal.appendChecklistToHasil()" title="Salin indikator checklist yang terpenuhi ke dalam kolom Hasil Temuan Lapangan">
-                <span>➕</span> Salin Checklist ke Catatan Temuan
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px; display: inline-block; vertical-align: middle; margin-right: 4px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Salin Checklist ke Catatan Temuan
               </button>
+            </div>
+          </div>
+
+          <!-- TEMPLAT RESPONS CEPAT KEDINASAN -->
+          <div class="gov-template-group">
+            <div class="gov-template-label">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+              <span>Templat Respons Cepat Kedinasan:</span>
+            </div>
+            <div class="gov-template-chips">
+              <button type="button" class="btn-gov-chip" onclick="window.portal &amp;&amp; window.portal.applyResponseTemplate('verifikasi')">Verifikasi Faktual</button>
+              <button type="button" class="btn-gov-chip" onclick="window.portal &amp;&amp; window.portal.applyResponseTemplate('teguran')">Teguran Tertulis</button>
+              <button type="button" class="btn-gov-chip" onclick="window.portal &amp;&amp; window.portal.applyResponseTemplate('pembersihan')">Pembersihan / Angkut</button>
+              <button type="button" class="btn-gov-chip" onclick="window.portal &amp;&amp; window.portal.applyResponseTemplate('koordinasi')">Koordinasi Desa</button>
+              <button type="button" class="btn-gov-chip" onclick="window.portal &amp;&amp; window.portal.applyResponseTemplate('selesai')">Tuntas Ditangani</button>
             </div>
           </div>
 
@@ -4194,11 +4374,14 @@
 
           <!-- Unggah Foto Kondisi Riil Pengecekan Fisik -->
           <div class="form-group-modal">
-            <label class="form-label-modal" for="vFotoRiilInput">
-              📸 Foto Kondisi Riil Lapangan (Hasil Pengecekan Fisik Petugas)
+            <label class="form-label-modal" for="vFotoRiilInput" style="display: flex; align-items: center; gap: 6px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; color: #047857;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+              Foto Kondisi Riil Lapangan (Hasil Pengecekan Fisik Petugas)
             </label>
             <div class="upload-zone-verifikasi" id="vUploadZone">
-              <div style="font-size: 1.6rem; margin-bottom: 4px;">📷</div>
+              <div style="margin-bottom: 6px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="1.75" style="width: 32px; height: 32px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+              </div>
               <div style="font-size: 0.86rem; font-weight: 700; color: #1e293b;">
                 Pilih atau Ambil Foto Kondisi Faktual Lapangan
               </div>
@@ -4206,12 +4389,14 @@
                 Dapat mengambil langsung dari kamera HP atau memilih dari galeri perangkat.
               </p>
               <div style="display: flex; justify-content: center; gap: 8px; margin-top: 10px;">
-                <label class="btn-action-tool" style="cursor: pointer; background: #059669; color: white; border-color: #047857; margin: 0;">
-                  📁 Pilih File Foto
+                <label class="btn-action-tool" style="cursor: pointer; background: #059669; color: white; border-color: #047857; margin: 0; display: inline-flex; align-items: center; gap: 6px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+                  Pilih Berkas Foto
                   <input type="file" id="vFotoRiilInput" accept="image/*" multiple style="display: none;">
                 </label>
-                <label class="btn-action-tool" style="cursor: pointer; background: #0284c7; color: white; border-color: #0369a1; margin: 0;">
-                  📸 Kamera HP
+                <label class="btn-action-tool" style="cursor: pointer; background: #0284c7; color: white; border-color: #0369a1; margin: 0; display: inline-flex; align-items: center; gap: 6px;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  Kamera Perangkat
                   <input type="file" id="vFotoKameraInput" accept="image/*" capture="environment" style="display: none;">
                 </label>
               </div>
@@ -4221,7 +4406,9 @@
                 <div class="upload-anim-header">
                   <div class="upload-anim-icon-wrap">
                     <span class="upload-anim-spinner"></span>
-                    <span class="upload-anim-icon" id="vUploadAnimIcon">📤</span>
+                    <span class="upload-anim-icon" id="vUploadAnimIcon">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
+                    </span>
                   </div>
                   <div class="upload-anim-text-wrap">
                     <div class="upload-anim-title" id="vUploadAnimTitle">Mengunggah Foto Fisik Petugas...</div>
@@ -4241,7 +4428,7 @@
               <!-- Status Sukses Banner -->
               <div id="vUploadSuccessBanner" class="upload-success-banner" style="display: none; margin-top: 12px; text-align: left;">
                 <div class="usb-left">
-                  <span class="usb-check">✓</span>
+                  <span class="usb-check"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg></span>
                   <div>
                     <strong class="usb-title">Status: Upload Sukses!</strong>
                     <div class="usb-desc" id="vUploadSuccessDesc">Foto kondisi riil siap disimpan ke arsip resmi DLH.</div>
@@ -4257,35 +4444,39 @@
               <div id="vFotoCountHint" style="font-size: 0.74rem; color: #64748b; font-weight: 600;"></div>
               <div style="display: flex; gap: 6px; align-items: center;">
                 <button type="button" id="vBtnReplacePhotos" onclick="window.portal && window.portal.replaceUploadedPhotos()" style="display: none; background: #e0f2fe; border: 1px solid #7dd3fc; color: #0369a1; font-size: 0.74rem; font-weight: 700; border-radius: 6px; padding: 4px 10px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#bae6fd'" onmouseout="this.style.background='#e0f2fe'">
-                  🔄 Ganti / Foto Ulang
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle; margin-right: 4px;"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+                  Ganti / Foto Ulang
                 </button>
                 <button type="button" id="vBtnClearPhotos" onclick="window.portal && window.portal.clearAllUploadedPhotos()" style="display: none; background: #fee2e2; border: 1px solid #fca5a5; color: #b91c1c; font-size: 0.74rem; font-weight: 700; border-radius: 6px; padding: 4px 10px; cursor: pointer; transition: background 0.2s;" onmouseover="this.style.background='#fecdd3'" onmouseout="this.style.background='#fee2e2'">
-                  🗑️ Hapus Semua Foto Petugas
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle; margin-right: 4px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                  Hapus Semua Foto Petugas
                 </button>
               </div>
             </div>
           </div>
 
           <!-- Berita Acara Pemeriksaan Fisik Lapangan (BAST) -->
-          <div style="background: #fefce8; border: 1px solid #fef08a; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
+          <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
-              <div style="font-weight: 800; color: #854d0e; font-size: 0.88rem; display: flex; align-items: center; gap: 6px;">
-                <span>📜</span> Berita Acara Pemeriksaan Fisik Lapangan (BA / BAST)
+              <div style="font-weight: 800; color: #0f172a; font-size: 0.88rem; display: flex; align-items: center; gap: 6px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; color: #047857;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+                Berita Acara Pemeriksaan Fisik Lapangan (BA / BAST)
               </div>
               <button type="button" class="auto-ba-btn" id="btnGenerateNoBA" onclick="window.portal.generateNoBA()">
-                ⚡ No. BA Otomatis
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle; margin-right: 4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                No. BA Otomatis
               </button>
             </div>
 
             <div class="form-group-modal" style="margin-bottom: 10px;">
-              <label class="form-label-modal" for="vNomorBA" style="color: #713f12; font-size: 0.8rem;">
+              <label class="form-label-modal" for="vNomorBA" style="color: #334155; font-size: 0.8rem;">
                 Nomor Register Berita Acara Fisik
               </label>
               <input type="text" id="vNomorBA" class="form-control-modal" placeholder="Contoh: BA-05/DLH-LMB/X/2026">
             </div>
 
             <div class="form-group-modal" style="margin-bottom: 0;">
-              <label class="form-label-modal" for="vCatatanBA" style="color: #713f12; font-size: 0.8rem;">
+              <label class="form-label-modal" for="vCatatanBA" style="color: #334155; font-size: 0.8rem;">
                 Catatan Singkat Berita Acara
               </label>
               <textarea id="vCatatanBA" class="form-control-modal" rows="2"
@@ -4305,8 +4496,9 @@
 
       <div class="modal-footer">
         <button type="button" class="btn-modal-cancel" data-close-modal>Batal</button>
-        <button type="submit" form="formVerifikasiPetugas" class="btn-modal-submit" id="btnSimpanVerifikasi">
-          💾 Simpan Hasil Verifikasi
+        <button type="submit" form="formVerifikasiPetugas" class="btn-modal-submit" id="btnSimpanVerifikasi" style="display: inline-flex; align-items: center; gap: 6px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Simpan Hasil Verifikasi
         </button>
       </div>
     </div>
@@ -4318,7 +4510,10 @@
   <div class="modal-backdrop" id="modalDetailAduan">
     <div class="modal-dialog" style="max-width: 680px;">
       <div class="modal-header">
-        <h3 class="modal-title">🔍 Rincian Lengkap Aduan Lingkungan</h3>
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px; color: #047857;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Rincian Lengkap Aduan Lingkungan
+        </h3>
         <button type="button" class="modal-close" data-close-modal>&times;</button>
       </div>
 
@@ -4338,7 +4533,10 @@
   <div class="modal-backdrop" id="modalCloudSync">
     <div class="modal-dialog">
       <div class="modal-header">
-        <h3 class="modal-title">☁️ Pengaturan Database Google Apps Script</h3>
+        <h3 class="modal-title" style="display: flex; align-items: center; gap: 8px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px; color: #047857;"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
+          Pengaturan Database Google Apps Script
+        </h3>
         <button type="button" class="modal-close" data-close-modal>&times;</button>
       </div>
 
@@ -4355,8 +4553,9 @@
             placeholder="https://script.google.com/macros/s/AKfycbwuDJ9X5a27GnVuuiU1keHexKXzG3OITUxwOomwHGt-1S53DdqfAfguDInXwtbh9ljKMw/exec">
         </div>
 
-        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-top: 14px; font-size: 0.8rem; color: #64748b;">
-          💡 <strong>Tips:</strong> Jika URL dikosongkan, aplikasi akan beroperasi secara mandiri menggunakan penyimpanan lokal browser (Local Storage) dengan dataset Kabupaten Lembata.
+        <div style="background: #f8fafc; border: 1px solid var(--border); border-radius: 10px; padding: 12px; margin-top: 14px; font-size: 0.8rem; color: #64748b; display: flex; align-items: flex-start; gap: 6px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; flex-shrink: 0; margin-top: 2px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          <div><strong>Petunjuk:</strong> Jika URL dikosongkan, aplikasi akan beroperasi secara mandiri menggunakan penyimpanan lokal browser (Local Storage) dengan dataset Kabupaten Lembata.</div>
         </div>
 
         <div style="margin-top: 14px; padding: 12px 14px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; display: flex; align-items: center; justify-content: space-between; gap: 12px;">
@@ -4364,24 +4563,28 @@
             <div style="font-size: 0.82rem; font-weight: 600; color: #065f46;">Spreadsheet Baru Masih Kosong?</div>
             <div style="font-size: 0.76rem; color: #047857; margin-top: 2px;">Unggah seluruh data aduan lokal saat ini ke Google Spreadsheet agar langsung terisi.</div>
           </div>
-          <button type="button" class="btn-action-tool" id="btnUploadLocalToGas" style="background: #059669; color: white; border-color: #047857; font-size: 0.78rem; padding: 7px 12px; white-space: nowrap;">
-            📤 Unggah ke Sheets
+          <button type="button" class="btn-action-tool" id="btnUploadLocalToGas" style="background: #059669; color: white; border-color: #047857; font-size: 0.78rem; padding: 7px 12px; white-space: nowrap; display: inline-flex; align-items: center; gap: 6px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;"><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/></svg>
+            Unggah ke Sheets
           </button>
         </div>
       </div>
 
       <div class="modal-footer" style="justify-content: space-between;">
-        <button type="button" class="btn-modal-cancel" id="btnResetDefaultData" style="color: #dc2626; font-weight: 700;" title="Kosongkan sistem menjadi 0 aduan (Fresh Start)">
-          🧹 Reset ke 0 Aduan
+        <button type="button" class="btn-modal-cancel" id="btnResetDefaultData" style="color: #dc2626; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;" title="Kosongkan sistem menjadi 0 aduan (Fresh Start)">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg>
+          Reset ke 0 Aduan
         </button>
 
         <div style="display: flex; gap: 8px;">
           <button type="button" class="btn-modal-cancel" data-close-modal>Tutup</button>
-          <button type="button" class="btn-action-tool" id="btnTriggerSyncNow" style="background: #0284c7; color: white; border-color: #0369a1;">
-            🔄 Sinkronkan Sekarang
+          <button type="button" class="btn-action-tool" id="btnTriggerSyncNow" style="background: #0284c7; color: white; border-color: #0369a1; display: inline-flex; align-items: center; gap: 6px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;"><polyline points="23 4 23 10 17 10"/><path d="M20.49 15a9 9 0 1 1-2.12-9.36L23 10"/></svg>
+            Sinkronkan Sekarang
           </button>
-          <button type="button" class="btn-modal-submit" id="btnSaveGasUrl">
-            💾 Simpan URL
+          <button type="button" class="btn-modal-submit" id="btnSaveGasUrl" style="display: inline-flex; align-items: center; gap: 6px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+            Simpan URL
           </button>
         </div>
       </div>
@@ -4395,7 +4598,8 @@
     <div class="modal-dialog" style="max-width: 480px;">
       <div class="modal-header modal-header-danger">
         <h3 class="modal-title" style="color: #991b1b; display: flex; align-items: center; gap: 8px;">
-          <span>🗑️</span> Konfirmasi Hapus Data Aduan
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          Konfirmasi Hapus Data Aduan
         </h3>
         <button type="button" class="modal-close" data-close-modal>&times;</button>
       </div>
@@ -4410,7 +4614,7 @@
         </div>
 
         <div class="delete-warning-banner">
-          <span style="font-size: 1.25rem;">⚠️</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="#e11d48" stroke-width="2" style="width: 22px; height: 22px; flex-shrink: 0;"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
           <div>
             <strong>Perhatian:</strong> Tindakan ini bersifat permanen. Data akan dihapus dari sistem pengawasan DLH dan dicatat ke blacklist log agar tidak dipulihkan.
           </div>
@@ -4419,8 +4623,9 @@
 
       <div class="modal-footer" style="background: #fef2f2; border-top: 1px solid #fee2e2;">
         <button type="button" class="btn-modal-cancel" data-close-modal>Batal</button>
-        <button type="button" class="btn-danger-confirm" id="btnExecuteDelete">
-          🗑️ Ya, Hapus Permanen
+        <button type="button" class="btn-danger-confirm" id="btnExecuteDelete" style="display: inline-flex; align-items: center; gap: 6px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+          Ya, Hapus Permanen
         </button>
       </div>
     </div>
@@ -4433,7 +4638,8 @@
     <div class="modal-dialog" style="max-width: 600px;">
       <div class="modal-header" style="background: #ecfdf5; border-bottom: 1px solid #a7f3d0;">
         <h3 class="modal-title" style="color: #065f46; display: flex; align-items: center; gap: 8px;">
-          <span>💬</span> Catat / Impor Aduan dari WhatsApp
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Catat / Impor Aduan dari WhatsApp
         </h3>
         <button type="button" class="modal-close" data-close-modal>&times;</button>
       </div>
@@ -4446,21 +4652,28 @@
         <div class="form-group-modal">
           <label class="form-label-modal" for="inputWaRawText" style="display: flex; justify-content: space-between; align-items: center;">
             <span>Teks Pesan WhatsApp:</span>
-            <button type="button" class="auto-ba-btn" onclick="window.portal.pasteClipboardToWaImport()" style="font-size: 0.72rem; padding: 2px 8px;">📋 Tempel dari Clipboard</button>
+            <button type="button" class="auto-ba-btn" onclick="window.portal.pasteClipboardToWaImport()" style="font-size: 0.72rem; padding: 2px 8px; display: inline-flex; align-items: center; gap: 4px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px;"><rect x="9" y="9" width="13" height="13" rx="2" ry="2"/><path d="M5 15H4a2 2 0 0 1-2-2V4a2 2 0 0 1 2-2h9a2 2 0 0 1 2 2v1"/></svg>
+              Tempel dari Clipboard
+            </button>
           </label>
-          <textarea id="inputWaRawText" class="form-control-modal" rows="8" style="font-family: monospace; font-size: 0.82rem; line-height: 1.45;" placeholder="Tempelkan pesan WhatsApp laporan pengaduan masyarakat di sini...&#10;&#10;Contoh:&#10;*LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA*&#10;📌 *NOMOR REGISTER:* ADU-26-K8M4&#10;👤 *DATA PELAPOR:*&#10;• *Nama Pelapor:* Fransiskus Kedang&#10;• *Nomor WhatsApp / HP:* 081234567890&#10;📍 *LOKASI KEJADIAN PENCEMARAN:*&#10;• *Kecamatan:* Nubatukan&#10;• *Desa / Kelurahan:* Lewoleba Tengah&#10;• *Titik Koordinat GPS:* -8.3615, 123.5512&#10;⚠️ *RINCIAN MASALAH:*&#10;• *Jenis Pencemaran:* Laut & Pesisir"></textarea>
+          <textarea id="inputWaRawText" class="form-control-modal" rows="8" style="font-family: monospace; font-size: 0.82rem; line-height: 1.45;" placeholder="Tempelkan pesan WhatsApp laporan pengaduan masyarakat di sini...&#10;&#10;Contoh:&#10;*LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA*&#10;*NOMOR REGISTER:* ADU-26-K8M4&#10;*DATA PELAPOR:*&#10;• *Nama Pelapor:* Fransiskus Kedang&#10;• *Nomor WhatsApp / HP:* 081234567890&#10;*LOKASI KEJADIAN PENCEMARAN:*&#10;• *Kecamatan:* Nubatukan&#10;• *Desa / Kelurahan:* Lewoleba Tengah&#10;• *Titik Koordinat GPS:* -8.3615, 123.5512&#10;*RINCIAN MASALAH:*&#10;• *Jenis Pencemaran:* Laut & Pesisir"></textarea>
         </div>
 
         <div style="margin-bottom: 14px;">
-          <button type="button" class="btn-action-tool" id="btnParseWaText" onclick="window.portal.parseWaText()" style="width: 100%; background: #059669; color: white; border-color: #047857; justify-content: center; padding: 10px; font-weight: 700;">
-            ⚡ Ekstrak &amp; Tinjau Data Aduan
+          <button type="button" class="btn-action-tool" id="btnParseWaText" onclick="window.portal.parseWaText()" style="width: 100%; background: #059669; color: white; border-color: #047857; justify-content: center; padding: 10px; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 15px; height: 15px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+            Ekstrak &amp; Tinjau Data Aduan
           </button>
         </div>
 
         <!-- Hasil Ekstraksi Preview Card -->
         <div id="waParsePreviewCard" style="display: none; background: #f8fafc; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 14px; font-size: 0.84rem;">
           <div style="font-weight: 800; color: #065f46; margin-bottom: 8px; display: flex; align-items: center; justify-content: space-between;">
-            <span>🔍 Data Berhasil Diekstrak:</span>
+            <span style="display: flex; align-items: center; gap: 6px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 15px; height: 15px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+              Data Berhasil Diekstrak:
+            </span>
             <span id="previewWaRegisterBadge" class="ticket-badge">-</span>
           </div>
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; font-size: 0.82rem; margin-bottom: 8px;">
@@ -4480,9 +4693,13 @@
           <!-- Pratinjau Foto Lampiran Aduan -->
           <div id="waImportPhotoSection" style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed #cbd5e1;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-              <strong style="color: #065f46; font-size: 0.82rem;">📸 Foto Bukti Pelapor:</strong>
-              <label for="inputWaImportFiles" style="cursor: pointer; background: #059669; color: white; padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 700;">
-                ➕ Tambah Foto
+              <strong style="color: #065f46; font-size: 0.82rem; display: flex; align-items: center; gap: 6px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+                Foto Bukti Pelapor:
+              </strong>
+              <label for="inputWaImportFiles" style="cursor: pointer; background: #059669; color: white; padding: 3px 8px; border-radius: 6px; font-size: 0.72rem; font-weight: 700; display: inline-flex; align-items: center; gap: 4px;">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                Tambah Foto
               </label>
               <input type="file" id="inputWaImportFiles" accept="image/*" multiple style="display: none;">
             </div>
@@ -4493,8 +4710,9 @@
 
       <div class="modal-footer" style="background: #f8fafc; border-top: 1px solid #e2e8f0;">
         <button type="button" class="btn-modal-cancel" data-close-modal>Batal</button>
-        <button type="button" class="btn-modal-submit" id="btnSaveWaImport" onclick="window.portal.saveWaImport()" disabled style="background: #059669;">
-          💾 Simpan Aduan ke Dashboard Petugas
+        <button type="button" class="btn-modal-submit" id="btnSaveWaImport" onclick="window.portal.saveWaImport()" disabled style="background: #059669; display: inline-flex; align-items: center; gap: 6px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 15px; height: 15px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
+          Simpan Aduan ke Dashboard Petugas
         </button>
       </div>
     </div>
@@ -4505,9 +4723,9 @@
        =================================================================== -->
   <div class="modal-backdrop" id="modalForgotPin">
     <div class="modal-card" style="max-width: 490px;">
-      <div class="modal-header" style="background: linear-gradient(135deg, #065f46 0%, #047857 100%); color: #ffffff;">
+      <div class="modal-header" style="background: #064e3b; color: #ffffff;">
         <div style="display: flex; align-items: center; gap: 10px;">
-          <span style="font-size: 1.4rem;">📸</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 24px; height: 24px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
           <div>
             <h3 class="modal-title" style="color: #ffffff; font-size: 1.05rem;">Bantuan Pemulihan Kata Sandi</h3>
             <div style="font-size: 0.74rem; color: #a7f3d0;">Hubungi Administrator Resmi DLH Kabupaten Lembata</div>
@@ -4517,14 +4735,18 @@
       </div>
 
       <div class="modal-body" style="padding: 22px;">
-        <div style="background: #f0fdf4; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 14px; margin-bottom: 18px; font-size: 0.84rem; color: #166534; line-height: 1.5;">
-          🛡️ <strong>Ketentuan Keamanan Akses:</strong><br>
-          Untuk menjamin validitas dan kerahasiaan data pengawasan aduan lingkungan hidup, pemulihan atau reset kata sandi verifikator dilakukan langsung oleh <strong>Administrator Sistem Dinas Lingkungan Hidup Kabupaten Lembata</strong>.
+        <div style="background: #f0fdf4; border: 1.5px solid #a7f3d0; border-radius: 12px; padding: 14px; margin-bottom: 18px; font-size: 0.84rem; color: #166534; line-height: 1.5; display: flex; align-items: flex-start; gap: 8px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; flex-shrink: 0; margin-top: 2px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          <div>
+            <strong>Ketentuan Keamanan Akses:</strong><br>
+            Untuk menjamin validitas dan kerahasiaan data pengawasan aduan lingkungan hidup, pemulihan atau reset kata sandi verifikator dilakukan langsung oleh <strong>Administrator Sistem Dinas Lingkungan Hidup Kabupaten Lembata</strong>.
+          </div>
         </div>
 
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 16px; margin-bottom: 18px;">
           <div style="font-weight: 800; color: #0f172a; font-size: 0.88rem; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
-            <span>🏢</span> Kontak Pengelola / Administrator DLH:
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; color: #047857;"><path d="M3 21h18M9 8h1m4 0h1m-5 4h1m4 0h1m-5 4h1m4 0h1M4 21V4a1 1 0 0 1 1-1h14a1 1 0 0 1 1 1v17"/></svg>
+            Kontak Pengelola / Administrator DLH:
           </div>
 
           <div style="font-size: 0.84rem; color: #334155; line-height: 1.6; display: flex; flex-direction: column; gap: 10px;">
@@ -4554,8 +4776,9 @@
         </div>
 
         <div style="display: flex; flex-direction: column; gap: 10px;">
-          <a href="https://wa.me/6282234582769?text=Halo%20Admin%20DLH%20Lembata,%20saya%20petugas%20verifikator%20ingin%20meminta%20bantuan%20reset%20kata%20sandi%20dashboard%20petugas." target="_blank" class="btn-modal-submit" style="text-decoration: none; text-align: center; padding: 12px; background: #16a34a; font-size: 0.94rem; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; border-radius: 10px; box-shadow: 0 4px 12px rgba(22, 163, 74, 0.3);">
-            <span>💬</span> Hubungi Admin via WhatsApp (+62 822-3458-2769)
+          <a href="https://wa.me/6282234582769?text=Halo%20Admin%20DLH%20Lembata,%20saya%20petugas%20verifikator%20ingin%20meminta%20bantuan%20reset%20kata%20sandi%20dashboard%20petugas." target="_blank" class="btn-modal-submit" style="text-decoration: none; text-align: center; padding: 12px; background: #064e3b; font-size: 0.94rem; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; border-radius: 10px; box-shadow: 0 4px 12px rgba(6, 78, 59, 0.25);">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+            Hubungi Admin via WhatsApp (+62 822-3458-2769)
           </a>
 
           <button type="button" class="btn-modal-cancel" data-close-modal style="width: 100%; padding: 10px; text-align: center;">
@@ -4573,7 +4796,8 @@
     <div style="position: relative; width: 100%; max-width: 980px; height: 92vh; margin: auto; display: flex; flex-direction: column; padding: 12px; box-sizing: border-box;">
       <div style="display: flex; justify-content: space-between; align-items: center; padding: 10px 16px; background: rgba(15, 23, 42, 0.9); border-radius: 12px; margin-bottom: 10px; border: 1.5px solid rgba(255,255,255,0.15); box-shadow: 0 8px 24px rgba(0,0,0,0.5); flex-wrap: wrap; gap: 8px;">
         <div style="color: #f8fafc; font-weight: 800; font-size: 0.92rem; display: flex; align-items: center; gap: 8px;">
-          <span>📸</span> <span id="lightboxPhotoCaption">Bukti Foto Aduan Lingkungan</span>
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 18px; height: 18px; color: #10b981;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg>
+          <span id="lightboxPhotoCaption">Bukti Foto Aduan Lingkungan</span>
         </div>
         <div style="display: flex; gap: 6px; align-items: center; flex-wrap: wrap;">
           <!-- Kontrol Zoom Presisi -->
@@ -4581,21 +4805,29 @@
             <button type="button" id="btnLightboxZoomOut" title="Perkecil (Zoom Out)" style="background: transparent; color: #fff; border: none; width: 28px; height: 28px; cursor: pointer; font-size: 1.1rem; font-weight: 800; border-radius: 4px; display: flex; align-items: center; justify-content: center;">−</button>
             <span id="lightboxZoomLevel" style="font-size: 0.76rem; font-weight: 800; color: #34d399; min-width: 44px; text-align: center; font-family: monospace;">100%</span>
             <button type="button" id="btnLightboxZoomIn" title="Perbesar (Zoom In)" style="background: transparent; color: #fff; border: none; width: 28px; height: 28px; cursor: pointer; font-size: 1.1rem; font-weight: 800; border-radius: 4px; display: flex; align-items: center; justify-content: center;">+</button>
-            <button type="button" id="btnLightboxZoomReset" title="Reset Ukuran (100%)" style="background: rgba(255,255,255,0.1); color: #cbd5e1; border: none; padding: 3px 6px; cursor: pointer; font-size: 0.72rem; font-weight: 700; border-radius: 4px; margin-left: 2px;">↺ 1:1</button>
+            <button type="button" id="btnLightboxZoomReset" title="Reset Ukuran (100%)" style="background: rgba(255,255,255,0.1); color: #cbd5e1; border: none; padding: 3px 6px; cursor: pointer; font-size: 0.72rem; font-weight: 700; border-radius: 4px; margin-left: 2px; display: inline-flex; align-items: center; gap: 2px;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 11px; height: 11px;"><polyline points="1 4 1 10 7 10"/><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"/></svg> 1:1
+            </button>
           </div>
 
           <!-- Navigasi Multi-Foto -->
           <div id="lightboxNavControls" style="display: none; align-items: center; gap: 4px;">
-            <button type="button" id="btnLightboxPrev" title="Foto Sebelumnya (◀)" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center;">◀</button>
+            <button type="button" id="btnLightboxPrev" title="Foto Sebelumnya" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><polyline points="15 18 9 12 15 6"/></svg>
+            </button>
             <span id="lightboxPhotoCounter" style="font-size: 0.74rem; font-weight: 700; color: #e2e8f0; padding: 0 4px; font-family: monospace;">1/1</span>
-            <button type="button" id="btnLightboxNext" title="Foto Berikutnya (▶)" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 700; display: flex; align-items: center; justify-content: center;">▶</button>
+            <button type="button" id="btnLightboxNext" title="Foto Berikutnya" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.25); width: 30px; height: 30px; border-radius: 6px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><polyline points="9 18 15 12 9 6"/></svg>
+            </button>
           </div>
 
-          <button type="button" onclick="window.portal && window.portal.openPhotoInNewWindow()" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600;">
-            ↗ Tab Baru
+          <button type="button" onclick="window.portal && window.portal.openPhotoInNewWindow()" style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+            Tab Baru
           </button>
-          <button type="button" onclick="window.portal && window.portal.downloadCurrentPhoto()" style="background: #059669; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600;">
-            ⬇️ Unduh
+          <button type="button" onclick="window.portal && window.portal.downloadCurrentPhoto()" style="background: #059669; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg>
+            Unduh
           </button>
           <button type="button" onclick="window.portal && window.portal.closeLightbox()" style="background: #ef4444; color: #fff; border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 1.3rem; line-height: 1; display: flex; align-items: center; justify-content: center; font-weight: 800;">
             &times;
@@ -4609,9 +4841,15 @@
           <img id="lightboxPhotoImg" src="" alt="Bukti Foto Penuh" style="max-width: 88vw; max-height: 72vh; object-fit: contain; border-radius: 8px; box-shadow: 0 10px 40px rgba(0,0,0,0.85); pointer-events: auto; user-select: none; -webkit-user-drag: none;">
         </div>
       </div>
-      <div style="display: flex; justify-content: space-between; align-items: center; color: #94a3b8; font-size: 0.74rem; margin-top: 8px; padding: 0 4px; flex-wrap: wrap; gap: 4px;">
-        <span>🔍 Scroll mouse atau gunakan tombol <strong>+ / −</strong> untuk zoom &bull; Klik &amp; geser gambar untuk menggeser (Pan)</span>
-        <span>💡 Dobel-klik untuk zoom cepat 2× &bull; Tombol Esc untuk keluar</span>
+      <div style="display: flex; justify-content: space-between; align-items: center; color: #94a3b8; font-size: 0.74rem; margin-top: 8px; padding: 0 4px; flex-wrap: wrap; gap: 8px;">
+        <span style="display: flex; align-items: center; gap: 4px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+          Scroll mouse atau gunakan tombol <strong>+ / −</strong> untuk zoom &bull; Klik &amp; geser gambar untuk menggeser (Pan)
+        </span>
+        <span style="display: flex; align-items: center; gap: 4px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>
+          Dobel-klik untuk zoom cepat 2× &bull; Tombol Esc untuk keluar
+        </span>
       </div>
     </div>
   </div>
@@ -4791,11 +5029,11 @@
         if (!input || !btn) return;
         if (input.type === 'password') {
           input.type = 'text';
-          btn.textContent = '🙈';
+          btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M17.94 17.94A10.07 10.07 0 0 1 12 20c-7 0-11-8-11-8a18.45 18.45 0 0 1 5.06-5.94M9.9 4.24A9.12 9.12 0 0 1 12 4c7 0 11 8 11 8a18.5 18.5 0 0 1-2.16 3.19m-6.72-1.07a3 3 0 1 1-4.24-4.24"/><line x1="1" y1="1" x2="23" y2="23"/></svg>`;
           btn.title = 'Sembunyikan Kata Sandi';
         } else {
           input.type = 'password';
-          btn.textContent = '👁️';
+          btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"/><circle cx="12" cy="12" r="3"/></svg>`;
           btn.title = 'Tampilkan Kata Sandi';
         }
       }
@@ -4808,7 +5046,7 @@
         const submitBtn = document.getElementById('btnSubmitLogin');
 
         if (errEl) errEl.textContent = errorMsg;
-        if (btnIcon) btnIcon.textContent = '🔓';
+        if (btnIcon) btnIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>`;
         if (btnText) btnText.textContent = 'Buka Dashboard Petugas';
         if (submitBtn) submitBtn.disabled = false;
 
@@ -4837,7 +5075,7 @@
         const entered = (input.value || '').trim();
 
         if (!entered) {
-          this.triggerAuthShake('⚠️ Masukkan PIN atau kata sandi petugas verifikator.');
+          this.triggerAuthShake('Masukkan PIN atau kata sandi petugas verifikator.');
           input.focus();
           return;
         }
@@ -4864,7 +5102,7 @@
         // Tampilkan indikator proses validasi kredensial
         if (errEl) errEl.textContent = '';
         if (submitBtn) submitBtn.disabled = true;
-        if (btnIcon) btnIcon.textContent = '🔓';
+        if (btnIcon) btnIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>`;
         if (btnText) btnText.textContent = 'Memverifikasi Kredensial...';
         if (card) {
           card.classList.add('scanning');
@@ -4934,7 +5172,7 @@
             card.classList.remove('scanning');
             card.classList.add('unlocking');
           }
-          if (btnIcon) btnIcon.textContent = '🔓';
+          if (btnIcon) btnIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>`;
           if (btnText) btnText.textContent = 'Membuka Dashboard...';
 
           setTimeout(async () => {
@@ -4943,13 +5181,13 @@
 
             if (card) card.classList.remove('unlocking', 'scanning');
             if (submitBtn) submitBtn.disabled = false;
-            if (btnIcon) btnIcon.textContent = '🔓';
+            if (btnIcon) btnIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>`;
             if (btnText) btnText.textContent = 'Buka Dashboard Petugas';
-            if (badgeIcon) badgeIcon.textContent = '🛡️';
+            if (badgeIcon) badgeIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
 
             const toastMsg = isSmartFallback
-              ? '🔓 Akses Berhasil: Selamat bertugas di Dashboard Petugas DLH Lembata (Mode Cepat)!'
-              : '🔓 Akses Berhasil: Selamat bertugas di Dashboard Petugas DLH Lembata!';
+              ? 'Akses Berhasil: Selamat bertugas di Dashboard Petugas DLH Lembata (Mode Cepat)!'
+              : 'Akses Berhasil: Selamat bertugas di Dashboard Petugas DLH Lembata!';
             this.showToast(toastMsg, 'success');
 
             // Sinkronkan data langsung dari server agar data PII unmasked termutakhirkan
@@ -4975,10 +5213,10 @@
           // SKENARIO C (PIN Salah): Kredensial tidak cocok baik di server maupun di fallback
           if (card) card.classList.remove('scanning');
           if (submitBtn) submitBtn.disabled = false;
-          if (btnIcon) btnIcon.textContent = '🔒';
+          if (btnIcon) btnIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
           if (btnText) btnText.textContent = 'Buka Dashboard Petugas';
 
-          this.triggerAuthShake('❌ Kata sandi atau PIN tidak cocok. Silakan periksa kembali kredensial Anda.');
+          this.triggerAuthShake('Kata sandi atau PIN tidak cocok. Silakan periksa kembali kredensial Anda.');
           input.focus();
           input.select();
         }
@@ -5001,7 +5239,7 @@
         }
         const errEl = document.getElementById('authErrorMsg');
         if (errEl) errEl.textContent = '';
-        this.showToast('🔒 Sesi dashboard berhasil dikunci.', 'info');
+        this.showToast('Sesi dashboard berhasil dikunci.', 'info');
       }
 
       openForgotModal() {
@@ -5050,7 +5288,7 @@
         const newSplit = !currentSplit;
         this.applySplitMode(newSplit);
         localStorage.setItem('dlh_split_mode', newSplit ? 'split' : 'full');
-        this.showToast(newSplit ? '🖥️ Mode Split-Screen aktif (Peta & Tabel Berdampingan).' : '📄 Mode Penuh aktif (Tata Letak Bertumpuk).', 'info');
+        this.showToast(newSplit ? 'Mode Split-Screen aktif (Peta & Tabel Berdampingan).' : 'Mode Penuh aktif (Tata Letak Bertumpuk).', 'info');
       }
 
       applySplitMode(isSplit) {
@@ -5073,7 +5311,9 @@
           text.textContent = isSplit ? 'Mode Split-Screen' : 'Mode Penuh';
         }
         if (icon) {
-          icon.textContent = isSplit ? '🖥️' : '📄';
+          icon.innerHTML = isSplit
+            ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="12" y1="3" x2="12" y2="17"/></svg>`
+            : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`;
         }
 
         // Segarkan rendering Leaflet map agar ukuran layer tile langsung pas
@@ -5174,12 +5414,12 @@
         }
 
         const landmarks = [
-          { name: '🏛️ Kota Lewoleba (Ibukota)', lat: -8.3750, lng: 123.4180, desc: 'Pusat Pemerintahan Kab. Lembata & Kec. Nubatukan' },
-          { name: '🌊 Teluk Lewoleba', lat: -8.3550, lng: 123.4000, desc: 'Perairan Teluk Lewoleba' },
-          { name: '🌋 G. Ile Lewotolok', lat: -8.2725, lng: 123.5050, desc: 'Gunung Api Aktif Ile Ape / Ile Ape Timur' },
-          { name: '⚓ Balauring', lat: -8.2336, lng: 123.7060, desc: 'Pusat Kecamatan Omesuri' },
-          { name: '🏖️ Hadakewa', lat: -8.3707, lng: 123.5474, desc: 'Pusat Kecamatan Lebatukan' },
-          { name: '🐳 Lamalera', lat: -8.5583, lng: 123.4244, desc: 'Kecamatan Wulandoni' }
+          { name: 'Kota Lewoleba (Ibukota)', lat: -8.3750, lng: 123.4180, desc: 'Pusat Pemerintahan Kab. Lembata & Kec. Nubatukan' },
+          { name: 'Teluk Lewoleba', lat: -8.3550, lng: 123.4000, desc: 'Perairan Teluk Lewoleba' },
+          { name: 'G. Ile Lewotolok', lat: -8.2725, lng: 123.5050, desc: 'Gunung Api Aktif Ile Ape / Ile Ape Timur' },
+          { name: 'Balauring', lat: -8.2336, lng: 123.7060, desc: 'Pusat Kecamatan Omesuri' },
+          { name: 'Hadakewa', lat: -8.3707, lng: 123.5474, desc: 'Pusat Kecamatan Lebatukan' },
+          { name: 'Lamalera', lat: -8.5583, lng: 123.4244, desc: 'Kecamatan Wulandoni' }
         ];
 
         landmarks.forEach(lm => {
@@ -5228,20 +5468,20 @@
             filtered.forEach(item => {
               const statusClean = (item.status || 'Baru').toLowerCase();
               let pinBg = '#e11d48'; // Baru
-              let iconChar = '⚠️';
+              let iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
 
               if (statusClean.includes('verif')) {
-                pinBg = '#f59e0b';
-                iconChar = '📋';
+                pinBg = '#4f46e5';
+                iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>';
               } else if (statusClean.includes('tindak') || statusClean.includes('proses') || statusClean.includes('penanganan')) {
                 pinBg = '#2563eb';
-                iconChar = '🛠️';
+                iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>';
               } else if (statusClean.includes('selesai') || statusClean.includes('tuntas')) {
                 pinBg = '#10b981';
-                iconChar = '✅';
+                iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;"><polyline points="20 6 9 17 4 12"/></svg>';
               } else if (statusClean.includes('tolak')) {
                 pinBg = '#64748b';
-                iconChar = '✕';
+                iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>';
               }
 
               const customIcon = L.divIcon({
@@ -5250,7 +5490,7 @@
                   <div class="custom-marker-pin-wrap">
                     <div class="marker-pulse-ring" style="--pin-bg: ${pinBg};"></div>
                     <div class="custom-marker-pin" style="--pin-bg: ${pinBg};">
-                      <span class="custom-marker-icon-inner">${iconChar}</span>
+                      <span class="custom-marker-icon-inner" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #ffffff;">${iconSvg}</span>
                     </div>
                   </div>
                 `,
@@ -5276,26 +5516,35 @@
                     <strong style="color: #065f46; font-family: monospace;">${item.id}</strong>
                     ${this.getStatusBadgeHtml(item.status)}
                   </div>
-                  <div style="font-weight: 800; color: #0f172a; margin-bottom: 2px;">${item.namaPelapor}</div>
-                  <div style="color: #64748b; font-size: 0.76rem; margin-bottom: 4px;">📍 Kec. ${item.kecamatan}, Desa ${item.desa || '-'}</div>
-                  <div style="color: #047857; font-weight: 700; margin-bottom: 6px;">🏷️ ${item.jenisPencemaran}</div>
+                  <div style="font-weight: 800; color: #0f172a; margin-bottom: 2px;">${this.escHtml(item.namaPelapor)}</div>
+                  <div style="color: #64748b; font-size: 0.76rem; margin-bottom: 4px; display: flex; align-items: center; gap: 4px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px; flex-shrink: 0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span>Kec. ${this.escHtml(item.kecamatan)}, Desa ${this.escHtml(item.desa || '-')}</span>
+                  </div>
+                  <div style="color: #047857; font-weight: 700; margin-bottom: 6px; display: flex; align-items: center; gap: 4px;">
+                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px; flex-shrink: 0;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                    <span>${this.escHtml(item.jenisPencemaran)}</span>
+                  </div>
                   <div style="color: #475569; font-size: 0.76rem; margin-bottom: 8px; max-height: 44px; overflow: hidden; text-overflow: ellipsis;">
-                    "${(item.uraian || '').substring(0, 75)}..."
+                    "${this.escHtml((item.uraian || '').substring(0, 75))}..."
                   </div>
                   ${mapWaUrl ? `
                     <div style="margin-bottom: 8px;">
                       <a href="${mapWaUrl}" target="_blank" rel="noopener noreferrer" 
                          style="display: flex; align-items: center; justify-content: center; gap: 5px; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; border-radius: 6px; padding: 4px 8px; font-size: 0.74rem; font-weight: 700; text-decoration: none;">
-                        💬 Hubungi Pelapor (${mapDisplayPhone})
+                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                        Hubungi Pelapor (${mapDisplayPhone})
                       </a>
                     </div>
                   ` : ''}
                   <div style="display: flex; gap: 6px;">
-                    <button type="button" class="btn-tbl btn-tbl-detail" style="flex: 1; padding: 5px; font-size: 0.74rem;" onclick="window.portal.showDetailModal('${item.id}')">
-                      🔍 Rincian
+                    <button type="button" class="btn-tbl btn-tbl-detail" style="flex: 1; padding: 5px; font-size: 0.74rem; display: inline-flex; align-items: center; justify-content: center; gap: 4px;" onclick="window.portal.showDetailModal('${item.id}')">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                      Rincian
                     </button>
-                    <button type="button" class="btn-tbl btn-tbl-verify" style="flex: 1; padding: 5px; font-size: 0.74rem;" onclick="window.portal.openVerifikasiModal('${item.id}')">
-                      📋 Verifikasi
+                    <button type="button" class="btn-tbl btn-tbl-verify" style="flex: 1; padding: 5px; font-size: 0.74rem; display: inline-flex; align-items: center; justify-content: center; gap: 4px;" onclick="window.portal.openVerifikasiModal('${item.id}')">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px;"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                      Verifikasi
                     </button>
                   </div>
                 </div>
@@ -5455,7 +5704,7 @@
             }
           }, 1100);
 
-          this.showToast(`📍 Menyorot lokasi aduan ${id} (${item.desa || item.kecamatan}) di peta`, 'success');
+          this.showToast(`Menyorot lokasi aduan ${id} (${item.desa || item.kecamatan}) di peta`, 'success');
         }
       }
 
@@ -5506,7 +5755,7 @@
         const btnExecDelete = document.getElementById('btnExecuteDelete');
         if (btnExecDelete) {
           btnExecDelete.disabled = true;
-          btnExecDelete.textContent = '⏳ Menghapus...';
+          btnExecDelete.textContent = 'Menghapus...';
         }
 
         try {
@@ -5526,22 +5775,22 @@
           this._isDeleting = false;
           if (btnExecDelete) {
             btnExecDelete.disabled = false;
-            btnExecDelete.textContent = '🗑️ Ya, Hapus Permanen';
+            btnExecDelete.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px; display: inline-block; vertical-align: middle; margin-right: 4px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>Ya, Hapus Permanen`;
           }
         }
       }
 
       async confirmDeleteOfficerPhoto(id, photoIndex) {
-        if (!confirm(`⚠️ KONFIRMASI HAPUS FOTO PETUGAS:\n\nApakah Anda yakin ingin menghapus foto ke-${photoIndex + 1} dari tiket ${id}?\n\nFoto akan dihapus permanen dan perubahan langsung disinkronkan ke Google Spreadsheet.`)) {
+        if (!confirm(`KONFIRMASI HAPUS FOTO PETUGAS:\n\nApakah Anda yakin ingin menghapus foto ke-${photoIndex + 1} dari tiket ${id}?\n\nFoto akan dihapus permanen dan perubahan langsung disinkronkan ke Google Spreadsheet.`)) {
           return;
         }
 
-        this.showToast('⏳ Menghapus foto petugas & menyinkronkan ke cloud...', 'info');
+        this.showToast('Menghapus foto petugas & menyinkronkan ke cloud...', 'info');
 
         try {
           const success = await window.aduanStore.deleteOfficerPhoto(id, photoIndex);
           if (success) {
-            this.showToast(`✅ Foto ke-${photoIndex + 1} berhasil dihapus & data disinkronkan!`, 'success');
+            this.showToast(`Foto ke-${photoIndex + 1} berhasil dihapus & data disinkronkan!`, 'success');
             this.updateKPIs();
             this.renderTable();
             this.renderMapLayers();
@@ -5557,11 +5806,11 @@
       }
 
       async confirmClearAllOfficerPhotos(id) {
-        if (!confirm(`⚠️ KONFIRMASI HAPUS SEMUA FOTO PETUGAS:\n\nApakah Anda yakin ingin menghapus SELURUH foto dokumentasi petugas untuk tiket ${id}?\n\nSemua foto petugas akan dikosongkan dan langsung disinkronkan ke Google Spreadsheet.`)) {
+        if (!confirm(`KONFIRMASI HAPUS SEMUA FOTO PETUGAS:\n\nApakah Anda yakin ingin menghapus SELURUH foto dokumentasi petugas untuk tiket ${id}?\n\nSemua foto petugas akan dikosongkan dan langsung disinkronkan ke Google Spreadsheet.`)) {
           return;
         }
 
-        this.showToast('⏳ Mengosongkan seluruh foto petugas & menyinkronkan...', 'info');
+        this.showToast('Mengosongkan seluruh foto petugas & menyinkronkan...', 'info');
 
         try {
           const updated = await window.aduanStore.updateVerifikasi(id, {
@@ -5570,7 +5819,7 @@
           });
 
           if (updated) {
-            this.showToast('✅ Seluruh foto petugas berhasil dihapus & disinkronkan!', 'success');
+            this.showToast('Seluruh foto petugas berhasil dihapus & disinkronkan!', 'success');
             this.updateKPIs();
             this.renderTable();
             this.renderMapLayers();
@@ -5642,13 +5891,13 @@
             if (animPercent) animPercent.textContent = `${progress}%`;
 
             if (progress < 30) {
-              if (animStep) animStep.textContent = '📥 Membaca data gambar dari kamera/galeri...';
+              if (animStep) animStep.textContent = 'Membaca data gambar dari kamera/galeri...';
             } else if (progress < 70) {
-              if (animStep) animStep.textContent = '⚙️ Mengompresi resolusi Berita Acara (WebP/JPEG)...';
+              if (animStep) animStep.textContent = 'Mengompresi resolusi Berita Acara (WebP/JPEG)...';
             } else if (progress < 95) {
-              if (animStep) animStep.textContent = '🔒 Mengunci metadata foto fisik verifikator DLH...';
+              if (animStep) animStep.textContent = 'Mengunci metadata foto fisik verifikator DLH...';
             } else {
-              if (animStep) animStep.textContent = '✅ Memvalidasi kelengkapan dokumen foto...';
+              if (animStep) animStep.textContent = 'Memvalidasi kelengkapan dokumen foto...';
             }
 
             if (progress >= 100) {
@@ -5662,7 +5911,7 @@
                     successDesc.textContent = `${this.tempUploadedPhotos.length} foto kondisi riil berhasil diunggah dengan status sukses.`;
                   }
                 }
-                this.showToast(`✅ ${count} Foto kondisi riil berhasil diunggah! Status: Sukses.`, 'success');
+                this.showToast(`${count} Foto kondisi riil berhasil diunggah! Status: Sukses.`, 'success');
                 if (onDone) onDone();
               }, 250);
             }
@@ -5753,7 +6002,7 @@
         grid.innerHTML = this.tempUploadedPhotos.map((src, idx) => `
           <div class="preview-thumb-box" style="display: flex; flex-direction: column; background: #ffffff; border: 1.5px solid #10b981; border-radius: 8px; overflow: hidden; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
             <div style="position: relative; height: 110px; width: 100%; background: #0f172a;">
-              <span class="thumb-badge-success" style="position: absolute; top: 4px; left: 4px; z-index: 2;">✓ Foto ${idx + 1}</span>
+              <span class="thumb-badge-success" style="position: absolute; top: 4px; left: 4px; z-index: 2;">Foto ${idx + 1}</span>
               <img src="${this.formatPhotoUrl(src)}" alt="Foto Fisik ${idx + 1}" onerror="this.src='${src}';" style="width: 100%; height: 100%; object-fit: cover;">
               <button type="button" class="btn-remove-thumb" onclick="window.portal.removeUploadedPhoto(${idx})" title="Hapus foto #${idx + 1}">&times;</button>
             </div>
@@ -5763,7 +6012,8 @@
                       onmouseover="this.style.background='#fecaca';"
                       onmouseout="this.style.background='#fee2e2';"
                       title="Hapus foto #${idx + 1} dari lampiran verifikasi">
-                <span>🗑️ Hapus Foto ${idx + 1}</span>
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 11px; height: 11px;"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                <span>Hapus Foto ${idx + 1}</span>
               </button>
             </div>
           </div>
@@ -5771,7 +6021,7 @@
 
         if (hint) {
           hint.style.display = 'block';
-          hint.textContent = `✅ ${this.tempUploadedPhotos.length} foto kondisi riil terlampir untuk Berita Acara.`;
+          hint.textContent = `${this.tempUploadedPhotos.length} foto kondisi riil terlampir untuk Berita Acara.`;
         }
         if (btnClear) {
           btnClear.style.display = 'inline-flex';
@@ -5843,7 +6093,8 @@
               <strong style="color: #0f172a;">${vDisplayPhone}</strong>
               <a href="https://wa.me/${vWaPhone}?text=${vWaText}" target="_blank" rel="noopener noreferrer"
                  style="background: #16a34a; color: white; padding: 2px 8px; border-radius: 5px; font-size: 0.72rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 3px rgba(22, 163, 74, 0.25);">
-                💬 Chat WA
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                Chat WA
               </a>
             `;
           } else {
@@ -5910,7 +6161,7 @@
       appendChecklistToHasil() {
         const checkedInputs = Array.from(document.querySelectorAll('.v-chk-input:checked'));
         if (checkedInputs.length === 0) {
-          this.showToast('⚠️ Centang minimal satu poin checklist terlebih dahulu.', 'warning');
+          this.showToast('Centang minimal satu poin checklist terlebih dahulu.', 'warning');
           return;
         }
         const hasilEl = document.getElementById('vHasilVerifikasi');
@@ -5925,7 +6176,69 @@
         } else {
           hasilEl.value = current ? `${current}\n\n${block}` : block;
         }
-        this.showToast('✅ Poin checklist berhasil disinkronkan ke Catatan Temuan!', 'success');
+        this.showToast('Poin checklist berhasil disinkronkan ke Catatan Temuan!', 'success');
+      }
+
+      /**
+       * Menerapkan templat respons dinas resmi ke formulir verifikasi
+       * Mempercepat proses pembuatan Berita Acara & Tindak Lanjut oleh petugas DLH
+       */
+      applyResponseTemplate(key) {
+        const statusEl = document.getElementById('vStatusSelect');
+        const hasilEl = document.getElementById('vHasilVerifikasi');
+        const tindakanEl = document.getElementById('vTindakanDLH');
+
+        const templates = {
+          verifikasi: {
+            status: 'Diverifikasi',
+            hasil: 'Telah dilakukan pemeriksaan dan verifikasi lapangan oleh Tim Pengawasan LH. Lokasi kejadian faktual dan bukti fisik terkonfirmasi sesuai pengaduan masyarakat.',
+            tindakan: 'Penyusunan Berita Acara Verifikasi Lapangan dan koordinasi lebih lanjut dengan pemerintah desa/kelurahan setempat.'
+          },
+          teguran: {
+            status: 'Ditindaklanjuti',
+            hasil: 'Ditemukan indikasi ketidaksesuaian pengelolaan lingkungan hidup di lokasi kegiatan. Teridentifikasi pihak penanggung jawab kegiatan.',
+            tindakan: 'Penerbitan Surat Peringatan / Teguran Tertulis kepada penanggung jawab kegiatan untuk melakukan pembersihan dan pemulihan lingkungan secara mandiri dalam tenggat waktu yang ditentukan.'
+          },
+          pembersihan: {
+            status: 'Ditindaklanjuti',
+            hasil: 'Penumpukan volume sampah/limbah di area publik yang berpotensi mengganggu estetika dan sanitasi lingkungan warga sekitar.',
+            tindakan: 'Pengerahan armada truk pengangkut sampah dan regu kebersihan DLH Kabupaten Lembata ke lokasi untuk evakuasi sampah menuju TPA.'
+          },
+          koordinasi: {
+            status: 'Ditindaklanjuti',
+            hasil: 'Kondisi lingkungan memerlukan penanganan lintas sektor bersama pemangku wilayah setempat.',
+            tindakan: 'Koordinasi bersama Kepala Desa/Lurah dan tokoh masyarakat untuk sosialisasi larangan pembuangan sampah liar dan penataan tempat penampungan sementara.'
+          },
+          selesai: {
+            status: 'Selesai',
+            hasil: 'Objek pencemaran telah bersih tuntas dan fungsi lingkungan hidup telah pulih normal kembali.',
+            tindakan: 'Penutupan aduan dan pemantauan berkala oleh Pengawas Lingkungan Hidup DLH Lembata.'
+          }
+        };
+
+        const tpl = templates[key];
+        if (!tpl) return;
+
+        if (statusEl) statusEl.value = tpl.status;
+        if (hasilEl) {
+          const cur = (hasilEl.value || '').trim();
+          hasilEl.value = cur ? `${cur}\n\n${tpl.hasil}` : tpl.hasil;
+        }
+        if (tindakanEl) {
+          const cur = (tindakanEl.value || '').trim();
+          tindakanEl.value = cur ? `${cur}\n\n${tpl.tindakan}` : tpl.tindakan;
+        }
+        this.showToast(`Templat respons '${tpl.status}' berhasil diterapkan ke formulir.`, 'success');
+      }
+
+      getJenisPencemaranBgClass(jenis) {
+        const j = (jenis || '').toLowerCase();
+        if (j.includes('udara') || j.includes('asap')) return 'cat-bg-udara';
+        if (j.includes('limbah') || j.includes('b3') || j.includes('kimia') || j.includes('medis')) return 'cat-bg-limbah';
+        if (j.includes('laut') || j.includes('pesisir') || j.includes('pantai') || j.includes('terumbu')) return 'cat-bg-pesisir';
+        if (j.includes('air') || j.includes('sungai') || j.includes('danau') || j.includes('mata air')) return 'cat-bg-air';
+        if (j.includes('sampah') || j.includes('bau') || j.includes('tps') || j.includes('kotor')) return 'cat-bg-sampah';
+        return 'cat-bg-default';
       }
 
       /* ===================================================================
@@ -6156,12 +6469,16 @@
           <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 10px;">
             <!-- Kolom Kiri: Pelapor -->
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 10px; border-radius: 8px;">
-              <div style="color: #64748b; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; margin-bottom: 2px;">👤 PELAPOR</div>
+              <div style="color: #64748b; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                PELAPOR
+              </div>
               <div style="font-weight: 700; color: #0f172a; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="${this.escHtml(item.namaPelapor || '-')}">
                 ${this.escHtml(item.namaPelapor || 'Warga')}
               </div>
-              <div style="font-size: 0.76rem; color: #475569; font-family: monospace; margin-top: 2px;">
-                📞 ${this.formatPhoneDisplay(item.noHp)}
+              <div style="font-size: 0.76rem; color: #475569; font-family: monospace; margin-top: 2px; display: flex; align-items: center; gap: 4px;">
+                <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                <span>${this.formatPhoneDisplay(item.noHp)}</span>
               </div>
               ${(function(portalInst) {
                 const dWaPhone = portalInst.formatWhatsAppPhone(item.noHp);
@@ -6172,9 +6489,10 @@
                 return `
                   <div style="margin-top: 5px;">
                     <a href="https://wa.me/${dWaPhone}?text=${dWaText}" target="_blank" rel="noopener noreferrer"
-                       style="background: #16a34a; color: white; padding: 2px 8px; border-radius: 5px; font-size: 0.72rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 3px; box-shadow: 0 1px 2px rgba(22,163,74,0.25);"
+                       style="background: #16a34a; color: white; padding: 2px 8px; border-radius: 5px; font-size: 0.72rem; font-weight: 700; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; box-shadow: 0 1px 2px rgba(22,163,74,0.25);"
                        title="Hubungi Pelapor via WhatsApp">
-                      💬 Hubungi WA
+                      <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                      Hubungi WA
                     </a>
                   </div>
                 `;
@@ -6183,7 +6501,10 @@
 
             <!-- Kolom Kanan: Lokasi -->
             <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 8px 10px; border-radius: 8px;">
-              <div style="color: #64748b; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; margin-bottom: 2px;">📍 LOKASI</div>
+              <div style="color: #64748b; font-size: 0.68rem; font-weight: 800; text-transform: uppercase; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                LOKASI
+              </div>
               <div style="font-weight: 700; color: #0f172a; font-size: 0.88rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;" title="Kec. ${this.escHtml(item.kecamatan || '-')}">
                 Kec. ${this.escHtml(item.kecamatan || '-')}
               </div>
@@ -6193,13 +6514,15 @@
               ${mapsUrl ? `
                 <div style="margin-top: 5px;">
                   <a href="${mapsUrl}" target="_blank" rel="noopener noreferrer"
-                     style="color: #0284c7; font-size: 0.72rem; font-weight: 700; text-decoration: underline; display: inline-flex; align-items: center; gap: 2px;">
-                    📍 Buka Peta ↗
+                     style="color: #0284c7; font-size: 0.72rem; font-weight: 700; text-decoration: underline; display: inline-flex; align-items: center; gap: 4px;">
+                    <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+                    Buka Peta ↗
                   </a>
                 </div>
               ` : `
-                <div style="margin-top: 5px; font-size: 0.72rem; color: #94a3b8;">
-                  📍 Titik GPS (-)
+                <div style="margin-top: 5px; font-size: 0.72rem; color: #94a3b8; display: flex; align-items: center; gap: 3px;">
+                  <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="4.93" y1="4.93" x2="19.07" y2="19.07"/></svg>
+                  Titik GPS (-)
                 </div>
               `}
             </div>
@@ -6220,13 +6543,19 @@
             </div>
 
             <div style="background: #f0fdf4; border: 1px solid #bbf7d0; border-radius: 6px; padding: 6px 8px; font-size: 0.82rem; color: #14532d; line-height: 1.45;">
-              <div style="font-weight: 700; font-size: 0.75rem; color: #047857; margin-bottom: 2px;">📝 Kronologi Aduan Warga:</div>
+              <div style="font-weight: 700; font-size: 0.75rem; color: #047857; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
+                Kronologi Aduan Warga:
+              </div>
               <div style="white-space: pre-wrap;">${escapeHtml(cleanUraian)}</div>
             </div>
 
             <!-- Blok Poin 5: Penyelesaian yang Diinginkan -->
             <div style="margin-top: 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px; font-size: 0.82rem; color: #1e293b; line-height: 1.45;">
-              <div style="font-weight: 700; font-size: 0.75rem; color: #334155; margin-bottom: 2px;">⚖️ Penyelesaian yang Diinginkan:</div>
+              <div style="font-weight: 700; font-size: 0.75rem; color: #334155; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 6v6l4 2"/></svg>
+                Penyelesaian yang Diinginkan:
+              </div>
               ${(displayPenyelesaian && displayPenyelesaian !== '-' && displayPenyelesaian.trim() !== '')
                 ? `<div style="white-space: pre-wrap; color: #0f172a;">${escapeHtml(displayPenyelesaian)}</div>`
                 : `<div style="color: #94a3b8; font-style: italic; font-size: 0.78rem;">Tidak dicantumkan oleh pelapor</div>`}
@@ -6234,7 +6563,10 @@
 
             <!-- Blok Poin 6: Riwayat Pengaduan ke Pihak Lain -->
             <div style="margin-top: 6px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 8px; font-size: 0.82rem; color: #1e293b; line-height: 1.45;">
-              <div style="font-weight: 700; font-size: 0.75rem; color: #334155; margin-bottom: 2px;">🏛️ Riwayat Pengaduan ke Pihak Lain:</div>
+              <div style="font-weight: 700; font-size: 0.75rem; color: #334155; margin-bottom: 2px; display: flex; align-items: center; gap: 4px;">
+                <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M5 21V7l7-4 7 4v14"/><path d="M9 10h1"/><path d="M14 10h1"/><path d="M9 14h1"/><path d="M14 14h1"/><path d="M9 18h1"/><path d="M14 18h1"/></svg>
+                Riwayat Pengaduan ke Pihak Lain:
+              </div>
               ${(displayRiwayat && displayRiwayat !== '-' && displayRiwayat.trim() !== '' && displayRiwayat.toLowerCase() !== 'belum pernah')
                 ? `<div style="white-space: pre-wrap; color: #0f172a;">${escapeHtml(displayRiwayat)}</div>`
                 : `<div style="color: #94a3b8; font-style: italic; font-size: 0.78rem;">Tidak dicantumkan oleh pelapor</div>`}
@@ -6243,7 +6575,10 @@
             ${((item.hasilVerifikasi && item.hasilVerifikasi !== '-') || (Array.isArray(item.checklistVerifikasi) && item.checklistVerifikasi.length > 0) || item.nomorBeritaAcara) ? `
               <div style="margin-top: 6px; background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 8px; font-size: 0.8rem;">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 2px; flex-wrap: wrap; gap: 4px;">
-                  <span style="font-weight: 700; color: #065f46; font-size: 0.75rem;">📋 Hasil Pemeriksaan Lapangan:</span>
+                  <span style="font-weight: 700; color: #065f46; font-size: 0.75rem; display: flex; align-items: center; gap: 4px;">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
+                    Hasil Pemeriksaan Lapangan:
+                  </span>
                   ${item.nomorBeritaAcara ? `<span style="font-family: monospace; font-size: 0.7rem; font-weight: 700; background: #fef08a; padding: 1px 5px; border-radius: 3px;">BAST: ${this.escHtml(item.nomorBeritaAcara)}</span>` : ''}
                 </div>
                 ${item.hasilVerifikasi && item.hasilVerifikasi !== '-' ? `<div style="color: #334155; line-height: 1.4; white-space: pre-wrap;">${this.escHtml(item.hasilVerifikasi)}</div>` : ''}
@@ -6257,7 +6592,10 @@
             <!-- Foto Bukti Warga -->
             <div style="margin-bottom: 8px;">
               <div style="font-size: 0.74rem; font-weight: 800; color: #334155; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;">
-                <span>📸 Foto Warga (${citizenPhotos.length})</span>
+                <span style="display: flex; align-items: center; gap: 4px;">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  Foto Warga (${citizenPhotos.length})
+                </span>
                 ${citizenPhotos.length > 0 ? `<span style="font-size: 0.68rem; color: #059669; font-weight: 600;">Klik untuk perbesar</span>` : ''}
               </div>
               ${citizenPhotos.length > 0 ? `
@@ -6292,14 +6630,18 @@
             <!-- Foto Kondisi Riil Petugas -->
             <div>
               <div style="font-size: 0.74rem; font-weight: 800; color: #065f46; text-transform: uppercase; margin-bottom: 4px; display: flex; align-items: center; justify-content: space-between;">
-                <span>📸 Foto Lapangan Petugas (${officerPhotos.length})</span>
+                <span style="display: flex; align-items: center; gap: 4px;">
+                  <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                  Foto Lapangan Petugas (${officerPhotos.length})
+                </span>
                 ${officerPhotos.length > 0 ? `
                   <div style="display: flex; align-items: center; gap: 6px;">
                     <span style="font-size: 0.68rem; color: #059669; font-weight: 600;">Klik perbesar</span>
                     <button type="button" onclick="window.portal.confirmClearAllOfficerPhotos('${cleanAduanId}')"
-                            style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; border-radius: 4px; padding: 1px 6px; font-size: 0.68rem; font-weight: 700; cursor: pointer;"
+                            style="background: #fee2e2; color: #b91c1c; border: 1px solid #fca5a5; border-radius: 4px; padding: 2px 7px; font-size: 0.68rem; font-weight: 700; cursor: pointer; display: inline-flex; align-items: center; gap: 3px;"
                             title="Hapus seluruh foto petugas">
-                      🗑️ Hapus Semua
+                      <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                      Hapus Semua
                     </button>
                   </div>
                 ` : ''}
@@ -6351,7 +6693,8 @@
                     onmouseover="this.style.background='#047857';"
                     onmouseout="this.style.background='#059669';"
                     title="Input Hasil Verifikasi Lapangan">
-              <span>📋</span> Verifikasi / Tindak Lanjut
+              <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+              <span>Verifikasi / Tindak Lanjut</span>
             </button>
 
             <!-- Baris 2: Tombol Pendukung (Grid 3 Kolom Seimbang) -->
@@ -6363,7 +6706,8 @@
                       onmouseover="this.style.background='#0f766e';"
                       onmouseout="this.style.background='#0d9488';"
                       title="Tampilkan dan sorot lokasi kejadian di peta">
-                <span>📍</span> Sorot Peta
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span>Sorot Peta</span>
               </button>
 
               <!-- 2. Cetak BAST (Biru Lembut) -->
@@ -6373,7 +6717,8 @@
                       onmouseover="this.style.background='#0369a1';"
                       onmouseout="this.style.background='#0284c7';"
                       title="Cetak Berita Acara Pemeriksaan Fisik Lapangan">
-                <span>🖨️</span> Cetak BAST
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+                <span>Cetak BAST</span>
               </button>
 
               <!-- 3. Hapus (Merah Lembut #fef2f2, teks #dc2626) -->
@@ -6383,7 +6728,8 @@
                       onmouseover="this.style.background='#fee2e2';"
                       onmouseout="this.style.background='#fef2f2';"
                       title="Hapus laporan ini secara permanen">
-                <span>🗑️</span> Hapus
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                <span>Hapus</span>
               </button>
             </div>
           </div>
@@ -6487,7 +6833,7 @@
         }
         if (checklistArr.length > 0) {
           checklistHtml = '<ul style="margin: 2px 0 0 16px; padding: 0;">' + 
-            checklistArr.map(chk => `<li>☑ ${escapeHtml(chk)}</li>`).join('') + 
+            checklistArr.map(chk => `<li>• ${escapeHtml(chk)}</li>`).join('') + 
             '</ul>';
         }
 
@@ -6571,7 +6917,10 @@
 </head>
 <body>
   <div class="no-print" style="margin-bottom: 10px; text-align: right;">
-    <button onclick="window.print()" style="padding: 6px 14px; background: #000; color: #fff; border: none; font-weight: bold; cursor: pointer; font-size: 12pt;">🖨️ Cetak Dokumen</button>
+    <button onclick="window.print()" style="padding: 6px 14px; background: #000; color: #fff; border: none; font-weight: bold; cursor: pointer; font-size: 11pt; display: inline-flex; align-items: center; gap: 6px;">
+      <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
+      Cetak Dokumen
+    </button>
   </div>
 
   <div class="kop-surat">
@@ -6953,7 +7302,7 @@
         const caption = this.currentLightboxCaption || 'Bukti Foto Aduan Lingkungan';
         const w = window.open('', '_blank');
         if (w) {
-          w.document.write(`<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${caption} - DLH Lembata</title><style>body{margin:0;background:#0b1120;color:#f8fafc;font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;box-sizing:border-box;}.topbar{margin-bottom:14px;text-align:center;}.topbar h3{margin:0 0 4px;color:#10b981;font-size:1.15rem;}.img-wrap{max-width:96vw;max-height:82vh;border-radius:10px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.8);border:2px solid #334155;}img{max-width:100%;max-height:82vh;object-fit:contain;display:block;}.btn-dl{margin-top:14px;display:inline-block;background:#059669;color:white;padding:8px 18px;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.85rem;}</style></head><body><div class="topbar"><h3>📸 ${caption}</h3><p>Dinas Lingkungan Hidup Kabupaten Lembata</p></div><div class="img-wrap"><img src="${src}" alt="${caption}"></div><a href="${src}" download="Bukti_Foto_DLH_${Date.now()}.jpg" class="btn-dl">⬇️ Unduh Foto Ini</a></body></html>`);
+          w.document.write(`<!DOCTYPE html><html lang="id"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><title>${caption} - DLH Lembata</title><style>body{margin:0;background:#0b1120;color:#f8fafc;font-family:sans-serif;display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:100vh;padding:20px;box-sizing:border-box;}.topbar{margin-bottom:14px;text-align:center;}.topbar h3{margin:0 0 4px;color:#10b981;font-size:1.15rem;display:flex;align-items:center;justify-content:center;gap:6px;}.img-wrap{max-width:96vw;max-height:82vh;border-radius:10px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,0.8);border:2px solid #334155;}img{max-width:100%;max-height:82vh;object-fit:contain;display:block;}.btn-dl{margin-top:14px;display:inline-flex;align-items:center;gap:6px;background:#059669;color:white;padding:8px 18px;border-radius:8px;text-decoration:none;font-weight:700;font-size:0.85rem;}</style></head><body><div class="topbar"><h3><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg> ${caption}</h3><p>Dinas Lingkungan Hidup Kabupaten Lembata</p></div><div class="img-wrap"><img src="${src}" alt="${caption}"></div><a href="${src}" download="Bukti_Foto_DLH_${Date.now()}.jpg" class="btn-dl"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="7 10 12 15 17 10"/><line x1="12" y1="15" x2="12" y2="3"/></svg> Unduh Foto Ini</a></body></html>`);
           w.document.close();
         }
       }
@@ -6973,7 +7322,7 @@
         document.querySelectorAll('.modal-backdrop').forEach(m => m.classList.remove('show'));
       }
 
-            getStatusBadgeHtml(status) {
+      getStatusBadgeHtml(status) {
         const clean = (status || 'Baru').toLowerCase();
         let cssClass = 'badge-baru';
         let label = status || 'Baru';
@@ -6988,7 +7337,7 @@
           cssClass = 'badge-ditolak';
         }
 
-        return `<span class="badge ${cssClass}">● ${label}</span>`;
+        return `<span class="badge ${cssClass}"><span class="badge-dot"></span>${this.escHtml(label)}</span>`;
       }
 
       /**
@@ -7070,11 +7419,17 @@
         const toast = document.createElement('div');
         toast.className = `toast-item ${type}`;
 
-        let icon = 'ℹ️';
-        if (type === 'success') icon = '✅';
-        if (type === 'warning') icon = '⚠️';
+        let iconSvg = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
+        if (type === 'success') {
+          iconSvg = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg>';
+        } else if (type === 'warning' || type === 'error') {
+          iconSvg = '<svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>';
+        }
 
-        toast.innerHTML = `<span>${icon}</span> <span>${message}</span>`;
+        // Clean any residual emojis in message text
+        const cleanMsg = (message || '').replace(/[\uD83C-\uDBFF\uDC00-\uDFFF\u2600-\u26FF\u2700-\u27BF]/g, '').trim();
+
+        toast.innerHTML = `<span style="display:inline-flex;align-items:center;">${iconSvg}</span> <span style="line-height:1.4;">${cleanMsg}</span>`;
         container.appendChild(toast);
 
         setTimeout(() => {
@@ -7293,10 +7648,12 @@
 
         if (!data || data.length === 0) {
           rkList.innerHTML = `
-            <div class="rk-empty-card">
-              <div style="font-size: 2.2rem; margin-bottom: 8px;">✨</div>
-              <strong style="color: #0f172a; font-size: 1rem; display: block;">Belum ada aduan masuk (0 Aduan).</strong>
-              <p style="font-size: 0.85rem; color: #64748b; margin-top: 6px; margin-bottom: 0;">Sistem telah disegarkan dan bersih total. Siap menerima pengujian laporan baru dari formulir warga maupun WhatsApp.</p>
+            <div class="rk-empty-card" style="text-align: center; padding: 36px 20px; background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 12px;">
+              <div style="display: flex; justify-content: center; margin-bottom: 12px; color: #059669;">
+                <svg viewBox="0 0 24 24" width="38" height="38" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+              </div>
+              <strong style="color: #0f172a; font-size: 0.95rem; display: block;">Belum ada aduan masuk (0 Aduan).</strong>
+              <p style="font-size: 0.82rem; color: #64748b; margin-top: 6px; margin-bottom: 0;">Sistem telah disegarkan dan bersih total. Siap menerima pengujian laporan baru dari formulir warga maupun WhatsApp.</p>
             </div>
           `;
           return;
@@ -7304,10 +7661,12 @@
 
         if (!filtered || filtered.length === 0) {
           rkList.innerHTML = `
-            <div class="rk-empty-card">
-              <div style="font-size: 2rem; margin-bottom: 8px;">📭</div>
-              <strong style="color: #334155; font-size: 0.95rem; display: block;">Tidak ada data aduan yang sesuai dengan kriteria filter.</strong>
-              <p style="font-size: 0.8rem; margin-top: 4px; margin-bottom: 0;">Coba ubah kata kunci pencarian atau reset filter kecamatan/status.</p>
+            <div class="rk-empty-card" style="text-align: center; padding: 32px 20px; background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 12px;">
+              <div style="display: flex; justify-content: center; margin-bottom: 12px; color: #64748b;">
+                <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+              </div>
+              <strong style="color: #334155; font-size: 0.92rem; display: block;">Tidak ada data aduan yang sesuai dengan kriteria filter.</strong>
+              <p style="font-size: 0.8rem; color: #64748b; margin-top: 4px; margin-bottom: 0;">Coba sesuaikan kata kunci pencarian atau reset filter kecamatan/status.</p>
             </div>
           `;
           return;
@@ -7318,62 +7677,85 @@
           const jenis = item.jenisPencemaran || 'Laporan Lingkungan';
           const pelapor = item.namaPelapor || 'Warga';
           const desaLabel = this.formatDesaKelurahan(item.desa);
+          const kecLabel = item.kecamatan ? `Kec. ${item.kecamatan}` : 'Kab. Lembata';
           const stNorm = this.normalizeStatus(item.status);
           const isBaru = stNorm.key === 'baru';
 
           const rawDate = item.timestamp || item.tanggalKejadian || '';
           const dateStr = this.formatShortStepDate(rawDate) || rawDate || '-';
-          const rightTopHtml = `<span>${this.escHtml(dateStr)}</span>`;
 
           const iconSvg = this.getJenisPencemaranIcon(jenis);
+          const bgClass = this.getJenisPencemaranBgClass(jenis);
 
-          // ── Quick Action Buttons (mobile) ──────────────────────────────────
-          // Tombol Verifikasi Cepat — langsung buka modal verifikasi
-          const verBtn = `<button
-            type="button"
-            class="rk-action-btn rk-action-verif"
-            onclick="event.stopPropagation(); window.portal && window.portal.openVerifikasiModal('${this.escHtml(id)}')"
-            title="Verifikasi Cepat"
-            aria-label="Verifikasi aduan ${this.escHtml(id)}">&#x1F4CB;</button>`;
-
-          // Tombol WhatsApp — hanya tampil jika nomor HP valid (minimal 10 digit)
-          const cleanPhone = (item.noHp || '').replace(/^0/, '62').replace(/[^0-9]/g, '');
-          const waBtn = cleanPhone.length >= 10
-            ? `<a
-                href="https://wa.me/${cleanPhone}"
-                target="_blank"
-                rel="noopener noreferrer"
-                class="rk-action-btn rk-action-wa"
-                onclick="event.stopPropagation()"
-                title="Chat WhatsApp Pelapor"
-                aria-label="WhatsApp ${this.escHtml(pelapor)}">&#x1F4AC;</a>`
+          // Format WhatsApp Button
+          const waPhone = this.formatWhatsAppPhone(item.noHp);
+          const waBtn = waPhone
+            ? `<a href="https://wa.me/${waPhone}"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  class="btn-gov-card btn-gov-wa"
+                  onclick="event.stopPropagation();"
+                  title="Hubungi WhatsApp Pelapor"
+                  aria-label="WhatsApp ${this.escHtml(pelapor)}">
+                <svg class="btn-gov-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/>
+                </svg>
+              </a>`
             : '';
-          // ─────────────────────────────────────────────────────────────────
 
           return `
-            <div class="rk-row"
+            <div class="gov-card"
                  role="button"
                  tabindex="0"
                  data-id="${this.escHtml(id)}"
+                 onclick="window.portal.showDetailModal('${this.escHtml(id)}')"
                  aria-label="Aduan ${this.escHtml(jenis)}, Status ${this.escHtml(stNorm.label)}">
-              <div class="rk-icon-box">
-                ${iconSvg}
-                ${isBaru ? '<span class="rk-new-dot" title="Aduan Baru"></span>' : ''}
-              </div>
-              <div class="rk-center-col">
-                <div class="rk-title ${isBaru ? 'rk-title-bold' : ''}">${this.escHtml(jenis)}</div>
-                <div class="rk-sub">${this.escHtml(pelapor)} &bull; ${this.escHtml(desaLabel)}</div>
-              </div>
-              <div class="rk-right-col">
-                <div class="rk-meta-top">${rightTopHtml}</div>
-                <div class="rk-meta-bottom ${stNorm.cssClass}">
-                  <span class="rk-dot"></span>
-                  <span>${this.escHtml(stNorm.label)}</span>
+              <div class="gov-card-header">
+                <div class="gov-card-icon-box ${bgClass}">
+                  ${iconSvg}
+                  ${isBaru ? '<span class="gov-card-pulse-dot" title="Aduan Baru"></span>' : ''}
                 </div>
-                <div class="rk-actions">
-                  ${verBtn}
-                  ${waBtn}
+                <div class="gov-card-main">
+                  <div class="gov-card-meta-top">
+                    <span class="gov-card-reg">${this.escHtml(id)}</span>
+                    <span class="gov-card-date">${this.escHtml(dateStr)}</span>
+                  </div>
+                  <h3 class="gov-card-title">${this.escHtml(jenis)}</h3>
+                  <div class="gov-card-sub">
+                    <span class="gov-card-pelapor">${this.escHtml(pelapor)}</span>
+                    <span class="gov-card-dot-sep">•</span>
+                    <span class="gov-card-loc">${this.escHtml(desaLabel)}, ${this.escHtml(kecLabel)}</span>
+                  </div>
                 </div>
+                <div class="gov-card-badge-wrap">
+                  ${this.getStatusBadgeHtml(item.status)}
+                </div>
+              </div>
+              <div class="gov-card-actions">
+                <button type="button"
+                        class="btn-gov-card btn-gov-detail"
+                        onclick="event.stopPropagation(); window.portal.showDetailModal('${this.escHtml(id)}');"
+                        title="Lihat Detail Aduan">
+                  <svg class="btn-gov-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+                    <polyline points="14 2 14 8 20 8"/>
+                    <line x1="16" y1="13" x2="8" y2="13"/>
+                    <line x1="16" y1="17" x2="8" y2="17"/>
+                    <polyline points="10 9 9 9 8 9"/>
+                  </svg>
+                  <span>Detail</span>
+                </button>
+                <button type="button"
+                        class="btn-gov-card btn-gov-respond"
+                        onclick="event.stopPropagation(); window.portal.openVerifikasiModal('${this.escHtml(id)}');"
+                        title="Tindak Lanjut / Verifikasi Lapangan">
+                  <svg class="btn-gov-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M9 11l3 3L22 4"/>
+                    <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/>
+                  </svg>
+                  <span>Tanggapi</span>
+                </button>
+                ${waBtn}
               </div>
             </div>
           `;
@@ -7440,7 +7822,9 @@
           tbody.innerHTML = `
             <tr>
               <td colspan="7" style="text-align: center; padding: 48px 20px; color: #64748b;">
-                <div style="font-size: 2.2rem; margin-bottom: 8px;">✨</div>
+                <div style="display: flex; justify-content: center; margin-bottom: 8px; color: #059669;">
+                  <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="currentColor" stroke-width="1.75"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+                </div>
                 <strong style="color: #0f172a; font-size: 1rem;">Belum ada aduan masuk (0 Aduan).</strong>
                 <p style="font-size: 0.85rem; color: #64748b; margin-top: 6px;">Sistem telah disegarkan dan bersih total. Siap menerima pengujian laporan baru dari formulir warga maupun WhatsApp.</p>
               </td>
@@ -7456,7 +7840,9 @@
           tbody.innerHTML = `
             <tr>
               <td colspan="7" style="text-align: center; padding: 40px 20px; color: #64748b;">
-                <div style="font-size: 2rem; margin-bottom: 8px;">📭</div>
+                <div style="display: flex; justify-content: center; margin-bottom: 8px; color: #64748b;">
+                  <svg viewBox="0 0 24 24" width="34" height="34" fill="none" stroke="currentColor" stroke-width="1.75"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+                </div>
                 <strong style="color: #334155;">Tidak ada data aduan yang sesuai dengan kriteria filter.</strong>
                 <p style="font-size: 0.8rem; margin-top: 4px;">Coba ubah kata kunci pencarian atau reset filter kecamatan/status.</p>
               </td>
@@ -7560,17 +7946,21 @@
                     <a href="${rowWaUrl}" target="_blank" rel="noopener noreferrer" 
                        style="font-size: 0.75rem; color: #059669; font-weight: 700; text-decoration: none; font-family: monospace; display: inline-flex; align-items: center; gap: 4px; background: #ecfdf5; padding: 2px 6px; border-radius: 4px; border: 1px solid #a7f3d0;"
                        title="Klik untuk langsung chat WhatsApp Pelapor (${rowDisplayPhone})">
-                      <span style="font-size: 0.82rem;">💬</span> ${rowDisplayPhone}
+                      <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                      <span>${rowDisplayPhone}</span>
                     </a>
                   ` : `
-                    <span style="font-size: 0.76rem; color: #64748b; font-family: monospace;">📞 ${rowDisplayPhone}</span>
+                    <span style="font-size: 0.76rem; color: #64748b; font-family: monospace; display: inline-flex; align-items: center; gap: 3px;">
+                      <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                      <span>${rowDisplayPhone}</span>
+                    </span>
                   `}
                 </div>
               </td>
               <td class="col-lokasi">
                 <div style="font-weight: 600;">Kec. ${item.kecamatan}</div>
                 <div style="font-size: 0.76rem; color: #64748b;">${desaKelLabel}</div>
-                ${mapsUrl ? `<a href="${mapsUrl}" target="_blank" style="font-size: 0.72rem; color: #0284c7; text-decoration: underline; font-weight: 600;">📍 Titik GPS</a>` : ''}
+                ${mapsUrl ? `<a href="${mapsUrl}" target="_blank" style="font-size: 0.72rem; color: #0284c7; text-decoration: underline; font-weight: 600; display: inline-flex; align-items: center; gap: 2px;"><svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg> Titik GPS</a>` : ''}
               </td>
               <td class="col-jenis">
                 <span style="font-weight: 700; color: #059669; font-size: 0.8rem;">${item.jenisPencemaran}</span>
@@ -7595,7 +7985,8 @@
 
                   <!-- Tombol Utama: Verifikasi -->
                   <button type="button" class="btn-tbl btn-tbl-verify" onclick="event.stopPropagation(); window.portal.openVerifikasiModal('${item.id}')" title="Input Hasil Verifikasi Lapangan">
-                    <span>📋</span> Verifikasi
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                    <span>Verifikasi</span>
                   </button>
 
                   <!-- Tombol Dropdown: Aksi Lanjutan (Desktop > 768px) -->
@@ -7609,40 +8000,58 @@
               <td colspan="7" class="aduan-accordion-cell">
                 <div class="acc-detail-grid">
                   <div class="acc-detail-item">
-                    <span class="acc-detail-label">👤 Pelapor &amp; Kontak</span>
+                    <span class="acc-detail-label" style="display: flex; align-items: center; gap: 4px;">
+                      <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                      Pelapor &amp; Kontak
+                    </span>
                     <div class="acc-detail-val">
                       <span>${item.namaPelapor || '-'}</span>
                       ${rowWaUrl ? `
                         <a href="${rowWaUrl}" target="_blank" rel="noopener noreferrer"
                            style="font-size: 0.7rem; color: #059669; font-weight: 700; text-decoration: none; font-family: monospace; display: inline-flex; align-items: center; gap: 3px; background: #ecfdf5; padding: 2px 6px; border-radius: 4px; border: 1px solid #a7f3d0;">
-                          💬 ${rowDisplayPhone}
+                          <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                          <span>${rowDisplayPhone}</span>
                         </a>
-                      ` : `<span style="font-size: 0.7rem; color: #64748b; font-family: monospace;">📞 ${rowDisplayPhone}</span>`}
+                      ` : `
+                        <span style="font-size: 0.7rem; color: #64748b; font-family: monospace; display: inline-flex; align-items: center; gap: 3px;">
+                          <svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/></svg>
+                          <span>${rowDisplayPhone}</span>
+                        </span>
+                      `}
                     </div>
                   </div>
                   <div class="acc-detail-item">
-                    <span class="acc-detail-label">📅 Tanggal Lapor</span>
+                    <span class="acc-detail-label" style="display: flex; align-items: center; gap: 4px;">
+                      <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+                      Tanggal Lapor
+                    </span>
                     <div class="acc-detail-val">
                       <span>${formattedDate}${timeOnly ? ` • ${timeOnly} WITA` : ''}</span>
                     </div>
                   </div>
                   <div class="acc-detail-item acc-full">
-                    <span class="acc-detail-label">📍 Desa/Kelurahan &amp; Titik Koordinat GPS</span>
+                    <span class="acc-detail-label" style="display: flex; align-items: center; gap: 4px;">
+                      <svg viewBox="0 0 24 24" width="11" height="11" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                      Desa/Kelurahan &amp; Titik Koordinat GPS
+                    </span>
                     <div class="acc-detail-val">
                       <span>${desaKelLabel}, Kec. ${item.kecamatan || '-'}</span>
-                      ${mapsUrl ? `<a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" style="font-size: 0.7rem; color: #0284c7; text-decoration: underline; font-weight: 700;">📍 Titik GPS ↗</a>` : ''}
+                      ${mapsUrl ? `<a href="${mapsUrl}" target="_blank" rel="noopener noreferrer" style="font-size: 0.7rem; color: #0284c7; text-decoration: underline; font-weight: 700; display: inline-flex; align-items: center; gap: 2px;"><svg viewBox="0 0 24 24" width="10" height="10" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg> Titik GPS ↗</a>` : ''}
                     </div>
                   </div>
                 </div>
                 <div class="acc-actions-bar">
                   <button type="button" class="btn-acc-act" onclick="window.portal.showDetailModal('${item.id}')">
-                    🔍 Rincian
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                    <span>Rincian</span>
                   </button>
                   <button type="button" class="btn-acc-act btn-acc-map" onclick="window.portal.highlightOnMap('${item.id}')">
-                    📍 Sorot Peta
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                    <span>Sorot Peta</span>
                   </button>
                   <button type="button" class="btn-acc-act btn-acc-del" onclick="window.portal.confirmDeleteAduan('${item.id}')">
-                    🗑️ Hapus
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg>
+                    <span>Hapus</span>
                   </button>
                 </div>
               </td>
@@ -7702,28 +8111,28 @@
             <span class="dropdown-reporter">${(item.namaPelapor || 'Pelapor').substring(0, 24)}</span>
           </div>
           <button type="button" class="dropdown-item" onclick="window.portal.handleDropdownAction('detail', '${item.id}')">
-            <span class="dropdown-icon">🔍</span>
+            <span class="dropdown-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg></span>
             <span>Lihat Rincian</span>
           </button>
           <button type="button" class="dropdown-item" onclick="window.portal.handleDropdownAction('map', '${item.id}')">
-            <span class="dropdown-icon">📍</span>
+            <span class="dropdown-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg></span>
             <span>Sorot di Peta</span>
           </button>
           ${waUrl ? `
             <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="dropdown-item" onclick="window.portal.closeActionDropdown()">
-              <span class="dropdown-icon">💬</span>
+              <span class="dropdown-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
               <span style="flex: 1;">Hubungi Pelapor (WA)</span>
               <small style="font-size: 0.72rem; color: #059669; font-weight: 700; font-family: monospace;">${displayPhone}</small>
             </a>
           ` : `
             <button type="button" class="dropdown-item disabled" title="Nomor WhatsApp pelapor belum dicantumkan atau tidak valid" disabled>
-              <span class="dropdown-icon">💬</span>
+              <span class="dropdown-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></span>
               <span style="opacity: 0.5;">Hubungi Pelapor (WA)</span>
             </button>
           `}
           <div class="dropdown-divider"></div>
           <button type="button" class="dropdown-item dropdown-item-danger" onclick="window.portal.handleDropdownAction('delete', '${item.id}')">
-            <span class="dropdown-icon">🗑️</span>
+            <span class="dropdown-icon"><svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/></svg></span>
             <span>Hapus Laporan</span>
           </button>
         `;
@@ -7927,7 +8336,7 @@
         if (btnExport) {
           btnExport.addEventListener('click', () => {
             window.aduanStore.exportToCSV();
-            this.showToast('✅ Data aduan berhasil diekspor ke file CSV rapi & terstruktur!', 'success');
+            this.showToast('Data aduan berhasil diekspor ke file CSV rapi & terstruktur.', 'success');
           });
         }
 
@@ -7960,7 +8369,7 @@
             const originalBtnHtml = btnSimpan ? btnSimpan.innerHTML : '';
             if (btnSimpan) {
               btnSimpan.disabled = true;
-              btnSimpan.innerHTML = '<span>⏳ Menyimpan & Sinkron Cloud...</span>';
+              btnSimpan.innerHTML = '<span class="spinner" style="display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;margin-right:6px;"></span>Menyimpan & Sinkron Cloud...';
             }
 
             try {
@@ -7988,13 +8397,13 @@
                 this.updateKPIs();
                 this.renderTable();
                 this.renderMapLayers();
-                this.showToast(`✅ Verifikasi & Foto tiket ${id} berhasil tersinkron ke cloud & seluruh perangkat!`, 'success');
+                this.showToast(`Verifikasi & Foto tiket ${id} berhasil tersinkron ke cloud & seluruh perangkat.`, 'success');
               } else {
-                this.showToast('⚠️ Gagal menyimpan pembaruan verifikasi.', 'warning');
+                this.showToast('Gagal menyimpan pembaruan verifikasi.', 'warning');
               }
             } catch (err) {
               console.error('Error saat menyimpan verifikasi:', err);
-              this.showToast('⚠️ Terjadi kendala saat menyimpan verifikasi: ' + err.message, 'warning');
+              this.showToast('Terjadi kendala saat menyimpan verifikasi: ' + err.message, 'warning');
             } finally {
               if (btnSimpan) {
                 btnSimpan.disabled = false;
@@ -8064,21 +8473,21 @@
         if (btnSyncNow) {
           btnSyncNow.addEventListener('click', async () => {
             btnSyncNow.disabled = true;
-            btnSyncNow.textContent = '⏳ Menyinkronkan...';
+            btnSyncNow.textContent = 'Menyinkronkan...';
             // Unggah data verifikasi lokal yang belum tersimpan ke Google Sheets
             if (window.aduanStore && typeof window.aduanStore.pushPendingVerifications === 'function') {
               await window.aduanStore.pushPendingVerifications();
             }
             const res = await window.aduanStore.syncFromGAS();
             btnSyncNow.disabled = false;
-            btnSyncNow.textContent = '🔄 Sinkronkan Sekarang';
+            btnSyncNow.textContent = 'Sinkronkan Sekarang';
             updateStatusIndicator();
             if (res.success) {
               this.updateKPIs();
               this.renderTable();
               this.renderMapLayers();
               if (res.emptyRemote) {
-                this.showToast('✅ Terhubung ke Google Spreadsheet! Database di spreadsheet saat ini masih kosong (0 data aduan).', 'info');
+                this.showToast('Terhubung ke Google Spreadsheet! Database di spreadsheet saat ini masih kosong (0 data aduan).', 'info');
               } else {
                 this.showToast(res.message || 'Data berhasil disinkronkan dari Google Apps Script!', 'success');
               }
@@ -8094,16 +8503,16 @@
             const count = (window.aduanStore.getAll() || []).length;
             if (!confirm(`Unggah ${count} data aduan lokal saat ini ke Google Spreadsheet DLH Lembata?`)) return;
             btnUploadToGas.disabled = true;
-            btnUploadToGas.textContent = '⏳ Mengunggah...';
+            btnUploadToGas.textContent = 'Mengunggah...';
             const res = await window.aduanStore.uploadAllLocalToGAS();
             btnUploadToGas.disabled = false;
-            btnUploadToGas.textContent = '📤 Unggah ke Sheets';
+            btnUploadToGas.textContent = 'Unggah ke Sheets';
             if (res.success) {
               this.updateKPIs();
               this.renderTable();
               this.renderMapLayers();
               updateStatusIndicator();
-              this.showToast(`✅ Berhasil mengunggah ${res.uploaded} data ke Google Spreadsheet!`, 'success');
+              this.showToast(`Berhasil mengunggah ${res.uploaded} data ke Google Spreadsheet.`, 'success');
             } else {
               this.showToast(`Gagal mengunggah: ${res.error || 'Terjadi kendala jaringan'}`, 'warning');
             }
@@ -8123,7 +8532,7 @@
               this.renderMapLayers();
               updateStatusIndicator();
               modal.classList.remove('show');
-              this.showToast('✨ Seluruh data berhasil dikosongkan (0 aduan). Siap pengujian baru!', 'success');
+              this.showToast('Seluruh data berhasil dikosongkan (0 aduan). Siap pengujian baru.', 'success');
             }
           });
         }
@@ -8135,7 +8544,7 @@
         if (icon) icon.style.animation = 'spin 0.8s linear infinite';
         if (btn) btn.disabled = true;
 
-        this.showToast('🔄 Menghubungkan & mengambil data Google Spreadsheet...', 'info');
+        this.showToast('Menghubungkan & mengambil data Google Spreadsheet...', 'info');
 
         try {
           if (window.aduanStore) {
@@ -8145,11 +8554,11 @@
             const res = await window.aduanStore.syncFromGAS(false);
             if (res && res.success) {
               const remoteCount = res.remoteCount !== undefined ? res.remoteCount : (res.count || 0);
-              this.showToast(`✅ Berhasil menyinkronkan ${remoteCount} aduan dari Google Spreadsheet!`, 'success');
+              this.showToast(`Berhasil menyinkronkan ${remoteCount} aduan dari Google Spreadsheet.`, 'success');
             } else if (res && res.error) {
               this.showToast(`Info Sinkronisasi: ${res.error}`, 'warning');
             } else {
-              this.showToast('✅ Data aduan berhasil disegarkan.', 'success');
+              this.showToast('Data aduan berhasil disegarkan.', 'success');
             }
           }
         } catch (e) {
@@ -8165,11 +8574,11 @@
       }
 
       async resetOfficialData() {
-        if (!confirm('⚠️ KONFIRMASI PENYEGARAN TOTAL:\n\nApakah Anda ingin mengosongkan seluruh data aduan menjadi 0 aduan (Fresh Start) di Google Spreadsheet dan semua perangkat (HP Petugas & Laptop)?\n\nSetelah ini sistem akan bersih total untuk pengujian laporan baru dari awal.')) {
+        if (!confirm('KONFIRMASI PENYEGARAN TOTAL:\n\nApakah Anda ingin mengosongkan seluruh data aduan menjadi 0 aduan (Fresh Start) di Google Spreadsheet dan semua perangkat (HP Petugas & Laptop)?\n\nSetelah ini sistem akan bersih total untuk pengujian laporan baru dari awal.')) {
           return;
         }
 
-        const authCode = prompt('🔒 PENGAMANAN DATABASE:\n\nTindakan ini akan mengosongkan seluruh basis data aduan menjadi 0 laporan.\nUntuk konfirmasi eksekusi, ketik kata "RESET" atau masukkan PIN Petugas:');
+        const authCode = prompt('PENGAMANAN DATABASE:\n\nTindakan ini akan mengosongkan seluruh basis data aduan menjadi 0 laporan.\nUntuk konfirmasi eksekusi, ketik kata "RESET" atau masukkan PIN Petugas:');
         if (!authCode) {
           this.showToast('Operasi pengosongan database dibatalkan.', 'info');
           return;
@@ -8177,24 +8586,24 @@
 
         const inputTrimmed = authCode.trim();
         if (inputTrimmed.toUpperCase() !== 'RESET' && inputTrimmed !== '1999') {
-          this.showToast('❌ Kode otorisasi atau PIN salah. Pengosongan database dibatalkan demi keamanan.', 'warning');
+          this.showToast('Kode otorisasi atau PIN salah. Pengosongan database dibatalkan demi keamanan.', 'warning');
           return;
         }
 
-        this.showToast('⏳ Sedang menyegarkan sistem dan mengosongkan data...', 'info');
+        this.showToast('Sedang menyegarkan sistem dan mengosongkan data...', 'info');
 
         if (window.aduanStore && typeof window.aduanStore.resetDatabaseToZero === 'function') {
           const res = await window.aduanStore.resetDatabaseToZero();
           this.updateKPIs();
           this.renderTable();
           this.renderMapLayers();
-          this.showToast(res.message || '✨ Penyegaran Berhasil! Sistem kini bersih (0 aduan) siap untuk pengujian baru.', 'success');
+          this.showToast(res.message || 'Penyegaran Berhasil! Sistem kini bersih (0 aduan) siap untuk pengujian baru.', 'success');
         } else if (window.aduanStore && typeof window.aduanStore.resetToOfficialDefaults === 'function') {
           window.aduanStore.resetToOfficialDefaults();
           this.updateKPIs();
           this.renderTable();
           this.renderMapLayers();
-          this.showToast('✨ Penyegaran Berhasil! Sistem kini bersih (0 aduan).', 'success');
+          this.showToast('Penyegaran Berhasil! Sistem kini bersih (0 aduan).', 'success');
         }
       }
 
@@ -8219,7 +8628,7 @@
               const payload = msg.payload || msg.data || {};
               const id = payload.id || '';
               const nama = (payload.item && payload.item.namaPelapor) ? payload.item.namaPelapor : 'Masyarakat';
-              this.showToast(`📢 Laporan Aduan Baru (${id}) diterima dari ${nama}!`, 'success');
+              this.showToast(`Laporan Aduan Baru (${id}) diterima dari ${nama}.`, 'success');
             }
           });
         }
@@ -8517,7 +8926,7 @@
 
         if (preview) preview.style.display = 'block';
         if (btnSave) btnSave.disabled = false;
-        this.showToast('✅ Format WhatsApp berhasil diurai! Periksa ringkasan lalu klik Simpan.', 'success');
+        this.showToast('Format WhatsApp berhasil diurai. Periksa ringkasan lalu klik Simpan.', 'success');
       }
 
       async saveWaImport() {
@@ -8526,7 +8935,7 @@
         const btnSave = document.getElementById('btnSaveWaImport');
         if (btnSave) {
           btnSave.disabled = true;
-          btnSave.innerHTML = '<span>⏳</span> Menyimpan...';
+          btnSave.innerHTML = '<span class="spinner" style="display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;margin-right:6px;"></span>Menyimpan...';
         }
 
         let recId = '';
@@ -8546,12 +8955,12 @@
 
           recId = (record && record.id) ? record.id : (this.currentParsedWaData.id || '');
           recNama = (record && record.namaPelapor) ? record.namaPelapor : (this.currentParsedWaData.namaPelapor || '');
-          this.showToast(`🎉 Aduan ${recId} atas nama "${recNama}" berhasil dicatat ke sistem!`, 'success');
+          this.showToast(`Aduan ${recId} atas nama "${recNama}" berhasil dicatat ke sistem!`, 'success');
         } finally {
           this._isSavingWaImport = false;
           if (btnSave) {
             btnSave.disabled = false;
-            btnSave.innerHTML = '<span>💾</span> Simpan Aduan ke Database';
+            btnSave.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan Aduan ke Database';
           }
         }
 
