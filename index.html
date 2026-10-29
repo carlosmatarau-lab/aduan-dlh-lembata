@@ -1704,71 +1704,81 @@
     }
 
     .map-header-bar {
-      padding: 18px 24px;
+      padding: 14px 20px;
       background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
       border-bottom: 1px solid var(--border);
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 16px;
+      gap: 12px;
     }
 
     .map-header-info {
       flex: 1;
-      min-width: 280px;
+      min-width: 260px;
+    }
+
+    .map-header-top-row {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
     }
 
     .map-badge-live {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 5px;
       background: #ecfdf5;
       color: #065f46;
       border: 1px solid #a7f3d0;
-      font-size: 0.68rem;
+      font-size: 0.65rem;
       font-weight: 800;
-      letter-spacing: 0.6px;
-      padding: 3px 8px;
+      letter-spacing: 0.5px;
+      padding: 2px 7px;
       border-radius: 999px;
-      margin-bottom: 6px;
+      white-space: nowrap;
     }
 
     .map-main-title {
-      font-size: 1.35rem;
+      font-size: 1.25rem;
       font-weight: 800;
       color: #064e3b;
-      margin: 0 0 4px 0;
+      margin: 0;
       line-height: 1.3;
     }
 
     .map-sub-title {
-      font-size: 0.85rem;
+      font-size: 0.82rem;
       color: #64748b;
-      margin: 0;
-      line-height: 1.45;
+      margin: 4px 0 0 0;
+      line-height: 1.4;
     }
 
-    /* Basemap Switcher Buttons */
+    /* Basemap Switcher Buttons (Segmented Control) */
     .map-basemap-buttons {
       display: flex;
-      gap: 6px;
+      gap: 4px;
       background: #e2e8f0;
-      padding: 4px;
-      border-radius: 10px;
+      padding: 3px;
+      border-radius: 8px;
     }
 
     .btn-basemap {
       background: transparent;
       border: none;
-      padding: 6px 12px;
-      border-radius: 7px;
-      font-size: 0.78rem;
+      padding: 5px 11px;
+      border-radius: 6px;
+      font-size: 0.74rem;
       font-weight: 700;
       color: #475569;
       cursor: pointer;
       transition: all 0.2s ease;
       white-space: nowrap;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
     }
 
     .btn-basemap:hover {
@@ -1778,48 +1788,65 @@
     .btn-basemap.active {
       background: white;
       color: #065f46;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+      box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
     }
 
     /* Mini KPI Strip Above Map */
     .map-stats-strip {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
-      gap: 12px;
-      padding: 12px 24px;
-      background: #f1f5f9;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      padding: 10px 20px;
+      background: #f8fafc;
       border-bottom: 1px solid var(--border);
     }
 
     .map-stat-chip {
       background: white;
       border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 8px 12px;
+      border-radius: 8px;
+      padding: 6px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
+      min-width: 0;
+      box-sizing: border-box;
+    }
+
+    .map-stat-chip-top {
       display: flex;
       align-items: center;
-      gap: 10px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
+      justify-content: center;
+      gap: 4px;
+      line-height: 1.1;
     }
 
     .mstat-icon {
-      font-size: 1.4rem;
+      font-size: 0.85rem;
       line-height: 1;
     }
 
     .mstat-num {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.3rem;
+      font-size: 1.15rem;
       font-weight: 800;
       color: #0f172a;
       line-height: 1;
     }
 
     .mstat-lbl {
-      font-size: 0.7rem;
+      font-size: 0.68rem;
       font-weight: 600;
       color: #64748b;
-      margin-top: 2px;
+      margin-top: 3px;
+      line-height: 1.1;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
     }
 
     .chip-amber .mstat-num {
@@ -1836,31 +1863,89 @@
 
     /* Filter Toolbar */
     .map-toolbar {
-      padding: 12px 24px;
+      padding: 10px 20px;
       background: #ffffff;
       border-bottom: 1px solid var(--border);
-      display: flex;
+      box-sizing: border-box;
+    }
+
+    .map-filters-row {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+      gap: 8px;
       align-items: center;
-      flex-wrap: wrap;
-      gap: 12px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .map-filter-group {
       display: flex;
       align-items: center;
       gap: 6px;
+      min-width: 0;
+      width: 100%;
     }
 
     .map-filter-label {
-      font-size: 0.78rem;
+      font-size: 0.76rem;
       font-weight: 700;
       color: #475569;
       white-space: nowrap;
     }
 
+    .map-compact-select {
+      height: 34px;
+      min-height: 34px;
+      max-height: 34px;
+      padding: 0 20px 0 8px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: #1e293b;
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      width: 100%;
+      min-width: 0;
+      box-sizing: border-box;
+      outline: none;
+      cursor: pointer;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .btn-reset-map-icon {
+      height: 34px;
+      min-height: 34px;
+      max-height: 34px;
+      padding: 0 10px;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      white-space: nowrap;
+      box-sizing: border-box;
+      outline: none;
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .btn-reset-map-icon:hover {
+      background: #e2e8f0;
+      border-color: #94a3b8;
+      color: #0f172a;
+    }
+
     /* Quick Region Pills */
     .map-region-pills {
-      padding: 10px 24px;
+      padding: 8px 20px;
       background: #f8fafc;
       border-bottom: 1px solid var(--border);
       display: flex;
@@ -3492,43 +3577,199 @@
         border-radius: 14px;
       }
 
+      /* Panel Kontrol Peta Spasial Live di Layar HP (Hemat Ruang Vertikal hingga 60%) */
       .map-header-bar {
-        padding: 12px 12px;
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
+        padding: 8px 10px !important;
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 6px !important;
+      }
+
+      .map-header-info {
+        min-width: 0 !important;
+        width: 100% !important;
+      }
+
+      .map-header-top-row {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 6px !important;
+        width: 100% !important;
       }
 
       .map-main-title {
-        font-size: 1.15rem;
+        font-size: 1.05rem !important;
+        font-weight: 800 !important;
+        line-height: 1.25 !important;
+        margin: 0 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
       }
 
+      .map-title-sub-text {
+        display: none !important;
+      }
+
+      .map-badge-live {
+        font-size: 0.62rem !important;
+        padding: 2px 6px !important;
+        margin: 0 !important;
+        flex-shrink: 0 !important;
+      }
+
+      /* 1. Sembunyikan deskripsi panjang di layar ponsel */
       .map-sub-title {
-        font-size: 0.78rem;
+        display: none !important;
       }
 
+      /* 3. Desain Pilihan Peta (Layer Switcher) Segmented Control Tipis */
+      .map-basemap-buttons {
+        width: 100% !important;
+        height: 32px !important;
+        min-height: 32px !important;
+        padding: 2px !important;
+        gap: 2px !important;
+        border-radius: 7px !important;
+        box-sizing: border-box !important;
+      }
+
+      .btn-basemap {
+        flex: 1 !important;
+        height: 100% !important;
+        padding: 0 4px !important;
+        font-size: 0.72rem !important;
+        border-radius: 5px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        white-space: nowrap !important;
+      }
+
+      /* 2. Kartu Statistik Menjadi 1 Baris Horizontal (Mini KPI Bar max ~50px) */
       .map-stats-strip {
-        grid-template-columns: 1fr 1fr;
-        padding: 8px 10px;
-        gap: 6px;
+        grid-template-columns: repeat(4, 1fr) !important;
+        gap: 4px !important;
+        padding: 5px 8px !important;
+        max-height: 52px !important;
+        background: #f8fafc !important;
+        box-sizing: border-box !important;
       }
 
+      .map-stat-chip {
+        padding: 4px 2px !important;
+        border-radius: 6px !important;
+        border: 1px solid #e2e8f0 !important;
+        background: #ffffff !important;
+        box-shadow: none !important;
+        min-width: 0 !important;
+        gap: 0 !important;
+        flex-direction: column !important;
+        align-items: center !important;
+        justify-content: center !important;
+        text-align: center !important;
+      }
+
+      .map-stat-chip-top {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        gap: 2px !important;
+        line-height: 1 !important;
+      }
+
+      .mstat-icon {
+        font-size: 0.72rem !important;
+        line-height: 1 !important;
+      }
+
+      .mstat-num {
+        font-size: 0.95rem !important;
+        font-weight: 800 !important;
+        line-height: 1 !important;
+      }
+
+      .mstat-lbl {
+        font-size: 0.62rem !important;
+        color: #64748b !important;
+        margin-top: 2px !important;
+        line-height: 1.1 !important;
+        white-space: nowrap !important;
+        overflow: hidden !important;
+        text-overflow: ellipsis !important;
+        max-width: 100% !important;
+      }
+
+      /* 4. Ringkaskan Form Filter (Dropdown Bar 3 Kolom Kompak + Tombol Reset Icon) */
       .map-toolbar {
-        padding: 8px 10px;
-        flex-direction: column;
-        gap: 6px;
+        padding: 6px 8px !important;
+        background: #ffffff !important;
+        flex-direction: row !important;
+      }
+
+      .map-filters-row {
+        display: grid !important;
+        grid-template-columns: repeat(3, minmax(0, 1fr)) 34px !important;
+        gap: 4px !important;
+        align-items: center !important;
+        width: 100% !important;
       }
 
       .map-filter-group {
-        width: 100%;
-        flex-direction: column;
-        gap: 6px;
+        width: 100% !important;
+        min-width: 0 !important;
+        flex-direction: row !important;
+        gap: 0 !important;
       }
 
-      .map-filter-group select {
-        width: 100%;
-        min-height: 44px;
-        font-size: 16px !important;
+      /* Sembunyikan label judul tambahan di HP agar hemat ruang */
+      .map-filter-label {
+        display: none !important;
+      }
+
+      .map-compact-select {
+        width: 100% !important;
+        height: 34px !important;
+        min-height: 34px !important;
+        max-height: 34px !important;
+        font-size: 0.73rem !important;
+        padding: 0 16px 0 5px !important;
+        border-radius: 6px !important;
+        box-sizing: border-box !important;
+      }
+
+      .btn-reset-map-icon {
+        height: 34px !important;
+        min-height: 34px !important;
+        max-height: 34px !important;
+        width: 34px !important;
+        min-width: 34px !important;
+        padding: 0 !important;
+        border-radius: 6px !important;
+        display: inline-flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        flex-shrink: 0 !important;
+      }
+
+      .btn-reset-text {
+        display: none !important;
+      }
+
+      /* Quick Region Pills di HP */
+      .map-region-pills {
+        padding: 5px 8px !important;
+        gap: 4px !important;
+      }
+
+      .region-pills-label {
+        display: none !important;
+      }
+
+      .pill-region {
+        padding: 3px 8px !important;
+        font-size: 0.7rem !important;
       }
 
       /* Legenda Keterangan Warna Pin di Layar HP (Kompak, Rapi, & Bebas Menutupi Peta) */
@@ -4701,24 +4942,25 @@
 
       <div class="map-card-box">
 
-        <!-- Header & Info Edukasi -->
+        <!-- Header & Info Edukasi (Mobile-First Ramping) -->
         <div class="map-header-bar">
           <div class="map-header-info">
-            <div class="map-badge-live">🟢 PEMANTAUAN SPASIAL LIVE</div>
-            <h2 class="map-main-title">🗺️ Peta Sebaran Titik Aduan Lingkungan Lembata</h2>
+            <div class="map-header-top-row">
+              <h2 class="map-main-title">🗺️ Peta Titik Aduan <span class="map-title-sub-text">Lingkungan Lembata</span></h2>
+              <span class="map-badge-live">🟢 LIVE</span>
+            </div>
             <p class="map-sub-title">
-              Visualisasi terbuka dan transparan aduan masyarakat di 9 kecamatan. Gunakan tombol wilayah, filter, atau
-              klik pin untuk melihat kondisi faktual dan tindakan DLH.
+              Visualisasi terbuka dan transparan aduan masyarakat di 9 kecamatan. Gunakan tombol wilayah, filter, atau klik pin untuk melihat kondisi faktual dan tindakan DLH.
             </p>
           </div>
 
-          <!-- Quick Basemap Toggle Buttons -->
+          <!-- Quick Basemap Toggle Buttons (Segmented Control Tipis) -->
           <div class="map-basemap-buttons">
             <button type="button" class="btn-basemap" id="btnBaseOsm" title="Tampilan Peta Standar">
-              🗺️ Peta Standar
+              🗺️ Standar
             </button>
             <button type="button" class="btn-basemap active" id="btnBaseSat" title="Tampilan Citra Satelit Nyata">
-              🛰️ Citra Satelit
+              🛰️ Satelit
             </button>
             <button type="button" class="btn-basemap" id="btnBaseTopo" title="Tampilan Relief Topografi">
               ⛰️ Topografi
@@ -4726,87 +4968,89 @@
           </div>
         </div>
 
-        <!-- Mini KPI Bar Khusus Peta -->
+        <!-- Mini KPI Bar Khusus Peta (1 Baris Horizontal Kompak) -->
         <div class="map-stats-strip">
           <div class="map-stat-chip">
-            <span class="mstat-icon">📍</span>
-            <div>
-              <div class="mstat-num" id="mapStatTotal">0</div>
-              <div class="mstat-lbl">Titik Terpantau</div>
+            <div class="map-stat-chip-top">
+              <span class="mstat-icon">📍</span>
+              <span class="mstat-num" id="mapStatTotal">0</span>
             </div>
+            <div class="mstat-lbl">Terpantau</div>
           </div>
           <div class="map-stat-chip chip-amber">
-            <span class="mstat-icon">🟠</span>
-            <div>
-              <div class="mstat-num" id="mapStatBaru">0</div>
-              <div class="mstat-lbl">Aduan Masuk</div>
+            <div class="map-stat-chip-top">
+              <span class="mstat-icon">🟠</span>
+              <span class="mstat-num" id="mapStatBaru">0</span>
             </div>
+            <div class="mstat-lbl">Masuk</div>
           </div>
           <div class="map-stat-chip chip-blue">
-            <span class="mstat-icon">🔷</span>
-            <div>
-              <div class="mstat-num" id="mapStatProses">0</div>
-              <div class="mstat-lbl">Dalam Penanganan</div>
+            <div class="map-stat-chip-top">
+              <span class="mstat-icon">🔷</span>
+              <span class="mstat-num" id="mapStatProses">0</span>
             </div>
+            <div class="mstat-lbl">Diproses</div>
           </div>
           <div class="map-stat-chip chip-green">
-            <span class="mstat-icon">🟢</span>
-            <div>
-              <div class="mstat-num" id="mapStatSelesai">0</div>
-              <div class="mstat-lbl">Tuntas Selesai</div>
+            <div class="map-stat-chip-top">
+              <span class="mstat-icon">🟢</span>
+              <span class="mstat-num" id="mapStatSelesai">0</span>
             </div>
+            <div class="mstat-lbl">Selesai</div>
           </div>
         </div>
 
-        <!-- Filter Controls Bar -->
+        <!-- Filter Controls Bar (Dropdown Bar Kompak 3 Kolom + Tombol Reset Icon) -->
         <div class="map-toolbar">
-          <div class="map-filter-group">
-            <label class="map-filter-label" for="mapFilterKecamatan">Kecamatan:</label>
-            <select id="mapFilterKecamatan" class="input-select select-sm">
-              <option value="all">Semua Kecamatan (9 Kecamatan)</option>
-              <option value="Nubatukan">Nubatukan (Lewoleba)</option>
-              <option value="Ile Ape">Ile Ape (Waipukang)</option>
-              <option value="Ile Ape Timur">Ile Ape Timur (Lamagute)</option>
-              <option value="Lebatukan">Lebatukan (Hadakewa)</option>
-              <option value="Nagawutung">Nagawutung (Loang)</option>
-              <option value="Wulandoni">Wulandoni</option>
-              <option value="Atadei">Atadei (Kalikasa)</option>
-              <option value="Omesuri">Omesuri (Balauring)</option>
-              <option value="Buyasuri">Buyasuri (Wairiang)</option>
-            </select>
-          </div>
+          <div class="map-filters-row">
+            <div class="map-filter-group">
+              <label class="map-filter-label" for="mapFilterKecamatan">Kecamatan:</label>
+              <select id="mapFilterKecamatan" class="input-select select-sm map-compact-select" title="Saring Kecamatan">
+                <option value="all">📍 Semua Kec.</option>
+                <option value="Nubatukan">Nubatukan (Lewoleba)</option>
+                <option value="Ile Ape">Ile Ape (Waipukang)</option>
+                <option value="Ile Ape Timur">Ile Ape Timur (Lamagute)</option>
+                <option value="Lebatukan">Lebatukan (Hadakewa)</option>
+                <option value="Nagawutung">Nagawutung (Loang)</option>
+                <option value="Wulandoni">Wulandoni</option>
+                <option value="Atadei">Atadei (Kalikasa)</option>
+                <option value="Omesuri">Omesuri (Balauring)</option>
+                <option value="Buyasuri">Buyasuri (Wairiang)</option>
+              </select>
+            </div>
 
-          <div class="map-filter-group">
-            <label class="map-filter-label" for="mapFilterStatus">Status Penanganan:</label>
-            <select id="mapFilterStatus" class="input-select select-sm">
-              <option value="all">Semua Status</option>
-              <option value="Aduan Diterima">🟠 Aduan Diterima</option>
-              <option value="Verifikasi Administrasi">🟡 Verifikasi Administrasi</option>
-              <option value="Menunggu Verifikasi Lapangan">🔵 Menunggu Verifikasi Lapangan</option>
-              <option value="Sedang Diverifikasi">🟣 Sedang Diverifikasi</option>
-              <option value="Dalam Penanganan">🔷 Dalam Penanganan</option>
-              <option value="Selesai">🟢 Selesai Ditangani</option>
-              <option value="Ditolak">⚪ Ditolak / Tidak Terbukti</option>
-            </select>
-          </div>
+            <div class="map-filter-group">
+              <label class="map-filter-label" for="mapFilterStatus">Status:</label>
+              <select id="mapFilterStatus" class="input-select select-sm map-compact-select" title="Saring Status Penanganan">
+                <option value="all">🏷️ Semua Status</option>
+                <option value="Aduan Diterima">🟠 Aduan Diterima</option>
+                <option value="Verifikasi Administrasi">🟡 Verifikasi Administrasi</option>
+                <option value="Menunggu Verifikasi Lapangan">🔵 Verifikasi Lapangan</option>
+                <option value="Sedang Diverifikasi">🟣 Sedang Diverifikasi</option>
+                <option value="Dalam Penanganan">🔷 Dalam Penanganan</option>
+                <option value="Selesai">🟢 Selesai Ditangani</option>
+                <option value="Ditolak">⚪ Ditolak / Tidak Terbukti</option>
+              </select>
+            </div>
 
-          <div class="map-filter-group">
-            <label class="map-filter-label" for="mapFilterJenis">Jenis Pencemaran:</label>
-            <select id="mapFilterJenis" class="input-select select-sm">
-              <option value="all">Semua Jenis Pencemaran</option>
-              <option value="Laut & Pesisir">🌊 Laut &amp; Pesisir</option>
-              <option value="Sampah Ilegal & Bau">🗑️ Sampah Ilegal &amp; Bau</option>
-              <option value="Pencemaran Air">💧 Pencemaran Air &amp; Sungai</option>
-              <option value="Udara & Asap">💨 Udara &amp; Asap</option>
-              <option value="Limbah B3 & Kimia">☣️ Limbah B3 / Kimia</option>
-              <option value="Kerusakan Lingkungan & Tanah">🌳 Kerusakan Lingkungan</option>
-            </select>
-          </div>
+            <div class="map-filter-group">
+              <label class="map-filter-label" for="mapFilterJenis">Jenis:</label>
+              <select id="mapFilterJenis" class="input-select select-sm map-compact-select" title="Saring Jenis Pencemaran">
+                <option value="all">⚠️ Semua Jenis</option>
+                <option value="Laut & Pesisir">🌊 Laut &amp; Pesisir</option>
+                <option value="Sampah Ilegal & Bau">🗑️ Sampah Ilegal &amp; Bau</option>
+                <option value="Pencemaran Air">💧 Pencemaran Air &amp; Sungai</option>
+                <option value="Udara & Asap">💨 Udara &amp; Asap</option>
+                <option value="Limbah B3 & Kimia">☣️ Limbah B3 / Kimia</option>
+                <option value="Kerusakan Lingkungan & Tanah">🌳 Kerusakan Lingkungan</option>
+              </select>
+            </div>
 
-          <button type="button" class="btn btn-outline btn-sm" id="btnResetMapFilters"
-            title="Kembalikan semua filter ke awal">
-            🔄 Reset Filter
-          </button>
+            <button type="button" class="btn-reset-map-icon" id="btnResetMapFilters" title="Kembalikan semua filter ke awal">
+              <span class="reset-icon">🔄</span>
+              <span class="btn-reset-text">Reset</span>
+            </button>
+          </div>
         </div>
 
         <!-- Quick Region Navigator (Pills) -->
