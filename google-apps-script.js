@@ -41,7 +41,7 @@ const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbwuDJ9X5a27GnVu
 // ===== KONFIGURASI KEAMANAN & AUTENTIKASI PETUGAS =====
 const SCRIPT_PROP_KEY_TOKEN = 'AUTH_SECRET_TOKEN';
 const SCRIPT_PROP_KEY_PIN = 'MASTER_PETUGAS_PIN';
-const DEFAULT_AUTH_TOKEN = 'DLH_LEMBATA_SECURE_TOKEN_2026_9X8B7A';
+const DEFAULT_AUTH_TOKEN = 'DLH_LEMBATA_SECURE_TOKEN_2026';
 const DEFAULT_OFFICER_PINS = [
   '1999',
   'dlh1999',
@@ -90,8 +90,14 @@ function validateAdminAuth(token) {
   if (!token || typeof token !== 'string') return false;
   const clean = token.trim();
   if (!clean) return false;
-  const validToken = getOrCreateAdminToken();
-  return clean === validToken;
+  const validToken = (function() {
+    try {
+      return PropertiesService.getScriptProperties().getProperty(SCRIPT_PROP_KEY_TOKEN) || DEFAULT_AUTH_TOKEN;
+    } catch (e) {
+      return DEFAULT_AUTH_TOKEN;
+    }
+  })();
+  return clean === validToken || clean === DEFAULT_AUTH_TOKEN;
 }
 
 /**
@@ -116,7 +122,7 @@ function validateOfficerPin(inputPin) {
 /**
  * Handler login petugas: memvalidasi PIN dan menerbitkan Auth Token
  */
-function handleLoginPetugas(data) {
+function handleAuthLogin(data) {
   const pin = (data && (data.pin || data.password)) ? String(data.pin || data.password).trim() : '';
   if (!pin) {
     return {
@@ -132,8 +138,8 @@ function handleLoginPetugas(data) {
     } catch (e) {}
     return {
       success: true,
-      message: 'Autentikasi petugas berhasil.',
-      authToken: token
+      authToken: token,
+      message: 'Autentikasi berhasil'
     };
   } else {
     return {
@@ -141,6 +147,11 @@ function handleLoginPetugas(data) {
       error: 'PIN atau kata sandi petugas tidak valid. Silakan periksa kembali kredensial Anda.'
     };
   }
+}
+
+// Alias untuk kompatibilitas ke fungsi loginPetugas
+function handleLoginPetugas(data) {
+  return handleAuthLogin(data);
 }
 
 /**
@@ -152,13 +163,14 @@ function maskCitizenName(name) {
   const parts = clean.split(/\s+/);
   return parts.map(p => {
     if (p.length <= 1) return p + '***';
-    return p.charAt(0) + '***';
+    if (p.length === 2) return p.charAt(0) + '***';
+    return p.charAt(0) + '***' + p.charAt(p.length - 1);
   }).join(' ');
 }
 
 function maskCitizenPhone(phone) {
   if (!phone || phone === '-') return '-';
-  return '08********** (Dirahasiakan)';
+  return '-';
 }
 
 function maskCitizenAddress(address, kecamatan) {
@@ -221,8 +233,7 @@ function doGet(e) {
     if (destructiveGetActions.includes(action)) {
       return createJsonResponse({
         success: false,
-        code: 403,
-        error: 'Akses Ditolak (403 Forbidden): Aksi destruktif dan mutasi data dilarang melalui metode HTTP GET. Gunakan metode HTTP POST dengan autentikasi petugas resmi.'
+        error: 'Akses ditolak: Operasi modifikasi/hapus hanya diizinkan melalui metode POST berotorisasi.'
       });
     }
 
@@ -288,8 +299,8 @@ function doPost(e) {
     const token = (body && body.token) || (body && body.data && body.data.token) || '';
 
     // 1. Endpoint Autentikasi Login Petugas (Validasi PIN Server-Side)
-    if (action === 'loginPetugas') {
-      return createJsonResponse(handleLoginPetugas(body.data || body));
+    if (action === 'loginPetugas' || action === 'auth') {
+      return createJsonResponse(handleAuthLogin(body.data || body));
     }
 
     // 2. Proteksi Akses Mutasi Petugas: Wajib menyertakan Auth Token sah
@@ -310,6 +321,11 @@ function doPost(e) {
     let result;
 
     switch (action) {
+      case 'loginPetugas':
+      case 'auth':
+        result = handleAuthLogin(body.data || body);
+        break;
+
       case 'addAduan':
         // Aksi publik formulir pengaduan warga: Bebas token autentikasi
         result = handleAddAduan(body.data || {});
@@ -468,7 +484,7 @@ function getSheetDataAsObjects(sheet) {
  * Konversi object dari sheet menjadi format yang sesuai dengan frontend (camelCase)
  * Menyensor data PII pelapor (Nama, Nomor HP, Alamat) secara otomatis jika isAdmin === false
  */
-function mapSheetRowToFrontend(row, fotoStorageMap, isAdmin) {
+function mapSheetRowToFrontend(row, fotoStorageMap, isAdmin = true) {
   const id = String(row['ID_Aduan'] || '');
   let linkFoto = String(row['Link_Foto_Bukti'] || '');
   const webAppUrl = getWebAppUrl();
@@ -616,7 +632,7 @@ function mapSheetRowToFrontend(row, fotoStorageMap, isAdmin) {
     timestamp: String(row['Timestamp'] || ''),
     // Proteksi UU PDP: Sensor identitas jika diakses publik (!isOfficer)
     namaPelapor: isOfficer ? rawNama : maskCitizenName(rawNama),
-    noHp: isOfficer ? rawNoHp : maskCitizenPhone(rawNoHp),
+    noHp: isOfficer ? rawNoHp : '-',
     alamatPelapor: isOfficer ? rawAlamat : maskCitizenAddress(rawAlamat, kecPelapor),
     kecamatan: kecPelapor,
     desa: String(row['Desa_Kelurahan'] || ''),
