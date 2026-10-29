@@ -101,10 +101,10 @@ class LembataMapEngine {
 
       // Kontrol Layer Bawaan Leaflet di Pojok Kanan Atas
       const layerControlLabels = {
-        '🗺️ Peta Jalan (OSM)': osmLayer,
-        '🛣️ Peta Jalan & Kota (Esri)': esriStreetLayer,
-        '🛰️ Citra Satelit Nyata': satLayer,
-        '⛰️ Relief Topografi': topoLayer
+        'Peta Jalan (OSM)': osmLayer,
+        'Peta Jalan & Kota (Esri)': esriStreetLayer,
+        'Citra Satelit': satLayer,
+        'Relief Topografi': topoLayer
       };
       L.control.layers(layerControlLabels, null, { position: 'topright' }).addTo(this.map);
 
@@ -131,16 +131,16 @@ class LembataMapEngine {
     this.landmarksGroup = L.layerGroup().addTo(this.map);
 
     const landmarks = [
-      { name: '🏛️ Kota Lewoleba (Ibukota)', coords: [-8.375, 123.418], desc: 'Pusat Pemerintahan, Pelabuhan & Ibukota Lembata' },
-      { name: '🌊 Teluk Lewoleba', coords: [-8.355, 123.400], desc: 'Kawasan Pesisir Nubatukan' },
-      { name: '🌋 Gunung Ile Lewotolok', coords: [-8.273, 123.507], desc: 'Puncak Vulkanik Ile Ape' },
-      { name: '🐟 Teluk Hadakewa', coords: [-8.365, 123.548], desc: 'Pesisir Hadakewa Lebatukan' },
-      { name: '🏝️ Tanjung Batu', coords: [-8.245, 123.485], desc: 'Ujung Utara Ile Ape' },
-      { name: '🏘️ Balauring (Kedang)', coords: [-8.234, 123.706], desc: 'Pusat Kecamatan Omesuri' },
-      { name: '🌾 Wairiang (Buyasuri)', coords: [-8.192, 123.820], desc: 'Pusat Kecamatan Buyasuri' },
-      { name: '🛶 Lamalera (Wulandoni)', coords: [-8.552, 123.435], desc: 'Desa Tradisional Pesisir Selatan' },
-      { name: '🏖️ Mingar / Loang (Nagawutung)', coords: [-8.490, 123.360], desc: 'Kawasan Pesisir Barat Daya' },
-      { name: '🏔️ Kalikasa (Atadei)', coords: [-8.434, 123.468], desc: 'Pusat Kecamatan Atadei' }
+      { name: 'Kota Lewoleba (Ibukota)', coords: [-8.375, 123.418], desc: 'Pusat Pemerintahan, Pelabuhan & Ibukota Lembata' },
+      { name: 'Teluk Lewoleba', coords: [-8.355, 123.400], desc: 'Kawasan Pesisir Nubatukan' },
+      { name: 'Gunung Ile Lewotolok', coords: [-8.273, 123.507], desc: 'Puncak Vulkanik Ile Ape' },
+      { name: 'Teluk Hadakewa', coords: [-8.365, 123.548], desc: 'Pesisir Hadakewa Lebatukan' },
+      { name: 'Tanjung Batu', coords: [-8.245, 123.485], desc: 'Ujung Utara Ile Ape' },
+      { name: 'Balauring (Kedang)', coords: [-8.234, 123.706], desc: 'Pusat Kecamatan Omesuri' },
+      { name: 'Wairiang (Buyasuri)', coords: [-8.192, 123.820], desc: 'Pusat Kecamatan Buyasuri' },
+      { name: 'Lamalera (Wulandoni)', coords: [-8.552, 123.435], desc: 'Desa Tradisional Pesisir Selatan' },
+      { name: 'Mingar / Loang (Nagawutung)', coords: [-8.490, 123.360], desc: 'Kawasan Pesisir Barat Daya' },
+      { name: 'Kalikasa (Atadei)', coords: [-8.434, 123.468], desc: 'Pusat Kecamatan Atadei' }
     ];
 
     landmarks.forEach(lm => {
@@ -166,17 +166,9 @@ class LembataMapEngine {
     });
   }
 
-  /* Ikon Kategori Pencemaran */
+  /* Ikon Kategori Pencemaran (Zero-Emoji Policy untuk Gov WebGIS) */
   getCategoryIcon(jenis) {
-    if (!jenis) return '⚠️';
-    const j = jenis.toLowerCase();
-    if (j.includes('laut') || j.includes('pesisir')) return '🌊';
-    if (j.includes('sampah') || j.includes('bau')) return '🗑️';
-    if (j.includes('air') || j.includes('sungai')) return '💧';
-    if (j.includes('udara') || j.includes('asap')) return '💨';
-    if (j.includes('b3') || j.includes('kimia') || j.includes('medis')) return '☣️';
-    if (j.includes('kerusakan') || j.includes('tanah') || j.includes('hutan')) return '🌳';
-    return '⚠️';
+    return '';
   }
 
   /* Warna Status Aduan */
@@ -196,10 +188,9 @@ class LembataMapEngine {
     }
   }
 
-  /* Custom Leaflet Pin Icon dengan Ikon Kategori dan Animasi Halo Denyut */
+  /* Custom Leaflet Pin Icon (Gov Clean Pin dengan Dot Putih Solid dan Halo Denyut) */
   createPinIcon(item) {
     const color = this.getMarkerColor(item.status);
-    const catIcon = this.getCategoryIcon(item.jenisPencemaran);
     const isActivelyHandled = item.status !== 'Selesai' && item.status !== 'Ditolak';
 
     return L.divIcon({
@@ -208,13 +199,13 @@ class LembataMapEngine {
         <div class="custom-leaflet-marker" style="--marker-color: ${color};">
           ${isActivelyHandled ? `<div class="marker-pulse-ring" style="border-color: ${color};"></div>` : ''}
           <div class="marker-pin" style="background: ${color};">
-            <span class="marker-icon">${catIcon}</span>
+            <span class="marker-pin-dot"></span>
           </div>
         </div>
       `,
-      iconSize: [32, 38],
-      iconAnchor: [16, 36],
-      popupAnchor: [0, -36]
+      iconSize: [28, 34],
+      iconAnchor: [14, 32],
+      popupAnchor: [0, -32]
     });
   }
 
@@ -259,10 +250,10 @@ class LembataMapEngine {
               <span class="tt-id">${item.id}</span>
               <span class="tt-status" style="background: ${color}25; color: ${color};">${item.status}</span>
             </div>
-            <div class="tt-title">${catIcon} ${item.jenisPencemaran}</div>
-            <div class="tt-loc">📍 Desa ${item.desa}, Kec. ${item.kecamatan}</div>
+            <div class="tt-title">${item.jenisPencemaran}</div>
+            <div class="tt-loc">Desa ${item.desa}, Kec. ${item.kecamatan}</div>
             <div class="tt-desc">${(item.uraian || '').substring(0, 80)}${item.uraian && item.uraian.length > 80 ? '...' : ''}</div>
-            <div class="tt-hint">👆 Klik pin untuk melihat detail aduan</div>
+            <div class="tt-hint">Klik pin untuk melihat detail aduan</div>
           </div>
         `, {
           direction: 'top',
@@ -280,15 +271,14 @@ class LembataMapEngine {
             </div>
             
             <div class="popup-cat">
-              <span class="cat-icon">${catIcon}</span>
               <strong>${item.jenisPencemaran}</strong>
             </div>
 
             <div class="popup-location">
-              <strong>📍 Lokasi Kejadian:</strong><br>
+              <strong>Lokasi Kejadian:</strong><br>
               Desa ${item.desa}, Kec. ${item.kecamatan}
               <div class="popup-detail-loc">Patokan: ${item.lokasiDetail || '-'}</div>
-              <div class="popup-coords">🌐 Koordinat: ${item.lat}, ${item.lng}</div>
+              <div class="popup-coords">Koordinat: ${item.lat}, ${item.lng}</div>
             </div>
 
             <div class="popup-chronology">
@@ -305,7 +295,7 @@ class LembataMapEngine {
 
             <div class="popup-actions">
               <button class="btn btn-sm btn-primary" onclick="window.app.showDetailModal('${item.id}')" style="flex: 1;">
-                📄 Lihat Detail Aduan &amp; Foto
+                Lihat Detail Aduan &amp; Foto
               </button>
             </div>
           </div>
@@ -407,9 +397,8 @@ class LembataMapEngine {
     if (!filteredData || filteredData.length === 0) {
       container.innerHTML = `
         <div style="grid-column: 1/-1; text-align: center; padding: 32px 16px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; color: #64748b;">
-          <div style="font-size: 28px; margin-bottom: 6px;">🔍</div>
-          <strong>Tidak ada titik aduan yang cocok dengan kriteria filter saat ini.</strong>
-          <p style="font-size: 0.82rem; margin-top: 4px;">Coba ubah pilihan kecamatan, status, atau jenis pencemaran.</p>
+          <div style="font-size: 1rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Tidak Ada Titik Aduan Sesuai Filter</div>
+          <p style="font-size: 0.82rem; margin: 0;">Silakan ubah pilihan kecamatan, status, atau jenis aduan untuk melihat data lainnya.</p>
         </div>
       `;
       return;
@@ -471,10 +460,8 @@ class LembataMapEngine {
             </div>
 
             <!-- Baris 2: Kategori & Lokasi -->
-            <div class="mac-title">${catIcon} ${item.jenisPencemaran || 'Aduan Lingkungan'}</div>
-            <div class="mac-loc">
-              <span class="mac-pin-icon">📍</span> ${desaLabel}, ${kecLabel}
-            </div>
+            <div class="mac-title">${item.jenisPencemaran || 'Aduan Lingkungan'}</div>
+            <div class="mac-loc">${desaLabel}, ${kecLabel}</div>
 
             <!-- Baris 3: Cuplikan Kronologi 1 Baris -->
             <div class="mac-desc" title="${tooltipUraian}">${cleanUraian}</div>
@@ -483,7 +470,7 @@ class LembataMapEngine {
           <!-- Baris 4: Action Bar Ramping -->
           <div class="mac-actions">
             <button type="button" class="btn-mac-highlight" onclick="window.lembataMap.highlightAduan('${item.id}')" title="Pusatkan peta ke titik koordinat ini">
-              🎯 Sorot di Peta
+              Sorot di Peta
             </button>
             <button type="button" class="btn-mac-detail" onclick="window.app.showDetailModal('${item.id}')" title="Lihat rincian lengkap aduan">
               Detail
@@ -665,7 +652,7 @@ class LembataMapEngine {
     container.innerHTML = `
       <div style="position: relative; width: 100%; height: 100%; background: #e0f2fe; overflow: hidden; display: flex; flex-direction: column;">
         <div style="background: rgba(255,255,255,0.9); padding: 8px 16px; font-size: 12px; border-bottom: 1px solid #cbd5e1; display: flex; justify-content: space-between; align-items: center;">
-          <span>🗺️ <strong>Peta Digital Spasial Lembata (Mode Vektor Cadangan)</strong></span>
+          <span><strong>Peta Digital Spasial Lembata (Mode Vektor Cadangan)</strong></span>
           <span class="badge badge-selesai">${filtered.length} Titik Terpantau</span>
         </div>
         <div style="flex: 1; position: relative; padding: 20px;">
