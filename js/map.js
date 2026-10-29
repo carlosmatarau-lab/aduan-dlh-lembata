@@ -351,6 +351,15 @@ class LembataMapEngine {
     }
   }
 
+  /* Alias method sorot peta untuk kompatibilitas */
+  sorotDiPeta(id) {
+    return this.highlightAduan(id);
+  }
+
+  highlightOnMap(id) {
+    return this.highlightAduan(id);
+  }
+
   /* Set Filter Peta */
   setFilters(status = 'all', kecamatan = 'all', jenis = 'all') {
     this.activeFilter = { status, kecamatan, jenis };
@@ -439,23 +448,45 @@ class LembataMapEngine {
       const catIcon = this.getCategoryIcon(item.jenisPencemaran);
       const badgeClass = (item.status || 'baru').toLowerCase().replace(/[^a-z0-9]/g, '-');
 
+      // Ambil uraian murni sebelum penanda internal '---' dan format newline menjadi spasi
+      let rawUraian = String(item.uraian || '-');
+      if (rawUraian.includes('---')) {
+        rawUraian = rawUraian.split('---')[0].trim();
+      }
+      const cleanUraian = rawUraian.replace(/\r?\n+/g, ' ').trim() || '-';
+      const tooltipUraian = cleanUraian.replace(/"/g, '&quot;');
+
+      const desaClean = String(item.desa || '-').replace(/^desa\s+/i, '');
+      const kecClean = String(item.kecamatan || '-').replace(/^kec(\.|\s+)/i, '');
+      const desaLabel = desaClean !== '-' ? `Desa ${desaClean}` : 'Desa -';
+      const kecLabel = kecClean !== '-' ? `Kec. ${kecClean}` : 'Kec. -';
+
       return `
         <div class="map-aduan-card">
-          <div>
+          <div class="mac-content">
+            <!-- Baris 1: Header Tiket (ID Register & Badge Status Mini) -->
             <div class="mac-top">
               <span class="mac-id">${item.id}</span>
-              <span class="badge badge-${badgeClass}">${item.status}</span>
+              <span class="badge badge-${badgeClass} mac-badge">${item.status}</span>
             </div>
-            <div class="mac-title">${catIcon} ${item.jenisPencemaran}</div>
-            <div class="mac-loc">📍 Desa ${item.desa}, Kec. ${item.kecamatan}</div>
-            <div class="mac-desc">${item.uraian}</div>
+
+            <!-- Baris 2: Kategori & Lokasi -->
+            <div class="mac-title">${catIcon} ${item.jenisPencemaran || 'Aduan Lingkungan'}</div>
+            <div class="mac-loc">
+              <span class="mac-pin-icon">📍</span> ${desaLabel}, ${kecLabel}
+            </div>
+
+            <!-- Baris 3: Cuplikan Kronologi 1 Baris -->
+            <div class="mac-desc" title="${tooltipUraian}">${cleanUraian}</div>
           </div>
+
+          <!-- Baris 4: Action Bar Ramping -->
           <div class="mac-actions">
-            <button type="button" class="btn btn-outline btn-sm" onclick="window.lembataMap.highlightAduan('${item.id}')" style="flex: 1;" title="Pusatkan peta ke titik ini">
+            <button type="button" class="btn-mac-highlight" onclick="window.lembataMap.highlightAduan('${item.id}')" title="Pusatkan peta ke titik koordinat ini">
               🎯 Sorot di Peta
             </button>
-            <button type="button" class="btn btn-primary btn-sm" onclick="window.app.showDetailModal('${item.id}')" title="Lihat rincian aduan ini">
-              📄 Detail
+            <button type="button" class="btn-mac-detail" onclick="window.app.showDetailModal('${item.id}')" title="Lihat rincian lengkap aduan">
+              Detail
             </button>
           </div>
         </div>
@@ -773,3 +804,11 @@ class LembataMapEngine {
 
 // Global instance
 window.lembataMap = new LembataMapEngine();
+
+// Global helper aliases untuk kompatibilitas sorot peta
+window.sorotDiPeta = function(id) {
+  if (window.lembataMap) window.lembataMap.highlightAduan(id);
+};
+window.highlightOnMap = function(id) {
+  if (window.lembataMap) window.lembataMap.highlightAduan(id);
+};
