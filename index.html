@@ -1684,12 +1684,23 @@
     /* ===================================================================
    MAP TAB
    =================================================================== */
+    #pane-peta {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      box-sizing: border-box;
+    }
+
     .map-card-box {
       background: var(--card-bg);
       border-radius: var(--radius-lg);
       border: 1px solid var(--border);
       overflow: hidden;
       box-shadow: 0 4px 20px -2px rgba(0, 0, 0, 0.05);
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      box-sizing: border-box;
     }
 
     .map-header-bar {
@@ -2190,9 +2201,16 @@
       gap: 6px;
     }
 
-    /* Map Cards Feed (Below Map) */
-    .map-cards-section {
-      padding: 18px 24px 24px;
+    /* Map Cards Feed (Below Map) - Parent Wrapper Bebas Overflow */
+    .map-cards-section,
+    .section-container,
+    .content-wrapper {
+      width: 100%;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 18px 16px 24px;
+      box-sizing: border-box;
+      overflow-x: hidden;
       background: #ffffff;
       border-top: 1px solid var(--border);
     }
@@ -2203,25 +2221,56 @@
       justify-content: space-between;
       margin-bottom: 14px;
       gap: 12px;
+      width: 100%;
+      box-sizing: border-box;
     }
 
-    /* Grid Responsif: Desktop 3 Kolom, Tablet 2 Kolom, Mobile 1 Kolom */
-    .map-aduan-grid {
+    /* 1. Kontainer Grid Kartu Fleksibel */
+    .map-aduan-grid,
+    .aduan-grid,
+    #mapAduanGrid {
       display: grid;
-      grid-template-columns: repeat(3, 1fr);
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
       gap: 12px;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      margin-top: 14px;
       align-items: stretch;
     }
 
-    @media (max-width: 992px) {
-      .map-aduan-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 10px;
+    /* 4. Penyesuaian Media Queries (Responsif Layar) */
+    /* Layar Lebar (Desktop > 1024px): 3 Kolom seimbang */
+    @media (min-width: 1025px) {
+      .map-aduan-grid,
+      .aduan-grid,
+      #mapAduanGrid {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
+        gap: 12px;
       }
     }
 
-    @media (max-width: 640px) {
-      .map-cards-section {
+    /* Layar Sedang (Tablet 768px - 1024px): 2 Kolom seimbang */
+    @media (min-width: 768px) and (max-width: 1024px) {
+      .map-aduan-grid,
+      .aduan-grid,
+      #mapAduanGrid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+    }
+
+    /* Layar HP (< 768px): 1 Kolom penuh */
+    @media (max-width: 767px) {
+      .map-aduan-grid,
+      .aduan-grid,
+      #mapAduanGrid {
+        grid-template-columns: minmax(0, 1fr);
+        gap: 10px;
+      }
+      .map-cards-section,
+      .section-container,
+      .content-wrapper {
         padding: 14px 12px 20px;
       }
       .map-cards-header {
@@ -2229,14 +2278,16 @@
         align-items: flex-start;
         gap: 8px;
       }
-      .map-aduan-grid {
-        grid-template-columns: 1fr;
-        gap: 10px;
-      }
     }
 
-    /* Rampingkan Struktur & Padding Kartu */
-    .map-aduan-card {
+    /* 2. Cegah Grid Item Meluap (Prevent Overflow) */
+    .map-aduan-card,
+    .aduan-card {
+      min-width: 0;
+      width: 100%;
+      max-width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
       background: #ffffff;
       border: 1px solid #e2e8f0;
       border-radius: 10px;
@@ -2246,10 +2297,10 @@
       flex-direction: column;
       justify-content: space-between;
       height: 100%;
-      box-sizing: border-box;
     }
 
-    .map-aduan-card:hover {
+    .map-aduan-card:hover,
+    .aduan-card:hover {
       background: #ffffff;
       border-color: #cbd5e1;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
@@ -2260,6 +2311,8 @@
       display: flex;
       flex-direction: column;
       min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     /* Baris 1: Header Tiket (ID Register & Badge Status Mini) */
@@ -2267,8 +2320,11 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
+      gap: 6px;
       margin-bottom: 6px;
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .mac-id {
@@ -2280,6 +2336,8 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      min-width: 0;
+      flex-shrink: 1;
     }
 
     .mac-badge {
@@ -2289,7 +2347,11 @@
       line-height: 1.25;
       border-radius: 9999px !important;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 58%;
       flex-shrink: 0;
+      box-sizing: border-box;
     }
 
     /* Baris 2: Kategori & Lokasi */
@@ -2302,6 +2364,8 @@
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
+      min-width: 0;
+      width: 100%;
     }
 
     .mac-loc {
@@ -2315,12 +2379,15 @@
       display: flex;
       align-items: center;
       gap: 3px;
+      min-width: 0;
+      width: 100%;
     }
 
     .mac-pin-icon {
       font-size: 0.72rem;
       opacity: 0.85;
       filter: grayscale(40%);
+      flex-shrink: 0;
     }
 
     /* Baris 3: Cuplikan Kronologi 1 Baris */
@@ -2332,19 +2399,25 @@
       color: #64748b;
       margin: 6px 0 10px 0;
       line-height: 1.4;
+      min-width: 0;
+      width: 100%;
     }
 
     /* Baris 4: Action Bar Ramping */
     .mac-actions {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       margin-top: auto;
       padding-top: 4px;
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
     }
 
     .btn-mac-highlight {
       flex: 1;
+      min-width: 0;
       height: 29px;
       min-height: 28px;
       max-height: 30px;
@@ -2359,9 +2432,11 @@
       justify-content: center;
       gap: 4px;
       cursor: pointer;
-      padding: 0 8px;
+      padding: 0 6px;
       transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
       white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
       box-sizing: border-box;
       outline: none;
     }
@@ -2392,6 +2467,7 @@
       white-space: nowrap;
       box-sizing: border-box;
       outline: none;
+      flex-shrink: 0;
     }
 
     .btn-mac-detail:hover {
@@ -4796,7 +4872,7 @@
             <span class="badge badge-sedang-diverifikasi" id="mapFilteredCountBadge">Memuat data...</span>
           </div>
 
-          <div class="map-aduan-grid" id="mapAduanGrid">
+          <div class="map-aduan-grid aduan-grid" id="mapAduanGrid">
             <!-- Render dinamis kartu aduan -->
           </div>
         </div>
