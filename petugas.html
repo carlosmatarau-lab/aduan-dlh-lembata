@@ -2391,157 +2391,7 @@
         white-space: nowrap !important;
         text-align: right !important;
       }
-      .aduan-main-row {
-        cursor: pointer !important;
-      }
-      .aduan-main-row.expanded {
-        background: #f0fdf4 !important;
-      }
-      .aduan-main-row.expanded > td {
-        border-bottom-color: #a7f3d0 !important;
-      }
-      .ticket-badge {
-        font-size: 0.72rem !important;
-        padding: 2px 6px !important;
-      }
-      .mobile-reg-subtext {
-        display: block !important;
-        font-size: 0.68rem !important;
-        color: #475569 !important;
-        margin-top: 3px !important;
-        line-height: 1.25 !important;
-        font-weight: 600 !important;
-        white-space: normal !important;
-      }
-      .mobile-reg-subtext .mobile-jenis-tag {
-        color: #059669 !important;
-        font-weight: 700 !important;
-      }
-      .badge {
-        font-size: 0.65rem !important;
-        padding: 3px 6px !important;
-      }
-      .table-actions,
-      .table-actions-compact {
-        gap: 4px !important;
-        justify-content: flex-end !important;
-      }
-      .btn-tbl {
-        padding: 5px 8px !important;
-        font-size: 0.71rem !important;
-        border-radius: 6px !important;
-        min-height: 28px !important;
-      }
-      .btn-tbl-accordion {
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        width: 28px !important;
-        height: 28px !important;
-        padding: 0 !important;
-        border-radius: 6px !important;
-        border: 1px solid #cbd5e1 !important;
-        background: #f8fafc !important;
-        color: #334155 !important;
-        font-size: 0.72rem !important;
-        font-weight: 800 !important;
-        cursor: pointer !important;
-        transition: all 0.2s ease !important;
-        flex-shrink: 0 !important;
-      }
-      .btn-tbl-accordion .acc-arrow {
-        display: inline-block !important;
-        transition: transform 0.2s ease !important;
-      }
-      .aduan-main-row.expanded .btn-tbl-accordion {
-        background: #ecfdf5 !important;
-        border-color: #10b981 !important;
-        color: #065f46 !important;
-      }
-      .aduan-main-row.expanded .btn-tbl-accordion .acc-arrow {
-        transform: rotate(180deg) !important;
-      }
-      /* Baris Lipatan Detail (Accordion Row) Khusus HP */
-      .aduan-accordion-row {
-        display: none !important;
-        background: #f8fafc !important;
-      }
-      .aduan-accordion-row.open {
-        display: table-row !important;
-      }
-      .aduan-accordion-cell {
-        padding: 10px 10px 12px 10px !important;
-        background: #f8fafc !important;
-        border-left: 3px solid #059669 !important;
-        border-bottom: 2px solid #cbd5e1 !important;
-      }
-      .acc-detail-grid {
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
-        gap: 6px 10px !important;
-        margin-bottom: 8px !important;
-        font-size: 0.73rem !important;
-        color: #1e293b !important;
-      }
-      .acc-detail-item {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 2px !important;
-      }
-      .acc-detail-item.acc-full {
-        grid-column: 1 / -1 !important;
-      }
-      .acc-detail-label {
-        font-size: 0.64rem !important;
-        font-weight: 800 !important;
-        text-transform: uppercase !important;
-        color: #64748b !important;
-        letter-spacing: 0.2px !important;
-      }
-      .acc-detail-val {
-        font-size: 0.74rem !important;
-        font-weight: 700 !important;
-        color: #0f172a !important;
-        display: flex !important;
-        align-items: center !important;
-        flex-wrap: wrap !important;
-        gap: 6px !important;
-      }
-      .acc-actions-bar {
-        display: flex !important;
-        align-items: center !important;
-        gap: 6px !important;
-        padding-top: 8px !important;
-        border-top: 1px dashed #cbd5e1 !important;
-        flex-wrap: wrap !important;
-      }
-      .acc-actions-bar .btn-acc-act {
-        flex: 1 1 auto !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 4px !important;
-        padding: 6px 8px !important;
-        border-radius: 6px !important;
-        font-size: 0.71rem !important;
-        font-weight: 700 !important;
-        cursor: pointer !important;
-        text-decoration: none !important;
-        border: 1px solid #cbd5e1 !important;
-        background: #ffffff !important;
-        color: #334155 !important;
-      }
-      .acc-actions-bar .btn-acc-act.btn-acc-map {
-        background: #f0fdf4 !important;
-        border-color: #86efac !important;
-        color: #065f46 !important;
-      }
-      .acc-actions-bar .btn-acc-act.btn-acc-del {
-        flex: 0 0 auto !important;
-        background: #fff1f2 !important;
-        border-color: #fecdd3 !important;
-        color: #e11d48 !important;
-      }
+
       .table-footer {
         padding: 10px 12px !important;
         flex-direction: column !important;
@@ -2643,8 +2493,9 @@
     }
 
     /* ===================================================================
-       POLISH MOBILE (<= 768px): Tabel Accordion & KPI 100% Fit Tanpa Terpotong
+       POLISH MOBILE (<= 768px): KPI 100% Fit Tanpa Terpotong
        Hanya CSS tampilan — tidak menyentuh fungsi / data
+       [Dead accordion CSS dihapus — tabel desktop di-skip via JS di mobile]
        =================================================================== */
     @media (max-width: 768px) {
       /* KPI: kartu tap-friendly, proporsional */
@@ -2704,173 +2555,6 @@
         white-space: nowrap !important;
       }
 
-      /* Baris utama: tiga kolom padat, presisi di tengah kolom masing-masing & lurus vertikal ke bawah */
-      .aduan-main-row > td {
-        padding: 8px 4px !important;
-        vertical-align: middle !important;
-      }
-      .aduan-main-row > td.col-reg {
-        padding-left: 6px !important;
-        padding-right: 4px !important;
-        text-align: center !important;
-        width: auto !important;
-      }
-      .aduan-main-row > td.col-status {
-        padding-left: 4px !important;
-        padding-right: 4px !important;
-        text-align: center !important;
-        width: 1% !important;
-        white-space: nowrap !important;
-      }
-      .aduan-main-row > td.col-status .status-cell-inner {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        text-align: center !important;
-        width: 100% !important;
-      }
-      .aduan-main-row > td.col-aksi {
-        padding-left: 4px !important;
-        padding-right: 6px !important;
-        text-align: center !important;
-        width: 1% !important;
-        white-space: nowrap !important;
-      }
-
-      /* Nomor register: simetris di tengah kolom & lurus vertikal ke bawah */
-      .officer-table td.col-reg .ticket-badge {
-        font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif !important;
-        font-weight: 800 !important;
-        font-size: 0.62rem !important;
-        letter-spacing: -0.2px !important;
-        padding: 2.5px 6px !important;
-        border-radius: 5px !important;
-        line-height: 1.25 !important;
-        white-space: normal !important;
-        word-break: break-word !important;
-        max-width: 100% !important;
-        display: inline-block !important;
-        margin: 0 auto !important;
-        text-align: center !important;
-      }
-      .mobile-reg-subtext {
-        display: flex !important;
-        flex-direction: column !important;
-        align-items: center !important;
-        justify-content: center !important;
-        text-align: center !important;
-        gap: 1px !important;
-        font-size: 0.63rem !important;
-        line-height: 1.22 !important;
-        margin-top: 3px !important;
-        color: #475569 !important;
-        white-space: normal !important;
-        word-break: break-word !important;
-      }
-      .mobile-reg-subtext .mobile-loc-line {
-        font-weight: 600 !important;
-        color: #475569 !important;
-        text-align: center !important;
-      }
-      .mobile-reg-subtext .mobile-jenis-tag {
-        color: #047857 !important;
-        font-weight: 700 !important;
-        text-align: center !important;
-      }
-
-      /* Badge status ringkas, simetris & lurus vertikal dengan header STATUS */
-      .officer-table td.col-status .badge {
-        font-size: 0.55rem !important;
-        font-weight: 800 !important;
-        padding: 2.5px 6px !important;
-        letter-spacing: 0px !important;
-        line-height: 1.15 !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        margin: 0 auto !important;
-      }
-
-      /* Aksi: simetris di tengah kolom AKSI & lurus vertikal ke bawah */
-      .officer-table td.col-aksi .table-actions-compact {
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 4px !important;
-        flex-wrap: nowrap !important;
-        margin: 0 auto !important;
-      }
-      .btn-tbl-accordion {
-        width: 26px !important;
-        height: 28px !important;
-        border-radius: 6px !important;
-        font-size: 0.62rem !important;
-        flex-shrink: 0 !important;
-      }
-      .officer-table td.col-aksi .btn-tbl-verify {
-        height: 28px !important;
-        min-height: 28px !important;
-        padding: 0 7px !important;
-        font-size: 0.64rem !important;
-        border-radius: 6px !important;
-        white-space: nowrap !important;
-        gap: 3px !important;
-        flex-shrink: 0 !important;
-      }
-
-      /* Baris lipatan: panel detail bersih dengan tombol proporsional */
-      .aduan-accordion-cell {
-        padding: 10px 10px 12px !important;
-        background: linear-gradient(180deg, #f0fdf4 0%, #f8fafc 100%) !important;
-        border-left: 3px solid #10b981 !important;
-        border-bottom: 1.5px solid #cbd5e1 !important;
-      }
-      .acc-detail-grid {
-        grid-template-columns: 1fr !important;
-        gap: 6px !important;
-        background: #ffffff !important;
-        border: 1px solid #e2e8f0 !important;
-        border-radius: 10px !important;
-        padding: 9px 11px !important;
-        margin-bottom: 8px !important;
-      }
-      .acc-detail-item {
-        flex-direction: row !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        gap: 8px !important;
-        padding-bottom: 6px !important;
-        border-bottom: 1px dashed #e2e8f0 !important;
-      }
-      .acc-detail-item:last-child { border-bottom: none !important; padding-bottom: 0 !important; }
-      .acc-detail-label {
-        flex: 0 0 38% !important;
-        font-size: 0.61rem !important;
-      }
-      .acc-detail-val {
-        flex: 1 1 auto !important;
-        justify-content: flex-end !important;
-        text-align: right !important;
-        font-size: 0.72rem !important;
-      }
-      .acc-actions-bar {
-        display: grid !important;
-        grid-template-columns: repeat(3, 1fr) !important;
-        gap: 6px !important;
-        border-top: none !important;
-        padding-top: 0 !important;
-      }
-      .acc-actions-bar .btn-acc-act,
-      .acc-actions-bar .btn-acc-act.btn-acc-del {
-        flex: none !important;
-        width: 100% !important;
-        min-height: 34px !important;
-        padding: 5px 4px !important;
-        border-radius: 8px !important;
-        font-size: 0.68rem !important;
-        box-shadow: 0 1px 2px rgba(15, 23, 42, 0.05) !important;
-      }
     }
 
     /* Penyesuaian Ponsel Layar Kecil (<= 480px) */
@@ -3811,6 +3495,76 @@
       border-radius: 50%;
       margin-right: 4px;
       background: currentColor;
+    }
+
+    /* Tombol Aksi Cepat di Daftar Ringkas Mobile */
+    .rk-actions {
+      display: flex;
+      gap: 5px;
+      align-items: center;
+      margin-top: 2px;
+    }
+    .rk-action-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 28px;
+      border-radius: 7px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      cursor: pointer;
+      flex-shrink: 0;
+      text-decoration: none;
+      border: none;
+      line-height: 1;
+      -webkit-tap-highlight-color: transparent;
+      transition: opacity 0.15s ease, transform 0.1s ease;
+    }
+    .rk-action-btn:active {
+      opacity: 0.75;
+      transform: scale(0.93);
+    }
+    .rk-action-verif {
+      background: #059669;
+      color: #ffffff;
+    }
+    .rk-action-wa {
+      background: #16a34a;
+      color: #ffffff;
+    }
+
+    /* Penyesuaian Daftar Ringkas untuk Layar HP Sangat Ramping (<= 480px) */
+    @media (max-width: 480px) {
+      .rk-row {
+        grid-template-columns: 36px 1fr auto;
+        gap: 8px;
+        padding: 10px 10px;
+      }
+      .rk-icon-box {
+        width: 36px;
+        height: 36px;
+        border-radius: 8px;
+      }
+      .rk-icon {
+        width: 18px;
+        height: 18px;
+      }
+      .rk-title {
+        font-size: 13.5px;
+      }
+      .rk-sub {
+        font-size: 11px;
+      }
+      .rk-meta-top,
+      .rk-meta-bottom {
+        font-size: 11px;
+      }
+      .rk-action-btn {
+        width: 28px;
+        height: 26px;
+        font-size: 0.72rem;
+      }
     }
 
     /* Palet Warna Status */
@@ -7573,6 +7327,29 @@
 
           const iconSvg = this.getJenisPencemaranIcon(jenis);
 
+          // ── Quick Action Buttons (mobile) ──────────────────────────────────
+          // Tombol Verifikasi Cepat — langsung buka modal verifikasi
+          const verBtn = `<button
+            type="button"
+            class="rk-action-btn rk-action-verif"
+            onclick="event.stopPropagation(); window.portal && window.portal.openVerifikasiModal('${this.escHtml(id)}')"
+            title="Verifikasi Cepat"
+            aria-label="Verifikasi aduan ${this.escHtml(id)}">&#x1F4CB;</button>`;
+
+          // Tombol WhatsApp — hanya tampil jika nomor HP valid (minimal 10 digit)
+          const cleanPhone = (item.noHp || '').replace(/^0/, '62').replace(/[^0-9]/g, '');
+          const waBtn = cleanPhone.length >= 10
+            ? `<a
+                href="https://wa.me/${cleanPhone}"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="rk-action-btn rk-action-wa"
+                onclick="event.stopPropagation()"
+                title="Chat WhatsApp Pelapor"
+                aria-label="WhatsApp ${this.escHtml(pelapor)}">&#x1F4AC;</a>`
+            : '';
+          // ─────────────────────────────────────────────────────────────────
+
           return `
             <div class="rk-row"
                  role="button"
@@ -7592,6 +7369,10 @@
                 <div class="rk-meta-bottom ${stNorm.cssClass}">
                   <span class="rk-dot"></span>
                   <span>${this.escHtml(stNorm.label)}</span>
+                </div>
+                <div class="rk-actions">
+                  ${verBtn}
+                  ${waBtn}
                 </div>
               </div>
             </div>
@@ -7726,6 +7507,18 @@
         };
 
         const formatDesaKelurahan = (raw) => this.formatDesaKelurahan(raw);
+
+        // ── MOBILE GUARD: skip costly desktop-row rendering on small screens ──
+        // Di layar HP (<= 768px) tabel disembunyikan via CSS; renderCompactList()
+        // sudah merender #rkList dengan tampilan yang dioptimalkan untuk mobile.
+        // Melewati render baris tabel di mobile menghemat CPU & memori secara signifikan.
+        if (window.innerWidth <= 768) {
+          tbody.innerHTML = ''; // kosongkan tbody agar tidak ada DOM node idle
+          this.renderCompactList(filtered, data);
+          const footer = document.getElementById('tablePagination');
+          if (footer) footer.textContent = `Menampilkan ${filtered.length} dari total ${data.length} laporan aduan`;
+          return;
+        }
 
         tbody.innerHTML = filtered.map(item => {
           const formattedDate = formatCompactDate(item.timestamp || item.tanggalKejadian);
@@ -8064,6 +7857,10 @@
         const rkList = document.getElementById('rkList');
         if (rkList) {
           rkList.addEventListener('click', (e) => {
+            // Abaikan jika klik terjadi pada tombol aksi cepat (Verifikasi/WA)
+            if (e.target.closest('.rk-action-btn') || e.target.closest('a') || e.target.closest('button')) {
+              return;
+            }
             const row = e.target.closest('[data-id]');
             if (row && row.dataset.id) {
               this.showDetailModal(row.dataset.id);
@@ -8071,6 +7868,9 @@
           });
           rkList.addEventListener('keydown', (e) => {
             if (e.key === 'Enter' || e.key === ' ') {
+              if (e.target.closest('.rk-action-btn') || e.target.closest('a') || e.target.closest('button')) {
+                return;
+              }
               const row = e.target.closest('[data-id]');
               if (row && row.dataset.id) {
                 e.preventDefault();
