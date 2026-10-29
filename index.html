@@ -2079,88 +2079,776 @@
       box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
     }
 
-    /* Map Canvas Container */
-    .map-container-relative {
-      position: relative;
+    /* ===================================================================
+       GEOSPASIAL COMMAND CENTER (DLH KABUPATEN LEMBATA)
+       Desktop Split-Screen (5fr:7fr) & Mobile-First Dual View
+       =================================================================== */
+
+    /* Lebar Kontainer Utama Saat Tab Peta Aktif */
+    .main-wrap.wide-mode,
+    .main-wrap:has(#pane-peta.active) {
+      max-width: 1440px !important;
+      padding-left: 20px !important;
+      padding-right: 20px !important;
+    }
+
+    /* 1. Top Bar Komando */
+    .map-command-topbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 14px;
+      flex-wrap: wrap;
+    }
+
+    .map-command-title-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex: 1;
+      min-width: 0;
+    }
+
+    .map-topbar-headings {
+      min-width: 0;
+    }
+
+    .map-command-title {
+      font-family: 'Outfit', -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      font-size: 1.15rem;
+      font-weight: 800;
+      color: #064e3b;
+      margin: 0;
+      line-height: 1.25;
+    }
+
+    .map-command-subtitle {
+      font-size: 0.76rem;
+      color: #64748b;
+      margin: 2px 0 0 0;
+      line-height: 1.3;
+    }
+
+    .btn-back-beranda {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #1e293b;
+      font-weight: 700;
+      font-size: 0.8rem;
+      padding: 6px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+      transition: all 0.15s ease;
+      flex-shrink: 0;
+    }
+
+    .btn-back-beranda:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+      color: #0f172a;
+    }
+
+    .map-badge-live {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: #ecfdf5;
+      color: #047857;
+      border: 1px solid #a7f3d0;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    .live-pulse-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      box-shadow: 0 0 0 rgba(16, 185, 129, 0.6);
+      animation: livePulse 1.8s infinite;
+    }
+
+    @keyframes livePulse {
+      0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.7); }
+      70% { box-shadow: 0 0 0 6px rgba(16, 185, 129, 0); }
+      100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+    }
+
+    /* 2. Mobile Segmented Switcher (< 1024px) */
+    .map-mobile-switcher {
+      display: none;
+    }
+
+    @media (max-width: 1023px) {
+      .map-mobile-switcher {
+        display: flex;
+        gap: 6px;
+        background: #f1f5f9;
+        padding: 4px;
+        border-radius: 10px;
+        border: 1px solid #e2e8f0;
+        margin-bottom: 12px;
+      }
+
+      .btn-mobi-view {
+        flex: 1;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: 6px;
+        padding: 8px 12px;
+        font-size: 0.8rem;
+        font-weight: 700;
+        color: #64748b;
+        background: transparent;
+        border: none;
+        border-radius: 7px;
+        cursor: pointer;
+        transition: all 0.15s ease;
+      }
+
+      .btn-mobi-view.active {
+        background: #ffffff;
+        color: #064e3b;
+        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+      }
+    }
+
+    /* 3. Command Center Layout Grid (Split-Screen Desktop vs Mobile) */
+    .map-command-layout {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
       width: 100%;
+    }
+
+    @media (min-width: 1024px) {
+      .map-command-layout {
+        display: grid !important;
+        grid-template-columns: 5fr 7fr !important;
+        gap: 16px !important;
+        height: calc(100vh - 120px) !important;
+        min-height: 640px !important;
+        max-height: 900px !important;
+      }
+    }
+
+    /* 4. Kolom Kiri: Panel Pengawasan, Filter & Feed Kartu Aduan */
+    .map-feed-panel {
+      display: flex;
+      flex-direction: column;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    @media (min-width: 1024px) {
+      .map-feed-panel {
+        height: 100% !important;
+        min-height: 0 !important;
+      }
+    }
+
+    .map-feed-header {
+      flex-shrink: 0;
+      background: #ffffff;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .map-feed-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 10px 14px;
+      gap: 10px;
+      background: #ffffff;
+      border-bottom: 1px solid #f1f5f9;
+    }
+
+    .map-feed-heading-wrap {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      min-width: 0;
+    }
+
+    .map-feed-title {
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0;
+      line-height: 1.25;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .map-chip-formal {
+      display: inline-flex;
+      align-items: center;
+      border: 1px solid #e2e8f0;
+      background: #f8fafc;
+      color: #334155;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 3px 8px;
+      border-radius: 6px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Mini KPI Metric Strip */
+    .map-stats-strip {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 0;
+      padding: 6px 8px;
+      background: #f8fafc;
+      border-bottom: 1px solid #e2e8f0;
+      box-sizing: border-box;
+    }
+
+    .map-stat-chip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 2px 4px;
+      min-width: 0;
+    }
+
+    .map-stat-divider {
+      display: none;
+    }
+
+    .mstat-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+
+    .dot-total { background: #3b82f6; }
+    .dot-baru { background: #f59e0b; }
+    .dot-proses { background: #2563eb; }
+    .dot-selesai { background: #10b981; }
+
+    .mstat-num {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #0f172a;
+      line-height: 1;
+    }
+
+    .mstat-lbl {
+      font-size: 0.68rem;
+      color: #64748b;
+      font-weight: 500;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    /* Bilah Filter Spasial */
+    .map-toolbar {
+      padding: 8px 10px;
+      background: #ffffff;
+    }
+
+    .map-filters-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
+      gap: 8px;
+      align-items: end;
+    }
+
+    @media (max-width: 768px) {
+      .map-filters-grid {
+        grid-template-columns: 1fr 1fr;
+        gap: 6px;
+      }
+      .map-filters-grid .col-reset-btn {
+        grid-column: span 2;
+      }
+    }
+
+    .map-filter-col {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      min-width: 0;
+    }
+
+    .map-filter-label {
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #64748b;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+      margin: 0;
+      white-space: nowrap;
+    }
+
+    .map-select {
+      height: 32px;
+      font-size: 0.75rem;
+      padding: 0 8px;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      background-color: #ffffff;
+      color: #1e293b;
+      width: 100%;
+      box-sizing: border-box;
+      outline: none;
+      transition: border-color 0.15s ease;
+    }
+
+    .map-select:focus {
+      border-color: #059669;
+      box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.15);
+    }
+
+    .btn-reset-map {
+      height: 32px;
+      padding: 0 10px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      background: #f1f5f9;
+      border: 1px solid #cbd5e1;
+      color: #475569;
+      border-radius: 6px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+      width: 100%;
+    }
+
+    .btn-reset-map:hover {
+      background: #e2e8f0;
+      color: #0f172a;
+    }
+
+    /* Quick Region Navigator Pills */
+    .map-region-pills {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 10px;
+      background: #f8fafc;
+      border-top: 1px solid #f1f5f9;
+      border-bottom: 1px solid #e2e8f0;
+      overflow-x: auto;
+      white-space: nowrap;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+    }
+
+    .map-region-pills::-webkit-scrollbar {
+      display: none;
+    }
+
+    .region-pills-label {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: #64748b;
+      margin-right: 2px;
+      flex-shrink: 0;
+    }
+
+    .pill-region {
+      padding: 3px 10px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border-radius: 999px;
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .pill-region:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .pill-region.active {
+      background: #065f46;
+      border-color: #065f46;
+      color: #ffffff;
+      box-shadow: 0 1px 3px rgba(6, 95, 70, 0.25);
+    }
+
+    /* Feed Wadah Scroll Mandiri Daftar Titik Aduan */
+    .map-feed-scroll {
+      flex: 1 1 auto;
+      min-height: 0;
+      overflow-y: auto;
+      padding: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      background: #f8fafc;
+      box-sizing: border-box;
+    }
+
+    @media (max-width: 1023px) {
+      .map-feed-scroll {
+        max-height: 60vh;
+      }
+    }
+
+    /* 5. Ultra-Compact Card Styling */
+    .map-aduan-card {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 10px 12px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04);
+      transition: all 0.15s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-width: 0;
+      width: 100%;
+      box-sizing: border-box;
+    }
+
+    .map-aduan-card:hover {
+      border-color: #cbd5e1;
+      box-shadow: 0 3px 8px rgba(0, 0, 0, 0.06);
+    }
+
+    .mac-row-top {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      min-width: 0;
+    }
+
+    .mac-id {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #334155;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mac-badge {
+      font-size: 0.68rem;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      white-space: nowrap;
+      line-height: 1.2;
+    }
+
+    .mac-badge-baru {
+      background: #fffbeb !important;
+      color: #b45309 !important;
+      border: 1px solid #fde68a !important;
+    }
+
+    .mac-badge-verifikasi {
+      background: #eef2ff !important;
+      color: #4338ca !important;
+      border: 1px solid #c7d2fe !important;
+    }
+
+    .mac-badge-proses {
+      background: #eff6ff !important;
+      color: #1d4ed8 !important;
+      border: 1px solid #bfdbfe !important;
+    }
+
+    .mac-badge-selesai {
+      background: #ecfdf5 !important;
+      color: #047857 !important;
+      border: 1px solid #a7f3d0 !important;
+    }
+
+    .mac-badge-ditolak {
+      background: #f8fafc !important;
+      color: #475569 !important;
+      border: 1px solid #e2e8f0 !important;
+    }
+
+    .mac-row-title {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .mac-category {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: #0f172a;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      line-height: 1.3;
+    }
+
+    .mac-location {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.74rem;
+      color: #64748b;
+      min-width: 0;
+      line-height: 1.3;
+    }
+
+    .mac-loc-text {
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mac-desc {
+      font-size: 0.74rem;
+      color: #475569;
+      margin: 0;
+      line-height: 1.35;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .mac-actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-top: 2px;
+      padding-top: 5px;
+      border-top: 1px dashed #f1f5f9;
+    }
+
+    .btn-mac-highlight {
+      flex: 1;
+      min-width: 0;
+      height: 31px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      color: #334155;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+      padding: 0 10px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+    }
+
+    .btn-mac-highlight:hover {
+      background: #e2e8f0;
+      border-color: #94a3b8;
+      color: #0f172a;
+    }
+
+    .btn-mac-detail {
+      height: 31px;
+      background: #065f46;
+      border: 1px solid #065f46;
+      color: #ffffff;
+      border-radius: 6px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      cursor: pointer;
+      padding: 0 12px;
+      transition: all 0.15s ease;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    .btn-mac-detail:hover {
+      background: #047857;
+      border-color: #047857;
+      color: #ffffff;
+    }
+
+    /* 6. Kolom Kanan: Peta Spasial Leaflet Sticky / Full Height */
+    .map-view-panel {
+      display: block;
+      position: relative;
+      background: #e0f2fe;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      overflow: hidden;
+      min-width: 0;
+    }
+
+    @media (max-width: 1023px) {
+      .map-view-panel {
+        height: 55vh;
+        min-height: 380px;
+      }
+    }
+
+    @media (min-width: 1024px) {
+      .map-view-panel {
+        height: 100% !important;
+        min-height: 0 !important;
+      }
     }
 
     .map-render-container {
-      height: 560px;
-      min-height: 520px;
-      max-height: 580px;
-      width: 100%;
+      width: 100% !important;
+      height: 100% !important;
+      min-height: 100% !important;
       background: #e0f2fe;
     }
 
-    /* Floating Interactive Legend Box */
+    /* Floating Basemap Switcher (Jalan, Satelit, Topografi) */
+    .map-floating-basemap {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      z-index: 1000;
+      display: flex;
+      align-items: center;
+      gap: 3px;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(203, 213, 225, 0.9);
+      padding: 3px;
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    .btn-basemap {
+      padding: 4px 10px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      border-radius: 6px;
+      border: none;
+      background: transparent;
+      color: #475569;
+      cursor: pointer;
+      transition: all 0.15s ease;
+      line-height: 1.2;
+    }
+
+    .btn-basemap:hover {
+      background: #f1f5f9;
+      color: #0f172a;
+    }
+
+    .btn-basemap.active {
+      background: #065f46;
+      color: #ffffff;
+      box-shadow: 0 1px 3px rgba(6, 95, 70, 0.3);
+    }
+
+    /* Floating Glassmorphism Legend di Sudut Peta */
     .map-legend-box {
       position: absolute;
-      bottom: 24px;
-      left: 20px;
-      background: rgba(255, 255, 255, 0.95);
-      backdrop-filter: blur(8px);
-      border: 1px solid rgba(226, 232, 240, 0.9);
-      border-radius: 12px;
-      padding: 12px 14px;
-      box-shadow: 0 8px 24px -4px rgba(0, 0, 0, 0.15);
+      bottom: 12px;
+      left: 12px;
       z-index: 1000;
-      max-width: 260px;
+      background: rgba(255, 255, 255, 0.94);
+      backdrop-filter: blur(8px);
+      border: 1px solid rgba(203, 213, 225, 0.9);
+      border-radius: 8px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      font-size: 0.74rem;
+      max-width: 240px;
+      overflow: hidden;
       transition: all 0.2s ease;
     }
 
     .legend-header {
+      padding: 6px 10px;
       display: flex;
       align-items: center;
       justify-content: space-between;
-      font-size: 0.8rem;
-      color: #0f172a;
-      margin-bottom: 8px;
+      gap: 8px;
+      background: rgba(248, 250, 252, 0.9);
+      border-bottom: 1px solid #e2e8f0;
+      cursor: pointer;
+      user-select: none;
+    }
+
+    .legend-header-title {
       font-weight: 700;
+      color: #1e293b;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
     }
 
     .legend-toggle {
       background: none;
       border: none;
-      font-size: 13px;
       color: #64748b;
+      font-size: 0.85rem;
       cursor: pointer;
-      padding: 0 4px;
+      padding: 0 2px;
     }
 
     .legend-items {
+      padding: 6px 8px;
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 4px;
     }
 
     .legend-item {
       display: flex;
       align-items: center;
-      gap: 8px;
-      font-size: 0.75rem;
-      color: #334155;
-      padding: 4px 6px;
-      border-radius: 6px;
+      gap: 6px;
+      padding: 3px 6px;
+      border-radius: 4px;
       cursor: pointer;
       transition: background 0.15s ease;
     }
 
     .legend-item:hover {
       background: #f1f5f9;
-      color: #0f172a;
     }
 
     .legend-dot {
-      width: 10px;
-      height: 10px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       flex-shrink: 0;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.2);
     }
 
     .legend-text {
-      font-weight: 600;
+      color: #334155;
+      font-size: 0.72rem;
+      line-height: 1.2;
     }
 
     /* Custom Marker Styling (Gov Clean Dot Pin) */
@@ -2215,15 +2903,8 @@
     }
 
     @keyframes markerHalo {
-      0% {
-        transform: scale(0.8);
-        opacity: 0.9;
-      }
-
-      100% {
-        transform: scale(2.4);
-        opacity: 0;
-      }
+      0% { transform: scale(0.8); opacity: 0.9; }
+      100% { transform: scale(2.4); opacity: 0; }
     }
 
     /* Leaflet Tooltip */
@@ -2293,7 +2974,7 @@
       padding-top: 4px;
     }
 
-    /* Leaflet Popup Card (Sesuai Gambar 1) */
+    /* Leaflet Popup Card */
     .map-popup-card {
       font-family: 'Plus Jakarta Sans', sans-serif;
       min-width: 270px;
@@ -2378,281 +3059,6 @@
     .popup-actions {
       display: flex;
       gap: 6px;
-    }
-
-    /* Map Cards Feed (Below Map) - Parent Wrapper Bebas Overflow */
-    .map-cards-section,
-    .section-container,
-    .content-wrapper {
-      width: 100%;
-      max-width: 1200px;
-      margin: 0 auto;
-      padding: 18px 16px 24px;
-      box-sizing: border-box;
-      overflow-x: hidden;
-      background: #ffffff;
-      border-top: 1px solid var(--border);
-    }
-
-    .map-cards-header {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      margin-bottom: 14px;
-      gap: 12px;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    /* 1. Kontainer Grid Kartu Fleksibel */
-    .map-aduan-grid,
-    .aduan-grid,
-    #mapAduanGrid {
-      display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-      gap: 12px;
-      width: 100%;
-      max-width: 100%;
-      box-sizing: border-box;
-      margin-top: 14px;
-      align-items: stretch;
-    }
-
-    /* 4. Penyesuaian Media Queries (Responsif Layar) */
-    /* Layar Lebar (Desktop > 1024px): 3 Kolom seimbang */
-    @media (min-width: 1025px) {
-      .map-aduan-grid,
-      .aduan-grid,
-      #mapAduanGrid {
-        grid-template-columns: repeat(3, minmax(0, 1fr));
-        gap: 12px;
-      }
-    }
-
-    /* Layar Sedang (Tablet 768px - 1024px): 2 Kolom seimbang */
-    @media (min-width: 768px) and (max-width: 1024px) {
-      .map-aduan-grid,
-      .aduan-grid,
-      #mapAduanGrid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 12px;
-      }
-    }
-
-    /* Layar HP (< 768px): 1 Kolom penuh */
-    @media (max-width: 767px) {
-      .map-aduan-grid,
-      .aduan-grid,
-      #mapAduanGrid {
-        grid-template-columns: minmax(0, 1fr);
-        gap: 10px;
-      }
-      .map-cards-section,
-      .section-container,
-      .content-wrapper {
-        padding: 14px 12px 20px;
-      }
-      .map-cards-header {
-        flex-direction: column;
-        align-items: flex-start;
-        gap: 8px;
-      }
-    }
-
-    /* 2. Cegah Grid Item Meluap (Prevent Overflow) */
-    .map-aduan-card,
-    .aduan-card {
-      min-width: 0;
-      width: 100%;
-      max-width: 100%;
-      box-sizing: border-box;
-      overflow: hidden;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 12px 14px;
-      transition: transform 0.2s ease, box-shadow 0.2s ease, border-color 0.2s ease;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      height: 100%;
-    }
-
-    .map-aduan-card:hover,
-    .aduan-card:hover {
-      background: #ffffff;
-      border-color: #cbd5e1;
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
-      transform: translateY(-2px);
-    }
-
-    .mac-content {
-      display: flex;
-      flex-direction: column;
-      min-width: 0;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    /* Baris 1: Header Tiket (ID Register & Badge Status Mini) */
-    .mac-top {
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 6px;
-      margin-bottom: 6px;
-      min-width: 0;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .mac-id {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace;
-      font-weight: 700;
-      color: #334155;
-      font-size: 0.78rem;
-      letter-spacing: 0.2px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      min-width: 0;
-      flex-shrink: 1;
-    }
-
-    .mac-badge {
-      font-size: 0.68rem !important;
-      padding: 2px 8px !important;
-      font-weight: 700;
-      line-height: 1.25;
-      border-radius: 9999px !important;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      max-width: 58%;
-      flex-shrink: 0;
-      box-sizing: border-box;
-    }
-
-    /* Baris 2: Kategori & Lokasi */
-    .mac-title {
-      font-size: 0.85rem;
-      font-weight: 700;
-      color: #0f172a;
-      margin-bottom: 2px;
-      line-height: 1.3;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      min-width: 0;
-      width: 100%;
-    }
-
-    .mac-loc {
-      font-size: 0.75rem;
-      color: #64748b;
-      margin-bottom: 2px;
-      line-height: 1.35;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      display: flex;
-      align-items: center;
-      gap: 3px;
-      min-width: 0;
-      width: 100%;
-    }
-
-    .mac-pin-icon {
-      font-size: 0.72rem;
-      opacity: 0.85;
-      filter: grayscale(40%);
-      flex-shrink: 0;
-    }
-
-    /* Baris 3: Cuplikan Kronologi 1 Baris */
-    .mac-desc {
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      font-size: 0.75rem;
-      color: #64748b;
-      margin: 6px 0 10px 0;
-      line-height: 1.4;
-      min-width: 0;
-      width: 100%;
-    }
-
-    /* Baris 4: Action Bar Ramping */
-    .mac-actions {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      margin-top: auto;
-      padding-top: 4px;
-      min-width: 0;
-      width: 100%;
-      box-sizing: border-box;
-    }
-
-    .btn-mac-highlight {
-      flex: 1;
-      min-width: 0;
-      height: 29px;
-      min-height: 28px;
-      max-height: 30px;
-      background: #f1f5f9;
-      border: 1px solid #cbd5e1;
-      color: #334155;
-      border-radius: 6px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      cursor: pointer;
-      padding: 0 6px;
-      transition: background 0.15s ease, border-color 0.15s ease, color 0.15s ease;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-      box-sizing: border-box;
-      outline: none;
-    }
-
-    .btn-mac-highlight:hover {
-      background: #e2e8f0;
-      border-color: #94a3b8;
-      color: #0f172a;
-    }
-
-    .btn-mac-detail {
-      height: 29px;
-      min-height: 28px;
-      max-height: 30px;
-      background: #059669;
-      border: 1px solid #059669;
-      color: #ffffff;
-      border-radius: 6px;
-      font-size: 0.72rem;
-      font-weight: 600;
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      gap: 4px;
-      cursor: pointer;
-      padding: 4px 10px;
-      transition: background 0.15s ease, border-color 0.15s ease;
-      white-space: nowrap;
-      box-sizing: border-box;
-      outline: none;
-      flex-shrink: 0;
-    }
-
-    .btn-mac-detail:hover {
-      background: #047857;
-      border-color: #047857;
-      color: #ffffff;
     }
 
     /* ===================================================================
@@ -3664,296 +4070,7 @@
         line-height: 1.35;
       }
 
-      /* Peta Spasial Tab di Layar HP */
-      .map-render-container {
-        height: 60vh !important;
-        min-height: 380px;
-        border-radius: 14px;
-      }
 
-      /* Panel Kontrol Peta Spasial Live di Layar HP (Mobile-First Floating GIS) */
-      .map-header-bar {
-        padding: 6px 10px !important;
-        min-height: auto !important;
-        display: flex !important;
-        flex-direction: row !important;
-        align-items: center !important;
-        justify-content: space-between !important;
-        gap: 8px !important;
-        background: #ffffff !important;
-      }
-
-      .map-header-info {
-        min-width: 0 !important;
-        flex: 1 !important;
-      }
-
-      .map-header-top-row {
-        display: flex !important;
-        align-items: center !important;
-        gap: 6px !important;
-        width: 100% !important;
-      }
-
-      .map-main-title {
-        font-size: 0.98rem !important;
-        font-weight: 800 !important;
-        line-height: 1.25 !important;
-        margin: 0 !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-      }
-
-      .map-title-sub-text {
-        display: none !important;
-      }
-
-      .map-badge-live {
-        font-size: 0.62rem !important;
-        padding: 2px 6px !important;
-        margin: 0 !important;
-        flex-shrink: 0 !important;
-      }
-
-      /* Sembunyikan deskripsi panjang di layar ponsel */
-      .map-sub-title {
-        display: none !important;
-      }
-
-      /* Segmented Control Basemap Tipis (30px) */
-      .map-basemap-buttons {
-        height: 30px !important;
-        min-height: 30px !important;
-        padding: 2px !important;
-        gap: 2px !important;
-        border-radius: 7px !important;
-        box-sizing: border-box !important;
-        flex-shrink: 0 !important;
-        background: #e2e8f0 !important;
-      }
-
-      .btn-basemap {
-        height: 100% !important;
-        padding: 0 8px !important;
-        font-size: 0.72rem !important;
-        border-radius: 5px !important;
-        display: inline-flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        white-space: nowrap !important;
-      }
-
-      /* Mini Metric Strip (1 Baris Utuh, max-height 36px) */
-      .map-dashboard-bar {
-        display: flex !important;
-        flex-direction: column !important;
-        padding: 0 !important;
-        background: #ffffff !important;
-        border-bottom: 1px solid var(--border) !important;
-        gap: 0 !important;
-      }
-
-      .map-stats-strip {
-        display: grid !important;
-        grid-template-columns: repeat(4, 1fr) !important;
-        gap: 0 !important;
-        padding: 0 4px !important;
-        height: 34px !important;
-        max-height: 36px !important;
-        background: #f8fafc !important;
-        border: none !important;
-        border-bottom: 1px solid #e2e8f0 !important;
-        border-radius: 0 !important;
-        box-sizing: border-box !important;
-        width: 100% !important;
-      }
-
-      .map-stat-chip {
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        gap: 4px !important;
-        padding: 0 2px !important;
-        text-align: center !important;
-        min-width: 0 !important;
-        background: transparent !important;
-        box-shadow: none !important;
-        border: none !important;
-      }
-
-      .map-stat-divider {
-        display: none !important;
-      }
-
-      .mstat-dot {
-        width: 5px !important;
-        height: 5px !important;
-      }
-
-      .mstat-num {
-        font-size: 0.82rem !important;
-        font-weight: 800 !important;
-        line-height: 1 !important;
-      }
-
-      .mstat-lbl {
-        font-size: 0.64rem !important;
-        color: #64748b !important;
-        line-height: 1 !important;
-        white-space: nowrap !important;
-        overflow: hidden !important;
-        text-overflow: ellipsis !important;
-      }
-
-      /* Filter Dropdown 2 Baris Proporsional (Cegah Terpotong "Sem...") */
-      .map-toolbar {
-        padding: 6px 8px !important;
-        width: 100% !important;
-        box-sizing: border-box !important;
-        background: #ffffff !important;
-        border: none !important;
-      }
-
-      .map-filters-bar {
-        display: flex !important;
-        flex-direction: column !important;
-        gap: 6px !important;
-        width: 100% !important;
-      }
-
-      .map-filters-row-top {
-        display: flex !important;
-        gap: 6px !important;
-        width: 100% !important;
-      }
-
-      .map-filters-row-top .map-filter-col {
-        flex: 1 !important;
-        min-width: 0 !important;
-      }
-
-      .map-filters-row-bottom {
-        display: flex !important;
-        gap: 6px !important;
-        width: 100% !important;
-        align-items: center !important;
-      }
-
-      .map-filters-row-bottom .col-status {
-        flex: 1 !important;
-        min-width: 0 !important;
-      }
-
-      .map-filters-row-bottom .col-reset {
-        flex: 0 0 auto !important;
-      }
-
-      .map-filter-label {
-        display: none !important;
-      }
-
-      .map-select {
-        height: 34px !important;
-        min-height: 34px !important;
-        max-height: 34px !important;
-        font-size: 0.74rem !important;
-        padding: 0 20px 0 8px !important;
-        border-radius: 6px !important;
-        box-sizing: border-box !important;
-        width: 100% !important;
-      }
-
-      .btn-reset-map {
-        height: 34px !important;
-        min-height: 34px !important;
-        max-height: 34px !important;
-        padding: 0 12px !important;
-        font-size: 0.74rem !important;
-        border-radius: 6px !important;
-        white-space: nowrap !important;
-      }
-
-      /* Quick Region Pills di HP (Horizontal Scroll) */
-      .map-region-pills {
-        display: flex !important;
-        overflow-x: auto !important;
-        white-space: nowrap !important;
-        gap: 6px !important;
-        -webkit-overflow-scrolling: touch !important;
-        scrollbar-width: none !important;
-        padding: 6px 8px !important;
-        background: #f8fafc !important;
-        border-bottom: 1px solid var(--border) !important;
-      }
-
-      .map-region-pills::-webkit-scrollbar {
-        display: none !important;
-      }
-
-      .region-pills-label {
-        display: none !important;
-      }
-
-      .pill-region {
-        padding: 4px 12px !important;
-        font-size: 0.74rem !important;
-        border-radius: 9999px !important;
-        flex-shrink: 0 !important;
-      }
-
-      /* Legenda Keterangan Warna Pin di Layar HP (Kompak, Rapi, & Bebas Menutupi Peta) */
-      .map-legend-box {
-        bottom: 10px !important;
-        left: 10px !important;
-        right: 10px !important;
-        max-width: none !important;
-        padding: 6px 12px !important;
-        border-radius: 10px !important;
-        background: rgba(255, 255, 255, 0.94) !important;
-        backdrop-filter: blur(10px) !important;
-        -webkit-backdrop-filter: blur(10px) !important;
-        box-shadow: 0 4px 16px rgba(0, 0, 0, 0.22) !important;
-        border: 1px solid rgba(226, 232, 240, 0.95) !important;
-      }
-
-      .map-legend-box .legend-header {
-        margin-bottom: 0 !important;
-        font-size: 0.72rem !important;
-        cursor: pointer;
-        user-select: none;
-      }
-
-      .map-legend-box .legend-items {
-        display: none;
-        flex-direction: row !important;
-        flex-wrap: wrap !important;
-        gap: 4px 8px !important;
-        margin-top: 6px !important;
-        padding-top: 6px !important;
-        border-top: 1px solid #e2e8f0 !important;
-      }
-
-      .map-legend-box.expanded .legend-items {
-        display: flex !important;
-      }
-
-      .map-legend-box .legend-item {
-        padding: 2px 6px !important;
-        font-size: 0.68rem !important;
-        background: #f8fafc;
-        border-radius: 6px;
-      }
-
-      .map-legend-box .legend-dot {
-        width: 8px !important;
-        height: 8px !important;
-      }
-
-      .map-legend-box .legend-text {
-        font-size: 0.68rem !important;
-        font-weight: 600 !important;
-      }
 
       /* Floating WhatsApp Button HP */
       .floating-wa-btn {
@@ -5059,82 +5176,104 @@
     </section>
 
     <!-- ===============================================================
-         TAB 4: PETA SPASIAL SEBARAN
+         TAB 4: PETA SPASIAL SEBARAN (GEOSPASIAL COMMAND CENTER)
          =============================================================== -->
     <section class="tab-content" id="pane-peta">
 
-      <!-- Tombol Kembali ke Beranda -->
-      <div style="margin-bottom: 12px;">
-        <button type="button" class="btn-back-beranda" onclick="window.app && window.app.switchTab('beranda')" style="background: #ffffff; border: 1.5px solid #cbd5e1; color: #1e293b; font-weight: 700; font-size: 0.84rem; padding: 7px 16px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px; box-shadow: 0 1px 3px rgba(0,0,0,0.06); transition: all 0.2s;">
-          ← Kembali ke Beranda
+      <!-- Top Bar: Tombol Kembali, Judul Komando & Indikator Live -->
+      <div class="map-command-topbar">
+        <div class="map-command-title-group">
+          <button type="button" class="btn-back-beranda" onclick="window.app && window.app.switchTab('beranda')" title="Kembali ke Beranda">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="19" y1="12" x2="5" y2="12"></line>
+              <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            <span>Kembali ke Beranda</span>
+          </button>
+          <div class="map-topbar-headings">
+            <h2 class="map-command-title">Pemantauan Geospasial Aduan Lingkungan</h2>
+            <p class="map-command-subtitle">Command Center SPBE Pengawasan &amp; Respon Lapangan DLH Kabupaten Lembata</p>
+          </div>
+        </div>
+        <div class="map-topbar-meta">
+          <span class="map-badge-live">
+            <span class="live-pulse-dot"></span> LIVE SPATIAL
+          </span>
+        </div>
+      </div>
+
+      <!-- Segmented Tab Switcher Khusus Mobile (< 1024px) -->
+      <div class="map-mobile-switcher" id="mapMobileSwitcher">
+        <button type="button" class="btn-mobi-view active" id="btnMobiViewMap" onclick="window.switchMobileMapView('map')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+            <line x1="8" y1="2" x2="8" y2="18"></line>
+            <line x1="16" y1="6" x2="16" y2="22"></line>
+          </svg>
+          <span>Tampilan Peta</span>
+        </button>
+        <button type="button" class="btn-mobi-view" id="btnMobiViewList" onclick="window.switchMobileMapView('list')">
+          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+          <span>Daftar Titik Aduan (<span id="mobiAduanCount">0</span>)</span>
         </button>
       </div>
 
-      <div class="map-card-box">
+      <!-- Split-Screen Command Center Container -->
+      <div class="map-command-layout" id="mapCommandLayout">
 
-        <!-- Header & Info Edukasi (Mobile-First Ramping, Zero-Emoji) -->
-        <div class="map-header-bar">
-          <div class="map-header-info">
-            <div class="map-header-top-row">
-              <h2 class="map-main-title">Pemantauan Spasial <span class="map-title-sub-text">Lingkungan Lembata</span></h2>
-              <span class="map-badge-live">
-                <span class="live-pulse-dot"></span> LIVE
-              </span>
+        <!-- Kolom Kiri: Panel Pengawasan, Filter & Feed Kartu Aduan -->
+        <div class="map-feed-panel" id="mapFeedPanel">
+          <div class="map-feed-header">
+            <!-- Header Judul Panel & Chip Formal Total Titik -->
+            <div class="map-feed-title-row">
+              <div class="map-feed-heading-wrap">
+                <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="#065f46" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                  <circle cx="12" cy="10" r="3"></circle>
+                </svg>
+                <h3 class="map-feed-title">Sebaran Titik Pengaduan</h3>
+              </div>
+              <span class="map-chip-formal" id="mapFilteredCountBadge">Memuat data...</span>
             </div>
-            <p class="map-sub-title">
-              Visualisasi terbuka dan transparan aduan masyarakat di 9 kecamatan. Gunakan tombol wilayah, filter, atau klik pin untuk melihat kondisi faktual dan tindakan DLH.
-            </p>
-          </div>
 
-          <!-- Quick Basemap Toggle Buttons (Segmented Control Tipis) -->
-          <div class="map-basemap-buttons">
-            <button type="button" class="btn-basemap" id="btnBaseOsm" title="Tampilan Peta Jalan">
-              Jalan
-            </button>
-            <button type="button" class="btn-basemap active" id="btnBaseSat" title="Tampilan Citra Satelit">
-              Satelit
-            </button>
-            <button type="button" class="btn-basemap" id="btnBaseTopo" title="Tampilan Relief Topografi">
-              Topografi
-            </button>
-          </div>
-        </div>
+            <!-- Mini KPI Metric Strip (1 Baris Ringkas: Total, Masuk, Proses, Selesai) -->
+            <div class="map-stats-strip">
+              <div class="map-stat-chip">
+                <span class="mstat-dot dot-total"></span>
+                <span class="mstat-num" id="mapStatTotal">0</span>
+                <span class="mstat-lbl">Total</span>
+              </div>
+              <div class="map-stat-divider"></div>
+              <div class="map-stat-chip chip-amber">
+                <span class="mstat-dot dot-baru"></span>
+                <span class="mstat-num" id="mapStatBaru">0</span>
+                <span class="mstat-lbl">Masuk</span>
+              </div>
+              <div class="map-stat-divider"></div>
+              <div class="map-stat-chip chip-blue">
+                <span class="mstat-dot dot-proses"></span>
+                <span class="mstat-num" id="mapStatProses">0</span>
+                <span class="mstat-lbl">Proses</span>
+              </div>
+              <div class="map-stat-divider"></div>
+              <div class="map-stat-chip chip-green">
+                <span class="mstat-dot dot-selesai"></span>
+                <span class="mstat-num" id="mapStatSelesai">0</span>
+                <span class="mstat-lbl">Selesai</span>
+              </div>
+            </div>
 
-        <!-- Dashboard Control Bar: Mini Metric Strip & Filter Toolbar -->
-        <div class="map-dashboard-bar">
-          <!-- Mini KPI Metric Strip (1 Baris Utuh, Format: [Dot Warna] [Angka] [Label]) -->
-          <div class="map-stats-strip">
-            <div class="map-stat-chip">
-              <span class="mstat-dot dot-total"></span>
-              <span class="mstat-num" id="mapStatTotal">0</span>
-              <span class="mstat-lbl">Total</span>
-            </div>
-            <div class="map-stat-divider"></div>
-            <div class="map-stat-chip chip-amber">
-              <span class="mstat-dot dot-baru"></span>
-              <span class="mstat-num" id="mapStatBaru">0</span>
-              <span class="mstat-lbl">Masuk</span>
-            </div>
-            <div class="map-stat-divider"></div>
-            <div class="map-stat-chip chip-blue">
-              <span class="mstat-dot dot-proses"></span>
-              <span class="mstat-num" id="mapStatProses">0</span>
-              <span class="mstat-lbl">Proses</span>
-            </div>
-            <div class="map-stat-divider"></div>
-            <div class="map-stat-chip chip-green">
-              <span class="mstat-dot dot-selesai"></span>
-              <span class="mstat-num" id="mapStatSelesai">0</span>
-              <span class="mstat-lbl">Selesai</span>
-            </div>
-          </div>
-
-          <!-- Filter Toolbar (Desktop: 1 Baris Sejajar | HP: 2 Baris Proporsional) -->
-          <div class="map-toolbar">
-            <div class="map-filters-bar">
-              <!-- Baris 1 di HP: Kecamatan & Jenis Aduan -->
-              <div class="map-filters-row-top">
-                <div class="map-filter-col col-kecamatan">
+            <!-- Bilah Filter Spasial Ringkas -->
+            <div class="map-toolbar">
+              <div class="map-filters-grid">
+                <div class="map-filter-col">
                   <label class="map-filter-label" for="mapFilterKecamatan">Kecamatan:</label>
                   <select id="mapFilterKecamatan" class="map-select" title="Saring Kecamatan">
                     <option value="all">Semua Kecamatan</option>
@@ -5149,23 +5288,7 @@
                     <option value="Buyasuri">Buyasuri (Wairiang)</option>
                   </select>
                 </div>
-                <div class="map-filter-col col-jenis">
-                  <label class="map-filter-label" for="mapFilterJenis">Jenis Aduan:</label>
-                  <select id="mapFilterJenis" class="map-select" title="Saring Jenis Aduan">
-                    <option value="all">Semua Jenis Aduan</option>
-                    <option value="Laut & Pesisir">Laut &amp; Pesisir</option>
-                    <option value="Sampah Ilegal & Bau">Sampah Ilegal &amp; Bau</option>
-                    <option value="Pencemaran Air">Pencemaran Air &amp; Sungai</option>
-                    <option value="Udara & Asap">Udara &amp; Asap</option>
-                    <option value="Limbah B3 & Kimia">Limbah B3 &amp; Kimia</option>
-                    <option value="Kerusakan Lingkungan & Tanah">Kerusakan Lingkungan &amp; Tanah</option>
-                  </select>
-                </div>
-              </div>
-
-              <!-- Baris 2 di HP: Status Penanganan & Tombol Reset -->
-              <div class="map-filters-row-bottom">
-                <div class="map-filter-col col-status">
+                <div class="map-filter-col">
                   <label class="map-filter-label" for="mapFilterStatus">Status Penanganan:</label>
                   <select id="mapFilterStatus" class="map-select" title="Saring Status Penanganan">
                     <option value="all">Semua Status</option>
@@ -5178,81 +5301,103 @@
                     <option value="Ditolak">Ditolak / Tidak Terbukti</option>
                   </select>
                 </div>
-                <div class="map-filter-col col-reset">
+                <div class="map-filter-col">
+                  <label class="map-filter-label" for="mapFilterJenis">Jenis Aduan:</label>
+                  <select id="mapFilterJenis" class="map-select" title="Saring Jenis Aduan">
+                    <option value="all">Semua Jenis Aduan</option>
+                    <option value="Laut & Pesisir">Laut &amp; Pesisir</option>
+                    <option value="Sampah Ilegal & Bau">Sampah Ilegal &amp; Bau</option>
+                    <option value="Pencemaran Air">Pencemaran Air &amp; Sungai</option>
+                    <option value="Udara & Asap">Udara &amp; Asap</option>
+                    <option value="Limbah B3 & Kimia">Limbah B3 &amp; Kimia</option>
+                    <option value="Kerusakan Lingkungan & Tanah">Kerusakan Lingkungan &amp; Tanah</option>
+                  </select>
+                </div>
+                <div class="map-filter-col col-reset-btn">
                   <button type="button" class="btn-reset-map" id="btnResetMapFilters" title="Kembalikan semua filter ke awal">
-                    Reset Filter
+                    <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                      <path d="M3 3v5h5"></path>
+                    </svg>
+                    <span>Reset</span>
                   </button>
                 </div>
               </div>
             </div>
+
+            <!-- Quick Region Navigator (Pills Horizontal Scroll) -->
+            <div class="map-region-pills">
+              <span class="region-pills-label">Pusatkan:</span>
+              <button type="button" class="pill-region active" data-region="all">Seluruh Lembata</button>
+              <button type="button" class="pill-region" data-region="Nubatukan">Nubatukan</button>
+              <button type="button" class="pill-region" data-region="Ile Ape">Ile Ape</button>
+              <button type="button" class="pill-region" data-region="Ile Ape Timur">Ile Ape Timur</button>
+              <button type="button" class="pill-region" data-region="Lebatukan">Lebatukan</button>
+              <button type="button" class="pill-region" data-region="Kedang">Kedang</button>
+              <button type="button" class="pill-region" data-region="Selatan">Selatan</button>
+              <button type="button" class="pill-region" data-region="Nagawutung">Nagawutung</button>
+            </div>
+          </div>
+
+          <!-- Wadah Scroll Mandiri Daftar Titik Aduan -->
+          <div class="map-feed-scroll" id="mapAduanGrid">
+            <!-- Render dinamis kartu ultra-kompak oleh map.js -->
           </div>
         </div>
 
-        <!-- Quick Region Navigator (Pills Bersih & Horizontal Scroll) -->
-        <div class="map-region-pills">
-          <span class="region-pills-label">Pusatkan Wilayah:</span>
-          <button type="button" class="pill-region active" data-region="all">Seluruh Lembata</button>
-          <button type="button" class="pill-region" data-region="Nubatukan">Nubatukan</button>
-          <button type="button" class="pill-region" data-region="Ile Ape">Ile Ape</button>
-          <button type="button" class="pill-region" data-region="Ile Ape Timur">Ile Ape Timur</button>
-          <button type="button" class="pill-region" data-region="Lebatukan">Lebatukan</button>
-          <button type="button" class="pill-region" data-region="Kedang">Kedang (Omesuri &amp; Buyasuri)</button>
-          <button type="button" class="pill-region" data-region="Selatan">Wulandoni &amp; Atadei</button>
-          <button type="button" class="pill-region" data-region="Nagawutung">Nagawutung</button>
-        </div>
+        <!-- Kolom Kanan: Peta Spasial Leaflet Sticky / Full Height -->
+        <div class="map-view-panel" id="mapViewPanel">
+          <!-- Floating Basemap Switcher (Jalan, Satelit, Topografi) -->
+          <div class="map-floating-basemap">
+            <button type="button" class="btn-basemap" id="btnBaseOsm" title="Tampilan Peta Jalan (OpenStreetMap)">
+              Jalan
+            </button>
+            <button type="button" class="btn-basemap active" id="btnBaseSat" title="Tampilan Citra Satelit (Esri Imagery)">
+              Satelit
+            </button>
+            <button type="button" class="btn-basemap" id="btnBaseTopo" title="Tampilan Relief Topografi">
+              Topografi
+            </button>
+          </div>
 
-        <!-- Map Leaflet Render Area -->
-        <div class="map-container-relative">
+          <!-- Leaflet Map Canvas -->
           <div id="map" class="map-render-container"></div>
 
-          <!-- Floating Legend di Sudut Peta -->
+          <!-- Floating Glassmorphism Legend di Sudut Peta -->
           <div class="map-legend-box" id="mapLegendBox">
             <div class="legend-header">
-              <span><strong>Keterangan Status Pin</strong></span>
-              <button type="button" class="legend-toggle" id="btnToggleLegend"
-                title="Perkecil/Perbesar Legenda">▾</button>
+              <span class="legend-header-title">
+                <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="16" x2="12" y2="12"></line>
+                  <line x1="12" y1="8" x2="12.01" y2="8"></line>
+                </svg>
+                Legenda Status
+              </span>
+              <button type="button" class="legend-toggle" id="btnToggleLegend" title="Perkecil/Perbesar Legenda">▾</button>
             </div>
             <div class="legend-items" id="legendItemsList">
               <div class="legend-item" data-status-filter="Aduan Diterima" title="Klik untuk saring status ini">
                 <span class="legend-dot" style="background: #f59e0b;"></span>
-                <span class="legend-text">Aduan Diterima / Menunggu</span>
+                <span class="legend-text">Aduan Diterima</span>
               </div>
               <div class="legend-item" data-status-filter="Sedang Diverifikasi" title="Klik untuk saring status ini">
                 <span class="legend-dot" style="background: #8b5cf6;"></span>
-                <span class="legend-text">Sedang Diverifikasi Tim DLH</span>
+                <span class="legend-text">Diverifikasi Tim DLH</span>
               </div>
               <div class="legend-item" data-status-filter="Dalam Penanganan" title="Klik untuk saring status ini">
                 <span class="legend-dot" style="background: #2563eb;"></span>
-                <span class="legend-text">Dalam Tindakan Penanganan</span>
+                <span class="legend-text">Dalam Penanganan</span>
               </div>
               <div class="legend-item" data-status-filter="Selesai" title="Klik untuk saring status ini">
                 <span class="legend-dot" style="background: #059669;"></span>
-                <span class="legend-text">Selesai / Pulih Tuntas</span>
+                <span class="legend-text">Selesai Ditangani</span>
               </div>
               <div class="legend-item" data-status-filter="Ditolak" title="Klik untuk saring status ini">
                 <span class="legend-dot" style="background: #64748b;"></span>
                 <span class="legend-text">Ditolak / Tidak Terbukti</span>
               </div>
             </div>
-          </div>
-        </div>
-
-        <!-- Daftar Kartu Titik Aduan Terpilih (Feed / List View di Bawah Peta) -->
-        <div class="map-cards-section">
-          <div class="map-cards-header">
-            <div>
-              <h3 style="font-size: 1.05rem; font-weight: 800; color: #0f172a;">
-                Daftar Titik Aduan di Wilayah Terpilih
-              </h3>
-              <p style="font-size: 0.8rem; color: #64748b; margin: 0;">
-                Klik tombol "Sorot di Peta" untuk memusatkan tampilan ke koordinat lokasi kejadian
-              </p>
-            </div>
-            <span class="badge badge-sedang-diverifikasi" id="mapFilteredCountBadge">Memuat data...</span>
-          </div>
-
-          <div class="map-aduan-grid aduan-grid" id="mapAduanGrid">
-            <!-- Render dinamis kartu aduan -->
           </div>
         </div>
 

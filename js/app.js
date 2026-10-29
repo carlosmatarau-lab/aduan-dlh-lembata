@@ -145,19 +145,28 @@ class DLHApp {
       }, 100);
     }
 
-    // Refresh map when entering peta tab
-    if (tabName === 'peta' && window.lembataMap) {
-      setTimeout(() => {
-        if (window.lembataMap.map) {
-          window.lembataMap.map.invalidateSize();
-          if (typeof window.lembataMap.resetMapView === 'function') {
-            window.lembataMap.resetMapView();
+    // Refresh map when entering peta tab (Geospasial Command Center)
+    const mainWrap = document.querySelector('.main-wrap');
+    if (tabName === 'peta') {
+      if (mainWrap) mainWrap.classList.add('wide-mode');
+      if (window.lembataMap) {
+        setTimeout(() => {
+          if (typeof window.switchMobileMapView === 'function' && window.innerWidth < 1024) {
+            window.switchMobileMapView('map');
           }
-          window.lembataMap.renderMarkers();
-        } else {
-          window.lembataMap.init();
-        }
-      }, 100);
+          if (window.lembataMap.map) {
+            window.lembataMap.map.invalidateSize();
+            if (typeof window.lembataMap.resetMapView === 'function') {
+              window.lembataMap.resetMapView();
+            }
+            window.lembataMap.renderMarkers();
+          } else {
+            window.lembataMap.init();
+          }
+        }, 100);
+      }
+    } else {
+      if (mainWrap) mainWrap.classList.remove('wide-mode');
     }
   }
 

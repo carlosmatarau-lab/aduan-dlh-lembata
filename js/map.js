@@ -321,15 +321,20 @@ class LembataMapEngine {
     if (!item || !item.lat || !item.lng) return;
 
     if (this.map) {
-      // Gulir halaman ke peta secara halus
-      const mapContainer = document.getElementById(this.containerId);
-      if (mapContainer) {
-        mapContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+      // Pada perangkat seluler, beralih otomatis ke tab Peta
+      if (typeof window.switchMobileMapView === 'function' && window.innerWidth < 1024) {
+        window.switchMobileMapView('map');
       }
 
-      this.map.flyTo([item.lat, item.lng], 14, {
+      // Gulir halus jika diperlukan
+      const mapContainer = document.getElementById(this.containerId);
+      if (mapContainer && window.innerWidth < 1024) {
+        mapContainer.scrollIntoView({ behavior: 'smooth', block: 'start' });
+      }
+
+      this.map.flyTo([Number(item.lat), Number(item.lng)], 15, {
         animate: true,
-        duration: 1.2
+        duration: 1.0
       });
 
       setTimeout(() => {
@@ -337,7 +342,7 @@ class LembataMapEngine {
         if (marker) {
           marker.openPopup();
         }
-      }, 1250);
+      }, 1050);
     }
   }
 
@@ -367,21 +372,25 @@ class LembataMapEngine {
     const statProses = document.getElementById('mapStatProses');
     const statSelesai = document.getElementById('mapStatSelesai');
     const badgeCount = document.getElementById('mapFilteredCountBadge');
+    const mobiCount = document.getElementById('mobiAduanCount');
 
     let baru = 0;
     let proses = 0;
     let selesai = 0;
 
     filteredData.forEach(item => {
-      if (item.status === 'Aduan Diterima' || item.status === 'Baru') baru++;
-      else if (item.status === 'Selesai') selesai++;
-      else if (item.status !== 'Ditolak') proses++;
+      const s = String(item.status || '').toLowerCase();
+      if (s.includes('selesai')) selesai++;
+      else if (s.includes('tolak')) { /* ditolak tidak masuk proses aktif */ }
+      else if (s === 'aduan diterima' || s === 'baru') baru++;
+      else proses++;
     });
 
     if (statTotal) statTotal.textContent = filteredData.length;
     if (statBaru) statBaru.textContent = baru;
     if (statProses) statProses.textContent = proses;
     if (statSelesai) statSelesai.textContent = selesai;
+    if (mobiCount) mobiCount.textContent = filteredData.length;
 
     if (badgeCount) {
       const kecLabel = this.activeFilter.kecamatan === 'all' ? 'Seluruh Lembata' : `Kec. ${this.activeFilter.kecamatan}`;
@@ -389,16 +398,16 @@ class LembataMapEngine {
     }
   }
 
-  /* Render Feed Kartu Aduan di Bawah Peta */
+  /* Render Feed Kartu Aduan di Bawah Peta (Command Center Ultra-Compact Card) */
   renderMapFeed(filteredData) {
     const container = document.getElementById('mapAduanGrid');
     if (!container) return;
 
     if (!filteredData || filteredData.length === 0) {
       container.innerHTML = `
-        <div style="grid-column: 1/-1; text-align: center; padding: 32px 16px; background: #f8fafc; border: 1px dashed #cbd5e1; border-radius: 12px; color: #64748b;">
-          <div style="font-size: 1rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Tidak Ada Titik Aduan Sesuai Filter</div>
-          <p style="font-size: 0.82rem; margin: 0;">Silakan ubah pilihan kecamatan, status, atau jenis aduan untuk melihat data lainnya.</p>
+        <div style="text-align: center; padding: 28px 14px; background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 10px; color: #64748b;">
+          <div style="font-size: 0.88rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Tidak Ada Titik Aduan Sesuai Filter</div>
+          <p style="font-size: 0.78rem; margin: 0; line-height: 1.4;">Silakan ubah pilihan kecamatan, status, atau jenis aduan untuk melihat data lainnya.</p>
         </div>
       `;
       return;
@@ -411,7 +420,6 @@ class LembataMapEngine {
       if (!tStr || tStr === '-') return 0;
       const parsed = Date.parse(tStr);
       if (!isNaN(parsed)) return parsed;
-      // Dukung format DD/MM/YYYY atau DD-MM-YYYY
       const parts = String(tStr).match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
       if (parts) {
         return new Date(`${parts[3]}-${parts[2].padStart(2, '0')}-${parts[1].padStart(2, '0')}`).getTime() || 0;
@@ -419,25 +427,39 @@ class LembataMapEngine {
       return 0;
     };
 
-    // Urutkan kartu aduan agar yang paling baru diterima selalu berada di posisi paling depan (paling kiri/atas)
+    // Urutkan kartu aduan agar yang paling baru diterima selalu berada di posisi paling depan
     const listAduanTerbaru = [...filteredData].reverse().sort((a, b) => {
       const timeA = parseTime(a);
       const timeB = parseTime(b);
       if (timeA && timeB && timeA !== timeB) {
-        return timeB - timeA; // Descending: waktu terbaru di urutan pertama
+        return timeB - timeA;
       }
-      // Jika waktu sama atau tidak ada, gunakan Nomor Register / ID secara descending (misal ADU-LMB-2026-025 di depan 024)
       if (a.id && b.id && a.id !== b.id) {
         return String(b.id).localeCompare(String(a.id), undefined, { numeric: true });
       }
       return 0;
     });
 
-    container.innerHTML = listAduanTerbaru.map(item => {
-      const catIcon = this.getCategoryIcon(item.jenisPencemaran);
-      const badgeClass = (item.status || 'baru').toLowerCase().replace(/[^a-z0-9]/g, '-');
+    const getStatusBadgeInfo = (status) => {
+      const s = String(status || '').toLowerCase();
+      if (s.includes('selesai')) {
+        return { cls: 'mac-badge-selesai', label: 'Selesai' };
+      }
+      if (s.includes('tolak')) {
+        return { cls: 'mac-badge-ditolak', label: 'Ditolak' };
+      }
+      if (s.includes('tindak') || s.includes('tangani') || s.includes('proses')) {
+        return { cls: 'mac-badge-proses', label: 'Dalam Penanganan' };
+      }
+      if (s.includes('verifikasi')) {
+        return { cls: 'mac-badge-verifikasi', label: 'Diverifikasi' };
+      }
+      return { cls: 'mac-badge-baru', label: status || 'Aduan Diterima' };
+    };
 
-      // Ambil uraian murni sebelum penanda internal '---' dan format newline menjadi spasi
+    container.innerHTML = listAduanTerbaru.map(item => {
+      const badgeInfo = getStatusBadgeInfo(item.status);
+
       let rawUraian = String(item.uraian || '-');
       if (rawUraian.includes('---')) {
         rawUraian = rawUraian.split('---')[0].trim();
@@ -450,30 +472,52 @@ class LembataMapEngine {
       const desaLabel = desaClean !== '-' ? `Desa ${desaClean}` : 'Desa -';
       const kecLabel = kecClean !== '-' ? `Kec. ${kecClean}` : 'Kec. -';
 
+      const itemLat = Number(item.lat) || 0;
+      const itemLng = Number(item.lng) || 0;
+
       return `
         <div class="map-aduan-card">
-          <div class="mac-content">
-            <!-- Baris 1: Header Tiket (ID Register & Badge Status Mini) -->
-            <div class="mac-top">
-              <span class="mac-id">${item.id}</span>
-              <span class="badge badge-${badgeClass} mac-badge">${item.status}</span>
-            </div>
-
-            <!-- Baris 2: Kategori & Lokasi -->
-            <div class="mac-title">${item.jenisPencemaran || 'Aduan Lingkungan'}</div>
-            <div class="mac-loc">${desaLabel}, ${kecLabel}</div>
-
-            <!-- Baris 3: Cuplikan Kronologi 1 Baris -->
-            <div class="mac-desc" title="${tooltipUraian}">${cleanUraian}</div>
+          <!-- Baris 1: ID Tiket & Badge Status SPBE Formal -->
+          <div class="mac-row-top">
+            <span class="mac-id">${item.id}</span>
+            <span class="mac-badge ${badgeInfo.cls}">${badgeInfo.label}</span>
           </div>
 
-          <!-- Baris 4: Action Bar Ramping -->
+          <!-- Baris 2: Nama Kategori & Lokasi Administratif -->
+          <div class="mac-row-title">
+            <div class="mac-category" title="${item.jenisPencemaran || 'Aduan Lingkungan'}">${item.jenisPencemaran || 'Aduan Lingkungan'}</div>
+            <div class="mac-location">
+              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
+                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
+                <circle cx="12" cy="10" r="3"></circle>
+              </svg>
+              <span class="mac-loc-text">${desaLabel}, ${kecLabel}</span>
+            </div>
+          </div>
+
+          <!-- Baris 3: Cuplikan Kronologi 1 Baris Clamped -->
+          <p class="mac-desc" title="${tooltipUraian}">${cleanUraian}</p>
+
+          <!-- Baris 4: Action Bar Ramping Terintegrasi -->
           <div class="mac-actions">
-            <button type="button" class="btn-mac-highlight" onclick="window.lembataMap.highlightAduan('${item.id}')" title="Pusatkan peta ke titik koordinat ini">
-              Sorot di Peta
+            <button type="button" class="btn-mac-highlight" onclick="sorotDiPeta(${itemLat}, ${itemLng}, '${item.id}')" title="Pusatkan peta ke titik koordinat ini">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="22" y1="12" x2="18" y2="12"></line>
+                <line x1="6" y1="12" x2="2" y2="12"></line>
+                <line x1="12" y1="6" x2="12" y2="2"></line>
+                <line x1="12" y1="22" x2="12" y2="18"></line>
+              </svg>
+              <span>Sorot</span>
             </button>
-            <button type="button" class="btn-mac-detail" onclick="window.app.showDetailModal('${item.id}')" title="Lihat rincian lengkap aduan">
-              Detail
+            <button type="button" class="btn-mac-detail" onclick="bukaDetail('${item.id}')" title="Lihat rincian lengkap aduan">
+              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                <polyline points="14 2 14 8 20 8"></polyline>
+                <line x1="16" y1="13" x2="8" y2="13"></line>
+                <line x1="16" y1="17" x2="8" y2="17"></line>
+              </svg>
+              <span>Detail</span>
             </button>
           </div>
         </div>
@@ -792,10 +836,85 @@ class LembataMapEngine {
 // Global instance
 window.lembataMap = new LembataMapEngine();
 
-// Global helper aliases untuk kompatibilitas sorot peta
-window.sorotDiPeta = function(id) {
-  if (window.lembataMap) window.lembataMap.highlightAduan(id);
+/**
+ * Pengalih Tampilan Peta vs Daftar pada Perangkat Seluler (< 1024px)
+ * @param {'map' | 'list'} mode
+ */
+window.switchMobileMapView = function(mode) {
+  const btnMap = document.getElementById('btnMobiViewMap');
+  const btnList = document.getElementById('btnMobiViewList');
+  const viewPanel = document.getElementById('mapViewPanel');
+  const feedGrid = document.getElementById('mapAduanGrid');
+
+  if (window.innerWidth < 1024) {
+    if (mode === 'map') {
+      if (btnMap) btnMap.classList.add('active');
+      if (btnList) btnList.classList.remove('active');
+      if (viewPanel) viewPanel.style.display = 'block';
+      if (feedGrid) feedGrid.style.display = 'none';
+
+      if (window.lembataMap && window.lembataMap.map) {
+        setTimeout(() => {
+          try {
+            window.lembataMap.map.invalidateSize();
+          } catch(e) {}
+        }, 80);
+      }
+    } else if (mode === 'list') {
+      if (btnList) btnList.classList.add('active');
+      if (btnMap) btnMap.classList.remove('active');
+      if (viewPanel) viewPanel.style.display = 'none';
+      if (feedGrid) feedGrid.style.display = 'flex';
+    }
+  } else {
+    // Pada Desktop (> 1024px), kedua panel tampil bersisian
+    if (viewPanel) viewPanel.style.display = '';
+    if (feedGrid) feedGrid.style.display = '';
+  }
 };
+
+// Pastikan sinkronisasi tata letak saat ukuran layar browser diubah
+window.addEventListener('resize', () => {
+  if (window.innerWidth >= 1024) {
+    const viewPanel = document.getElementById('mapViewPanel');
+    const feedGrid = document.getElementById('mapAduanGrid');
+    if (viewPanel) viewPanel.style.display = '';
+    if (feedGrid) feedGrid.style.display = '';
+  }
+  if (window.lembataMap && window.lembataMap.map) {
+    try {
+      window.lembataMap.map.invalidateSize();
+    } catch(e) {}
+  }
+});
+
+// Global helper aliases untuk kompatibilitas sorot peta & buka detail
+window.sorotDiPeta = function(a, b, c) {
+  const id = c || (typeof a === 'string' ? a : null);
+  const lat = (typeof a === 'number') ? a : null;
+  const lng = (typeof b === 'number') ? b : null;
+
+  if (typeof window.switchMobileMapView === 'function' && window.innerWidth < 1024) {
+    window.switchMobileMapView('map');
+  }
+
+  if (window.lembataMap) {
+    if (id) {
+      window.lembataMap.highlightAduan(id);
+    } else if (lat && lng && window.lembataMap.map) {
+      window.lembataMap.map.flyTo([lat, lng], 15, { animate: true, duration: 1.0 });
+    }
+  }
+};
+
 window.highlightOnMap = function(id) {
-  if (window.lembataMap) window.lembataMap.highlightAduan(id);
+  if (window.sorotDiPeta) window.sorotDiPeta(id);
+};
+
+window.bukaDetail = function(id) {
+  if (window.app && typeof window.app.showDetailModal === 'function') {
+    window.app.showDetailModal(id);
+  } else if (window.portal && typeof window.portal.showDetailModal === 'function') {
+    window.portal.showDetailModal(id);
+  }
 };
