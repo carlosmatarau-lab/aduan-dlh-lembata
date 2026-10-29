@@ -4992,10 +4992,14 @@
       checkAuth() {
         const loginPage = document.getElementById('petugasLoginPage');
         const dashWrap = document.getElementById('dashboardAppWrapper');
+        const token = sessionStorage.getItem('dlh_petugas_token') || localStorage.getItem('dlh_petugas_token');
         const isAuthSession = sessionStorage.getItem('dlh_petugas_auth') === 'true';
         const isAuthRemember = localStorage.getItem('dlh_petugas_remember') === 'true';
 
-        if (isAuthSession || isAuthRemember) {
+        if (token && (isAuthSession || isAuthRemember)) {
+          // Sinkronkan token ke sessionStorage sesi aktif
+          sessionStorage.setItem('dlh_petugas_token', token);
+          sessionStorage.setItem('dlh_petugas_auth', 'true');
           if (loginPage) loginPage.style.display = 'none';
           if (dashWrap) dashWrap.style.display = 'flex';
           try { this.initSplitScreen(); } catch (e) {}
@@ -5003,6 +5007,13 @@
             setTimeout(() => this.map.invalidateSize(), 300);
           }
         } else {
+          // Bersihkan sisa sesi tidak lengkap jika token tidak ditemukan
+          sessionStorage.removeItem('dlh_petugas_auth');
+          sessionStorage.removeItem('dlh_petugas_token');
+          if (!isAuthRemember) {
+            localStorage.removeItem('dlh_petugas_remember');
+            localStorage.removeItem('dlh_petugas_token');
+          }
           if (loginPage) loginPage.style.display = 'flex';
           if (dashWrap) dashWrap.style.display = 'none';
           const input = document.getElementById('inputPetugasPin');
@@ -5057,7 +5068,7 @@
         }
       }
 
-      submitPin() {
+      async submitPin() {
         const input = document.getElementById('inputPetugasPin');
         const card = document.getElementById('authCard');
         const loginPage = document.getElementById('petugasLoginPage');
@@ -5078,78 +5089,116 @@
           return;
         }
 
-        // Daftar kata sandi & PIN resmi petugas yang diterima
-        const validPasswords = [
-          '1999',
-          'dlh1999',
-          'dlh2026',
-          'dlhlembata2026',
-          'petugas',
-          'petugas2026',
-          'petugasdlh2026',
-          'admindlh2026',
-          'lembata',
-          'lembata2026'
-        ];
-        const customPass = localStorage.getItem('dlh_petugas_password') || localStorage.getItem('dlh_custom_pin');
-        if (customPass) validPasswords.push(customPass.toLowerCase());
-
-        const lower = entered.toLowerCase();
-        // Terima hanya jika cocok dengan daftar kata sandi atau PIN petugas yang valid
-        const isMatch = validPasswords.includes(lower);
-
-        if (!isMatch) {
-          this.triggerAuthShake('❌ Kata sandi atau PIN tidak cocok. Silakan periksa kembali kredensial Anda.');
-          input.focus();
-          input.select();
-          return;
-        }
-
-        // Respons Cepat & Buka Dashboard
+        // Tampilkan indikator proses validasi kredensial ke server
         if (errEl) errEl.textContent = '';
         if (submitBtn) submitBtn.disabled = true;
-        if (btnIcon) btnIcon.textContent = '🔓';
-        if (btnText) btnText.textContent = 'Membuka Dashboard...';
+        if (btnIcon) btnIcon.textContent = '⏳';
+        if (btnText) btnText.textContent = 'Memverifikasi Kredensial...';
         if (card) {
-          card.classList.remove('scanning');
-          card.classList.add('unlocking');
+          card.classList.add('scanning');
         }
 
-        setTimeout(() => {
-          sessionStorage.setItem('dlh_petugas_auth', 'true');
-          if (rememberCheck && rememberCheck.checked) {
-            localStorage.setItem('dlh_petugas_remember', 'true');
-          }
-          if (loginPage) loginPage.style.display = 'none';
-          if (dashWrap) dashWrap.style.display = 'flex';
-
-          if (card) {
-            card.classList.remove('unlocking', 'scanning');
-          }
-          if (submitBtn) submitBtn.disabled = false;
-          if (btnIcon) btnIcon.textContent = '🔓';
-          if (btnText) btnText.textContent = 'Buka Dashboard Petugas';
-          if (badgeIcon) badgeIcon.textContent = '🛡️';
-
-          this.showToast('🔓 Akses Berhasil: Selamat bertugas di Dashboard Petugas DLH Lembata!', 'success');
-
-          this.updateKPIs();
-          this.renderTable();
-          this.renderMapLayers();
-          try { this.initSplitScreen(); } catch (e) {}
-          if (this.map) {
-            setTimeout(() => {
-              try { this.map.invalidateSize(); } catch (e) {}
-            }, 100);
+        try {
+          let loginRes = null;
+          // Validasi kredensial langsung ke server Google Apps Script (Server-Side Authentication)
+          if (window.aduanStore && typeof window.aduanStore.postToGAS === 'function') {
+            const res = await window.aduanStore.postToGAS('loginPetugas', { pin: entered });
+            loginRes = (res && res.response) ? res.response : res;
           } else {
-            this.initMap();
+            // Direct fetch fallback jika instansi dataStore belum siap
+            const gasUrl = (window.aduanStore && window.aduanStore.getGasUrl)
+              ? window.aduanStore.getGasUrl()
+              : 'https://script.google.com/macros/s/AKfycbwuDJ9X5a27GnVuuiU1keHexKXzG3OITUxwOomwHGt-1S53DdqfAfguDInXwtbh9ljKMw/exec';
+            const resp = await fetch(gasUrl, {
+              method: 'POST',
+              headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+              body: JSON.stringify({ action: 'loginPetugas', data: { pin: entered } })
+            });
+            loginRes = await resp.json();
           }
-        }, 120);
+
+          if (loginRes && loginRes.success && loginRes.authToken) {
+            const token = loginRes.authToken;
+            sessionStorage.setItem('dlh_petugas_token', token);
+            sessionStorage.setItem('dlh_petugas_auth', 'true');
+
+            if (rememberCheck && rememberCheck.checked) {
+              localStorage.setItem('dlh_petugas_token', token);
+              localStorage.setItem('dlh_petugas_remember', 'true');
+            } else {
+              localStorage.removeItem('dlh_petugas_token');
+              localStorage.removeItem('dlh_petugas_remember');
+            }
+
+            if (card) {
+              card.classList.remove('scanning');
+              card.classList.add('unlocking');
+            }
+            if (btnIcon) btnIcon.textContent = '🔓';
+            if (btnText) btnText.textContent = 'Membuka Dashboard...';
+
+            setTimeout(async () => {
+              if (loginPage) loginPage.style.display = 'none';
+              if (dashWrap) dashWrap.style.display = 'flex';
+
+              if (card) card.classList.remove('unlocking', 'scanning');
+              if (submitBtn) submitBtn.disabled = false;
+              if (btnIcon) btnIcon.textContent = '🔓';
+              if (btnText) btnText.textContent = 'Buka Dashboard Petugas';
+              if (badgeIcon) badgeIcon.textContent = '🛡️';
+
+              this.showToast('🔓 Akses Berhasil: Selamat bertugas di Dashboard Petugas DLH Lembata!', 'success');
+
+              // Sinkronkan data langsung dari server agar data PII unmasked termutakhirkan
+              if (window.aduanStore && typeof window.aduanStore.syncFromGAS === 'function') {
+                try {
+                  await window.aduanStore.syncFromGAS(true);
+                } catch (e) {}
+              }
+
+              this.updateKPIs();
+              this.renderTable();
+              this.renderMapLayers();
+              try { this.initSplitScreen(); } catch (e) {}
+              if (this.map) {
+                setTimeout(() => {
+                  try { this.map.invalidateSize(); } catch (e) {}
+                }, 100);
+              } else {
+                this.initMap();
+              }
+            }, 120);
+          } else {
+            // Validasi server gagal
+            if (card) card.classList.remove('scanning');
+            if (submitBtn) submitBtn.disabled = false;
+            if (btnIcon) btnIcon.textContent = '🔒';
+            if (btnText) btnText.textContent = 'Buka Dashboard Petugas';
+
+            const errMsg = (loginRes && loginRes.error)
+              ? loginRes.error
+              : 'Kata sandi atau PIN tidak cocok. Silakan periksa kembali kredensial Anda.';
+            this.triggerAuthShake('❌ ' + errMsg);
+            input.focus();
+            input.select();
+          }
+        } catch (err) {
+          console.error('Login error:', err);
+          if (card) card.classList.remove('scanning');
+          if (submitBtn) submitBtn.disabled = false;
+          if (btnIcon) btnIcon.textContent = '🔒';
+          if (btnText) btnText.textContent = 'Buka Dashboard Petugas';
+
+          this.triggerAuthShake('⚠️ Gagal terhubung ke server autentikasi: ' + (err.message || 'Periksa koneksi jaringan'));
+          input.focus();
+        }
       }
 
       lockPortal() {
         sessionStorage.removeItem('dlh_petugas_auth');
+        sessionStorage.removeItem('dlh_petugas_token');
         localStorage.removeItem('dlh_petugas_remember');
+        localStorage.removeItem('dlh_petugas_token');
         const loginPage = document.getElementById('petugasLoginPage');
         const dashWrap = document.getElementById('dashboardAppWrapper');
         if (loginPage) loginPage.style.display = 'flex';

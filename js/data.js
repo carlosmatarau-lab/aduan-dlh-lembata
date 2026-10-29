@@ -1308,6 +1308,20 @@ class AduanDataStore {
     }
   }
 
+  getAuthToken() {
+    try {
+      if (typeof sessionStorage !== 'undefined') {
+        const s = sessionStorage.getItem('dlh_petugas_token');
+        if (s && s.trim()) return s.trim();
+      }
+      if (typeof localStorage !== 'undefined') {
+        const l = localStorage.getItem('dlh_petugas_token');
+        if (l && l.trim()) return l.trim();
+      }
+    } catch (e) {}
+    return '';
+  }
+
   hasGasConfigured() {
     const url = this.getGasUrl();
     return !!(url && url.trim().startsWith('http'));
@@ -1335,7 +1349,11 @@ class AduanDataStore {
     // 2. Fetch rekaman dari GAS endpoint via action getById
     try {
       const gasUrl = this.getGasUrl();
-      const url = `${gasUrl}${gasUrl.includes('?') ? '&' : '?'}action=getById&id=${encodeURIComponent(baseId)}&_t=${Date.now()}`;
+      const authToken = this.getAuthToken();
+      let url = `${gasUrl}${gasUrl.includes('?') ? '&' : '?'}action=getById&id=${encodeURIComponent(baseId)}&_t=${Date.now()}`;
+      if (authToken) {
+        url += `&token=${encodeURIComponent(authToken)}`;
+      }
       const res = await fetch(url, { method: 'GET', mode: 'cors' });
       const json = await res.json();
       if (json && json.success && json.data) {
@@ -1499,7 +1517,11 @@ class AduanDataStore {
         }
 
         // Endpoint resmi Google Apps Script Web App
+        const authToken = this.getAuthToken();
         endpoint = `${endpoint}${endpoint.includes('?') ? '&' : '?'}action=getAll&_t=${Date.now()}`;
+        if (authToken) {
+          endpoint += `&token=${encodeURIComponent(authToken)}`;
+        }
         const response = await fetch(endpoint, { method: 'GET', mode: 'cors' });
         if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
         const json = await response.json();
@@ -1691,7 +1713,9 @@ class AduanDataStore {
     if (!endpoint || !endpoint.startsWith('http')) return { success: false, offline: true };
 
     try {
-      const bodyStr = JSON.stringify({ action: action, data: payload });
+      const token = this.getAuthToken();
+      const bodyPayload = { action: action, token: token, data: payload };
+      const bodyStr = JSON.stringify(bodyPayload);
       // Gunakan fetch standar tanpa keepalive agar tidak terkena kuota batas 64KB browser (W3C/WHATWG)
       // saat mengunggah bukti foto Base64 ke Google Apps Script
       const response = await fetch(endpoint, {
@@ -1700,7 +1724,8 @@ class AduanDataStore {
         body: bodyStr
       });
       const data = await response.json();
-      return { success: true, response: data };
+      const isSuccess = (data && data.success !== undefined) ? data.success : true;
+      return { success: isSuccess, response: data, ...data };
     } catch (err) {
       console.warn(`Gagal kirim '${action}' ke Google Apps Script:`, err);
       return { success: false, error: err.message };
