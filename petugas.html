@@ -5258,9 +5258,20 @@
         if (!container || typeof L === 'undefined') return;
 
         try {
+          // Kunci batas koordinat Kabupaten Lembata agar tidak bisa digeser keluar pulau
+          const lembataBounds = L.latLngBounds(
+            L.latLng(-8.70, 123.10), // Batas Barat Daya
+            L.latLng(-8.10, 123.95)  // Batas Timur Laut
+          );
+
+          // Terapkan konfigurasi viewport dan limitasi zoom yang identik dengan index.html
           this.map = L.map('petugasMap', {
-            center: this.centerCoords,
-            zoom: 11,
+            center: [-8.37, 123.55],
+            zoom: 10,
+            minZoom: 9,
+            maxZoom: 18,
+            maxBounds: lembataBounds,
+            maxBoundsViscosity: 1.0, // Peta membal kembali jika dipaksa geser ke luar Lembata
             zoomControl: true,
             scrollWheelZoom: true
           });
