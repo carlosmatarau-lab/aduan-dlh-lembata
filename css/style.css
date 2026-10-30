@@ -1395,6 +1395,14 @@ body {
 }
 
 /* Bilah Filter Spasial */
+.map-filter-toggle-row {
+  display: none;
+}
+
+.map-filters-collapsible {
+  display: block;
+}
+
 .map-toolbar {
   padding: 8px 10px;
   background: #ffffff;
@@ -1407,13 +1415,10 @@ body {
   align-items: end;
 }
 
-@media (max-width: 768px) {
+@media (max-width: 767px) {
   .map-filters-grid {
     grid-template-columns: 1fr 1fr;
     gap: 6px;
-  }
-  .map-filters-grid .col-reset-btn {
-    grid-column: span 2;
   }
 }
 
@@ -1742,17 +1747,33 @@ body {
   min-width: 0;
 }
 
-@media (max-width: 1023px) {
-  .map-view-panel {
-    height: 55vh;
-    min-height: 380px;
-  }
-}
-
 @media (min-width: 1024px) {
   .map-view-panel {
     height: 100% !important;
     min-height: 0 !important;
+  }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+  .map-view-panel {
+    height: 56vh;
+    min-height: 400px;
+  }
+}
+
+@media (max-width: 767px) {
+  .map-view-panel {
+    width: 100% !important;
+    height: 68vh !important;
+    min-height: 440px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: 1px solid #e2e8f0 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    box-shadow: none !important;
   }
 }
 
@@ -2092,4 +2113,438 @@ body {
 .popup-actions {
   display: flex;
   gap: 6px;
+}
+
+/* ===================================================================
+   MOBILE-FIRST SPATIAL MAP OPTIMIZATION (< 768px)
+   Full-Bleed, Edge-to-Edge Canvas, Single-Row Header, De-Cluttered Map
+   =================================================================== */
+@media (max-width: 767px) {
+  /* 1. Eliminasi Margin & Padding Luar (Full-Bleed) */
+  .main-wrap.wide-mode,
+  .main-wrap:has(#pane-peta.active) {
+    padding-left: 0 !important;
+    padding-right: 0 !important;
+    padding-top: 4px !important;
+    padding-bottom: 24px !important;
+    max-width: 100% !important;
+    width: 100% !important;
+  }
+
+  #pane-peta {
+    padding: 0 !important;
+    margin: 0 !important;
+    width: 100% !important;
+  }
+
+  .map-command-layout {
+    gap: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  /* 2. Header & Identitas: Satu Baris Kompak */
+  .map-command-topbar {
+    display: flex !important;
+    flex-direction: row !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    flex-wrap: nowrap !important;
+    padding: 6px 10px !important;
+    margin-bottom: 4px !important;
+    gap: 8px !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+  }
+
+  .map-command-title-group {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px !important;
+    min-width: 0 !important;
+    flex: 1 !important;
+  }
+
+  .btn-back-beranda {
+    padding: 4px 8px !important;
+    font-size: 0.74rem !important;
+    height: 28px !important;
+    border-radius: 999px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .map-topbar-headings {
+    min-width: 0 !important;
+    flex: 1 !important;
+    overflow: hidden !important;
+  }
+
+  .map-command-title {
+    font-size: 0.84rem !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    margin: 0 !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Hapus Subjudul Panjang di Mobile */
+  .map-command-subtitle {
+    display: none !important;
+  }
+
+  .map-topbar-meta {
+    flex-shrink: 0 !important;
+  }
+
+  .map-badge-live {
+    font-size: 0.62rem !important;
+    padding: 2px 6px !important;
+  }
+
+  /* Segmented Mobile Switcher (Peta vs Daftar) */
+  .map-mobile-switcher {
+    margin: 6px 8px !important;
+    padding: 3px !important;
+    border-radius: 8px !important;
+    background: #f1f5f9 !important;
+  }
+
+  .btn-mobi-view {
+    padding: 6px 10px !important;
+    font-size: 0.75rem !important;
+  }
+
+  /* 3. Kanvas Peta Penuh Tepi (Edge-to-Edge Full-Bleed 68vh) */
+  .map-view-panel {
+    width: 100% !important;
+    height: 68vh !important;
+    min-height: 440px !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: 1px solid #e2e8f0 !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    box-shadow: none !important;
+  }
+
+  #map,
+  .map-render-container {
+    width: 100% !important;
+    height: 100% !important;
+    min-height: 100% !important;
+    border-radius: 0 !important;
+    border: none !important;
+    margin: 0 !important;
+  }
+
+  /* 4. Dekompresi Panel Kontrol & Filter */
+  .map-feed-panel {
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+    box-shadow: none !important;
+    width: 100% !important;
+  }
+
+  .map-feed-header {
+    border-bottom: none !important;
+  }
+
+  .map-feed-title-row {
+    padding: 6px 10px !important;
+  }
+
+  .map-feed-title {
+    font-size: 0.82rem !important;
+  }
+
+  .map-chip-formal {
+    font-size: 0.66rem !important;
+    padding: 2px 6px !important;
+  }
+
+  /* Mini Metric Strip: 1 Baris Horizontal Chip (flex-nowrap overflow-x-auto gap-1.5) */
+  .map-stats-strip {
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: nowrap !important;
+    overflow-x: auto !important;
+    gap: 6px !important;
+    padding: 4px 10px !important;
+    background: #f8fafc !important;
+    border-bottom: 1px solid #e2e8f0 !important;
+    scrollbar-width: none !important;
+    -webkit-overflow-scrolling: touch !important;
+    box-sizing: border-box !important;
+  }
+  .map-stats-strip::-webkit-scrollbar {
+    display: none;
+  }
+
+  .map-stat-chip {
+    flex: 1 0 auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 4px !important;
+    padding: 3px 8px !important;
+    background: #ffffff !important;
+    border: 1px solid #e2e8f0 !important;
+    border-radius: 999px !important;
+    font-size: 0.7rem !important;
+    box-sizing: border-box !important;
+  }
+
+  .mstat-dot {
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  .mstat-num {
+    font-size: 0.76rem !important;
+    font-weight: 800 !important;
+  }
+
+  .mstat-lbl {
+    font-size: 0.65rem !important;
+    color: #64748b !important;
+  }
+
+  /* Baris Toggle Filter Mobile */
+  .map-filter-toggle-row {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    padding: 4px 10px !important;
+    background: #ffffff !important;
+    border-bottom: 1px solid #f1f5f9 !important;
+  }
+
+  .map-filter-toggle-hint {
+    font-size: 0.68rem !important;
+    font-weight: 600 !important;
+    color: #64748b !important;
+  }
+
+  .btn-toggle-filters-mobile {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 4px !important;
+    font-size: 0.7rem !important;
+    font-weight: 700 !important;
+    color: #065f46 !important;
+    background: #ecfdf5 !important;
+    border: 1px solid #a7f3d0 !important;
+    padding: 3px 8px !important;
+    border-radius: 6px !important;
+    cursor: pointer !important;
+    line-height: 1.2 !important;
+  }
+
+  /* Collapsible Filters Container */
+  .map-filters-collapsible.collapsed {
+    display: none !important;
+  }
+
+  /* Filter Padat: 2 Kolom Rapat (grid grid-cols-2 gap-1.5) */
+  .map-toolbar {
+    padding: 6px 10px !important;
+    background: #ffffff !important;
+  }
+
+  .map-filters-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 6px !important;
+    width: 100% !important;
+    align-items: end !important;
+  }
+
+  .map-filter-col {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 2px !important;
+    min-width: 0 !important;
+  }
+
+  .map-filter-label {
+    font-size: 0.64rem !important;
+    font-weight: 700 !important;
+    color: #64748b !important;
+    margin: 0 !important;
+    white-space: nowrap !important;
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+  }
+
+  .map-select {
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    font-size: 0.72rem !important;
+    padding: 0 6px !important;
+    border-radius: 6px !important;
+    border: 1px solid #cbd5e1 !important;
+    background-color: #ffffff !important;
+    width: 100% !important;
+  }
+
+  .btn-reset-map {
+    height: 32px !important;
+    min-height: 32px !important;
+    max-height: 32px !important;
+    font-size: 0.72rem !important;
+    padding: 0 6px !important;
+    border-radius: 6px !important;
+    width: 100% !important;
+  }
+
+  .map-region-pills {
+    padding: 4px 10px !important;
+    gap: 4px !important;
+    background: #f8fafc !important;
+  }
+
+  .pill-region {
+    padding: 2px 8px !important;
+    font-size: 0.68rem !important;
+  }
+
+  /* 5. Pembersihan Kanvas Peta (De-Cluttering Map Mobile) */
+  /* Sembunyikan kontrol layer bawaan Leaflet */
+  .leaflet-control-layers {
+    display: none !important;
+  }
+
+  /* Sembunyikan label landmark permanen di atas pulau agar tidak bertumpuk */
+  .landmark-map-label {
+    display: none !important;
+  }
+
+  /* Basemap switcher mengambang kompak */
+  .map-floating-basemap {
+    top: 8px !important;
+    right: 8px !important;
+    padding: 2px !important;
+    gap: 2px !important;
+    border-radius: 6px !important;
+  }
+
+  .btn-basemap {
+    padding: 3px 7px !important;
+    font-size: 0.68rem !important;
+    border-radius: 5px !important;
+  }
+
+  /* Legenda Kompak (Floating Pill Button di Sudut Kiri Bawah) */
+  .map-legend-box {
+    position: absolute !important;
+    bottom: 12px !important;
+    left: 8px !important;
+    right: auto !important;
+    z-index: 1000 !important;
+    background: rgba(255, 255, 255, 0.92) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
+    border: 1px solid #cbd5e1 !important;
+    border-radius: 6px !important;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12) !important;
+    font-size: 0.7rem !important;
+    max-width: 200px !important;
+    padding: 0 !important;
+    margin: 0 !important;
+  }
+
+  .legend-header {
+    padding: 4px 8px !important;
+    cursor: pointer !important;
+    user-select: none !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: space-between !important;
+    gap: 6px !important;
+    border-radius: 6px !important;
+    background: transparent !important;
+    border-bottom: none !important;
+  }
+
+  .map-legend-box.expanded .legend-header {
+    border-bottom: 1px solid #e2e8f0 !important;
+    border-radius: 6px 6px 0 0 !important;
+    background: rgba(248, 250, 252, 0.95) !important;
+  }
+
+  .map-legend-box:not(.expanded) .legend-items {
+    display: none !important;
+  }
+
+  .map-legend-box.expanded .legend-items {
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 4px !important;
+    padding: 6px 8px !important;
+    background: rgba(255, 255, 255, 0.98) !important;
+    border-radius: 0 0 6px 6px !important;
+  }
+
+  .legend-header-title {
+    font-size: 0.7rem !important;
+    font-weight: 700 !important;
+    color: #1e293b !important;
+  }
+
+  .legend-toggle {
+    font-size: 0.7rem !important;
+    color: #64748b !important;
+  }
+
+  .legend-item {
+    font-size: 0.68rem !important;
+    padding: 2px 4px !important;
+  }
+
+  .legend-dot {
+    width: 6px !important;
+    height: 6px !important;
+  }
+
+  .legend-text {
+    font-size: 0.68rem !important;
+  }
+
+  /* 6. Z-Index & Penempatan Tombol WhatsApp di Mobile */
+  body:has(#pane-peta.active) .floating-wa-btn,
+  .main-wrap.wide-mode ~ .floating-wa-btn {
+    bottom: 20px !important;
+    right: 10px !important;
+    padding: 9px !important;
+    z-index: 995 !important;
+  }
+
+  .leaflet-bottom.leaflet-right {
+    max-width: 60% !important;
+    overflow: hidden !important;
+  }
+
+  .leaflet-control-attribution {
+    font-size: 8px !important;
+    background: rgba(255, 255, 255, 0.7) !important;
+    margin-right: 48px !important; /* Mencegah benturan dengan tombol WA */
+  }
+
+  /* Feed Wadah Scroll Mandiri di Layar Ponsel */
+  .map-feed-scroll {
+    max-height: 65vh !important;
+    padding: 8px !important;
+    gap: 8px !important;
+  }
 }

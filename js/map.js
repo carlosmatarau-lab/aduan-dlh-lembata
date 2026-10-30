@@ -91,6 +91,8 @@ class LembataMapEngine {
       // Default basemap: Peta Jalan OSM
       osmLayer.addTo(this.map);
 
+      // Quick Basemap Switcher menggunakan tombol mengambang (.map-floating-basemap)
+      // Kontrol bawaan Leaflet dihilangkan agar tidak menduplikasi kontrol dan menghemat ruang kanvas
       this.baseLayers = {
         'osm': osmLayer,
         'street': esriStreetLayer,
@@ -98,15 +100,6 @@ class LembataMapEngine {
         'topo': topoLayer
       };
       this.currentBaseLayer = 'osm';
-
-      // Kontrol Layer Bawaan Leaflet di Pojok Kanan Atas
-      const layerControlLabels = {
-        'Peta Jalan (OSM)': osmLayer,
-        'Peta Jalan & Kota (Esri)': esriStreetLayer,
-        'Citra Satelit': satLayer,
-        'Relief Topografi': topoLayer
-      };
-      L.control.layers(layerControlLabels, null, { position: 'topright' }).addTo(this.map);
 
       // Tambahkan skala jarak (metric)
       L.control.scale({ imperial: false, position: 'bottomright' }).addTo(this.map);
@@ -243,7 +236,7 @@ class LembataMapEngine {
         const catIcon = this.getCategoryIcon(item.jenisPencemaran);
         const badgeClass = (item.status || 'baru').toLowerCase().replace(/[^a-z0-9]/g, '-');
 
-        // 1. Tooltip Instan Saat Kursor Diarahkan (Hover)
+        // 1. Tooltip Instan Saat Kursor Diarahkan (Hover) - Non-permanent agar tidak mengotori layar mobile
         marker.bindTooltip(`
           <div class="map-tooltip-content">
             <div class="tt-header">
@@ -259,7 +252,8 @@ class LembataMapEngine {
           direction: 'top',
           offset: [0, -32],
           opacity: 0.98,
-          className: 'custom-map-tooltip'
+          className: 'custom-map-tooltip',
+          permanent: false
         });
 
         // 2. Popup Interaktif Saat Pin Diklik
@@ -623,31 +617,33 @@ class LembataMapEngine {
     }
   }
 
-  /* Setup Interaksi Legenda Peta */
+  /* Setup Interaksi Legenda Peta (Floating Pill Button Collapsed by Default) */
   setupLegendInteractions() {
     const toggleBtn = document.getElementById('btnToggleLegend');
     const itemsList = document.getElementById('legendItemsList');
-
     const box = document.getElementById('mapLegendBox');
+    const arrow = document.getElementById('legendArrowIcon');
     const header = box ? box.querySelector('.legend-header') : null;
 
+    // Default tertutup (collapsed)
+    if (itemsList) itemsList.style.display = 'none';
+    if (box) box.classList.remove('expanded');
+    if (arrow) arrow.textContent = '▾';
+    if (toggleBtn) toggleBtn.textContent = '▾';
+
     const toggleFn = () => {
-      if (!itemsList) return;
-      const isExpanded = box && box.classList.contains('expanded');
-      if (box) {
-        if (isExpanded) {
-          box.classList.remove('expanded');
-          itemsList.style.display = 'none';
-          if (toggleBtn) toggleBtn.textContent = '▸';
-        } else {
-          box.classList.add('expanded');
-          itemsList.style.display = 'flex';
-          if (toggleBtn) toggleBtn.textContent = '▾';
-        }
+      if (!itemsList || !box) return;
+      const isExpanded = box.classList.contains('expanded');
+      if (isExpanded) {
+        box.classList.remove('expanded');
+        itemsList.style.display = 'none';
+        if (arrow) arrow.textContent = '▾';
+        if (toggleBtn) toggleBtn.textContent = '▾';
       } else {
-        const isHidden = itemsList.style.display === 'none';
-        itemsList.style.display = isHidden ? 'flex' : 'none';
-        if (toggleBtn) toggleBtn.textContent = isHidden ? '▾' : '▸';
+        box.classList.add('expanded');
+        itemsList.style.display = 'flex';
+        if (arrow) arrow.textContent = '▴';
+        if (toggleBtn) toggleBtn.textContent = '▴';
       }
     };
 
@@ -659,7 +655,10 @@ class LembataMapEngine {
     }
 
     if (header) {
-      header.addEventListener('click', toggleFn);
+      header.addEventListener('click', (e) => {
+        e.stopPropagation();
+        toggleFn();
+      });
     }
 
     // Klik item legenda untuk langsung memfilter status
@@ -835,6 +834,27 @@ class LembataMapEngine {
 
 // Global instance
 window.lembataMap = new LembataMapEngine();
+
+/**
+ * Toggle Bilah Filter & Wilayah pada Perangkat Seluler (< 768px)
+ */
+window.toggleMapFiltersMobile = function() {
+  const container = document.getElementById('mapFiltersCollapsible');
+  const btnText = document.getElementById('filterToggleBtnText');
+  const arrow = document.getElementById('filterToggleArrow');
+  if (!container) return;
+
+  const isCollapsed = container.classList.contains('collapsed');
+  if (isCollapsed) {
+    container.classList.remove('collapsed');
+    if (btnText) btnText.textContent = 'Tutup Filter';
+    if (arrow) arrow.textContent = '▴';
+  } else {
+    container.classList.add('collapsed');
+    if (btnText) btnText.textContent = 'Buka Filter';
+    if (arrow) arrow.textContent = '▾';
+  }
+};
 
 /**
  * Pengalih Tampilan Peta vs Daftar pada Perangkat Seluler (< 1024px)
