@@ -1084,6 +1084,7 @@ function saveBase64ImageToDrive(base64Data, idAduan) {
 // HANDLER AKSI: TAMBAH ADUAN BARU (POST)
 // ==================================================================================
 function handleAddAduan(formData) {
+  formData = formData || {};
   const lock = LockService.getScriptLock();
   try {
     lock.waitLock(20000); // Tunggu hingga 20 detik jika ada proses bersamaan
@@ -2960,6 +2961,35 @@ function mintaIzinOtorisasi() {
 function kirimPesanWhatsApp() {
   return testSendWhatsApp();
 }
+
+/**
+ * 9. Fungsi Simulasi Uji Coba Aduan Lengkap (Testing handleAddAduan + WhatsApp Otomatis)
+ * Pilih fungsi ini di toolbar editor dan klik "Jalankan" untuk menguji seluruh proses end-to-end
+ */
+function testSimulasiAduanBaru() {
+  var props = PropertiesService.getScriptProperties();
+  var nomorPetugas = props.getProperty('PETUGAS_WA_NUMBER') || '085602149754';
+  var testPhone = nomorPetugas.split(',')[0].trim();
+
+  var dataDummy = {
+    namaPelapor: 'Budi Santoso (Warga Uji Coba)',
+    noHp: testPhone,
+    alamatPelapor: 'Jl. Trans Lembata',
+    kecamatan: 'Nubatukan',
+    desa: 'Lewoleba Timur',
+    lokasiDetail: 'Dermaga Lewoleba',
+    jenisPencemaran: 'Pencemaran Sampah',
+    uraian: 'Ini adalah pesan uji coba end-to-end: pencatatan database dan pengiriman otomatis WhatsApp Gateway Fonnte.',
+    sumberDugaan: 'Aktivitas Warga',
+    tanggalKejadian: Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd')
+  };
+
+  Logger.log('🚀 Memulai simulasi aduan baru dengan nomor pengujian: ' + testPhone);
+  var hasil = handleAddAduan(dataDummy);
+  Logger.log('🎉 Hasil simulasi aduan: ' + JSON.stringify(hasil));
+  return hasil;
+}
+
 
 
 
