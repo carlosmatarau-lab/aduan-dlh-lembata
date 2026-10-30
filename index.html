@@ -2309,6 +2309,10 @@
       flex-shrink: 0;
     }
 
+    .map-chip-formal .badge-sub-label {
+      display: inline;
+    }
+
     /* Mini KPI Metric Strip */
     .map-stats-strip {
       display: grid;
@@ -2995,12 +2999,51 @@
       padding-top: 4px;
     }
 
+    /* Custom Leaflet Popup DLH Lembata */
+    .custom-dlh-popup .leaflet-popup-content-wrapper {
+      padding: 0;
+      border-radius: 10px;
+      box-shadow: 0 4px 18px rgba(0, 0, 0, 0.16);
+      border: 1px solid #cbd5e1;
+      overflow: hidden;
+      background: #ffffff;
+    }
+
+    .custom-dlh-popup .leaflet-popup-content {
+      margin: 10px 12px;
+      line-height: 1.4;
+      font-size: 0.78rem;
+      max-width: 290px;
+    }
+
+    .custom-dlh-popup .leaflet-popup-tip {
+      background: #ffffff;
+    }
+
     /* Leaflet Popup Card */
     .map-popup-card {
       font-family: 'Plus Jakarta Sans', sans-serif;
-      min-width: 270px;
-      max-width: 320px;
-      padding: 4px;
+      min-width: 240px;
+      max-width: 290px;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .popup-body-scroll {
+      max-height: 180px;
+      overflow-y: auto;
+      padding-right: 4px;
+      margin-bottom: 8px;
+      scrollbar-width: thin;
+    }
+
+    .popup-body-scroll::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .popup-body-scroll::-webkit-scrollbar-thumb {
+      background: #cbd5e1;
+      border-radius: 4px;
     }
 
     .popup-head {
@@ -3089,10 +3132,11 @@
     @media (max-width: 767px) {
       /* 1. Eliminasi Margin & Padding Luar (Full-Bleed) */
       .main-wrap.wide-mode,
+      .main-wrap.peta-active,
       .main-wrap:has(#pane-peta.active) {
         padding-left: 0 !important;
         padding-right: 0 !important;
-        padding-top: 4px !important;
+        padding-top: 0 !important;
         padding-bottom: 24px !important;
         max-width: 100% !important;
         width: 100% !important;
@@ -3227,16 +3271,45 @@
       }
 
       .map-feed-title-row {
-        padding: 6px 10px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        padding: 8px 10px !important;
+        gap: 8px !important;
+        flex-wrap: nowrap !important;
       }
 
+      .map-feed-heading-wrap {
+        display: flex !important;
+        align-items: center !important;
+        gap: 6px !important;
+        flex: 0 0 auto !important;
+        min-width: 0 !important;
+      }
+
+      /* Judul "Sebaran Titik Pengaduan" utuh tanpa elipsis/terpotong */
       .map-feed-title {
         font-size: 0.82rem !important;
+        font-weight: 700 !important;
+        color: #1e293b !important;
+        white-space: nowrap !important;
+        overflow: visible !important;
+        text-overflow: clip !important;
+        margin: 0 !important;
+        line-height: 1.2 !important;
       }
 
       .map-chip-formal {
-        font-size: 0.66rem !important;
-        padding: 2px 6px !important;
+        font-size: 0.68rem !important;
+        padding: 2px 7px !important;
+        white-space: nowrap !important;
+        flex: 0 0 auto !important;
+        border-radius: 6px !important;
+      }
+
+      /* Sembunyikan label panjang pada badge status di mobile ("15 Titik") */
+      .map-chip-formal .badge-sub-label {
+        display: none !important;
       }
 
       /* Mini Metric Strip: 1 Baris Horizontal Chip (flex-nowrap overflow-x-auto gap-1.5) */
@@ -3513,6 +3586,76 @@
         max-height: 65vh !important;
         padding: 8px !important;
         gap: 8px !important;
+      }
+
+      /* 7. Leaflet Custom DLH Popup Mobile */
+      .custom-dlh-popup .leaflet-popup-content {
+        margin: 8px 10px !important;
+        font-size: 0.72rem !important;
+        max-width: 260px !important;
+      }
+
+      .map-popup-card {
+        min-width: 220px !important;
+        max-width: 260px !important;
+        font-size: 0.72rem !important;
+      }
+
+      .popup-body-scroll {
+        max-height: 160px !important;
+        overflow-y: auto !important;
+      }
+
+      .popup-head {
+        margin-bottom: 4px !important;
+        padding-bottom: 4px !important;
+      }
+
+      .popup-id {
+        font-size: 0.8rem !important;
+      }
+
+      .popup-cat {
+        font-size: 0.78rem !important;
+        margin-bottom: 5px !important;
+      }
+
+      .popup-location {
+        font-size: 0.7rem !important;
+        padding: 5px 8px !important;
+        margin-bottom: 5px !important;
+        border-radius: 6px !important;
+      }
+
+      .popup-detail-loc,
+      .popup-coords {
+        font-size: 0.65rem !important;
+        margin-top: 2px !important;
+      }
+
+      .popup-chronology {
+        font-size: 0.7rem !important;
+        margin-bottom: 5px !important;
+      }
+
+      .popup-chronology p {
+        font-size: 0.7rem !important;
+        margin-top: 2px !important;
+        line-height: 1.35 !important;
+      }
+
+      .popup-dlh-status {
+        font-size: 0.7rem !important;
+        padding: 5px 8px !important;
+        margin-bottom: 6px !important;
+        border-radius: 6px !important;
+        line-height: 1.35 !important;
+      }
+
+      .popup-actions .btn {
+        font-size: 0.72rem !important;
+        padding: 6px 10px !important;
+        height: 30px !important;
       }
     }
 
@@ -5695,7 +5838,7 @@
                 </svg>
                 <h3 class="map-feed-title">Sebaran Titik Pengaduan</h3>
               </div>
-              <span class="map-chip-formal" id="mapFilteredCountBadge">Memuat data...</span>
+              <span class="map-chip-formal" id="mapFilteredCountBadge"><span class="badge-count-num">Memuat...</span><span class="badge-sub-label"></span></span>
             </div>
 
             <!-- Mini KPI Metric Strip (1 Baris Ringkas: Total, Masuk, Proses, Selesai) -->

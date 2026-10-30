@@ -148,7 +148,10 @@ class DLHApp {
     // Refresh map when entering peta tab (Geospasial Command Center)
     const mainWrap = document.querySelector('.main-wrap');
     if (tabName === 'peta') {
-      if (mainWrap) mainWrap.classList.add('wide-mode');
+      if (mainWrap) {
+        mainWrap.classList.add('wide-mode');
+        mainWrap.classList.add('peta-active');
+      }
       if (window.lembataMap) {
         setTimeout(() => {
           if (typeof window.switchMobileMapView === 'function' && window.innerWidth < 1024) {
@@ -166,7 +169,10 @@ class DLHApp {
         }, 100);
       }
     } else {
-      if (mainWrap) mainWrap.classList.remove('wide-mode');
+      if (mainWrap) {
+        mainWrap.classList.remove('wide-mode');
+        mainWrap.classList.remove('peta-active');
+      }
     }
   }
 

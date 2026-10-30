@@ -112,6 +112,13 @@ class LembataMapEngine {
 
       // Render pertama kali
       this.renderMarkers();
+
+      // Pastikan petak peta Leaflet terisi penuh tanpa celah abu-abu
+      setTimeout(() => {
+        try {
+          if (this.map) this.map.invalidateSize();
+        } catch (e) {}
+      }, 250);
     } catch (err) {
       console.error('Error saat inisialisasi Leaflet:', err);
       this.initSvgFallback();
@@ -236,6 +243,29 @@ class LembataMapEngine {
         const catIcon = this.getCategoryIcon(item.jenisPencemaran);
         const badgeClass = (item.status || 'baru').toLowerCase().replace(/[^a-z0-9]/g, '-');
 
+        // Sanitasi teks uraian (pisahkan aduan asli dari tag sistem backend internal)
+        let cleanUraian = (item.uraian || '-').trim();
+        if (cleanUraian.includes('---')) {
+          cleanUraian = cleanUraian.split('---')[0].trim();
+        }
+        cleanUraian = cleanUraian
+          .replace(/\[PENYELESAIAN_DIINGINKAN\]:[\s\S]*/gi, '')
+          .replace(/\[RIWAYAT_INSTANSI\]:[\s\S]*/gi, '')
+          .replace(/\[[A-Z0-9_]+:[^\]]*\]/gi, '')
+          .trim();
+        if (!cleanUraian) cleanUraian = '-';
+
+        // Sanitasi teks tindakan DLH jika ada
+        let cleanTindakan = (item.tindakanDLH && item.tindakanDLH !== '-') ? item.tindakanDLH.trim() : '';
+        if (cleanTindakan) {
+          if (cleanTindakan.includes('---')) {
+            cleanTindakan = cleanTindakan.split('---')[0].trim();
+          }
+          cleanTindakan = cleanTindakan
+            .replace(/\[[A-Z0-9_]+:[^\]]*\]/gi, '')
+            .trim();
+        }
+
         // 1. Tooltip Instan Saat Kursor Diarahkan (Hover) - Non-permanent agar tidak mengotori layar mobile
         marker.bindTooltip(`
           <div class="map-tooltip-content">
@@ -245,7 +275,7 @@ class LembataMapEngine {
             </div>
             <div class="tt-title">${item.jenisPencemaran}</div>
             <div class="tt-loc">Desa ${item.desa}, Kec. ${item.kecamatan}</div>
-            <div class="tt-desc">${(item.uraian || '').substring(0, 80)}${item.uraian && item.uraian.length > 80 ? '...' : ''}</div>
+            <div class="tt-desc">${cleanUraian.substring(0, 80)}${cleanUraian.length > 80 ? '...' : ''}</div>
             <div class="tt-hint">Klik pin untuk melihat detail aduan</div>
           </div>
         `, {
@@ -256,7 +286,7 @@ class LembataMapEngine {
           permanent: false
         });
 
-        // 2. Popup Interaktif Saat Pin Diklik
+        // 2. Popup Interaktif Saat Pin Diklik (Auto-pan aman, terbebas dari teks mentah sistem)
         const popupContent = `
           <div class="map-popup-card">
             <div class="popup-head">
@@ -268,34 +298,47 @@ class LembataMapEngine {
               <strong>${item.jenisPencemaran}</strong>
             </div>
 
-            <div class="popup-location">
-              <strong>Lokasi Kejadian:</strong><br>
-              Desa ${item.desa}, Kec. ${item.kecamatan}
-              <div class="popup-detail-loc">Patokan: ${item.lokasiDetail || '-'}</div>
-              <div class="popup-coords">Koordinat: ${item.lat}, ${item.lng}</div>
-            </div>
-
-            <div class="popup-chronology">
-              <strong>Uraian Aduan:</strong>
-              <p>${item.uraian}</p>
-            </div>
-
-            ${item.tindakanDLH && item.tindakanDLH !== '-' ? `
-              <div class="popup-dlh-status">
-                <strong>Tindakan DLH:</strong><br>
-                ${item.tindakanDLH}
+            <div class="popup-body-scroll">
+              <div class="popup-location">
+                <strong>Lokasi Kejadian:</strong><br>
+                Desa ${item.desa}, Kec. ${item.kecamatan}
+                <div class="popup-detail-loc">Patokan: ${item.lokasiDetail || '-'}</div>
+                <div class="popup-coords">Koordinat: ${item.lat}, ${item.lng}</div>
               </div>
-            ` : ''}
+
+              <div class="popup-chronology">
+                <strong>Uraian Aduan:</strong>
+                <p>${cleanUraian}</p>
+              </div>
+
+              ${cleanTindakan ? `
+                <div class="popup-dlh-status">
+                  <strong>Tindakan DLH:</strong><br>
+                  ${cleanTindakan}
+                </div>
+              ` : ''}
+            </div>
 
             <div class="popup-actions">
-              <button class="btn btn-sm btn-primary" onclick="window.app.showDetailModal('${item.id}')" style="flex: 1;">
+              <button class="btn btn-sm btn-primary" onclick="window.app && window.app.showDetailModal ? window.app.showDetailModal('${item.id}') : (window.showDetailModal ? window.showDetailModal('${item.id}') : null)" style="flex: 1; width: 100%;">
                 Lihat Detail Aduan &amp; Foto
               </button>
             </div>
           </div>
         `;
 
-        marker.bindPopup(popupContent, { maxWidth: 320 });
+        const popupOptions = {
+          maxWidth: 290,
+          minWidth: 240,
+          autoPan: true,
+          keepInView: true,
+          autoPanPaddingTopLeft: L.point(15, 90),
+          autoPanPaddingBottomRight: L.point(15, 20),
+          closeButton: true,
+          className: 'custom-dlh-popup'
+        };
+
+        marker.bindPopup(popupContent, popupOptions);
         this.markersGroup.addLayer(marker);
 
         // Simpan instance marker agar bisa dibuka dari daftar feed
@@ -388,7 +431,7 @@ class LembataMapEngine {
 
     if (badgeCount) {
       const kecLabel = this.activeFilter.kecamatan === 'all' ? 'Seluruh Lembata' : `Kec. ${this.activeFilter.kecamatan}`;
-      badgeCount.textContent = `${filteredData.length} Titik Terpantau (${kecLabel})`;
+      badgeCount.innerHTML = `<span class="badge-count-num">${filteredData.length} Titik</span><span class="badge-sub-label"> Terpantau (${kecLabel})</span>`;
     }
   }
 
@@ -647,15 +690,9 @@ class LembataMapEngine {
       }
     };
 
-    if (toggleBtn) {
-      toggleBtn.addEventListener('click', (e) => {
-        e.stopPropagation();
-        toggleFn();
-      });
-    }
-
-    if (header) {
-      header.addEventListener('click', (e) => {
+    const clickTarget = header || toggleBtn;
+    if (clickTarget) {
+      clickTarget.addEventListener('click', (e) => {
         e.stopPropagation();
         toggleFn();
       });
