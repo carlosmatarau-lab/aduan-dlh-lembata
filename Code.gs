@@ -2812,20 +2812,20 @@ function generatePelaporMessage(data) {
   }
 
   var lines = [
-    '*TANDA TERIMA PENGADUAN — DLH LEMBATA*',
+    '*TANDA TERIMA PENGADUAN - DLH LEMBATA*',
     '',
     'Halo *' + nama + '*, laporan Anda telah tercatat dengan rincian:',
-    '• *No. Tiket* : ' + id,
-    '• *Kategori* : ' + kategori
+    '*No. Tiket* : ' + id,
+    '*Kategori* : ' + kategori
   ];
 
   if (lokasi) {
-    lines.push('• *Lokasi* : ' + lokasi);
+    lines.push('*Lokasi* : ' + lokasi);
   }
 
   lines.push(
-    '• *Ringkasan* : ' + isiAduan,
-    '• *Status* : Menunggu Verifikasi',
+    '*Ringkasan* : ' + isiAduan,
+    '*Status* : Menunggu Verifikasi',
     '',
     'Pantau tindak lanjut laporan:',
     trackUrl,
@@ -2865,18 +2865,18 @@ function generatePetugasAlert(data) {
   var dashboardUrl = 'https://aduan-dlh-lembata.vercel.app/petugas.html';
 
   var lines = [
-    '*ADUAN BARU MASUK — DLH LEMBATA*',
+    '*ADUAN BARU MASUK - DLH LEMBATA*',
     '',
-    '• *No. Tiket* : ' + id,
-    '• *Waktu* : ' + waktu,
-    '• *Pelapor* : ' + nama + ' (' + noHp + ')',
-    '• *Wilayah* : ' + wilayah,
-    '• *Kategori* : ' + kategori,
-    '• *Uraian* : "' + isiAduan + '"'
+    '*No. Tiket* : ' + id,
+    '*Waktu* : ' + waktu,
+    '*Pelapor* : ' + nama + ' (' + noHp + ')',
+    '*Wilayah* : ' + wilayah,
+    '*Kategori* : ' + kategori,
+    '*Uraian* : ' + isiAduan
   ];
 
   if (data.lokasiDetail && data.lokasiDetail !== '-') {
-    lines.push('• *Patokan* : ' + data.lokasiDetail);
+    lines.push('*Patokan* : ' + data.lokasiDetail);
   }
 
   lines.push(
