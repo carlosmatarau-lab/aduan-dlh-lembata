@@ -2943,4 +2943,23 @@ function testSendWhatsApp() {
   return res;
 }
 
+/**
+ * 7. FUNGSI PEMICU OTORISASI IZIN EKSTERNAL (mintaIzinOtorisasi)
+ * Jalankan fungsi ini jika muncul pesan: "Anda tidak memiliki izin untuk memanggil UrlFetchApp.fetch"
+ * Fungsi ini TIDAK menggunakan try...catch agar sistem Google langsung membuka jendela pop-up otorisasi ("Tinjau Izin" / "Review Permissions")
+ */
+function mintaIzinOtorisasi() {
+  // Panggilan langsung tanpa try-catch untuk memicu dialog OAuth Consent resmi Google
+  UrlFetchApp.fetch('https://api.fonnte.com', { muteHttpExceptions: true });
+  Logger.log('✅ Otorisasi izin external request (UrlFetchApp) BERHASIL diberikan!');
+}
+
+/**
+ * 8. Alias fungsi kirimPesanWhatsApp untuk kompatibilitas pemilihan fungsi di toolbar editor
+ */
+function kirimPesanWhatsApp() {
+  return testSendWhatsApp();
+}
+
+
 
