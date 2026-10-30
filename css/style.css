@@ -1266,16 +1266,17 @@ body {
 
 @media (min-width: 1024px) {
   .map-command-layout {
-    display: grid !important;
-    grid-template-columns: 5fr 7fr !important;
-    gap: 16px !important;
-    height: calc(100vh - 120px) !important;
-    min-height: 640px !important;
-    max-height: 900px !important;
+    display: flex !important;
+    flex-direction: column !important;
+    gap: 14px !important;
+    width: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
+    max-height: none !important;
   }
 }
 
-/* 4. Kolom Kiri: Panel Pengawasan, Filter & Feed Kartu Aduan */
+/* 4. Panel Pengawasan, Filter & Navigasi Spasial */
 .map-feed-panel {
   display: flex;
   flex-direction: column;
@@ -1289,7 +1290,8 @@ body {
 
 @media (min-width: 1024px) {
   .map-feed-panel {
-    height: 100% !important;
+    width: 100% !important;
+    height: auto !important;
     min-height: 0 !important;
   }
 }
@@ -1297,7 +1299,6 @@ body {
 .map-feed-header {
   flex-shrink: 0;
   background: #ffffff;
-  border-bottom: 1px solid #e2e8f0;
 }
 
 .map-feed-title-row {
@@ -1753,15 +1754,17 @@ body {
 
 @media (min-width: 1024px) {
   .map-view-panel {
-    height: 100% !important;
-    min-height: 0 !important;
+    width: 100% !important;
+    height: calc(100vh - 270px) !important;
+    min-height: 560px !important;
   }
 }
 
 @media (min-width: 768px) and (max-width: 1023px) {
   .map-view-panel {
-    height: 56vh;
-    min-height: 400px;
+    width: 100% !important;
+    height: 60vh !important;
+    min-height: 460px !important;
   }
 }
 
@@ -2060,14 +2063,22 @@ body {
   max-width: 290px;
   display: flex;
   flex-direction: column;
+  padding: 2px 2px 4px 2px;
 }
 
 .popup-body-scroll {
-  max-height: 180px;
+  max-height: 220px;
   overflow-y: auto;
   padding-right: 4px;
-  margin-bottom: 8px;
+  margin-bottom: 2px;
   scrollbar-width: thin;
+}
+
+#mapMobileSwitcher,
+.map-mobile-switcher,
+#mapAduanGrid,
+.map-feed-scroll {
+  display: none !important;
 }
 
 .popup-body-scroll::-webkit-scrollbar {
@@ -2632,11 +2643,13 @@ body {
     min-width: 220px !important;
     max-width: 260px !important;
     font-size: 0.72rem !important;
+    padding-bottom: 2px !important;
   }
 
   .popup-body-scroll {
-    max-height: 160px !important;
+    max-height: 180px !important;
     overflow-y: auto !important;
+    margin-bottom: 2px !important;
   }
 
   .popup-head {

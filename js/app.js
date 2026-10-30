@@ -2261,7 +2261,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         <td><strong style="color: #065f46; font-family: monospace;">${item.id}</strong></td>
         <td style="color: #64748b; font-size: 0.8rem; white-space: nowrap;">${item.timestamp.split(' ')[0]}</td>
         <td><strong>${item.namaPelapor}</strong></td>
-        <td>Kec. ${item.kecamatan}<br><small style="color: #64748b;">Desa: ${item.desa}</small></td>
+        <td>Kec. ${item.kecamatan}<br><small style="color: #64748b;">${window.formatWilayahAdministratif ? window.formatWilayahAdministratif(item.desa) : 'Desa: ' + item.desa}</small></td>
         <td><span style="font-weight: 600; color: #059669;">${item.jenisPencemaran}</span></td>
         <td style="text-align: center; white-space: nowrap;">
           <button class="btn btn-outline btn-sm" onclick="window.app.showDetailModal('${item.id}')" title="Lihat Rincian Aduan">
@@ -2410,7 +2410,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         </div>
         <div style="font-size: 0.82rem; color: #334155; line-height: 1.5;">
           <div><strong>Jenis:</strong> <span style="color:#059669; font-weight:700;">${item.jenisPencemaran}</span></div>
-          <div><strong>Lokasi:</strong> Kec. ${item.kecamatan}, Desa ${item.desa}</div>
+          <div><strong>Lokasi:</strong> Kec. ${item.kecamatan}, ${window.formatWilayahAdministratif ? window.formatWilayahAdministratif(item.desa) : 'Desa ' + item.desa}</div>
           <div><strong>Waktu Lapor:</strong> ${item.timestamp}</div>
           ${item.petugasVerifikasi && item.petugasVerifikasi !== '-' ? `<div style="margin-top: 4px; color: #047857;"><strong>Petugas DLH:</strong> ${item.petugasVerifikasi}</div>` : '<div style="margin-top: 4px; color: #d97706;"><em>Menunggu penugasan tim verifikator lapangan DLH.</em></div>'}
           ${item.tindakanDLH && item.tindakanDLH !== '-' ? `<div style="margin-top: 2px; color: #0284c7;"><strong>Tindak Lanjut:</strong> ${item.tindakanDLH}</div>` : ''}
@@ -2639,7 +2639,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         <div style="background: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; border-radius: 8px;">
           <div style="color: #64748b; font-size: 0.72rem; font-weight: 800; letter-spacing: 0.3px;">LOKASI KEJADIAN</div>
           <strong style="color: #0f172a; font-size: 0.88rem; display: block; margin-top: 2px;">Kec. ${item.kecamatan}</strong>
-          <span style="color: #475569; font-size: 0.8rem;">Desa/Kel. ${item.desa}</span>
+          <span style="color: #475569; font-size: 0.8rem;">${window.formatWilayahAdministratif ? window.formatWilayahAdministratif(item.desa) : 'Desa/Kel. ' + item.desa}</span>
         </div>
       </div>
 

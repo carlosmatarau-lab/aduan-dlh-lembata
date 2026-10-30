@@ -1,8 +1,43 @@
 /**
  * SISTEM PENDATAAN DIGITAL ADUAN PENCEMARAN LINGKUNGAN
  * DINAS LINGKUNGAN HIDUP KABUPATEN LEMBATA
- * Enhanced Interactive Map Engine (Leaflet + Citra Satelit + Tooltips + Feed)
+ * Enhanced Interactive Map Engine (Leaflet + Citra Satelit + Tooltips)
  */
+
+/**
+ * Format nama wilayah administratif Desa vs Kelurahan Kabupaten Lembata
+ * @param {string} rawNama
+ * @returns {string}
+ */
+function formatWilayahAdministratif(rawNama) {
+  if (!rawNama || rawNama === '-') return '-';
+  let clean = String(rawNama).trim();
+
+  const daftarKelurahan = [
+    'lewoleba', 'lewoleba utara', 'lewoleba selatan', 
+    'lewoleba tengah', 'lewoleba timur', 'lewoleba barat', 'selandoro'
+  ];
+
+  // Cek apakah string mengandung penanda kelurahan
+  const isTaggedKelurahan = /\(kelurahan\)|^kelurahan\s+/i.test(clean);
+
+  // Bersihkan awalan Desa/Kelurahan dan akhiran (Kelurahan)/(Desa)
+  clean = clean
+    .replace(/^(desa|kelurahan|kel\.?)\s+/i, '')
+    .replace(/\s*\((kelurahan|desa)\)/i, '')
+    .trim();
+
+  if (!clean || clean === '-') return '-';
+
+  const isKnownKelurahan = daftarKelurahan.includes(clean.toLowerCase());
+
+  if (isTaggedKelurahan || isKnownKelurahan) {
+    return `Kelurahan ${clean}`;
+  }
+  return `Desa ${clean}`;
+}
+
+window.formatWilayahAdministratif = formatWilayahAdministratif;
 
 class LembataMapEngine {
   constructor(containerId = 'map') {
@@ -20,6 +55,7 @@ class LembataMapEngine {
     };
     this.baseLayers = {};
     this.currentBaseLayer = 'osm';
+    this.formatWilayahAdministratif = formatWilayahAdministratif;
   }
 
   init() {
@@ -266,6 +302,9 @@ class LembataMapEngine {
             .trim();
         }
 
+        // Sanitasi wilayah administratif (Desa vs Kelurahan resmi Lembata)
+        const desaKelFormatted = formatWilayahAdministratif(item.desa);
+
         // 1. Tooltip Instan Saat Kursor Diarahkan (Hover) - Non-permanent agar tidak mengotori layar mobile
         marker.bindTooltip(`
           <div class="map-tooltip-content">
@@ -274,9 +313,9 @@ class LembataMapEngine {
               <span class="tt-status" style="background: ${color}25; color: ${color};">${item.status}</span>
             </div>
             <div class="tt-title">${item.jenisPencemaran}</div>
-            <div class="tt-loc">Desa ${item.desa}, Kec. ${item.kecamatan}</div>
+            <div class="tt-loc">${desaKelFormatted}, Kec. ${item.kecamatan}</div>
             <div class="tt-desc">${cleanUraian.substring(0, 80)}${cleanUraian.length > 80 ? '...' : ''}</div>
-            <div class="tt-hint">Klik pin untuk melihat detail aduan</div>
+            <div class="tt-hint">Klik pin untuk melihat ringkasan aduan</div>
           </div>
         `, {
           direction: 'top',
@@ -286,7 +325,7 @@ class LembataMapEngine {
           permanent: false
         });
 
-        // 2. Popup Interaktif Saat Pin Diklik (Auto-pan aman, terbebas dari teks mentah sistem)
+        // 2. Popup Interaktif Saat Pin Diklik (Auto-pan aman, informasi umum publik ringkas tanpa tombol detail modal)
         const popupContent = `
           <div class="map-popup-card">
             <div class="popup-head">
@@ -301,7 +340,7 @@ class LembataMapEngine {
             <div class="popup-body-scroll">
               <div class="popup-location">
                 <strong>Lokasi Kejadian:</strong><br>
-                Desa ${item.desa}, Kec. ${item.kecamatan}
+                ${desaKelFormatted}, Kec. ${item.kecamatan}
                 <div class="popup-detail-loc">Patokan: ${item.lokasiDetail || '-'}</div>
                 <div class="popup-coords">Koordinat: ${item.lat}, ${item.lng}</div>
               </div>
@@ -317,12 +356,6 @@ class LembataMapEngine {
                   ${cleanTindakan}
                 </div>
               ` : ''}
-            </div>
-
-            <div class="popup-actions">
-              <button class="btn btn-sm btn-primary" onclick="window.app && window.app.showDetailModal ? window.app.showDetailModal('${item.id}') : (window.showDetailModal ? window.showDetailModal('${item.id}') : null)" style="flex: 1; width: 100%;">
-                Lihat Detail Aduan &amp; Foto
-              </button>
             </div>
           </div>
         `;
@@ -435,131 +468,13 @@ class LembataMapEngine {
     }
   }
 
-  /* Render Feed Kartu Aduan di Bawah Peta (Command Center Ultra-Compact Card) */
+  /* Render Feed Kartu Aduan dinonaktifkan (Peta Spasial adalah satu-satunya tampilan visual utama) */
   renderMapFeed(filteredData) {
     const container = document.getElementById('mapAduanGrid');
-    if (!container) return;
-
-    if (!filteredData || filteredData.length === 0) {
-      container.innerHTML = `
-        <div style="text-align: center; padding: 28px 14px; background: #ffffff; border: 1px dashed #cbd5e1; border-radius: 10px; color: #64748b;">
-          <div style="font-size: 0.88rem; font-weight: 700; color: #334155; margin-bottom: 4px;">Tidak Ada Titik Aduan Sesuai Filter</div>
-          <p style="font-size: 0.78rem; margin: 0; line-height: 1.4;">Silakan ubah pilihan kecamatan, status, atau jenis aduan untuk melihat data lainnya.</p>
-        </div>
-      `;
-      return;
+    if (container) {
+      container.style.display = 'none';
+      container.innerHTML = '';
     }
-
-    // Helper parser timestamp/tanggal aduan yang fleksibel
-    const parseTime = (item) => {
-      if (!item) return 0;
-      const tStr = item.timestamp || item.waktuLapor || item.tanggal || item.tanggalKejadian;
-      if (!tStr || tStr === '-') return 0;
-      const parsed = Date.parse(tStr);
-      if (!isNaN(parsed)) return parsed;
-      const parts = String(tStr).match(/^(\d{1,2})[\/\-](\d{1,2})[\/\-](\d{4})/);
-      if (parts) {
-        return new Date(`${parts[3]}-${parts[2].padStart(2, '0')}-${parts[1].padStart(2, '0')}`).getTime() || 0;
-      }
-      return 0;
-    };
-
-    // Urutkan kartu aduan agar yang paling baru diterima selalu berada di posisi paling depan
-    const listAduanTerbaru = [...filteredData].reverse().sort((a, b) => {
-      const timeA = parseTime(a);
-      const timeB = parseTime(b);
-      if (timeA && timeB && timeA !== timeB) {
-        return timeB - timeA;
-      }
-      if (a.id && b.id && a.id !== b.id) {
-        return String(b.id).localeCompare(String(a.id), undefined, { numeric: true });
-      }
-      return 0;
-    });
-
-    const getStatusBadgeInfo = (status) => {
-      const s = String(status || '').toLowerCase();
-      if (s.includes('selesai')) {
-        return { cls: 'mac-badge-selesai', label: 'Selesai' };
-      }
-      if (s.includes('tolak')) {
-        return { cls: 'mac-badge-ditolak', label: 'Ditolak' };
-      }
-      if (s.includes('tindak') || s.includes('tangani') || s.includes('proses')) {
-        return { cls: 'mac-badge-proses', label: 'Dalam Penanganan' };
-      }
-      if (s.includes('verifikasi')) {
-        return { cls: 'mac-badge-verifikasi', label: 'Diverifikasi' };
-      }
-      return { cls: 'mac-badge-baru', label: status || 'Aduan Diterima' };
-    };
-
-    container.innerHTML = listAduanTerbaru.map(item => {
-      const badgeInfo = getStatusBadgeInfo(item.status);
-
-      let rawUraian = String(item.uraian || '-');
-      if (rawUraian.includes('---')) {
-        rawUraian = rawUraian.split('---')[0].trim();
-      }
-      const cleanUraian = rawUraian.replace(/\r?\n+/g, ' ').trim() || '-';
-      const tooltipUraian = cleanUraian.replace(/"/g, '&quot;');
-
-      const desaClean = String(item.desa || '-').replace(/^desa\s+/i, '');
-      const kecClean = String(item.kecamatan || '-').replace(/^kec(\.|\s+)/i, '');
-      const desaLabel = desaClean !== '-' ? `Desa ${desaClean}` : 'Desa -';
-      const kecLabel = kecClean !== '-' ? `Kec. ${kecClean}` : 'Kec. -';
-
-      const itemLat = Number(item.lat) || 0;
-      const itemLng = Number(item.lng) || 0;
-
-      return `
-        <div class="map-aduan-card">
-          <!-- Baris 1: ID Tiket & Badge Status SPBE Formal -->
-          <div class="mac-row-top">
-            <span class="mac-id">${item.id}</span>
-            <span class="mac-badge ${badgeInfo.cls}">${badgeInfo.label}</span>
-          </div>
-
-          <!-- Baris 2: Nama Kategori & Lokasi Administratif -->
-          <div class="mac-row-title">
-            <div class="mac-category" title="${item.jenisPencemaran || 'Aduan Lingkungan'}">${item.jenisPencemaran || 'Aduan Lingkungan'}</div>
-            <div class="mac-location">
-              <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" style="flex-shrink:0;">
-                <path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path>
-                <circle cx="12" cy="10" r="3"></circle>
-              </svg>
-              <span class="mac-loc-text">${desaLabel}, ${kecLabel}</span>
-            </div>
-          </div>
-
-          <!-- Baris 3: Cuplikan Kronologi 1 Baris Clamped -->
-          <p class="mac-desc" title="${tooltipUraian}">${cleanUraian}</p>
-
-          <!-- Baris 4: Action Bar Ramping Terintegrasi -->
-          <div class="mac-actions">
-            <button type="button" class="btn-mac-highlight" onclick="sorotDiPeta(${itemLat}, ${itemLng}, '${item.id}')" title="Pusatkan peta ke titik koordinat ini">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10"></circle>
-                <line x1="22" y1="12" x2="18" y2="12"></line>
-                <line x1="6" y1="12" x2="2" y2="12"></line>
-                <line x1="12" y1="6" x2="12" y2="2"></line>
-                <line x1="12" y1="22" x2="12" y2="18"></line>
-              </svg>
-              <span>Sorot</span>
-            </button>
-            <button type="button" class="btn-mac-detail" onclick="bukaDetail('${item.id}')" title="Lihat rincian lengkap aduan">
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                <polyline points="14 2 14 8 20 8"></polyline>
-                <line x1="16" y1="13" x2="8" y2="13"></line>
-                <line x1="16" y1="17" x2="8" y2="17"></line>
-              </svg>
-              <span>Detail</span>
-            </button>
-          </div>
-        </div>
-      `;
-    }).join('');
   }
 
   /* Setup Switcher Basemap Buttons (Peta Standar, Satelit, Topografi) */
@@ -894,50 +809,24 @@ window.toggleMapFiltersMobile = function() {
 };
 
 /**
- * Pengalih Tampilan Peta vs Daftar pada Perangkat Seluler (< 1024px)
- * @param {'map' | 'list'} mode
+ * Pengalih Tampilan Mobile (Disederhanakan karena Peta Spasial adalah satu-satunya tampilan utama)
  */
 window.switchMobileMapView = function(mode) {
-  const btnMap = document.getElementById('btnMobiViewMap');
-  const btnList = document.getElementById('btnMobiViewList');
   const viewPanel = document.getElementById('mapViewPanel');
-  const feedGrid = document.getElementById('mapAduanGrid');
-
-  if (window.innerWidth < 1024) {
-    if (mode === 'map') {
-      if (btnMap) btnMap.classList.add('active');
-      if (btnList) btnList.classList.remove('active');
-      if (viewPanel) viewPanel.style.display = 'block';
-      if (feedGrid) feedGrid.style.display = 'none';
-
-      if (window.lembataMap && window.lembataMap.map) {
-        setTimeout(() => {
-          try {
-            window.lembataMap.map.invalidateSize();
-          } catch(e) {}
-        }, 80);
-      }
-    } else if (mode === 'list') {
-      if (btnList) btnList.classList.add('active');
-      if (btnMap) btnMap.classList.remove('active');
-      if (viewPanel) viewPanel.style.display = 'none';
-      if (feedGrid) feedGrid.style.display = 'flex';
-    }
-  } else {
-    // Pada Desktop (> 1024px), kedua panel tampil bersisian
-    if (viewPanel) viewPanel.style.display = '';
-    if (feedGrid) feedGrid.style.display = '';
+  if (viewPanel) viewPanel.style.display = 'block';
+  if (window.lembataMap && window.lembataMap.map) {
+    setTimeout(() => {
+      try {
+        window.lembataMap.map.invalidateSize();
+      } catch(e) {}
+    }, 80);
   }
 };
 
 // Pastikan sinkronisasi tata letak saat ukuran layar browser diubah
 window.addEventListener('resize', () => {
-  if (window.innerWidth >= 1024) {
-    const viewPanel = document.getElementById('mapViewPanel');
-    const feedGrid = document.getElementById('mapAduanGrid');
-    if (viewPanel) viewPanel.style.display = '';
-    if (feedGrid) feedGrid.style.display = '';
-  }
+  const viewPanel = document.getElementById('mapViewPanel');
+  if (viewPanel) viewPanel.style.display = 'block';
   if (window.lembataMap && window.lembataMap.map) {
     try {
       window.lembataMap.map.invalidateSize();

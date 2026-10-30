@@ -2223,7 +2223,7 @@
       }
     }
 
-    /* 3. Command Center Layout Grid (Split-Screen Desktop vs Mobile) */
+    /* 3. Command Center Layout Grid */
     .map-command-layout {
       display: flex;
       flex-direction: column;
@@ -2233,16 +2233,17 @@
 
     @media (min-width: 1024px) {
       .map-command-layout {
-        display: grid !important;
-        grid-template-columns: 5fr 7fr !important;
-        gap: 16px !important;
-        height: calc(100vh - 120px) !important;
-        min-height: 640px !important;
-        max-height: 900px !important;
+        display: flex !important;
+        flex-direction: column !important;
+        gap: 14px !important;
+        width: 100% !important;
+        height: auto !important;
+        min-height: 0 !important;
+        max-height: none !important;
       }
     }
 
-    /* 4. Kolom Kiri: Panel Pengawasan, Filter & Feed Kartu Aduan */
+    /* 4. Panel Pengawasan, Filter & Navigasi Spasial */
     .map-feed-panel {
       display: flex;
       flex-direction: column;
@@ -2256,7 +2257,8 @@
 
     @media (min-width: 1024px) {
       .map-feed-panel {
-        height: 100% !important;
+        width: 100% !important;
+        height: auto !important;
         min-height: 0 !important;
       }
     }
@@ -2264,7 +2266,6 @@
     .map-feed-header {
       flex-shrink: 0;
       background: #ffffff;
-      border-bottom: 1px solid #e2e8f0;
     }
 
     .map-feed-title-row {
@@ -2720,15 +2721,17 @@
 
     @media (min-width: 1024px) {
       .map-view-panel {
-        height: 100% !important;
-        min-height: 0 !important;
+        width: 100% !important;
+        height: calc(100vh - 270px) !important;
+        min-height: 560px !important;
       }
     }
 
     @media (min-width: 768px) and (max-width: 1023px) {
       .map-view-panel {
-        height: 56vh;
-        min-height: 400px;
+        width: 100% !important;
+        height: 60vh !important;
+        min-height: 460px !important;
       }
     }
 
@@ -3027,14 +3030,22 @@
       max-width: 290px;
       display: flex;
       flex-direction: column;
+      padding: 2px 2px 4px 2px;
     }
 
     .popup-body-scroll {
-      max-height: 180px;
+      max-height: 220px;
       overflow-y: auto;
       padding-right: 4px;
-      margin-bottom: 8px;
+      margin-bottom: 2px;
       scrollbar-width: thin;
+    }
+
+    #mapMobileSwitcher,
+    .map-mobile-switcher,
+    #mapAduanGrid,
+    .map-feed-scroll {
+      display: none !important;
     }
 
     .popup-body-scroll::-webkit-scrollbar {
@@ -3599,11 +3610,13 @@
         min-width: 220px !important;
         max-width: 260px !important;
         font-size: 0.72rem !important;
+        padding-bottom: 2px !important;
       }
 
       .popup-body-scroll {
-        max-height: 160px !important;
+        max-height: 180px !important;
         overflow-y: auto !important;
+        margin-bottom: 2px !important;
       }
 
       .popup-head {
@@ -5800,30 +5813,7 @@
         </div>
       </div>
 
-      <!-- Segmented Tab Switcher Khusus Mobile (< 1024px) -->
-      <div class="map-mobile-switcher" id="mapMobileSwitcher">
-        <button type="button" class="btn-mobi-view active" id="btnMobiViewMap" onclick="window.switchMobileMapView('map')">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
-            <line x1="8" y1="2" x2="8" y2="18"></line>
-            <line x1="16" y1="6" x2="16" y2="22"></line>
-          </svg>
-          <span>Tampilan Peta</span>
-        </button>
-        <button type="button" class="btn-mobi-view" id="btnMobiViewList" onclick="window.switchMobileMapView('list')">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-            <line x1="8" y1="6" x2="21" y2="6"></line>
-            <line x1="8" y1="12" x2="21" y2="12"></line>
-            <line x1="8" y1="18" x2="21" y2="18"></line>
-            <line x1="3" y1="6" x2="3.01" y2="6"></line>
-            <line x1="3" y1="12" x2="3.01" y2="12"></line>
-            <line x1="3" y1="18" x2="3.01" y2="18"></line>
-          </svg>
-          <span>Daftar Titik Aduan (<span id="mobiAduanCount">0</span>)</span>
-        </button>
-      </div>
-
-      <!-- Split-Screen Command Center Container -->
+      <!-- Command Center Container -->
       <div class="map-command-layout" id="mapCommandLayout">
 
         <!-- Kolom Kiri: Panel Pengawasan, Filter & Feed Kartu Aduan -->
@@ -5947,11 +5937,6 @@
                 <button type="button" class="pill-region" data-region="Nagawutung">Nagawutung</button>
               </div>
             </div>
-          </div>
-
-          <!-- Wadah Scroll Mandiri Daftar Titik Aduan -->
-          <div class="map-feed-scroll" id="mapAduanGrid">
-            <!-- Render dinamis kartu ultra-kompak oleh map.js -->
           </div>
         </div>
 
