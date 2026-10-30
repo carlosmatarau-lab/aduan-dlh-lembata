@@ -2788,18 +2788,17 @@ function cleanUraianText(rawText) {
 
 /**
  * 2. Generator Template Pesan WhatsApp: Tanda Terima Resmi untuk Pelapor (Publik)
- * Standar Tata Naskah Dinas SPBE: Memuat tautan lacak aduan online, resmi, dan tanpa emoji kasual
+ * Format Ringkas, Padat, dan Resmi (Mobile-Friendly & Tautan Lacak Otomatis)
  *
  * @param {Object} data - Objek data aduan {namaPelapor, id, kategori, uraian, desa, kecamatan, timestamp}
- * @return {string} Teks pesan WhatsApp tanda terima resmi
+ * @return {string} Teks pesan WhatsApp tanda terima resmi ringkas
  */
 function generatePelaporMessage(data) {
   data = data || {};
-  var nama = data.namaPelapor || data.nama || 'Bapak/Ibu/Saudara Pelapor';
+  var nama = data.namaPelapor || data.nama || 'Bapak/Ibu';
   var id = data.id || data.ticketId || '-';
   var kategori = data.kategori || data.jenisPencemaran || 'Lainnya';
   var isiAduan = cleanUraianText(data.uraian || data.isiAduan || data.ringkasan || '-');
-  var tanggal = data.timestamp ? String(data.timestamp).split(' ')[0] : Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd');
   
   // Tautan pelacakan online resmi portal DLH Lembata
   var trackUrl = 'https://aduan-dlh-lembata.vercel.app/?tiket=' + encodeURIComponent(id);
@@ -2813,36 +2812,25 @@ function generatePelaporMessage(data) {
   }
 
   var lines = [
-    '*PEMERINTAH KABUPATEN LEMBATA*',
-    '*DINAS LINGKUNGAN HIDUP*',
-    '_Sistem Pelaporan & Penanganan Pengaduan Lingkungan Hidup_',
+    '*TANDA TERIMA PENGADUAN — DLH LEMBATA*',
     '',
-    '*TANDA TERIMA PENGADUAN*',
-    'Yth. Sdr/i. *' + nama + '*,',
-    '',
-    'Laporan pengaduan Anda telah resmi diterima dan tercatat dalam sistem penanganan Dinas Lingkungan Hidup Kabupaten Lembata.',
-    '',
-    '*Rincian Laporan:*',
-    '• No. Registrasi : *' + id + '*',
-    '• Tanggal Masuk  : ' + tanggal,
-    '• Kategori       : ' + kategori
+    'Halo *' + nama + '*, laporan Anda telah tercatat dengan rincian:',
+    '• *No. Tiket* : ' + id,
+    '• *Kategori* : ' + kategori
   ];
 
   if (lokasi) {
-    lines.push('• Lokasi         : ' + lokasi);
+    lines.push('• *Lokasi* : ' + lokasi);
   }
 
   lines.push(
-    '• Ringkasan      : ' + isiAduan,
-    '• Status Awal    : Menunggu Verifikasi Lapangan',
+    '• *Ringkasan* : ' + isiAduan,
+    '• *Status* : Menunggu Verifikasi',
     '',
-    '*Pelacakan Status Pengaduan:*',
-    'Anda dapat memantau perkembangan verifikasi dan penanganan aduan secara langsung melalui tautan resmi berikut:',
+    'Pantau tindak lanjut laporan:',
     trackUrl,
     '',
-    'Simpan Nomor Registrasi di atas sebagai bukti sah pelaporan Anda. Terima kasih atas partisipasi dan kepedulian Anda dalam menjaga kelestarian lingkungan hidup di Kabupaten Lembata.',
-    '',
-    '_Dinas Lingkungan Hidup Kabupaten Lembata_'
+    '_Simpan pesan ini sebagai bukti sah tanda terima. Terima kasih._'
   );
 
   return lines.join('\n');
@@ -2850,10 +2838,10 @@ function generatePelaporMessage(data) {
 
 /**
  * 3. Generator Template Pesan WhatsApp: Pemberitahuan Tugas Masuk untuk Petugas Internal DLH
- * Standar Tata Naskah Dinas SPBE: Tegas, terstruktur, memuat data lapangan, dan tautan Dashboard Petugas
+ * Format Ringkas, Padat, Siaga, dan Tautan Cepat Dashboard Verifikasi
  *
  * @param {Object} data - Objek data aduan {id, timestamp, namaPelapor, noHp, kategori, uraian, desa, kecamatan, lokasiDetail}
- * @return {string} Teks pesan WhatsApp alert terformat resmi
+ * @return {string} Teks pesan WhatsApp alert terformat resmi ringkas
  */
 function generatePetugasAlert(data) {
   data = data || {};
@@ -2874,32 +2862,28 @@ function generatePetugasAlert(data) {
     wilayah = 'Kec. ' + data.kecamatan;
   }
 
-  var patokan = (data.lokasiDetail && data.lokasiDetail !== '-') ? data.lokasiDetail : '-';
   var dashboardUrl = 'https://aduan-dlh-lembata.vercel.app/petugas.html';
 
   var lines = [
-    '*PEMBERITAHUAN TUGAS: ADUAN BARU MASUK*',
-    '*DINAS LINGKUNGAN HIDUP KABUPATEN LEMBATA*',
+    '*ADUAN BARU MASUK — DLH LEMBATA*',
     '',
-    'Telah diterima laporan pengaduan pencemaran lingkungan hidup melalui portal resmi masyarakat dengan rincian sebagai berikut:',
-    '',
-    '*Data Laporan:*',
-    '• No. Registrasi : *' + id + '*',
-    '• Waktu Masuk    : ' + waktu,
-    '• Nama Pelapor   : ' + nama,
-    '• Kontak Pelapor : ' + noHp,
-    '• Wilayah Lokasi : ' + wilayah,
-    '• Titik Patokan  : ' + patokan,
-    '• Kategori       : ' + kategori,
-    '• Uraian Laporan :',
-    '  "' + isiAduan + '"',
-    '',
-    '*Instruksi Petugas:*',
-    'Harap verifikator lapangan segera melakukan telaah administrasi dan koordinasi penanganan lapangan melalui Dashboard Petugas:',
-    dashboardUrl,
-    '',
-    '_Seksi Pengawasan & Penegakan Hukum Lingkungan DLH Kabupaten Lembata_'
+    '• *No. Tiket* : ' + id,
+    '• *Waktu* : ' + waktu,
+    '• *Pelapor* : ' + nama + ' (' + noHp + ')',
+    '• *Wilayah* : ' + wilayah,
+    '• *Kategori* : ' + kategori,
+    '• *Uraian* : "' + isiAduan + '"'
   ];
+
+  if (data.lokasiDetail && data.lokasiDetail !== '-') {
+    lines.push('• *Patokan* : ' + data.lokasiDetail);
+  }
+
+  lines.push(
+    '',
+    'Buka Dashboard Petugas:',
+    dashboardUrl
+  );
 
   return lines.join('\n');
 }
