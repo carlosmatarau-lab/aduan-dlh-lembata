@@ -1996,29 +1996,13 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         // Buka modal konfirmasi sukses
         if (modalSuccess) modalSuccess.classList.add('show');
 
-        // Jeda ~1,8 detik agar warga sempat membaca "Laporan Sudah Masuk" & melihat nomor tiket,
-        // lalu arahkan otomatis ke WhatsApp petugas. Dibatalkan jika modal ditutup / tombol manual diklik.
+        // Notifikasi konfirmasi WhatsApp ganda telah dikirim secara otomatis via server Fonnte Gateway di backend.
+        // Pengalihan paksa/otomatis ke WhatsApp dinonaktifkan agar warga dapat membaca nomor tiket dengan tenang.
         if (redirectNotice) {
           redirectNotice.style.display = 'block';
           const noticeText = document.getElementById('waRedirectNoticeText');
-          if (noticeText) noticeText.textContent = 'Membuka WhatsApp petugas...';
+          if (noticeText) noticeText.textContent = '✓ Notifikasi tanda terima telah otomatis dikirim via WhatsApp ke kontak Anda & tim DLH.';
         }
-        this._waRedirectTimer = setTimeout(() => {
-          this._waRedirectTimer = null;
-          if (!modalSuccess || !modalSuccess.classList.contains('show')) return;
-          try {
-            window.location.href = waUrl;
-          } catch (e) {
-            window.open(waUrl, '_blank');
-          }
-          // Bila WhatsApp tidak terbuka (mis. diblokir), ubah pesan agar warga memakai tombol manual
-          setTimeout(() => {
-            const noticeText = document.getElementById('waRedirectNoticeText');
-            if (noticeText && redirectNotice && redirectNotice.style.display !== 'none') {
-              noticeText.textContent = 'Jika WhatsApp belum terbuka, tekan tombol "Buka WhatsApp Sekarang" di bawah.';
-            }
-          }, 2500);
-        }, 1800);
 
       } catch (submitErr) {
         if (animProgressInterval) clearInterval(animProgressInterval);
