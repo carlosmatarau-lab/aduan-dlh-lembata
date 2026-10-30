@@ -317,6 +317,21 @@ Semua respons dikembalikan dalam format standar JSON:
 
 ---
 
+### 8. Notifikasi Otomatis WhatsApp Ganda (Fonnte Gateway API)
+Backend terintegrasi dengan **Fonnte API** untuk mengirim notifikasi WhatsApp instan saat formulir aduan publik berhasil disimpan ke spreadsheet:
+1. **Pesan Konfirmasi Pelapor**: Mengirim bukti tanda terima, nomor tiket aduan, kategori, dan ringkasan isi aduan.
+2. **Pesan Alert Tembusan Petugas**: Mengirim pemberitahuan instan aduan baru masuk beserta data pelapor dan isi laporan ke satu atau multi-nomor WhatsApp petugas internal DLH Lembata.
+
+**Konfigurasi Script Properties**:
+- `FONNTE_TOKEN`: API Token akun Fonnte Anda.
+- `PETUGAS_WA_NUMBER`: Nomor WhatsApp petugas internal DLH (dapat berupa nomor tunggal atau multi-nomor dipisahkan koma, misal: `081234567890,089876543210`).
+
+**Fitur Keandalan**:
+- Sanitasi otomatis format nomor lokal (`08...`), internasional (`628...`), dan `8...` menjadi `628...`.
+- *Fault-tolerant & non-blocking*: Kegagalan request WhatsApp (karena API down atau nomor tidak valid) tidak menggagalkan penyimpanan data aduan ke spreadsheet.
+
+---
+
 ## 💻 5. Integrasi Frontend (Web Portal)
 
 Pada file [`js/data.js`](file:///d:/app/js/data.js), URL Web App telah disetel ke endpoint aktif resmi:
