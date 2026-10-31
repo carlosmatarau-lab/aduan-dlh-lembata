@@ -1643,6 +1643,35 @@ function handleUpdateVerifikasi(updateData) {
   // Tulis log
   writeLog('UPDATE_VERIFIKASI', 'ID: ' + targetId + ' → Status: ' + (updateData.status || '-') + ' | Petugas: ' + (updateData.petugasVerifikasi || '-'));
 
+  // ==================================================================================
+  // NOTIFIKASI WHATSAPP KE PELAPOR SAAT STATUS DIPERBARUI (TEMPLATE 3)
+  // Non-blocking & fault-tolerant: kegagalan WA tidak menggagalkan update database
+  // ==================================================================================
+  if (updateData.status) {
+    try {
+      const colNoHp = headers.indexOf('No_HP');
+      const colNama = headers.indexOf('Nama_Pelapor');
+      const citizenRaw = (colNoHp !== -1) ? String(data[targetRowIndex - 1][colNoHp] || '').trim() : '';
+      const citizenNama = (colNama !== -1) ? String(data[targetRowIndex - 1][colNama] || '').trim() : 'Bapak/Ibu';
+
+      if (citizenRaw) {
+        const updateMsg = generateStatusUpdateMessage({
+          id: targetId,
+          namaPelapor: citizenNama,
+          status: updateData.status,
+          catatan: updateData.tindakanDLH || updateData.hasilVerifikasi || updateData.catatanBeritaAcara || '-',
+          petugas: updateData.petugasVerifikasi || '-',
+          timestamp: Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm')
+        });
+
+        sendWhatsAppFonnte_(citizenRaw, updateMsg);
+        Logger.log('[WA STATUS UPDATE] Berhasil dikirim ke pelapor: ' + citizenRaw);
+      }
+    } catch (errWaUpdate) {
+      Logger.log('[WA STATUS UPDATE] Gagal kirim notifikasi status (non-blocking): ' + errWaUpdate.message);
+    }
+  }
+
   return {
     success: true,
     message: 'Status aduan ' + targetId + ' berhasil diperbarui menjadi "' + (updateData.status || '-') + '".',
@@ -2705,35 +2734,74 @@ function onOpen() {
 
 // ==================================================================================
 // MODUL INTEGRASI WHATSAPP GATEWAY (FONNTE API)
-// Notifikasi Ganda Otomatis: Konfirmasi Pelapor & Alert Tembusan Petugas DLH
+// Notifikasi Otomatis: Tanda Terima Pelapor, Alert Petugas, & Pembaruan Status Aduan
 // ==================================================================================
 
 /**
- * 1. Sanitasi dan Normalisasi Nomor Telepon ke Format Internasional WhatsApp (628...)
- *
- * @param {string|number} phone - Nomor telepon masukan dari formulir/petugas
- * @return {string|null} Nomor valid diawali 628... atau null jika tidak valid
+ * 1. Normalisasi nomor WhatsApp ke format standar 628xxx untuk perbandingan akurat
+ */
+function normalizeWaNumber_(rawPhone) {
+  if (!rawPhone) return '';
+  var str = String(rawPhone).trim();
+  if (str.indexOf('@g.us') !== -1) return str; // Biarkan jika ID Grup WA
+  var digits = str.replace(/[^0-9]/g, '');
+  if (digits.indexOf('08') === 0) {
+    return '62' + digits.substring(1);
+  }
+  if (digits.indexOf('8') === 0) {
+    return '62' + digits;
+  }
+  if (digits.indexOf('62') === 0) {
+    return digits;
+  }
+  if (digits.indexOf('0') === 0) {
+    return '62' + digits.substring(1);
+  }
+  return digits;
+}
+
+/**
+ * Filter daftar nomor target agar bebas duplikat dan tidak mengirim ke nomor Bot sendiri
+ */
+function filterValidTargets_(rawTargets, botDeviceNumber) {
+  if (!rawTargets) return '';
+  var normalizedBot = normalizeWaNumber_(botDeviceNumber);
+  var parts = String(rawTargets).split(',');
+  var validList = [];
+  var seen = {};
+
+  for (var i = 0; i < parts.length; i++) {
+    var item = parts[i].trim();
+    if (!item) continue;
+    if (item.indexOf('@g.us') !== -1) {
+      if (!seen[item]) {
+        seen[item] = true;
+        validList.push(item);
+      }
+      continue;
+    }
+    var norm = normalizeWaNumber_(item);
+    if (!norm || norm.length < 9) continue;
+    // Cegah self-chat ke nomor bot pengirim
+    if (normalizedBot && norm === normalizedBot) {
+      Logger.log('Info: Nomor tujuan ' + item + ' dilewati karena sama dengan FONNTE_DEVICE_NUMBER (' + normalizedBot + ').');
+      continue;
+    }
+    if (!seen[norm]) {
+      seen[norm] = true;
+      validList.push(norm);
+    }
+  }
+  return validList.join(',');
+}
+
+/**
+ * Sanitasi dan normalisasi nomor untuk kompatibilitas kode fungsi lama
  */
 function formatWhatsAppNumber(phone) {
-  if (!phone) return null;
-  var cleaned = String(phone).replace(/\D/g, '');
-  if (!cleaned) return null;
-
-  if (cleaned.startsWith('08')) {
-    cleaned = '628' + cleaned.substring(2);
-  } else if (cleaned.startsWith('8')) {
-    cleaned = '628' + cleaned.substring(1);
-  } else if (cleaned.startsWith('62')) {
-    // Format sudah diawali 62, dipertahankan
-  } else if (cleaned.startsWith('0')) {
-    cleaned = '62' + cleaned.substring(1);
-  }
-
-  // Validasi panjang digit (harus 10 hingga 15 digit numerik)
-  if (cleaned.length < 10 || cleaned.length > 15) {
-    return null;
-  }
-  return cleaned;
+  var norm = normalizeWaNumber_(phone);
+  if (!norm || norm.length < 9 || norm.length > 16) return null;
+  return norm;
 }
 
 /**
@@ -2748,16 +2816,18 @@ function cleanUraianText(rawText) {
 }
 
 /**
- * 2. Generator Template Pesan WhatsApp: Tanda Terima Resmi untuk Pelapor (Publik)
- * Format Ringkas, Padat, dan Resmi (Mobile-Friendly & Tautan Lacak Otomatis)
+ * Template 2: Generator Template Pesan WhatsApp - Tanda Terima Resmi untuk Pelapor (Publik)
+ * Memuat konfirmasi penerimaan aduan, No. Tiket, Waktu, Kategori, Status: Menunggu Verifikasi Petugas,
+ * dan tautan pelacakan tiket di portal resmi (tanpa banner preview vertikal raksasa).
  *
- * @param {Object} data - Objek data aduan {namaPelapor, id, kategori, uraian, desa, kecamatan, timestamp}
- * @return {string} Teks pesan WhatsApp tanda terima resmi ringkas
+ * @param {Object} data - {namaPelapor, id, kategori, uraian, desa, kecamatan, timestamp}
+ * @return {string}
  */
 function generatePelaporMessage(data) {
   data = data || {};
   var nama = data.namaPelapor || data.nama || 'Bapak/Ibu';
   var id = data.id || data.ticketId || '-';
+  var waktu = data.timestamp || data.waktu || Utilities.formatDate(new Date(), 'Asia/Makassar', 'yyyy-MM-dd HH:mm');
   var kategori = data.kategori || data.jenisPencemaran || 'Lainnya';
   var isiAduan = cleanUraianText(data.uraian || data.isiAduan || data.ringkasan || '-');
   
@@ -2777,37 +2847,39 @@ function generatePelaporMessage(data) {
     '',
     'Halo *' + nama + '*, laporan Anda telah tercatat dengan rincian:',
     '*No. Tiket* : ' + id,
+    '*Waktu* : ' + waktu,
     '*Kategori* : ' + kategori
   ];
 
   if (lokasi) {
-    lines.push('*Lokasi* : ' + lokasi);
+    lines.push('*Wilayah* : ' + lokasi);
   }
 
   lines.push(
     '*Ringkasan* : ' + isiAduan,
-    '*Status* : Menunggu Verifikasi',
+    '*Status* : Menunggu Verifikasi Petugas',
     '',
-    'Pantau tindak lanjut laporan:',
+    'Pantau tindak lanjut laporan Anda:',
     trackUrl,
     '',
-    '_Simpan pesan ini sebagai bukti sah tanda terima. Terima kasih._'
+    '_Simpan pesan ini sebagai bukti sah tanda terima pengaduan._'
   );
 
   return lines.join('\n');
 }
 
 /**
- * 3. Generator Template Pesan WhatsApp: Pemberitahuan Tugas Masuk untuk Petugas Internal DLH
- * Format Ringkas, Padat, Siaga, dan Tautan Cepat Dashboard Verifikasi
+ * Template 1: Generator Template Pesan WhatsApp - Alert Pemberitahuan Tugas Masuk untuk Petugas Internal DLH
+ * Memuat header *ADUAN BARU MASUK - DLH LEMBATA*, No. Tiket, Waktu, Pelapor (beserta nomor HP),
+ * Wilayah, Kategori, Uraian, dan tautan portal https://aduan-dlh-lembata.vercel.app
  *
- * @param {Object} data - Objek data aduan {id, timestamp, namaPelapor, noHp, kategori, uraian, desa, kecamatan, lokasiDetail}
- * @return {string} Teks pesan WhatsApp alert terformat resmi ringkas
+ * @param {Object} data - {id, timestamp, namaPelapor, noHp, kategori, uraian, desa, kecamatan, lokasiDetail}
+ * @return {string}
  */
 function generatePetugasAlert(data) {
   data = data || {};
   var id = data.id || data.ticketId || '-';
-  var waktu = data.timestamp || data.waktu || data.waktuMasuk || '-';
+  var waktu = data.timestamp || data.waktu || Utilities.formatDate(new Date(), 'Asia/Makassar', 'yyyy-MM-dd HH:mm');
   var nama = data.namaPelapor || data.nama || 'Anonim';
   var noHp = data.noHp || data.telepon || '-';
   var kategori = data.kategori || data.jenisPencemaran || 'Lainnya';
@@ -2823,7 +2895,7 @@ function generatePetugasAlert(data) {
     wilayah = 'Kec. ' + data.kecamatan;
   }
 
-  var dashboardUrl = 'https://aduan-dlh-lembata.vercel.app/petugas.html';
+  var portalUrl = 'https://aduan-dlh-lembata.vercel.app';
 
   var lines = [
     '*ADUAN BARU MASUK - DLH LEMBATA*',
@@ -2842,15 +2914,59 @@ function generatePetugasAlert(data) {
 
   lines.push(
     '',
-    'Buka Dashboard Petugas:',
-    dashboardUrl
+    portalUrl
   );
 
   return lines.join('\n');
 }
 
 /**
- * 4. Dispatcher Pengiriman WhatsApp Terisolasi Penuh (Zero-Leak Routing: Pelapor vs Petugas)
+ * Template 3: Generator Template Pesan WhatsApp saat Status Aduan Diperbarui Petugas
+ * Memuat pemberitahuan perubahan status (Diverifikasi, Dalam Penanganan, Selesai, atau Ditolak),
+ * catatan tindak lanjut petugas, No. Tiket, dan tautan portal resmi.
+ *
+ * @param {Object} data - {id, namaPelapor, status, catatan, petugas, timestamp}
+ * @return {string}
+ */
+function generateStatusUpdateMessage(data) {
+  data = data || {};
+  var nama = data.namaPelapor || data.nama || 'Bapak/Ibu';
+  var id = data.id || data.ticketId || '-';
+  var status = data.status || 'Diverifikasi';
+  var catatan = cleanUraianText(data.catatan || data.tindakanDLH || data.hasilVerifikasi || '-');
+  var waktu = data.timestamp || Utilities.formatDate(new Date(), 'Asia/Makassar', 'yyyy-MM-dd HH:mm');
+  var trackUrl = 'https://aduan-dlh-lembata.vercel.app/?tiket=' + encodeURIComponent(id);
+
+  var lines = [
+    '*PEMBARUAN STATUS ADUAN - DLH LEMBATA*',
+    '',
+    'Halo *' + nama + '*, terdapat pembaruan status atas pengaduan Anda:',
+    '*No. Tiket* : ' + id,
+    '*Status Terbaru* : ' + status,
+    '*Waktu Pembaruan* : ' + waktu
+  ];
+
+  if (data.petugas && data.petugas !== '-') {
+    lines.push('*Petugas* : ' + data.petugas);
+  }
+
+  if (catatan && catatan !== '-') {
+    lines.push('*Catatan Petugas* : ' + catatan);
+  }
+
+  lines.push(
+    '',
+    'Pantau tindak lanjut laporan Anda:',
+    trackUrl,
+    '',
+    '_Terima kasih atas kepedulian Anda dalam menjaga kebersihan & kelestarian lingkungan hidup di Kabupaten Lembata._'
+  );
+
+  return lines.join('\n');
+}
+
+/**
+ * Dispatcher Pengiriman WhatsApp Terisolasi Penuh (Zero-Leak Routing: Pelapor vs Petugas)
  * Memisahkan secara tegas rute pengiriman pesan WhatsApp antara Pelapor dan Petugas:
  * - Blok 1 (Pelapor): target HANYA pelaporPhone, isi pesan HANYA pesanPelapor
  * - Blok 2 (Petugas): target HANYA membaca PETUGAS_WA_NUMBER, isi pesan HANYA pesanPetugas
@@ -2863,58 +2979,52 @@ function generatePetugasAlert(data) {
 function dispatchWhatsAppNotifications(data, ticketId, timestamp) {
   data = data || {};
   ticketId = ticketId || data.id || '-';
-  timestamp = timestamp || data.timestamp || Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm:ss');
+  var waktu = timestamp || data.timestamp || Utilities.formatDate(new Date(), 'Asia/Makassar', 'yyyy-MM-dd HH:mm');
 
-  const scriptProps = PropertiesService.getScriptProperties();
-
-  // Verifikasi Pencegahan Looping/Self-Chat: Ambil nomor bot pengirim jika dikonfigurasi
-  const rawBotPhone = scriptProps.getProperty('FONNTE_DEVICE_NUMBER') || scriptProps.getProperty('FONNTE_SENDER_NUMBER') || '';
-  const botSenderPhone = rawBotPhone ? formatWhatsAppNumber(rawBotPhone) : null;
+  var scriptProps = PropertiesService.getScriptProperties();
+  var botDeviceNumber = scriptProps.getProperty('FONNTE_DEVICE_NUMBER') || '085602149754';
 
   // ============================================================================
   // BLOK 1 (PELAPOR): Parameter target WAJIB HANYA berisi nomor pelapor
   // ============================================================================
   try {
-    // Audit Ekstraksi Nomor Pelapor: fallback multi-field untuk mencegah undefined
-    const rawPelapor = data.telepon || data.noHp || data.nomor_hp || data.whatsapp || data.phone || '';
-    const pelaporPhone = formatWhatsAppNumber(rawPelapor);
+    var rawPelapor = data.telepon || data.noHp || data.nomor_hp || data.whatsapp || data.phone || '';
+    var cleanPelapor = filterValidTargets_(rawPelapor, botDeviceNumber);
 
-    if (!pelaporPhone) {
-      Logger.log('[WA PELAPOR] Dilewati: Nomor WhatsApp pelapor kosong atau format tidak valid (' + rawPelapor + ').');
-    } else if (botSenderPhone && pelaporPhone === botSenderPhone) {
-      Logger.log('[WA PELAPOR] Dilewati: Nomor pelapor sama dengan nomor bot pengirim Fonnte (' + pelaporPhone + ') untuk mencegah self-chat loop.');
+    if (!cleanPelapor) {
+      Logger.log('[WA PELAPOR] Dilewati: Nomor WhatsApp pelapor kosong, tidak valid, atau sama dengan bot pengirim (' + rawPelapor + ').');
     } else {
-      const pesanPelapor = generatePelaporMessage({
+      var pesanPelapor = generatePelaporMessage({
         namaPelapor: data.namaPelapor || data.nama || 'Warga / Pelapor',
         id: ticketId,
         kategori: data.jenisPencemaran || data.kategori || 'Lainnya',
         uraian: data.uraian || data.isiAduan || '-',
         desa: data.desa || '-',
         kecamatan: data.kecamatan || 'Nubatukan',
-        timestamp: timestamp
+        timestamp: waktu
       });
 
-      // Target WAJIB HANYA berisi nomor pelapor (pelaporPhone), dengan isi pesanPelapor
-      const resPelapor = sendFonnteMessage(pelaporPhone, pesanPelapor);
-      Logger.log('[WA PELAPOR] Berhasil dikirim ke: ' + pelaporPhone + ' | Status: ' + (resPelapor && resPelapor.success));
+      var resPelapor = sendWhatsAppFonnte_(cleanPelapor, pesanPelapor);
+      Logger.log('[WA PELAPOR] Berhasil diproses ke: ' + cleanPelapor + ' | Status: ' + (resPelapor && resPelapor.ok));
     }
   } catch (errPelapor) {
-    Logger.log('[WA PELAPOR] Gagal mengirim pesan ke pelapor: ' + errPelapor.message);
+    Logger.log('[WA PELAPOR] Gagal mengirim pesan ke pelapor (non-blocking): ' + errPelapor.message);
   }
 
   // ============================================================================
   // BLOK 2 (PETUGAS): Parameter target WAJIB HANYA membaca dari PETUGAS_WA_NUMBER
   // ============================================================================
   try {
-    const rawOfficerConfig = scriptProps.getProperty('PETUGAS_WA_NUMBER') || '';
+    var rawOfficerConfig = scriptProps.getProperty('PETUGAS_WA_NUMBER') || '082234582769';
+    var cleanOfficers = filterValidTargets_(rawOfficerConfig, botDeviceNumber);
 
-    if (!rawOfficerConfig || !rawOfficerConfig.trim()) {
-      Logger.log('[WA PETUGAS] Peringatan: PETUGAS_WA_NUMBER belum dikonfigurasi di Script Properties.');
+    if (!cleanOfficers) {
+      Logger.log('[WA PETUGAS] Peringatan: Tidak ada nomor petugas valid setelah filter anti-self-chat.');
     } else {
-      const rawPelaporContact = data.telepon || data.noHp || data.nomor_hp || data.whatsapp || data.phone || '-';
-      const pesanPetugas = generatePetugasAlert({
+      var rawPelaporContact = data.telepon || data.noHp || data.nomor_hp || data.whatsapp || data.phone || '-';
+      var pesanPetugas = generatePetugasAlert({
         id: ticketId,
-        timestamp: timestamp,
+        timestamp: waktu,
         namaPelapor: data.namaPelapor || data.nama || 'Anonim',
         noHp: rawPelaporContact,
         kategori: data.jenisPencemaran || data.kategori || 'Lainnya',
@@ -2924,142 +3034,123 @@ function dispatchWhatsAppNotifications(data, ticketId, timestamp) {
         lokasiDetail: data.lokasiDetail || data.patokan || '-'
       });
 
-      const officerNumbers = rawOfficerConfig.split(',');
-      officerNumbers.forEach(function(rawOfficer) {
-        const cleanOfficer = rawOfficer ? rawOfficer.trim() : '';
-        const officerPhone = formatWhatsAppNumber(cleanOfficer);
-
-        if (!officerPhone) {
-          if (cleanOfficer) {
-            Logger.log('[WA PETUGAS] Dilewati: Format nomor petugas tidak valid (' + cleanOfficer + ').');
-          }
-          return;
-        }
-
-        if (botSenderPhone && officerPhone === botSenderPhone) {
-          Logger.log('[WA PETUGAS] Dilewati: Nomor petugas sama dengan nomor bot pengirim Fonnte (' + officerPhone + ') untuk mencegah self-chat loop.');
-          return;
-        }
-
-        // Target WAJIB HANYA berisi nomor petugas (officerPhone), dengan isi pesanPetugas
-        const resPetugas = sendFonnteMessage(officerPhone, pesanPetugas);
-        Logger.log('[WA PETUGAS] Alert berhasil dikirim ke petugas: ' + officerPhone + ' | Status: ' + (resPetugas && resPetugas.success));
-      });
+      var resPetugas = sendWhatsAppFonnte_(cleanOfficers, pesanPetugas);
+      Logger.log('[WA PETUGAS] Alert berhasil diproses ke: ' + cleanOfficers + ' | Status: ' + (resPetugas && resPetugas.ok));
     }
   } catch (errPetugas) {
-    Logger.log('[WA PETUGAS] Gagal mengirim alert ke petugas: ' + errPetugas.message);
+    Logger.log('[WA PETUGAS] Gagal mengirim alert ke petugas (non-blocking): ' + errPetugas.message);
   }
 }
 
 /**
- * 5. Modul Pengiriman HTTP ke WhatsApp Gateway (Fonnte API)
- * Non-blocking & fault-tolerant: mencatat log tanpa melempar fatal exception
+ * Fungsi Utama Pengiriman WhatsApp via Fonnte (Fault-Tolerant & Tanpa Banner Raksasa)
+ * Wajib menyertakan preview: false dan countryCode: "62" agar tidak muncul og:image raksasa
  *
- * @param {string} targetPhone - Nomor tujuan (sudah dinormalisasi 628...)
+ * @param {string} targetNumbers - Nomor tujuan atau multi-nomor koma
  * @param {string} messageText - Konten pesan WhatsApp
- * @return {Object} Hasil pengiriman {success, statusCode, response/error}
+ * @return {Object} Hasil pengiriman {ok, response/error}
  */
-function sendFonnteMessage(targetPhone, messageText) {
+function sendWhatsAppFonnte_(targetNumbers, messageText) {
   try {
     var props = PropertiesService.getScriptProperties();
-    var token = props.getProperty('FONNTE_TOKEN');
-    if (!token || !token.trim()) {
-      Logger.log('[FONNTE] Peringatan: FONNTE_TOKEN belum dikonfigurasi di Script Properties.');
-      return {
-        success: false,
-        error: 'FONNTE_TOKEN belum dikonfigurasi di Script Properties'
-      };
+    var token = (props.getProperty('FONNTE_TOKEN') || 'x8hXbT8JoBpPYvgWSHp3').trim();
+    var botNumber = (props.getProperty('FONNTE_DEVICE_NUMBER') || '085602149754').trim();
+
+    if (!token) {
+      Logger.log('Peringatan: FONNTE_TOKEN belum diatur di Script Properties.');
+      return { ok: false, reason: 'MISSING_TOKEN' };
     }
 
-    var url = 'https://api.fonnte.com/send';
+    var cleanTargets = filterValidTargets_(targetNumbers, botNumber);
+    if (!cleanTargets) {
+      Logger.log('Peringatan: Tidak ada nomor tujuan valid setelah filter anti-self-chat.');
+      return { ok: false, reason: 'NO_VALID_TARGET' };
+    }
+
     var payload = {
-      target: String(targetPhone),
-      message: String(messageText),
-      countryCode: '62'
+      'target': cleanTargets,
+      'message': String(messageText || ''),
+      'preview': false, // Wajib false agar tidak memunculkan kartu preview logo raksasa
+      'countryCode': '62'
     };
 
     var options = {
-      method: 'post',
-      contentType: 'application/json',
-      headers: {
-        'Authorization': token.trim()
+      'method': 'post',
+      'headers': {
+        'Authorization': token
       },
-      payload: JSON.stringify(payload),
-      muteHttpExceptions: true
+      'payload': payload,
+      'muteHttpExceptions': true
     };
 
-    var response = UrlFetchApp.fetch(url, options);
-    var responseCode = response.getResponseCode();
-    var responseBody = response.getContentText();
-
-    Logger.log('[FONNTE] Kirim ke ' + targetPhone + ' | Status HTTP: ' + responseCode + ' | Response: ' + responseBody);
+    var response = UrlFetchApp.fetch('https://api.fonnte.com/send', options);
+    var resCode = response.getResponseCode();
+    var resText = response.getContentText();
+    Logger.log('Respons Fonnte [' + cleanTargets + '] HTTP ' + resCode + ': ' + resText);
 
     var parsed = null;
     try {
-      parsed = JSON.parse(responseBody);
+      parsed = JSON.parse(resText);
     } catch (e) {
-      parsed = { raw: responseBody };
+      parsed = { raw: resText };
     }
 
     return {
-      success: (responseCode >= 200 && responseCode < 300),
-      statusCode: responseCode,
+      ok: (resCode >= 200 && resCode < 300),
+      success: (resCode >= 200 && resCode < 300),
+      statusCode: resCode,
       response: parsed
     };
   } catch (err) {
-    Logger.log('[FONNTE] Exception error pengiriman: ' + err.message);
-    return {
-      success: false,
-      error: err.message
-    };
+    Logger.log('Error sendWhatsAppFonnte_: ' + err.toString());
+    return { ok: false, success: false, error: err.toString() };
   }
 }
 
 /**
- * 5. Fungsi Utilitas Konfigurasi Sekali Jalan (setupPropertiesOnce)
- * Simpan token Fonnte dan nomor WhatsApp petugas ke Script Properties langsung dari editor skrip
+ * Alias sendFonnteMessage untuk kompatibilitas penuh dengan kode fungsi sebelumnya
  */
-function setupPropertiesOnce() {
-  PropertiesService.getScriptProperties().setProperties({
-    'FONNTE_TOKEN': 'MASUKKAN_TOKEN_FONNTE_DI_SINI',
-    'PETUGAS_WA_NUMBER': '08xxxxxxxxxx,08yyyyyyyyyy',
-    'FONNTE_DEVICE_NUMBER': '085602149754' // Opsional: Nomor bot pengirim Fonnte untuk pencegahan looping/self-chat
-  });
-  Logger.log('Konfigurasi Script Properties (FONNTE_TOKEN, PETUGAS_WA_NUMBER, FONNTE_DEVICE_NUMBER) berhasil disimpan.');
+function sendFonnteMessage(targetPhone, messageText) {
+  return sendWhatsAppFonnte_(targetPhone, messageText);
 }
 
 /**
- * 6. Fungsi Pengujian (Unit Test) WhatsApp Gateway Langsung dari Apps Script Console
- * Pilih fungsi ini di dropdown toolbar Apps Script lalu klik "Run / Jalankan"
+ * 5. Fungsi Utilitas Konfigurasi Sekali Jalan (Aman dari Overwrite Kosong)
+ * Menjaga ScriptProperties aktif agar tidak tertimpa teks placeholder
+ */
+function setupPropertiesOnce() {
+  var props = PropertiesService.getScriptProperties();
+  var currentToken = props.getProperty('FONNTE_TOKEN');
+  var currentPetugas = props.getProperty('PETUGAS_WA_NUMBER');
+  var currentBot = props.getProperty('FONNTE_DEVICE_NUMBER');
+
+  props.setProperties({
+    'FONNTE_TOKEN': currentToken || 'x8hXbT8JoBpPYvgWSHp3',
+    'PETUGAS_WA_NUMBER': currentPetugas || '082234582769',
+    'FONNTE_DEVICE_NUMBER': currentBot || '085602149754'
+  });
+  Logger.log('Konfigurasi Script Properties terverifikasi dan tersimpan aman.');
+}
+
+/**
+ * 6. Fungsi Pengujian (Unit Test) WhatsApp Gateway dari Apps Script Console
  */
 function testSendWhatsApp() {
   var props = PropertiesService.getScriptProperties();
-  var token = props.getProperty('FONNTE_TOKEN');
-  var officer = props.getProperty('PETUGAS_WA_NUMBER');
+  var petugasTargets = props.getProperty('PETUGAS_WA_NUMBER') || '082234582769';
+  var pesanTes =
+    '*ADUAN BARU MASUK - DLH LEMBATA*\n\n' +
+    'No. Tiket : ADU-26-TEST\n' +
+    'Waktu : ' + Utilities.formatDate(new Date(), 'Asia/Makassar', 'yyyy-MM-dd HH:mm') + '\n' +
+    'Pelapor : Penguji Sistem (081234567890)\n' +
+    'Wilayah : Lewoleba\n' +
+    'Kategori : Sampah Ilegal & Bau\n' +
+    'Uraian : Uji coba sistem notifikasi proporsional tanpa banner raksasa.\n\n' +
+    'https://aduan-dlh-lembata.vercel.app';
 
-  Logger.log('=== TEST INTEGRASI FONNTE WHATSAPP GATEWAY ===');
-  Logger.log('Status FONNTE_TOKEN: ' + (token ? 'Tersedia (' + token.substring(0, 4) + '***)' : 'BELUM DIISI'));
-  Logger.log('Status PETUGAS_WA_NUMBER: ' + (officer ? officer : 'BELUM DIISI'));
-
-  if (!token || token === 'MASUKKAN_TOKEN_FONNTE_DI_SINI') {
-    Logger.log('[PERINGATAN] Harap masukkan FONNTE_TOKEN yang valid pada Script Properties terlebih dahulu.');
-    return { success: false, error: 'Token belum valid' };
-  }
-
-  var firstTarget = officer ? officer.split(',')[0].trim() : '';
-  var formatted = formatWhatsAppNumber(firstTarget);
-  if (!formatted) {
-    Logger.log('[PERINGATAN] Nomor target pada PETUGAS_WA_NUMBER tidak valid: ' + firstTarget);
-    return { success: false, error: 'Nomor target uji coba tidak valid' };
-  }
-
-  var testMsg = '🔔 *TES INTEGRASI WHATSAPP DLH LEMBATA*\n\n' +
-                'Koneksi WhatsApp Gateway Fonnte berhasil terhubung ke sistem backend Google Apps Script!\n' +
-                'Waktu tes: ' + Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm:ss');
-
-  var res = sendFonnteMessage(formatted, testMsg);
-  Logger.log('Hasil pengujian: ' + JSON.stringify(res));
-  return res;
+  var hasil = sendWhatsAppFonnte_(petugasTargets, pesanTes);
+  Logger.log('Hasil Unit Test WA: ' + JSON.stringify(hasil));
+  return hasil;
 }
 
 /**
@@ -3068,7 +3159,6 @@ function testSendWhatsApp() {
  * Fungsi ini TIDAK menggunakan try...catch agar sistem Google langsung membuka jendela pop-up otorisasi ("Tinjau Izin" / "Review Permissions")
  */
 function mintaIzinOtorisasi() {
-  // Panggilan langsung tanpa try-catch untuk memicu dialog OAuth Consent resmi Google
   UrlFetchApp.fetch('https://api.fonnte.com', { muteHttpExceptions: true });
   Logger.log('✅ Otorisasi izin external request (UrlFetchApp) BERHASIL diberikan!');
 }
@@ -3086,23 +3176,23 @@ function kirimPesanWhatsApp() {
  */
 function testSimulasiAduanBaru() {
   var props = PropertiesService.getScriptProperties();
-  var nomorPetugas = props.getProperty('PETUGAS_WA_NUMBER') || '085602149754';
+  var nomorPetugas = props.getProperty('PETUGAS_WA_NUMBER') || '082234582769';
   var testPhone = nomorPetugas.split(',')[0].trim();
 
   var dataDummy = {
     namaPelapor: 'Budi Santoso (Warga Uji Coba)',
-    noHp: testPhone,
+    noHp: '081234567890',
     alamatPelapor: 'Jl. Trans Lembata',
     kecamatan: 'Nubatukan',
     desa: 'Lewoleba Timur',
     lokasiDetail: 'Dermaga Lewoleba',
     jenisPencemaran: 'Pencemaran Sampah',
-    uraian: 'Ini adalah pesan uji coba end-to-end: pencatatan database dan pengiriman otomatis WhatsApp Gateway Fonnte.',
+    uraian: 'Ini adalah pesan uji coba end-to-end: pencatatan database dan pengiriman otomatis WhatsApp Gateway Fonnte tanpa banner raksasa.',
     sumberDugaan: 'Aktivitas Warga',
-    tanggalKejadian: Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd')
+    tanggalKejadian: Utilities.formatDate(new Date(), 'Asia/Makassar', 'yyyy-MM-dd')
   };
 
-  Logger.log('🚀 Memulai simulasi aduan baru dengan nomor pengujian: ' + testPhone);
+  Logger.log('🚀 Memulai simulasi aduan baru...');
   var hasil = handleAddAduan(dataDummy);
   Logger.log('🎉 Hasil penyimpanan database: ' + JSON.stringify(hasil));
 
@@ -3114,6 +3204,7 @@ function testSimulasiAduanBaru() {
 
   return hasil;
 }
+
 
 
 
