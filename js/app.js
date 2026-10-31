@@ -392,7 +392,7 @@ class DLHApp {
         const nameInput = card.querySelector('.riwayat-instansi-nama');
         const tglInput = card.querySelector('.riwayat-instansi-tgl');
 
-        if (badgeNum) badgeNum.textContent = num;
+        if (badgeNum) badgeNum.textContent = `6.${num}`;
         if (badgeTitle) badgeTitle.textContent = getCardTitle(num);
         if (nameInput) {
           nameInput.id = `inputInstansi${num}`;
@@ -438,7 +438,7 @@ class DLHApp {
       cardEl.innerHTML = `
         <div class="riwayat-card-header">
           <div class="riwayat-card-badge">
-            <span class="riwayat-badge-num">${newIndex}</span>
+            <span class="riwayat-badge-num">6.${newIndex}</span>
             <span class="riwayat-badge-title">${getCardTitle(newIndex)}</span>
           </div>
           <div style="display: flex; align-items: center; gap: 8px;">
