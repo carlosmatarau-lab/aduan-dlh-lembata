@@ -5152,6 +5152,144 @@
       pointer-events: none;
       z-index: 2;
     }
+
+    /* ===================================================================
+       MODAL: SUKSES KIRIM ADUAN (FLOATING DIALOG OVERLAY)
+       =================================================================== */
+    #modalSuccessAduan {
+      position: fixed;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(15, 23, 42, 0.68) !important;
+      backdrop-filter: blur(8px) !important;
+      -webkit-backdrop-filter: blur(8px) !important;
+      z-index: 10000;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 16px;
+      box-sizing: border-box;
+    }
+
+    #modalSuccessAduan.show {
+      display: flex !important;
+    }
+
+    #modalSuccessAduan .modal-dialog {
+      width: 90% !important;
+      max-width: 480px !important;
+      background: #ffffff !important;
+      border-radius: 20px !important;
+      overflow: hidden !important;
+      border: 1px solid rgba(16, 185, 129, 0.25) !important;
+      box-shadow: 0 25px 60px -12px rgba(6, 78, 59, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.1) !important;
+      margin: auto !important;
+      text-align: center;
+      animation: modalSuccessPop 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes modalSuccessPop {
+      0% {
+        opacity: 0;
+        transform: scale(0.92) translateY(12px);
+      }
+      100% {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+      }
+    }
+
+    /* Di layar HP, kotak modal mengambil sekitar 60% lebar layar */
+    @media (max-width: 768px) {
+      #modalSuccessAduan {
+        padding: 12px !important;
+      }
+      #modalSuccessAduan .modal-dialog {
+        width: 60% !important;
+        min-width: 288px !important;
+        max-width: 440px !important;
+        margin: auto !important;
+        border-radius: 18px !important;
+      }
+    }
+
+    /* Tombol Ghost Admin (Transparan dengan garis tepi hijau tipis) */
+    .btn-ghost-admin {
+      background: transparent !important;
+      border: 1.5px solid #059669 !important;
+      color: #047857 !important;
+      font-weight: 700 !important;
+      font-size: 0.88rem !important;
+      padding: 11px 16px !important;
+      border-radius: 12px !important;
+      cursor: pointer !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 8px !important;
+      transition: all 0.2s ease !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .btn-ghost-admin:hover {
+      background: rgba(5, 150, 105, 0.08) !important;
+      border-color: #047857 !important;
+      color: #065f46 !important;
+      transform: translateY(-1px);
+    }
+
+    .btn-ghost-admin:active {
+      transform: scale(0.98);
+    }
+
+    /* Tombol Tutup (Teks biasa / Minimalis) */
+    .btn-text-close {
+      background: transparent !important;
+      border: none !important;
+      color: #64748b !important;
+      font-size: 0.82rem !important;
+      font-weight: 600 !important;
+      padding: 8px 12px !important;
+      cursor: pointer !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      gap: 4px !important;
+      transition: color 0.2s ease !important;
+      width: 100% !important;
+      box-sizing: border-box !important;
+    }
+
+    .btn-text-close:hover {
+      color: #0f172a !important;
+      text-decoration: underline !important;
+    }
+
+    /* Tombol Mungil Salin Tiket */
+    .btn-copy-ticket-sm {
+      background: #ffffff !important;
+      border: 1.5px solid #10b981 !important;
+      color: #047857 !important;
+      font-weight: 700 !important;
+      font-size: 0.78rem !important;
+      padding: 5px 14px !important;
+      border-radius: 999px !important;
+      cursor: pointer !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      gap: 5px !important;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
+      transition: all 0.2s ease !important;
+    }
+
+    .btn-copy-ticket-sm:hover {
+      background: #ecfdf5 !important;
+      border-color: #059669 !important;
+      color: #065f46 !important;
+      transform: translateY(-1px);
+    }
   </style>
 </head>
 
@@ -6032,57 +6170,59 @@
        MODAL: SUKSES KIRIM ADUAN
        =================================================================== -->
   <div class="modal-backdrop" id="modalSuccessAduan">
-    <div class="modal-dialog"
-      style="max-width: 520px; text-align: center; border-radius: 20px; overflow: hidden; border: 2px solid #86efac; box-shadow: 0 20px 45px -10px rgba(6, 78, 59, 0.3);">
-      <div
-        style="background: linear-gradient(135deg, #064e3b 0%, #047857 50%, #059669 100%); color: white; padding: 24px 20px 20px; text-align: center; position: relative;">
-        <span style="display: inline-flex; align-items: center; justify-content: center; width: 52px; height: 52px; border-radius: 50%; background: rgba(255,255,255,0.18); font-size: 28px; font-weight: 800; margin-bottom: 8px;">✓</span>
-        <h3 style="color: white; font-size: 1.35rem; font-weight: 800; margin: 0; line-height: 1.3;">Laporan Sudah Masuk ✓</h3>
+    <div class="modal-dialog">
+      <!-- 1. Bagian Atas Modal (Blok Warna Hijau Gelap) -->
+      <div style="background: linear-gradient(135deg, #064e3b 0%, #065f46 100%); color: #ffffff; padding: 22px 18px 20px; text-align: center; position: relative;">
+        <!-- Ikon centang (sukses) modern -->
+        <div style="display: inline-flex; align-items: center; justify-content: center; width: 48px; height: 48px; border-radius: 50%; background: rgba(255, 255, 255, 0.16); border: 2px solid rgba(255, 255, 255, 0.28); margin-bottom: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15);">
+          <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <polyline points="20 6 9 17 4 12"></polyline>
+          </svg>
+        </div>
+        <!-- Judul (Teks putih, besar, dan tebal) -->
+        <h3 style="color: #ffffff; font-size: 1.25rem; font-weight: 800; margin: 0; line-height: 1.35; letter-spacing: -0.2px;">Aduan Berhasil Terkirim!</h3>
       </div>
 
-      <div class="modal-body" style="padding: 22px 22px 24px;">
-        <p style="font-size: 0.92rem; color: #334155; margin: 0 0 16px 0; line-height: 1.55;">
-          Data aduan Anda telah berhasil dicatat resmi di database DLH Kabupaten Lembata. Bukti tanda terima dan nomor tiket telah dikirimkan secara otomatis ke nomor WhatsApp Anda.
+      <!-- 2. Bagian Isi Modal (Latar Putih) -->
+      <div class="modal-body" style="padding: 20px 20px 22px; background: #ffffff; text-align: center;">
+        <!-- Teks pengantar -->
+        <p style="font-size: 0.88rem; color: #475569; margin: 0 0 14px 0; line-height: 1.5; text-align: center;">
+          Laporan Anda sudah aman tercatat di sistem DLH Kabupaten Lembata. Silakan simpan nomor tiket di bawah ini untuk mengecek progres tindak lanjutnya.
         </p>
 
-        <!-- Nomor Tiket -->
-        <div
-          style="background: #f0fdf4; border: 2px dashed #86efac; border-radius: 14px; padding: 14px; margin-bottom: 14px;">
-          <div style="font-size: 0.75rem; color: #166534; font-weight: 800; letter-spacing: 0.5px;">NOMOR TIKET ANDA</div>
-          <div id="successTicketId"
-            style="font-family: monospace; font-size: 1.75rem; font-weight: 900; color: #059669; margin: 4px 0 8px; word-break: break-all;">
-            ADU-26-K8M4
+        <!-- Area Tiket (Border putus-putus) -->
+        <div style="background: #f0fdf4; border: 2px dashed #10b981; border-radius: 12px; padding: 12px 14px; margin-bottom: 12px; text-align: center;">
+          <div style="font-size: 0.72rem; color: #047857; font-weight: 800; letter-spacing: 0.8px; text-transform: uppercase;">NOMOR TIKET LAPORAN</div>
+          <div id="successTicketId" style="font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace; font-size: 1.7rem; font-weight: 900; color: #064e3b; margin: 4px 0 8px; letter-spacing: 0.5px; word-break: break-all; line-height: 1.2;">
+            ADU-26-Q8D8
           </div>
-          <button type="button" id="btnCopyTicket"
-            style="background: #ffffff; border: 1.5px solid #86efac; color: #047857; font-weight: 700; font-size: 0.84rem; padding: 8px 16px; border-radius: 999px; cursor: pointer; display: inline-flex; align-items: center; gap: 6px;">
-            📋 Salin Nomor Tiket
+          <button type="button" id="btnCopyTicket" class="btn-copy-ticket-sm">
+            📄 Salin Tiket
           </button>
-          <div style="margin-top: 10px; padding-top: 8px; border-top: 1px dashed #86efac; font-size: 0.76rem; color: #166534;">
-            <div style="font-weight: 800; margin-bottom: 2px;">🔍 Tautan pelacakan:</div>
-            <a id="successTrackingUrl" href="#" target="_blank" style="color: #047857; font-weight: 700; word-break: break-all; text-decoration: underline;">Membuat tautan pelacakan...</a>
-          </div>
         </div>
 
-        <!-- Status Konfirmasi WhatsApp Otomatis (Tanpa Pengalihan Manual) -->
-        <div id="waRedirectLoadingNotice"
-          style="display: block; background: #ecfdf5; border: 1.5px solid #86efac; border-radius: 12px; padding: 10px 14px; margin-bottom: 14px; text-align: center; color: #065f46; font-size: 0.84rem; font-weight: 700;">
-          <span id="waRedirectNoticeText">✓ Notifikasi tanda terima telah dikirim otomatis via WhatsApp Gateway ke kontak Anda &amp; petugas DLH.</span>
+        <!-- Kotak Notifikasi (Latar Hijau Mint Tipis) -->
+        <div style="background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 10px; padding: 10px 14px; margin-bottom: 14px; text-align: center; color: #065f46; font-size: 0.82rem; font-weight: 600; line-height: 1.45;">
+          💡 Tanda terima elektronik telah kami kirimkan ke WhatsApp Anda dan petugas DLH.
         </div>
 
-        <!-- Aksi -->
-        <div style="display: flex; flex-direction: column; gap: 10px;">
-          <button type="button" id="btnSuccessTrack" class="btn btn-primary"
-            style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; font-weight: 800; font-size: 0.95rem; padding: 13px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; border: none; cursor: pointer; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.3);">
-            <span>🔍</span> Lacak Status Aduan Sekarang
+        <!-- 3. Bagian Tombol Aksi (Minimalis & Elegan) -->
+        <div style="display: flex; flex-direction: column; gap: 8px; align-items: stretch; margin-top: 4px;">
+          <!-- Tombol Utama/Pertama (Ghost Button): Transparan dengan garis tepi hijau tipis agar tidak dominan -->
+          <button type="button" id="btnWaConfirmation" class="btn-ghost-admin">
+            <span>💬</span> Chat Admin via WhatsApp
           </button>
-          <button type="button" id="btnWaConfirmation" class="btn btn-outline"
-            style="background: #f8fafc; border: 1.5px solid #cbd5e1; font-size: 0.88rem; font-weight: 700; padding: 10px; border-radius: 12px; display: flex; align-items: center; justify-content: center; gap: 8px; color: #166534; cursor: pointer;">
-            <span>💬</span> Hubungi Hotline WhatsApp DLH (Opsional)
-          </button>
-          <button type="button" class="btn btn-outline btn-close-modal" style="font-size: 0.88rem; padding: 10px; border-radius: 10px; font-weight: 600; color: #64748b; border-color: #e2e8f0;">
-            Tutup &amp; Buat Aduan Baru
+          <!-- Tombol Tutup (Teks biasa/Minimalis): "✕ Selesai & Tutup" -->
+          <button type="button" class="btn-close-modal btn-text-close">
+            ✕ Selesai &amp; Tutup
           </button>
         </div>
+
+        <!-- Hidden hooks for background non-regression JS bindings -->
+        <div id="waRedirectLoadingNotice" style="display: none;" aria-hidden="true">
+          <span id="waRedirectNoticeText"></span>
+        </div>
+        <a id="successTrackingUrl" href="#" style="display: none;" aria-hidden="true"></a>
       </div>
     </div>
   </div>

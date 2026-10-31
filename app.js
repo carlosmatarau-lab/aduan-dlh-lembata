@@ -1908,8 +1908,8 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
                 document.body.removeChild(ta);
               } catch (copyErr) {}
             }
-            const origCopyLabel = '📋 Salin Nomor Tiket';
-            btnCopyTicket.textContent = copied ? '✓ Nomor Tiket Disalin' : 'Tekan lama nomor tiket untuk menyalin';
+            const origCopyLabel = '📄 Salin Tiket';
+            btnCopyTicket.textContent = copied ? '✓ Tiket Disalin' : 'Tekan lama nomor tiket untuk menyalin';
             setTimeout(() => { btnCopyTicket.textContent = origCopyLabel; }, 2200);
           };
         }
