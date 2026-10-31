@@ -858,7 +858,7 @@ class DLHApp {
      3.4 PENGOMPRES & OPTIMASI MEDIA HANDAL (KAMERA & GALERI)
      Mendukung foto beresolusi tinggi (12-50MP) tanpa blocking & tanpa timeout 2 detik
      =================================================================== */
-  async compressMediaFile(mediaItem, maxDim = 640, quality = 0.58) {
+  async compressMediaFile(mediaItem, maxDim = 1440, quality = 0.82) {
     if (!mediaItem) return null;
     if (typeof mediaItem === 'string') return mediaItem;
 
@@ -952,6 +952,8 @@ class DLHApp {
         canvas.height = height;
         const ctx = canvas.getContext('2d');
         if (ctx) {
+          ctx.imageSmoothingEnabled = true;
+          ctx.imageSmoothingQuality = 'high';
           ctx.drawImage(bitmap, 0, 0, width, height);
           bitmap.close();
           const dUrl = canvas.toDataURL('image/jpeg', quality);
@@ -996,6 +998,8 @@ class DLHApp {
                   cv.width = w;
                   cv.height = h;
                   const c = cv.getContext('2d');
+                  c.imageSmoothingEnabled = true;
+                  c.imageSmoothingQuality = 'high';
                   c.drawImage(imgFallback, 0, 0, w, h);
                   finishOnce(cv.toDataURL('image/jpeg', quality));
                 } catch (cvErr) {
@@ -1039,6 +1043,8 @@ class DLHApp {
             canvas.width = width;
             canvas.height = height;
             const ctx = canvas.getContext('2d');
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
             ctx.drawImage(img, 0, 0, width, height);
             URL.revokeObjectURL(objectUrl);
             finishOnce(canvas.toDataURL('image/jpeg', quality));
@@ -1089,9 +1095,9 @@ class DLHApp {
     if (clean.includes('Buka') && clean.includes('Foto Bukti')) return '';
     if (clean.startsWith('📸')) return '';
     if (clean.startsWith('data:image')) return clean;
-    const driveMatch = clean.match(/(?:\/file\/d\/|[?&]id=)([a-zA-Z0-9_-]+)/);
+    const driveMatch = clean.match(/(?:\/file\/d\/|googleusercontent\.com\/d\/|[?&]id=)([a-zA-Z0-9_-]+)/);
     if (driveMatch && driveMatch[1]) {
-      return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1200`;
+      return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1600`;
     }
     if (clean.startsWith('http')) return clean;
     return '';

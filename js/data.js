@@ -937,9 +937,9 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     let tr = p.trim();
     if (!tr || tr === '-' || tr.includes('#ERROR')) return '';
     if (tr.includes('Buka') && tr.includes('Foto Bukti')) return '';
-    const dMatch = tr.match(/(?:\/file\/d\/|[?&]id=)([a-zA-Z0-9_-]+)/);
+    const dMatch = tr.match(/(?:\/file\/d\/|googleusercontent\.com\/d\/|[?&]id=)([a-zA-Z0-9_-]+)/);
     if (dMatch && dMatch[1] && !tr.startsWith('data:image')) {
-      return `https://lh3.googleusercontent.com/d/${dMatch[1]}`;
+      return `https://drive.google.com/thumbnail?id=${dMatch[1]}&sz=w1600`;
     }
     return tr;
   }).filter(Boolean);
@@ -1973,7 +1973,7 @@ class AduanDataStore {
     // Simpan salinan cadangan foto Base64 ke cache lokal secara aman
     try {
       mergedPhotos.forEach((photoStr, idx) => {
-        if (photoStr && typeof photoStr === 'string' && photoStr.startsWith('data:image') && photoStr.length < 150000) {
+        if (photoStr && typeof photoStr === 'string' && photoStr.startsWith('data:image') && photoStr.length < 450000) {
           try {
             localStorage.setItem('dlh_photo_cache_' + newId + '_' + idx, photoStr);
           } catch (e) {}
@@ -2563,7 +2563,7 @@ window.handleAduanPhotoError = function(imgEl, aduanId, photoIdx, isOfficerParam
     if (!imgEl.dataset.retryStep) {
       imgEl.dataset.retryStep = '1';
       imgEl.referrerPolicy = 'no-referrer';
-      imgEl.src = 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1200';
+      imgEl.src = 'https://drive.google.com/thumbnail?id=' + m[1] + '&sz=w1600';
       return;
     } else if (imgEl.dataset.retryStep === '1') {
       imgEl.dataset.retryStep = '2';

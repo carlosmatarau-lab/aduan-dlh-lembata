@@ -5843,9 +5843,9 @@
         if (clean.includes('Buka') && clean.includes('Foto Bukti')) return '';
         if (clean.startsWith('📸')) return '';
         if (clean.startsWith('data:image')) return clean;
-        const driveMatch = clean.match(/(?:\/file\/d\/|[?&]id=)([a-zA-Z0-9_-]+)/);
+        const driveMatch = clean.match(/(?:\/file\/d\/|googleusercontent\.com\/d\/|[?&]id=)([a-zA-Z0-9_-]+)/);
         if (driveMatch && driveMatch[1]) {
-          return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1200`;
+          return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1600`;
         }
         if (clean.startsWith('http')) return clean;
         return '';
@@ -5939,7 +5939,7 @@
                     const canvas = document.createElement('canvas');
                     let width = img.width || 640;
                     let height = img.height || 480;
-                    const maxDim = 720;
+                    const maxDim = 1440;
                     if (width > maxDim || height > maxDim) {
                       if (width > height) {
                         height = Math.round((height * maxDim) / width);
@@ -5952,8 +5952,10 @@
                     canvas.width = width;
                     canvas.height = height;
                     const ctx = canvas.getContext('2d');
+                    ctx.imageSmoothingEnabled = true;
+                    ctx.imageSmoothingQuality = 'high';
                     ctx.drawImage(img, 0, 0, width, height);
-                    this.tempUploadedPhotos.push(canvas.toDataURL('image/jpeg', 0.65));
+                    this.tempUploadedPhotos.push(canvas.toDataURL('image/jpeg', 0.82));
                   } catch (err) {
                     this.tempUploadedPhotos.push(dataUrl);
                   }

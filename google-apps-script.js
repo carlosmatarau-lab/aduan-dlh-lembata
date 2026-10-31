@@ -530,9 +530,9 @@ function mapSheetRowToFrontend(row, fotoStorageMap, isAdmin = true) {
         if (cleanLink.includes('Buka') && cleanLink.includes('Foto Bukti')) {
           cleanLink = webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(id) + '&photoIdx=' + idx;
         }
-        const dMatch = cleanLink.match(/(?:\/file\/d\/|[?&]id=)([a-zA-Z0-9-_]+)/);
+        const dMatch = cleanLink.match(/(?:\/file\/d\/|googleusercontent\.com\/d\/|[?&]id=)([a-zA-Z0-9-_]+)/);
         if (dMatch && !cleanLink.startsWith('data:image')) {
-          cleanLink = 'https://lh3.googleusercontent.com/d/' + dMatch[1];
+          cleanLink = 'https://lh3.googleusercontent.com/d/' + dMatch[1] + '=w1600';
         }
         if (cleanLink && !cleanLink.includes('#ERROR') && !resolvedCitizenPhotos.includes(cleanLink)) {
           resolvedCitizenPhotos.push(cleanLink);
@@ -586,9 +586,9 @@ function mapSheetRowToFrontend(row, fotoStorageMap, isAdmin = true) {
         if (cleanLink.includes('Buka') && cleanLink.includes('Foto Petugas')) {
           cleanLink = webAppUrl + '?action=viewFoto&id=' + encodeURIComponent(id + '_PETUGAS') + '&photoIdx=' + idx;
         }
-        const dMatch = cleanLink.match(/(?:\/file\/d\/|[?&]id=)([a-zA-Z0-9-_]+)/);
+        const dMatch = cleanLink.match(/(?:\/file\/d\/|googleusercontent\.com\/d\/|[?&]id=)([a-zA-Z0-9-_]+)/);
         if (dMatch && !cleanLink.startsWith('data:image')) {
-          cleanLink = 'https://lh3.googleusercontent.com/d/' + dMatch[1];
+          cleanLink = 'https://lh3.googleusercontent.com/d/' + dMatch[1] + '=w1600';
         }
         if (cleanLink && !cleanLink.includes('#ERROR') && !resolvedOfficerPhotos.includes(cleanLink)) {
           resolvedOfficerPhotos.push(cleanLink);
@@ -1089,7 +1089,7 @@ function saveBase64ImageToDrive(base64Data, idAduan) {
 
     const file = folder.createFile(blob);
     file.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-    return 'https://lh3.googleusercontent.com/d/' + file.getId();
+    return 'https://lh3.googleusercontent.com/d/' + file.getId() + '=w1600';
   } catch (e) {
     Logger.log('DriveApp save info: ' + e.message);
     return '';
