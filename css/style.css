@@ -2726,3 +2726,33 @@ body {
   justify-content: center;
   box-shadow: 0 2px 5px rgba(5, 150, 105, 0.25);
 }
+
+@keyframes fadeInSlideDown {
+  from { opacity: 0; transform: translateY(-6px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+@media (max-width: 640px) {
+  .riwayat-card-item {
+    padding: 10px 12px !important;
+    margin-bottom: 8px !important;
+  }
+  .riwayat-card-body {
+    display: grid !important;
+    grid-template-columns: 1fr 1fr !important;
+    gap: 8px !important;
+    align-items: flex-end !important;
+  }
+  .riwayat-card-body .input-text {
+    font-size: 14px !important;
+    padding: 8px 10px !important;
+    min-height: 40px !important;
+  }
+  .riwayat-sublabel {
+    font-size: 0.72rem !important;
+  }
+  .btn-add-riwayat {
+    padding: 8px 12px !important;
+    font-size: 0.78rem !important;
+  }
+}

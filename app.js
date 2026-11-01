@@ -361,12 +361,18 @@ class DLHApp {
   }
 
   /* ===================================================================
-     2D. SISTEM DINAMIS RIWAYAT PENGADUAN INSTANSI (+ TAMBAH / HAPUS)
+     2D. SISTEM DINAMIS RIWAYAT PENGADUAN INSTANSI (+ PROGRESSIVE DISCLOSURE)
      =================================================================== */
   setupDynamicRiwayatInstansi() {
     const container = document.getElementById('riwayatCardsContainer');
     const btnAdd = document.getElementById('btnAddRiwayat');
     const countHint = document.getElementById('riwayatCountHint');
+    const radioBelum = document.getElementById('radioBelumPernah');
+    const radioPernah = document.getElementById('radioPernahLapor');
+    const labelBelum = document.getElementById('labelBelumPernah');
+    const labelPernah = document.getElementById('labelPernahLapor');
+    const inputsWrap = document.getElementById('riwayatInputsWrapper');
+
     if (!container || !btnAdd) return;
 
     const MAX_RIWAYAT = 5;
@@ -398,11 +404,10 @@ class DLHApp {
           nameInput.id = `inputInstansi${num}`;
           nameInput.placeholder = num === 1
             ? 'Contoh: Kantor Desa / Polsek / DLH Provinsi'
-            : `Nama instansi ke-${num} (jika ada)`;
+            : `Nama instansi ke-${num}`;
         }
         if (tglInput) tglInput.id = `inputTglInstansi${num}`;
 
-        // Kartu pertama tidak menampilkan tombol hapus
         if (removeBtn) {
           removeBtn.style.display = (num > 1) ? 'inline-flex' : 'none';
         }
@@ -449,10 +454,10 @@ class DLHApp {
         <div class="riwayat-card-body">
           <div class="riwayat-field-group riwayat-field-instansi">
             <label class="riwayat-sublabel" for="inputInstansi${newIndex}">Nama Instansi</label>
-            <input type="text" id="inputInstansi${newIndex}" class="input-text riwayat-instansi-nama riwayat-instansi" placeholder="Nama instansi ke-${newIndex} (jika ada)">
+            <input type="text" id="inputInstansi${newIndex}" class="input-text riwayat-instansi-nama riwayat-instansi" placeholder="Nama instansi ke-${newIndex}">
           </div>
           <div class="riwayat-field-group riwayat-field-tanggal">
-            <label class="riwayat-sublabel" for="inputTglInstansi${newIndex}">Tanggal / Bulan / Tahun</label>
+            <label class="riwayat-sublabel" for="inputTglInstansi${newIndex}">Tanggal / Waktu</label>
             <input type="date" id="inputTglInstansi${newIndex}" class="input-text riwayat-instansi-tgl riwayat-tanggal">
           </div>
         </div>
@@ -470,7 +475,6 @@ class DLHApp {
       container.appendChild(cardEl);
       updateState();
 
-      // Focus ke input instansi baru
       setTimeout(() => {
         const input = cardEl.querySelector('.riwayat-instansi-nama');
         if (input) input.focus();
@@ -482,7 +486,6 @@ class DLHApp {
       this.addRiwayatCard();
     });
 
-    // Pasang listener pada remove button kartu bawaan jika ada
     container.querySelectorAll('.btn-remove-riwayat').forEach(btn => {
       btn.addEventListener('click', (e) => {
         e.preventDefault();
@@ -508,6 +511,58 @@ class DLHApp {
       });
       updateState();
     };
+
+    // Logika Progressive Disclosure Radio Toggle
+    const syncRiwayatToggleUI = () => {
+      if (!inputsWrap) return;
+      const isPernah = radioPernah && radioPernah.checked;
+
+      if (isPernah) {
+        inputsWrap.style.display = 'block';
+        if (labelPernah) {
+          labelPernah.style.background = '#ecfdf5';
+          labelPernah.style.borderColor = '#a7f3d0';
+          labelPernah.style.color = '#065f46';
+          labelPernah.style.fontWeight = '700';
+        }
+        if (labelBelum) {
+          labelBelum.style.background = '#f8fafc';
+          labelBelum.style.borderColor = '#e2e8f0';
+          labelBelum.style.color = '#475569';
+          labelBelum.style.fontWeight = '600';
+        }
+        setTimeout(() => {
+          const firstInput = document.getElementById('inputInstansi1');
+          if (firstInput && !firstInput.value) firstInput.focus();
+        }, 50);
+      } else {
+        inputsWrap.style.display = 'none';
+        if (labelBelum) {
+          labelBelum.style.background = '#ecfdf5';
+          labelBelum.style.borderColor = '#a7f3d0';
+          labelBelum.style.color = '#065f46';
+          labelBelum.style.fontWeight = '700';
+        }
+        if (labelPernah) {
+          labelPernah.style.background = '#f8fafc';
+          labelPernah.style.borderColor = '#e2e8f0';
+          labelPernah.style.color = '#475569';
+          labelPernah.style.fontWeight = '600';
+        }
+        this.resetRiwayatCards();
+      }
+    };
+
+    if (radioBelum) radioBelum.addEventListener('change', syncRiwayatToggleUI);
+    if (radioPernah) radioPernah.addEventListener('change', syncRiwayatToggleUI);
+
+    const formWarga = document.getElementById('formAduanWarga');
+    if (formWarga) {
+      formWarga.addEventListener('reset', () => {
+        if (radioBelum) radioBelum.checked = true;
+        setTimeout(syncRiwayatToggleUI, 10);
+      });
+    }
 
     updateState();
   }

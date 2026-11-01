@@ -1632,21 +1632,33 @@
       }
     }
 
+    @keyframes fadeInSlideDown {
+      from { opacity: 0; transform: translateY(-6px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
     @media (max-width: 640px) {
-      .riwayat-card-body {
-        grid-template-columns: 1fr;
-        gap: 10px;
-      }
       .riwayat-card-item {
-        padding: 12px;
+        padding: 10px 12px !important;
+        margin-bottom: 8px !important;
+      }
+      .riwayat-card-body {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+        align-items: flex-end !important;
       }
       .riwayat-card-body .input-text {
-        font-size: 16px !important;
-        min-height: 44px;
+        font-size: 14px !important;
+        padding: 8px 10px !important;
+        min-height: 40px !important;
+      }
+      .riwayat-sublabel {
+        font-size: 0.72rem !important;
       }
       .btn-add-riwayat {
-        padding: 11px 16px;
-        font-size: 0.85rem;
+        padding: 8px 12px !important;
+        font-size: 0.78rem !important;
       }
     }
 
@@ -6170,49 +6182,68 @@
             <span>6</span> Pernah Menyampaikan Pengaduan
           </div>
 
-          <div class="form-field" style="margin-bottom: 22px;">
-            <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-bottom: 6px;">
-              <label class="field-label" style="margin-bottom: 0;">Riwayat Penyampaian Pengaduan ke Pihak / Instansi Lain</label>
-              <span id="riwayatCountHint" class="riwayat-count-hint">Dapat menambahkan hingga 5 instansi</span>
+          <div class="form-field" style="margin-bottom: 20px;">
+            <label class="field-label" style="margin-bottom: 6px;">
+              Apakah Anda pernah menyampaikan pengaduan ini ke pihak / instansi lain sebelumnya?
+            </label>
+
+            <!-- Pilihan Radio Progressive Disclosure -->
+            <div class="riwayat-toggle-wrap" style="display: flex; gap: 8px; margin-bottom: 10px; flex-wrap: wrap;">
+              <label class="riwayat-radio-label" id="labelBelumPernah" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 700; color: #065f46; cursor: pointer; background: #ecfdf5; padding: 6px 14px; border-radius: 999px; border: 1.5px solid #a7f3d0; transition: all 0.2s;">
+                <input type="radio" name="radioPernahLapor" id="radioBelumPernah" value="tidak" checked style="accent-color: #059669; margin: 0;">
+                <span>Belum Pernah</span>
+              </label>
+              <label class="riwayat-radio-label" id="labelPernahLapor" style="display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 600; color: #475569; cursor: pointer; background: #f8fafc; padding: 6px 14px; border-radius: 999px; border: 1.5px solid #e2e8f0; transition: all 0.2s;">
+                <input type="radio" name="radioPernahLapor" id="radioPernahLapor" value="ya" style="accent-color: #059669; margin: 0;">
+                <span>Pernah Melapor</span>
+              </label>
             </div>
 
-            <!-- Kontainer Kartu Dinamis (+ Tambah / Hapus Instansi) -->
-            <div class="riwayat-cards-container" id="riwayatCardsContainer">
-              <!-- Kartu 1 (Default Awal) -->
-              <div class="riwayat-card-item">
-                <div class="riwayat-card-header">
-                  <div class="riwayat-card-badge">
-                    <span class="riwayat-badge-num">6.1</span>
-                    <span class="riwayat-badge-title">Instansi Pertama</span>
+            <!-- Kontainer Kartu Input (Hanya tampil jika memilih "Pernah Melapor") -->
+            <div id="riwayatInputsWrapper" style="display: none; animation: fadeInSlideDown 0.25s ease-out;">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; flex-wrap: wrap; gap: 6px; margin-bottom: 6px;">
+                <span style="font-size: 0.76rem; font-weight: 700; color: #334155;">Daftar Instansi yang Pernah Dihubungi:</span>
+                <span id="riwayatCountHint" class="riwayat-count-hint" style="font-size: 0.72rem; color: #64748b;">Maksimal 5 instansi</span>
+              </div>
+
+              <!-- Kontainer Kartu Dinamis -->
+              <div class="riwayat-cards-container" id="riwayatCardsContainer">
+                <!-- Kartu 1 Default -->
+                <div class="riwayat-card-item">
+                  <div class="riwayat-card-header">
+                    <div class="riwayat-card-badge">
+                      <span class="riwayat-badge-num">6.1</span>
+                      <span class="riwayat-badge-title">Instansi Pertama</span>
+                    </div>
+                    <div style="display: flex; align-items: center; gap: 8px;">
+                      <button type="button" class="btn-remove-riwayat" title="Hapus baris instansi ini" style="display: none;">✕ Hapus</button>
+                      <span class="riwayat-badge-hint">Opsional</span>
+                    </div>
                   </div>
-                  <div style="display: flex; align-items: center; gap: 8px;">
-                    <button type="button" class="btn-remove-riwayat" title="Hapus baris instansi ini" style="display: none;">✕ Hapus</button>
-                    <span class="riwayat-badge-hint">Opsional</span>
-                  </div>
-                </div>
-                <div class="riwayat-card-body">
-                  <div class="riwayat-field-group riwayat-field-instansi">
-                    <label class="riwayat-sublabel" for="inputInstansi1">Nama Instansi</label>
-                    <input type="text" id="inputInstansi1" class="input-text riwayat-instansi-nama riwayat-instansi" placeholder="Contoh: Kantor Desa / Polsek / DLH Provinsi">
-                  </div>
-                  <div class="riwayat-field-group riwayat-field-tanggal">
-                    <label class="riwayat-sublabel" for="inputTglInstansi1">Tanggal / Bulan / Tahun</label>
-                    <input type="date" id="inputTglInstansi1" class="input-text riwayat-instansi-tgl riwayat-tanggal">
+                  <div class="riwayat-card-body">
+                    <div class="riwayat-field-group riwayat-field-instansi">
+                      <label class="riwayat-sublabel" for="inputInstansi1">Nama Instansi</label>
+                      <input type="text" id="inputInstansi1" class="input-text riwayat-instansi-nama riwayat-instansi" placeholder="Contoh: Kantor Desa / Polsek / DLH Provinsi">
+                    </div>
+                    <div class="riwayat-field-group riwayat-field-tanggal">
+                      <label class="riwayat-sublabel" for="inputTglInstansi1">Tanggal / Waktu</label>
+                      <input type="date" id="inputTglInstansi1" class="input-text riwayat-instansi-tgl riwayat-tanggal">
+                    </div>
                   </div>
                 </div>
               </div>
-            </div>
 
-            <!-- Tombol Tambah Riwayat Instansi Dinamis -->
-            <div class="riwayat-actions-wrap" style="margin-top: 10px;">
-              <button type="button" class="btn-add-riwayat" id="btnAddRiwayat">
-                <span>➕</span> Tambah Riwayat Instansi Lain
-              </button>
-            </div>
+              <!-- Tombol Tambah Riwayat Instansi -->
+              <div class="riwayat-actions-wrap" style="margin-top: 8px;">
+                <button type="button" class="btn-add-riwayat" id="btnAddRiwayat">
+                  <span>➕</span> Tambah Riwayat Instansi Lain
+                </button>
+              </div>
 
-            <small class="riwayat-footnote">
-              * Kosongkan jika ini adalah laporan pertama kali atau belum pernah menyampaikan pengaduan ke pihak lain sebelumnya.
-            </small>
+              <small class="riwayat-footnote" style="display: block; margin-top: 6px; font-size: 0.72rem; color: #64748b;">
+                * Cantumkan instansi lain yang pernah Anda hubungi sebelumnya terkait permasalahan ini.
+              </small>
+            </div>
           </div>
 
           <!-- Submit Button -->
