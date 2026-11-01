@@ -5297,6 +5297,11 @@
       transform: translateY(-1px);
     }
 
+    /* Sembunyikan notifikasi teks duplikat di bagian bawah modal */
+    #waRedirectLoadingNotice {
+      display: none !important;
+    }
+
     /* ===================================================================
        1. INITIAL WEB SPLASH SCREEN (ECOADU LEMBATA)
        =================================================================== */
@@ -6592,10 +6597,10 @@
         </div>
 
         <!-- Hidden hooks for background non-regression JS bindings -->
-        <div id="waRedirectLoadingNotice" style="display: none;" aria-hidden="true">
+        <div id="waRedirectLoadingNotice" style="display: none !important;" aria-hidden="true">
           <span id="waRedirectNoticeText"></span>
         </div>
-        <a id="successTrackingUrl" href="#" style="display: none;" aria-hidden="true"></a>
+        <a id="successTrackingUrl" href="#" style="display: none !important;" aria-hidden="true"></a>
       </div>
     </div>
   </div>

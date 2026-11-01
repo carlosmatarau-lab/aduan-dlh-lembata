@@ -1942,9 +1942,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
             const origText = btnWa.innerHTML;
             btnWa.innerHTML = '<span class="btn-spinner"></span> <span>Membuka WhatsApp...</span>';
             if (redirectNotice) {
-              redirectNotice.style.display = 'block';
-              const noticeText = document.getElementById('waRedirectNoticeText');
-              if (noticeText) noticeText.textContent = 'Mengarahkan Anda ke Room Chat WhatsApp Layanan Pengaduan...';
+              redirectNotice.style.display = 'none';
             }
 
             setTimeout(async () => {
@@ -2006,12 +2004,9 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         // Buka modal konfirmasi sukses
         if (modalSuccess) modalSuccess.classList.add('show');
 
-        // Notifikasi konfirmasi WhatsApp ganda telah dikirim secara otomatis via server Fonnte Gateway di backend.
-        // Pengalihan paksa/otomatis ke WhatsApp dinonaktifkan agar warga dapat membaca nomor tiket dengan tenang.
+        // Notifikasi konfirmasi WhatsApp telah ditampilkan rapi di dalam kotak informasi modal.
         if (redirectNotice) {
-          redirectNotice.style.display = 'block';
-          const noticeText = document.getElementById('waRedirectNoticeText');
-          if (noticeText) noticeText.textContent = '✓ Notifikasi tanda terima telah otomatis dikirim via WhatsApp ke kontak Anda & tim DLH.';
+          redirectNotice.style.display = 'none';
         }
 
       } catch (submitErr) {
