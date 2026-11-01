@@ -124,8 +124,8 @@ class LembataMapEngine {
         attribution: 'Topografi &copy; Esri, USGS'
       });
 
-      // Default basemap: Peta Jalan OSM
-      osmLayer.addTo(this.map);
+      // Default basemap: Citra Satelit Nyata Resolusi Tinggi (Esri World Imagery)
+      satLayer.addTo(this.map);
 
       // Quick Basemap Switcher menggunakan tombol mengambang (.map-floating-basemap)
       // Kontrol bawaan Leaflet dihilangkan agar tidak menduplikasi kontrol dan menghemat ruang kanvas
@@ -135,7 +135,7 @@ class LembataMapEngine {
         'sat': satLayer,
         'topo': topoLayer
       };
-      this.currentBaseLayer = 'osm';
+      this.currentBaseLayer = 'sat';
 
       // Tambahkan skala jarak (metric)
       L.control.scale({ imperial: false, position: 'bottomright' }).addTo(this.map);
@@ -161,45 +161,10 @@ class LembataMapEngine {
     }
   }
 
-  /* Landmark Geografis Pulau Lembata untuk memudahkan masyarakat mengenali wilayah */
+  /* Landmark Geografis Pulau Lembata (Dinonaktifkan agar kanvas peta bersih tanpa keterangan nama lokasi yang menumpuk di desktop & mobile) */
   addGeographicLandmarks() {
-    if (!this.map) return;
-    this.landmarksGroup = L.layerGroup().addTo(this.map);
-
-    const landmarks = [
-      { name: 'Kota Lewoleba (Ibukota)', coords: [-8.375, 123.418], desc: 'Pusat Pemerintahan, Pelabuhan & Ibukota Lembata' },
-      { name: 'Teluk Lewoleba', coords: [-8.355, 123.400], desc: 'Kawasan Pesisir Nubatukan' },
-      { name: 'Gunung Ile Lewotolok', coords: [-8.273, 123.507], desc: 'Puncak Vulkanik Ile Ape' },
-      { name: 'Teluk Hadakewa', coords: [-8.365, 123.548], desc: 'Pesisir Hadakewa Lebatukan' },
-      { name: 'Tanjung Batu', coords: [-8.245, 123.485], desc: 'Ujung Utara Ile Ape' },
-      { name: 'Balauring (Kedang)', coords: [-8.234, 123.706], desc: 'Pusat Kecamatan Omesuri' },
-      { name: 'Wairiang (Buyasuri)', coords: [-8.192, 123.820], desc: 'Pusat Kecamatan Buyasuri' },
-      { name: 'Lamalera (Wulandoni)', coords: [-8.552, 123.435], desc: 'Desa Tradisional Pesisir Selatan' },
-      { name: 'Mingar / Loang (Nagawutung)', coords: [-8.490, 123.360], desc: 'Kawasan Pesisir Barat Daya' },
-      { name: 'Kalikasa (Atadei)', coords: [-8.434, 123.468], desc: 'Pusat Kecamatan Atadei' }
-    ];
-
-    landmarks.forEach(lm => {
-      const landmarkIcon = L.divIcon({
-        className: 'landmark-map-label',
-        html: `<div style="
-          background: rgba(15, 23, 42, 0.75);
-          color: #ffffff;
-          padding: 2px 7px;
-          border-radius: 999px;
-          font-size: 10px;
-          font-weight: 700;
-          white-space: nowrap;
-          border: 1px solid rgba(255, 255, 255, 0.4);
-          box-shadow: 0 2px 6px rgba(0,0,0,0.3);
-          pointer-events: none;
-        ">${lm.name}</div>`,
-        iconSize: [120, 20],
-        iconAnchor: [60, 10]
-      });
-
-      L.marker(lm.coords, { icon: landmarkIcon, interactive: false }).addTo(this.landmarksGroup);
-    });
+    // Kanvas peta bersih dari keterangan nama lokasi di seluruh mode (desktop & mobile)
+    return;
   }
 
   /* Ikon Kategori Pencemaran (Zero-Emoji Policy untuk Gov WebGIS) */

@@ -1824,7 +1824,9 @@
       transform: scale(1.15);
     }
 
-    .landmark-map-label {
+    .landmark-map-label,
+    .custom-landmark-pin {
+      display: none !important;
       background: transparent;
       border: none;
     }
@@ -4009,9 +4011,9 @@
           <div class="map-action-row-group">
             <!-- Basemap Selector -->
             <select id="mapBasemapSelect" class="filter-select map-basemap-select" onchange="window.portal.changeBasemap(this.value)">
-              <option value="osm" selected>Peta Jalan (OSM Standard)</option>
+              <option value="osm">Peta Jalan (OSM Standard)</option>
               <option value="esri_street">Peta Jalan &amp; Kota (Esri)</option>
-              <option value="sat">Citra Satelit Nyata</option>
+              <option value="sat" selected>Citra Satelit Nyata</option>
               <option value="topo">Relief Topografi</option>
             </select>
 
@@ -5383,13 +5385,13 @@
             attribution: 'Topografi &copy; Esri, USGS'
           });
 
-          // Set default basemap ke OpenStreetMap Standard (Peta Jalan Bersih)
-          osmLayer.addTo(this.map);
+          // Set default basemap ke Citra Satelit Resolusi Tinggi
+          satLayer.addTo(this.map);
           this.baseLayers = { osm: osmLayer, esri_street: esriStreetLayer, sat: satLayer, topo: topoLayer };
-          this.currentBaseLayer = 'osm';
+          this.currentBaseLayer = 'sat';
 
           const selectBasemap = document.getElementById('mapBasemapSelect');
-          if (selectBasemap) selectBasemap.value = 'osm';
+          if (selectBasemap) selectBasemap.value = 'sat';
 
           L.control.scale({ imperial: false, position: 'bottomright' }).addTo(this.map);
 
@@ -5406,33 +5408,8 @@
       }
 
       addGeographicLandmarks() {
-        if (!this.map) return;
-        if (this.landmarksGroup) {
-          this.landmarksGroup.clearLayers();
-        } else {
-          this.landmarksGroup = L.layerGroup().addTo(this.map);
-        }
-
-        const landmarks = [
-          { name: 'Kota Lewoleba (Ibukota)', lat: -8.3750, lng: 123.4180, desc: 'Pusat Pemerintahan Kab. Lembata & Kec. Nubatukan' },
-          { name: 'Teluk Lewoleba', lat: -8.3550, lng: 123.4000, desc: 'Perairan Teluk Lewoleba' },
-          { name: 'G. Ile Lewotolok', lat: -8.2725, lng: 123.5050, desc: 'Gunung Api Aktif Ile Ape / Ile Ape Timur' },
-          { name: 'Balauring', lat: -8.2336, lng: 123.7060, desc: 'Pusat Kecamatan Omesuri' },
-          { name: 'Hadakewa', lat: -8.3707, lng: 123.5474, desc: 'Pusat Kecamatan Lebatukan' },
-          { name: 'Lamalera', lat: -8.5583, lng: 123.4244, desc: 'Kecamatan Wulandoni' }
-        ];
-
-        landmarks.forEach(lm => {
-          const icon = L.divIcon({
-            className: 'custom-landmark-pin',
-            html: `<div class="landmark-map-label">${lm.name}</div>`,
-            iconSize: [140, 24],
-            iconAnchor: [70, 12]
-          });
-          L.marker([lm.lat, lm.lng], { icon: icon, interactive: true })
-            .bindTooltip(`<strong>${lm.name}</strong><br>${lm.desc}`, { direction: 'top', opacity: 0.9 })
-            .addTo(this.landmarksGroup);
-        });
+        // Kanvas peta bersih dari keterangan nama lokasi di seluruh mode (desktop & mobile)
+        return;
       }
 
       renderMapLayers() {

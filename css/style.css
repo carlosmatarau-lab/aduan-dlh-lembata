@@ -1791,6 +1791,12 @@ body {
   background: #e0f2fe;
 }
 
+/* Sembunyikan label landmark geografis permanen agar kanvas peta bersih di semua mode (desktop & mobile) */
+.landmark-map-label,
+.custom-landmark-pin {
+  display: none !important;
+}
+
 /* Floating Basemap Switcher (Jalan, Satelit, Topografi) */
 .map-floating-basemap {
   position: absolute;

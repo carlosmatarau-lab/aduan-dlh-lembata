@@ -538,10 +538,14 @@ class DLHApp {
       scrollWheelZoom: true
     }).setView([initialLat, initialLng], 14);
 
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    const satBase = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/World_Imagery/MapServer/tile/{z}/{y}/{x}', {
       maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright" target="_blank">OpenStreetMap</a> kontributor'
-    }).addTo(this.citizenPinMap);
+      attribution: 'Citra Satelit &copy; Esri, Maxar'
+    });
+    const satLabels = L.tileLayer('https://server.arcgisonline.com/ArcGIS/rest/services/Reference/World_Boundaries_and_Places/MapServer/tile/{z}/{y}/{x}', {
+      maxZoom: 19
+    });
+    L.layerGroup([satBase, satLabels]).addTo(this.citizenPinMap);
 
     const pinIcon = L.divIcon({
       className: 'custom-citizen-pin',
