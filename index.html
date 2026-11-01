@@ -5296,10 +5296,377 @@
       color: #065f46 !important;
       transform: translateY(-1px);
     }
+
+    /* ===================================================================
+       1. INITIAL WEB SPLASH SCREEN (ECOADU LEMBATA)
+       =================================================================== */
+    .ecoadu-splash-overlay {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 9999999;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at 50% 35%, #065f46 0%, #064e3b 45%, #022c22 100%);
+      user-select: none;
+      -webkit-user-select: none;
+      overflow: hidden;
+      box-sizing: border-box;
+    }
+
+    .ecoadu-splash-overlay.splash-exit {
+      transform: scale(1.04);
+      opacity: 0;
+      filter: blur(6px);
+      pointer-events: none;
+      transition: transform 0.42s cubic-bezier(0.16, 1, 0.3, 1),
+                  opacity 0.42s ease-out,
+                  filter 0.42s ease-out;
+    }
+
+    .splash-content {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 24px;
+      max-width: 440px;
+      width: 90%;
+      animation: splashFadeIn 0.5s ease-out forwards;
+    }
+
+    @keyframes splashFadeIn {
+      0% {
+        opacity: 0;
+        transform: translateY(14px) scale(0.96);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .splash-logo-wrap {
+      position: relative;
+      width: 110px;
+      height: 110px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 20px;
+    }
+
+    .splash-ring {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 110px;
+      height: 110px;
+      border-radius: 50%;
+      border: 2px solid rgba(52, 211, 153, 0.5);
+      box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+      pointer-events: none;
+    }
+
+    .splash-ring-1 {
+      animation: splashRingPulse 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    }
+
+    .splash-ring-2 {
+      animation: splashRingPulse 2.2s cubic-bezier(0.16, 1, 0.3, 1) infinite 0.75s;
+    }
+
+    @keyframes splashRingPulse {
+      0% {
+        transform: translate(-50%, -50%) scale(0.8);
+        opacity: 0.9;
+      }
+      50% {
+        opacity: 0.4;
+      }
+      100% {
+        transform: translate(-50%, -50%) scale(1.68);
+        opacity: 0;
+      }
+    }
+
+    .splash-logo {
+      width: 92px;
+      height: 92px;
+      object-fit: contain;
+      position: relative;
+      z-index: 2;
+      filter: drop-shadow(0 10px 24px rgba(0, 0, 0, 0.5));
+    }
+
+    .splash-title {
+      font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+      font-size: 1.9rem;
+      font-weight: 800;
+      letter-spacing: 1.5px;
+      margin: 0 0 6px 0;
+      line-height: 1.2;
+      background: linear-gradient(90deg, #ecfdf5 0%, #a7f3d0 30%, #ffffff 50%, #34d399 70%, #ecfdf5 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      animation: emeraldShimmer 2.5s linear infinite;
+    }
+
+    @keyframes emeraldShimmer {
+      0% {
+        background-position: 0% center;
+      }
+      100% {
+        background-position: 200% center;
+      }
+    }
+
+    .splash-subtitle {
+      font-size: 0.88rem;
+      font-weight: 500;
+      color: #a7f3d0;
+      margin: 0 0 22px 0;
+      line-height: 1.45;
+      letter-spacing: 0.2px;
+      opacity: 0.92;
+    }
+
+    .splash-progress-track {
+      width: 220px;
+      height: 4px;
+      background: rgba(255, 255, 255, 0.16);
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 10px;
+      box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+    }
+
+    .splash-progress-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #10b981 0%, #34d399 50%, #6ee7b7 100%);
+      border-radius: 999px;
+      box-shadow: 0 0 10px rgba(52, 211, 153, 0.85);
+      transition: width 1.4s cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    .splash-caption {
+      font-size: 0.72rem;
+      color: rgba(209, 250, 229, 0.75);
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* ===================================================================
+       2. PORTAL HANDOFF OVERLAY (TRANSISI KE PETUGAS.HTML)
+       =================================================================== */
+    .portal-handoff-overlay {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 9999998;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(2, 44, 34, 0.92);
+      backdrop-filter: blur(14px);
+      -webkit-backdrop-filter: blur(14px);
+      opacity: 0;
+      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      box-sizing: border-box;
+      padding: 20px;
+    }
+
+    .portal-handoff-overlay.show {
+      opacity: 1;
+    }
+
+    .handoff-card {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      background: rgba(6, 78, 59, 0.85);
+      border: 1.5px solid rgba(52, 211, 153, 0.4);
+      box-shadow: 0 25px 60px -10px rgba(0, 0, 0, 0.6), 0 0 40px rgba(16, 185, 129, 0.2);
+      border-radius: 20px;
+      padding: 32px 28px;
+      max-width: 440px;
+      width: 90%;
+      animation: handoffPop 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+    }
+
+    @keyframes handoffPop {
+      0% {
+        transform: scale(0.92) translateY(16px);
+        opacity: 0;
+      }
+      100% {
+        transform: scale(1) translateY(0);
+        opacity: 1;
+      }
+    }
+
+    .handoff-shield-wrap {
+      position: relative;
+      width: 72px;
+      height: 72px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 16px;
+      border-radius: 18px;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1.5px solid rgba(52, 211, 153, 0.3);
+      overflow: hidden;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    }
+
+    .handoff-shield-svg {
+      width: 42px;
+      height: 42px;
+    }
+
+    .handoff-laser-line {
+      position: absolute;
+      left: 0;
+      right: 0;
+      height: 2.5px;
+      background: #34d399;
+      box-shadow: 0 0 10px #34d399, 0 0 4px #10b981;
+      animation: handoffLaser 1.2s ease-in-out infinite;
+    }
+
+    @keyframes handoffLaser {
+      0% {
+        top: -4px;
+        opacity: 0;
+      }
+      15% {
+        opacity: 1;
+      }
+      85% {
+        opacity: 1;
+      }
+      100% {
+        top: 74px;
+        opacity: 0;
+      }
+    }
+
+    .handoff-badge-label {
+      display: inline-flex;
+      align-items: center;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 1.2px;
+      color: #34d399;
+      background: rgba(16, 185, 129, 0.15);
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      padding: 4px 10px;
+      border-radius: 999px;
+      margin-bottom: 10px;
+    }
+
+    .handoff-title {
+      color: #ffffff;
+      font-size: 1.15rem;
+      font-weight: 800;
+      margin: 0 0 6px 0;
+      line-height: 1.35;
+      font-family: 'Outfit', 'Plus Jakarta Sans', sans-serif;
+    }
+
+    .handoff-subtitle {
+      color: #a7f3d0;
+      font-size: 0.84rem;
+      font-weight: 500;
+      margin: 0 0 20px 0;
+      line-height: 1.45;
+    }
+
+    .handoff-pulse-track {
+      width: 100%;
+      height: 3.5px;
+      background: rgba(255, 255, 255, 0.12);
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .handoff-pulse-fill {
+      height: 100%;
+      width: 0%;
+      background: linear-gradient(90deg, #10b981, #34d399, #6ee7b7);
+      box-shadow: 0 0 8px rgba(52, 211, 153, 0.8);
+      border-radius: 999px;
+      animation: handoffFill 0.95s cubic-bezier(0.22, 1, 0.36, 1) forwards;
+    }
+
+    @keyframes handoffFill {
+      0% {
+        width: 0%;
+      }
+      100% {
+        width: 100%;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .ecoadu-splash-overlay,
+      .splash-content,
+      .splash-ring-1,
+      .splash-ring-2,
+      .splash-title,
+      .splash-progress-fill,
+      .portal-handoff-overlay,
+      .handoff-card,
+      .handoff-laser-line,
+      .handoff-pulse-fill {
+        animation: none !important;
+        transition: none !important;
+      }
+    }
   </style>
 </head>
 
 <body>
+
+  <!-- ===================================================================
+       INITIAL WEB SPLASH SCREEN (SPBE BIO-GREEN EDITION)
+       =================================================================== -->
+  <div id="ecoaduInitialSplash" class="ecoadu-splash-overlay" aria-label="Memuat ECOADU Lembata">
+    <div class="splash-content">
+      <!-- Logo & Dual Ring Waves -->
+      <div class="splash-logo-wrap">
+        <div class="splash-ring splash-ring-1"></div>
+        <div class="splash-ring splash-ring-2"></div>
+        <img src="assets/logo-ecoadu.png" alt="Logo ECOADU Lembata" class="splash-logo" onerror="this.onerror=null; this.src='assets/logo-pemkab-lembata.png';" />
+      </div>
+
+      <!-- Typography -->
+      <h1 class="splash-title">ECOADU LEMBATA</h1>
+      <p class="splash-subtitle">Ekosistem Digital Aduan Lingkungan Lembata</p>
+
+      <!-- Progress Track & Bar (0% to 100% over 1.4s) -->
+      <div class="splash-progress-track">
+        <div id="splashProgressBar" class="splash-progress-fill"></div>
+      </div>
+      <div class="splash-caption">Memuat Layanan Pengaduan Lingkungan Hidup...</div>
+    </div>
+  </div>
+  <script>
+    // Fast-check sessionStorage to prevent any flash if already shown in this session
+    if (sessionStorage.getItem('ecoadu_splash_shown') === 'true') {
+      var _earlySp = document.getElementById('ecoaduInitialSplash');
+      if (_earlySp) _earlySp.style.display = 'none';
+    }
+  </script>
 
   <!-- Top Nature Accent Ribbon -->
   <div class="nature-top-ribbon"></div>
@@ -6408,6 +6775,28 @@
     <span class="floating-wa-text">WhatsApp DLH</span>
   </a>
 
+  <!-- ===================================================================
+       TRANSISI PINDAH KE DASHBOARD PETUGAS (PORTAL HANDOFF OVERLAY)
+       =================================================================== -->
+  <div id="portalHandoffOverlay" class="portal-handoff-overlay" aria-hidden="true" style="display: none;">
+    <div class="handoff-card">
+      <div class="handoff-shield-wrap">
+        <svg class="handoff-shield-svg" viewBox="0 0 24 24" fill="none" stroke="#34d399" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" fill="rgba(6, 78, 59, 0.5)" />
+          <rect x="9" y="11" width="6" height="5" rx="1" stroke="#a7f3d0" stroke-width="1.6" fill="rgba(16, 185, 129, 0.3)" />
+          <path d="M10 11V9a2 2 0 1 1 4 0v2" stroke="#a7f3d0" stroke-width="1.6" />
+        </svg>
+        <div class="handoff-laser-line"></div>
+      </div>
+      <div class="handoff-badge-label">GERBANG OTENTIKASI PPKLH</div>
+      <h3 class="handoff-title">Beralih ke Portal Internal Petugas DLH</h3>
+      <p class="handoff-subtitle">Menyiapkan Gerbang Otentikasi PPKLH...</p>
+      <div class="handoff-pulse-track">
+        <div class="handoff-pulse-fill"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- Leaflet JS -->
   <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
@@ -6416,6 +6805,67 @@
   <script charset="UTF-8" src="js/data.js?v=20261027_sort_01"></script>
   <script charset="UTF-8" src="js/map.js?v=20261029_clean_gov_gis"></script>
   <script charset="UTF-8" src="js/app.js?v=20261027_sort_01"></script>
+
+  <!-- ===================================================================
+       SCRIPTS: SPLASH SCREEN & PORTAL TRANSITION HANDLER
+       =================================================================== -->
+  <script>
+    // 1. Initial Web Splash Screen Handler
+    (function initEcoaduSplash() {
+      const splash = document.getElementById('ecoaduInitialSplash');
+      if (!splash) return;
+      const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      if (sessionStorage.getItem('ecoadu_splash_shown') === 'true' || prefersReduced) {
+        splash.style.display = 'none';
+        splash.remove();
+        return;
+      }
+      const progressBar = document.getElementById('splashProgressBar');
+      requestAnimationFrame(() => {
+        setTimeout(() => {
+          if (progressBar) progressBar.style.width = '100%';
+        }, 50);
+      });
+
+      setTimeout(() => {
+        sessionStorage.setItem('ecoadu_splash_shown', 'true');
+        splash.classList.add('splash-exit');
+        setTimeout(() => {
+          splash.remove();
+        }, 420);
+      }, 1450);
+    })();
+
+    // 2. Transisi Pindah ke Dashboard Petugas (#portalHandoffOverlay)
+    (function initPortalHandoff() {
+      const handoffOverlay = document.getElementById('portalHandoffOverlay');
+      if (!handoffOverlay) return;
+
+      document.addEventListener('click', function(e) {
+        const targetLink = e.target.closest('a[href*="petugas.html"]');
+        if (targetLink) {
+          e.preventDefault();
+          const destUrl = targetLink.getAttribute('href') || 'petugas.html';
+
+          handoffOverlay.style.display = 'flex';
+          void handoffOverlay.offsetWidth;
+          handoffOverlay.classList.add('show');
+
+          setTimeout(() => {
+            window.location.href = destUrl;
+          }, 950);
+        }
+      });
+
+      // Reset overlay saat user kembali via tombol back browser (BFCache)
+      window.addEventListener('pageshow', function() {
+        if (handoffOverlay) {
+          handoffOverlay.classList.remove('show');
+          handoffOverlay.style.display = 'none';
+        }
+      });
+    })();
+  </script>
 </body>
 
 </html>

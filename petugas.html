@@ -3784,6 +3784,34 @@
       overflow: hidden;
       text-overflow: ellipsis;
     }
+
+    /* ===================================================================
+       STAGGERED ENTRY ANIMATION FOR OFFICER DASHBOARD
+       =================================================================== */
+    @keyframes fadeSlideUp {
+      0% {
+        opacity: 0;
+        transform: translateY(22px);
+      }
+      100% {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .stagger-in {
+      animation: fadeSlideUp 0.55s cubic-bezier(0.16, 1, 0.3, 1) both;
+      will-change: transform, opacity;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .stagger-in {
+        animation: none !important;
+        opacity: 1 !important;
+        transform: none !important;
+        will-change: auto !important;
+      }
+    }
   </style>
 </head>
 
@@ -4983,6 +5011,32 @@
       /* ===================================================================
          1. PROTEKSI AKSES (LOGIN / PIN DENGAN SERVER AUTH & SMART FALLBACK)
          =================================================================== */
+      applyDashboardStagger() {
+        const prefersReduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+        const staggerTargets = [
+          document.querySelector('.officer-top-strip'),
+          document.querySelector('.kpi-grid'),
+          document.querySelector('.officer-map-card'),
+          document.querySelector('.table-container-card')
+        ];
+
+        staggerTargets.forEach((el, index) => {
+          if (!el) return;
+          if (prefersReduced) {
+            el.classList.remove('stagger-in');
+            el.style.animationDelay = '0s';
+            el.style.opacity = '1';
+            el.style.transform = 'none';
+          } else {
+            el.classList.remove('stagger-in');
+            el.style.animationDelay = `${index * 70}ms`;
+            // Trigger browser reflow agar animasi CSS terpicu ulang
+            void el.offsetWidth;
+            el.classList.add('stagger-in');
+          }
+        });
+      }
+
       checkAuth() {
         const loginPage = document.getElementById('petugasLoginPage');
         const dashWrap = document.getElementById('dashboardAppWrapper');
@@ -4997,6 +5051,7 @@
           sessionStorage.setItem('dlh_petugas_auth', 'true');
           if (loginPage) loginPage.style.display = 'none';
           if (dashWrap) dashWrap.style.display = 'flex';
+          this.applyDashboardStagger();
           try { this.initSplitScreen(); } catch (e) {}
           if (this.map) {
             setTimeout(() => this.map.invalidateSize(), 300);
@@ -5180,6 +5235,7 @@
           setTimeout(async () => {
             if (loginPage) loginPage.style.display = 'none';
             if (dashWrap) dashWrap.style.display = 'flex';
+            this.applyDashboardStagger();
 
             if (card) card.classList.remove('unlocking', 'scanning');
             if (submitBtn) submitBtn.disabled = false;
