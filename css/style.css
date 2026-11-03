@@ -2045,21 +2045,46 @@ body {
 .custom-dlh-popup .leaflet-popup-content-wrapper {
   padding: 0;
   border-radius: 10px;
-  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.16);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
   border: 1px solid #cbd5e1;
   overflow: hidden;
   background: #ffffff;
 }
 
 .custom-dlh-popup .leaflet-popup-content {
-  margin: 10px 12px;
-  line-height: 1.4;
-  font-size: 0.78rem;
-  max-width: 290px;
+  margin: 8px 10px 6px 10px !important;
+  line-height: 1.35 !important;
+  font-size: 0.76rem !important;
+  max-width: 270px !important;
+  max-height: 220px;
+  overflow-y: auto;
+}
+
+.custom-dlh-popup .leaflet-popup-tip-container {
+  overflow: visible;
 }
 
 .custom-dlh-popup .leaflet-popup-tip {
   background: #ffffff;
+}
+
+.custom-dlh-popup a.leaflet-popup-close-button {
+  top: 6px !important;
+  right: 6px !important;
+  color: #64748b !important;
+  font-size: 15px !important;
+  width: 18px !important;
+  height: 18px !important;
+  line-height: 18px !important;
+  text-align: center !important;
+  padding: 0 !important;
+  border-radius: 50% !important;
+  background: rgba(241, 245, 249, 0.85) !important;
+  border: none !important;
+}
+.custom-dlh-popup a.leaflet-popup-close-button:hover {
+  color: #0f172a !important;
+  background: #e2e8f0 !important;
 }
 
 /* Leaflet Popup Card */
@@ -2640,9 +2665,10 @@ body {
 
   /* 7. Leaflet Custom DLH Popup Mobile */
   .custom-dlh-popup .leaflet-popup-content {
-    margin: 8px 10px !important;
+    margin: 6px 8px 5px 8px !important;
     font-size: 0.72rem !important;
-    max-width: 260px !important;
+    max-width: 240px !important;
+    max-height: 185px;
   }
 
   .map-popup-card {
@@ -2976,18 +3002,18 @@ body {
   /* Popup Leaflet Anti-Terpotong (Desktop Mode) */
   .command-center-layout.split-mode .custom-dlh-popup .leaflet-popup-content-wrapper,
   .custom-dlh-popup .leaflet-popup-content-wrapper {
-    border-radius: 12px;
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
     border: 1px solid #cbd5e1;
     overflow: hidden;
   }
 
   .command-center-layout.split-mode .custom-dlh-popup .leaflet-popup-content,
   .custom-dlh-popup .leaflet-popup-content {
-    margin: 10px 12px !important;
+    margin: 8px 10px 6px 10px !important;
     font-size: 0.76rem !important;
-    max-width: 280px !important;
-    line-height: 1.4 !important;
+    max-width: 270px !important;
+    line-height: 1.35 !important;
   }
 
   .custom-dlh-popup .leaflet-popup-tip {
