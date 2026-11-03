@@ -795,8 +795,8 @@
 
     /* Floating Dropdown Action Menu */
     .action-dropdown-menu {
-      position: absolute;
-      z-index: 1050;
+      position: fixed;
+      z-index: 999999;
       min-width: 195px;
       background: #ffffff;
       border: 1px solid #e2e8f0;
@@ -4607,9 +4607,6 @@
       <!-- Daftar Ringkas Khusus Layar HP (<= 768px) -->
       <div id="rkList" class="rk-container" aria-label="Daftar Ringkas Aduan"></div>
 
-      <!-- Floating Action Dropdown Menu Container -->
-      <div id="tableActionDropdownMenu" class="action-dropdown-menu" style="display: none;" role="menu"></div>
-
       <!-- Footer Info -->
       <div class="table-footer">
         <div id="tablePagination">Menampilkan 0 aduan</div>
@@ -4624,6 +4621,9 @@
 
   </main>
   </div> <!-- /#dashboardAppWrapper -->
+
+  <!-- Floating Action Dropdown Menu Container (Direct Child of Body) -->
+  <div id="tableActionDropdownMenu" class="action-dropdown-menu" style="display: none;" role="menu"></div>
 
   <!-- ===================================================================
        MODAL 1: FORMULIR VERIFIKASI LAPANGAN PETUGAS DLH
@@ -8617,7 +8617,7 @@
                   </button>
 
                   <!-- Tombol Dropdown: Aksi Lanjutan (Desktop > 768px) -->
-                  <button type="button" class="btn-tbl btn-tbl-more" onclick="window.portal.toggleActionDropdown(event, '${item.id}')" title="Menu Aksi Lanjutan" aria-label="Aksi Lainnya">
+                  <button type="button" class="btn-tbl btn-tbl-more" onclick="window.portal.toggleActionDropdown(event, '${item.id}', this)" title="Menu Aksi Lanjutan" aria-label="Aksi Lainnya">
                     ⋮
                   </button>
                 </div>
@@ -8699,18 +8699,20 @@
       /* ===================================================================
          MENU MELAYANG (DROPDOWN ACTION MENU) PETUGAS
          =================================================================== */
-      toggleActionDropdown(event, id) {
+      toggleActionDropdown(event, id, btnEl) {
         if (event) {
           event.stopPropagation();
           event.preventDefault();
         }
 
-        const btn = event ? event.currentTarget : null;
+        const btn = btnEl || (event && (event.currentTarget || (event.target && event.target.closest && event.target.closest('.btn-tbl-more')))) || null;
         let menu = document.getElementById('tableActionDropdownMenu');
         if (!menu) {
           menu = document.createElement('div');
           menu.id = 'tableActionDropdownMenu';
           menu.className = 'action-dropdown-menu';
+          document.body.appendChild(menu);
+        } else if (menu.parentElement !== document.body) {
           document.body.appendChild(menu);
         }
 
@@ -8773,21 +8775,21 @@
           const menuWidth = menu.offsetWidth || 195;
           const menuHeight = menu.offsetHeight || 190;
 
-          // Posisi horizontal: sejajar kanan dengan tombol pemicu
-          let left = rect.right - menuWidth + window.scrollX;
+          // Posisi horizontal: sejajar kanan dengan tombol pemicu (berbasis viewport fixed)
+          let left = rect.right - menuWidth;
           if (left < 10) left = 10;
-          if (left + menuWidth > window.innerWidth + window.scrollX - 10) {
-            left = window.innerWidth + window.scrollX - menuWidth - 10;
+          if (left + menuWidth > window.innerWidth - 10) {
+            left = window.innerWidth - menuWidth - 10;
           }
 
-          // Posisi vertikal: ke bawah, atau ke atas jika mepet batas bawah viewport
-          let top = rect.bottom + window.scrollY + 4;
+          // Posisi vertikal: ke bawah tombol, atau ke atas jika mepet batas bawah viewport
+          let top = rect.bottom + 4;
           if (rect.bottom + menuHeight > window.innerHeight && rect.top > menuHeight) {
-            top = rect.top + window.scrollY - menuHeight - 4;
+            top = rect.top - menuHeight - 4;
           }
 
-          menu.style.left = `${left}px`;
-          menu.style.top = `${top}px`;
+          menu.style.left = `${Math.round(left)}px`;
+          menu.style.top = `${Math.round(top)}px`;
         }
         menu.style.visibility = 'visible';
       }
