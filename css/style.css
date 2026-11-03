@@ -2858,21 +2858,18 @@ body {
    SPLIT-SCREEN MODE & COMPACT CARD FEED (DASHBOARD PETUGAS)
    =================================================================== */
 @media (min-width: 1024px) {
-  .command-center-layout.split-mode,
-  .split-screen-container {
+  .command-center-layout.split-mode {
     display: grid !important;
     grid-template-columns: minmax(360px, 0.95fr) minmax(440px, 1.05fr) !important;
     gap: 20px !important;
     align-items: start !important;
   }
 
-  .command-center-layout.split-mode .table-responsive,
-  .split-screen-container .table-responsive {
+  .command-center-layout.split-mode .table-responsive {
     display: none !important;
   }
 
-  .command-center-layout.split-mode .aduan-compact-feed,
-  .split-screen-container .aduan-compact-feed {
+  .command-center-layout.split-mode .aduan-compact-feed {
     display: flex !important;
   }
 }

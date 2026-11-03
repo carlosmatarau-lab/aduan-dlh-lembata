@@ -3281,32 +3281,27 @@
       }
 
       /* Split-Screen Active on Desktop */
-      .command-center-layout.split-mode,
-      .split-screen-container {
+      .command-center-layout.split-mode {
         display: grid;
         grid-template-columns: minmax(360px, 0.95fr) minmax(440px, 1.05fr);
         gap: 20px;
         align-items: start;
       }
 
-      .command-center-layout.split-mode .table-container-card,
-      .split-screen-container .table-container-card {
+      .command-center-layout.split-mode .table-container-card {
         order: 1;
         margin-bottom: 0;
       }
 
-      .command-center-layout.split-mode .table-responsive,
-      .split-screen-container .table-responsive {
+      .command-center-layout.split-mode .table-responsive {
         display: none !important;
       }
 
-      .command-center-layout.split-mode .aduan-compact-feed,
-      .split-screen-container .aduan-compact-feed {
+      .command-center-layout.split-mode .aduan-compact-feed {
         display: flex !important;
       }
 
-      .command-center-layout.split-mode .officer-map-card,
-      .split-screen-container .officer-map-card {
+      .command-center-layout.split-mode .officer-map-card {
         order: 2;
         position: sticky;
         top: 76px;
@@ -3319,8 +3314,7 @@
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
       }
 
-      .command-center-layout.split-mode .officer-map-card .petugas-map-canvas,
-      .split-screen-container .officer-map-card .petugas-map-canvas {
+      .command-center-layout.split-mode .officer-map-card .petugas-map-canvas {
         flex: 1;
         height: auto;
         min-height: 320px;
@@ -4205,7 +4199,7 @@
     <!-- ===================================================================
          TATA LETAK COMMAND CENTER: SPLIT-SCREEN (DESKTOP) / VERTIKAL (HP)
          =================================================================== -->
-    <div class="command-center-layout split-mode split-screen-container" id="commandCenterLayout">
+    <div class="command-center-layout split-mode" id="commandCenterLayout">
 
       <!-- ===================================================================
            MAP & HEATMAP SECTION (PETA SPASIAL & PETA PANAS KOORDINAT ADUAN)
@@ -5955,13 +5949,18 @@
       }
 
       /**
-       * Sinkronisasi Koordinasi 2 Arah: Daftar Aduan & Peta Leaflet
+       * Sinkronisasi Koordinasi 2 Arah: Daftar Aduan & Peta Leaflet (Khusus Mode Split-Screen)
        */
       highlightAduanInList(idAduan, fromList = true) {
         if (!idAduan) return;
+        const layout = document.getElementById('commandCenterLayout');
+        const isSplit = layout && layout.classList.contains('split-mode');
+        // Hanya terapkan sinkronisasi interaksi ini pada mode split-screen (peta berdampingan)
+        if (!isSplit) return;
+
         this.selectedAduanId = idAduan;
 
-        // 1. Highlight kartu di compact feed (split-screen)
+        // 1. Highlight kartu di compact feed (khusus split-screen)
         document.querySelectorAll('.aduan-compact-card').forEach(card => {
           if (card.getAttribute('data-id') === idAduan) {
             card.classList.add('is-active');
@@ -5970,47 +5969,15 @@
           }
         });
 
-        // 2. Highlight baris tabel desktop (full table mode)
-        document.querySelectorAll('.aduan-main-row').forEach(row => {
-          if (row.getAttribute('data-id') === idAduan) {
-            row.classList.add('is-active');
-            row.style.background = '#ecfdf5';
-          } else {
-            row.classList.remove('is-active');
-            row.style.background = '';
-          }
-        });
-
-        // 3. Highlight kartu mobile (jika di layar kecil)
-        document.querySelectorAll('.gov-card').forEach(gc => {
-          if (gc.getAttribute('data-id') === idAduan) {
-            gc.classList.add('is-active');
-            gc.style.borderColor = '#059669';
-            gc.style.background = '#ecfdf5';
-          } else {
-            gc.classList.remove('is-active');
-            gc.style.borderColor = '';
-            gc.style.background = '';
-          }
-        });
-
-        // 4. Jika dipicu dari klik marker (fromList === false), scroll kartu / baris ke pandangan pengguna
+        // 2. Jika dipicu dari klik marker (fromList === false), scroll kartu feed ke pandangan pengguna
         if (!fromList) {
           const activeCard = document.querySelector(`.aduan-compact-card[data-id="${idAduan}"]`);
           if (activeCard) {
             activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
           }
-          const activeRow = document.querySelector(`.aduan-main-row[data-id="${idAduan}"]`);
-          if (activeRow && window.innerWidth > 768) {
-            activeRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }
-          const activeGov = document.querySelector(`.gov-card[data-id="${idAduan}"]`);
-          if (activeGov && window.innerWidth <= 768) {
-            activeGov.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-          }
         }
 
-        // 5. Efek denyut marker Leaflet (highlight-pulse)
+        // 3. Efek denyut marker Leaflet (highlight-pulse)
         const markerMap = this.markerMap || this.markersById || window.markerMap || {};
         const marker = markerMap[idAduan];
 
@@ -6034,7 +6001,7 @@
           }
         }
 
-        // 6. Jika dipicu dari klik kartu / baris (fromList === true), terbangkan kamera Leaflet ke titik koordinat GPS
+        // 4. Jika dipicu dari klik kartu (fromList === true), terbangkan kamera Leaflet ke titik koordinat GPS
         if (fromList) {
           const item = window.aduanStore ? window.aduanStore.getById(idAduan) : null;
           if (item && item.lat && item.lng && this.map) {
@@ -7839,13 +7806,11 @@
       }
 
       handleMobileRowClick(event, id) {
+        // Hanya jalankan buka-tutup lipatan (accordion) pada layar HP (<= 768px)
+        if (window.innerWidth > 768) return;
         // Abaikan jika yang diketuk adalah tombol aksi atau link
         if (event && event.target && event.target.closest('button, a')) return;
-        if (window.innerWidth <= 768) {
-          this.toggleMobileAccordion(id, event);
-        } else {
-          this.highlightAduanInList(id, true);
-        }
+        this.toggleMobileAccordion(id, event);
       }
 
       /**
