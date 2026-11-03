@@ -3358,3 +3358,58 @@ window.addEventListener('DOMContentLoaded', () => {
 if (document.readyState === 'interactive' || document.readyState === 'complete') {
   window.dispatchEvent(new Event('DOMContentLoaded'));
 }
+
+/* ===================================================================
+   8. ANIMASI TRANSISI MENUJU RUANG PETUGAS (FLOATING CIVIC PILL)
+   =================================================================== */
+// Fungsi Transisi Animasi saat Berpindah ke Dashboard Petugas
+function transisiKePetugas(event, targetUrl) {
+  if (event) {
+    if (typeof event.preventDefault === 'function') event.preventDefault();
+    if (typeof event.stopPropagation === 'function') event.stopPropagation();
+  }
+
+  let pill = document.getElementById('officerTransitPill');
+  let bar = document.getElementById('topGlowBar');
+
+  // Buat elemen pill dinamis jika belum ada di DOM
+  if (!pill) {
+    pill = document.createElement('div');
+    pill.id = 'officerTransitPill';
+    pill.innerHTML = `
+      <span class="transit-mini-spin"></span>
+      <span>Menghubungkan ke Ruang Petugas...</span>
+    `;
+    document.body.appendChild(pill);
+  }
+
+  // Buat elemen top glow bar dinamis jika belum ada di DOM
+  if (!bar) {
+    bar = document.createElement('div');
+    bar.id = 'topGlowBar';
+    document.body.appendChild(bar);
+  }
+
+  // Picu animasi muncul halus
+  requestAnimationFrame(() => {
+    pill.classList.add('show');
+    bar.style.width = '85%';
+  });
+
+  // Arahkan ke URL tujuan setelah jeda transisi halus
+  setTimeout(() => {
+    bar.style.width = '100%';
+    window.location.href = targetUrl || 'petugas.html';
+  }, 260);
+}
+
+// Pastikan fungsi dapat diakses secara global
+if (typeof window !== 'undefined') {
+  window.transisiKePetugas = transisiKePetugas;
+  window.addEventListener('pageshow', () => {
+    const pill = document.getElementById('officerTransitPill');
+    const bar = document.getElementById('topGlowBar');
+    if (pill) pill.classList.remove('show');
+    if (bar) bar.style.width = '0%';
+  });
+}

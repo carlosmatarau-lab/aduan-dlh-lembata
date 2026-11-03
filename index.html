@@ -5649,6 +5649,103 @@
         transition: none !important;
       }
     }
+
+    /* ===================================================================
+       ANIMASI TRANSISI MENUJU RUANG PETUGAS (FLOATING CIVIC PILL)
+       =================================================================== */
+    #officerTransitPill {
+      position: fixed;
+      top: -60px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: #064e3b;
+      color: #ffffff;
+      border: 1px solid rgba(110, 231, 183, 0.4);
+      box-shadow: 0 12px 30px -5px rgba(6, 78, 59, 0.4), 0 4px 10px rgba(0, 0, 0, 0.1);
+      padding: 10px 20px;
+      border-radius: 999px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, sans-serif;
+      font-size: 0.82rem;
+      font-weight: 700;
+      z-index: 9999999;
+      transition: top 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
+      opacity: 0;
+      pointer-events: none;
+      white-space: nowrap;
+    }
+
+    #officerTransitPill.show {
+      top: 18px;
+      opacity: 1;
+    }
+
+    .transit-mini-spin {
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.25);
+      border-top-color: #34d399;
+      border-radius: 50%;
+      animation: transitSpin 0.6s linear infinite;
+      display: inline-block;
+      flex-shrink: 0;
+    }
+
+    @keyframes transitSpin {
+      100% { transform: rotate(360deg); }
+    }
+
+    #topGlowBar {
+      position: fixed;
+      top: 0;
+      left: 0;
+      height: 3px;
+      width: 0%;
+      background: linear-gradient(90deg, #059669, #34d399);
+      box-shadow: 0 0 10px rgba(52, 211, 153, 0.8);
+      z-index: 9999999;
+      transition: width 0.25s ease-out;
+      pointer-events: none;
+    }
+
+    /* Tombol Navigasi Header Akses Petugas */
+    .btn-header-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 14px;
+      border-radius: 999px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      cursor: pointer;
+      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      color: #ffffff !important;
+      border: 1px solid rgba(5, 150, 105, 0.35);
+      box-shadow: 0 2px 6px rgba(5, 150, 105, 0.25);
+      white-space: nowrap;
+    }
+
+    .btn-header-link:hover {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff !important;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+    }
+
+    .btn-header-link:active {
+      transform: translateY(0);
+    }
+
+    @media (max-width: 640px) {
+      .btn-header-link {
+        font-size: 0.72rem;
+        padding: 5px 10px;
+      }
+    }
   </style>
 </head>
 
@@ -5685,6 +5782,13 @@
     }
   </script>
 
+  <!-- Top Glow Bar & Floating Civic Pill Transisi Petugas -->
+  <div id="topGlowBar"></div>
+  <div id="officerTransitPill">
+    <span class="transit-mini-spin"></span>
+    <span>Menghubungkan ke Ruang Petugas...</span>
+  </div>
+
   <!-- Top Nature Accent Ribbon -->
   <div class="nature-top-ribbon"></div>
 
@@ -5705,6 +5809,9 @@
         <div class="lentera-badge-wrap" title="Dinas Lingkungan Hidup Kabupaten Lembata">
           <span class="lentera-dlh-pill">🏛️ DLH KAB. LEMBATA</span>
         </div>
+        <a href="petugas.html" class="btn-header-link" onclick="transisiKePetugas(event, this.href)" title="Akses Dashboard Petugas DLH">
+          Akses Petugas ↗
+        </a>
       </div>
     </div>
   </header>
@@ -6880,6 +6987,11 @@
       document.addEventListener('click', function(e) {
         const targetLink = e.target.closest('a[href*="petugas.html"]');
         if (targetLink) {
+          // Lewati jika tautan menggunakan transisi kapsul cepat (btn-header-link / transisiKePetugas)
+          if (targetLink.classList.contains('btn-header-link') || targetLink.getAttribute('onclick')?.includes('transisiKePetugas')) {
+            return;
+          }
+
           e.preventDefault();
           const destUrl = targetLink.getAttribute('href') || 'petugas.html';
 
