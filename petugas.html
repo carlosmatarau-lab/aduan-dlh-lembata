@@ -3319,6 +3319,129 @@
         height: auto;
         min-height: 320px;
       }
+
+      /* ===================================================================
+         OPTIMASI KOMPAK & SIMETRIS KONTROL PETA (KHUSUS SPLIT-SCREEN DESKTOP >= 1024px)
+         =================================================================== */
+      .command-center-layout.split-mode .officer-map-card .map-card-header {
+        padding: 10px 14px;
+        display: flex;
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .command-center-layout.split-mode .officer-map-card .map-card-header > div:first-child {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+      }
+
+      .command-center-layout.split-mode .officer-map-card .map-card-title {
+        font-size: 0.98rem;
+        font-weight: 800;
+        margin: 0;
+      }
+
+      .command-center-layout.split-mode .officer-map-card .map-card-sub {
+        display: none !important;
+      }
+
+      .command-center-layout.split-mode .officer-map-card .map-header-controls {
+        width: 100%;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .command-center-layout.split-mode .officer-map-card .map-mode-pill-group {
+        display: inline-flex;
+        padding: 2px;
+        gap: 2px;
+        background: #f1f5f9;
+        border-radius: 999px;
+      }
+
+      .command-center-layout.split-mode .officer-map-card .btn-map-mode {
+        padding: 4px 8px;
+        font-size: 0.72rem;
+        border-radius: 999px;
+      }
+
+      .command-center-layout.split-mode .officer-map-card .map-action-row-group {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+      }
+
+      .command-center-layout.split-mode .officer-map-card .map-basemap-select {
+        padding: 3px 6px;
+        font-size: 0.72rem;
+        height: 28px;
+        border-radius: 6px;
+        max-width: 150px;
+      }
+
+      .command-center-layout.split-mode .officer-map-card .btn-focus-lmb {
+        padding: 3px 8px;
+        font-size: 0.72rem;
+        height: 28px;
+        border-radius: 6px;
+      }
+
+      .command-center-layout.split-mode .officer-map-card .map-filter-strip {
+        padding: 6px 14px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: 6px;
+        background: #f8fafc;
+      }
+
+      .command-center-layout.split-mode .officer-map-card .map-stat-indicator {
+        font-size: 0.71rem;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+        max-width: 48%;
+      }
+
+      .command-center-layout.split-mode .officer-map-card .map-filter-group {
+        display: flex;
+        gap: 4px;
+        align-items: center;
+      }
+
+      .command-center-layout.split-mode .officer-map-card .map-mini-select {
+        padding: 3px 5px;
+        font-size: 0.71rem;
+        height: 26px;
+        border-radius: 6px;
+        max-width: 125px;
+      }
+
+      /* Popup Leaflet Anti-Terpotong (Desktop Mode) */
+      .command-center-layout.split-mode .custom-dlh-popup .leaflet-popup-content-wrapper,
+      .custom-dlh-popup .leaflet-popup-content-wrapper {
+        border-radius: 12px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        border: 1px solid #cbd5e1;
+        overflow: hidden;
+      }
+
+      .command-center-layout.split-mode .custom-dlh-popup .leaflet-popup-content,
+      .custom-dlh-popup .leaflet-popup-content {
+        margin: 10px 12px !important;
+        font-size: 0.76rem !important;
+        max-width: 280px !important;
+        line-height: 1.4 !important;
+      }
+
+      .custom-dlh-popup .leaflet-popup-tip {
+        background: #ffffff;
+      }
     }
 
     /* Feed Kartu Ringkas Mode Split-Screen */
@@ -4135,7 +4258,7 @@
 
       <div class="top-strip-right" style="display: flex; align-items: center; gap: 10px; flex-wrap: wrap;">
         <!-- Tombol Toggle Mode Command Center: Split-Screen vs Penuh -->
-        <button type="button" class="btn-toggle-split active" id="btnToggleSplitScreen" onclick="window.portal && window.portal.toggleSplitScreen()" title="Beralih antara Mode Split-Screen (Berdampingan) & Mode Penuh (Bertumpuk)">
+        <button type="button" class="btn-toggle-split" id="btnToggleSplitScreen" onclick="window.portal && window.portal.toggleSplitScreen()" title="Beralih antara Mode Split-Screen (Berdampingan) & Mode Penuh (Bertumpuk)">
           <span id="splitScreenIcon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width: 15px; height: 15px; display: inline-block; vertical-align: middle;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg></span>
           <span id="splitScreenText">Mode Berdampingan</span>
         </button>
@@ -4199,7 +4322,7 @@
     <!-- ===================================================================
          TATA LETAK COMMAND CENTER: SPLIT-SCREEN (DESKTOP) / VERTIKAL (HP)
          =================================================================== -->
-    <div class="command-center-layout split-mode" id="commandCenterLayout">
+    <div class="command-center-layout" id="commandCenterLayout">
 
       <!-- ===================================================================
            MAP & HEATMAP SECTION (PETA SPASIAL & PETA PANAS KOORDINAT ADUAN)
@@ -5509,11 +5632,11 @@
          1B. TATA LETAK COMMAND CENTER (SPLIT-SCREEN & MODE PENUH)
          =================================================================== */
       initSplitScreen() {
-        const isDesktop = window.innerWidth >= 1024;
-        const saved = localStorage.getItem('dlh_split_mode');
-        // Default split-screen pada desktop, bertumpuk pada layar HP/tablet
-        const wantSplit = saved ? (saved === 'split') : isDesktop;
-        this.applySplitMode(wantSplit && isDesktop);
+        if (this._splitScreenInitialized) return;
+        this._splitScreenInitialized = true;
+
+        // Default Mode Penuh (tabel data melebar 100%) saat pertama kali dimuat atau di-refresh
+        this.applySplitMode(false);
 
         if (!this._splitResizeBound) {
           this._splitResizeBound = true;
@@ -5524,11 +5647,6 @@
               if (layout) layout.classList.remove('split-mode');
               const container = document.querySelector('.portal-container');
               if (container) container.classList.remove('command-center-wide');
-            } else {
-              const currentSaved = localStorage.getItem('dlh_split_mode');
-              if (currentSaved !== 'full') {
-                this.applySplitMode(true);
-              }
             }
             if (this.map && typeof this.map.invalidateSize === 'function') {
               this.map.invalidateSize();
@@ -5564,12 +5682,12 @@
           btn.classList.toggle('active', isSplit);
         }
         if (text) {
-          text.textContent = isSplit ? 'Mode Split-Screen' : 'Mode Penuh';
+          text.textContent = isSplit ? 'Mode Penuh' : 'Mode Berdampingan';
         }
         if (icon) {
           icon.innerHTML = isSplit
             ? `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/><line x1="12" y1="3" x2="12" y2="17"/></svg>`
-            : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><rect x="2" y="3" width="20" height="14" rx="2" ry="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg>`;
+            : `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 14px; height: 14px;"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/><line x1="12" y1="3" x2="12" y2="21"/></svg>`;
         }
 
         // Segarkan rendering Leaflet map agar ukuran layer tile langsung pas
@@ -5790,7 +5908,15 @@
                 </div>
               `;
 
-              marker.bindPopup(popupHtml);
+              marker.bindPopup(popupHtml, {
+                className: 'custom-dlh-popup',
+                autoPan: true,
+                autoPanPaddingTopLeft: [20, 85],
+                autoPanPaddingBottomRight: [20, 20],
+                autoPanPadding: [20, 30],
+                maxHeight: 280,
+                closeButton: true
+              });
               this.markersGroup.addLayer(marker);
             });
           }
@@ -5929,7 +6055,14 @@
 
         if (this.map) {
           this.map.invalidateSize();
-          this.map.flyTo([lat, lng], 15, { duration: 1.0 });
+          try {
+            // Geser fokus kamera sedikit ke utara agar balon popup muat utuh tanpa terpotong batas atas
+            const targetPoint = this.map.project([lat, lng], 15).subtract([0, 70]);
+            const targetLatLng = this.map.unproject(targetPoint, 15);
+            this.map.flyTo(targetLatLng, 15, { duration: 1.0 });
+          } catch(e) {
+            this.map.flyTo([lat, lng], 15, { duration: 1.0 });
+          }
 
           // Buka popup marker setelah perpindahan peta
           setTimeout(() => {
@@ -6009,7 +6142,14 @@
             const lng = parseFloat(item.lng);
             if (!isNaN(lat) && !isNaN(lng)) {
               this.map.invalidateSize();
-              this.map.flyTo([lat, lng], 16, { duration: 0.8 });
+              try {
+                // Geser fokus kamera sedikit ke utara agar balon popup muat utuh di atas marker
+                const targetPoint = this.map.project([lat, lng], 16).subtract([0, 75]);
+                const targetLatLng = this.map.unproject(targetPoint, 16);
+                this.map.flyTo(targetLatLng, 16, { duration: 0.8 });
+              } catch(e) {
+                this.map.flyTo([lat, lng], 16, { duration: 0.8 });
+              }
             }
           }
         }

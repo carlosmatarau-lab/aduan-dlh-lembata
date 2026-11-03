@@ -2872,6 +2872,127 @@ body {
   .command-center-layout.split-mode .aduan-compact-feed {
     display: flex !important;
   }
+
+  /* Optimasi Kompak & Proporsional Kontrol Peta Khusus Mode Split-Screen Desktop */
+  .command-center-layout.split-mode .officer-map-card .map-card-header {
+    padding: 10px 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .command-center-layout.split-mode .officer-map-card .map-card-header > div:first-child {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .command-center-layout.split-mode .officer-map-card .map-card-title {
+    font-size: 0.98rem;
+    font-weight: 800;
+    margin: 0;
+  }
+
+  .command-center-layout.split-mode .officer-map-card .map-card-sub {
+    display: none !important;
+  }
+
+  .command-center-layout.split-mode .officer-map-card .map-header-controls {
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    flex-wrap: wrap;
+  }
+
+  .command-center-layout.split-mode .officer-map-card .map-mode-pill-group {
+    display: inline-flex;
+    padding: 2px;
+    gap: 2px;
+    background: #f1f5f9;
+    border-radius: 999px;
+  }
+
+  .command-center-layout.split-mode .officer-map-card .btn-map-mode {
+    padding: 4px 8px;
+    font-size: 0.72rem;
+    border-radius: 999px;
+  }
+
+  .command-center-layout.split-mode .officer-map-card .map-action-row-group {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+  }
+
+  .command-center-layout.split-mode .officer-map-card .map-basemap-select {
+    padding: 3px 6px;
+    font-size: 0.72rem;
+    height: 28px;
+    border-radius: 6px;
+    max-width: 150px;
+  }
+
+  .command-center-layout.split-mode .officer-map-card .btn-focus-lmb {
+    padding: 3px 8px;
+    font-size: 0.72rem;
+    height: 28px;
+    border-radius: 6px;
+  }
+
+  .command-center-layout.split-mode .officer-map-card .map-filter-strip {
+    padding: 6px 14px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 6px;
+    background: #f8fafc;
+  }
+
+  .command-center-layout.split-mode .officer-map-card .map-stat-indicator {
+    font-size: 0.71rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 48%;
+  }
+
+  .command-center-layout.split-mode .officer-map-card .map-filter-group {
+    display: flex;
+    gap: 4px;
+    align-items: center;
+  }
+
+  .command-center-layout.split-mode .officer-map-card .map-mini-select {
+    padding: 3px 5px;
+    font-size: 0.71rem;
+    height: 26px;
+    border-radius: 6px;
+    max-width: 125px;
+  }
+
+  /* Popup Leaflet Anti-Terpotong (Desktop Mode) */
+  .command-center-layout.split-mode .custom-dlh-popup .leaflet-popup-content-wrapper,
+  .custom-dlh-popup .leaflet-popup-content-wrapper {
+    border-radius: 12px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    border: 1px solid #cbd5e1;
+    overflow: hidden;
+  }
+
+  .command-center-layout.split-mode .custom-dlh-popup .leaflet-popup-content,
+  .custom-dlh-popup .leaflet-popup-content {
+    margin: 10px 12px !important;
+    font-size: 0.76rem !important;
+    max-width: 280px !important;
+    line-height: 1.4 !important;
+  }
+
+  .custom-dlh-popup .leaflet-popup-tip {
+    background: #ffffff;
+  }
 }
 
 .aduan-compact-feed {
