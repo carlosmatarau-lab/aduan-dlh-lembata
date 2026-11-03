@@ -3281,19 +3281,32 @@
       }
 
       /* Split-Screen Active on Desktop */
-      .command-center-layout.split-mode {
+      .command-center-layout.split-mode,
+      .split-screen-container {
         display: grid;
-        grid-template-columns: minmax(0, 1.15fr) minmax(0, 0.85fr);
-        gap: 24px;
+        grid-template-columns: minmax(360px, 0.95fr) minmax(440px, 1.05fr);
+        gap: 20px;
         align-items: start;
       }
 
-      .command-center-layout.split-mode .table-container-card {
+      .command-center-layout.split-mode .table-container-card,
+      .split-screen-container .table-container-card {
         order: 1;
         margin-bottom: 0;
       }
 
-      .command-center-layout.split-mode .officer-map-card {
+      .command-center-layout.split-mode .table-responsive,
+      .split-screen-container .table-responsive {
+        display: none !important;
+      }
+
+      .command-center-layout.split-mode .aduan-compact-feed,
+      .split-screen-container .aduan-compact-feed {
+        display: flex !important;
+      }
+
+      .command-center-layout.split-mode .officer-map-card,
+      .split-screen-container .officer-map-card {
         order: 2;
         position: sticky;
         top: 76px;
@@ -3306,11 +3319,199 @@
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
       }
 
-      .command-center-layout.split-mode .officer-map-card .petugas-map-canvas {
+      .command-center-layout.split-mode .officer-map-card .petugas-map-canvas,
+      .split-screen-container .officer-map-card .petugas-map-canvas {
         flex: 1;
         height: auto;
         min-height: 320px;
       }
+    }
+
+    /* Feed Kartu Ringkas Mode Split-Screen */
+    .aduan-compact-feed {
+      display: none;
+      flex-direction: column;
+      gap: 10px;
+      max-height: calc(100vh - 220px);
+      min-height: 480px;
+      overflow-y: auto;
+      overflow-x: hidden;
+      padding: 4px 6px 14px 2px;
+      scrollbar-width: thin;
+      scrollbar-color: #cbd5e1 transparent;
+    }
+
+    .aduan-compact-feed::-webkit-scrollbar {
+      width: 6px;
+    }
+
+    .aduan-compact-feed::-webkit-scrollbar-thumb {
+      background-color: #cbd5e1;
+      border-radius: 999px;
+    }
+
+    .aduan-compact-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 12px 14px;
+      cursor: pointer;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      user-select: none;
+    }
+
+    .aduan-compact-card:hover {
+      border-color: #34d399;
+      background: #f0fdf4;
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.1);
+    }
+
+    .aduan-compact-card.is-active {
+      border-color: #059669 !important;
+      background: #ecfdf5 !important;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.35), 0 6px 16px rgba(5, 150, 105, 0.18) !important;
+      transform: translateY(-1px);
+    }
+
+    .aduan-compact-card.is-active::before {
+      content: '';
+      position: absolute;
+      left: 0;
+      top: 10px;
+      bottom: 10px;
+      width: 4px;
+      background: linear-gradient(180deg, #059669 0%, #10b981 100%);
+      border-radius: 0 4px 4px 0;
+    }
+
+    .aduan-card-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .aduan-card-ticket {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+      font-size: 0.78rem;
+      font-weight: 800;
+      color: #064e3b;
+      background: rgba(16, 185, 129, 0.12);
+      border: 1px solid rgba(16, 185, 129, 0.28);
+      padding: 2px 8px;
+      border-radius: 6px;
+      letter-spacing: 0.4px;
+    }
+
+    .aduan-card-title {
+      font-size: 0.88rem;
+      font-weight: 700;
+      color: #0f172a;
+      line-height: 1.3;
+    }
+
+    .aduan-card-loc {
+      font-size: 0.76rem;
+      color: #475569;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-weight: 500;
+    }
+
+    .aduan-card-submeta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      color: #64748b;
+      border-top: 1px dashed #e2e8f0;
+      padding-top: 6px;
+      margin-top: 2px;
+    }
+
+    .aduan-card-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+    }
+
+    .btn-card-action {
+      flex: 1;
+      padding: 4px 8px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
+      color: #334155;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      transition: all 0.15s ease;
+      text-decoration: none;
+    }
+
+    .btn-card-action:hover {
+      background: #f8fafc;
+      border-color: #94a3b8;
+    }
+
+    .btn-card-action.btn-card-verify {
+      background: #059669;
+      color: #ffffff;
+      border-color: #047857;
+      font-weight: 700;
+    }
+
+    .btn-card-action.btn-card-verify:hover {
+      background: #047857;
+    }
+
+    .btn-card-action.btn-card-wa {
+      background: #ecfdf5;
+      color: #047857;
+      border-color: #a7f3d0;
+      font-weight: 700;
+    }
+
+    .btn-card-action.btn-card-wa:hover {
+      background: #d1fae5;
+    }
+
+    /* Animasi Denyut Marker Peta */
+    @keyframes markerPulseGlow {
+      0% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.8), 0 0 16px rgba(5, 150, 105, 0.6);
+      }
+      50% {
+        transform: scale(1.25);
+        box-shadow: 0 0 0 12px rgba(16, 185, 129, 0), 0 0 24px rgba(52, 211, 153, 0.8);
+      }
+      100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0), 0 0 16px rgba(5, 150, 105, 0.6);
+      }
+    }
+
+    .custom-marker-icon-wrapper.highlight-pulse .custom-marker-pin,
+    .highlight-pulse .custom-marker-pin,
+    .marker-highlight-pulse {
+      animation: markerPulseGlow 1.2s ease-in-out infinite !important;
+      z-index: 9999 !important;
+    }
+
+    .custom-marker-icon-wrapper.highlight-pulse {
+      z-index: 9999 !important;
     }
 
     @media (max-width: 1023px) {
@@ -4004,7 +4205,7 @@
     <!-- ===================================================================
          TATA LETAK COMMAND CENTER: SPLIT-SCREEN (DESKTOP) / VERTIKAL (HP)
          =================================================================== -->
-    <div class="command-center-layout split-mode" id="commandCenterLayout">
+    <div class="command-center-layout split-mode split-screen-container" id="commandCenterLayout">
 
       <!-- ===================================================================
            MAP & HEATMAP SECTION (PETA SPASIAL & PETA PANAS KOORDINAT ADUAN)
@@ -4227,6 +4428,9 @@
           </tbody>
         </table>
       </div>
+
+      <!-- Feed Kartu Ringkas Khusus Mode Split-Screen Desktop -->
+      <div id="splitCardsFeed" class="aduan-compact-feed" aria-label="Feed Ringkas Aduan Split-Screen"></div>
 
       <!-- Daftar Ringkas Khusus Layar HP (<= 768px) -->
       <div id="rkList" class="rk-container" aria-label="Daftar Ringkas Aduan"></div>
@@ -5496,6 +5700,8 @@
         if (this.markersGroup) {
           this.markersGroup.clearLayers();
           this.markersById = {};
+          this.markerMap = {};
+          window.markerMap = this.markerMap;
 
           if (this.mapMode === 'markers' || this.mapMode === 'hybrid') {
             filtered.forEach(item => {
@@ -5535,6 +5741,13 @@
               const marker = L.marker([item.lat, item.lng], { icon: customIcon });
               marker.recordId = item.id;
               this.markersById[item.id] = marker;
+              this.markerMap[item.id] = marker;
+
+              marker.on('click', () => {
+                if (window.portal && typeof window.portal.highlightAduanInList === 'function') {
+                  window.portal.highlightAduanInList(item.id, false);
+                }
+              });
 
               const mapWaPhone = this.formatWhatsAppPhone(item.noHp);
               const mapDisplayPhone = this.formatPhoneDisplay(item.noHp);
@@ -5738,6 +5951,100 @@
           }, 1100);
 
           this.showToast(`Menyorot lokasi aduan ${id} (${item.desa || item.kecamatan}) di peta`, 'success');
+        }
+      }
+
+      /**
+       * Sinkronisasi Koordinasi 2 Arah: Daftar Aduan & Peta Leaflet
+       */
+      highlightAduanInList(idAduan, fromList = true) {
+        if (!idAduan) return;
+        this.selectedAduanId = idAduan;
+
+        // 1. Highlight kartu di compact feed (split-screen)
+        document.querySelectorAll('.aduan-compact-card').forEach(card => {
+          if (card.getAttribute('data-id') === idAduan) {
+            card.classList.add('is-active');
+          } else {
+            card.classList.remove('is-active');
+          }
+        });
+
+        // 2. Highlight baris tabel desktop (full table mode)
+        document.querySelectorAll('.aduan-main-row').forEach(row => {
+          if (row.getAttribute('data-id') === idAduan) {
+            row.classList.add('is-active');
+            row.style.background = '#ecfdf5';
+          } else {
+            row.classList.remove('is-active');
+            row.style.background = '';
+          }
+        });
+
+        // 3. Highlight kartu mobile (jika di layar kecil)
+        document.querySelectorAll('.gov-card').forEach(gc => {
+          if (gc.getAttribute('data-id') === idAduan) {
+            gc.classList.add('is-active');
+            gc.style.borderColor = '#059669';
+            gc.style.background = '#ecfdf5';
+          } else {
+            gc.classList.remove('is-active');
+            gc.style.borderColor = '';
+            gc.style.background = '';
+          }
+        });
+
+        // 4. Jika dipicu dari klik marker (fromList === false), scroll kartu / baris ke pandangan pengguna
+        if (!fromList) {
+          const activeCard = document.querySelector(`.aduan-compact-card[data-id="${idAduan}"]`);
+          if (activeCard) {
+            activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+          const activeRow = document.querySelector(`.aduan-main-row[data-id="${idAduan}"]`);
+          if (activeRow && window.innerWidth > 768) {
+            activeRow.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+          const activeGov = document.querySelector(`.gov-card[data-id="${idAduan}"]`);
+          if (activeGov && window.innerWidth <= 768) {
+            activeGov.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+          }
+        }
+
+        // 5. Efek denyut marker Leaflet (highlight-pulse)
+        const markerMap = this.markerMap || this.markersById || window.markerMap || {};
+        const marker = markerMap[idAduan];
+
+        // Hapus denyut dari semua marker lain
+        Object.values(markerMap).forEach(m => {
+          try {
+            const el = (m && m.getElement) ? m.getElement() : (m ? m._icon : null);
+            if (el) el.classList.remove('highlight-pulse');
+          } catch(e) {}
+        });
+
+        if (marker) {
+          try {
+            const el = marker.getElement ? marker.getElement() : marker._icon;
+            if (el) el.classList.add('highlight-pulse');
+          } catch(e) {}
+
+          // Buka popup marker jika belum terbuka
+          if (typeof marker.openPopup === 'function') {
+            marker.openPopup();
+          }
+        }
+
+        // 6. Jika dipicu dari klik kartu / baris (fromList === true), terbangkan kamera Leaflet ke titik koordinat GPS
+        if (fromList) {
+          const item = window.aduanStore ? window.aduanStore.getById(idAduan) : null;
+          if (item && item.lat && item.lng && this.map) {
+            const lat = parseFloat(item.lat);
+            const lng = parseFloat(item.lng);
+            if (!isNaN(lat) && !isNaN(lng)) {
+              this.map.invalidateSize();
+              this.map.flyTo([lat, lng], 16, { duration: 0.8 });
+            }
+          }
         }
       }
 
@@ -7532,11 +7839,13 @@
       }
 
       handleMobileRowClick(event, id) {
-        // Hanya jalankan buka-tutup lipatan (accordion) pada layar HP (<= 768px)
-        if (window.innerWidth > 768) return;
         // Abaikan jika yang diketuk adalah tombol aksi atau link
         if (event && event.target && event.target.closest('button, a')) return;
-        this.toggleMobileAccordion(id, event);
+        if (window.innerWidth <= 768) {
+          this.toggleMobileAccordion(id, event);
+        } else {
+          this.highlightAduanInList(id, true);
+        }
       }
 
       /**
@@ -7797,6 +8106,88 @@
         }).join('');
       }
 
+      renderSplitCardsFeed(filtered, data) {
+        const feed = document.getElementById('splitCardsFeed');
+        if (!feed) return;
+
+        if (!data || data.length === 0) {
+          feed.innerHTML = `
+            <div style="text-align: center; padding: 36px 16px; background: #ffffff; border: 1.5px dashed #cbd5e1; border-radius: 12px;">
+              <div style="display: flex; justify-content: center; margin-bottom: 8px; color: #059669;">
+                <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+              </div>
+              <strong style="color: #0f172a; font-size: 0.88rem; display: block;">Belum ada aduan masuk (0 Aduan).</strong>
+              <p style="font-size: 0.78rem; color: #64748b; margin-top: 4px; margin-bottom: 0;">Sistem telah disegarkan dan bersih total.</p>
+            </div>
+          `;
+          return;
+        }
+
+        if (!filtered || filtered.length === 0) {
+          feed.innerHTML = `
+            <div style="text-align: center; padding: 32px 16px; background: #ffffff; border: 1.5px dashed #cbd5e1; border-radius: 12px;">
+              <strong style="color: #334155; font-size: 0.85rem; display: block;">Tidak ada aduan sesuai filter.</strong>
+              <p style="font-size: 0.76rem; color: #64748b; margin-top: 4px; margin-bottom: 0;">Ubah pencarian atau reset filter.</p>
+            </div>
+          `;
+          return;
+        }
+
+        feed.innerHTML = filtered.map(item => {
+          const id = item.id || '';
+          const jenis = item.jenisPencemaran || 'Laporan Lingkungan';
+          const pelapor = item.namaPelapor || 'Warga';
+          const desaLabel = this.formatDesaKelurahan ? this.formatDesaKelurahan(item.desa) : (item.desa || '-');
+          const kecLabel = item.kecamatan ? `Kec. ${item.kecamatan}` : 'Kab. Lembata';
+          const rawDate = item.timestamp || item.tanggalKejadian || '';
+          const formattedDate = (this.formatShortStepDate ? this.formatShortStepDate(rawDate) : null) || rawDate || '-';
+          const hasGps = Boolean(item.lat && item.lng);
+
+          const waPhone = this.formatWhatsAppPhone ? this.formatWhatsAppPhone(item.noHp) : '';
+          const waUrl = waPhone ? `https://wa.me/${waPhone}` : '';
+          const isActive = this.selectedAduanId === id;
+
+          return `
+            <div class="aduan-compact-card ${isActive ? 'is-active' : ''}"
+                 data-id="${this.escHtml(id)}"
+                 tabindex="0"
+                 role="button"
+                 onclick="window.portal.highlightAduanInList('${this.escHtml(id)}', true)">
+              <div class="aduan-card-header">
+                <span class="aduan-card-ticket">${this.escHtml(id)}</span>
+                <div>${this.getStatusBadgeHtml(item.status)}</div>
+              </div>
+              <div class="aduan-card-title">${this.escHtml(jenis)}</div>
+              <div class="aduan-card-loc">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px; flex-shrink: 0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span>${this.escHtml(desaLabel)}, ${this.escHtml(kecLabel)}</span>
+                ${hasGps ? '<span style="color: #059669; font-size: 0.68rem; font-weight: 700; background: #ecfdf5; padding: 1px 4px; border-radius: 4px; margin-left: auto;">📍 GPS</span>' : ''}
+              </div>
+              <div class="aduan-card-submeta">
+                <span>👤 ${this.escHtml(pelapor)}</span>
+                <span>📅 ${this.escHtml(formattedDate)}</span>
+              </div>
+              <div class="aduan-card-actions">
+                <button type="button" class="btn-card-action" onclick="event.stopPropagation(); window.portal.showDetailModal('${this.escHtml(id)}')" title="Lihat Rincian Aduan">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                  <span>Rincian</span>
+                </button>
+                <button type="button" class="btn-card-action btn-card-verify" onclick="event.stopPropagation(); window.portal.openVerifikasiModal('${this.escHtml(id)}')" title="Verifikasi Lapangan">
+                  <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                  <span>Verifikasi</span>
+                </button>
+                ${waUrl ? `
+                  <a href="${waUrl}" target="_blank" rel="noopener noreferrer" class="btn-card-action btn-card-wa" onclick="event.stopPropagation();" title="Chat WhatsApp Pelapor">
+                    <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg>
+                    <span>WA</span>
+                  </a>
+                ` : ''}
+              </div>
+            </div>
+          `;
+        }).join('');
+      }
+
       renderTable() {
         const tbody = document.getElementById('aduanTableBody');
         if (!tbody) return;
@@ -7868,6 +8259,7 @@
           const footer = document.getElementById('tablePagination');
           if (footer) footer.textContent = `Menampilkan 0 dari 0 laporan aduan (Database Bersih / Fresh Start)`;
           this.renderCompactList(filtered, data);
+          this.renderSplitCardsFeed(filtered, data);
           return;
         }
 
@@ -7886,6 +8278,7 @@
           const footer = document.getElementById('tablePagination');
           if (footer) footer.textContent = `Menampilkan 0 dari total ${data.length} laporan aduan`;
           this.renderCompactList(filtered, data);
+          this.renderSplitCardsFeed(filtered, data);
           return;
         }
 
@@ -7936,6 +8329,7 @@
         if (window.innerWidth <= 768) {
           tbody.innerHTML = ''; // kosongkan tbody agar tidak ada DOM node idle
           this.renderCompactList(filtered, data);
+          this.renderSplitCardsFeed(filtered, data);
           const footer = document.getElementById('tablePagination');
           if (footer) footer.textContent = `Menampilkan ${filtered.length} dari total ${data.length} laporan aduan`;
           return;
@@ -8096,6 +8490,7 @@
 
         // Render juga Daftar Ringkas khusus tampilan layar HP (<= 768px)
         this.renderCompactList(filtered, data);
+        this.renderSplitCardsFeed(filtered, data);
 
         const footer = document.getElementById('tablePagination');
         if (footer) {
