@@ -1184,6 +1184,9 @@ class AduanDataStore {
     }
     this.isSyncing = false;
     this.currentSyncPromise = null;
+    this.isSyncingStats = false;
+    this.currentStatsPromise = null;
+    this.remoteStats = null;
     this.lastSyncTime = null;
     this.pendingDeletions = {};
     this._activeSyncIds = new Set();
@@ -1272,33 +1275,40 @@ class AduanDataStore {
     this._deduplicateList();
     this.save();
 
-    // Sinkronisasi otomatis real-time lintas perangkat (Interval 3.5 detik + event-driven instan)
+    // Sinkronisasi otomatis real-time lintas perangkat (Dual-tier: Stats Ringan 200B + Data Lengkap)
     if (this.hasGasConfigured() && !this._pollIntervalStarted) {
       this._pollIntervalStarted = true;
-      setTimeout(() => this.syncFromGAS(true), 150);
+      setTimeout(() => this.syncStatsFromGAS(), 50);
+      setTimeout(() => this.syncFromGAS(true), 250);
 
-      // Polling cerdas: 3.5 detik saat tab aktif, 15 detik saat tab di latar belakang
+      // Polling cerdas: 4 detik saat tab aktif, 15 detik saat tab di latar belakang
       let pollTimer = null;
       const restartPolling = () => {
         if (pollTimer) clearInterval(pollTimer);
-        const ms = (typeof document !== 'undefined' && document.hidden) ? 15000 : 3500;
-        pollTimer = setInterval(() => this.syncFromGAS(true), ms);
+        const ms = (typeof document !== 'undefined' && document.hidden) ? 15000 : 4000;
+        pollTimer = setInterval(() => {
+          this.syncStatsFromGAS();
+          this.syncFromGAS(true);
+        }, ms);
       };
       restartPolling();
 
       // Sinkronkan instan saat tab dibuka kembali, window fokus, atau koneksi pulih
       if (typeof window !== 'undefined') {
         window.addEventListener('focus', () => {
+          this.syncStatsFromGAS();
           this.syncFromGAS(true);
           restartPolling();
         });
         window.addEventListener('online', () => {
+          this.syncStatsFromGAS();
           this.syncFromGAS(true);
           restartPolling();
         });
         if (typeof document !== 'undefined') {
           document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible') {
+              this.syncStatsFromGAS();
               this.syncFromGAS(true);
             }
             restartPolling();
@@ -1473,6 +1483,78 @@ class AduanDataStore {
     return this.hasGasConfigured();
   }
 
+  /**
+   * Sinkronisasi Cepat Agregat Statistik Langsung dari Google Spreadsheet
+   * Ultra-ringan (~200 Bytes JSON), responsif di bawah 1 detik bahkan pada sinyal pedesaan 2G/3G/EDGE
+   */
+  async syncStatsFromGAS() {
+    if (!this.hasGasConfigured()) return null;
+    if (this.isSyncingStats) return this.currentStatsPromise;
+
+    this.isSyncingStats = true;
+    this.currentStatsPromise = (async () => {
+      try {
+        let endpoint = this.getGasUrl();
+        if (endpoint.includes('docs.google.com/spreadsheets')) {
+          return null;
+        }
+        const sep = endpoint.includes('?') ? '&' : '?';
+        const url = `${endpoint}${sep}action=getStats&_t=${Date.now()}`;
+
+        const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+        const timeoutId = controller ? setTimeout(() => controller.abort(), 6000) : null;
+
+        const response = await fetch(url, {
+          method: 'GET',
+          mode: 'cors',
+          signal: controller ? controller.signal : undefined
+        });
+        if (timeoutId) clearTimeout(timeoutId);
+
+        if (!response.ok) return null;
+        const json = await response.json();
+
+        if (json && json.success && json.data) {
+          const d = json.data;
+          const normalized = {
+            total: Number(d.total) || 0,
+            baru: Number(d.baru) || 0,
+            dalamProses: (typeof d.dalamProses !== 'undefined') ? Number(d.dalamProses) : (Number(d.diverifikasi || 0) + Number(d.ditindak || 0)),
+            selesai: Number(d.selesai) || 0,
+            ditolak: Number(d.ditolak) || 0,
+            tingkatPenyelesaian: Number(d.tingkatPenyelesaian) || 0,
+            diverifikasi: Number(d.diverifikasi) || 0,
+            ditindak: Number(d.ditindak) || 0,
+            perKecamatan: d.perKecamatan || {},
+            perJenis: d.perJenis || {},
+            lastSync: Date.now()
+          };
+
+          this.remoteStats = normalized;
+          try {
+            localStorage.setItem('dlh_cached_hero_stats', JSON.stringify(normalized));
+          } catch (e) {}
+
+          if (typeof window !== 'undefined') {
+            window.dispatchEvent(new CustomEvent('aduanStatsSynced', { detail: normalized }));
+            if (window.dlhRealtime) {
+              window.dlhRealtime.broadcast('STATS_UPDATED', normalized);
+            }
+          }
+          return normalized;
+        }
+      } catch (e) {
+        // Toleransi sinyal lemah / network timeout: senyap tanpa mengganggu pengguna
+      } finally {
+        this.isSyncingStats = false;
+        this.currentStatsPromise = null;
+      }
+      return null;
+    })();
+
+    return this.currentStatsPromise;
+  }
+
   async syncFromGAS(silent = false) {
     if (!this.hasGasConfigured()) {
       return { success: false, reason: 'URL Web App Google Apps Script belum disetel.' };
@@ -1580,6 +1662,7 @@ class AduanDataStore {
 
             this.lastSyncTime = new Date();
             window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent } }));
+            window.dispatchEvent(new CustomEvent('aduanStatsSynced', { detail: this.getStats() }));
 
             // Otomatis dorong item lokal pending ke server jika ada
             if (localPending.length > 0) {
@@ -1600,6 +1683,7 @@ class AduanDataStore {
             }
             this.lastSyncTime = new Date();
             window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent, emptyRemote: true } }));
+            window.dispatchEvent(new CustomEvent('aduanStatsSynced', { detail: this.getStats() }));
             return {
               success: true,
               count: this.aduanList.length,
@@ -1805,6 +1889,10 @@ class AduanDataStore {
         }
       }
     }
+    try {
+      const stats = this.getStats();
+      localStorage.setItem('dlh_cached_hero_stats', JSON.stringify(stats));
+    } catch (e) {}
   }
 
   getAll() {
@@ -2371,6 +2459,24 @@ class AduanDataStore {
   getStats() {
     this._deduplicateList();
     const cleanList = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id));
+    
+    // Jika list lokal masih kosong (misal baru buka laman warga pada sinyal lemah),
+    // gunakan remoteStats dari Google Spreadsheet atau cache statistik lokal yang tersimpan
+    if (cleanList.length === 0) {
+      if (this.remoteStats && typeof this.remoteStats.total === 'number') {
+        return this.remoteStats;
+      }
+      try {
+        const cached = localStorage.getItem('dlh_cached_hero_stats');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && typeof parsed.total === 'number') {
+            return parsed;
+          }
+        }
+      } catch (e) {}
+    }
+
     const total = cleanList.length;
     let aduanDiterima = 0;
     let verifAdmin = 0;
@@ -2398,17 +2504,17 @@ class AduanDataStore {
       else if (item.status === 'Ditindaklanjuti') dalamPenanganan++;
 
       // By Kecamatan
-      perKecamatan[item.kecamatan] = (perKecamatan[item.kecamatan] || 0) + 1;
+      if (item.kecamatan) perKecamatan[item.kecamatan] = (perKecamatan[item.kecamatan] || 0) + 1;
 
       // By Jenis
-      perJenis[item.jenisPencemaran] = (perJenis[item.jenisPencemaran] || 0) + 1;
+      if (item.jenisPencemaran) perJenis[item.jenisPencemaran] = (perJenis[item.jenisPencemaran] || 0) + 1;
     });
 
     const baru = aduanDiterima; // alias for KPI
     const dalamProses = verifAdmin + menungguVerif + sedangDiverif + dalamPenanganan;
     const tingkatPenyelesaian = total > 0 ? Math.round(((selesai + ditolak) / total) * 100) : 0;
 
-    return {
+    const computed = {
       total,
       baru,
       aduanDiterima,
@@ -2425,6 +2531,12 @@ class AduanDataStore {
       perKecamatan,
       perJenis
     };
+
+    try {
+      localStorage.setItem('dlh_cached_hero_stats', JSON.stringify(computed));
+    } catch (e) {}
+
+    return computed;
   }
 
   exportToCSV() {

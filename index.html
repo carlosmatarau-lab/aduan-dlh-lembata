@@ -5894,7 +5894,7 @@
             </div>
             <div>
               <div class="stat-row-lbl">Total Aduan</div>
-              <div class="stat-row-val" id="heroStatTotal">1</div>
+              <div class="stat-row-val" id="heroStatTotal">-</div>
             </div>
           </div>
 
@@ -5907,7 +5907,7 @@
             </div>
             <div>
               <div class="stat-row-lbl">Dalam Penanganan</div>
-              <div class="stat-row-val" id="heroStatProses">1</div>
+              <div class="stat-row-val" id="heroStatProses">-</div>
             </div>
           </div>
 
@@ -5919,10 +5919,44 @@
             </div>
             <div>
               <div class="stat-row-lbl">Selesai</div>
-              <div class="stat-row-val" id="heroStatSelesai">0</div>
+              <div class="stat-row-val" id="heroStatSelesai">-</div>
             </div>
           </div>
         </div>
+        <!-- Fast Instant Hydration: Menampilkan angka statistik real-time 0ms dari cache lokal sebelum render lengkap -->
+        <script>
+          (function() {
+            try {
+              var s = null;
+              var cached = localStorage.getItem('dlh_cached_hero_stats');
+              if (cached) {
+                s = JSON.parse(cached);
+              } else {
+                var raw = localStorage.getItem('dlh_lembata_aduan_v5');
+                if (raw) {
+                  var list = JSON.parse(raw);
+                  if (Array.isArray(list) && list.length > 0) {
+                    var dp = 0, sl = 0;
+                    for (var i = 0; i < list.length; i++) {
+                      var st = list[i].status;
+                      if (st === 'Selesai') sl++;
+                      else if (st === 'Dalam Penanganan' || st === 'Sedang Diverifikasi' || st === 'Verifikasi Administrasi' || st === 'Menunggu Verifikasi Lapangan' || st === 'Diverifikasi' || st === 'Ditindaklanjuti') dp++;
+                    }
+                    s = { total: list.length, dalamProses: dp, selesai: sl };
+                  }
+                }
+              }
+              if (s && typeof s.total !== 'undefined') {
+                var elT = document.getElementById('heroStatTotal');
+                var elP = document.getElementById('heroStatProses');
+                var elS = document.getElementById('heroStatSelesai');
+                if (elT) elT.textContent = Number(s.total || 0).toLocaleString('id-ID');
+                if (elP) elP.textContent = Number(s.dalamProses || 0).toLocaleString('id-ID');
+                if (elS) elS.textContent = Number(s.selesai || 0).toLocaleString('id-ID');
+              }
+            } catch (e) {}
+          })();
+        </script>
       </section>
 
       <!-- ===============================================================

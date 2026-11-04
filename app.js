@@ -38,6 +38,13 @@ class DLHApp {
     try { this.updateKPIs(); } catch (e) { console.warn('updateKPIs error:', e); }
     try { this.renderTable(); } catch (e) { console.warn('renderTable error:', e); }
 
+    // Sinkronisasi cepat statistik live dari Google Spreadsheet (Ultra-cepat untuk sinyal lemah)
+    if (window.aduanStore && typeof window.aduanStore.syncStatsFromGAS === 'function') {
+      window.aduanStore.syncStatsFromGAS().then(() => {
+        try { this.updateKPIs(); } catch (e) {}
+      }).catch(() => {});
+    }
+
     // Set default date to today
     try {
       const dateInput = document.getElementById('inputTanggalKejadian');
@@ -2185,12 +2192,36 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
      5. REAL-TIME SYNCHRONIZATION LISTENER (PORTAL WARGA)
      =================================================================== */
   setupRealtimeSync() {
+    // 1. Dengarkan event lokal ketika agregat statistik diperbarui
+    window.addEventListener('aduanStatsSynced', () => {
+      this.updateKPIs();
+    });
+
+    // 2. Dengarkan event storage lintas tab/jendela browser
+    window.addEventListener('storage', (e) => {
+      if (e.key === 'dlh_cached_hero_stats' || e.key === 'dlh_lembata_aduan_v5') {
+        if (window.aduanStore) {
+          window.aduanStore.init();
+        }
+        this.updateKPIs();
+        this.renderTable();
+      }
+    });
+
     if (!window.dlhRealtime) return;
 
     window.dlhRealtime.listen((msg) => {
       if (!msg || !msg.type) return;
 
-      if (msg.type === 'ADUAN_BARU' || msg.type === 'STORAGE_RAW_UPDATED' || msg.type === 'TINDAK_LANJUT_UPDATED') {
+      if (
+        msg.type === 'ADUAN_BARU' ||
+        msg.type === 'STORAGE_RAW_UPDATED' ||
+        msg.type === 'TINDAK_LANJUT_UPDATED' ||
+        msg.type === 'ADUAN_UPDATED' ||
+        msg.type === 'ADUAN_DELETED' ||
+        msg.type === 'DATA_RESET' ||
+        msg.type === 'STATS_UPDATED'
+      ) {
         if (window.aduanStore) {
           window.aduanStore.init();
         }
@@ -2325,17 +2356,24 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
   }
 
   updateKPIs() {
-    const stats = window.aduanStore ? window.aduanStore.getStats() : { total: 0, baru: 0, dalamProses: 0, selesai: 0 };
+    let stats = window.aduanStore ? window.aduanStore.getStats() : null;
+    if (!stats || typeof stats.total !== 'number') {
+      try {
+        const cached = localStorage.getItem('dlh_cached_hero_stats');
+        if (cached) stats = JSON.parse(cached);
+      } catch (e) {}
+    }
+    if (!stats) stats = { total: 0, baru: 0, dalamProses: 0, selesai: 0 };
     
     const elTotal = document.getElementById('kpiTotal');
     const elBaru = document.getElementById('kpiBaru');
     const elProses = document.getElementById('kpiProses');
     const elSelesai = document.getElementById('kpiSelesai');
 
-    if (elTotal) elTotal.textContent = stats.total;
-    if (elBaru) elBaru.textContent = stats.baru;
-    if (elProses) elProses.textContent = stats.dalamProses;
-    if (elSelesai) elSelesai.textContent = stats.selesai;
+    if (elTotal) elTotal.textContent = (stats.total || 0).toLocaleString('id-ID');
+    if (elBaru) elBaru.textContent = (stats.baru || 0).toLocaleString('id-ID');
+    if (elProses) elProses.textContent = (stats.dalamProses || 0).toLocaleString('id-ID');
+    if (elSelesai) elSelesai.textContent = (stats.selesai || 0).toLocaleString('id-ID');
 
     // Metrik Dashboard Publik Masyarakat & Hero Section (100% Sinkron Data Real Aduan)
     const userTotal = document.getElementById('userKpiTotal');
