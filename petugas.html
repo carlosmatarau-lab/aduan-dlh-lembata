@@ -4676,7 +4676,7 @@
               <option value="Diverifikasi">Diverifikasi (Sedang / Sudah Cek Lapangan)</option>
               <option value="Ditindaklanjuti">Ditindaklanjuti (Dalam Penanganan / Pembersihan)</option>
               <option value="Selesai">Selesai (Perkara Lingkungan Tuntas)</option>
-              <option value="Ditolak">Ditolak (Laporan Tidak Terbukti / Tidak Valid)</option>
+              <option value="Ditolak">Ditolak (Tidak Terbukti / Penolakan Pemeriksaan oleh Terlapor)</option>
             </select>
           </div>
 
@@ -4757,6 +4757,7 @@
               <button type="button" class="btn-gov-chip" onclick="window.portal &amp;&amp; window.portal.applyResponseTemplate('pembersihan')">Pembersihan / Angkut</button>
               <button type="button" class="btn-gov-chip" onclick="window.portal &amp;&amp; window.portal.applyResponseTemplate('koordinasi')">Koordinasi Desa</button>
               <button type="button" class="btn-gov-chip" onclick="window.portal &amp;&amp; window.portal.applyResponseTemplate('selesai')">Tuntas Ditangani</button>
+              <button type="button" class="btn-gov-chip" style="color: #991b1b; border-color: #fca5a5; background: #fef2f2;" onclick="window.portal && window.portal.applyResponseTemplate('penolakan')">Penolakan Terlapor</button>
             </div>
           </div>
 
@@ -4868,10 +4869,15 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; color: #047857;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
                 Berita Acara Pemeriksaan Fisik Lapangan (BA / BAST)
               </div>
-              <button type="button" class="auto-ba-btn" id="btnGenerateNoBA" onclick="window.portal.generateNoBA()">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle; margin-right: 4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
-                No. BA Otomatis
-              </button>
+              <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                <button type="button" class="auto-ba-btn" id="btnGenerateNoBA" onclick="window.portal.generateNoBA()">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px; display: inline-block; vertical-align: middle; margin-right: 4px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+                  No. BA Otomatis
+                </button>
+                <button type="button" class="auto-ba-btn" style="background: #fef2f2; border-color: #fca5a5; color: #991b1b;" onclick="const idVal = document.getElementById('vTargetId').value; if(idVal) window.portal.printBeritaAcaraPenolakan(idVal);" title="Cetak Berita Acara Penolakan Pemeriksaan Lapangan">
+                  Cetak BA Penolakan
+                </button>
+              </div>
             </div>
 
             <div class="form-group-modal" style="margin-bottom: 10px;">
@@ -6755,6 +6761,12 @@
             status: 'Selesai',
             hasil: 'Objek pencemaran telah bersih tuntas dan fungsi lingkungan hidup telah pulih normal kembali.',
             tindakan: 'Penutupan aduan dan pemantauan berkala oleh Pengawas Lingkungan Hidup DLH Lembata.'
+          },
+          penolakan: {
+            status: 'Ditolak',
+            hasil: 'Tim Verifikasi Lapangan DLH Kabupaten Lembata telah mendatangi lokasi usaha/kegiatan terlapor. Namun, pemilik usaha / penanggung jawab kegiatan MENOLAK memberikan akses pemeriksaan fisik lapangan, menolak pengambilan dokumentasi/sampel, dan/atau tidak bersedia memberikan keterangan kepada petugas.',
+            tindakan: 'Penerbitan Berita Acara Penolakan Pemeriksaan Lapangan sesuai Pasal 74 jo. Pasal 112 UU No. 32 Tahun 2009 tentang Perlindungan dan Pengelolaan Lingkungan Hidup, koordinasi bersama Pemerintah Desa/Kelurahan setempat, serta pemanggilan resmi penanggung jawab usaha ke Kantor DLH Kabupaten Lembata.',
+            catatanBA: 'Pihak terlapor / penanggung jawab usaha menolak dilakukan pemeriksaan lapangan dan menolak menandatangani Berita Acara Pemeriksaan dengan alasan tidak bersedia diperiksa petugas.'
           }
         };
 
@@ -6769,6 +6781,20 @@
         if (tindakanEl) {
           const cur = (tindakanEl.value || '').trim();
           tindakanEl.value = cur ? `${cur}\n\n${tpl.tindakan}` : tpl.tindakan;
+        }
+        const catatanBaEl = document.getElementById('vCatatanBA');
+        if (catatanBaEl && tpl.catatanBA) {
+          catatanBaEl.value = tpl.catatanBA;
+        }
+        if (key === 'penolakan') {
+          const nomorBaEl = document.getElementById('vNomorBA');
+          if (nomorBaEl && !nomorBaEl.value.trim()) {
+            const year = new Date().getFullYear();
+            const romanMonths = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+            const romanMonth = romanMonths[new Date().getMonth()];
+            const randomNum = String(Math.floor(Math.random() * 900) + 100);
+            nomorBaEl.value = `BA-TOLAK-${randomNum}/DLH-LMB/${romanMonth}/${year}`;
+          }
         }
         this.showToast(`Templat respons '${tpl.status}' berhasil diterapkan ke formulir.`, 'success');
       }
@@ -7274,6 +7300,17 @@
                 <span>Hapus</span>
               </button>
             </div>
+
+            <!-- Tombol Cetak Berita Acara Penolakan Pemeriksaan Lapangan -->
+            <button type="button"
+                    onclick="window.portal.printBeritaAcaraPenolakan('${this.escHtml(item.id)}')"
+                    style="width: 100%; height: 36px; background: #fff1f2; color: #9f1239; border: 1px solid #fecdd3; border-radius: 7px; font-size: 0.78rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.2s; margin-top: 8px;"
+                    onmouseover="this.style.background='#ffe4e6';"
+                    onmouseout="this.style.background='#fff1f2';"
+                    title="Cetak Berita Acara Penolakan Pemeriksaan Lapangan (Jika ditolak pemilik usaha/terlapor)">
+              <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
+              <span>Cetak Berita Acara Penolakan Pemeriksaan</span>
+            </button>
           </div>
         `;
 
@@ -7570,6 +7607,205 @@
   <script>
     function triggerPrint() { window.focus(); window.print(); }
     if (document.readyState === 'complete') { setTimeout(triggerPrint, 500); } 
+    else { window.addEventListener('load', () => setTimeout(triggerPrint, 500)); }
+  <\/script>
+</body>
+</html>`;
+
+        printWin.document.open();
+        printWin.document.write(printHtml);
+        printWin.document.close();
+      }
+
+      printBeritaAcaraPenolakan(id) {
+        const item = window.aduanStore ? window.aduanStore.getById(id) : null;
+        if (!item) {
+          this.showToast(`Data aduan ${id} tidak ditemukan.`, 'warning');
+          return;
+        }
+
+        const escapeHtml = (str) => {
+          if (!str && str !== 0) return '-';
+          return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/"/g, '&quot;')
+            .replace(/'/g, '&#039;');
+        };
+
+        const regId = escapeHtml(item.id || '-');
+        const romanMonths = ['I', 'II', 'III', 'IV', 'V', 'VI', 'VII', 'VIII', 'IX', 'X', 'XI', 'XII'];
+        const defaultNoBA = `BA-TOLAK/${regId}/DLH-LMB/${romanMonths[new Date().getMonth()]}/${new Date().getFullYear()}`;
+        const noBA = escapeHtml((item.nomorBeritaAcara && item.nomorBeritaAcara !== '-') ? item.nomorBeritaAcara : defaultNoBA);
+        const terlaporNama = escapeHtml((item.sumberDugaan && item.sumberDugaan !== '-') ? item.sumberDugaan : 'Pemilik Usaha / Penanggung Jawab Kegiatan Terlapor');
+        const desaKel = escapeHtml(this.formatDesaKelurahan ? this.formatDesaKelurahan(item.desa) : (item.desa || '-'));
+        const lokasiLengkap = escapeHtml(`${item.lokasiDetail || '-'}, ${desaKel}, Kec. ${item.kecamatan || '-'}`);
+        const latLngText = (item.lat && item.lng) ? `${item.lat}, ${item.lng}` : '-';
+        const logoUrl = new URL('assets/logo-pemkab-lembata.png', window.location.href).href;
+
+        const NAMA_HARI = ['Minggu', 'Senin', 'Selasa', 'Rabu', 'Kamis', 'Jumat', 'Sabtu'];
+        const NAMA_BULAN = ['Januari', 'Februari', 'Maret', 'April', 'Mei', 'Juni', 'Juli', 'Agustus', 'September', 'Oktober', 'November', 'Desember'];
+
+        let tglObj = new Date();
+        if (item.tanggalVerifikasi && item.tanggalVerifikasi !== '-') {
+          const parsed = new Date(item.tanggalVerifikasi);
+          if (!isNaN(parsed.getTime())) tglObj = parsed;
+        }
+
+        const hariStr = NAMA_HARI[tglObj.getDay()];
+        const tglStr = `${tglObj.getDate()} ${NAMA_BULAN[tglObj.getMonth()]} ${tglObj.getFullYear()}`;
+        const petugasVerif = (item.petugasVerifikasi && item.petugasVerifikasi !== '-')
+          ? escapeHtml(item.petugasVerifikasi)
+          : 'Tim Verifikasi Lapangan DLH Kab. Lembata';
+
+        const faktaPenolakan = (item.hasilVerifikasi && item.hasilVerifikasi !== '-' && item.hasilVerifikasi !== 'Menunggu penugasan verifikator lapangan.')
+          ? escapeHtml(item.hasilVerifikasi)
+          : 'Tim Pengawasan dan Verifikasi Lapangan Dinas Lingkungan Hidup Kabupaten Lembata telah hadir di lokasi usaha/kegiatan untuk melaksanakan verifikasi pengaduan masyarakat, namun pihak pemilik usaha / penanggung jawab kegiatan menolak memberikan akses masuk, menolak pemeriksaan fisik lingkungan, dan/atau tidak bersedia memberikan keterangan kepada petugas.';
+
+        const alasanPenolakan = (item.catatanBeritaAcara && item.catatanBeritaAcara !== '-')
+          ? escapeHtml(item.catatanBeritaAcara)
+          : 'Pihak penanggung jawab usaha/kegiatan menyatakan keberatan untuk diperiksa di lapangan dan menolak menandatangani Berita Acara Pemeriksaan.';
+
+        const tindakLanjut = (item.tindakanDLH && item.tindakanDLH !== '-' && item.tindakanDLH !== 'Aduan telah dicatat ke sistem.')
+          ? escapeHtml(item.tindakanDLH)
+          : 'Penerbitan Berita Acara Penolakan Pemeriksaan Lapangan, koordinasi bersama Pemerintah Desa/Kelurahan setempat, serta pemanggilan resmi penanggung jawab usaha ke Kantor Dinas Lingkungan Hidup Kabupaten Lembata.';
+
+        const printWin = window.open('', '_blank');
+        if (!printWin) {
+          this.showToast('Gagal membuka jendela cetak. Pastikan pop-up diizinkan pada browser Anda.', 'warning');
+          return;
+        }
+
+        const printHtml = `<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <title>Berita Acara Penolakan Pemeriksaan - ${regId}</title>
+  <style>
+    @page { size: A4; margin: 14mm 15mm; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Times New Roman', Times, serif; font-size: 10pt; line-height: 1.4; color: #000; background: #fff; padding: 10px 15px; }
+    .kop-surat { display: flex; align-items: center; justify-content: center; gap: 16px; padding-bottom: 8px; border-bottom: 3px double #000; margin-bottom: 12px; text-align: center; }
+    .kop-logo { width: 68px; height: auto; object-fit: contain; }
+    .kop-text h3 { font-size: 13pt; font-weight: bold; text-transform: uppercase; margin: 0; letter-spacing: 0.5px; }
+    .kop-text h2 { font-size: 15pt; font-weight: 900; text-transform: uppercase; margin: 2px 0; letter-spacing: 0.8px; }
+    .kop-text p { font-size: 9.5pt; margin: 0; }
+    .doc-header { text-align: center; margin-bottom: 12px; }
+    .doc-header h1 { font-size: 11.5pt; font-weight: bold; text-transform: uppercase; text-decoration: underline; margin-bottom: 3px; }
+    .doc-meta { font-size: 9.5pt; font-weight: bold; }
+    .intro-text { text-align: justify; margin-bottom: 10px; text-indent: 28px; font-size: 9.5pt; }
+    .section-box { border: 1px solid #000; margin-bottom: 10px; page-break-inside: avoid; }
+    .section-title { font-weight: bold; border-bottom: 1px solid #000; padding: 4px 8px; text-transform: uppercase; font-size: 9.5pt; }
+    table.data-table { width: 100%; border-collapse: collapse; font-size: 9.5pt; }
+    table.data-table th, table.data-table td { border-bottom: 1px solid #000; padding: 4px 8px; vertical-align: top; }
+    table.data-table tr:last-child th, table.data-table tr:last-child td { border-bottom: none; }
+    table.data-table th { font-weight: normal; text-align: left; width: 35%; border-right: 1px solid #000; }
+    .legal-box { border: 1.5px solid #000; padding: 7px 10px; margin-bottom: 10px; font-size: 9pt; text-align: justify; line-height: 1.35; page-break-inside: avoid; }
+    .closing-text { margin-bottom: 14px; text-align: justify; text-indent: 28px; font-size: 9.5pt; }
+    .signature-grid { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-top: 8px; page-break-inside: avoid; }
+    .signature-box { text-align: center; font-size: 9.5pt; }
+    .signature-space { height: 62px; display: flex; align-items: center; justify-content: center; font-size: 8pt; font-style: italic; }
+    .signature-name { font-weight: bold; text-decoration: underline; }
+    @media print { body { padding: 0; } .no-print { display: none !important; } }
+  </style>
+</head>
+<body>
+  <div class="no-print" style="margin-bottom: 10px; text-align: right;">
+    <button onclick="window.print()" style="padding: 6px 14px; background: #000; color: #fff; border: none; font-weight: bold; cursor: pointer; font-size: 10pt;">
+      Cetak Dokumen (A4)
+    </button>
+  </div>
+
+  <div class="kop-surat">
+    <img src="${logoUrl}" alt="Logo Pemkab" class="kop-logo" onerror="this.style.display='none'">
+    <div class="kop-text">
+      <h3>PEMERINTAH KABUPATEN LEMBATA</h3>
+      <h2>DINAS LINGKUNGAN HIDUP</h2>
+      <p>Jalan Trans Atadei, Lewoleba, Kabupaten Lembata, Nusa Tenggara Timur</p>
+    </div>
+  </div>
+
+  <div class="doc-header">
+    <h1>BERITA ACARA PENOLAKAN PEMERIKSAAN LAPANGAN</h1>
+    <div class="doc-meta">Nomor: ${noBA}</div>
+  </div>
+
+  <p class="intro-text">
+    Pada hari ini, <strong>${hariStr}</strong>, tanggal <strong>${tglStr}</strong>, kami yang bertanda tangan di bawah ini, Tim Verifikasi Lapangan Dinas Lingkungan Hidup Kabupaten Lembata, telah mendatangi lokasi usaha dan/atau kegiatan sehubungan dengan tindak lanjut verifikasi pengaduan masyarakat bidang lingkungan hidup dengan rincian sebagai berikut:
+  </p>
+
+  <div class="section-box">
+    <div class="section-title">A. IDENTITAS OBJEK PENGAWASAN / PIHAK TERLAPOR</div>
+    <table class="data-table">
+      <tr><th>1. Nomor Registrasi Pengaduan</th><td>${regId}</td></tr>
+      <tr><th>2. Nama Usaha / Pihak Terlapor</th><td><strong>${terlaporNama}</strong></td></tr>
+      <tr><th>3. Lokasi Usaha / Kegiatan</th><td>${lokasiLengkap}</td></tr>
+      <tr><th>4. Titik Koordinat GPS</th><td>${latLngText}</td></tr>
+      <tr><th>5. Jenis Dugaan Pencemaran</th><td>${escapeHtml(item.jenisPencemaran || '-')}</td></tr>
+    </table>
+  </div>
+
+  <div class="section-box">
+    <div class="section-title">B. IDENTITAS PETUGAS VERIFIKATOR LAPANGAN</div>
+    <table class="data-table">
+      <tr><th>1. Nama Tim / Petugas Verifikator</th><td>${petugasVerif}</td></tr>
+      <tr><th>2. Instansi Penyelenggara</th><td>Bidang PPKLH - Dinas Lingkungan Hidup Kabupaten Lembata</td></tr>
+      <tr><th>3. Hari / Tanggal Pelaksanaan</th><td>${hariStr}, ${tglStr}</td></tr>
+    </table>
+  </div>
+
+  <div class="section-box">
+    <div class="section-title">C. URAIAN PERISTIWA DAN ALASAN PENOLAKAN PEMERIKSAAN</div>
+    <table class="data-table">
+      <tr>
+        <th>1. Fakta Kejadian Penolakan di Lapangan</th>
+        <td style="white-space: pre-wrap; text-align: justify;">${faktaPenolakan}</td>
+      </tr>
+      <tr>
+        <th>2. Alasan / Keterangan Pihak Terlapor</th>
+        <td style="white-space: pre-wrap; text-align: justify;">${alasanPenolakan}</td>
+      </tr>
+      <tr>
+        <th>3. Langkah / Rencana Tindak Lanjut DLH</th>
+        <td style="white-space: pre-wrap; text-align: justify;">${tindakLanjut}</td>
+      </tr>
+    </table>
+  </div>
+
+  <div class="legal-box">
+    <strong>DASAR HUKUM DAN KETENTUAN SANKSI:</strong><br>
+    Berdasarkan <strong>Pasal 74 ayat (1) Undang-Undang Nomor 32 Tahun 2009</strong> tentang Perlindungan dan Pengelolaan Lingkungan Hidup, Pejabat Pengawas Lingkungan Hidup berwenang memasuki tempat tertentu, melakukan pemantauan, mengambil sampel, dan memeriksa peralatan/instalasi. Selanjutnya sesuai <strong>Pasal 112 UU Nomor 32 Tahun 2009</strong>, setiap orang yang dengan sengaja mencegah, menghalang-halangi, atau menggagalkan pelaksanaan tugas pengawasan lingkungan hidup dapat dikenakan ancaman sanksi pidana sesuai peraturan perundang-undangan yang berlaku.
+  </div>
+
+  <p class="closing-text">
+    Demikian Berita Acara Penolakan Pemeriksaan Lapangan ini dibuat dengan sebenarnya di lokasi kejadian. Apabila pihak penanggung jawab usaha dan/atau kegiatan menolak membubuhkan tanda tangan pada dokumen ini, maka penolakan tersebut dicatat secara resmi dan Berita Acara ini tetap sah serta mengikat secara hukum dengan ditandatangani oleh Tim Verifikator dan Saksi.
+  </p>
+
+  <div class="signature-grid">
+    <div class="signature-box">
+      <div>Pihak Terlapor / Penanggung Jawab</div>
+      <div class="signature-space">(Tidak Bersedia / Menolak Tanda Tangan)</div>
+      <div class="signature-name">${terlaporNama}</div>
+      <div>Pemilik / Perwakilan Usaha</div>
+    </div>
+    <div class="signature-box">
+      <div>Saksi Lapangan / Aparat Setempat</div>
+      <div class="signature-space"></div>
+      <div class="signature-name">( ............................................ )</div>
+      <div>Aparat Desa/Kelurahan / Saksi</div>
+    </div>
+    <div class="signature-box">
+      <div>Lewoleba, ${tglStr}<br>Petugas Verifikator DLH</div>
+      <div class="signature-space"></div>
+      <div class="signature-name">${petugasVerif}</div>
+      <div>Dinas Lingkungan Hidup Kab. Lembata</div>
+    </div>
+  </div>
+
+  <script>
+    function triggerPrint() { window.focus(); window.print(); }
+    if (document.readyState === 'complete') { setTimeout(triggerPrint, 500); }
     else { window.addEventListener('load', () => setTimeout(triggerPrint, 500)); }
   <\/script>
 </body>
