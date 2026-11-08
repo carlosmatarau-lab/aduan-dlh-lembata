@@ -1555,7 +1555,7 @@ class DLHApp {
         if (chkPernyataan) {
           chkPernyataan.focus();
         }
-        this.showToast('⚠️ Harap centang pernyataan kebenaran data sebelum mengirimkan laporan aduan.', 'warning');
+        this.showToast('⚠️ Mohon centang pernyataan kebenaran data terlebih dahulu sebelum mengirimkan laporan.', 'warning');
         return;
       }
 
@@ -1887,7 +1887,7 @@ ${buktiList.length > 0
   : '• Status: Pelapor tidak melampirkan foto bukti.'}
 
 *PERNYATAAN PELAPOR:*
-☑️ Menyatakan dengan sadar bahwa data & bukti yang dilaporkan adalah BENAR dan dapat dipertanggungjawabkan.
+☑️ Menyatakan dengan sadar bahwa seluruh data & bukti yang dilaporkan adalah BENAR dan dapat dipertanggungjawabkan dengan itikad baik.
 --------------------------------------------------
 _Laporan resmi dikirim melalui formulir Layanan Pengaduan Lingkungan Masyarakat Kabupaten Lembata._
 _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
@@ -2227,7 +2227,7 @@ ${fallbackPenyelesaian || 'Sesuai dengan ketentuan peraturan perundang-undangan 
 ${fallbackRiwayatWaText}
 
 *PERNYATAAN PELAPOR:*
-☑️ Menyatakan dengan sadar bahwa data & bukti yang dilaporkan adalah BENAR dan dapat dipertanggungjawabkan.
+☑️ Menyatakan dengan sadar bahwa seluruh data & bukti yang dilaporkan adalah BENAR dan dapat dipertanggungjawabkan dengan itikad baik.
 --------------------------------------------------
 _Laporan resmi dikirim melalui formulir Layanan Pengaduan Lingkungan Masyarakat Kabupaten Lembata._
 _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
