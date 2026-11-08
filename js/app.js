@@ -1887,7 +1887,7 @@ ${buktiList.length > 0
   : '• Status: Pelapor tidak melampirkan foto bukti.'}
 
 *PERNYATAAN PELAPOR:*
-☑️ Menyatakan dengan sadar bahwa seluruh data & bukti yang dilaporkan adalah BENAR dan dapat dipertanggungjawabkan dengan itikad baik.
+☑️ Menyatakan dengan sadar bahwa seluruh data & bukti yang dilaporkan adalah BENAR dan siap dipertanggungjawabkan.
 --------------------------------------------------
 _Laporan resmi dikirim melalui formulir Layanan Pengaduan Lingkungan Masyarakat Kabupaten Lembata._
 _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
@@ -2227,7 +2227,7 @@ ${fallbackPenyelesaian || 'Sesuai dengan ketentuan peraturan perundang-undangan 
 ${fallbackRiwayatWaText}
 
 *PERNYATAAN PELAPOR:*
-☑️ Menyatakan dengan sadar bahwa seluruh data & bukti yang dilaporkan adalah BENAR dan dapat dipertanggungjawabkan dengan itikad baik.
+☑️ Menyatakan dengan sadar bahwa seluruh data & bukti yang dilaporkan adalah BENAR dan siap dipertanggungjawabkan.
 --------------------------------------------------
 _Laporan resmi dikirim melalui formulir Layanan Pengaduan Lingkungan Masyarakat Kabupaten Lembata._
 _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
