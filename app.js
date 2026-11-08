@@ -1513,12 +1513,52 @@ class DLHApp {
       if (typeof this.resetRiwayatCards === 'function') {
         this.resetRiwayatCards();
       }
+      const chkPernyataan = document.getElementById('checkPernyataanBenar');
+      if (chkPernyataan) chkPernyataan.checked = false;
+      const boxPernyataan = document.getElementById('boxPernyataanBenar');
+      if (boxPernyataan) {
+        boxPernyataan.style.borderColor = '#a7f3d0';
+        boxPernyataan.style.background = '#f0fdf4';
+        boxPernyataan.classList.remove('shake-error');
+      }
     });
+
+    const chkPernyataanEl = document.getElementById('checkPernyataanBenar');
+    const boxPernyataanEl = document.getElementById('boxPernyataanBenar');
+    if (chkPernyataanEl && boxPernyataanEl) {
+      chkPernyataanEl.addEventListener('change', () => {
+        if (chkPernyataanEl.checked) {
+          boxPernyataanEl.style.borderColor = '#a7f3d0';
+          boxPernyataanEl.style.background = '#f0fdf4';
+          boxPernyataanEl.classList.remove('shake-error');
+        }
+      });
+    }
 
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
 
       if (this._isSubmittingAduan) return;
+
+      // 0. Validasi Wajib Checkbox Pernyataan Kebenaran Data (Mandatory Validation Gate)
+      const chkPernyataan = document.getElementById('checkPernyataanBenar');
+      const boxPernyataan = document.getElementById('boxPernyataanBenar');
+      if (!chkPernyataan || !chkPernyataan.checked) {
+        if (boxPernyataan) {
+          boxPernyataan.style.borderColor = '#ef4444';
+          boxPernyataan.style.background = '#fef2f2';
+          boxPernyataan.classList.remove('shake-error');
+          void boxPernyataan.offsetWidth; // Force reflow for restart animation
+          boxPernyataan.classList.add('shake-error');
+          boxPernyataan.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        if (chkPernyataan) {
+          chkPernyataan.focus();
+        }
+        this.showToast('⚠️ Harap centang pernyataan kebenaran data sebelum mengirimkan laporan aduan.', 'warning');
+        return;
+      }
+
       this._isSubmittingAduan = true;
 
       // 1. Validasi Input Nomor WhatsApp
@@ -1753,6 +1793,7 @@ class DLHApp {
           riwayatPengaduanList: riwayatList,
           lat: lat,
           lng: lng,
+          pernyataanBenar: true,
           fotoBukti: buktiList[0] || '',
           linkFotoBukti: (buktiList[0] || ''),
           buktiFotoList: [...buktiList]
@@ -1844,6 +1885,9 @@ ${riwayatWaText}
 ${buktiList.length > 0 
   ? `• Status: ${buktiList.length} Foto Bukti Terlampir Bersama Laporan Ini` 
   : '• Status: Pelapor tidak melampirkan foto bukti.'}
+
+*PERNYATAAN PELAPOR:*
+☑️ Menyatakan dengan sadar bahwa data & bukti yang dilaporkan adalah BENAR dan dapat dipertanggungjawabkan.
 --------------------------------------------------
 _Laporan resmi dikirim melalui formulir Layanan Pengaduan Lingkungan Masyarakat Kabupaten Lembata._
 _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
@@ -1881,6 +1925,14 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
 
         // Reset form
         form.reset();
+        const chkPernyataanPost = document.getElementById('checkPernyataanBenar');
+        if (chkPernyataanPost) chkPernyataanPost.checked = false;
+        const boxPernyataanPost = document.getElementById('boxPernyataanBenar');
+        if (boxPernyataanPost) {
+          boxPernyataanPost.style.borderColor = '#a7f3d0';
+          boxPernyataanPost.style.background = '#f0fdf4';
+          boxPernyataanPost.classList.remove('shake-error');
+        }
         (this.selectedMediaFiles || []).forEach(m => {
           if (m && m.previewUrl && String(m.previewUrl).startsWith('blob:')) {
             try { URL.revokeObjectURL(m.previewUrl); } catch (e) {}
@@ -2173,6 +2225,9 @@ ${fallbackPenyelesaian || 'Sesuai dengan ketentuan peraturan perundang-undangan 
 
 *PERNAH MENYAMPAIKAN PENGADUAN:*
 ${fallbackRiwayatWaText}
+
+*PERNYATAAN PELAPOR:*
+☑️ Menyatakan dengan sadar bahwa data & bukti yang dilaporkan adalah BENAR dan dapat dipertanggungjawabkan.
 --------------------------------------------------
 _Laporan resmi dikirim melalui formulir Layanan Pengaduan Lingkungan Masyarakat Kabupaten Lembata._
 _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
