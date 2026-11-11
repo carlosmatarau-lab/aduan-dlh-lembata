@@ -1738,7 +1738,10 @@ class AduanDataStore {
         } catch (e) {}
       }
     }
-    if (pushedCount > 0) this.save();
+    if (pushedCount > 0) {
+      this.save();
+      window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: true } }));
+    }
     return pushedCount;
   }
 
@@ -1770,6 +1773,7 @@ class AduanDataStore {
       await this.pushPendingVerifications();
 
       this.save();
+      window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: true } }));
     } finally {
       this._isFlushing = false;
     }
@@ -2492,18 +2496,20 @@ class AduanDataStore {
     const perJenis = {};
 
     cleanList.forEach(item => {
-      // By Status
-      if (item.status === 'Aduan Diterima') aduanDiterima++;
-      else if (item.status === 'Verifikasi Administrasi') verifAdmin++;
-      else if (item.status === 'Menunggu Verifikasi Lapangan') menungguVerif++;
-      else if (item.status === 'Sedang Diverifikasi') sedangDiverif++;
-      else if (item.status === 'Dalam Penanganan') dalamPenanganan++;
-      else if (item.status === 'Selesai') selesai++;
-      else if (item.status === 'Ditolak') ditolak++;
-      // Backward compat: map old status names
-      else if (item.status === 'Baru') aduanDiterima++;
-      else if (item.status === 'Diverifikasi') sedangDiverif++;
-      else if (item.status === 'Ditindaklanjuti') dalamPenanganan++;
+      // By Status: Penyelarasan 5 Status Baku SOP 2.0 & Kompatibilitas Alias Lama
+      const rawSt = String(item.status || 'Baru').trim();
+      const stLower = rawSt.toLowerCase();
+      if (stLower.includes('selesai') || stLower.includes('tuntas')) {
+        selesai++;
+      } else if (stLower.includes('tolak')) {
+        ditolak++;
+      } else if (stLower.includes('tindak') || stLower.includes('penanganan') || stLower.includes('proses')) {
+        dalamPenanganan++;
+      } else if (stLower.includes('verif') || stLower.includes('sedang')) {
+        sedangDiverif++;
+      } else {
+        aduanDiterima++;
+      }
 
       // By Kecamatan
       if (item.kecamatan) perKecamatan[item.kecamatan] = (perKecamatan[item.kecamatan] || 0) + 1;

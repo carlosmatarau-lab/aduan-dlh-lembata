@@ -89,7 +89,7 @@
 ---
 
 ### IV. REKOMENDASI DAN TINDAK LANJUT PENGAWAS LH *(Ref. Uraian Tugas Butir 15, 17, 18)*
-- [ ] Penerbitan Berita Acara Pemeriksaan Fisik Lapangan (BAP) di lokasi.
+- [ ] Penerbitan Berita Acara Verifikasi Lapangan Pengaduan Lingkungan Hidup di lokasi.
 - [ ] Penghentian sementara kegiatan pelanggaran (sesuai Butir 15).
 - [ ] Teguran tertulis dan penetapan batas waktu perbaikan teknis sarana pengendali limbah.
 - [ ] Pengusulan sanksi administrasi / peninjauan perizinan lingkungan hidup (sesuai Butir 18).

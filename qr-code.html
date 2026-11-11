@@ -277,12 +277,13 @@
     <div class="poster-body">
       
       <div class="qr-frame">
-        <!-- High Quality QR Code Generator API -->
+        <!-- High Quality Vector & High-Res QR Code -->
         <img 
-          src="https://api.qrserver.com/v1/create-qr-code/?size=400x400&format=png&data=https%3A%2F%2Faduan-dlh-lembata.vercel.app%2F" 
+          src="assets/qr-code-ecoadu.svg" 
           alt="QR Code Aduan DLH Lembata" 
           class="qr-image"
           id="qrImage"
+          onerror="this.onerror=null; this.src='assets/qr-code-ecoadu.png';"
         >
       </div>
 
@@ -309,12 +310,11 @@
 
       <!-- Panduan Bagi Warga -->
       <div class="instructions">
-        <strong>📱 CARA MELAPORKAN PENGADUAN:</strong>
+        <strong>📱 CARA AKSES FORMULIR PENGADUAN:</strong>
         <ol>
-          <li>Buka <strong>Kamera HP</strong> atau aplikasi pemindai QR Code / WhatsApp.</li>
-          <li>Arahkan kamera ke <strong>QR Code</strong> di atas.</li>
-          <li>Klik tautan yang muncul untuk membuka formulir aduan.</li>
-          <li>Isi uraian kejadian &amp; kirim laporan dengan mudah!</li>
+          <li><strong>Pilihan 1 (Scan Barcode):</strong> Arahkan pemindai barcode / kamera HP ke QR Code di atas.</li>
+          <li><strong>Pilihan 2 (Klik Alamat URL):</strong> Ketik atau sentuh tautan <strong>aduan-dlh-lembata.vercel.app</strong> pada browser HP Anda.</li>
+          <li>Isi formulir pengaduan &amp; kirim laporan dengan mudah tanpa perlu instal aplikasi atau membuat akun!</li>
         </ol>
       </div>
 
@@ -332,7 +332,7 @@
 
     <!-- Footer -->
     <div class="poster-footer">
-      Dinas Lingkungan Hidup Kab. Lembata &bull; Layanan Cepat Tanggap Lingkungan Hidup
+      Dinas Lingkungan Hidup Kab. Lembata &bull; Pengelolaan dan Penanganan Pengaduan Lingkungan Hidup
     </div>
 
   </div>

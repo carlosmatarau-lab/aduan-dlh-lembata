@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -6472,10 +6472,10 @@
           <h4 style="font-size: 0.88rem; font-weight: 800; color: #0f172a; margin-bottom: 12px; display: flex; align-items: center; gap: 6px;">
             <span>ℹ️</span> Tahapan Status Pengaduan DLH Lembata
           </h4>
-          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px;">
+          <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 10px;">
             <div style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
-              <span class="badge badge-aduan-diterima" style="display: inline-block; margin-bottom: 4px;">Aduan Diterima</span>
-              <p style="font-size: 0.76rem; color: #64748b; margin: 0; line-height: 1.4;">Laporan teregistrasi ke database dan menunggu telaah dokumen.</p>
+              <span class="badge badge-baru" style="display: inline-block; margin-bottom: 4px;">Baru / Masuk</span>
+              <p style="font-size: 0.76rem; color: #64748b; margin: 0; line-height: 1.4;">Laporan teregistrasi ke database dan menunggu telaah dokumen awal.</p>
             </div>
             <div style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
               <span class="badge badge-diverifikasi" style="display: inline-block; margin-bottom: 4px;">Diverifikasi</span>
@@ -6488,6 +6488,10 @@
             <div style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
               <span class="badge badge-selesai" style="display: inline-block; margin-bottom: 4px;">Selesai</span>
               <p style="font-size: 0.76rem; color: #64748b; margin: 0; line-height: 1.4;">Aduan telah tuntas diselesaikan dan berita acara diarsipkan.</p>
+            </div>
+            <div style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
+              <span class="badge badge-ditolak" style="display: inline-block; margin-bottom: 4px;">Ditolak</span>
+              <p style="font-size: 0.76rem; color: #64748b; margin: 0; line-height: 1.4;">Laporan tidak memenuhi syarat atau fakta tidak terbukti di lapangan.</p>
             </div>
           </div>
 
@@ -6608,13 +6612,11 @@
                     <label class="map-filter-label" for="mapFilterStatus">Status Penanganan:</label>
                     <select id="mapFilterStatus" class="map-select" title="Saring Status Penanganan">
                       <option value="all">Semua Status</option>
-                      <option value="Aduan Diterima">Aduan Diterima</option>
-                      <option value="Verifikasi Administrasi">Verifikasi Administrasi</option>
-                      <option value="Menunggu Verifikasi Lapangan">Verifikasi Lapangan</option>
-                      <option value="Sedang Diverifikasi">Sedang Diverifikasi</option>
-                      <option value="Dalam Penanganan">Dalam Penanganan</option>
-                      <option value="Selesai">Selesai Ditangani</option>
-                      <option value="Ditolak">Ditolak / Tidak Terbukti</option>
+                      <option value="Baru">Baru / Masuk</option>
+                      <option value="Diverifikasi">Diverifikasi Lapangan</option>
+                      <option value="Ditindaklanjuti">Ditindaklanjuti</option>
+                      <option value="Selesai">Selesai</option>
+                      <option value="Ditolak">Ditolak</option>
                     </select>
                   </div>
                   <div class="map-filter-col">
@@ -6941,7 +6943,11 @@
             </svg>
             <span>Kontak DLH</span>
           </a>
-          <a href="petugas.html" class="footer-link-btn" onclick="transisiKePetugas(event, this.href)"
+                    <a href="panduan-warga.html" class="footer-link-btn" title="Buka Buku Panduan Penggunaan Khusus Warga &amp; Masyarakat">
+            <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" style="display: inline-block; vertical-align: middle;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+            <span>Panduan Warga</span>
+          </a>
+                    <a href="petugas.html" class="footer-link-btn" onclick="transisiKePetugas(event, this.href)"
             style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.4) 100%); border: 1.5px solid #34d399; color: #ffffff; font-weight: 800;"
             title="Akses Dashboard Khusus Petugas Verifikator DLH Lembata">Akses Petugas ↗</a>
         </div>

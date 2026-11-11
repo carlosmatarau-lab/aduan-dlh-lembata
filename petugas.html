@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -696,6 +696,21 @@
       background: #fff1f2 !important;
       color: #9f1239 !important;
       border: 1px solid #fecdd3 !important;
+    }
+
+    .badge-pending-sync {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.68rem;
+      font-weight: 700;
+      background: #fffbeb !important;
+      color: #b45309 !important;
+      border: 1px solid #fde68a !important;
+      padding: 1px 6px;
+      border-radius: 4px;
+      white-space: nowrap;
+      line-height: 1.3;
     }
 
     /* Table Action Buttons & Compact Action Group */
@@ -4290,6 +4305,12 @@
           <span class="btn-header-text">Formulir Warga</span>
         </a>
 
+                <!-- Buku SOP Petugas -->
+        <a href="panduan-sop.html" target="_blank" class="btn-header-link" title="Buka Standar Operasional Prosedur (SOP) &amp; Juknis Petugas DLH">
+          <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="display: inline-block; vertical-align: middle;"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"></path><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"></path></svg>
+          <span class="btn-header-text">SOP Petugas</span>
+        </a>
+
         <!-- Kunci Dashboard -->
         <button type="button" class="btn-header-link btn-lock-portal" id="btnLockPortal" title="Kunci Sesi Dashboard Petugas">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
@@ -4452,10 +4473,11 @@
           <!-- Filter Status Peta -->
           <select id="mapFilterStatus" class="map-mini-select" onchange="window.portal.onMapFilterChange()">
             <option value="all">Semua Status</option>
-            <option value="Baru">Aduan Masuk / Baru</option>
+            <option value="Baru">Baru / Masuk</option>
             <option value="Diverifikasi">Diverifikasi Lapangan</option>
-            <option value="Ditindaklanjuti">Dalam Penanganan</option>
-            <option value="Selesai">Tuntas / Selesai</option>
+            <option value="Ditindaklanjuti">Ditindaklanjuti</option>
+            <option value="Selesai">Selesai</option>
+            <option value="Ditolak">Ditolak</option>
           </select>
         </div>
       </div>
@@ -4549,11 +4571,11 @@
         <!-- Filter Status -->
         <select id="filterStatus" class="filter-select">
           <option value="all">Semua Status</option>
-          <option value="Baru">Baru / Masuk</option>
-          <option value="Diverifikasi">Diverifikasi Lapangan</option>
-          <option value="Ditindaklanjuti">Dalam Penanganan</option>
-          <option value="Selesai">Selesai Ditangani</option>
-          <option value="Ditolak">Ditolak / Tidak Terbukti</option>
+          <option value="Baru">Baru (Menunggu Telaah)</option>
+          <option value="Diverifikasi">Diverifikasi (Fakta Lapangan)</option>
+          <option value="Ditindaklanjuti">Ditindaklanjuti (Penanganan)</option>
+          <option value="Selesai">Selesai (Tuntas)</option>
+          <option value="Ditolak">Ditolak (Tidak Terbukti)</option>
         </select>
 
         <!-- Filter Kecamatan -->
@@ -4672,11 +4694,11 @@
               Status Penanganan <span style="color: #e11d48;">*</span>
             </label>
             <select id="vStatusSelect" class="form-control-modal" required>
-              <option value="Baru">Baru (Aduan Masuk, Belum Dicek)</option>
-              <option value="Diverifikasi">Diverifikasi (Sedang / Sudah Cek Lapangan)</option>
-              <option value="Ditindaklanjuti">Ditindaklanjuti (Dalam Penanganan / Pembersihan)</option>
-              <option value="Selesai">Selesai (Perkara Lingkungan Tuntas)</option>
-              <option value="Ditolak">Ditolak (Tidak Terbukti / Penolakan Pemeriksaan oleh Terlapor)</option>
+              <option value="Baru">Baru (Menunggu Telaah Awal)</option>
+              <option value="Diverifikasi">Diverifikasi (Pemeriksaan / Fakta Lapangan)</option>
+              <option value="Ditindaklanjuti">Ditindaklanjuti (Penanganan / Aksi Berjalan)</option>
+              <option value="Selesai">Selesai (Tuntas dengan Bukti Penyelesaian)</option>
+              <option value="Ditolak">Ditolak (Tidak Memenuhi Syarat / Tidak Terbukti)</option>
             </select>
           </div>
 
@@ -4704,7 +4726,7 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                 Daftar Periksa (Checklist) Verifikasi Lapangan
               </label>
-              <span class="checklist-counter-badge" id="vChecklistCounter">0/5 Terpenuhi</span>
+              <span class="checklist-counter-badge" id="vChecklistCounter">0 dari 5 Indikator Terekam</span>
             </div>
             <p style="font-size: 0.74rem; color: #64748b; margin: 0 0 10px 0; line-height: 1.35;">
               Instrumen pengawasan faktual Bidang PPKLH DLH Kabupaten Lembata. Centang indikator yang telah diverifikasi di lapangan:
@@ -4722,18 +4744,18 @@
               </label>
 
               <label class="chk-item-row" for="chkSumberPelaku">
-                <input type="checkbox" id="chkSumberPelaku" class="v-chk-input" value="Sumber atau pelaku dugaan pencemaran telah diperiksa" onchange="window.portal && window.portal.onChecklistChange()">
-                <span class="chk-item-text">Sumber atau pelaku dugaan pencemaran telah diperiksa</span>
+                <input type="checkbox" id="chkSumberPelaku" class="v-chk-input" value="Sumber atau pihak terkait diklarifikasi apabila dapat diidentifikasi" onchange="window.portal && window.portal.onChecklistChange()">
+                <span class="chk-item-text">Sumber atau pihak terkait diklarifikasi apabila dapat diidentifikasi</span>
               </label>
 
               <label class="chk-item-row" for="chkDokumenSampel">
-                <input type="checkbox" id="chkDokumenSampel" class="v-chk-input" value="Pengambilan dokumentasi fisik/sampel lapangan telah dilakukan" onchange="window.portal && window.portal.onChecklistChange()">
-                <span class="chk-item-text">Pengambilan dokumentasi fisik/sampel lapangan telah dilakukan</span>
+                <input type="checkbox" id="chkDokumenSampel" class="v-chk-input" value="Dokumentasi foto/video dan/atau sampel diambil sesuai kebutuhan dan prosedur" onchange="window.portal && window.portal.onChecklistChange()">
+                <span class="chk-item-text">Dokumentasi foto/video dan/atau sampel diambil sesuai kebutuhan dan prosedur</span>
               </label>
 
               <label class="chk-item-row" for="chkKoordinasiAparat">
-                <input type="checkbox" id="chkKoordinasiAparat" class="v-chk-input" value="Koordinasi bersama aparat desa/kelurahan atau pihak terkait" onchange="window.portal && window.portal.onChecklistChange()">
-                <span class="chk-item-text">Koordinasi bersama aparat desa/kelurahan atau pihak terkait</span>
+                <input type="checkbox" id="chkKoordinasiAparat" class="v-chk-input" value="Koordinasi dengan aparat desa/kelurahan atau pihak terkait dilakukan bila relevan" onchange="window.portal && window.portal.onChecklistChange()">
+                <span class="chk-item-text">Koordinasi dengan aparat desa/kelurahan atau pihak terkait dilakukan bila relevan</span>
               </label>
             </div>
 
@@ -4862,12 +4884,12 @@
             </div>
           </div>
 
-          <!-- Berita Acara Pemeriksaan Fisik Lapangan (BAST) -->
+          <!-- Berita Acara Pemeriksaan dan Verifikasi Lapangan -->
           <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 12px; padding: 14px; margin-bottom: 16px;">
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px;">
               <div style="font-weight: 800; color: #0f172a; font-size: 0.88rem; display: flex; align-items: center; gap: 6px;">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px; color: #047857;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
-                Berita Acara Pemeriksaan Fisik Lapangan (BA / BAST)
+                Berita Acara Pemeriksaan / Verifikasi Lapangan
               </div>
               <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
                 <button type="button" class="auto-ba-btn" id="btnGenerateNoBA" onclick="window.portal.generateNoBA()">
@@ -5896,7 +5918,20 @@
           let matchSt = true;
           if (this.mapFilters.status !== 'all') {
             const itemSt = (item.status || 'Baru').toLowerCase();
-            matchSt = itemSt.includes(this.mapFilters.status.toLowerCase());
+            const target = this.mapFilters.status;
+            if (target === 'Baru') {
+              matchSt = itemSt.includes('baru') || itemSt === 'aduan diterima' || itemSt.includes('masuk');
+            } else if (target === 'Diverifikasi') {
+              matchSt = itemSt.includes('verif') || itemSt.includes('sedang');
+            } else if (target === 'Ditindaklanjuti') {
+              matchSt = itemSt.includes('tindak') || itemSt.includes('penanganan') || itemSt.includes('proses');
+            } else if (target === 'Selesai') {
+              matchSt = itemSt.includes('selesai') || itemSt.includes('tuntas');
+            } else if (target === 'Ditolak') {
+              matchSt = itemSt.includes('tolak');
+            } else {
+              matchSt = itemSt.includes(target.toLowerCase());
+            }
           }
 
           return matchKec && matchSt && item.lat && item.lng;
@@ -6684,11 +6719,15 @@
         const chkKoordinasi = document.getElementById('chkKoordinasiAparat');
 
         const savedChecklist = Array.isArray(item.checklistVerifikasi) ? item.checklistVerifikasi : [];
-        if (chkGps) chkGps.checked = !isUnverified && savedChecklist.includes(chkGps.value);
-        if (chkVisual) chkVisual.checked = !isUnverified && savedChecklist.includes(chkVisual.value);
-        if (chkSumber) chkSumber.checked = !isUnverified && savedChecklist.includes(chkSumber.value);
-        if (chkDokumen) chkDokumen.checked = !isUnverified && savedChecklist.includes(chkDokumen.value);
-        if (chkKoordinasi) chkKoordinasi.checked = !isUnverified && savedChecklist.includes(chkKoordinasi.value);
+        const isMatched = (chk, keyword) => {
+          if (isUnverified || !chk) return false;
+          return savedChecklist.some(s => s === chk.value || (keyword && String(s || '').toLowerCase().includes(keyword)));
+        };
+        if (chkGps) chkGps.checked = isMatched(chkGps, 'gps');
+        if (chkVisual) chkVisual.checked = isMatched(chkVisual, 'visual');
+        if (chkSumber) chkSumber.checked = isMatched(chkSumber, 'sumber');
+        if (chkDokumen) chkDokumen.checked = isMatched(chkDokumen, 'sampel') || isMatched(chkDokumen, 'dokumentasi');
+        if (chkKoordinasi) chkKoordinasi.checked = isMatched(chkKoordinasi, 'koordinasi');
         this.onChecklistChange();
         this.syncBaPenolakanButtonVisibility();
 
@@ -6704,28 +6743,31 @@
           if (input.checked) checkedCount++;
         });
         const counter = document.getElementById('vChecklistCounter');
-        if (counter) counter.textContent = `${checkedCount}/5 Terpenuhi`;
+        if (counter) counter.textContent = `${checkedCount} dari 5 Indikator Terekam`;
       }
 
       appendChecklistToHasil() {
         const checkedInputs = Array.from(document.querySelectorAll('.v-chk-input:checked'));
         if (checkedInputs.length === 0) {
-          this.showToast('Centang minimal satu poin checklist terlebih dahulu.', 'warning');
+          this.showToast('Centang minimal satu indikator checklist terlebih dahulu.', 'warning');
           return;
         }
         const hasilEl = document.getElementById('vHasilVerifikasi');
         if (!hasilEl) return;
-        const header = '[Daftar Periksa Lapangan Terpenuhi]:';
+        const tglInput = document.getElementById('vTanggalVerifikasi');
+        const tglText = tglInput && tglInput.value ? tglInput.value : new Date().toISOString().split('T')[0];
+        const header = `[Hasil Verifikasi Lapangan - ${tglText}]:`;
         const points = checkedInputs.map(i => `• ${i.value}`).join('\n');
         const block = `${header}\n${points}`;
 
         let current = (hasilEl.value || '').trim();
-        if (current.includes(header)) {
-          hasilEl.value = current.replace(new RegExp(`\\[Daftar Periksa Lapangan Terpenuhi\\]:[\\s\\S]*?(?=\\n\\n|$)`), block).trim();
+        const checklistPattern = /\[(?:Hasil Verifikasi Lapangan[^\]]*|Daftar Periksa Lapangan Terpenuhi)\]:[\s\S]*?(?=\n\n|$)/;
+        if (checklistPattern.test(current)) {
+          hasilEl.value = current.replace(checklistPattern, block).trim();
         } else {
           hasilEl.value = current ? `${current}\n\n${block}` : block;
         }
-        this.showToast('Poin checklist berhasil disinkronkan ke Catatan Temuan!', 'success');
+        this.showToast('Indikator checklist berhasil disinkronkan ke Catatan Temuan!', 'success');
       }
 
       /**
@@ -6764,17 +6806,28 @@
             tindakan: 'Penutupan aduan dan pemantauan berkala oleh Pengawas Lingkungan Hidup DLH Lembata.'
           },
           penolakan: {
-            status: 'Ditolak',
-            hasil: 'Tim Verifikasi Lapangan DLH Kabupaten Lembata telah mendatangi lokasi usaha/kegiatan terlapor. Namun, pemilik usaha / penanggung jawab kegiatan MENOLAK memberikan akses pemeriksaan fisik lapangan, menolak pengambilan dokumentasi/sampel, dan/atau tidak bersedia memberikan keterangan kepada petugas.',
-            tindakan: 'Penerbitan Berita Acara Penolakan Pemeriksaan Lapangan sesuai Pasal 74 jo. Pasal 112 UU No. 32 Tahun 2009 tentang Perlindungan dan Pengelolaan Lingkungan Hidup, koordinasi bersama Pemerintah Desa/Kelurahan setempat, serta pemanggilan resmi penanggung jawab usaha ke Kantor DLH Kabupaten Lembata.',
-            catatanBA: 'Pihak terlapor / penanggung jawab usaha menolak dilakukan pemeriksaan lapangan dan menolak menandatangani Berita Acara Pemeriksaan dengan alasan tidak bersedia diperiksa petugas.'
+            status: 'Diverifikasi',
+            hasil: 'Hambatan Pemeriksaan Lapangan: Tim Verifikasi Lapangan DLH Kabupaten Lembata telah mendatangi lokasi usaha/kegiatan terlapor sehubungan pengaduan warga. Namun terjadi hambatan pemeriksaan (pihak penanggung jawab usaha tidak berada di tempat / menolak memberikan akses masuk / izin pemeriksaan tertunda) sehingga verifikasi fisik belum dapat diselesaikan.',
+            tindakan: 'Penyusunan Berita Acara Penolakan / Hambatan Pemeriksaan Lapangan sesuai Pasal 74 ayat (1) jo. Pasal 115 UU No. 32 Tahun 2009, koordinasi dengan aparat desa/kelurahan setempat, serta penyampaian laporan kepada pimpinan untuk penerbitan surat panggilan resmi kepada penanggung jawab usaha/kegiatan.',
+            catatanBA: 'Hambatan Pemeriksaan: Pihak penanggung jawab usaha/kegiatan menolak memberikan akses pemeriksaan lapangan dan/atau tidak bersedia menandatangani Berita Acara Pemeriksaan.'
           }
         };
 
         const tpl = templates[key];
         if (!tpl) return;
 
-        if (statusEl) statusEl.value = tpl.status;
+        if (key === 'penolakan') {
+          // SOP Bab 2.2: Hambatan pemeriksaan dicatat secara khusus, tidak otomatis mengubah status menjadi Ditolak.
+          if (statusEl) {
+            const curVal = statusEl.value;
+            if (curVal !== 'Ditindaklanjuti' && curVal !== 'Diverifikasi') {
+              statusEl.value = 'Diverifikasi';
+            }
+          }
+        } else {
+          if (statusEl) statusEl.value = tpl.status;
+        }
+
         if (hasilEl) {
           const cur = (hasilEl.value || '').trim();
           hasilEl.value = cur ? `${cur}\n\n${tpl.hasil}` : tpl.hasil;
@@ -6798,15 +6851,18 @@
           }
         }
         this.syncBaPenolakanButtonVisibility();
-        this.showToast(`Templat respons '${tpl.status}' berhasil diterapkan ke formulir.`, 'success');
+        this.showToast(`Templat respons '${key === 'penolakan' ? 'Hambatan Pemeriksaan' : tpl.status}' berhasil diterapkan ke formulir.`, 'success');
       }
 
       syncBaPenolakanButtonVisibility() {
         const statusEl = document.getElementById('vStatusSelect');
+        const catatanBaEl = document.getElementById('vCatatanBA');
+        const hasilEl = document.getElementById('vHasilVerifikasi');
         const btnBaTolak = document.getElementById('btnPrintBaPenolakanForm');
-        if (!btnBaTolak || !statusEl) return;
-        const isDitolak = String(statusEl.value || '').toLowerCase().includes('tolak');
-        btnBaTolak.style.display = isDitolak ? 'inline-flex' : 'none';
+        if (!btnBaTolak) return;
+        const textToCheck = `${statusEl ? statusEl.value : ''} ${catatanBaEl ? catatanBaEl.value : ''} ${hasilEl ? hasilEl.value : ''}`.toLowerCase();
+        const hasHambatanOrTolak = textToCheck.includes('tolak') || textToCheck.includes('menolak') || textToCheck.includes('hambatan');
+        btnBaTolak.style.display = hasHambatanOrTolak ? 'inline-flex' : 'none';
       }
 
       getJenisPencemaranBgClass(jenis) {
@@ -7157,7 +7213,7 @@
                     <svg viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/><rect x="8" y="2" width="8" height="4" rx="1" ry="1"/></svg>
                     Hasil Pemeriksaan Lapangan:
                   </span>
-                  ${item.nomorBeritaAcara ? `<span style="font-family: monospace; font-size: 0.7rem; font-weight: 700; background: #fef08a; padding: 1px 5px; border-radius: 3px;">BAST: ${this.escHtml(item.nomorBeritaAcara)}</span>` : ''}
+                  ${item.nomorBeritaAcara ? `<span style="font-family: monospace; font-size: 0.7rem; font-weight: 700; background: #fef08a; padding: 1px 5px; border-radius: 3px;">BA: ${this.escHtml(item.nomorBeritaAcara)}</span>` : ''}
                 </div>
                 ${item.hasilVerifikasi && item.hasilVerifikasi !== '-' ? `<div style="color: #334155; line-height: 1.4; white-space: pre-wrap;">${this.escHtml(item.hasilVerifikasi)}</div>` : ''}
                 ${(item.tindakanDLH && item.tindakanDLH !== '-') ? `<div style="color: #047857; font-size: 0.76rem; margin-top: 3px;"><strong>Tindakan DLH:</strong> ${this.escHtml(item.tindakanDLH)}</div>` : ''}
@@ -7288,7 +7344,7 @@
                 <span>Sorot Peta</span>
               </button>
 
-              <!-- 2. Cetak BAST (Biru Lembut) -->
+              <!-- 2. Cetak BA Pemeriksaan (Biru Lembut) -->
               <button type="button"
                       onclick="window.portal.printBeritaAcara('${this.escHtml(item.id)}')"
                       style="height: 36px; background: #0284c7; color: #ffffff; border: none; border-radius: 7px; font-size: 0.78rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 4px; transition: background 0.2s;"
@@ -7296,7 +7352,7 @@
                       onmouseout="this.style.background='#0284c7';"
                       title="Cetak Berita Acara Pemeriksaan Fisik Lapangan">
                 <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2"><polyline points="6 9 6 2 18 2 18 9"/><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"/><rect x="6" y="14" width="12" height="8"/></svg>
-                <span>Cetak BAST</span>
+                <span>Cetak BA Pemeriksaan</span>
               </button>
 
               <!-- 3. Hapus (Merah Lembut #fef2f2, teks #dc2626) -->
@@ -7311,16 +7367,24 @@
               </button>
             </div>
 
-            ${String(item.status || '').toLowerCase().includes('tolak') ? `
-              <!-- Tombol Cetak Berita Acara Penolakan Pemeriksaan Lapangan -->
+            ${(
+              String(item.status || '').toLowerCase().includes('tolak') ||
+              String(item.catatanBeritaAcara || '').toLowerCase().includes('tolak') ||
+              String(item.catatanBeritaAcara || '').toLowerCase().includes('menolak') ||
+              String(item.catatanBeritaAcara || '').toLowerCase().includes('hambatan') ||
+              String(item.hasilVerifikasi || '').toLowerCase().includes('tolak') ||
+              String(item.hasilVerifikasi || '').toLowerCase().includes('menolak') ||
+              String(item.hasilVerifikasi || '').toLowerCase().includes('hambatan')
+            ) ? `
+              <!-- Tombol Cetak Berita Acara Penolakan / Hambatan Pemeriksaan Lapangan -->
               <button type="button"
                       onclick="window.portal.printBeritaAcaraPenolakan('${this.escHtml(item.id)}')"
                       style="width: 100%; height: 36px; background: #fff1f2; color: #9f1239; border: 1px solid #fecdd3; border-radius: 7px; font-size: 0.78rem; font-weight: 700; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; transition: background 0.2s; margin-top: 8px;"
                       onmouseover="this.style.background='#ffe4e6';"
                       onmouseout="this.style.background='#fff1f2';"
-                      title="Cetak Berita Acara Penolakan Pemeriksaan Lapangan (Jika ditolak pemilik usaha/terlapor)">
+                      title="Cetak Berita Acara Penolakan / Hambatan Pemeriksaan Lapangan (Jika ditolak pemilik usaha/terlapor)">
                 <svg viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
-                <span>Cetak Berita Acara Penolakan Pemeriksaan</span>
+                <span>Cetak Berita Acara Penolakan / Hambatan</span>
               </button>
             ` : ''}
           </div>
@@ -7465,7 +7529,7 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Berita Acara - ${regId}</title>
+  <title>Berita Acara Pemeriksaan dan Verifikasi - ${regId}</title>
   <style>
     @page { size: A4; margin: 15mm 15mm; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
@@ -7473,7 +7537,7 @@
     .kop-surat { display: flex; align-items: center; justify-content: center; gap: 16px; padding-bottom: 8px; border-bottom: 3px double #000; margin-bottom: 12px; text-align: center; }
     
     /* Gambar logo dan foto tidak di-filter, akan tetap FULL COLOR */
-    .kop-logo { width: 70px; height: auto; object-fit: contain; }
+    .kop-logo { width: 48px; max-width: 48px; height: auto; max-height: 52px; object-fit: contain; flex-shrink: 0; margin: 0; }
     .photo-images-wrap img { max-width: 100%; height: 140px; object-fit: contain; border: 1px solid #000; }
     
     .kop-text h3 { font-size: 14pt; font-weight: bold; text-transform: uppercase; margin: 0; letter-spacing: 0.5px; }
@@ -7570,7 +7634,7 @@
     <div class="section-title">D. TINDAKAN DAN RENCANA TINDAK LANJUT</div>
     <table class="data-table">
       <tr><th>1. Tindakan / Rekomendasi DLH</th><td style="white-space: pre-wrap; text-align: justify;">${escapeHtml(item.tindakanDLH)}</td></tr>
-      <tr><th>2. Catatan Berita Acara (BAST)</th><td style="white-space: pre-wrap; text-align: justify;">${escapeHtml(item.catatanBeritaAcara)}</td></tr>
+      <tr><th>2. Catatan Berita Acara Pemeriksaan</th><td style="white-space: pre-wrap; text-align: justify;">${escapeHtml(item.catatanBeritaAcara)}</td></tr>
     </table>
   </div>
 
@@ -7693,13 +7757,13 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
-  <title>Berita Acara Penolakan Pemeriksaan - ${regId}</title>
+  <title>Berita Acara Penolakan / Hambatan Pemeriksaan - ${regId}</title>
   <style>
     @page { size: A4; margin: 14mm 15mm; }
     * { box-sizing: border-box; margin: 0; padding: 0; }
     body { font-family: 'Times New Roman', Times, serif; font-size: 10pt; line-height: 1.4; color: #000; background: #fff; padding: 10px 15px; }
     .kop-surat { display: flex; align-items: center; justify-content: center; gap: 16px; padding-bottom: 8px; border-bottom: 3px double #000; margin-bottom: 12px; text-align: center; }
-    .kop-logo { width: 68px; height: auto; object-fit: contain; }
+    .kop-logo { width: 48px; max-width: 48px; height: auto; max-height: 52px; object-fit: contain; flex-shrink: 0; margin: 0; }
     .kop-text h3 { font-size: 13pt; font-weight: bold; text-transform: uppercase; margin: 0; letter-spacing: 0.5px; }
     .kop-text h2 { font-size: 15pt; font-weight: 900; text-transform: uppercase; margin: 2px 0; letter-spacing: 0.8px; }
     .kop-text p { font-size: 9.5pt; margin: 0; }
@@ -7739,7 +7803,7 @@
   </div>
 
   <div class="doc-header">
-    <h1>BERITA ACARA PENOLAKAN PEMERIKSAAN LAPANGAN</h1>
+    <h1>BERITA ACARA PENOLAKAN / HAMBATAN PEMERIKSAAN LAPANGAN</h1>
     <div class="doc-meta">Nomor: ${noBA}</div>
   </div>
 
@@ -7787,11 +7851,11 @@
 
   <div class="legal-box">
     <strong>DASAR HUKUM DAN KETENTUAN SANKSI:</strong><br>
-    Berdasarkan <strong>Pasal 74 ayat (1) Undang-Undang Nomor 32 Tahun 2009</strong> tentang Perlindungan dan Pengelolaan Lingkungan Hidup, Pejabat Pengawas Lingkungan Hidup berwenang memasuki tempat tertentu, melakukan pemantauan, mengambil sampel, dan memeriksa peralatan/instalasi. Selanjutnya sesuai <strong>Pasal 112 UU Nomor 32 Tahun 2009</strong>, setiap orang yang dengan sengaja mencegah, menghalang-halangi, atau menggagalkan pelaksanaan tugas pengawasan lingkungan hidup dapat dikenakan ancaman sanksi pidana sesuai peraturan perundang-undangan yang berlaku.
+    Berdasarkan <strong>Pasal 74 ayat (1) jo. Pasal 115 Undang-Undang Nomor 32 Tahun 2009</strong> tentang Perlindungan dan Pengelolaan Lingkungan Hidup sebagaimana telah disesuaikan dengan peraturan perundang-undangan yang berlaku, Pejabat Pengawas Lingkungan Hidup berwenang melakukan pemantauan, memeriksa peralatan/instalasi, dan mengumpulkan bahan keterangan. Setiap orang yang menghambat atau menolak pemeriksaan dicatat dalam Berita Acara ini untuk telaah administratif dan penanganan lebih lanjut sesuai kewenangan hukum.
   </div>
 
   <p class="closing-text">
-    Demikian Berita Acara Penolakan Pemeriksaan Lapangan ini dibuat dengan sebenarnya di lokasi kejadian. Apabila pihak penanggung jawab usaha dan/atau kegiatan menolak membubuhkan tanda tangan pada dokumen ini, maka penolakan tersebut dicatat secara resmi dan Berita Acara ini tetap sah serta mengikat secara hukum dengan ditandatangani oleh Tim Verifikator dan Saksi.
+    Demikian Berita Acara Penolakan / Hambatan Pemeriksaan Lapangan ini dibuat berdasarkan fakta kejadian yang diamati oleh Tim Verifikator pada waktu dan tempat tersebut untuk dilaporkan kepada pimpinan sebagai dasar tindak lanjut kedinasan.
   </p>
 
   <div class="signature-grid">
@@ -8507,7 +8571,14 @@
                 </div>
                 <div class="gov-card-main">
                   <div class="gov-card-meta-top">
-                    <span class="gov-card-reg">${this.escHtml(id)}</span>
+                    <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                      <span class="gov-card-reg">${this.escHtml(id)}</span>
+                      ${(item._pendingSync || item._pendingOfficerSync) ? `
+                        <span class="badge-pending-sync" style="font-size: 0.62rem; padding: 1px 5px;" title="Belum tersinkron ke cloud">
+                          ⏳ Pending Sync
+                        </span>
+                      ` : ''}
+                    </div>
                     <span class="gov-card-date">${this.escHtml(dateStr)}</span>
                   </div>
                   <h3 class="gov-card-title">${this.escHtml(jenis)}</h3>
@@ -8600,7 +8671,14 @@
                  role="button"
                  onclick="window.portal.highlightAduanInList('${this.escHtml(id)}', true)">
               <div class="aduan-card-header">
-                <span class="aduan-card-ticket">${this.escHtml(id)}</span>
+                <div style="display: flex; align-items: center; gap: 4px; flex-wrap: wrap;">
+                  <span class="aduan-card-ticket">${this.escHtml(id)}</span>
+                  ${(item._pendingSync || item._pendingOfficerSync) ? `
+                    <span class="badge-pending-sync" style="font-size: 0.6rem; padding: 1px 4px;" title="Belum tersinkron ke cloud">
+                      ⏳ Pending Sync
+                    </span>
+                  ` : ''}
+                </div>
                 <div>${this.getStatusBadgeHtml(item.status)}</div>
               </div>
               <div class="aduan-card-title">${this.escHtml(jenis)}</div>
@@ -8672,9 +8750,15 @@
           if (st !== 'all') {
             const itemSt = (item.status || 'Baru').toLowerCase();
             if (st === 'Baru') {
-              matchStatus = itemSt.includes('baru') || itemSt === 'aduan diterima';
+              matchStatus = itemSt.includes('baru') || itemSt === 'aduan diterima' || itemSt.includes('masuk');
+            } else if (st === 'Diverifikasi') {
+              matchStatus = itemSt.includes('verif') || itemSt.includes('sedang');
             } else if (st === 'Ditindaklanjuti') {
-              matchStatus = itemSt.includes('tindak') || itemSt.includes('penanganan') || itemSt.includes('verif') || itemSt.includes('proses');
+              matchStatus = itemSt.includes('tindak') || itemSt.includes('penanganan') || itemSt.includes('proses');
+            } else if (st === 'Selesai') {
+              matchStatus = itemSt.includes('selesai') || itemSt.includes('tuntas');
+            } else if (st === 'Ditolak') {
+              matchStatus = itemSt.includes('tolak');
             } else {
               matchStatus = itemSt.includes(st.toLowerCase());
             }
@@ -8802,9 +8886,16 @@
           return `
             <tr class="aduan-main-row ${isExpanded ? 'expanded' : ''}" data-id="${item.id}" onclick="window.portal.handleMobileRowClick(event, '${item.id}')">
               <td class="col-reg">
-                <span class="ticket-badge" onclick="if(window.innerWidth > 768) { event.stopPropagation(); window.portal.showDetailModal('${item.id}'); }" title="Klik untuk rincian lengkap">
-                  ${item.id}
-                </span>
+                <div style="display: flex; align-items: center; gap: 6px; flex-wrap: wrap;">
+                  <span class="ticket-badge" onclick="if(window.innerWidth > 768) { event.stopPropagation(); window.portal.showDetailModal('${item.id}'); }" title="Klik untuk rincian lengkap">
+                    ${item.id}
+                  </span>
+                  ${(item._pendingSync || item._pendingOfficerSync) ? `
+                    <span class="badge-pending-sync" title="Perubahan data tersimpan di penyimpanan lokal dan menunggu sinkronisasi dengan database cloud pusat">
+                      ⏳ Pending Cloud Sync
+                    </span>
+                  ` : ''}
+                </div>
                 <div class="mobile-reg-subtext">
                   <div class="mobile-loc-line">${desaKelLabel}, Kec. ${item.kecamatan || '-'}</div>
                   <div class="mobile-jenis-tag">&bull; ${item.jenisPencemaran || '-'}</div>
@@ -9294,6 +9385,14 @@
         const vStatusSelect = document.getElementById('vStatusSelect');
         if (vStatusSelect) {
           vStatusSelect.addEventListener('change', () => this.syncBaPenolakanButtonVisibility());
+        }
+        const vCatatanBA = document.getElementById('vCatatanBA');
+        if (vCatatanBA) {
+          vCatatanBA.addEventListener('input', () => this.syncBaPenolakanButtonVisibility());
+        }
+        const vHasilVerifikasi = document.getElementById('vHasilVerifikasi');
+        if (vHasilVerifikasi) {
+          vHasilVerifikasi.addEventListener('input', () => this.syncBaPenolakanButtonVisibility());
         }
       }
 

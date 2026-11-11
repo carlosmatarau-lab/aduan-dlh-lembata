@@ -1,0 +1,843 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Poster Panduan Pengaduan Lingkungan - ECOADU Lembata</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@600;700;800;900&family=Space+Grotesk:wght@700;800;900&display=swap" rel="stylesheet">
+  
+  <style>
+    :root {
+      --primary: #064e3b;
+      --primary-dark: #022c22;
+      --primary-mid: #047857;
+      --emerald: #059669;
+      --emerald-light: #10b981;
+      --emerald-soft: #ecfdf5;
+      --emerald-border: #6ee7b7;
+      --amber: #d97706;
+      --amber-soft: #fffbeb;
+      --amber-border: #fde68a;
+      --blue: #0284c7;
+      --blue-soft: #f0f9ff;
+      --blue-border: #bae6fd;
+      --purple: #7c3aed;
+      --purple-soft: #f5f3ff;
+      --purple-border: #ddd6fe;
+      --slate-dark: #0f172a;
+      --slate-body: #1e293b;
+      --slate-muted: #475569;
+      --slate-border: #cbd5e1;
+      --font-main: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      --font-heading: 'Space Grotesk', system-ui, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-main);
+      background: #0b1329;
+      color: var(--slate-body);
+      min-height: 100vh;
+      padding: 12px 10px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      line-height: 1.36;
+    }
+
+    /* ── ACTION BAR SCREEN ONLY ── */
+    .screen-actions {
+      max-width: 1160px;
+      width: 100%;
+      margin: 0 auto 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 8px 16px;
+      background: rgba(255, 255, 255, 0.08);
+      backdrop-filter: blur(10px);
+      border: 1px solid rgba(255, 255, 255, 0.15);
+      border-radius: 12px;
+      color: #f8fafc;
+    }
+    .screen-title {
+      font-size: 0.88rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      gap: 7px;
+    }
+    .screen-buttons {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-action {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-main);
+      font-size: 0.80rem;
+      font-weight: 800;
+      padding: 6px 14px;
+      border-radius: 8px;
+      cursor: pointer;
+      text-decoration: none;
+      border: 1.5px solid transparent;
+      transition: all 0.2s;
+    }
+    .btn-print {
+      background: var(--emerald);
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.35);
+    }
+    .btn-print:hover {
+      background: #047857;
+      transform: translateY(-1px);
+    }
+    .btn-portal {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+    .btn-portal:hover {
+      background: rgba(255, 255, 255, 0.25);
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       KANVAS UTAMA POSTER A4 LANDSCAPE (PENUH, PADAT, PROPORSIONAL)
+       ══════════════════════════════════════════════════════════ */
+    .poster-canvas {
+      width: 100%;
+      max-width: 1160px;
+      background: #ffffff;
+      border-radius: 14px;
+      box-shadow: 0 20px 50px rgba(0, 0, 0, 0.45);
+      padding: 10px 14px 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      border: 2px solid var(--emerald-border);
+      position: relative;
+    }
+
+    /* ── 1. KOP ATAS POSTER: BRAND ECOADU & KALIMAT AJAKAN WARGA ── */
+    .poster-top-header {
+      background: linear-gradient(135deg, var(--primary-dark) 0%, var(--primary) 70%, #047857 100%);
+      color: #ffffff;
+      border-radius: 11px;
+      padding: 9px 16px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+      box-shadow: 0 4px 16px rgba(6, 78, 59, 0.22);
+    }
+    .brand-id-group {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      flex-shrink: 0;
+    }
+    .brand-logo-img {
+      height: 46px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 5px rgba(0,0,0,0.3));
+    }
+    .brand-titles h1 {
+      font-family: var(--font-heading);
+      font-size: 1.35rem;
+      font-weight: 900;
+      color: #ffffff;
+      line-height: 1.1;
+      letter-spacing: -0.2px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .brand-titles h1 span.tag-lbt {
+      font-size: 0.70rem;
+      font-weight: 800;
+      background: var(--emerald-light);
+      color: var(--primary-dark);
+      padding: 2px 7px;
+      border-radius: 5px;
+      letter-spacing: 0.4px;
+    }
+    .brand-titles p {
+      font-size: 0.72rem;
+      color: #d1fae5;
+      font-weight: 700;
+    }
+
+    /* KALIMAT MENGAJAK WARGA PADA KOP ATAS */
+    .callout-invitation-box {
+      flex: 1;
+      background: rgba(255, 255, 255, 0.12);
+      border: 1.5px solid rgba(255, 255, 255, 0.28);
+      border-radius: 9px;
+      padding: 6px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .callout-bell-icon {
+      font-size: 1.35rem;
+      line-height: 1;
+      flex-shrink: 0;
+    }
+    .callout-invitation-text {
+      display: flex;
+      flex-direction: column;
+      gap: 1px;
+    }
+    .callout-invitation-text strong {
+      font-family: var(--font-heading);
+      font-size: 0.88rem;
+      font-weight: 900;
+      color: #fef08a;
+      line-height: 1.25;
+      letter-spacing: 0.1px;
+    }
+    .callout-invitation-text span {
+      font-size: 0.72rem;
+      color: #ffffff;
+      font-weight: 600;
+      line-height: 1.25;
+    }
+
+    .badge-24h {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      background: #ffffff;
+      color: var(--primary-dark);
+      font-size: 0.72rem;
+      font-weight: 900;
+      padding: 5px 11px;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.12);
+    }
+    .pulse-dot {
+      width: 8px;
+      height: 8px;
+      background: #10b981;
+      border-radius: 50%;
+      box-shadow: 0 0 0 2.5px rgba(16, 185, 129, 0.4);
+    }
+
+    /* ── 2. BODY UTAMA DUA KOLOM BERDAMPINGAN ── */
+    .poster-body-grid {
+      display: grid;
+      grid-template-columns: 290px 1fr;
+      gap: 11px;
+      align-items: stretch;
+      flex: 1;
+    }
+
+    /* ── KOLOM KIRI: GERBANG SCAN QR CODE ── */
+    .gate-left-column {
+      background: linear-gradient(170deg, #f0fdf4 0%, #ecfdf5 100%);
+      border: 2px solid var(--emerald-border);
+      border-radius: 12px;
+      padding: 10px 12px 9px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 7px;
+      box-shadow: 0 4px 14px rgba(5, 150, 105, 0.08);
+    }
+
+    /* Kartu QR Putih */
+    .qr-hero-card {
+      background: #ffffff;
+      border: 2px solid var(--emerald-border);
+      border-radius: 11px;
+      padding: 8px 8px 7px;
+      text-align: center;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.06);
+    }
+    .qr-frame-box {
+      position: relative;
+      display: inline-block;
+      padding: 4px;
+      background: #ffffff;
+      border-radius: 8px;
+    }
+    .reticle-tl { position: absolute; top: 0; left: 0; width: 14px; height: 14px; border-top: 3.5px solid var(--emerald); border-left: 3.5px solid var(--emerald); border-top-left-radius: 6px; }
+    .reticle-tr { position: absolute; top: 0; right: 0; width: 14px; height: 14px; border-top: 3.5px solid var(--emerald); border-right: 3.5px solid var(--emerald); border-top-right-radius: 6px; }
+    .reticle-bl { position: absolute; bottom: 0; left: 0; width: 14px; height: 14px; border-bottom: 3.5px solid var(--emerald); border-left: 3.5px solid var(--emerald); border-bottom-left-radius: 6px; }
+    .reticle-br { position: absolute; bottom: 0; right: 0; width: 14px; height: 14px; border-bottom: 3.5px solid var(--emerald); border-right: 3.5px solid var(--emerald); border-bottom-right-radius: 6px; }
+
+    .qr-image-asset {
+      width: 122px;
+      height: 122px;
+      display: block;
+      margin: 0 auto;
+    }
+    .qr-scan-badge {
+      font-size: 0.74rem;
+      font-weight: 900;
+      color: var(--primary);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-top: 4px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
+    .qr-url-link {
+      font-family: monospace;
+      font-size: 0.76rem;
+      font-weight: 900;
+      color: var(--emerald);
+      background: var(--emerald-soft);
+      border: 1px solid var(--emerald-border);
+      padding: 3px 8px;
+      border-radius: 6px;
+      display: inline-block;
+      margin-top: 3px;
+      text-decoration: none;
+    }
+
+    /* Pilihan Akses Cepat */
+    .access-steps-box {
+      background: #ffffff;
+      border: 1.5px solid var(--slate-border);
+      border-radius: 9px;
+      padding: 7px 9px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 0.74rem;
+      line-height: 1.32;
+    }
+    .access-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+    .access-num-tag {
+      background: var(--primary);
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 0.65rem;
+      padding: 1.5px 6px;
+      border-radius: 4px;
+      flex-shrink: 0;
+      text-transform: uppercase;
+    }
+    .access-row strong {
+      color: var(--primary-dark);
+    }
+
+    /* 3 Keunggulan Layanan */
+    .perks-strip {
+      display: flex;
+      justify-content: space-between;
+      gap: 4px;
+      font-size: 0.70rem;
+      font-weight: 800;
+      color: #065f46;
+      text-align: center;
+      padding-top: 4px;
+      border-top: 1.5px solid var(--emerald-border);
+    }
+
+    /* ── KOLOM KANAN: HEADLINE RESMI & 6 KARTU ALUR LENGKAP ── */
+    .flow-right-column {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 7px;
+      height: 100%;
+    }
+
+    /* HEADLINE PESANAN PENGGUNA */
+    .right-headline-strip {
+      background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
+      border: 1.5px solid var(--slate-border);
+      border-radius: 10px;
+      padding: 7px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      border-left: 5px solid var(--emerald);
+    }
+    .headline-titles h2 {
+      font-family: var(--font-heading);
+      font-size: 1.18rem;
+      font-weight: 900;
+      color: var(--primary-dark);
+      letter-spacing: -0.2px;
+      line-height: 1.2;
+    }
+    .headline-titles p {
+      font-size: 0.74rem;
+      color: var(--slate-muted);
+      font-weight: 700;
+      margin-top: 1px;
+    }
+    .step-count-pill {
+      font-size: 0.70rem;
+      font-weight: 900;
+      color: var(--emerald);
+      background: var(--emerald-soft);
+      border: 1.5px solid var(--emerald-border);
+      padding: 3px 10px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+      white-space: nowrap;
+    }
+
+    /* ── GRID 6 KARTU (2 BARIS × 3 KOLOM) DENGAN HURUF MANTAP ── */
+    .journey-grid {
+      flex: 1 1 0;
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      grid-template-rows: repeat(2, 1fr);
+      gap: 7px;
+    }
+    .journey-card {
+      background: #ffffff;
+      border: 1.5px solid var(--slate-border);
+      border-radius: 11px;
+      padding: 8px 10px 7px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      gap: 3px;
+      box-shadow: 0 2px 7px rgba(0, 0, 0, 0.04);
+    }
+    .jc-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+    }
+    .jc-step-badge {
+      font-size: 0.68rem;
+      font-weight: 900;
+      padding: 2.5px 8px;
+      border-radius: 999px;
+      text-transform: uppercase;
+      letter-spacing: 0.3px;
+    }
+    .jc-icon {
+      font-size: 1.12rem;
+      line-height: 1;
+    }
+
+    .journey-card h3 {
+      font-family: var(--font-heading);
+      font-size: 0.88rem;
+      font-weight: 900;
+      color: var(--slate-dark);
+      line-height: 1.2;
+      margin: 1px 0 0 0;
+    }
+    .journey-card p {
+      font-size: 0.74rem;
+      color: var(--slate-body);
+      font-weight: 600;
+      line-height: 1.34;
+      margin: 0;
+      flex: 1;
+    }
+    .jc-bottom-tag {
+      font-size: 0.68rem;
+      font-weight: 900;
+      padding: 3px 6px;
+      border-radius: 5px;
+      text-align: center;
+      margin-top: auto;
+    }
+
+    /* Warna Kartu yang Cerah & Menarik */
+    .card-t1 { background: var(--emerald-soft); border-color: var(--emerald-border); }
+    .card-t1 .jc-step-badge { background: #d1fae5; color: #065f46; }
+    .card-t1 .jc-bottom-tag { background: #d1fae5; color: #047857; }
+
+    .card-t2 { background: var(--blue-soft); border-color: var(--blue-border); }
+    .card-t2 .jc-step-badge { background: #e0f2fe; color: #0369a1; }
+    .card-t2 .jc-bottom-tag { background: #e0f2fe; color: #0284c7; }
+
+    .card-t3 { background: var(--amber-soft); border-color: var(--amber-border); }
+    .card-t3 .jc-step-badge { background: #fef3c7; color: #92400e; }
+    .card-t3 .jc-bottom-tag { background: #fef3c7; color: #b45309; }
+
+    .card-t4 { background: #f0fdf4; border-color: var(--emerald); border-width: 2px; }
+    .card-t4 .jc-step-badge { background: #dcfce7; color: #166534; }
+    .card-t4 .jc-bottom-tag { background: var(--emerald); color: #ffffff; }
+
+    .card-t5 { background: var(--purple-soft); border-color: var(--purple-border); }
+    .card-t5 .jc-step-badge { background: #ede9fe; color: #5b21b6; }
+    .card-t5 .jc-bottom-tag { background: #ede9fe; color: #6d28d9; }
+
+    .card-t6 { background: linear-gradient(135deg, #064e3b 0%, #065f46 100%); border-color: var(--emerald); color: #ffffff; }
+    .card-t6 .jc-step-badge { background: #fde68a; color: #78350f; }
+    .card-t6 h3 { color: #ffffff; }
+    .card-t6 p { color: #d1fae5; }
+    .card-t6 .jc-bottom-tag { background: rgba(255, 255, 255, 0.18); color: #ffffff; }
+
+    /* ── 3. FOOTER HELPLINE WHATSAPP & SLOGAN ── */
+    .poster-bottom-footer {
+      background: linear-gradient(135deg, #fefce8 0%, #fef9c3 100%);
+      border: 1.5px solid #fde047;
+      border-radius: 9px;
+      padding: 6px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      font-size: 0.74rem;
+    }
+    .footer-left-info {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .footer-left-info strong {
+      color: #713f12;
+      font-size: 0.76rem;
+    }
+    .footer-left-info span {
+      color: #854d0e;
+      font-size: 0.70rem;
+      font-weight: 600;
+    }
+    .footer-right-actions {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .helpline-btn-wa {
+      background: #25d366;
+      color: #ffffff;
+      padding: 4px 13px;
+      border-radius: 999px;
+      font-weight: 900;
+      font-size: 0.74rem;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      box-shadow: 0 2px 7px rgba(37, 211, 102, 0.35);
+      transition: all 0.2s;
+    }
+    .helpline-btn-wa:hover {
+      background: #1eb956;
+      transform: translateY(-1px);
+    }
+    .slogan-taantou {
+      font-weight: 900;
+      color: #065f46;
+      font-size: 0.74rem;
+    }
+
+    /* ══════════════════════════════════════════════════════════
+       MEDIA PRINT A4 LANDSCAPE - 1 LEMBAR PAS TANPA SISA KOSONG
+       ══════════════════════════════════════════════════════════ */
+    @page {
+      size: A4 landscape;
+      margin: 4mm 6mm;
+    }
+
+    @media print {
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+      html, body {
+        width: 100% !important;
+        height: 100% !important;
+        max-height: 202mm !important;
+        background: #ffffff !important;
+        padding: 0 !important;
+        margin: 0 !important;
+        overflow: hidden !important;
+      }
+      .screen-actions {
+        display: none !important;
+      }
+      .poster-canvas {
+        max-width: 100% !important;
+        width: 100% !important;
+        height: 198mm !important;
+        max-height: 198mm !important;
+        border: 2px solid var(--emerald) !important;
+        box-shadow: none !important;
+        border-radius: 10px !important;
+        padding: 8px 10px !important;
+        gap: 6px !important;
+        justify-content: space-between !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+      .poster-top-header {
+        padding: 7px 12px !important;
+      }
+      .brand-titles h1 {
+        font-size: 1.25rem !important;
+      }
+      .callout-invitation-text strong {
+        font-size: 0.84rem !important;
+      }
+      .callout-invitation-text span {
+        font-size: 0.70rem !important;
+      }
+      .poster-body-grid {
+        grid-template-columns: 280px 1fr !important;
+        gap: 9px !important;
+      }
+      .qr-image-asset {
+        width: 118px !important;
+        height: 118px !important;
+      }
+      .right-headline-strip {
+        padding: 6px 12px !important;
+      }
+      .headline-titles h2 {
+        font-size: 1.12rem !important;
+      }
+      .journey-grid {
+        gap: 6px !important;
+      }
+      .journey-card {
+        padding: 7px 9px 6px !important;
+      }
+      .journey-card h3 {
+        font-size: 0.85rem !important;
+      }
+      .journey-card p {
+        font-size: 0.72rem !important;
+        line-height: 1.3 !important;
+      }
+      .poster-bottom-footer {
+        padding: 5px 12px !important;
+      }
+      .btn-action, .no-print {
+        display: none !important;
+      }
+      a {
+        text-decoration: none !important;
+        color: inherit !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- SCREEN FLOATING ACTION BAR -->
+  <header class="screen-actions">
+    <div class="screen-title">
+      <span>📄</span> Poster Panduan Warga: ECOADU Lembata (A4 Landscape)
+    </div>
+    <div class="screen-buttons">
+      <a href="https://aduan-dlh-lembata.vercel.app/" target="_blank" class="btn-action btn-portal">
+        🌐 Buka Portal Web ↗
+      </a>
+      <button onclick="window.print()" class="btn-action btn-print">
+        🖨️ Cetak Poster (A4 Landscape)
+      </button>
+    </div>
+  </header>
+
+  <!-- KANVAS UTAMA POSTER A4 LANDSCAPE (1 LEMBAR PAS & PADAT) -->
+  <main class="poster-canvas">
+
+    <!-- 1. KOP ATAS: BRAND ECOADU & KALIMAT AJAKAN WARGA -->
+    <header class="poster-top-header">
+      <!-- Identitas Brand ECOADU -->
+      <div class="brand-id-group">
+        <img src="assets/logo-ecoadu.png" alt="Logo ECOADU" class="brand-logo-img" onerror="this.onerror=null; this.src='assets/logo-ecoadu-full.png';">
+        <div class="brand-titles">
+          <h1>ECOADU <span class="tag-lbt">LEMBATA</span></h1>
+          <p>Ekosistem Digital Aduan Lingkungan</p>
+        </div>
+      </div>
+
+      <!-- KOTAK SPANDUK MENGAJAK WARGA MELIHAT DUGAAN PENCEMARAN -->
+      <div class="callout-invitation-box">
+        <span class="callout-bell-icon">📢</span>
+        <div class="callout-invitation-text">
+          <strong>Melihat Adanya Dugaan Pencemaran Lingkungan di Sekitar Anda?</strong>
+          <span>Mari bersama lindungi kelestarian alam Lembata dengan melaporkan kejadian secara mudah dan terpercaya!</span>
+        </div>
+      </div>
+
+      <!-- Badge Layanan 24 Jam -->
+      <div class="badge-24h">
+        <span class="pulse-dot"></span>
+        <span>Layanan Online 24 Jam</span>
+      </div>
+    </header>
+
+    <!-- 2. BODY UTAMA DUA KOLOM BERDAMPINGAN -->
+    <div class="poster-body-grid">
+
+      <!-- KOLOM KIRI: GERBANG SCAN QR CODE -->
+      <aside class="gate-left-column">
+        <!-- Kartu QR Putih Bersih -->
+        <div class="qr-hero-card">
+          <div class="qr-frame-box">
+            <div class="reticle-tl"></div>
+            <div class="reticle-tr"></div>
+            <div class="reticle-bl"></div>
+            <div class="reticle-br"></div>
+            <img 
+              src="assets/qr-code-ecoadu.svg" 
+              alt="QR Code Resmi ECOADU Lembata" 
+              class="qr-image-asset"
+              onerror="this.onerror=null; this.src='assets/qr-code-ecoadu.png';"
+            >
+          </div>
+          <div class="qr-scan-badge">
+            <span>📲</span> Scan / Pindai QR Code
+          </div>
+          <a href="https://aduan-dlh-lembata.vercel.app/" target="_blank" class="qr-url-link" title="Buka Portal Langsung">
+            aduan-dlh-lembata.vercel.app ↗
+          </a>
+        </div>
+
+        <!-- 2 Langkah Akses Cepat -->
+        <div class="access-steps-box">
+          <div class="access-row">
+            <span class="access-num-tag">Cara 1</span>
+            <div><strong>Scan / Pindai QR Code:</strong> Pindai kode QR di atas untuk langsung membuka formulir pengaduan.</div>
+          </div>
+          <div class="access-row">
+            <span class="access-num-tag">Cara 2</span>
+            <div><strong>Ketik URL:</strong> Buka browser HP dan ketik: <strong>aduan-dlh-lembata.vercel.app</strong></div>
+          </div>
+        </div>
+
+        <!-- 3 Keunggulan Ramah Warga -->
+        <div class="perks-strip">
+          <span>✓ Tanpa Unduh</span>
+          <span>✓ Tanpa Login</span>
+          <span>✓ Bebas Biaya 24 Jam</span>
+        </div>
+      </aside>
+
+      <!-- KOLOM KANAN: HEADLINE RESMI & 6 KARTU ALUR PENGADUAN LENGKAP -->
+      <main class="flow-right-column">
+
+        <!-- HEADLINE UTAMA PESANAN PENGGUNA -->
+        <section class="right-headline-strip">
+          <div class="headline-titles">
+            <h2>Sampaikan Aduan Langsung dari Ponsel Anda.</h2>
+            <p>Proses Cepat, Mudah, Bebas Biaya, dan Terbuka untuk Seluruh Masyarakat Kabupaten Lembata</p>
+          </div>
+          <div class="step-count-pill">5 Langkah Mudah</div>
+        </section>
+
+        <!-- GRID 6 KARTU ALUR LENGKAP DENGAN HURUF MANTAP -->
+        <section class="journey-grid">
+          
+          <!-- Langkah 1 -->
+          <article class="journey-card card-t1">
+            <div class="jc-head">
+              <span class="jc-step-badge">Langkah 1</span>
+              <span class="jc-icon">📱</span>
+            </div>
+            <h3>Buka Portal</h3>
+            <p>Scan QR code di samping atau akses tautan di browser HP. Halaman formulir resmi langsung terbuka seketika.</p>
+            <div class="jc-bottom-tag">Langsung Terbuka ↗</div>
+          </article>
+
+          <!-- Langkah 2 -->
+          <article class="journey-card card-t2">
+            <div class="jc-head">
+              <span class="jc-step-badge">Langkah 2</span>
+              <span class="jc-icon">✏️</span>
+            </div>
+            <h3>Mulai Melapor</h3>
+            <p>Pada beranda utama, sentuh tombol hijau besar bertuliskan <strong>"AJUKAN ADUAN BARU"</strong>.</p>
+            <div class="jc-bottom-tag">Tombol Beranda</div>
+          </article>
+
+          <!-- Langkah 3 -->
+          <article class="journey-card card-t3">
+            <div class="jc-head">
+              <span class="jc-step-badge">Langkah 3</span>
+              <span class="jc-icon">📸</span>
+            </div>
+            <h3>Isi Formulir</h3>
+            <p>Tuliskan nama &amp; WhatsApp aktif, ambil foto bukti kejadian di lokasi, dan kunci koordinat GPS kejadian.</p>
+            <div class="jc-bottom-tag">Data, Foto &amp; GPS</div>
+          </article>
+
+          <!-- Langkah 4 -->
+          <article class="journey-card card-t4">
+            <div class="jc-head">
+              <span class="jc-step-badge">Langkah 4</span>
+              <span class="jc-icon">✍️</span>
+            </div>
+            <h3>Centang &amp; Kirim</h3>
+            <p>Periksa data laporan, centang kotak konfirmasi bahwa data benar, lalu sentuh <strong>"KIRIM PENGADUAN"</strong>.</p>
+            <div class="jc-bottom-tag">Wajib Dicentang ✓</div>
+          </article>
+
+          <!-- Langkah 5 -->
+          <article class="journey-card card-t5">
+            <div class="jc-head">
+              <span class="jc-step-badge">Langkah 5</span>
+              <span class="jc-icon">📲</span>
+            </div>
+            <h3>Pantau via WhatsApp</h3>
+            <p>Catat nomor tiket (contoh: <code>ADU-26-XXXX</code>). Setiap perkembangan penanganan dikabarkan via WhatsApp.</p>
+            <div class="jc-bottom-tag">Update Real-Time</div>
+          </article>
+
+          <!-- Kartu 6: Jaminan Layanan Warga -->
+          <article class="journey-card card-t6">
+            <div class="jc-head">
+              <span class="jc-step-badge">Jaminan Layanan</span>
+              <span class="jc-icon">🛡️</span>
+            </div>
+            <h3>Privasi &amp; Cepat</h3>
+            <p>Identitas pelapor dijamin aman &amp; dirahasiakan. Laporan segera diverifikasi tim lapangan dalam 1×24 jam.</p>
+            <div class="jc-bottom-tag">Aman &amp; Terpercaya</div>
+          </article>
+
+        </section>
+
+      </main>
+
+    </div>
+
+    <!-- 3. FOOTER HELPLINE WHATSAPP & SLOGAN -->
+    <footer class="poster-bottom-footer">
+      <div class="footer-left-info">
+        <span style="font-size: 1.15rem;">💬</span>
+        <div>
+          <strong>Butuh Bantuan Langsung?</strong>
+          <span>Hubungi WhatsApp Helpline Petugas (Senin – Jumat, Jam Kerja)</span>
+        </div>
+      </div>
+      <div class="footer-right-actions">
+        <a href="https://wa.me/6282234582769" target="_blank" class="helpline-btn-wa" title="Hubungi Petugas via WhatsApp">
+          <span>💬 WhatsApp: 0822-3458-2769</span>
+        </a>
+        <span class="slogan-taantou">🌱 Taan Tou</span>
+      </div>
+    </footer>
+
+  </main>
+
+</body>
+</html>

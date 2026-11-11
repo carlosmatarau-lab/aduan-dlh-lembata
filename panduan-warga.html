@@ -1,0 +1,3655 @@
+﻿<!DOCTYPE html>
+<html lang="id">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="description"
+    content="Buku Panduan Penggunaan Portal Pengaduan Lingkungan Hidup ECOADU Lembata untuk Warga dan Masyarakat Kabupaten Lembata. Saluran resmi penyampaian aduan dugaan pencemaran yang mudah, aman, bebas biaya, dan privasi terlindungi UU PDP.">
+  <title>Buku Panduan Penggunaan Portal ECOADU Lembata - Panduan Warga &amp; Masyarakat</title>
+
+  <!-- GOOGLE FONTS -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&family=Lora:ital,wght@0,400;0,600;0,700;1,400&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <style>
+    /* ==========================================================================
+       1. VARIABEL & RESET TEMA KEDINASAN (DLH KABUPATEN LEMBATA)
+       ========================================================================== */
+    :root {
+      --primary-dark: #064e3b;
+      /* Deep Forest Green DLH */
+      --primary-forest: #065f46;
+      --primary-emerald: #059669;
+      /* Emerald Brand */
+      --primary-light: #10b981;
+      --primary-bg: #ecfdf5;
+      /* Mint Soft */
+      --primary-tint: #f0fdf4;
+
+      --accent-gold: #d97706;
+      /* Amber / Golden Sand */
+      --accent-blue: #0284c7;
+      /* Coastal Blue */
+      --accent-indigo: #4338ca;
+      --accent-danger: #e11d48;
+      /* Rose / Alert Red */
+      --accent-slate: #475569;
+
+      --text-main: #0f172a;
+      /* Slate 900 */
+      --text-muted: #334155;
+      /* Slate 700 */
+      --text-sub: #64748b;
+      /* Slate 500 */
+      --border-soft: #e2e8f0;
+      --border-card: #cbd5e1;
+
+      --bg-body: #f8fafc;
+      --bg-white: #ffffff;
+
+      --font-heading: 'Outfit', system-ui, -apple-system, 'Segoe UI Emoji', sans-serif;
+      --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, 'Segoe UI Emoji', sans-serif;
+      --font-mono: 'JetBrains Mono', monospace;
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.08), 0 2px 4px -2px rgba(0, 0, 0, 0.05);
+      --shadow-lg: 0 10px 15px -3px rgba(0, 0, 0, 0.08), 0 4px 6px -4px rgba(0, 0, 0, 0.04);
+      --shadow-xl: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 8px 10px -6px rgba(0, 0, 0, 0.05);
+
+      --radius-sm: 6px;
+      --radius-md: 10px;
+      --radius-lg: 16px;
+      --radius-full: 9999px;
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+      font-size: 15px; /* Sedikit lebih kecil agar lebih nyaman di layar */
+    }
+
+    body {
+      font-family: var(--font-body);
+      color: #374151; /* Abu-abu gelap – lebih lembut dari hitam pekat */
+      background-color: #f1f5f9; /* Latar belakang abu-abu biru lembut */
+      line-height: 1.72; /* Jarak baris lebih lega – nyaman dipindai mata */
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    /* ==========================================================================
+       2. TOPBAR NAVIGASI MENGAMBANG (INTERACTIVE BAR - SCREEN ONLY)
+       ========================================================================== */
+    .top-action-bar {
+      position: sticky;
+      top: 0;
+      z-index: 1000;
+      background: rgba(6, 78, 59, 0.96);
+      backdrop-filter: blur(12px);
+      border-bottom: 1px solid rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      box-shadow: 0 4px 20px rgba(6, 78, 59, 0.25);
+    }
+
+    .top-bar-inner {
+      max-width: 1240px;
+      margin: 0 auto;
+      padding: 10px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .brand-quick {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      color: #ffffff;
+    }
+
+    .brand-quick img {
+      height: 32px;
+      width: auto;
+      object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.2));
+    }
+
+    .brand-quick-text {
+      display: flex;
+      flex-direction: column;
+    }
+
+    .brand-quick-title {
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 0.98rem;
+      letter-spacing: 0.5px;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .brand-quick-badge {
+      background: #10b981;
+      color: #064e3b;
+      font-size: 0.65rem;
+      font-weight: 800;
+      padding: 1px 6px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+    }
+
+    .brand-quick-sub {
+      font-size: 0.72rem;
+      color: #a7f3d0;
+      font-weight: 500;
+    }
+
+    .top-nav-buttons {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .btn-top-nav {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-family: var(--font-body);
+      font-size: 0.8rem;
+      font-weight: 700;
+      padding: 7px 14px;
+      border-radius: 8px;
+      text-decoration: none;
+      transition: all 0.2s ease;
+      cursor: pointer;
+      border: 1px solid transparent;
+      white-space: nowrap;
+    }
+
+    .btn-top-print {
+      background: #f59e0b;
+      color: #78350f;
+      border-color: #fcd34d;
+      box-shadow: 0 2px 6px rgba(245, 158, 11, 0.3);
+    }
+
+    .btn-top-print:hover {
+      background: #d97706;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .btn-top-layout {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.35);
+      transition: all 0.2s ease;
+    }
+
+    .btn-top-layout:hover {
+      background: rgba(255, 255, 255, 0.25);
+      border-color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    .btn-top-layout.active-newspaper {
+      background: #0284c7;
+      border-color: #38bdf8;
+      color: #ffffff;
+      box-shadow: 0 2px 6px rgba(2, 132, 199, 0.35);
+    }
+
+    .btn-top-layout.active-newspaper:hover {
+      background: #0369a1;
+      border-color: #7dd3fc;
+    }
+
+    .btn-top-portal {
+      background: rgba(255, 255, 255, 0.12);
+      color: #ffffff;
+      border-color: rgba(255, 255, 255, 0.25);
+    }
+
+    .btn-top-portal:hover {
+      background: rgba(255, 255, 255, 0.22);
+      transform: translateY(-1px);
+    }
+
+    .btn-top-officer {
+      background: #10b981;
+      color: #064e3b;
+      border-color: #34d399;
+      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.3);
+    }
+
+    .btn-top-officer:hover {
+      background: #059669;
+      color: #ffffff;
+      transform: translateY(-1px);
+    }
+
+    /* BANNER LEMBARAN BERITA KEDINASAN (GAZETTE DATELINE STRIP) */
+    .newspaper-dateline-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+      border-top: 2px solid #064e3b;
+      border-bottom: 1.5px solid #064e3b;
+      padding: 6px 14px;
+      margin: -6px 0 20px 0;
+      background: #f0fdf4;
+      font-family: var(--font-heading);
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: #064e3b;
+    }
+
+    .dateline-col {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .dateline-tag {
+      background: #064e3b;
+      color: #ffffff;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-size: 0.68rem;
+      letter-spacing: 1px;
+    }
+
+    .dateline-bullet {
+      color: #10b981;
+    }
+
+    /* ==========================================================================
+       3. TATA LETAK DOKUMEN & CONTAINER UTAMA
+       ========================================================================== */
+    .document-page-wrap {
+      max-width: 860px; /* Standar Dimensi A4 Portrait Kedinasan yang Proporsional & Elegan */
+      margin: 24px auto 60px;
+      padding: 0 16px;
+    }
+
+    .document-paper {
+      background: var(--bg-white);
+      border-radius: var(--radius-lg);
+      box-shadow: 0 4px 20px rgba(15, 23, 42, 0.08);
+      border: 1px solid var(--border-soft);
+      padding: 36px 40px 50px;
+      position: relative;
+    }
+
+    /* ==========================================================================
+       4. KOP RESMI PEMKAB LEMBATA & DINAS LINGKUNGAN HIDUP
+       ========================================================================== */
+    .kop-surat-resmi {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      padding-bottom: 18px;
+      border-bottom: 4px double #064e3b;
+      margin-bottom: 24px;
+      text-align: center;
+    }
+
+    .kop-logo-kiri,
+    .kop-logo-kanan {
+      width: 82px;
+      height: 82px;
+      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .kop-logo-kiri img,
+    .kop-logo-kanan img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+
+    .kop-text-tengah {
+      flex: 1;
+    }
+
+    .kop-text-tengah h3 {
+      font-family: var(--font-heading);
+      font-size: 1.15rem;
+      font-weight: 800;
+      letter-spacing: 1px;
+      color: #0f172a;
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .kop-text-tengah h2 {
+      font-family: var(--font-heading);
+      font-size: 1.45rem;
+      font-weight: 900;
+      letter-spacing: 1.5px;
+      color: var(--primary-dark);
+      text-transform: uppercase;
+      margin-bottom: 2px;
+    }
+
+    .kop-text-tengah .kop-bidang {
+      font-family: var(--font-body);
+      font-size: 0.95rem;
+      font-weight: 700;
+      color: var(--primary-forest);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      margin-bottom: 4px;
+    }
+
+    .kop-text-tengah p {
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      line-height: 1.35;
+      margin: 0;
+    }
+
+    /* ==========================================================================
+       5. COVER JUDUL & BANNER METADATA RESMI
+       ========================================================================== */
+    .document-header-box {
+      text-align: center;
+      margin-bottom: 22px; /* Kurangi jarak */
+      padding: 20px 18px;  /* Lebih kompak */
+      background: linear-gradient(145deg, #f0fdf4 0%, #ecfdf5 100%);
+      border: 1.5px solid #a7f3d0;
+      border-radius: var(--radius-md);
+      position: relative;
+    }
+
+    .doc-badge-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: var(--primary-dark);
+      color: #ffffff;
+      font-family: var(--font-heading);
+      font-size: 0.72rem; /* Lebih kecil */
+      font-weight: 800;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      padding: 3px 12px;
+      border-radius: var(--radius-full);
+      margin-bottom: 10px;
+      box-shadow: 0 2px 4px rgba(6, 78, 59, 0.2);
+    }
+
+    .document-main-title {
+      font-family: var(--font-heading);
+      font-size: 1.45rem; /* Lebih proporsional */
+      font-weight: 900;
+      color: var(--primary-dark);
+      line-height: 1.28;
+      margin-bottom: 6px;
+      letter-spacing: -0.2px;
+    }
+
+    .document-sub-title {
+      font-size: 0.88rem; /* Lebih kecil = lebih nyaman */
+      color: #475569;
+      max-width: 820px;
+      margin: 0 auto 12px;
+      font-weight: 400;
+      line-height: 1.55;
+    }
+
+    .doc-meta-strip {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      flex-wrap: wrap;
+      font-size: 0.74rem; /* Lebih kecil = kurang mencolok */
+      color: var(--primary-forest);
+      font-weight: 600;
+      border-top: 1px dashed #a7f3d0;
+      padding-top: 10px;
+      margin-top: 10px;
+    }
+
+    .doc-meta-item {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    /* ==========================================================================
+       6. DAFTAR ISI INTERAKTIF (TABLE OF CONTENTS)
+       ========================================================================== */
+    .toc-card {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0; /* Border lebih tipis */
+      border-radius: var(--radius-md);
+      padding: 16px 20px; /* Lebih kompak */
+      margin-bottom: 28px;
+      box-shadow: none; /* Kurangi dekorasi */
+    }
+
+    .toc-title {
+      font-family: var(--font-heading);
+      font-size: 0.95rem; /* Lebih kecil */
+      font-weight: 800;
+      color: var(--primary-dark);
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      margin-bottom: 10px;
+      padding-bottom: 7px;
+      border-bottom: 1.5px solid #e2e8f0;
+    }
+
+    .toc-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(290px, 1fr));
+      gap: 7px; /* Lebih rapat */
+    }
+
+    .toc-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      text-decoration: none;
+      color: #374151;
+      padding: 7px 12px; /* Lebih kompak */
+      background: #ffffff;
+      border: 1px solid #e9ecef;
+      border-radius: 7px;
+      transition: all 0.18s ease;
+    }
+
+    .toc-item:hover {
+      background: #f0fdf4;
+      border-color: #34d399;
+      transform: translateX(2px);
+      color: var(--primary-dark);
+    }
+
+    .toc-num {
+      background: var(--primary-dark);
+      color: #ffffff;
+      font-family: var(--font-heading);
+      font-size: 0.7rem;
+      font-weight: 800;
+      padding: 2px 7px;
+      border-radius: 5px;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .toc-label {
+      font-size: 0.82rem; /* Lebih kecil */
+      font-weight: 700;
+      line-height: 1.3;
+    }
+
+    .toc-desc {
+      font-size: 0.7rem; /* Lebih kecil */
+      color: var(--text-sub);
+      font-weight: 400;
+      margin-top: 2px;
+    }
+
+    /* ==========================================================================
+       7. FORMAT BAB & TATA LETAK KOLOM KORAN (NEWSPAPER GAZETTE MULTI-COLUMN)
+       ========================================================================== */
+    .chapter-block {
+      column-count: 2;
+      column-gap: 28px; /* Sedikit lebih rapat */
+      column-rule: 1px solid #e2e8f0; /* Garis lebih tipis & lebih terang */
+      margin-bottom: 44px;
+      padding-top: 10px;
+    }
+
+    /* Opsi Mode Standar 1 Kolom (Dapat diaktifkan melalui tombol bilah navigasi) */
+    body.layout-single-column .chapter-block {
+      column-count: 1 !important;
+      column-rule: none !important;
+    }
+
+    /* Elemen yang membentang penuh di kedua kolom (Span Across All Columns) */
+    .chapter-block > .chapter-header,
+    .chapter-block > h3.sub-heading,
+    .chapter-block > .instruction-figure,
+    .chapter-block > .callout-box,
+    .chapter-block > .table-container,
+    .chapter-block > .sop-table,
+    .chapter-block > div,
+    .chapter-block > .bast-mockup-paper,
+    .chapter-header,
+    h3.sub-heading {
+      column-span: all;
+      -webkit-column-span: all;
+      break-inside: avoid;
+      page-break-inside: avoid;
+    }
+
+    /* Drop Cap Huruf Awal Pembuka HANYA untuk Bab 1 (Gaya Editorial Lembaran Resmi) */
+    #bab-1 > p.content-text:first-of-type::first-letter {
+      font-family: var(--font-heading);
+      float: left;
+      font-size: 3.2rem;
+      line-height: 0.82;
+      padding-top: 4px;
+      padding-right: 10px;
+      padding-bottom: 2px;
+      color: var(--primary-dark);
+      font-weight: 900;
+      text-shadow: 1px 1px 0 rgba(6, 78, 59, 0.12);
+    }
+
+    /* Memastikan Bab 2 s.d. Bab 6 tidak memiliki drop cap */
+    #bab-2 > p.content-text:first-of-type::first-letter,
+    #bab-3 > p.content-text:first-of-type::first-letter,
+    #bab-4 > p.content-text:first-of-type::first-letter,
+    #bab-5 > p.content-text:first-of-type::first-letter,
+    #bab-6 > p.content-text:first-of-type::first-letter {
+      float: none !important;
+      font-size: inherit !important;
+      line-height: inherit !important;
+      padding: 0 !important;
+      color: inherit !important;
+      font-weight: inherit !important;
+      text-shadow: none !important;
+    }
+
+    .chapter-header {
+      background: linear-gradient(90deg, #064e3b 0%, #065f46 60%, #047857 100%);
+      color: #ffffff;
+      padding: 11px 18px; /* Lebih kompak */
+      border-radius: 9px;
+      margin-bottom: 16px; /* Lebih rapat ke konten */
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      box-shadow: 0 3px 8px rgba(6, 78, 59, 0.14); /* Shadow lebih halus */
+    }
+
+    .chapter-header-left {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .chapter-badge-roman {
+      background: #10b981;
+      color: #064e3b;
+      font-family: var(--font-heading);
+      font-size: 1rem;
+      font-weight: 900;
+      padding: 4px 12px;
+      border-radius: 8px;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.15);
+      flex-shrink: 0;
+    }
+
+    .chapter-title-text {
+      font-family: var(--font-heading);
+      font-size: 1.1rem; /* Lebih kecil = proporsional */
+      font-weight: 800;
+      letter-spacing: 0.2px;
+      line-height: 1.25;
+    }
+
+    .chapter-tag {
+      background: rgba(255, 255, 255, 0.15);
+      color: #ecfdf5;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      white-space: nowrap;
+    }
+
+    h3.sub-heading {
+      font-family: var(--font-heading);
+      font-size: 0.98rem; /* Lebih kecil namun tetap menonjol */
+      font-weight: 800;
+      color: var(--primary-dark);
+      margin: 20px 0 8px; /* Jarak lebih rapat */
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      position: relative;
+      padding-bottom: 5px;
+      border-bottom: 1px solid #e2e8f0; /* Border lebih tipis */
+    }
+
+    h3.sub-heading svg {
+      width: 18px;
+      height: 18px;
+      color: var(--primary-emerald);
+      flex-shrink: 0;
+    }
+
+    h4.sub-sub-heading {
+      font-family: var(--font-heading);
+      font-size: 0.9rem; /* Lebih kecil */
+      font-weight: 700;
+      color: #374151; /* Warna lebih lembut */
+      margin: 14px 0 6px; /* Jarak lebih rapat */
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      break-after: avoid;
+      page-break-after: avoid;
+    }
+
+    p.content-text {
+      font-size: 0.9rem;      /* Sedikit lebih kecil = lebih nyaman */
+      color: #374151;          /* Abu-abu gelap – tidak sepedas hitam pekat */
+      margin-bottom: 10px;     /* Jarak antar paragraf lebih rapat */
+      text-align: justify;
+      text-justify: inter-word;
+      hyphens: auto;
+      line-height: 1.72;       /* Jarak baris lebih lega */
+      break-inside: auto;
+    }
+
+    .chapter-block ul,
+    .chapter-block ol {
+      break-inside: auto;
+    }
+
+    .chapter-block li {
+      break-inside: avoid;
+      margin-bottom: 4px; /* Lebih rapat */
+      text-align: justify;
+      text-justify: inter-word;
+      font-size: 0.88rem;    /* Sedikit lebih kecil */
+      color: #374151;        /* Warna lembut, tidak terlalu pekat */
+      line-height: 1.65;
+    }
+
+    /* ==========================================================================
+       8. SISTEM GAMBAR PETUNJUK BERANOTASI (FIGURE INSTRUCTION SYSTEM)
+       ========================================================================== */
+    .instruction-figure {
+      margin: 18px 0 22px; /* Lebih rapat */
+      background: #ffffff;
+      border: 1px solid #e2e8f0; /* Border lebih tipis */
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 2px 10px rgba(15, 23, 42, 0.05); /* Shadow lebih halus */
+      page-break-inside: avoid;
+    }
+
+    .figure-window-bar {
+      background: #f1f5f9;
+      border-bottom: 1px solid #cbd5e1;
+      padding: 8px 14px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .fig-win-left {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .fig-dots {
+      display: flex;
+      gap: 5px;
+    }
+
+    .fig-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      display: inline-block;
+    }
+
+    .dot-red {
+      background: #ef4444;
+    }
+
+    .dot-yellow {
+      background: #f59e0b;
+    }
+
+    .dot-green {
+      background: #10b981;
+    }
+
+    .fig-win-title {
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #334155;
+      font-family: var(--font-heading);
+      letter-spacing: 0.3px;
+    }
+
+    .fig-win-url {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 6px;
+      padding: 2px 10px;
+      font-size: 0.74rem;
+      font-family: var(--font-mono);
+      color: #0f172a;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .figure-body {
+      padding: 14px 16px; /* Lebih rapat */
+      background: #f8fafc;
+      position: relative;
+    }
+
+    .figure-caption {
+      background: #ffffff;
+      border-top: 1px solid #e2e8f0;
+      padding: 9px 14px; /* Lebih rapat */
+      font-size: 0.8rem; /* Lebih kecil */
+      color: #475569;
+      line-height: 1.5;
+    }
+
+    .fig-badge-num {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      background: #064e3b;
+      color: #ffffff;
+      font-family: var(--font-heading);
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: 5px;
+      margin-right: 6px;
+      letter-spacing: 0.5px;
+    }
+
+    .figure-legend {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 8px 14px;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px dashed #cbd5e1;
+      font-size: 0.8rem;
+      color: #475569;
+    }
+
+    .legend-item {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+    }
+
+    .pin-pointer {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #e11d48;
+      color: #ffffff;
+      font-size: 0.72rem;
+      font-weight: 900;
+      font-family: var(--font-heading);
+      flex-shrink: 0;
+      box-shadow: 0 2px 4px rgba(225, 29, 72, 0.4);
+    }
+
+    .pin-pointer-green {
+      background: #059669;
+      box-shadow: 0 2px 4px rgba(5, 150, 105, 0.4);
+    }
+
+    .pin-pointer-blue {
+      background: #0284c7;
+      box-shadow: 0 2px 4px rgba(2, 132, 199, 0.4);
+    }
+
+    .pin-pointer-amber {
+      background: #d97706;
+      box-shadow: 0 2px 4px rgba(217, 119, 6, 0.4);
+    }
+
+    /* ── FLOWCHART CONNECTOR & ARROW SYSTEM (RESPONSIF) ── */
+    .flow-track {
+      display: flex;
+      flex-direction: row;
+      align-items: stretch;
+      justify-content: space-between;
+      gap: 6px;
+      position: relative;
+    }
+    .flow-step-box {
+      flex: 1 1 0;
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px 10px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      min-width: 0;
+      position: relative;
+      transition: all 0.2s ease;
+    }
+    .flow-arrow-sep {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #059669;
+      flex-shrink: 0;
+      padding: 0 2px;
+    }
+    .flow-arrow-sep svg {
+      width: 20px;
+      height: 20px;
+      display: block;
+    }
+    @media (max-width: 768px) {
+      .flow-track {
+        flex-direction: column;
+        gap: 6px;
+      }
+      .flow-arrow-sep {
+        transform: rotate(90deg);
+        padding: 4px 0;
+      }
+    }
+    @media print {
+      .flow-track {
+        display: flex !important;
+        flex-direction: row !important;
+      }
+      .flow-arrow-sep {
+        transform: none !important;
+      }
+    }
+
+    /* MOCKUP UI ELEMEN */
+    .mock-panel {
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 16px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .mock-dual-split {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px;
+    }
+
+    .mock-portal-card {
+      background: #ffffff;
+      border: 1.5px solid #a7f3d0;
+      border-radius: 10px;
+      padding: 14px;
+      position: relative;
+    }
+
+    .mock-officer-card {
+      background: #ffffff;
+      border: 1.5px solid #93c5fd;
+      border-radius: 10px;
+      padding: 14px;
+      position: relative;
+    }
+
+    .mock-header-badge {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 10px;
+      padding-bottom: 6px;
+      border-bottom: 1px solid #e2e8f0;
+    }
+
+    .mock-chip {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 2px 8px;
+      border-radius: var(--radius-full);
+      text-transform: uppercase;
+    }
+
+    .mock-chip-green {
+      background: #dcfce7;
+      color: #166534;
+    }
+
+    .mock-chip-blue {
+      background: #e0f2fe;
+      color: #0369a1;
+    }
+
+    .mock-chip-amber {
+      background: #fef3c7;
+      color: #92400e;
+    }
+
+    .mock-chip-red {
+      background: #ffe4e6;
+      color: #9f1239;
+    }
+
+    /* MOCKUP HP / MOBILE FRAME */
+    .mobile-mock-frame {
+      max-width: 380px;
+      margin: 0 auto;
+      background: #0f172a;
+      border-radius: 28px;
+      padding: 12px;
+      box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+    }
+
+    .mobile-screen-inner {
+      background: #f8fafc;
+      border-radius: 20px;
+      padding: 14px;
+      overflow: hidden;
+    }
+
+    .mobile-camera-notch {
+      width: 100px;
+      height: 16px;
+      background: #0f172a;
+      margin: 0 auto 10px;
+      border-radius: 0 0 10px 10px;
+    }
+
+    /* MOCKUP WHATSAPP CHAT */
+    .wa-chat-container {
+      max-width: 500px;
+      margin: 0 auto;
+      background: #efeae2;
+      border-radius: 12px;
+      padding: 16px;
+      border: 1px solid #cbd5e1;
+      font-family: system-ui, -apple-system, sans-serif;
+    }
+
+    .wa-bubble {
+      background: #ffffff;
+      border-radius: 8px 8px 8px 2px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.1);
+      font-size: 0.8rem;
+      line-height: 1.45;
+      position: relative;
+    }
+
+    .wa-bubble-bot {
+      background: #e7fedb;
+      border-radius: 8px 8px 2px 8px;
+      margin-left: 20px;
+    }
+
+    .wa-time {
+      font-size: 0.68rem;
+      color: #64748b;
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    /* MOCKUP BERITA ACARA PRINT (A4 PREVIEW) */
+    .bast-mockup-paper {
+      background: #ffffff;
+      border: 1px solid #000000;
+      padding: 20px 24px;
+      font-family: 'Times New Roman', Times, serif;
+      font-size: 8.5pt;
+      color: #000000;
+      line-height: 1.35;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    }
+
+    /* ==========================================================================
+       9. KOMPONEN VISUAL: KOTAK INFORMASI / CALLOUT
+       ========================================================================== */
+    .callout-box {
+      border-radius: 8px;
+      padding: 11px 15px; /* Lebih kompak */
+      margin: 14px 0;
+      font-size: 0.85rem; /* Lebih kecil */
+      line-height: 1.6;
+      display: flex;
+      gap: 11px;
+      align-items: flex-start;
+    }
+
+    .callout-icon {
+      font-size: 1.2rem; /* Lebih kecil */
+      line-height: 1;
+      flex-shrink: 0;
+      margin-top: 2px;
+    }
+
+    .callout-content {
+      flex: 1;
+    }
+
+    .callout-title {
+      font-family: var(--font-heading);
+      font-weight: 800;
+      font-size: 0.87rem; /* Lebih kecil */
+      margin-bottom: 3px;
+    }
+
+    .callout-pdp {
+      background: #eff6ff;
+      border-left: 4px solid #2563eb;
+      color: #1e3a8a;
+    }
+
+    .callout-pdp .callout-title {
+      color: #1e40af;
+    }
+
+    .callout-hukum {
+      background: #fff1f2;
+      border-left: 4px solid #e11d48;
+      color: #881337;
+    }
+
+    .callout-hukum .callout-title {
+      color: #be123c;
+    }
+
+    .callout-warning {
+      background: #fffbeb;
+      border-left: 4px solid #d97706;
+      color: #78350f;
+    }
+
+    .callout-warning .callout-title {
+      color: #b45309;
+    }
+
+    .callout-tips {
+      background: #ecfdf5;
+      border-left: 4px solid #059669;
+      color: #064e3b;
+    }
+
+    .callout-tips .callout-title {
+      color: #047857;
+    }
+
+    /* ==========================================================================
+       10. SIMULASI BADGE & REPLIKA TOMBOL KEDINASAN SPBE
+       ========================================================================== */
+    .app-badge-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--font-body);
+      font-size: 0.76rem;
+      font-weight: 800;
+      padding: 3px 8px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      vertical-align: middle;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.06);
+      white-space: nowrap;
+    }
+
+    .btn-sim-gps {
+      background: #f0fdf4;
+      color: #166534;
+      border-color: #86efac;
+    }
+
+    .btn-sim-verif {
+      background: #ecfdf5;
+      color: #047857;
+      border-color: #10b981;
+    }
+
+    .btn-sim-sync {
+      background: #f0fdf4;
+      color: #065f46;
+      border-color: #6ee7b7;
+    }
+
+    .btn-sim-bast {
+      background: #eff6ff;
+      color: #1d4ed8;
+      border-color: #93c5fd;
+    }
+
+    .btn-sim-tolak {
+      background: #fef2f2;
+      color: #991b1b;
+      border-color: #fca5a5;
+    }
+
+    .btn-sim-wa {
+      background: #25d366;
+      color: #ffffff;
+      border-color: #128c7e;
+    }
+
+    .btn-sim-gas {
+      background: #064e3b;
+      color: #a7f3d0;
+      border-color: #059669;
+    }
+
+    /* Replika Tombol Gov-Card Mobile Sesuai Asli di petugas.html */
+    .btn-gov-card {
+      height: 40px;
+      min-height: 40px;
+      border-radius: 9px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      cursor: default;
+      transition: all 0.15s ease;
+      user-select: none;
+      text-decoration: none;
+      box-sizing: border-box;
+      padding: 0 14px;
+      vertical-align: middle;
+      font-family: var(--font-body);
+    }
+    .btn-gov-detail {
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      color: #334155;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+    }
+    .btn-gov-respond {
+      background: #064e3b;
+      border: 1.5px solid #064e3b;
+      color: #ffffff;
+      font-weight: 800;
+      box-shadow: 0 1px 4px rgba(6, 78, 59, 0.28);
+    }
+    .btn-gov-wa {
+      width: 40px;
+      height: 40px;
+      background: #ecfdf5;
+      border: 1.5px solid #a7f3d0;
+      color: #047857;
+      padding: 0;
+      flex-shrink: 0;
+    }
+    .btn-gov-svg {
+      width: 16px;
+      height: 16px;
+      flex-shrink: 0;
+    }
+    .btn-gov-chip {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      color: #064e3b;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: default;
+      transition: all 0.15s ease;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-family: var(--font-body);
+    }
+
+    .code-pill {
+      font-family: var(--font-mono);
+      background: #f1f5f9;
+      color: #0f172a;
+      padding: 2px 6px;
+      border-radius: 4px;
+      font-size: 0.82rem;
+      border: 1px solid #cbd5e1;
+    }
+
+    /* ==========================================================================
+       11. TABEL MATRIKS & DATA
+       ========================================================================== */
+    .table-responsive {
+      width: 100%;
+      overflow-x: auto;
+      margin: 18px 0 24px;
+      border-radius: 10px;
+      border: 1px solid var(--border-card);
+      box-shadow: var(--shadow-sm);
+    }
+
+    table.gov-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem; /* Lebih kecil = lebih rapi */
+      background: #ffffff;
+      text-align: left;
+    }
+
+    table.gov-table th {
+      background: #f1f5f9;
+      color: #1e293b;
+      font-family: var(--font-heading);
+      font-weight: 800;
+      padding: 8px 12px; /* Lebih rapat */
+      border-bottom: 2px solid #cbd5e1;
+      font-size: 0.78rem;
+      text-transform: uppercase;
+      letter-spacing: 0.4px;
+    }
+
+    table.gov-table td {
+      padding: 8px 12px; /* Lebih rapat */
+      border-bottom: 1px solid #e2e8f0;
+      color: #374151;
+      vertical-align: top;
+      line-height: 1.5;
+    }
+
+    table.gov-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    table.gov-table tr:hover td {
+      background: #f8fafc;
+    }
+
+    .status-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.74rem;
+      font-weight: 800;
+      padding: 3px 9px;
+      border-radius: var(--radius-full);
+      white-space: nowrap;
+    }
+
+    .badge-status-baru {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+    }
+
+    .badge-status-verif {
+      background: #e0e7ff;
+      color: #3730a3;
+      border: 1px solid #c7d2fe;
+    }
+
+    .badge-status-proses {
+      background: #e0f2fe;
+      color: #0369a1;
+      border: 1px solid #bae6fd;
+    }
+
+    .badge-status-selesai {
+      background: #dcfce7;
+      color: #166534;
+      border: 1px solid #86efac;
+    }
+
+    .badge-status-ditolak {
+      background: #ffe4e6;
+      color: #9f1239;
+      border: 1px solid #fecdd3;
+    }
+
+    /* FOOTER TANDA TANGAN */
+    .document-footer-sign {
+      margin-top: 50px;
+      padding-top: 24px;
+      border-top: 2px solid #cbd5e1;
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 30px;
+      text-align: center;
+    }
+
+    .sign-box {
+      font-size: 0.86rem;
+      line-height: 1.5;
+    }
+
+    .sign-title {
+      font-weight: 700;
+      color: var(--text-main);
+      margin-bottom: 4px;
+    }
+
+    .sign-instansi {
+      color: var(--text-muted);
+      font-size: 0.82rem;
+    }
+
+    .sign-space {
+      height: 70px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-style: italic;
+      color: #94a3b8;
+      font-size: 0.78rem;
+    }
+
+    .sign-name {
+      font-weight: 800;
+      text-decoration: underline;
+      color: #0f172a;
+    }
+
+    .sign-nip {
+      font-size: 0.8rem;
+      color: #475569;
+    }
+
+    .btn-scroll-top {
+      position: fixed;
+      bottom: 24px;
+      right: 24px;
+      z-index: 990;
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-full);
+      background: var(--primary-dark);
+      color: #ffffff;
+      border: 1px solid #059669;
+      box-shadow: 0 4px 12px rgba(6, 78, 59, 0.35);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-scroll-top:hover {
+      background: var(--primary-emerald);
+      transform: translateY(-2px);
+    }
+
+    /* ==========================================================================
+       12. KOTAK KENDALI MUTU & REGISTRASI DOKUMEN RESMI (SPBE STANDARD)
+       ========================================================================== */
+    .doc-control-card {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: var(--radius-md);
+      padding: 12px 16px;
+      margin-bottom: 22px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+    }
+
+    .doc-control-title {
+      font-size: 0.82rem;
+      font-weight: 800;
+      color: #064e3b;
+      margin-bottom: 8px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      border-bottom: 1px solid #e2e8f0;
+      padding-bottom: 5px;
+    }
+
+    .doc-control-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.8rem;
+    }
+
+    .doc-control-table td {
+      padding: 4px 6px;
+      vertical-align: top;
+    }
+
+    .doc-control-table .col-lbl {
+      font-weight: 700;
+      color: #334155;
+      width: 18%;
+    }
+
+    .doc-control-table .col-val {
+      color: #0f172a;
+      width: 32%;
+    }
+
+    /* ==========================================================================
+       13. ATURAN CETAK PRESISI BUKU PANDUAN & SOP (@media print)
+       DOKUMEN RESMI KEDINASAN SPBE: MODE PORTRAIT A4 TEGAK, RAPI & SIAP CETAK
+       ========================================================================== */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 12mm 14mm 14mm 14mm;
+      }
+
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+        box-sizing: border-box !important;
+      }
+
+      html,
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        font-size: 8.4pt !important;
+        line-height: 1.45 !important;
+        width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      /* Sembunyikan semua elemen navigasi layar & interaktif */
+      .top-action-bar,
+      .btn-scroll-top,
+      nav,
+      button.btn-action,
+      #btnToggleLayout,
+      #btnCetakDokumen,
+      .no-print {
+        display: none !important;
+      }
+
+      .document-page-wrap {
+        max-width: 100% !important;
+        margin: 0 !important;
+        padding: 0 !important;
+      }
+
+      .document-paper {
+        border: none !important;
+        box-shadow: none !important;
+        padding: 0 !important;
+        border-radius: 0 !important;
+        max-width: 100% !important;
+      }
+
+      /* ── KOP SURAT FORMAL RESMI KEDINASAN PORTRAIT ── */
+      .kop-surat-resmi {
+        border-bottom: 2pt double #064e3b !important;
+        padding-bottom: 6px !important;
+        margin-bottom: 6px !important;
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .kop-logo-kiri img,
+      .kop-logo-kanan img {
+        height: 46px !important;
+        width: auto !important;
+      }
+
+      .kop-text-tengah h3 {
+        font-size: 9.2pt !important;
+        margin-bottom: 1px !important;
+      }
+
+      .kop-text-tengah h2 {
+        font-size: 11.8pt !important;
+        margin-bottom: 1px !important;
+      }
+
+      .kop-bidang {
+        font-size: 7.2pt !important;
+        padding: 1px 6px !important;
+        margin: 1px auto !important;
+      }
+
+      .kop-text-tengah p {
+        font-size: 6.4pt !important;
+        line-height: 1.25 !important;
+      }
+
+      /* ── BANNER DATELINE RESMI CETAK ── */
+      .newspaper-dateline-bar {
+        border-top: 1.2pt solid #064e3b !important;
+        border-bottom: 0.8pt solid #064e3b !important;
+        padding: 2px 4px !important;
+        margin: 2px 0 6px 0 !important;
+        font-size: 6.5pt !important;
+        background: #f8fafc !important;
+        display: flex !important;
+        flex-direction: row !important;
+        justify-content: space-between !important;
+        align-items: center !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      /* ── BANNER JUDUL UTAMA DOKUMEN ── */
+      .document-header-box {
+        padding: 8px 12px !important;
+        margin-bottom: 6px !important;
+        border-radius: 6px !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .doc-badge-pill {
+        font-size: 6.8pt !important;
+        padding: 2px 6px !important;
+        margin-bottom: 4px !important;
+      }
+
+      .document-main-title {
+        font-size: 11.5pt !important;
+        line-height: 1.25 !important;
+        margin-bottom: 4px !important;
+      }
+
+      .document-sub-title {
+        font-size: 7.6pt !important;
+        line-height: 1.3 !important;
+        margin-bottom: 4px !important;
+      }
+
+      .doc-meta-strip {
+        font-size: 6.8pt !important;
+        gap: 6px !important;
+      }
+
+      /* ── DAFTAR ISI: HALAMAN 1 SEBAGAI COVER & TOC FORMAL PORTRAIT (2 KOLOM) ── */
+      .toc-card {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        page-break-after: always !important; /* HALAMAN 1 JADI COVER & DAFTAR ISI BERSIH */
+        break-after: page !important;
+        padding: 8px 12px !important;
+        margin-bottom: 8px !important;
+        background: #f8fafc !important;
+        border: 1px solid #cbd5e1 !important;
+        border-radius: 8px !important;
+      }
+
+      .toc-title {
+        font-size: 8.2pt !important;
+        margin-bottom: 5px !important;
+      }
+
+      .toc-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important; /* 2 KOLOM COCOK PRESISI UNTUK PORTRAIT A4 */
+        gap: 6px 10px !important;
+      }
+
+      .toc-item {
+        padding: 5px 7px !important;
+      }
+
+      .toc-num {
+        font-size: 0.68rem !important;
+        padding: 2px 5px !important;
+      }
+
+      .toc-label {
+        font-size: 7.2pt !important;
+        font-weight: 700 !important;
+      }
+
+      .toc-desc {
+        font-size: 6.3pt !important;
+        line-height: 1.2 !important;
+      }
+
+      /* ── PEMISAH HALAMAN BAB (SETIAP BAB MULAI DI HALAMAN BARU) ── */
+      #bab-1,
+      #bab-2,
+      #bab-3,
+      #bab-4,
+      #bab-5,
+      #bab-6,
+      #bab-7 {
+        page-break-before: always !important;
+        break-before: page !important;
+        margin-top: 0 !important;
+        padding-top: 4px !important;
+      }
+
+      /* ── TATA LETAK DOKUMEN CETAK: 1 KOLOM LINIER UTUH PORTRAIT ── */
+      .chapter-block {
+        column-count: 1 !important;
+        column-rule: none !important;
+        display: block !important;
+        width: 100% !important;
+        margin-bottom: 14px !important;
+        page-break-inside: auto !important;
+      }
+
+      .chapter-block p.content-text:first-of-type::first-letter {
+        float: none !important;
+        font-size: inherit !important;
+        line-height: inherit !important;
+        padding: 0 !important;
+        color: inherit !important;
+      }
+
+      .chapter-header {
+        background: #064e3b !important;
+        color: #ffffff !important;
+        padding: 6px 10px !important;
+        margin-bottom: 8px !important;
+        border-radius: 5px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .chapter-title-text {
+        font-size: 9.2pt !important;
+        font-weight: 800 !important;
+      }
+
+      .chapter-tag {
+        font-size: 6.8pt !important;
+        padding: 2px 6px !important;
+        font-weight: 700 !important;
+      }
+
+      .sub-heading {
+        font-size: 8.8pt !important;
+        font-weight: 800 !important;
+        margin: 12px 0 5px !important;
+        color: #064e3b !important;
+        page-break-after: avoid !important;
+        break-after: avoid !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .content-text {
+        font-size: 8.2pt !important;
+        line-height: 1.45 !important;
+        margin-bottom: 6px !important;
+        color: #0f172a !important;
+        text-align: justify !important;
+        orphans: 3 !important;
+        widows: 3 !important;
+      }
+
+      ul li,
+      ol li {
+        font-size: 8pt !important;
+        line-height: 1.45 !important;
+        margin-bottom: 3px !important;
+        color: #0f172a !important;
+      }
+
+      /* ── KOTAK INFORMASI / CALLOUT RESMI ── */
+      .callout-box {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        margin: 8px 0 !important;
+        padding: 8px 12px !important;
+        font-size: 8pt !important;
+        line-height: 1.4 !important;
+        border-radius: 5px !important;
+        box-shadow: none !important;
+      }
+
+      .callout-title {
+        font-size: 8.4pt !important;
+        font-weight: 800 !important;
+        margin-bottom: 3px !important;
+      }
+
+      /* ── BAGAN ALIR 5 LANGKAH (FLOW-TRACK) KOMPAK PORTRAIT ── */
+      .flow-track {
+        display: flex !important;
+        flex-direction: row !important;
+        align-items: stretch !important;
+        justify-content: space-between !important;
+        gap: 3px !important;
+        width: 100% !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        margin: 8px 0 !important;
+      }
+
+      .flow-step-box {
+        flex: 1 1 0 !important;
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-between !important;
+        min-width: 0 !important;
+        padding: 5px 3px 5px !important;
+        border-radius: 6px !important;
+        font-size: 6.5pt !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .flow-step-box h4,
+      .flow-step-box .flow-step-title {
+        font-size: 6.8pt !important;
+      }
+
+      .flow-step-desc {
+        font-size: 6pt !important;
+        line-height: 1.2 !important;
+      }
+
+      .flow-arrow-sep {
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        transform: none !important;
+        flex-shrink: 0 !important;
+        padding: 0 !important;
+      }
+
+      .flow-arrow-sep svg {
+        width: 10px !important;
+        height: 10px !important;
+        transform: none !important;
+      }
+
+      /* ── TABEL SOP RESMI: KEPALA BERULANG & BARIS ANTI-POTONG ── */
+      .table-container,
+      .sop-table,
+      .gov-table,
+      table {
+        width: 100% !important;
+        border-collapse: collapse !important;
+        page-break-inside: auto !important;
+        break-inside: auto !important;
+        margin: 8px 0 !important;
+      }
+
+      thead {
+        display: table-header-group !important;
+      }
+
+      tr {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .sop-table th,
+      .gov-table th {
+        background: #064e3b !important;
+        color: #ffffff !important;
+        font-size: 7.2pt !important;
+        font-weight: 700 !important;
+        padding: 4px 6px !important;
+        border: 1px solid #047857 !important;
+      }
+
+      .sop-table td,
+      .gov-table td {
+        font-size: 7pt !important;
+        line-height: 1.35 !important;
+        padding: 4px 6px !important;
+        border: 1px solid #cbd5e1 !important;
+      }
+
+      /* ── FIGUR INSTRUKSI & MOCKUP TIDAK TERPOTONG ── */
+      .instruction-figure {
+        border: 1px solid #cbd5e1 !important;
+        box-shadow: none !important;
+        border-radius: 5px !important;
+        margin: 8px 0 !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        width: 100% !important;
+      }
+
+      .figure-window-bar {
+        padding: 3px 8px !important;
+        font-size: 6.8pt !important;
+        border-bottom: 1px solid #e2e8f0 !important;
+      }
+
+      .figure-body {
+        padding: 8px 10px !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .figure-caption {
+        padding: 5px 8px !important;
+        font-size: 6.8pt !important;
+        border-top: 1px solid #e2e8f0 !important;
+      }
+
+      .figure-legend {
+        font-size: 6.4pt !important;
+        margin-top: 3px !important;
+        padding-top: 3px !important;
+      }
+
+      .mock-dual-split {
+        display: grid !important;
+        grid-template-columns: 1fr 1fr !important;
+        gap: 8px !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .instruction-figure img {
+        max-height: 70mm !important;
+        width: auto !important;
+        max-width: 100% !important;
+        object-fit: contain !important;
+        margin: 0 auto !important;
+        display: block !important;
+      }
+
+      /* ── FORMULIR BAST KEDINASAN A4 (GAMBAR 5.1): HALAMAN TERSENDIRI PORTRAIT ── */
+      #gambar-5-1 {
+        page-break-before: always !important;
+        break-before: page !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .bast-mockup-paper {
+        border: 1.5px solid #000000 !important;
+        padding: 12px 16px !important;
+        font-size: 7.2pt !important;
+        line-height: 1.35 !important;
+        background: #ffffff !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        box-shadow: none !important;
+      }
+
+      button,
+      .btn-gov-card,
+      .app-badge-btn {
+        box-shadow: none !important;
+        text-shadow: none !important;
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+      }
+
+      .wa-chat-container {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        box-shadow: none !important;
+      }
+    }
+
+    /* ── MOBILE SCREEN ONLY (DIISOLASI AGAR TIDAK MERUSAK CETAK) ── */
+    @media screen and (max-width: 768px) {
+      .document-paper {
+        padding: 20px 14px 40px;
+      }
+
+      .chapter-block {
+        column-count: 1 !important;
+        column-rule: none !important;
+      }
+
+      .newspaper-dateline-bar {
+        flex-direction: column;
+        text-align: center;
+        gap: 6px;
+      }
+
+      .kop-surat-resmi {
+        flex-direction: column;
+        gap: 10px;
+      }
+
+      .mock-dual-split {
+        grid-template-columns: 1fr;
+      }
+
+      .document-main-title {
+        font-size: 1.3rem;
+      }
+    }
+
+    /* ==========================================================================
+       14. PENINGKATAN KETERBACAAN (READABILITY ENHANCEMENTS)
+       Mengoptimalkan visual agar tidak melelahkan mata petugas & warga saat membaca.
+       ========================================================================== */
+
+    /* Pastikan semua teks body berwarna abu-abu gelap – bukan hitam pekat */
+    .content-text, .chapter-block p, .chapter-block li,
+    .callout-box, .figure-caption, .toc-desc,
+    table.gov-table td, .sign-instansi {
+      color: #374151;
+    }
+
+    /* Judul sub-bab: ukuran proporsional & warna tidak terlalu kontras */
+    h3.sub-heading, h4.sub-sub-heading {
+      color: #064e3b;
+    }
+
+    /* Kop surat: kompreskan sedikit agar halaman depan tidak penuh */
+    .kop-surat-resmi {
+      padding-bottom: 14px;
+      margin-bottom: 18px;
+    }
+
+    .kop-text-tengah h2 {
+      font-size: 1.3rem; /* Lebih proporsional */
+    }
+
+    .kop-text-tengah h3 {
+      font-size: 1.0rem;
+    }
+
+    /* Newspaper dateline: lebih kompak */
+    .newspaper-dateline-bar {
+      padding: 4px 12px;
+      margin: -4px 0 14px 0;
+      font-size: 0.7rem;
+    }
+
+    /* Kotak kontrol dokumen: lebih rapi */
+    .doc-control-card {
+      padding: 10px 14px;
+      margin-bottom: 18px;
+    }
+
+    /* Tombol aplikasi/badge: ukuran lebih proporsional */
+    .app-badge-btn {
+      font-size: 0.74rem;
+      padding: 3px 8px;
+    }
+
+    /* Figur/gambar: caption lebih kecil */
+    .fig-win-title {
+      font-size: 0.74rem;
+    }
+
+    /* Komponen tombol gov: ukuran lebih kompak */
+    .btn-gov-card {
+      height: 36px;
+      min-height: 36px;
+      font-size: 0.78rem;
+      padding: 0 12px;
+    }
+
+    /* Garis pembatas antara div lebih halus */
+    .kop-surat-resmi {
+      border-bottom: 3px double #064e3b;
+    }
+
+    /* ul/ol di dalam chapter: spasi lebih rapat */
+    .chapter-block ul,
+    .chapter-block ol {
+      margin: 4px 0 8px 18px;
+    }
+
+    /* Pastikan teks di dalam mock-panel juga nyaman dibaca */
+    .mock-panel, .mock-portal-card, .mock-officer-card {
+      font-size: 0.84rem;
+      line-height: 1.6;
+    }
+
+    /* Perbaikan warna latar belakang body agar lebih lembut di mata */
+    @media screen {
+      body { background-color: #f0f4f8; }
+      .document-paper { background: #ffffff; }
+    }
+
+    /* ==========================================================================
+       15. KELAS UTILITY & KOMPONEN REUSABLE (REFATORISASI INLINE STYLE)
+       Menggantikan ratusan inline style berulang agar kode rapi & hemat ruang
+       ========================================================================== */
+    .text-muted-xs { font-size: 0.72rem; color: #64748b; }
+    .text-muted-sm { font-size: 0.74rem; color: #475569; }
+    .text-slate-sm { font-size: 0.82rem; color: #334155; }
+    .icon-11 { width: 11px; height: 11px; }
+    .icon-12 { width: 12px; height: 12px; }
+    .icon-13 { width: 13px; height: 13px; }
+    .icon-14 { width: 14px; height: 14px; }
+    .icon-emoji-lg { font-size: 1.6rem; }
+    .accent-emerald { accent-color: #059669; }
+    .flex-between { display: flex; align-items: center; justify-content: space-between; }
+    .flex-between-mb { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
+    .flex-gap-6 { display: flex; align-items: center; gap: 6px; }
+    .flex-gap-8 { display: flex; align-items: center; gap: 8px; }
+    .flex-shrink-0 { flex-shrink: 0; }
+    .category-box { background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 10px; display: flex; align-items: center; gap: 10px; }
+    .filter-pill { background: #ffffff; color: #475569; border: 1px solid #cbd5e1; font-size: 0.68rem; padding: 3px 8px; border-radius: 14px; }
+    .table-cell-border { padding: 8px 10px; border: 1px solid #e2e8f0; }
+    .table-cell-compact { padding: 6px 8px; border: 1px solid #e2e8f0; }
+    .table-cell-header { padding: 6px 8px; border: 1px solid #e2e8f0; font-weight: 700; }
+    .table-cell-emerald { padding: 8px 10px; border: 1px solid #e2e8f0; color: #064e3b; font-weight: 600; }
+    .table-cell-center { padding: 8px 10px; border: 1px solid #e2e8f0; text-align: center; }
+    .table-cell-border-slate { padding: 6px 8px; border: 1px solid #cbd5e1; }
+    .sop-instruction-list { margin-left: 24px; font-size: 0.9rem; color: #374151; line-height: 1.65; margin-bottom: 14px; }
+    .pin-top-right { position: absolute; top: -8px; right: -8px; }
+    .pin-top-right-lg { position: absolute; top: -10px; right: -8px; width: 22px; height: 22px; font-size: 0.76rem; border: 2px solid #ffffff; }
+    .pin-top-right-sm { position: absolute; top: -10px; right: -8px; }
+    .mock-card-step { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 6px; padding: 6px 4px; }
+    .mock-card-step-icon { font-size: 1.1rem; display: block; margin-bottom: 2px; }
+    .mock-card-step-title { font-size: 0.68rem; font-weight: 700; color: #0f172a; }
+    .mock-card-bordered { background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 8px; padding: 12px; position: relative; }
+    .mock-card-pill-step { background: #ffffff; border: 1px solid #bbf7d0; border-radius: 6px; padding: 7px 5px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+    .stat-card-inner { background: #ffffff; border-radius: 8px; padding: 6px 10px; display: flex; align-items: center; gap: 8px; box-shadow: 0 1px 2px rgba(0,0,0,0.04); }
+    .bast-table-td { padding: 3px; }
+    .bast-table-label { width: 30%; padding: 3px; font-weight: bold; }
+    .bast-table-row { border-bottom: 1px solid #000; }
+    .link-tracking { color: #0284c7; text-decoration: underline; }
+    .cell-label-pdp { padding: 3px 0; color: #64748b; }
+    .border-b-e2e8f0 { border-bottom: 1px solid #e2e8f0; }
+    .btn-gov-flex { flex: 1; font-size: 0.78rem; }
+    .table-pdp { width: 100%; font-size: 0.76rem; border-collapse: collapse; }
+    .btn-sim-dark-square { background: #1e293b; color: #fff; border: 1px solid #475569; width: 24px; height: 24px; border-radius: 5px; display: inline-flex; align-items: center; justify-content: center; cursor: default; }
+    .bg-slate-100 { background: #f1f5f9; }
+    .text-slate-muted { color: #334155; }
+    .text-muted-xs-pdp { padding: 3px 0; color: #64748b; width: 40%; }
+    .code-box-mono { padding: 4px; font-family: monospace; }
+    .btn-xs-pill { font-size: 0.62rem; padding: 1px 4px; }
+    .text-muted-sm-mb { font-size: 0.74rem; color: #475569; margin-bottom: 6px; line-height: 1.4; }
+    /* STEPPER LACAK STATUS WARGA */
+    .track-stepper-wrap { display: flex; align-items: center; justify-content: space-between; position: relative; margin: 16px 0 14px 0; padding: 0 4px; }
+    .track-step-node { display: flex; flex-direction: column; align-items: center; position: relative; z-index: 2; text-align: center; flex: 1; }
+    .step-circle { width: 30px; height: 30px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 0.78rem; font-weight: 800; margin-bottom: 5px; }
+    .circle-done { background: #059669; color: #ffffff; border: 2px solid #86efac; }
+    .circle-active { background: #0284c7; color: #ffffff; border: 2px solid #93c5fd; box-shadow: 0 0 0 3px rgba(2, 132, 199, 0.25); }
+    .circle-wait { background: #f1f5f9; color: #64748b; border: 2px solid #cbd5e1; }
+    .step-title-text { font-size: 0.72rem; font-weight: 700; color: #1e293b; line-height: 1.25; }
+    .step-sub-text { font-size: 0.65rem; color: #64748b; margin-top: 2px; }
+    .step-line-bar { flex: 1; height: 3px; margin: 0 -4px 18px -4px; z-index: 1; }
+    .bar-done { background: #059669; }
+    .bar-active { background: #0284c7; }
+    .bar-wait { background: #cbd5e1; }
+  </style>
+</head>
+
+<body>
+
+  <!-- =========================================================================
+       TOPBAR NAVIGASI MENGAMBANG (INTERACTIVE BAR - SCREEN ONLY)
+       ========================================================================= -->
+  <header class="top-action-bar no-print" aria-label="Bilah Alat Navigasi Dokumen Warga">
+    <div class="top-bar-inner">
+      <a href="#cover" class="brand-quick" title="Ke Bagian Atas Panduan Warga">
+        <img src="assets/logo-pemkab-lembata.png" alt="Logo Pemkab Lembata" onerror="this.style.display='none'">
+        <img src="assets/logo-ecoadu.png" alt="Logo ECOADU" onerror="this.style.display='none'">
+        <div class="brand-quick-text">
+          <span class="brand-quick-title">
+            ECOADU LEMBATA
+            <span class="brand-quick-badge" style="background: #047857;">PANDUAN WARGA</span>
+          </span>
+          <span class="brand-quick-sub">Dinas Lingkungan Hidup Kab. Lembata</span>
+        </div>
+      </a>
+
+      <div class="top-nav-buttons">
+        <a href="https://aduan-dlh-lembata.vercel.app/" target="_blank" class="btn-top-nav"
+          style="background: #064e3b; color: #ffffff; text-decoration: none;"
+          title="Buka Website Portal Pengaduan ECOADU Langsung di Browser">
+          <span>&#128241;</span>
+          <span>Buka Portal Aduan</span>
+        </a>
+
+        <a href="panduan-penggunaan-website.html" class="btn-top-nav"
+          style="background: #0284c7; color: #ffffff; text-decoration: none;"
+          title="Buka Poster Ringkas 1 Lembar A4 Landscape untuk Warga">
+          <span>&#128196;</span>
+          <span>Poster Ringkas 1 Lembar</span>
+        </a>
+
+        <a href="panduan-sop.html" class="btn-top-nav"
+          style="background: #475569; color: #ffffff; text-decoration: none;"
+          title="Lihat Dokumen Standar Operasional Prosedur (SOP) Khusus Petugas DLH">
+          <span>&#128203;</span>
+          <span>SOP Petugas DLH</span>
+        </a>
+
+        <button type="button" class="btn-top-nav btn-top-layout active-newspaper" id="btnToggleLayout" onclick="toggleLayoutMode()"
+          title="Sedang aktif: Mode Koran (2 Kolom). Klik untuk beralih ke Mode Standar (1 Kolom).">
+          <span id="layoutModeIcon">&#128240;</span>
+          <span id="layoutModeText">Mode Koran (2 Kolom)</span>
+        </button>
+
+        <button type="button" class="btn-top-nav btn-top-print" onclick="window.print()"
+          title="Cetak atau Simpan sebagai PDF Panduan Warga">
+          <span>&#128424;</span>
+          <span>Cetak / PDF</span>
+        </button>
+      </div>
+    </div>
+  </header>
+
+  <!-- =========================================================================
+       KONTEN UTAMA BUKU PANDUAN WARGA
+       ========================================================================= -->
+  <main class="document-page-wrap">
+    <article class="document-paper">
+
+      <!-- =======================================================================
+           KOP SURAT RESMI RAMAH MASYARAKAT
+           ======================================================================= -->
+      <header class="kop-surat-resmi" id="cover">
+        <div class="kop-logo-kiri">
+          <img src="assets/logo-pemkab-lembata.png" alt="Lambang Daerah Kabupaten Lembata"
+            onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Lambang_Kabupaten_Lembata.png/150px-Lambang_Kabupaten_Lembata.png'">
+        </div>
+        <div class="kop-text-tengah">
+          <h3>PEMERINTAH KABUPATEN LEMBATA</h3>
+          <h2>DINAS LINGKUNGAN HIDUP</h2>
+          <div class="kop-bidang">SALURAN RESMI PENGADUAN LINGKUNGAN HIDUP BAGI MASYARAKAT</div>
+          <p>
+            Jalan Trans Lembata, Lewoleba, Kabupaten Lembata, Nusa Tenggara Timur 86611<br>
+            Laman Pengaduan: <strong>aduan-dlh-lembata.vercel.app</strong> &bull; Pos-el: <strong>dlh@lembatakab.go.id</strong> &bull; Helpline WA: <strong>+62 822-3458-2769</strong>
+          </p>
+        </div>
+        <div class="kop-logo-kanan">
+          <img src="assets/logo-ecoadu.png" alt="Logo Ekosistem Digital Aduan Lingkungan"
+            onerror="this.src='https://placehold.co/100x100/064e3b/ffffff?text=ECOADU'">
+        </div>
+      </header>
+
+      <!-- =======================================================================
+           BANNER DATELINE RAMAH WARGA
+           ======================================================================= -->
+      <aside class="newspaper-dateline-bar" aria-label="Informasi Penerbitan Panduan">
+        <div class="dateline-left">
+          <span><strong>EDISI RESMI PANDUAN MASYARAKAT</strong></span>
+          <span>&bull;</span>
+          <span>KABUPATEN LEMBATA</span>
+          <span>&bull;</span>
+          <span>TAHUN 2026</span>
+        </div>
+        <div class="dateline-right">
+          <span>&#10003; 100% BEBAS BIAYA</span>
+          <span>&bull;</span>
+          <span>&#10003; TANPA LOGIN AKUN</span>
+          <span>&bull;</span>
+          <span>&#10003; PRIVASI TERLINDUNGI UU PDP</span>
+        </div>
+      </aside>
+
+      <!-- =======================================================================
+           BANNER JUDUL UTAMA PANDUAN WARGA
+           ======================================================================= -->
+      <section class="document-header-box">
+        <div class="doc-badge-pill">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="width: 13px; height: 13px;">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          BUKU PANDUAN PENGGUNAAN KHUSUS MASYARAKAT
+        </div>
+        <h1 class="document-main-title">
+          PANDUAN LENGKAP PENGGUNAAN PORTAL PENGADUAN LINGKUNGAN HIDUP<br>
+          (ECOADU LEMBATA)
+        </h1>
+        <p class="document-sub-title" style="margin-bottom: 0;">
+          Saluran Resmi Penyampaian Laporan Dugaan Pencemaran dan Kerusakan Lingkungan Hidup yang Mudah, Aman, Terbuka, dan Bebas Biaya untuk Seluruh Warga Kabupaten Lembata.
+        </p>
+      </section>
+
+      <!-- =======================================================================
+           4 KARTU KEUNGGULAN LAYANAN UNTUK WARGA
+           ======================================================================= -->
+      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 12px 0 16px 0; page-break-inside: avoid; break-inside: avoid;">
+        <div style="background: #f0fdf4; border: 1.5px solid #a7f3d0; border-radius: 8px; padding: 10px; text-align: center;">
+          <div style="font-size: 1.2rem; margin-bottom: 3px;">&#128176;</div>
+          <div style="font-weight: 800; color: #065f46; font-size: 0.82rem;">100% Bebas Biaya</div>
+          <div style="font-size: 0.72rem; color: #047857;">Gratis &amp; bebas pulsa untuk seluruh warga.</div>
+        </div>
+        <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 8px; padding: 10px; text-align: center;">
+          <div style="font-size: 1.2rem; margin-bottom: 3px;">&#128242;</div>
+          <div style="font-weight: 800; color: #1e40af; font-size: 0.82rem;">Tanpa Instal Aplikasi</div>
+          <div style="font-size: 0.72rem; color: #2563eb;">Langsung buka di browser HP Android / iPhone.</div>
+        </div>
+        <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 8px; padding: 10px; text-align: center;">
+          <div style="font-size: 1.2rem; margin-bottom: 3px;">&#128274;</div>
+          <div style="font-weight: 800; color: #991b1b; font-size: 0.82rem;">Privasi Aman (UU PDP)</div>
+          <div style="font-size: 0.72rem; color: #b91c1c;">Nama Anda disensor di tampilan publik.</div>
+        </div>
+        <div style="background: #fdf4ff; border: 1.5px solid #f5d0fe; border-radius: 8px; padding: 10px; text-align: center;">
+          <div style="font-size: 1.2rem; margin-bottom: 3px;">&#128172;</div>
+          <div style="font-weight: 800; color: #86198f; font-size: 0.82rem;">Kabar via WhatsApp</div>
+          <div style="font-size: 0.72rem; color: #a21caf;">Perkembangan laporan dikirim otomatis ke HP.</div>
+        </div>
+      </div>
+
+      <!-- =======================================================================
+           DAFTAR ISI PANDUAN WARGA (TABLE OF CONTENTS)
+           ======================================================================= -->
+      <section class="toc-card" id="daftar-isi">
+        <div class="toc-title">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+            style="width: 20px; height: 20px;">
+            <line x1="8" y1="6" x2="21" y2="6"></line>
+            <line x1="8" y1="12" x2="21" y2="12"></line>
+            <line x1="8" y1="18" x2="21" y2="18"></line>
+            <line x1="3" y1="6" x2="3.01" y2="6"></line>
+            <line x1="3" y1="12" x2="3.01" y2="12"></line>
+            <line x1="3" y1="18" x2="3.01" y2="18"></line>
+          </svg>
+          <span>Daftar Isi Buku Panduan Warga &amp; Masyarakat</span>
+        </div>
+
+        <div class="toc-grid">
+          <a href="#bab-1" class="toc-item">
+            <span class="toc-num">BAB I</span>
+            <div>
+              <div class="toc-label">Mengenal Portal ECOADU &amp; Jaminan Privasi Pelapor</div>
+              <div class="toc-desc">Mengapa portal hadir, kemudahan lapor, &amp; perlindungan data pribadi (UU PDP No. 27/2022)</div>
+            </div>
+          </a>
+
+          <a href="#bab-2" class="toc-item">
+            <span class="toc-num">BAB II</span>
+            <div>
+              <div class="toc-label">Cara Mudah Mengakses Portal di HP</div>
+              <div class="toc-desc">Pilihan 1: Scan Barcode QR Code resmi, Pilihan 2: Klik tautan link website di browser</div>
+            </div>
+          </a>
+
+          <a href="#bab-3" class="toc-item">
+            <span class="toc-num">BAB III</span>
+            <div>
+              <div class="toc-label">Alur &amp; 8 Langkah Lengkap Mengisi Formulir Laporan</div>
+              <div class="toc-desc">Bagan alir 5 tahap, foto bukti kejadian, kunci GPS lokasi, uraian masalah, &amp; kirim laporan</div>
+            </div>
+          </a>
+
+          <a href="#bab-4" class="toc-item">
+            <span class="toc-num">BAB IV</span>
+            <div>
+              <div class="toc-label">6 Pilihan Masalah Lingkungan yang Dapat Dilaporkan</div>
+              <div class="toc-desc">Laut &amp; pesisir, sampah ilegal, air &amp; sungai, udara &amp; asap, limbah B3, &amp; kerusakan lingkungan</div>
+            </div>
+          </a>
+
+          <a href="#bab-5" class="toc-item">
+            <span class="toc-num">BAB V</span>
+            <div>
+              <div class="toc-label">3 Cara Mudah Menunjukkan Titik Lokasi Kejadian</div>
+              <div class="toc-desc">Kunci otomatis lewat satelit GPS HP, geser pin peta interaktif, &amp; tuliskan patokan tempat</div>
+            </div>
+          </a>
+
+          <a href="#bab-6" class="toc-item">
+            <span class="toc-num">BAB VI</span>
+            <div>
+              <div class="toc-label">Bukti Laporan, Lacak Status &amp; Arti 4 Status Penanganan</div>
+              <div class="toc-desc">Nomor tiket resmi (ADU-26-XXXX), konfirmasi WhatsApp, cara lacak, &amp; penjelasan 4 status</div>
+            </div>
+          </a>
+
+          <a href="#bab-7" class="toc-item" style="grid-column: span 3;">
+            <span class="toc-num">BAB VII</span>
+            <div>
+              <div class="toc-label">Tanya Jawab Praktis (FAQ Warga) &amp; Layanan Bantuan Kontak DLH Lembata</div>
+              <div class="toc-desc">Pertanyaan yang sering diajukan warga, nomor Helpline WhatsApp resmi DLH, &amp; ajakan menjaga kelestarian alam Lembata</div>
+            </div>
+          </a>
+        </div>
+      </section>
+
+      <!-- =======================================================================
+           BAB I: MENGENAL PORTAL ECOADU & JAMINAN PRIVASI PELAPOR
+           ======================================================================= -->
+      <section class="chapter-block" id="bab-1">
+        <header class="chapter-header">
+          <div class="chapter-header-left">
+            <span class="chapter-badge-roman">BAB I</span>
+            <div class="chapter-title-text">MENGENAL PORTAL ECOADU &amp; JAMINAN PRIVASI PELAPOR</div>
+          </div>
+          <span class="chapter-tag">TENTANG LAYANAN</span>
+        </header>
+
+        <h3 class="sub-heading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <line x1="12" y1="16" x2="12" y2="12"></line>
+            <line x1="12" y1="8" x2="12.01" y2="8"></line>
+          </svg>
+          1.1. Mengapa Layanan Pengaduan ECOADU Hadir untuk Warga Lembata?
+        </h3>
+        <p class="content-text">
+          Kabupaten Lembata memiliki bentang alam yang indah, mulai dari laut pesisir yang kaya hasil tangkapan, teluk Lewoleba yang menawan, hingga perbukitan dan hutan yang sejuk. Namun, pencemaran lingkungan seperti pembuangan sampah sembarangan, limbah cair, tumpahan solar di laut, maupun pembakaran asap tebal dapat merusak kenyamanan dan kesehatan kita bersama.
+        </p>
+        <p class="content-text">
+          Selama ini, warga sering kali bingung harus melapor ke mana, atau terkendala jarak yang jauh dari kantor dinas di Lewoleba. Melalui <strong>Ekosistem Digital Aduan Lingkungan (ECOADU LEMBATA)</strong> yang dikembangkan oleh <strong>Dinas Lingkungan Hidup Kabupaten Lembata</strong>, seluruh masyarakat kini dapat melaporkan setiap dugaan masalah lingkungan di sekitar tempat tinggalnya langsung melalui HP — <strong>kapan saja, di mana saja, tanpa biaya sepeser pun (100% Gratis)</strong>.
+        </p>
+
+        <h3 class="sub-heading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+            <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+          </svg>
+          1.2. Jaminan Pelindungan Data Pribadi (UU PDP No. 27 Tahun 2022)
+        </h3>
+        <p class="content-text">
+          Banyak warga merasa enggan atau takut melapor karena khawatir identitasnya diketahui orang lain atau pihak yang ditegur. Kami sangat memahami kekhawatiran tersebut.
+        </p>
+        <p class="content-text">
+          Sistem ECOADU menerapkan standar ketat kepatuhan terhadap <strong>Undang-Undang Nomor 27 Tahun 2022 tentang Pelindungan Data Pribadi (UU PDP)</strong>:
+        </p>
+        <ul>
+          <li><strong>Identitas Disamarkan di Tampilan Publik:</strong> Nama lengkap dan nomor WhatsApp pelapor secara otomatis disensor dengan tanda bintang (contoh: <code>Fr*** K***</code> dan <code>0812****7890</code>). Siapa pun yang melihat daftar laporan di portal publik tidak akan dapat mengetahui identitas asli Anda.</li>
+          <li><strong>Hanya Petugas Berwenang yang Melihat:</strong> Identitas asli Anda hanya bisa diakses oleh Tim Pengawas DLH Kabupaten Lembata yang telah terotentikasi resmi guna keperluan verifikasi lapangan dan klarifikasi tindak lanjut.</li>
+          <li><strong>Aman dan Bebas dari Intimidasi:</strong> Hak rasa aman pelapor dijamin sepenuhnya oleh pemerintah daerah.</li>
+        </ul>
+
+        <!-- GAMBAR PETUNJUK 1.2 -->
+        <figure class="instruction-figure">
+          <div class="figure-window-bar">
+            <div class="fig-win-left">
+              <span class="fig-dots"><span class="fig-dot dot-red"></span><span class="fig-dot dot-yellow"></span><span
+                  class="fig-dot dot-green"></span></span>
+              <span class="fig-win-title">Mekanisme Kepatuhan Pelindungan Data Pribadi (UU PDP)</span>
+            </div>
+            <span class="code-pill">UU No. 27 Tahun 2022</span>
+          </div>
+          <div class="figure-body">
+            <div class="mock-dual-split">
+              <!-- Tampilan Publik Sensor -->
+              <div style="background: #ffffff; border: 1.5px solid #fecdd3; border-radius: 8px; padding: 14px;">
+                <div class="flex-between-mb">
+                  <span class="mock-chip mock-chip-red">Tampilan Publik (Masyarakat)</span>
+                  <span class="pin-pointer">1</span>
+                </div>
+                <div style="font-size: 0.78rem; color: #9f1239; font-weight: 700; margin-bottom: 6px;">IDENTITAS
+                  OTOMATIS DISENSOR:</div>
+                <table class="table-pdp">
+                  <tr>
+                    <td class="text-muted-xs-pdp">Nama Pelapor</td>
+                    <td style="font-weight: 700; color: #0f172a;">Fr*** K*** <span
+                        style="color: #e11d48; font-size: 0.7rem;">(Disamarkan)</span></td>
+                  </tr>
+                  <tr>
+                    <td class="cell-label-pdp">Nomor WhatsApp</td>
+                    <td style="font-weight: 700; color: #0f172a;">0812****7890 <span
+                        style="color: #e11d48; font-size: 0.7rem;">(Disensor)</span></td>
+                  </tr>
+                  <tr>
+                    <td class="cell-label-pdp">Alamat Domisili</td>
+                    <td style="font-style: italic; color: #64748b;">Disembunyikan demi privasi</td>
+                  </tr>
+                </table>
+              </div>
+
+              <!-- Tampilan Dashboard Petugas Utuh -->
+              <div style="background: #ffffff; border: 1.5px solid #a7f3d0; border-radius: 8px; padding: 14px;">
+                <div class="flex-between-mb">
+                  <span class="mock-chip mock-chip-green">Dashboard Petugas (Terotentikasi)</span>
+                  <span class="pin-pointer pin-pointer-green">2</span>
+                </div>
+                <div style="font-size: 0.78rem; color: #065f46; font-weight: 700; margin-bottom: 6px;">IDENTITAS UTUH
+                  &amp; TOMBOL HUBUNGI:</div>
+                <table class="table-pdp">
+                  <tr>
+                    <td class="text-muted-xs-pdp">Nama Pelapor</td>
+                    <td style="font-weight: 700; color: #064e3b;">Fransiskus Kedang</td>
+                  </tr>
+                  <tr>
+                    <td class="cell-label-pdp">Nomor WhatsApp</td>
+                    <td style="font-weight: 700; color: #064e3b;">081234567890 <span class="app-badge-btn btn-sim-wa"
+                        style="font-size: 0.65rem; padding: 1px 5px;">WA Pelapor</span></td>
+                  </tr>
+                  <tr>
+                    <td class="cell-label-pdp">Alamat Domisili</td>
+                    <td style="font-weight: 600; color: #1e293b;">Kel. Selandoro, Nubatukan</td>
+                  </tr>
+                </table>
+              </div>
+            </div>
+          </div>
+          <figcaption class="figure-caption">
+            <span class="fig-badge-num">Gambar 1.1</span>
+            <strong>Ilustrasi Komparasi Masking Data Pribadi: Publik Terproteksi vs Dashboard Petugas
+              Terverifikasi.</strong>
+            <div class="figure-legend">
+              <div class="legend-item"><span class="pin-pointer">1</span> <span><strong>Publik:</strong> Data sensitif
+                  disensor otomatis untuk melindungi pelapor dari ancaman/intimidasi pelaku pencemaran.</span></div>
+              <div class="legend-item"><span class="pin-pointer pin-pointer-green">2</span>
+                <span><strong>Petugas:</strong> Data tampil lengkap beserta tombol pintas WhatsApp untuk klarifikasi
+                  lapangan oleh Tim Pengawas.</span></div>
+            </div>
+          </figcaption>
+        </figure>
+      </section>
+
+      <!-- =======================================================================
+           BAB II: CARA MUDAH MENGAKSES PORTAL DI HP
+           ======================================================================= -->
+      <section class="chapter-block" id="bab-2">
+        <header class="chapter-header">
+          <div class="chapter-header-left">
+            <span class="chapter-badge-roman">BAB II</span>
+            <div class="chapter-title-text">CARA MUDAH MENGAKSES PORTAL ADUAN DI HP</div>
+          </div>
+          <span class="chapter-tag">AKSES PRAKTIS</span>
+        </header>
+
+        <h3 class="sub-heading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <rect x="2" y="3" width="20" height="14" rx="2" ry="2"></rect>
+            <line x1="8" y1="21" x2="16" y2="21"></line>
+            <line x1="12" y1="17" x2="12" y2="21"></line>
+          </svg>
+          2.1. Dua Cara Mudah Membuka Formulir Pengaduan
+        </h3>
+        <p class="content-text">
+          Anda tidak perlu mencari atau mengunduh aplikasi dari Google Play Store atau Apple App Store yang memakan memori ponsel. Portal ECOADU berbasis website modern yang sangat ringan dan langsung bisa diakses lewat 2 cara mudah:
+        </p>
+
+        <!-- KARTU QR CODE RESMI UNTUK SCAN LANGSUNG OLEH WARGA -->
+        <div style="background: #ffffff; border: 2px solid #059669; border-radius: 14px; padding: 16px 20px; margin: 12px 0 16px 0; box-shadow: 0 4px 14px rgba(6, 78, 59, 0.08); display: flex; align-items: center; gap: 20px; flex-wrap: wrap; page-break-inside: avoid; break-inside: avoid;">
+          <div style="flex-shrink: 0; text-align: center; margin: 0 auto;">
+            <div style="position: relative; display: inline-block; padding: 10px; background: #ffffff; border-radius: 12px; border: 2px solid #10b981; box-shadow: 0 4px 12px rgba(16, 185, 129, 0.15);">
+              <div style="position: absolute; top: 3px; left: 3px; width: 14px; height: 14px; border-top: 3px solid #059669; border-left: 3px solid #059669; border-top-left-radius: 4px;"></div>
+              <div style="position: absolute; top: 3px; right: 3px; width: 14px; height: 14px; border-top: 3px solid #059669; border-right: 3px solid #059669; border-top-right-radius: 4px;"></div>
+              <div style="position: absolute; bottom: 3px; left: 3px; width: 14px; height: 14px; border-bottom: 3px solid #059669; border-left: 3px solid #059669; border-bottom-left-radius: 4px;"></div>
+              <div style="position: absolute; bottom: 3px; right: 3px; width: 14px; height: 14px; border-bottom: 3px solid #059669; border-right: 3px solid #059669; border-bottom-right-radius: 4px;"></div>
+              <img 
+                src="assets/qr-code-ecoadu.svg" 
+                alt="QR Code Resmi ECOADU DLH Lembata" 
+                style="width: 160px; height: 160px; display: block; border-radius: 4px; image-rendering: -webkit-optimize-contrast; image-rendering: crisp-edges;" 
+                onerror="this.onerror=null; this.src='assets/qr-code-ecoadu.png';"
+              >
+            </div>
+            <div style="margin-top: 8px; font-size: 0.78rem; font-weight: 700; color: #064e3b; display: flex; align-items: center; justify-content: center; gap: 5px;">
+              <span>&#128269;</span>
+              <span>Scan Barcode atau Klik Alamat URL</span>
+            </div>
+          </div>
+          
+          <div style="flex: 1 1 280px;">
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
+              <span style="background: #ecfdf5; color: #065f46; font-size: 0.7rem; font-weight: 800; padding: 2px 8px; border-radius: 999px; border: 1px solid #a7f3d0;">
+                AKSES RESMI CEPAT
+              </span>
+              <span style="background: #eff6ff; color: #1e40af; font-size: 0.7rem; font-weight: 700; padding: 2px 8px; border-radius: 999px; border: 1px solid #bfdbfe;">
+                TANPA INSTAL APLIKASI
+              </span>
+            </div>
+            
+            <h4 style="margin: 0 0 6px 0; color: #064e3b; font-size: 1.05rem; font-weight: 800;">
+              QR Code Resmi Portal Pengaduan Warga ECOADU
+            </h4>
+            
+            <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 10px;">
+              <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #059669; border-radius: 6px; padding: 7px 10px; font-size: 0.8rem; color: #1e293b;">
+                <strong>PILIHAN 1 &mdash; Scan Barcode:</strong> Arahkan kamera HP (Android atau iPhone) atau aplikasi pemindai barcode ke kode QR di samping untuk langsung membuka formulir pengaduan.
+              </div>
+              <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #0284c7; border-radius: 6px; padding: 7px 10px; font-size: 0.8rem; color: #1e293b;">
+                <strong>PILIHAN 2 &mdash; Klik Alamat URL:</strong> Buka browser HP (Google Chrome / Safari) dan ketik alamat resmi: 
+                <a href="https://aduan-dlh-lembata.vercel.app/" target="_blank" style="color: #047857; font-weight: 800; text-decoration: underline;">https://aduan-dlh-lembata.vercel.app/</a>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="callout-box" style="background: #f0fdf4; border-left-color: #059669;">
+          <div class="callout-title" style="color: #065f46;">&#128161; Tips Praktis untuk Warga:</div>
+          <p style="margin: 0; font-size: 0.82rem; color: #1e293b;">
+            Anda bisa menyimpan tautan website ini sebagai <em>bookmark</em> di browser HP atau menambahkan pintasan ke Layar Utama (<em>Add to Home Screen</em>) agar dapat dibuka sewaktu-waktu layaknya aplikasi tanpa membebani memori ponsel.
+          </p>
+        </div>
+      </section>
+
+      <!-- =======================================================================
+           BAB III: ALUR & 8 LANGKAH PENGISIAN FORMULIR PENGADUAN
+           ======================================================================= -->
+      <section class="chapter-block" id="bab-3">
+        <header class="chapter-header">
+          <div class="chapter-header-left">
+            <span class="chapter-badge-roman">BAB III</span>
+            <div class="chapter-title-text">ALUR &amp; 8 LANGKAH PENGISIAN FORMULIR PENGADUAN</div>
+          </div>
+          <span class="chapter-tag">PANDUAN LAPOR</span>
+        </header>
+
+        <h3 class="sub-heading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polyline points="9 11 12 14 22 4"></polyline>
+            <path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"></path>
+          </svg>
+          3.1. Tampilan Beranda Awal Portal Warga &amp; Tombol Mulai Lapor
+        </h3>
+        <p class="content-text">
+          Saat pertama kali membuka website <span class="code-pill">aduan-dlh-lembata.vercel.app</span>, Anda akan disambut antarmuka yang bersih dan mudah digunakan. Di beranda ini terdapat tombol utama untuk langsung memulai laporan, fitur pelacakan tiket, serta ringkasan angka penanganan pengaduan terkini.
+        </p>
+
+        <figure class="instruction-figure" style="page-break-inside: avoid; break-inside: avoid; margin-bottom: 22px;">
+          <div class="figure-window-bar">
+            <div class="fig-win-left">
+              <span class="fig-dots"><span class="fig-dot dot-red"></span><span class="fig-dot dot-yellow"></span><span
+                  class="fig-dot dot-green"></span></span>
+              <span class="fig-win-title">Tampilan Beranda Awal Portal Warga (ECOADU LEMBATA) saat Pertama Kali Dibuka</span>
+            </div>
+            <div class="fig-win-url">https://aduan-dlh-lembata.vercel.app/</div>
+          </div>
+          <div class="figure-body" style="background: #f8fafc; padding: 14px;">
+
+            <!-- Header Mockup Web -->
+            <div style="background: #ffffff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 8px 12px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 1px 3px rgba(0,0,0,0.03);">
+              <div class="flex-gap-8">
+                <div style="width: 28px; height: 28px; border-radius: 6px; background: #064e3b; display: flex; align-items: center; justify-content: center; font-size: 1rem; color: #ffffff;">&#127811;</div>
+                <div>
+                  <div style="font-family: var(--font-heading); font-weight: 800; font-size: 0.84rem; color: #064e3b; line-height: 1.1;">ECOADU LEMBATA</div>
+                  <div style="font-size: 0.64rem; color: #64748b;">Ekosistem Digital Aduan Lingkungan Lembata</div>
+                </div>
+              </div>
+              <span style="background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; font-size: 0.68rem; font-weight: 800; padding: 3px 8px; border-radius: 20px;">&#127963;️ DLH KAB. LEMBATA</span>
+            </div>
+
+            <!-- Silapor Hero Container: Banner Hijau + Panel Statistik -->
+            <div style="display: grid; grid-template-columns: 1.4fr 0.9fr; gap: 12px; margin-bottom: 12px;">
+
+              <!-- Kolom Kiri: Hero Left Banner (#194a36) -->
+              <div style="background: #194a36; border-radius: 12px; padding: 16px; color: #ffffff; display: flex; flex-direction: column; justify-content: space-between; box-shadow: 0 4px 14px rgba(6, 78, 59, 0.25); position: relative;">
+                <div>
+                  <div style="font-family: var(--font-heading); font-size: 1.05rem; font-weight: 800; line-height: 1.25; margin-bottom: 4px; color: #ffffff;">
+                    Layanan Pengaduan Lingkungan Hidup
+                  </div>
+                  <div style="font-size: 0.74rem; color: #d1fae5; margin-bottom: 14px;">
+                    Jaga Kelestarian Alam Lewotana Lembata
+                  </div>
+                </div>
+
+                <!-- 2 Tombol Aksi Utama Berdampingan -->
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+
+                  <!-- TOMBOL 1: AJUKAN ADUAN BARU (PIN POINTER 1) -->
+                  <div style="background: #ffffff; border: 2.5px solid #059669; border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; box-shadow: 0 4px 12px rgba(0,0,0,0.12); position: relative; cursor: pointer;">
+                    <span class="pin-pointer" style="position: absolute; top: -10px; right: -8px; width: 22px; height: 22px; font-size: 0.76rem; border: 2px solid #ffffff; box-shadow: 0 2px 6px rgba(225,29,72,0.5);">1</span>
+                    <span style="position: absolute; top: -9px; left: 8px; background: #059669; color: #ffffff; font-size: 0.58rem; font-weight: 800; padding: 1px 6px; border-radius: 20px; text-transform: uppercase; letter-spacing: 0.3px;">PILIH INI</span>
+                    <div style="width: 32px; height: 32px; border-radius: 8px; background: #ecfdf5; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem;">
+                      &#128221;
+                    </div>
+                    <div>
+                      <div style="font-size: 0.65rem; font-weight: 800; color: #059669; letter-spacing: 0.3px;">✏️ AJUKAN</div>
+                      <div style="font-family: var(--font-heading); font-size: 0.8rem; font-weight: 900; color: #0f172a; line-height: 1.1;">ADUAN BARU</div>
+                    </div>
+                  </div>
+
+                  <!-- TOMBOL 2: LACAK STATUS ADUAN (PIN POINTER 2) -->
+                  <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 10px 12px; display: flex; align-items: center; gap: 10px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); position: relative; cursor: pointer;">
+                    <span class="pin-pointer pin-pointer-blue" style="position: absolute; top: -10px; right: -8px; width: 22px; height: 22px; font-size: 0.76rem; border: 2px solid #ffffff; box-shadow: 0 2px 6px rgba(2,132,199,0.5);">2</span>
+                    <div style="width: 32px; height: 32px; border-radius: 8px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; flex-shrink: 0; font-size: 1.1rem;">
+                      &#128269;
+                    </div>
+                    <div>
+                      <div style="font-size: 0.65rem; font-weight: 800; color: #0284c7; letter-spacing: 0.3px;">&#128269; LACAK</div>
+                      <div style="font-family: var(--font-heading); font-size: 0.8rem; font-weight: 800; color: #0f172a; line-height: 1.1;">STATUS ADUAN</div>
+                    </div>
+                  </div>
+
+                </div>
+              </div>
+
+              <!-- Kolom Kanan: Panel Statistik Kartu Sage (PIN POINTER 3) -->
+              <div style="background: #e3ebe4; border-radius: 12px; padding: 10px; display: flex; flex-direction: column; gap: 6px; border: 1px solid rgba(16, 185, 129, 0.2); position: relative;">
+                <span class="pin-pointer pin-pointer-amber" style="position: absolute; top: -8px; right: -6px; width: 20px; height: 20px; font-size: 0.72rem; border: 2px solid #ffffff;">3</span>
+                
+                <div class="stat-card-inner">
+                  <div style="width: 28px; height: 28px; border-radius: 6px; background: #f1f5f9; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">&#128229;</div>
+                  <div style="flex: 1;">
+                    <div style="font-size: 0.65rem; font-weight: 600; color: #64748b;">Total Aduan</div>
+                    <div style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 900; color: #0f172a; line-height: 1;">18 Laporan</div>
+                  </div>
+                </div>
+
+                <div class="stat-card-inner">
+                  <div style="width: 28px; height: 28px; border-radius: 6px; background: #fef3c7; display: flex; align-items: center; justify-content: center; font-size: 0.9rem;">&#9203;</div>
+                  <div style="flex: 1;">
+                    <div style="font-size: 0.65rem; font-weight: 600; color: #92400e;">Dalam Penanganan</div>
+                    <div style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 900; color: #b45309; line-height: 1;">5 Berkas</div>
+                  </div>
+                </div>
+
+                <div class="stat-card-inner">
+                  <div style="width: 28px; height: 28px; border-radius: 6px; background: #dcfce7; display: flex; align-items: center; justify-content: center; font-size: 0.9rem; color: #16a34a;">&#9989;</div>
+                  <div style="flex: 1;">
+                    <div style="font-size: 0.65rem; font-weight: 600; color: #166534;">Selesai Ditangani</div>
+                    <div style="font-family: var(--font-heading); font-size: 0.95rem; font-weight: 900; color: #059669; line-height: 1;">13 Kasus</div>
+                  </div>
+                </div>
+                <div style="font-size: 0.6rem; color: #475569; text-align: center; margin-top: 2px;">
+                  *Contoh tampilan beranda: angka terbarui otomatis
+                </div>
+              </div>
+
+            </div>
+
+            <!-- Bagian Bawah: Alur Pengaduan Digital & Tombol Alternatif (PIN POINTER 4) -->
+            <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 10px 14px; position: relative;">
+              <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; border-bottom: 1px solid #f1f5f9; padding-bottom: 6px;">
+                <span style="font-family: var(--font-heading); font-weight: 800; font-size: 0.76rem; color: #064e3b; letter-spacing: 0.3px;">ALUR 4 TAHAP PENGADUAN DIGITAL MASYARAKAT</span>
+                <span style="font-size: 0.68rem; color: #64748b;">Langsung Masuk ke DLH Lembata</span>
+              </div>
+
+              <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; text-align: center; margin-bottom: 10px;">
+                <div class="mock-card-step">
+                  <span class="mock-card-step-icon">&#128100;</span>
+                  <div class="mock-card-step-title">1. Isi Identitas</div>
+                  <div style="font-size: 0.6rem; color: #059669;">Privasi Terjamin</div>
+                </div>
+                <div class="mock-card-step">
+                  <span class="mock-card-step-icon">&#128248;</span>
+                  <div class="mock-card-step-title">2. Foto &amp; Lokasi</div>
+                  <div style="font-size: 0.6rem; color: #0284c7;">Kamera / GPS HP</div>
+                </div>
+                <div class="mock-card-step">
+                  <span class="mock-card-step-icon">&#128221;</span>
+                  <div class="mock-card-step-title">3. Cerita Masalah</div>
+                  <div style="font-size: 0.6rem; color: #d97706;">6 Pilihan Jenis</div>
+                </div>
+                <div class="mock-card-step">
+                  <span class="mock-card-step-icon">🛡️</span>
+                  <div class="mock-card-step-title">4. Penanganan DLH</div>
+                  <div style="font-size: 0.6rem; color: #059669;">Verifikasi Fisik</div>
+                </div>
+              </div>
+
+              <!-- Tombol Aksi Cepat Alternatif (PIN 4) -->
+              <div style="position: relative;">
+                <span class="pin-pointer pin-pointer-green" style="position: absolute; top: -8px; right: -6px; width: 20px; height: 20px; font-size: 0.72rem; border: 2px solid #ffffff; z-index: 2;">4</span>
+                <div style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: #ffffff; border-radius: 8px; padding: 8px 12px; display: flex; align-items: center; justify-content: center; gap: 8px; font-weight: 800; font-size: 0.78rem; box-shadow: 0 3px 8px rgba(5,150,105,0.25); cursor: pointer;">
+                  <span>✍️ Mulai Buat Aduan Sekarang ➔</span>
+                </div>
+              </div>
+            </div>
+
+          </div>
+          <figcaption class="figure-caption">
+            <span class="fig-badge-num">Gambar 3.1</span>
+            <strong>Antarmuka Beranda Awal Portal Warga ECOADU LEMBATA dan Penunjuk Tombol Pilihan untuk Memulai Buat Aduan Baru.</strong>
+            <div class="figure-legend">
+              <div class="legend-item"><span class="pin-pointer">1</span> <span><strong>Tombol "AJUKAN ADUAN BARU":</strong> Sentuh kartu putih bergaris hijau ini untuk langsung membuka formulir laporan. Tidak perlu daftar atau login.</span></div>
+              <div class="legend-item"><span class="pin-pointer pin-pointer-blue">2</span> <span><strong>Tombol "LACAK STATUS ADUAN":</strong> Untuk mengecek sudah sejauh mana laporan Anda ditangani — cukup masukkan nomor laporan yang pernah diterima.</span></div>
+              <div class="legend-item"><span class="pin-pointer pin-pointer-amber">3</span> <span><strong>Angka Laporan:</strong> Menunjukkan berapa laporan yang sudah masuk, sedang dikerjakan, dan sudah selesai ditangani petugas DLH.</span></div>
+              <div class="legend-item"><span class="pin-pointer pin-pointer-green">4</span> <span><strong>Tombol Hijau Panjang "Mulai Buat Aduan":</strong> Pilihan lain untuk langsung berpindah ke halaman formulir laporan.</span></div>
+            </div>
+          </figcaption>
+        </figure>
+
+        <!-- GAMBAR PETUNJUK 2.1A: BAGAN ALIR ALUR PELAPORAN MANDIRI OLEH WARGA VIA HP -->
+        <figure class="instruction-figure" style="page-break-inside: avoid; break-inside: avoid; margin-bottom: 22px;">
+          <div class="figure-window-bar">
+            <div class="fig-win-left">
+              <span class="fig-dots"><span class="fig-dot dot-red"></span><span class="fig-dot dot-yellow"></span><span class="fig-dot dot-green"></span></span>
+              <span class="fig-win-title">Bagan Alir: Siklus Pengaduan Mandiri oleh Warga Melalui Perangkat Ponsel (Mobile Flowchart)</span>
+            </div>
+            <span class="code-pill">Alur Pelapor Warga</span>
+          </div>
+          <div class="figure-body" style="background: #f8fafc; padding: 18px;">
+            <div style="max-width: 820px; margin: 0 auto; display: flex; flex-direction: column; gap: 12px;">
+              
+              <!-- Baris Alur Horizontal / Vertikal Responsif dengan Anak Panah -->
+              <div class="flow-track">
+                
+                <!-- Node 1: Akses -->
+                <div class="flow-step-box" style="border-top: 4px solid #059669;">
+                  <span class="pin-pointer pin-pointer-green" style="position: absolute; top: -10px; right: -6px; width: 20px; height: 20px; font-size: 0.7rem;">1</span>
+                  <div>
+                    <div style="font-size: 0.68rem; font-weight: 800; color: #065f46; text-transform: uppercase;">Akses Awal</div>
+                    <div style="font-size: 0.78rem; font-weight: 800; color: #0f172a; margin: 2px 0;">📱 Scan QR / Web</div>
+                    <div style="font-size: 0.7rem; color: #475569; line-height: 1.35;">Buka portal di browser HP tanpa unduh aplikasi &amp; tanpa daftar akun.</div>
+                  </div>
+                  <div style="margin-top: 8px; font-size: 0.65rem; background: #ecfdf5; color: #047857; padding: 2px 5px; border-radius: 4px; font-weight: 700; text-align: center;">Browser Chrome / Safari</div>
+                </div>
+
+                <!-- Panah 1 -->
+                <div class="flow-arrow-sep" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </div>
+
+                <!-- Node 2: Tombol Aduan -->
+                <div class="flow-step-box" style="border-top: 4px solid #0284c7;">
+                  <span class="pin-pointer pin-pointer-blue" style="position: absolute; top: -10px; right: -6px; width: 20px; height: 20px; font-size: 0.7rem;">2</span>
+                  <div>
+                    <div style="font-size: 0.68rem; font-weight: 800; color: #0284c7; text-transform: uppercase;">Mulai Lapor</div>
+                    <div style="font-size: 0.78rem; font-weight: 800; color: #0f172a; margin: 2px 0;">✏️ Ajukan Aduan</div>
+                    <div style="font-size: 0.7rem; color: #475569; line-height: 1.35;">Sentuh tombol hijau di beranda untuk membuka formulir pengaduan.</div>
+                  </div>
+                  <div style="margin-top: 8px; font-size: 0.65rem; background: #eff6ff; color: #0284c7; padding: 2px 5px; border-radius: 4px; font-weight: 700; text-align: center;">Tombol Hijau Beranda</div>
+                </div>
+
+                <!-- Panah 2 -->
+                <div class="flow-arrow-sep" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </div>
+
+                <!-- Node 3: Isi Formulir -->
+                <div class="flow-step-box" style="border-top: 4px solid #d97706;">
+                  <span class="pin-pointer pin-pointer-amber" style="position: absolute; top: -10px; right: -6px; width: 20px; height: 20px; font-size: 0.7rem;">3</span>
+                  <div>
+                    <div style="font-size: 0.68rem; font-weight: 800; color: #d97706; text-transform: uppercase;">Input Fakta</div>
+                    <div style="font-size: 0.78rem; font-weight: 800; color: #0f172a; margin: 2px 0;">📝 Data &amp; Bukti</div>
+                    <div style="font-size: 0.7rem; color: #475569; line-height: 1.35;">Nama, WA, foto bukti, kunci GPS, jenis masalah, &amp; riwayat lapor.</div>
+                  </div>
+                  <div style="margin-top: 8px; font-size: 0.65rem; background: #fffbeb; color: #b45309; padding: 2px 5px; border-radius: 4px; font-weight: 700; text-align: center;">Kunci Titik GPS</div>
+                </div>
+
+                <!-- Panah 3 -->
+                <div class="flow-arrow-sep" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </div>
+
+                <!-- Node 4: Centang & Kirim -->
+                <div class="flow-step-box" style="border: 2px solid #059669; border-top: 4px solid #059669; box-shadow: 0 3px 8px rgba(5,150,105,0.15);">
+                  <span class="pin-pointer pin-pointer-green" style="position: absolute; top: -10px; right: -6px; width: 20px; height: 20px; font-size: 0.7rem;">4</span>
+                  <div>
+                    <div style="font-size: 0.68rem; font-weight: 800; color: #059669; text-transform: uppercase;">Validasi &amp; Kirim</div>
+                    <div style="font-size: 0.78rem; font-weight: 800; color: #064e3b; margin: 2px 0;">✍️ Centang &amp; Kirim</div>
+                    <div style="font-size: 0.7rem; color: #475569; line-height: 1.35;">Centang pernyataan kebenaran data &amp; tekan tombol Kirim Pengaduan.</div>
+                  </div>
+                  <div style="margin-top: 8px; font-size: 0.65rem; background: #059669; color: #ffffff; padding: 2px 5px; border-radius: 4px; font-weight: 800; text-align: center;">Klausul Wajib</div>
+                </div>
+
+                <!-- Panah 4 -->
+                <div class="flow-arrow-sep" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#059669" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="5" y1="12" x2="19" y2="12"></line>
+                    <polyline points="12 5 19 12 12 19"></polyline>
+                  </svg>
+                </div>
+
+                <!-- Node 5: Notifikasi & Lacak -->
+                <div class="flow-step-box" style="border-top: 4px solid #6366f1;">
+                  <span class="pin-pointer" style="position: absolute; top: -10px; right: -6px; width: 20px; height: 20px; font-size: 0.7rem; background: #6366f1; border: 2px solid #fff;">5</span>
+                  <div>
+                    <div style="font-size: 0.68rem; font-weight: 800; color: #4f46e5; text-transform: uppercase;">Hasil &amp; Lacak</div>
+                    <div style="font-size: 0.78rem; font-weight: 800; color: #0f172a; margin: 2px 0;">🔍 No. Tiket &amp; WA</div>
+                    <div style="font-size: 0.7rem; color: #475569; line-height: 1.35;">Simpan ID (ADU-26-XXXX) &amp; buka tautan WhatsApp untuk lacak status.</div>
+                  </div>
+                  <div style="margin-top: 8px; font-size: 0.65rem; background: #eef2ff; color: #4338ca; padding: 2px 5px; border-radius: 4px; font-weight: 700; text-align: center;">Notifikasi Realtime</div>
+                </div>
+
+              </div>
+              <!-- Petunjuk Ringkas Warga -->
+              <div style="background: #f0fdf4; border: 1px solid #a7f3d0; border-radius: 6px; padding: 8px 12px; font-size: 0.73rem; color: #065f46; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 6px;">
+                <div><strong>Kerahasiaan Terjamin:</strong> Identitas nama &amp; nomor HP Anda otomatis disamarkan (<em>Fr*** K***</em>) dan dilindungi UU PDP.</div>
+                <div style="color: #047857; font-weight: 700;">Nomor Tiket Contoh: ADU-26-K8M4</div>
+              </div>
+
+            </div>
+          </div>
+          <figcaption class="figure-caption">
+            <span class="fig-badge-num">Gambar 3.2</span>
+            <strong>Bagan Alir Alur Pelaporan Pengaduan Mandiri oleh Warga Melalui Ponsel (Mobile Reporting Flowchart).</strong>
+            <div class="figure-legend">
+              <div class="legend-item"><span class="pin-pointer pin-pointer-green">1-5</span> <span>Urutan tahapan lengkap pelaporan warga dari pemindaian kode QR, pengisian formulir, persetujuan klausul kebenaran data, pengiriman laporan, hingga pelacakan transparan via notifikasi pesan WhatsApp.</span></div>
+            </div>
+          </figcaption>
+        </figure>
+
+        
+
+        <h3 class="sub-heading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          3.3. Panduan Lengkap Mengisi Formulir dari Awal sampai Terkirim (8 Langkah Jelas)
+        </h3>
+        <p class="content-text">
+          Setelah menyentuh tombol <strong style="color: #064e3b;">[ ✏️ AJUKAN ADUAN BARU ]</strong>, layar HP akan langsung menampilkan <strong>Formulir Laporan</strong>. Isi formulir ini dengan 8 langkah sederhana berikut:
+          <br>&bull; <strong>Langkah 1 &mdash; Nama &amp; Nomor WhatsApp Anda (Wajib Diisi):</strong> Tulis <em>Nama Lengkap</em> dan <em>Nomor WhatsApp</em> yang aktif (contoh: <span class="code-pill">081234567890</span>). Nomor WhatsApp wajib diisi agar petugas DLH bisa mengirim bukti terima laporan dan menghubungi Anda jika perlu. <strong>Nama dan nomor Anda terlindungi dan tidak akan ditampilkan ke masyarakat umum</strong> (dilindungi UU Pelindungan Data Pribadi).
+          <br>&bull; <strong>Langkah 2 &mdash; Foto Bukti Kejadian (Sangat Disarankan):</strong> Sentuh tombol hijau <span class="btn-gov-card" style="display: inline-flex; height: 26px; min-height: 26px; padding: 0 8px; font-size: 0.72rem; background: #ecfdf5; color: #065f46; border: 1.5px solid #a7f3d0; border-radius: 6px;">&#128248; Ambil Foto Kamera</span> untuk langsung memotret kondisi pencemaran, atau <span class="btn-gov-card" style="display: inline-flex; height: 26px; min-height: 26px; padding: 0 8px; font-size: 0.72rem; background: #ffffff; color: #334155; border: 1.5px solid #cbd5e1; border-radius: 6px;">&#128193; Pilih dari Galeri</span> jika foto sudah ada di HP Anda. Bisa unggah sampai 5 foto — ukurannya otomatis dihemat agar tidak boros kuota.
+          <br>&bull; <strong>Langkah 3 &mdash; Lokasi Kejadian:</strong> Pilih nama <em>Kecamatan</em> dan <em>Desa/Kelurahan</em>, lalu tulis patokan tempat yang mudah dicari (contoh: <em>Di belakang Dermaga Jeti Lewoleba</em>). Kalau Anda sedang berada di lokasi kejadian, sentuh tombol <span class="btn-gov-card" style="display: inline-flex; height: 26px; min-height: 26px; padding: 0 8px; font-size: 0.72rem; background: #059669; color: #ffffff; border: none; border-radius: 6px;">&#127919; Kunci GPS Presisi Tinggi</span> agar HP Anda langsung mencatat titik lokasi secara otomatis.
+          <br>&bull; <strong>Langkah 4 &mdash; Jenis Masalah &amp; Cerita Singkat:</strong> Sentuh 1 dari 6 tombol jenis masalah (Laut &amp; Pesisir, Sampah Ilegal, Air &amp; Sungai, Udara, Limbah Berbahaya, atau Kerusakan Lingkungan), pilih perkiraan tanggal pertama kali masalah ini terlihat, lalu ceritakan secara singkat apa yang terjadi.
+          <br>&bull; <strong>Langkah 5 &mdash; Apa yang Anda Harapkan:</strong> Tulis harapan Anda kepada DLH Lembata (contoh: <em>Pantai dibersihkan, pembuangan solar ke laut dihentikan, atau pelaku diberikan teguran resmi</em>).
+          <br>&bull; <strong>Langkah 6 &mdash; Pernah Lapor Sebelumnya?</strong> Pilih <em>"Belum Pernah"</em> jika baru pertama kali melapor, atau <em>"Pernah Melapor"</em> jika masalah ini sudah pernah disampaikan ke kantor desa atau polisi.
+          <br>&bull; <strong>Langkah 7 &mdash; Klausul Pernyataan Kebenaran Data (Wajib Dicentang):</strong> Beri tanda centang pada kotak klausul: <em>"Saya menyatakan bahwa seluruh data, keterangan, dan bukti foto yang disampaikan adalah <strong>BENAR</strong> sesuai fakta di lapangan serta siap dipertanggungjawabkan."</em> Kotak centang ini merupakan syarat validasi wajib sebelum laporan dapat dikirimkan.
+          <br>&bull; <strong>Langkah 8 &mdash; Kirim Laporan:</strong> Sentuh tombol hijau besar <strong style="color: #059669;">[ &#128242; KIRIM PENGADUAN SEKARANG ]</strong> di bagian paling bawah. Laporan Anda langsung diterima oleh petugas DLH dan <strong>nomor laporan resmi Anda langsung muncul di layar</strong>.
+        </p>
+
+        <!-- GAMBAR PETUNJUK 2.2: ANATOMI LENGKAP FORMULIR DIGITAL -->
+        <figure class="instruction-figure" style="page-break-inside: avoid; break-inside: avoid; margin-bottom: 22px;">
+          <div class="figure-window-bar">
+            <div class="fig-win-left">
+              <span class="fig-dots"><span class="fig-dot dot-red"></span><span class="fig-dot dot-yellow"></span><span
+                  class="fig-dot dot-green"></span></span>
+              <span class="fig-win-title">Anatomi Lengkap Formulir Pengaduan Digital: Panduan Pengisian dari Awal sampai Tombol Kirim</span>
+            </div>
+            <div class="fig-win-url">https://aduan-dlh-lembata.vercel.app/#formAduanWarga</div>
+          </div>
+          <div class="figure-body" style="background: #f1f5f9; padding: 14px;">
+
+            <!-- Kotak Formulir Putih Bergaris Hijau Kedinasan -->
+            <div style="background: #ffffff; border: 2px solid #059669; border-radius: 12px; padding: 16px; box-shadow: 0 4px 14px rgba(6,78,59,0.06); max-width: 780px; margin: 0 auto;">
+
+              <!-- Header Formulir -->
+              <div style="border-bottom: 1.5px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 12px; display: flex; justify-content: space-between; align-items: center;">
+                <div>
+                  <span style="background: #ecfdf5; color: #065f46; border: 1px solid #a7f3d0; font-size: 0.68rem; font-weight: 800; padding: 2px 8px; border-radius: 20px;">&#128221; FORMULIR PENGADUAN DIGITAL</span>
+                  <div style="font-family: var(--font-heading); font-weight: 900; font-size: 0.98rem; color: #064e3b; margin-top: 4px;">Data Laporan Kejadian Pencemaran</div>
+                </div>
+                <span style="font-size: 0.7rem; color: #64748b;">Wilayah Kabupaten Lembata</span>
+              </div>
+
+              <!-- SEKSI 1: IDENTITAS PELAPOR (PIN POINTER 1) -->
+              <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-left: 4px solid #064e3b; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; position: relative;">
+                <span class="pin-pointer pin-top-right-lg">1</span>
+                <div style="font-weight: 800; font-size: 0.78rem; color: #064e3b; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+                  <span>1. Identitas Pelapor</span>
+                  <span style="font-size: 0.65rem; color: #059669; background: #ecfdf5; padding: 1px 6px; border-radius: 4px;">&#128274; Dijamin Rahasia (UU PDP)</span>
+                </div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.72rem;">
+                  <div>
+                    <label style="color: #64748b; display: block; font-size: 0.68rem; margin-bottom: 2px;">Nama Lengkap Pelapor *</label>
+                    <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 5px 8px; color: #0f172a; font-weight: 700;">Fransiskus Kedang</div>
+                  </div>
+                  <div>
+                    <label style="color: #64748b; display: block; font-size: 0.68rem; margin-bottom: 2px;">Nomor WhatsApp Aktif * (Wajib Terima Tiket)</label>
+                    <div style="background: #ffffff; border: 1px solid #059669; border-radius: 6px; padding: 5px 8px; color: #065f46; font-weight: 700; display: flex; justify-content: space-between;">
+                      <span>081234567890</span>
+                      <span style="color: #059669; font-size: 0.65rem;">&#10003; Valid WhatsApp</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SEKSI 2: BUKTI FOTO (PIN POINTER 2) -->
+              <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-left: 4px solid #059669; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; position: relative;">
+                <span class="pin-pointer pin-pointer-green" style="position: absolute; top: -10px; right: -8px; width: 22px; height: 22px; font-size: 0.76rem; border: 2px solid #ffffff;">2</span>
+                <div style="font-weight: 800; font-size: 0.78rem; color: #059669; margin-bottom: 6px;">2. Bukti Foto Kejadian (Sangat Disarankan, Maksimal 5 Foto)</div>
+                <div style="display: flex; gap: 8px; align-items: center; flex-wrap: wrap;">
+                  <button type="button" class="btn-gov-card" style="height: 32px; min-height: 32px; padding: 0 10px; font-size: 0.72rem; background: #ecfdf5; color: #065f46; border: 1.5px solid #a7f3d0; border-radius: 6px;">
+                    &#128248; Ambil Foto Kamera Langsung
+                  </button>
+                  <button type="button" class="btn-gov-card" style="height: 32px; min-height: 32px; padding: 0 10px; font-size: 0.72rem; background: #ffffff; color: #334155; border: 1.5px solid #cbd5e1; border-radius: 6px;">
+                    &#128193; Pilih dari Galeri HP
+                  </button>
+                  <span style="font-size: 0.68rem; color: #059669; font-weight: 600;">&#10003; Foto otomatis hemat kuota</span>
+                </div>
+              </div>
+
+              <!-- SEKSI 3: LOKASI KEJADIAN (PIN POINTER 3) -->
+              <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-left: 4px solid #0284c7; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; position: relative;">
+                <span class="pin-pointer pin-pointer-blue" style="position: absolute; top: -10px; right: -8px; width: 22px; height: 22px; font-size: 0.76rem; border: 2px solid #ffffff;">3</span>
+                <div style="font-weight: 800; font-size: 0.78rem; color: #0284c7; margin-bottom: 4px;">3. Lokasi Kejadian (Kecamatan, Desa, Patokan &amp; GPS)</div>
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; font-size: 0.72rem; margin-bottom: 6px;">
+                  <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 5px 8px; color: #1e293b; font-weight: 600;">Kecamatan: Nubatukan (Lewoleba) ⌄</div>
+                  <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 5px 8px; color: #1e293b; font-weight: 600;">Desa/Kelurahan: Lewoleba Barat ⌄</div>
+                </div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                  <div style="flex: 1; background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 5px 8px; font-size: 0.72rem; color: #475569;">
+                    Patokan: Di tepi pantai dekat dermaga jeti nelayan
+                  </div>
+                  <button type="button" class="btn-gov-card" style="height: 30px; min-height: 30px; padding: 0 8px; font-size: 0.7rem; background: #059669; color: #ffffff; border: none; border-radius: 6px;">
+                    &#127919; Kunci GPS
+                  </button>
+                </div>
+              </div>
+
+              <!-- SEKSI 4: 6 KATEGORI MASALAH & CERITA (PIN POINTER 4) -->
+              <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-left: 4px solid #d97706; border-radius: 8px; padding: 10px 12px; margin-bottom: 10px; position: relative;">
+                <span class="pin-pointer pin-pointer-amber" style="position: absolute; top: -10px; right: -8px; width: 22px; height: 22px; font-size: 0.76rem; border: 2px solid #ffffff;">4</span>
+                <div style="font-weight: 800; font-size: 0.78rem; color: #d97706; margin-bottom: 6px;">4. Pilihan 6 Kategori Masalah &amp; Cerita Kronologi</div>
+                <div style="display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 6px;">
+                  <span style="background: #059669; color: #ffffff; font-size: 0.68rem; font-weight: 800; padding: 3px 8px; border-radius: 14px;">&#127754; Laut &amp; Pesisir (Terpilih)</span>
+                  <span class="filter-pill">&#128465;️ Sampah Ilegal</span>
+                  <span class="filter-pill">&#128167; Air &amp; Sungai</span>
+                  <span class="filter-pill">&#128168; Udara &amp; Asap</span>
+                  <span class="filter-pill">☣️ Limbah B3</span>
+                  <span class="filter-pill">&#127795; Kerusakan</span>
+                </div>
+                <div style="background: #ffffff; border: 1px solid #cbd5e1; border-radius: 6px; padding: 6px 8px; font-size: 0.72rem; color: #334155; line-height: 1.4;">
+                  Uraian Kejadian: <em>"Tumpahan minyak solar pelumas kapal motor menggenang di perairan jeti nelayan, air laut berbau menyengat sejak pagi hari..."</em>
+                </div>
+              </div>
+
+              <!-- SEKSI 5 & 6: HARAPAN & RIWAYAT (PIN POINTER 5 & 6) -->
+              <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px;">
+                <!-- Seksi 5 -->
+                <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-left: 4px solid #6366f1; border-radius: 8px; padding: 8px 10px; position: relative;">
+                  <span class="pin-pointer" style="position: absolute; top: -8px; right: -6px; width: 18px; height: 18px; font-size: 0.68rem; border: 2px solid #ffffff; background: #6366f1;">5</span>
+                  <div style="font-weight: 800; font-size: 0.72rem; color: #4338ca; margin-bottom: 2px;">5. Harapan Penyelesaian</div>
+                  <div style="font-size: 0.68rem; color: #475569; line-height: 1.35;">
+                    <em>"Mohon pantai dibersihkan dan pemilik kapal diberikan teguran resmi."</em>
+                  </div>
+                </div>
+                <!-- Seksi 6 -->
+                <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-left: 4px solid #64748b; border-radius: 8px; padding: 8px 10px; position: relative;">
+                  <span class="pin-pointer" style="position: absolute; top: -8px; right: -6px; width: 18px; height: 18px; font-size: 0.68rem; border: 2px solid #ffffff; background: #64748b;">6</span>
+                  <div style="font-weight: 800; font-size: 0.72rem; color: #334155; margin-bottom: 2px;">6. Riwayat Instansi Lain</div>
+                  <div style="display: flex; gap: 4px; align-items: center; font-size: 0.68rem;">
+                    <span style="background: #ecfdf5; color: #065f46; font-weight: 700; padding: 1px 6px; border-radius: 10px; border: 1px solid #a7f3d0;">● Belum Pernah</span>
+                    <span style="color: #64748b; padding: 1px 6px;">○ Pernah Lapor</span>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SEKSI 7: KLAUSUL PERNYATAAN KEBENARAN DATA (PIN POINTER 7) -->
+              <div style="background: #f0fdf4; border: 1.5px solid #a7f3d0; border-left: 4px solid #10b981; border-radius: 8px; padding: 10px 12px; margin-bottom: 12px; position: relative;">
+                <span class="pin-pointer pin-pointer-green" style="position: absolute; top: -10px; right: -8px; width: 22px; height: 22px; font-size: 0.76rem; border: 2px solid #ffffff;">7</span>
+                <div style="display: flex; align-items: flex-start; gap: 10px;">
+                  <input type="checkbox" checked disabled style="width: 18px; height: 18px; margin-top: 1px; accent-color: #059669; cursor: default;">
+                  <div>
+                    <div style="font-size: 0.76rem; color: #064e3b; font-weight: 700; line-height: 1.4;">
+                      Saya menyatakan bahwa seluruh data, keterangan, dan bukti foto yang disampaikan adalah <u>BENAR</u> sesuai fakta di lapangan serta siap dipertanggungjawabkan.
+                    </div>
+                    <div style="font-size: 0.67rem; color: #047857; margin-top: 3px;">
+                      &#9432; Wajib dicentang sebagai syarat verifikasi resmi pengawas DLH Kabupaten Lembata.
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- SEKSI 8: TOMBOL EKSEKUSI PENGIRIMAN (PIN POINTER 8) -->
+              <div style="position: relative; text-align: center;">
+                <span class="pin-pointer pin-pointer-green" style="position: absolute; top: -10px; right: -6px; width: 24px; height: 24px; font-size: 0.82rem; border: 2px solid #ffffff; box-shadow: 0 2px 6px rgba(5,150,105,0.6); z-index: 2;">8</span>
+                <div style="background: linear-gradient(135deg, #059669 0%, #047857 100%); color: #ffffff; border-radius: 10px; padding: 12px 18px; display: flex; align-items: center; justify-content: center; gap: 10px; box-shadow: 0 4px 14px rgba(5, 150, 105, 0.35); cursor: pointer;">
+                  <span style="font-size: 1.4rem;">&#128242;</span>
+                  <div style="text-align: left;">
+                    <div style="font-family: var(--font-heading); font-weight: 900; font-size: 0.94rem; letter-spacing: 0.5px; line-height: 1.1;">KIRIM PENGADUAN SEKARANG</div>
+                    <div style="font-size: 0.68rem; color: #d1fae5; font-weight: 500;">Diteruskan Langsung ke Kontak Tim Dinas DLH Lembata (+62 822-3458-2769)</div>
+                  </div>
+                </div>
+                <div style="font-size: 0.68rem; color: #065f46; font-weight: 600; margin-top: 6px;">
+                  &#128172; Nomor tiket pendaftaran resmi akan langsung muncul di layar dan dikirimkan otomatis ke WhatsApp Anda.
+                </div>
+              </div>
+
+            </div>
+
+          </div>
+          <figcaption class="figure-caption">
+            <span class="fig-badge-num">Gambar 3.3</span>
+            <strong>Anatomi Lengkap Formulir Pengaduan Digital: Panduan Bagian yang Harus Diisi dari Identitas Diri sampai Tombol Kirim Pengaduan.</strong>
+            <div class="figure-legend">
+              <div class="legend-item"><span class="pin-pointer">1</span> <span><strong>Nama &amp; WhatsApp:</strong> Data Anda terlindungi dan tidak ditampilkan ke masyarakat umum.</span></div>
+              <div class="legend-item"><span class="pin-pointer pin-pointer-green">2</span> <span><strong>Foto Bukti:</strong> Ambil langsung pakai kamera atau pilih dari galeri HP (maks. 5 foto, hemat kuota).</span></div>
+              <div class="legend-item"><span class="pin-pointer pin-pointer-blue">3</span> <span><strong>Lokasi:</strong> Pilih Kecamatan, Desa, tulis patokan tempat, atau kunci otomatis lewat GPS HP.</span></div>
+              <div class="legend-item"><span class="pin-pointer pin-pointer-amber">4</span> <span><strong>Jenis Masalah &amp; Cerita:</strong> Pilih 1 dari 6 jenis masalah, lalu ceritakan singkat apa yang terjadi.</span></div>
+              <div class="legend-item"><span class="pin-pointer" style="background: #6366f1;">5</span> <span><strong>Harapan Anda:</strong> Tulis solusi apa yang Anda harapkan dari DLH Lembata.</span></div>
+              <div class="legend-item"><span class="pin-pointer" style="background: #64748b;">6</span> <span><strong>Pernah Lapor Sebelumnya?</strong> Pilih "Belum Pernah" atau "Pernah Lapor" ke instansi lain.</span></div>
+              <div class="legend-item"><span class="pin-pointer pin-pointer-green">7</span> <span><strong>Pernyataan Kebenaran Data:</strong> Wajib dicentang bahwa data benar sesuai fakta &amp; siap dipertanggungjawabkan.</span></div>
+              <div class="legend-item"><span class="pin-pointer pin-pointer-green">8</span> <span><strong>Tombol Kirim:</strong> Sentuh tombol hijau ini — laporan Anda langsung diterima dan nomor laporan resmi muncul di layar.</span></div>
+            </div>
+          </figcaption>
+        </figure>
+
+        
+      </section>
+
+      <!-- =======================================================================
+           BAB IV: 6 PILIHAN MASALAH LINGKUNGAN YANG DAPAT DILAPORKAN
+           ======================================================================= -->
+      <section class="chapter-block" id="bab-4">
+        <header class="chapter-header">
+          <div class="chapter-header-left">
+            <span class="chapter-badge-roman">BAB IV</span>
+            <div class="chapter-title-text">6 PILIHAN MASALAH LINGKUNGAN YANG DAPAT DILAPORKAN</div>
+          </div>
+          <span class="chapter-tag">JENIS MASALAH</span>
+        </header>
+
+        <h3 class="sub-heading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <polygon points="12 2 2 7 12 12 22 7 12 2"></polygon>
+            <polyline points="2 17 12 22 22 17"></polyline>
+            <polyline points="2 12 12 17 22 12"></polyline>
+          </svg>
+          4.1. Mengenal 6 Pilihan Masalah Lingkungan yang Bisa Dilaporkan
+        </h3>
+        <p class="content-text">
+          Portal ECOADU menyediakan 6 pilihan jenis masalah lingkungan yang bisa dilaporkan warga. Pilih salah satu yang paling sesuai dengan apa yang Anda lihat:
+        </p>
+
+        <!-- GAMBAR PETUNJUK 2.3 -->
+        <figure class="instruction-figure">
+          <div class="figure-window-bar">
+            <div class="fig-win-left">
+              <span class="fig-dots"><span class="fig-dot dot-red"></span><span class="fig-dot dot-yellow"></span><span
+                  class="fig-dot dot-green"></span></span>
+              <span class="fig-win-title">Pilihan 6 Kategori Pengaduan Masalah Lingkungan</span>
+            </div>
+            <span class="code-pill">Layanan Aduan DLH Lembata</span>
+          </div>
+          <div class="figure-body">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px;">
+              <div
+                style="background: #ffffff; border: 1.5px solid #059669; border-radius: 8px; padding: 10px; display: flex; align-items: center; gap: 10px;">
+                <span class="icon-emoji-lg">&#127754;</span>
+                <div>
+                  <strong style="font-size: 0.82rem; color: #064e3b;">Laut &amp; Pesisir</strong>
+                  <div class="text-muted-xs">Tumpahan solar/minyak kapal, sampah di pantai/jeti
+                    nelayan, perusakan bakau/mangrove.</div>
+                </div>
+              </div>
+              <div
+                class="category-box">
+                <span class="icon-emoji-lg">&#128465;️</span>
+                <div>
+                  <strong style="font-size: 0.82rem; color: #334155;">Sampah Ilegal &amp; Bau</strong>
+                  <div class="text-muted-xs">Timbunan sampah liar di jalan/lahan kosong,
+                    pembakaran sampah, bau busuk menyengat.</div>
+                </div>
+              </div>
+              <div
+                class="category-box">
+                <span class="icon-emoji-lg">&#128167;</span>
+                <div>
+                  <strong style="font-size: 0.82rem; color: #334155;">Pencemaran Air &amp; Sungai</strong>
+                  <div class="text-muted-xs">Pembuangan limbah ke kali/waiblolo, air keruh berbau
+                    di sumur warga, ikan mati mendadak.</div>
+                </div>
+              </div>
+              <div
+                class="category-box">
+                <span class="icon-emoji-lg">&#128168;</span>
+                <div>
+                  <strong style="font-size: 0.82rem; color: #334155;">Udara, Asap &amp; Debu</strong>
+                  <div class="text-muted-xs">Asap cerobong usaha/bengkel/gilingan, debu tebal
+                    proyek galian, bau gas menyengat.</div>
+                </div>
+              </div>
+              <div
+                class="category-box">
+                <span class="icon-emoji-lg">☣️</span>
+                <div>
+                  <strong style="font-size: 0.82rem; color: #334155;">Limbah Berbahaya (B3) &amp; Medis</strong>
+                  <div class="text-muted-xs">Oli bekas dibuang ke got/tanah, aki bekas pecah,
+                    jarum suntik/perban dibuang sembarangan.</div>
+                </div>
+              </div>
+              <div
+                class="category-box">
+                <span class="icon-emoji-lg">&#127795;</span>
+                <div>
+                  <strong style="font-size: 0.82rem; color: #334155;">Kerusakan Lingkungan &amp; Tanah</strong>
+                  <div class="text-muted-xs">Galian C liar tanpa izin, pengerukan lereng bukit
+                    rawan longsor, perusakan mata air.</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <figcaption class="figure-caption">
+            <span class="fig-badge-num">Gambar 4.1</span>
+            <strong>Pilihan 6 Kategori Masalah Lingkungan Hidup yang Dapat Dilaporkan Warga.</strong>
+            <div class="figure-legend">
+              <div class="legend-item"><span>Warga cukup memilih salah satu tombol kategori di atas yang paling sesuai dengan kejadian faktual di lapangan agar petugas DLH dapat langsung menyiapkan perlengkapan dan keahlian verifikasi yang tepat.</span></div>
+            </div>
+          </figcaption>
+        </figure>
+
+        
+      </section>
+
+      <!-- =======================================================================
+           BAB V: TIGA CARA MUDAH MENUNJUKKAN TITIK LOKASI KEJADIAN
+           ======================================================================= -->
+      <section class="chapter-block" id="bab-5">
+        <header class="chapter-header">
+          <div class="chapter-header-left">
+            <span class="chapter-badge-roman">BAB V</span>
+            <div class="chapter-title-text">TIGA CARA MUDAH MENUNJUKKAN TITIK LOKASI KEJADIAN</div>
+          </div>
+          <span class="chapter-tag">PANDUAN LOKASI</span>
+        </header>
+
+        <h3 class="sub-heading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="10" r="3"></circle>
+            <path d="M12 21.7C17.3 17 20 13 20 10a8 8 0 1 0-16 0c0 3 2.7 7 8 11.7z"></path>
+          </svg>
+          5.1. Tiga Cara Mudah Menunjukkan Lokasi Kejadian
+        </h3>
+        <p class="content-text">
+          Supaya petugas DLH bisa langsung menemukan lokasi pencemaran di lapangan, warga punya 3 cara mudah untuk menunjukkan tempatnya:
+        </p>
+
+        <!-- GAMBAR PETUNJUK 2.4 -->
+        <figure class="instruction-figure">
+          <div class="figure-window-bar">
+            <div class="fig-win-left">
+              <span class="fig-dots"><span class="fig-dot dot-red"></span><span class="fig-dot dot-yellow"></span><span
+                  class="fig-dot dot-green"></span></span>
+              <span class="fig-win-title">Tiga Cara Praktis Menentukan Lokasi Kejadian Pengaduan</span>
+            </div>
+            <span class="code-pill">Mudah &amp; Praktis untuk Warga</span>
+          </div>
+          <div class="figure-body">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px;">
+              <!-- Cara 1 -->
+              <div
+                style="background: #ffffff; border: 1.5px solid #a7f3d0; border-radius: 8px; padding: 12px; position: relative;">
+                <span class="pin-pointer pin-top-right-sm">1</span>
+                <strong style="font-size: 0.8rem; color: #064e3b; display: block; margin-bottom: 4px;">CARA 1: Pilih
+                    Nama Wilayah</strong>
+                <p class="text-muted-sm-mb">Tinggal pilih nama
+                  Kecamatan (9 Kecamatan di Lembata) dan Desa/Kelurahan dari daftar yang tersedia.</p>
+                <div
+                  style="background: #f1f5f9; padding: 4px 6px; border-radius: 4px; font-size: 0.72rem; color: #334155; font-weight: 600;">
+                  Contoh: Nubatukan &bull; Lewoleba Barat</div>
+              </div>
+
+              <!-- Cara 2 -->
+              <div
+                style="background: #ffffff; border: 1.5px solid #86efac; border-radius: 8px; padding: 12px; position: relative;">
+                <span class="pin-pointer pin-top-right-sm">2</span>
+                <strong style="font-size: 0.8rem; color: #059669; display: block; margin-bottom: 4px;">CARA 2: Tekan
+                    Kunci Lokasi</strong>
+                <p class="text-muted-sm-mb">Jika Anda sedang
+                  berada langsung di tempat kejadian, sentuh tombol hijau agar ponsel mendeteksi lokasi otomatis.</p>
+                <div class="app-badge-btn btn-sim-gps" style="font-size: 0.7rem; width: 100%; justify-content: center;">
+                  &#127919; Kunci Lokasi GPS Saya</div>
+              </div>
+
+              <!-- Cara 3 -->
+              <div
+                style="background: #ffffff; border: 1.5px solid #93c5fd; border-radius: 8px; padding: 12px; position: relative;">
+                <span class="pin-pointer pin-top-right-sm">3</span>
+                <strong style="font-size: 0.8rem; color: #0284c7; display: block; margin-bottom: 4px;">CARA 3: Geser
+                    Peta &amp; Patokan</strong>
+                <p class="text-muted-sm-mb">Bila melapor saat
+                  sudah di rumah, geser penanda merah di peta dan sebutkan patokan tempat yang jelas di kolom rincian.
+                </p>
+                <div
+                  style="background: #eff6ff; padding: 4px 6px; border-radius: 4px; font-size: 0.72rem; color: #0369a1; font-weight: 600;">
+                  Contoh: "Di belakang Dermaga Jeti"</div>
+              </div>
+            </div>
+          </div>
+          <figcaption class="figure-caption">
+            <span class="fig-badge-num">Gambar 5.1</span>
+            <strong>Pilihan Cara Mudah Menentukan Titik Lokasi Kejadian agar Petugas DLH Tepat Sasaran.</strong>
+            <div class="figure-legend">
+              <div class="legend-item"><span class="pin-pointer">1</span> <span><strong>Pilih Wilayah:</strong> Memilih
+                  Kecamatan dan Desa/Kelurahan domisili kejadian.</span></div>
+              <div class="legend-item"><span class="pin-pointer">2</span> <span><strong>Kunci Otomatis:</strong> Ponsel
+                  langsung mencatat titik lokasi jika Anda melapor langsung dari lokasi kejadian.</span></div>
+              <div class="legend-item"><span class="pin-pointer">3</span> <span><strong>Geser Peta &amp;
+                    Patokan:</strong> Membantu petugas menemukan lokasi dengan menggeser penanda serta menuliskan
+                  patokan yang mudah dicari.</span></div>
+            </div>
+          </figcaption>
+        </figure>
+
+        
+      </section>
+
+      <!-- =======================================================================
+           BAB VI: BUKTI LAPORAN, LACAK STATUS & ARTI 4 STATUS PENANGANAN
+           ======================================================================= -->
+      <section class="chapter-block" id="bab-6">
+        <header class="chapter-header">
+          <div class="chapter-header-left">
+            <span class="chapter-badge-roman">BAB VI</span>
+            <div class="chapter-title-text">BUKTI LAPORAN, LACAK STATUS &amp; ARTI 4 STATUS PENANGANAN</div>
+          </div>
+          <span class="chapter-tag">PANTAU LAPORAN</span>
+        </header>
+
+        <h3 class="sub-heading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+            <polyline points="22,6 12,13 2,6"></polyline>
+          </svg>
+          6.1. Bukti Laporan, Panduan Visual Lacak Status &amp; 5 Arti Status bagi Pelapor
+        </h3>
+        <p class="content-text">
+          Setelah menekan tombol kirim, laporan Anda langsung diterima — tidak akan hilang atau terlewat. Ada 4 hal yang akan Anda dapatkan setelah mengirim laporan:
+          <br>&bull; <strong>1. Nomor Laporan Muncul di Layar HP Anda:</strong> Layar langsung menampilkan
+          <strong>Nomor Laporan Resmi</strong> Anda (contoh: <span
+            class="code-pill">ADU-26-K8M4</span>). Simpan nomor ini — itu bukti bahwa laporan Anda sudah masuk.
+          <br>&bull; <strong>2. Pesan WhatsApp Konfirmasi Otomatis:</strong> WhatsApp Anda akan langsung menerima pesan resmi dari <em>Layanan Aduan DLH Lembata</em>. Isi pesannya mencantumkan
+          nomor laporan, jenis masalah, nama wilayah, dan tautan untuk mengecek perkembangan laporan.
+          <br>&bull; <strong>3. Cara Mengecek Perkembangan Laporan:</strong>
+          <br>&nbsp;&nbsp;&bull; <em>Lewat Pesan WhatsApp (Paling Mudah):</em> Buka pesan WhatsApp dari DLH Lembata, lalu
+          ketuk tautan biru yang ada di pesan. Layar langsung menampilkan status terbaru laporan Anda (misalnya: <em>Sedang Dicek Petugas</em> atau <em>Sudah Selesai Ditangani</em>) — tanpa perlu mengetik ulang nomor laporan.
+          <br>&nbsp;&nbsp;&bull; <em>Lewat Website ECOADU:</em> Buka website ECOADU, sentuh tombol "Lacak Status Aduan", lalu masukkan nomor laporan Anda. Bisa dilakukan kapan saja, 24 jam.
+          <br>&bull; <strong>4. Identitas Anda Tetap Aman:</strong> Nama lengkap dan nomor HP Anda otomatis disembunyikan dari tampilan publik. Anda bisa melapor dengan tenang — identitas Anda terlindungi.
+        </p>
+
+        <!-- GAMBAR PETUNJUK 2.5 -->
+        <figure class="instruction-figure">
+          <div class="figure-window-bar">
+            <div class="fig-win-left">
+              <span class="fig-dots"><span class="fig-dot dot-red"></span><span class="fig-dot dot-yellow"></span><span
+                  class="fig-dot dot-green"></span></span>
+              <span class="fig-win-title">Tampilan Bukti Tanda Terima Digital &amp; Pesan WhatsApp Resmi yang Diterima
+                Warga</span>
+            </div>
+            <span class="code-pill">Sisi Pelapor (Warga)</span>
+          </div>
+          <div class="figure-body">
+            <!-- Tampilan Foto Screenshot Riil Sistem di Sisi Warga -->
+            <div style="text-align: center; margin-bottom: 14px;">
+              <div
+                style="font-size: 0.72rem; font-weight: 700; color: #064e3b; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">
+                Tangkapan Layar Riil: Tanda Terima di Layar Web &amp; Pesan WhatsApp pada Ponsel Pelapor
+              </div>
+              <img src="assets/notifikasi-wa-pelapor.png"
+                alt="Tampilan Nyata Tanda Terima Web dan Notifikasi WhatsApp Sisi Pelapor"
+                onerror="this.onerror=null; this.style.display='none'; if(this.parentElement) this.parentElement.style.display='none';"
+                style="width: 100%; max-width: 820px; height: auto; border-radius: 8px; border: 1.5px solid #a7f3d0; box-shadow: 0 4px 14px rgba(6, 78, 59, 0.12); display: block; margin: 0 auto;">
+            </div>
+
+            <!-- Rekonstruksi Tampilan Pesan WhatsApp Resmi Warga -->
+            <div style="max-width: 500px; margin: 0 auto;">
+              <div class="wa-chat-container"
+                style="background: #efeae2; border: 1.5px solid #a7f3d0; border-radius: 10px; padding: 12px;">
+                <div
+                  style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; padding-bottom: 4px; border-bottom: 1px solid #cbd5e1;">
+                  <strong style="font-size: 0.76rem; color: #075e54; display: flex; align-items: center; gap: 4px;">
+                    <span>&#128241;</span> <span>Layanan Aduan DLH Lembata (Bukti Tanda Terima Warga)</span>
+                  </strong>
+                  <span class="mock-chip mock-chip-green" style="font-size: 0.65rem;">Terkirim Otomatis</span>
+                </div>
+                <div class="wa-bubble wa-bubble-bot" style="margin: 0; font-size: 0.78rem; line-height: 1.5;">
+                  <strong>*PENGADUAN DITERIMA - DLH LEMBATA*</strong><br>
+                  Yth. Bpk/Ibu Fransiskus Kedang,<br><br>
+                  Laporan dugaan pencemaran lingkungan Anda telah kami terima di sistem <strong>ECOADU
+                    LEMBATA</strong>.<br><br>
+                  &bull; <strong>No. Tiket:</strong> ADU-26-K8M4<br>
+                  &bull; <strong>Kategori:</strong> Laut &amp; Pesisir<br>
+                  &bull; <strong>Lokasi:</strong> Nubatukan (Lewoleba)<br><br>
+                  Lacak perkembangan laporan Anda di:<br>
+                  <span
+                    class="link-tracking">https://aduan-dlh-lembata.vercel.app/?tiket=ADU-26-K8M4</span>
+                  <div class="wa-time">10:14 &bull; Terkirim Otomatis</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <figcaption class="figure-caption">
+            <span class="fig-badge-num">Gambar 6.1</span>
+            <strong>Bukti Nomor Laporan di Layar Web &amp; Pesan WhatsApp Konfirmasi untuk Mengecek Status Laporan dengan Sekali Ketuk.</strong>
+            <div class="figure-legend">
+              <div class="legend-item"><span class="pin-pointer pin-pointer-green">1</span> <span><strong>Nomor Laporan di Layar:</strong> Muncul langsung setelah Anda menekan tombol kirim sebagai bukti laporan sudah diterima.</span></div>
+              <div class="legend-item"><span class="pin-pointer pin-pointer-green">2</span> <span><strong>Pesan WhatsApp Konfirmasi:</strong> Berisi nomor laporan dan tautan untuk mengecek perkembangan penanganan DLH — cukup ketuk sekali.</span></div>
+            </div>
+          </figcaption>
+        </figure>
+
+        <p class="content-text" style="margin-top: 18px;">
+          Ketika warga ingin mengecek perkembangan penanganan pengaduan secara mandiri, warga cukup menyentuh tautan biru di pesan WhatsApp resmi atau membuka menu <strong>"Lacak Status Aduan"</strong> pada portal ECOADU LEMBATA. Sistem langsung menampilkan antarmuka pencarian nomor tiket dan kartu hasil pelacakan transparan berikut:
+        </p>
+
+        <!-- GAMBAR PETUNJUK 2.6: TAMPILAN ANTARMUKA PENCARIAN & KARTU HASIL LACAK STATUS TIKET -->
+        <figure class="instruction-figure" style="page-break-inside: avoid; break-inside: avoid;">
+          <div class="figure-window-bar">
+            <div class="fig-win-left">
+              <span class="fig-dots"><span class="fig-dot dot-red"></span><span class="fig-dot dot-yellow"></span><span class="fig-dot dot-green"></span></span>
+              <span class="fig-win-title">Tampilan Antarmuka Pencarian &amp; Kartu Hasil Pelacakan Status Tiket oleh Warga</span>
+            </div>
+            <span class="code-pill">Portal Warga: Lacak Status</span>
+          </div>
+          <div class="figure-body">
+            <!-- 1. Kotak Input Pencarian Tiket Instan -->
+            <!-- 1. Kotak Input Pencarian Tiket Instan -->
+            <div style="max-width: 580px; margin: 0 auto 16px auto; background: #ffffff; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 12px 14px; box-shadow: 0 1px 3px rgba(0,0,0,0.04); position: relative;">
+              <span class="pin-pointer pin-top-right-sm">1</span>
+              <div style="font-size: 0.78rem; font-weight: 800; color: #065f46; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+                <span>&#128269;</span> <span>KOLOM PENCARIAN TIKET ADUAN WARGA:</span>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <div style="flex: 1; background: #f8fafc; border: 1.5px solid #94a3b8; border-radius: 6px; padding: 7px 10px; font-family: var(--font-mono); font-size: 0.85rem; font-weight: 700; color: #0f172a; display: flex; align-items: center; justify-content: space-between;">
+                  <span>ADU-26-K8M4</span>
+                  <span style="font-size: 0.68rem; color: #64748b; font-family: var(--font-sans);">[Input Nomor Tiket]</span>
+                </div>
+                <div class="app-badge-btn" style="background: #059669; color: #ffffff; font-size: 0.76rem; font-weight: 800; padding: 7px 14px; border-radius: 6px; white-space: nowrap; border: 1px solid #047857;">
+                  &#128269; Lacak Tiket
+                </div>
+              </div>
+            </div>
+
+            <!-- 2. Kartu Hasil Pelacakan Transparan dengan Bilah Stepper 4 Tahap -->
+            <div style="max-width: 680px; margin: 0 auto; background: #ffffff; border: 2px solid #93c5fd; border-radius: 12px; padding: 16px 18px; box-shadow: 0 4px 16px rgba(2, 132, 199, 0.08); position: relative;">
+              <span class="pin-pointer pin-top-right-sm">2</span>
+              <!-- Header Kartu: ID Tiket & Badge Status -->
+              <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1.5px solid #e2e8f0; padding-bottom: 10px; margin-bottom: 12px; flex-wrap: wrap; gap: 8px;">
+                <div>
+                  <div style="font-size: 0.68rem; color: #64748b; font-weight: 800; letter-spacing: 0.5px; text-transform: uppercase;">Nomor Tiket Resmi:</div>
+                  <div style="font-family: var(--font-mono); font-weight: 900; color: #065f46; font-size: 1.2rem; letter-spacing: 0.5px;">ADU-26-K8M4</div>
+                </div>
+                <div style="text-align: right;">
+                  <span class="status-badge badge-status-proses" style="font-size: 0.82rem; padding: 4px 12px; box-shadow: 0 1px 3px rgba(3, 105, 161, 0.15);">
+                    <span style="font-size: 0.85rem;">&#9889;</span> Ditindaklanjuti
+                  </span>
+                  <div style="font-size: 0.66rem; color: #0284c7; font-weight: 700; margin-top: 3px;">Penanganan Sedang Berjalan</div>
+                </div>
+              </div>
+
+              <!-- Bilah Progres Stepper 4 Tahap Transparan -->
+              <div class="track-stepper-wrap">
+                <!-- Tahap 1: Baru / Masuk -->
+                <div class="track-step-node">
+                  <div class="step-circle circle-done">&#10003;</div>
+                  <div class="step-title-text" style="color: #065f46;">Aduan Masuk</div>
+                  <div class="step-sub-text">24 Okt 09:30</div>
+                </div>
+                <div class="step-line-bar bar-done"></div>
+
+                <!-- Tahap 2: Diverifikasi -->
+                <div class="track-step-node">
+                  <div class="step-circle circle-done">&#10003;</div>
+                  <div class="step-title-text" style="color: #065f46;">Diverifikasi</div>
+                  <div class="step-sub-text">24 Okt 11:15</div>
+                </div>
+                <div class="step-line-bar bar-active"></div>
+
+                <!-- Tahap 3: Ditindaklanjuti (Aktif) -->
+                <div class="track-step-node">
+                  <div class="step-circle circle-active">3</div>
+                  <div class="step-title-text" style="color: #0284c7; font-weight: 800;">Ditindaklanjuti</div>
+                  <div class="step-sub-text" style="color: #0284c7; font-weight: 700;">Dalam Proses</div>
+                </div>
+                <div class="step-line-bar bar-wait"></div>
+
+                <!-- Tahap 4: Selesai -->
+                <div class="track-step-node">
+                  <div class="step-circle circle-wait">4</div>
+                  <div class="step-title-text" style="color: #94a3b8;">Selesai</div>
+                  <div class="step-sub-text">Tahap Akhir</div>
+                </div>
+              </div>
+
+              <!-- Rincian Data Pengaduan -->
+              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 8px 14px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px 12px; margin-top: 12px; font-size: 0.76rem; color: #334155;">
+                <div><strong style="color: #475569;">Jenis Aduan:</strong> <span style="color: #065f46; font-weight: 800;">Laut &amp; Pesisir</span></div>
+                <div><strong style="color: #475569;">Lokasi:</strong> Kec. Nubatukan &bull; Kel. Lewoleba Barat</div>
+                <div><strong style="color: #475569;">Waktu Kirim:</strong> 24 Oktober 2026, 09:30 WITA</div>
+                <div><strong style="color: #475569;">Tim Verifikator:</strong> <span style="color: #0284c7; font-weight: 700;">Regu B Pengawas Lingkungan DLH</span></div>
+              </div>
+
+              <!-- Catatan Resmi Tindak Lanjut DLH -->
+              <div style="background: #f0fdf4; border: 1.5px solid #a7f3d0; border-radius: 8px; padding: 10px 12px; margin-top: 12px; position: relative;">
+                <span class="pin-pointer pin-top-right-sm">3</span>
+                <div style="font-size: 0.74rem; font-weight: 800; color: #065f46; display: flex; align-items: center; gap: 6px; margin-bottom: 4px;">
+                  <span>&#128226;</span> <span>CATATAN PROGRES TINDAK LANJUT RESMI DLH KABUPATEN LEMBATA:</span>
+                </div>
+                <p style="font-size: 0.75rem; color: #166534; line-height: 1.5; margin: 0;">
+                  "Pemeriksaan lapangan selesai (skor checklist 5/5 terpenuhi). DLH telah mengerahkan 1 unit armada dump truck dan 6 personil regu kebersihan untuk membersihkan timbulan sampah plastik di sempadan Pantai Jeti, serta memasang papan peringatan larangan membuang limbah sembarangan."
+                </p>
+              </div>
+            </div>
+          </div>
+          <figcaption class="figure-caption">
+            <span class="fig-badge-num">Gambar 6.2</span>
+            <strong>Tampilan Antarmuka Pencarian &amp; Kartu Hasil Pelacakan Status Tiket Aduan oleh Warga.</strong>
+            <div class="figure-legend">
+              <div class="legend-item"><span class="pin-pointer pin-pointer-green">1</span> <span><strong>Kolom Pencarian Tiket:</strong> Cukup mengetikkan ID Tiket resmi lalu menekan tombol Lacak Tiket.</span></div>
+              <div class="legend-item"><span class="pin-pointer pin-pointer-green">2</span> <span><strong>Bilah Stepper 4 Tahap:</strong> Mengetahui posisi penanganan aduan secara instan dari masuk, verifikasi, ditindaklanjuti, hingga selesai.</span></div>
+              <div class="legend-item"><span class="pin-pointer pin-pointer-green">3</span> <span><strong>Catatan Resmi DLH:</strong> Membaca langsung uraian tindakan nyata petugas dan armada yang turun ke lokasi kejadian.</span></div>
+            </div>
+          </figcaption>
+        </figure>
+
+        <!-- TABEL 2.1: ARTI 5 STATUS PENGADUAN BAGI WARGA PELAPOR -->
+        <div style="background: #ffffff; border: 1.5px solid #cbd5e1; border-top: 4px solid #059669; border-radius: 10px; padding: 14px 16px; margin: 18px 0; box-shadow: 0 2px 8px rgba(0,0,0,0.04); page-break-inside: avoid; break-inside: avoid;">
+          <div style="font-weight: 800; color: #064e3b; font-size: 0.88rem; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+            <span>&#128203;</span> <span>TABEL 2.1: ARTI 5 STATUS ADUAN BAGI WARGA PELAPOR</span>
+          </div>
+          <p class="content-text" style="font-size: 0.8rem; margin-bottom: 10px; color: #475569;">
+            Agar warga tidak bingung dengan istilah kedinasan, berikut adalah tabel penjelasan sederhana makna dari setiap status yang muncul pada layar pelacakan tiket atau notifikasi WhatsApp:
+          </p>
+          <div class="table-responsive">
+            <table class="gov-table" style="font-size: 0.77rem;">
+              <thead>
+                <tr>
+                  <th style="width: 17%;">Status di Layar</th>
+                  <th style="width: 13%;">Warna Tanda</th>
+                  <th style="width: 25%;">Arti bagi Warga Pelapor</th>
+                  <th style="width: 25%;">Yang Sedang Dikerjakan DLH</th>
+                  <th style="width: 20%;">Yang Perlu Dilakukan Warga</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <span class="status-badge badge-status-baru">Baru / Masuk</span>
+                  </td>
+                  <td>Kuning Keemasan</td>
+                  <td>Laporan Anda sudah tersimpan aman di database resmi DLH Lembata dan siap diperiksa.</td>
+                  <td>Operator memeriksa kelengkapan isi aduan dan meneruskan ke Kepala Seksi Pengawasan LH.</td>
+                  <td>Simpan nomor tiket aduan Anda (<code>ADU-26-XXXX</code>). Tidak perlu mengirim laporan berulang.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="status-badge badge-status-verif">Diverifikasi</span>
+                  </td>
+                  <td>Ungu Indigo</td>
+                  <td>Proses pemeriksaan kebenaran laporan warga secara langsung di lapangan oleh Tim Pengawas DLH.</td>
+                  <td>Tim verifikator mengecek titik koordinat GPS, menguji kondisi fisik lapangan, dan mengambil foto bukti.</td>
+                  <td>Pastikan nomor WhatsApp Anda aktif bila petugas membutuhkan panduan patokan lokasi tambahan.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="status-badge badge-status-proses">Ditindaklanjuti</span>
+                  </td>
+                  <td>Biru Langit</td>
+                  <td>Masalah lingkungan terbukti ada di lapangan dan DLH sedang melakukan aksi nyata pemulihan.</td>
+                  <td>Armada truk sampah dikerahkan, sampel diuji, mediasi digelar, atau teguran tertulis diterbitkan.</td>
+                  <td>Pantau perkembangan catatan tindakan petugas lewat tautan pelacakan WhatsApp kapan saja.</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="status-badge badge-status-selesai">Selesai</span>
+                  </td>
+                  <td>Hijau Segar</td>
+                  <td>Penanganan aduan lingkungan telah tuntas diselesaikan dan Berita Acara resmi telah diterbitkan.</td>
+                  <td>Lokasi telah dibersihkan/dipulihkan, pihak terlapor menaati aturan, dan berkas diarsipkan.</td>
+                  <td>Penanganan selesai. Terima kasih atas peran aktif Anda menjaga kelestarian bumi Lembata!</td>
+                </tr>
+                <tr>
+                  <td>
+                    <span class="status-badge badge-status-ditolak">Ditolak</span>
+                  </td>
+                  <td>Merah Mawar</td>
+                  <td>Aduan tidak dapat diproses lebih lanjut oleh DLH dengan alasan kedinasan yang jelas.</td>
+                  <td>Pemeriksaan membuktikan data fiktif, bukan ranah DLH (perdata tanah), atau terlapor menolak diperiksa.</td>
+                  <td>Baca alasan penolakan pada catatan petugas di layar lacak. Hubungi DLH jika ada kekeliruan data.</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Kotak Edukasi Tips Warga -->
+        <div
+          style="background: #f0fdf4; border: 1.5px solid #a7f3d0; border-radius: 10px; padding: 14px; margin: 16px 0;">
+          <h4
+            style="font-size: 0.88rem; font-weight: 800; color: #064e3b; margin-bottom: 6px; display: flex; align-items: center; gap: 8px;">
+            <span>&#128161;</span> Tips Praktis untuk Warga:
+          </h4>
+          <p style="font-size: 0.82rem; color: #166534; line-height: 1.5; margin: 0;">
+            Jangan hapus pesan WhatsApp yang Anda terima dari <em>Layanan Aduan DLH Lembata</em>. Kapan pun Anda ingin
+            mengetahui apakah petugas sudah turun ke lokasi atau sedang membersihkan sampah/limbah, cukup ketuk tautan biru
+            di pesan tersebut. Anda tidak perlu repot mengetik ulang nomor laporan.
+          </p>
+        </div>
+
+        
+      </section>
+
+      <!-- =======================================================================
+           BAB VII: TANYA JAWAB PRAKTIS (FAQ WARGA) & KONTAK HELPLINE DLH
+           ======================================================================= -->
+      <section class="chapter-block" id="bab-7">
+        <header class="chapter-header">
+          <div class="chapter-header-left">
+            <span class="chapter-badge-roman">BAB VII</span>
+            <div class="chapter-title-text">TANYA JAWAB PRAKTIS (FAQ WARGA) &amp; KONTAK HELPLINE DLH</div>
+          </div>
+          <span class="chapter-tag">BANTUAN &amp; FAQ</span>
+        </header>
+
+        <h3 class="sub-heading">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+            <circle cx="12" cy="12" r="10"></circle>
+            <path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"></path>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+          7.1. Pertanyaan Umum &amp; Jawaban Praktis (FAQ Warga)
+        </h3>
+        <p class="content-text">
+          Berikut adalah jawaban cepat atas beberapa hal yang sering ditanyakan warga:
+        </p>
+
+        <div class="table-responsive" style="margin: 10px 0 16px 0;">
+          <table class="gov-table">
+            <thead>
+              <tr>
+                <th style="width: 34%;">Pertanyaan Warga</th>
+                <th style="width: 66%;">Penjelasan &amp; Solusi Praktis</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td><strong>Apakah nama &amp; nomor HP saya aman dari pihak yang dilaporkan?</strong></td>
+                <td><strong>Sangat aman.</strong> Sesuai UU Perlindungan Data Pribadi (UU No. 27/2022), identitas pelapor otomatis disamarkan (contoh: <em>Fr*** K***</em>) dan tidak dapat dilihat oleh publik maupun pihak yang dilaporkan. Hanya petugas DLH berwenang yang bisa melihat untuk konfirmasi penanganan.</td>
+              </tr>
+              <tr>
+                <td><strong>Apakah harus unduh aplikasi atau bikin akun dulu?</strong></td>
+                <td><strong>Tidak perlu sama sekali.</strong> Cukup buka website di HP (Chrome atau Safari), formulir langsung siap diisi dan dikirim tanpa syarat login/pendaftaran yang rumit.</td>
+              </tr>
+              <tr>
+                <td><strong>Bagaimana jika tombol Kunci GPS di HP saya tidak jalan?</strong></td>
+                <td>Pastikan izin lokasi peramban HP Anda aktif (<em>"Allow / Izinkan"</em>). Jika masih tidak bisa, Anda cukup pilih nama Kecamatan &amp; Desa, lalu tulis patokan tempat yang jelas (contoh: <em>"Di belakang dermaga jeti nelayan"</em>). Petugas tetap bisa menemukan lokasinya.</td>
+              </tr>
+              <tr>
+                <td><strong>Apakah boleh melapor kalau belum sempat ambil foto?</strong></td>
+                <td><strong>Boleh.</strong> Foto bukti sangat membantu petugas agar penanganan lebih cepat, namun bila situasi tidak memungkinkan mengambil foto, laporan tetap bisa dikirim dengan menuliskan penjelasan kondisi yang jelas.</td>
+              </tr>
+              <tr>
+                <td><strong>Bagaimana kalau saya tidak menerima pesan WhatsApp setelah kirim?</strong></td>
+                <td>Pastikan nomor WhatsApp yang dimasukkan aktif dan benar. Nomor laporan resmi Anda tetap tercatat di layar HP (contoh: <code>ADU-26-K8M4</code>). Catat nomor ini untuk mengecek status lewat menu <em>Lacak Status Aduan</em> di website.</td>
+              </tr>
+              <tr>
+                <td><strong>Berapa lama laporan ditanggapi petugas DLH?</strong></td>
+                <td>Laporan masuk langsung tercatat di dashboard petugas verifikator DLH. Petugas akan memverifikasi kelengkapan data dan menjadwalkan tindakan ke lapangan sesuai urutan antrean serta tingkat urgensi masalah lingkungan yang dilaporkan.</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      
+      </section>
+
+    </article>
+  </main>
+
+  <!-- =========================================================================
+       TOMBOL KEMBALI KE ATAS (SCREEN ONLY)
+       ========================================================================= -->
+  <a href="#cover" class="btn-scroll-top no-print" title="Kembali ke atas halaman">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 20px; height: 20px;">
+      <polyline points="18 15 12 9 6 15"></polyline>
+    </svg>
+  </a>
+
+  <script>
+    function updateLayoutButton(isNewspaper) {
+      const btn = document.getElementById('btnToggleLayout');
+      const icon = document.getElementById('layoutModeIcon');
+      const txt = document.getElementById('layoutModeText');
+      if (!btn || !icon || !txt) return;
+
+      if (isNewspaper) {
+        icon.textContent = '&#128240;';
+        txt.textContent = 'Mode Koran (2 Kolom)';
+        btn.setAttribute('title', 'Sedang aktif: Mode Koran (2 Kolom). Klik untuk beralih ke Mode Standar (1 Kolom).');
+        btn.classList.add('active-newspaper');
+      } else {
+        icon.textContent = '&#128196;';
+        txt.textContent = 'Mode Standar (1 Kolom)';
+        btn.setAttribute('title', 'Sedang aktif: Mode Standar (1 Kolom). Klik untuk beralih ke Mode Koran (2 Kolom).');
+        btn.classList.remove('active-newspaper');
+      }
+    }
+
+    function initLayoutMode() {
+      const savedMode = localStorage.getItem('ecoadu_manual_layout_mode');
+      if (savedMode === 'single') {
+        document.body.classList.add('layout-single-column');
+        updateLayoutButton(false);
+      } else {
+        document.body.classList.remove('layout-single-column');
+        updateLayoutButton(true);
+      }
+    }
+
+    function toggleLayoutMode() {
+      const isSingle = document.body.classList.toggle('layout-single-column');
+      localStorage.setItem('ecoadu_manual_layout_mode', isSingle ? 'single' : 'newspaper');
+      updateLayoutButton(!isSingle);
+    }
+
+    document.addEventListener('DOMContentLoaded', function () {
+      initLayoutMode();
+
+      document.querySelectorAll('a[href^="#"]').forEach(anchor => {
+        anchor.addEventListener('click', function (e) {
+          e.preventDefault();
+          const target = document.querySelector(this.getAttribute('href'));
+          if (target) {
+            target.scrollIntoView({
+              behavior: 'smooth',
+              block: 'start'
+            });
+          }
+        });
+      });
+    });
+  </script>
+</body>
+
+</html>

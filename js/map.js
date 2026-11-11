@@ -210,6 +210,29 @@ class LembataMapEngine {
     });
   }
 
+  /* Cocokkan status aduan dengan filter (kompatibel dengan 5 status baku SOP 2.0 & alias lama) */
+  matchesStatus(itemStatus, filterStatus) {
+    if (!filterStatus || filterStatus === 'all') return true;
+    const isSt = String(itemStatus || 'Baru').toLowerCase();
+    const target = filterStatus.toLowerCase();
+    if (target === 'baru') {
+      return isSt.includes('baru') || isSt === 'aduan diterima' || isSt.includes('masuk');
+    }
+    if (target === 'diverifikasi') {
+      return isSt.includes('verif') || isSt.includes('sedang');
+    }
+    if (target === 'ditindaklanjuti') {
+      return isSt.includes('tindak') || isSt.includes('penanganan') || isSt.includes('proses');
+    }
+    if (target === 'selesai') {
+      return isSt.includes('selesai') || isSt.includes('tuntas');
+    }
+    if (target === 'ditolak') {
+      return isSt.includes('tolak');
+    }
+    return isSt.includes(target);
+  }
+
   /* Render Marker di Peta Sesuai Filter */
   renderMarkers() {
     if (!this.map || !this.markersGroup) return;
@@ -220,7 +243,7 @@ class LembataMapEngine {
     const data = window.aduanStore ? window.aduanStore.getAll() : [];
 
     const filtered = data.filter(item => {
-      const matchStatus = this.activeFilter.status === 'all' || item.status === this.activeFilter.status;
+      const matchStatus = this.matchesStatus(item.status, this.activeFilter.status);
       const matchKec = this.activeFilter.kecamatan === 'all' || item.kecamatan === this.activeFilter.kecamatan;
       const matchJenis = this.activeFilter.jenis === 'all' || item.jenisPencemaran === this.activeFilter.jenis;
       return matchStatus && matchKec && matchJenis;
@@ -600,7 +623,7 @@ class LembataMapEngine {
 
     const data = window.aduanStore ? window.aduanStore.getAll() : [];
     const filtered = data.filter(item => {
-      const matchStatus = this.activeFilter.status === 'all' || item.status === this.activeFilter.status;
+      const matchStatus = this.matchesStatus(item.status, this.activeFilter.status);
       const matchKec = this.activeFilter.kecamatan === 'all' || item.kecamatan === this.activeFilter.kecamatan;
       const matchJenis = this.activeFilter.jenis === 'all' || item.jenisPencemaran === this.activeFilter.jenis;
       return matchStatus && matchKec && matchJenis;
