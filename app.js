@@ -711,7 +711,7 @@ class DLHApp {
   }
 
   /* ===================================================================
-     3A. AUTO-ALIGNMENT PIN PETA BERDASARKAN KECAMATAN & DESA (PRESISI TINGGI)
+     3A. PENYELARASAN PIN PETA BERDASARKAN KECAMATAN & DESA
      =================================================================== */
   updateCitizenPinForLocation(kec, desa) {
     const coordsMap = {
@@ -791,7 +791,7 @@ class DLHApp {
       if (hasLocationChosen) {
         gpsMsg.style.display = 'block';
         gpsMsg.style.color = '#15803d';
-        gpsMsg.textContent = `🎯 Presisi Tinggi: Pin diselaraskan otomatis ke ${locationLabel} (${fixedLat}, ${fixedLng})`;
+        gpsMsg.textContent = `📍 Pin diarahkan ke ${locationLabel} (${fixedLat}, ${fixedLng})`;
       } else {
         gpsMsg.style.display = 'none';
         gpsMsg.textContent = '';
@@ -842,17 +842,17 @@ class DLHApp {
         if (gpsMsg) {
           gpsMsg.style.display = 'block';
           gpsMsg.style.color = '#e11d48';
-          gpsMsg.textContent = 'Perangkat Anda belum mendukung sensor satelit GPS.';
+          gpsMsg.textContent = 'Perangkat atau peramban Anda belum mendukung fitur lokasi.';
         }
         return;
       }
 
       btnGps.disabled = true;
-      btnGps.innerHTML = '<span>⏳</span> Mengunci Satelit GPS Presisi Tinggi...';
+      btnGps.innerHTML = '<span>⏳</span> Mendeteksi Lokasi Perangkat...';
       if (gpsMsg) {
         gpsMsg.style.display = 'block';
         gpsMsg.style.color = '#0284c7';
-        gpsMsg.textContent = 'Menghubungkan satelit GPS & meningkatkan ketepatan koordinat...';
+        gpsMsg.textContent = 'Sedang membaca titik koordinat perangkat...';
       }
 
       let bestPosition = null;
@@ -887,14 +887,14 @@ class DLHApp {
         }
 
         btnGps.disabled = false;
-        btnGps.innerHTML = '<span>✅</span> Titik GPS Terkunci';
+        btnGps.innerHTML = '<span>✅</span> Lokasi Terdeteksi';
         btnGps.style.background = '#dcfce7';
         btnGps.style.borderColor = '#16a34a';
         btnGps.style.color = '#15803d';
 
         if (gpsMsg) {
           gpsMsg.style.color = '#15803d';
-          gpsMsg.textContent = `🎯 Sangat Akurat! Koordinat: ${lat}, ${lng} (Tingkat Presisi: ±${accuracy} meter)`;
+          gpsMsg.textContent = `📍 Titik koordinat terdeteksi: ${lat}, ${lng} (Perkiraan toleransi: ±${accuracy} meter)`;
         }
       };
 
@@ -928,13 +928,13 @@ class DLHApp {
             (err) => {
               if (watchId !== null) navigator.geolocation.clearWatch(watchId);
               btnGps.disabled = false;
-              btnGps.innerHTML = '<span>🎯</span> Kunci GPS Presisi Tinggi';
+              btnGps.innerHTML = '<span>📍</span> Ambil Lokasi Perangkat';
               btnGps.style.background = '';
               btnGps.style.borderColor = '';
               btnGps.style.color = '';
               if (gpsMsg) {
                 gpsMsg.style.color = '#d97706';
-                gpsMsg.textContent = 'Sinyal satelit belum terkunci atau izin lokasi ditolak. Anda tetap dapat menggeser pin merah di peta untuk menentukan lokasi persis.';
+                gpsMsg.textContent = 'Lokasi perangkat belum berhasil diperoleh atau izin lokasi belum aktif. Anda dapat menggeser pin pada peta ke titik kejadian.';
               }
             },
             { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
@@ -1916,7 +1916,7 @@ class DLHApp {
 
         this.showToast(`💾 Laporan ${newRecord.id} tersimpan di arsip database DLH Lembata!`, 'success');
 
-        // Link Google Maps koordinat presisi
+        // Link Google Maps titik koordinat
         const finalLat = newRecord.lat || lat;
         const finalLng = newRecord.lng || lng;
         const mapsLink = (finalLat && finalLng)
