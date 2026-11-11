@@ -2099,6 +2099,416 @@
     .bar-done { background: #059669; }
     .bar-active { background: #0284c7; }
     .bar-wait { background: #cbd5e1; }
+
+    /* ==========================================================================
+       16. OPTIMASI TAMPILAN MOBILE KHUSUS PANDUAN WARGA (RINGKAS & HEMAT RUANG)
+       ========================================================================== */
+    .warga-highlight-grid {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 10px;
+      margin: 14px 0 16px 0;
+      page-break-inside: avoid;
+      break-inside: avoid;
+    }
+    .warga-hl-card {
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .warga-hl-card.hl-green { background: #f0fdf4; border: 1.5px solid #a7f3d0; }
+    .warga-hl-card.hl-blue { background: #eff6ff; border: 1.5px solid #bfdbfe; }
+    .warga-hl-card.hl-red { background: #fef2f2; border: 1.5px solid #fecaca; }
+    .warga-hl-card.hl-purple { background: #fdf4ff; border: 1.5px solid #f5d0fe; }
+    .warga-hl-icon { font-size: 1.4rem; flex-shrink: 0; }
+    .warga-hl-title { font-weight: 800; font-size: 0.82rem; }
+    .hl-green .warga-hl-title { color: #065f46; }
+    .hl-blue .warga-hl-title { color: #1e40af; }
+    .hl-red .warga-hl-title { color: #991b1b; }
+    .hl-purple .warga-hl-title { color: #86198f; }
+    .warga-hl-desc { font-size: 0.72rem; }
+    .hl-green .warga-hl-desc { color: #047857; }
+    .hl-blue .warga-hl-desc { color: #2563eb; }
+    .hl-red .warga-hl-desc { color: #b91c1c; }
+    .hl-purple .warga-hl-desc { color: #a21caf; }
+
+    .poin1-cards-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .mini-gov-box {
+      border-radius: 8px;
+      padding: 10px 12px;
+    }
+    .mini-gov-box.bg-mint { background: #f0fdf4; border: 1.5px solid #a7f3d0; }
+    .mini-gov-box.bg-blue { background: #eff6ff; border: 1.5px solid #bfdbfe; }
+    .mini-gov-box.bg-red { background: #fef2f2; border: 1.5px solid #fecaca; }
+    .mgb-head { display: flex; align-items: center; gap: 8px; margin-bottom: 4px; }
+    .mgb-head strong { font-size: 0.84rem; }
+    .bg-mint .mgb-head strong { color: #065f46; }
+    .bg-blue .mgb-head strong { color: #1e40af; }
+    .bg-red .mgb-head strong { color: #991b1b; }
+    .mini-gov-box p { font-size: 0.78rem; margin: 0; line-height: 1.45; }
+    .bg-mint p { color: #047857; }
+    .bg-blue p { color: #1d4ed8; }
+    .bg-red p { color: #7f1d1d; }
+
+    .kategori-grid-compact {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 8px;
+      margin: 10px 0 14px 0;
+    }
+    .kat-card {
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 8px 10px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+    }
+    .kat-head { display: flex; align-items: center; gap: 6px; margin-bottom: 3px; font-size: 0.82rem; color: #0f172a; }
+    .kat-card p { font-size: 0.75rem; color: #475569; margin: 0; line-height: 1.4; }
+
+    .steps-compact-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 10px 0 12px 0;
+    }
+    .step-compact-item {
+      display: flex;
+      gap: 10px;
+      background: #ffffff;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px 12px;
+      align-items: flex-start;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.03);
+    }
+    .step-badge {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #064e3b;
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .step-content { flex: 1; }
+    .step-content strong { font-size: 0.84rem; color: #0f172a; display: block; margin-bottom: 2px; }
+    .step-content p { font-size: 0.77rem; color: #475569; margin: 0; line-height: 1.4; }
+
+    .quick-action-strip {
+      background: #f0fdf4;
+      border: 1.5px solid #a7f3d0;
+      border-radius: 8px;
+      padding: 8px 12px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      font-size: 0.78rem;
+      color: #065f46;
+      font-weight: 600;
+    }
+    .btn-quick-portal {
+      background: #059669;
+      color: #ffffff !important;
+      font-weight: 700;
+      font-size: 0.74rem;
+      padding: 5px 10px;
+      border-radius: 6px;
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .lacak-card-compact {
+      background: #f8fafc;
+      border: 1.5px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 10px 12px;
+      margin: 8px 0;
+    }
+    .lacak-ol { margin: 0; padding-left: 18px; font-size: 0.77rem; color: #334155; line-height: 1.5; }
+    .lacak-ol li { margin-bottom: 4px; }
+
+    .status-cards-list {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin: 8px 0;
+    }
+    .status-card-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      border: 1px solid #e2e8f0;
+      background: #ffffff;
+    }
+    .status-card-item.st-baru { background: #f0f9ff; border-color: #bae6fd; }
+    .status-card-item.st-verif { background: #fefce8; border-color: #fef08a; }
+    .status-card-item.st-tindak { background: #fff7ed; border-color: #fed7aa; }
+    .status-card-item.st-selesai { background: #f0fdf4; border-color: #bbf7d0; }
+    .status-card-item.st-tolak { background: #fef2f2; border-color: #fecaca; }
+    .st-badge {
+      font-weight: 800;
+      font-size: 0.74rem;
+      white-space: nowrap;
+      min-width: 120px;
+    }
+    .st-baru .st-badge { color: #0284c7; }
+    .st-verif .st-badge { color: #b45309; }
+    .st-tindak .st-badge { color: #c2410c; }
+    .st-selesai .st-badge { color: #15803d; }
+    .st-tolak .st-badge { color: #b91c1c; }
+    .st-desc {
+      font-size: 0.75rem;
+      color: #334155;
+      line-height: 1.35;
+      flex: 1;
+    }
+
+    .kontak-compact-card {
+      background: #f8fafc;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px;
+      margin: 8px 0;
+    }
+    .kontak-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 8px;
+      font-size: 0.77rem;
+      color: #334155;
+      padding: 6px 0;
+      border-bottom: 1px dashed #e2e8f0;
+    }
+    .kontak-row:last-of-type { border-bottom: none; }
+    .kontak-row .k-icon { font-size: 1.1rem; flex-shrink: 0; line-height: 1.2; }
+    .kontak-row strong { color: #0f172a; }
+    .badge-resmi {
+      background: #ecfdf5;
+      color: #047857;
+      font-size: 0.65rem;
+      font-weight: 700;
+      padding: 2px 5px;
+      border-radius: 4px;
+      border: 1px solid #a7f3d0;
+    }
+    .kontak-actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 10px;
+    }
+    .btn-wa-direct {
+      flex: 1;
+      background: #25d366;
+      color: #ffffff !important;
+      font-weight: 700;
+      font-size: 0.76rem;
+      padding: 8px 12px;
+      border-radius: 6px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+    .btn-form-direct {
+      flex: 1;
+      background: #064e3b;
+      color: #ffffff !important;
+      font-weight: 700;
+      font-size: 0.76rem;
+      padding: 8px 12px;
+      border-radius: 6px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+    }
+
+    /* ── ATURAN MOBILE TAMPILAN HEMAT RUANG (MAX-WIDTH: 640px) ── */
+    @media screen and (max-width: 640px) {
+      .top-bar-inner {
+        padding: 8px 10px;
+        gap: 8px;
+      }
+      .brand-quick img {
+        width: 22px;
+        height: 22px;
+      }
+      .brand-quick-title {
+        font-size: 0.8rem;
+      }
+      .brand-quick-badge {
+        font-size: 0.6rem;
+        padding: 1px 4px;
+      }
+      .brand-quick-sub {
+        display: none !important;
+      }
+      .btn-top-nav {
+        padding: 5px 8px;
+        font-size: 0.72rem;
+        gap: 3px;
+      }
+      .btn-top-print span:last-child {
+        display: none; /* Icon-only cetak di mobile */
+      }
+
+      .document-page-wrap {
+        margin: 6px auto 20px !important;
+        padding: 0 6px !important;
+      }
+      .document-paper {
+        padding: 12px 10px 20px !important;
+        border-radius: 10px !important;
+      }
+
+      .document-header-box {
+        padding: 10px 10px !important;
+        margin-bottom: 8px !important;
+        border-radius: 8px !important;
+      }
+      .doc-badge-pill {
+        font-size: 0.64rem !important;
+        padding: 2px 6px !important;
+        margin-bottom: 4px !important;
+      }
+      .document-main-title {
+        font-size: 1.05rem !important;
+        line-height: 1.3 !important;
+        margin-bottom: 4px !important;
+      }
+      .document-sub-title {
+        font-size: 0.72rem !important;
+        line-height: 1.35 !important;
+      }
+
+      .warga-highlight-grid {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 6px !important;
+        margin: 8px 0 10px 0 !important;
+      }
+      .warga-hl-card {
+        padding: 6px 8px !important;
+        gap: 6px !important;
+      }
+      .warga-hl-icon {
+        font-size: 1.15rem !important;
+      }
+      .warga-hl-title {
+        font-size: 0.75rem !important;
+      }
+      .warga-hl-desc {
+        font-size: 0.65rem !important;
+        line-height: 1.25 !important;
+      }
+
+      .toc-card {
+        padding: 8px 10px !important;
+        margin-bottom: 10px !important;
+        border-radius: 8px !important;
+      }
+      .toc-title {
+        font-size: 0.78rem !important;
+        margin-bottom: 6px !important;
+      }
+      .toc-grid {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 4px !important;
+      }
+      .toc-item {
+        padding: 5px 6px !important;
+        border-radius: 5px !important;
+      }
+      .toc-num {
+        font-size: 0.62rem !important;
+        padding: 1px 3px !important;
+      }
+      .toc-label {
+        font-size: 0.7rem !important;
+        font-weight: 700 !important;
+        line-height: 1.25 !important;
+      }
+      .toc-desc {
+        display: none !important; /* Sangat hemat ruang di mobile */
+      }
+
+      .chapter-block {
+        margin-bottom: 12px !important;
+      }
+      .chapter-header {
+        padding: 6px 8px !important;
+        margin-bottom: 8px !important;
+        border-radius: 6px !important;
+      }
+      .chapter-badge-roman {
+        font-size: 0.68rem !important;
+        padding: 1px 5px !important;
+      }
+      .chapter-title-text {
+        font-size: 0.76rem !important;
+        font-weight: 800 !important;
+        line-height: 1.2 !important;
+      }
+      .chapter-tag {
+        display: none !important;
+      }
+
+      .poin1-cards-grid {
+        grid-template-columns: 1fr !important;
+        gap: 6px !important;
+      }
+      .kategori-grid-compact {
+        grid-template-columns: 1fr !important;
+        gap: 5px !important;
+      }
+      .kat-card {
+        padding: 6px 8px !important;
+      }
+      .kat-head {
+        font-size: 0.78rem !important;
+      }
+      .kat-card p {
+        font-size: 0.72rem !important;
+      }
+
+      .status-card-item {
+        flex-direction: column !important;
+        align-items: flex-start !important;
+        gap: 3px !important;
+        padding: 6px 8px !important;
+      }
+      .st-badge {
+        font-size: 0.72rem !important;
+        min-width: auto !important;
+      }
+      .st-desc {
+        font-size: 0.7rem !important;
+      }
+
+      .kontak-actions {
+        flex-direction: column !important;
+        gap: 6px !important;
+      }
+    }
   </style>
 </head>
 
@@ -2149,48 +2559,51 @@
            ======================================================================= -->
       <section class="document-header-box" id="cover">
         <div class="doc-badge-pill">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            style="width: 13px; height: 13px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px;">
             <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
             <polyline points="14 2 14 8 20 8"></polyline>
-            <line x1="16" y1="13" x2="8" y2="13"></line>
-            <line x1="16" y1="17" x2="8" y2="17"></line>
-            <polyline points="10 9 9 9 8 9"></polyline>
           </svg>
-          BUKU PANDUAN PENGGUNAAN KHUSUS MASYARAKAT
+          PANDUAN RESMI MASYARAKAT
         </div>
         <h1 class="document-main-title">
-          PANDUAN LENGKAP PENGGUNAAN PORTAL PENGADUAN LINGKUNGAN HIDUP<br>
-          (ECOADU LEMBATA)
+          Panduan Pengaduan Lingkungan Hidup (ECOADU)
         </h1>
         <p class="document-sub-title" style="margin-bottom: 0;">
-          Saluran Resmi Penyampaian Laporan Dugaan Pencemaran dan Kerusakan Lingkungan Hidup yang Mudah, Aman, Terbuka, dan Bebas Biaya untuk Seluruh Warga Kabupaten Lembata.
+          Saluran resmi pelaporan dugaan pencemaran lingkungan Dinas Lingkungan Hidup Kabupaten Lembata yang mudah, aman, dan bebas biaya.
         </p>
       </section>
 
       <!-- =======================================================================
            4 KARTU KEUNGGULAN LAYANAN UNTUK WARGA
            ======================================================================= -->
-      <div style="display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 12px 0 16px 0; page-break-inside: avoid; break-inside: avoid;">
-        <div style="background: #f0fdf4; border: 1.5px solid #a7f3d0; border-radius: 8px; padding: 10px; text-align: center;">
-          <div style="font-size: 1.2rem; margin-bottom: 3px;">&#128176;</div>
-          <div style="font-weight: 800; color: #065f46; font-size: 0.82rem;">100% Bebas Biaya</div>
-          <div style="font-size: 0.72rem; color: #047857;">Gratis &amp; bebas pulsa untuk seluruh warga.</div>
+      <div class="warga-highlight-grid">
+        <div class="warga-hl-card hl-green">
+          <span class="warga-hl-icon">&#128176;</span>
+          <div>
+            <div class="warga-hl-title">100% Bebas Biaya</div>
+            <div class="warga-hl-desc">Gratis untuk seluruh warga.</div>
+          </div>
         </div>
-        <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 8px; padding: 10px; text-align: center;">
-          <div style="font-size: 1.2rem; margin-bottom: 3px;">&#128242;</div>
-          <div style="font-weight: 800; color: #1e40af; font-size: 0.82rem;">Tanpa Instal Aplikasi</div>
-          <div style="font-size: 0.72rem; color: #2563eb;">Langsung buka di browser HP Android / iPhone.</div>
+        <div class="warga-hl-card hl-blue">
+          <span class="warga-hl-icon">&#128242;</span>
+          <div>
+            <div class="warga-hl-title">Tanpa Aplikasi</div>
+            <div class="warga-hl-desc">Buka di browser Android/iPhone.</div>
+          </div>
         </div>
-        <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 8px; padding: 10px; text-align: center;">
-          <div style="font-size: 1.2rem; margin-bottom: 3px;">&#128274;</div>
-          <div style="font-weight: 800; color: #991b1b; font-size: 0.82rem;">Privasi Aman (UU PDP)</div>
-          <div style="font-size: 0.72rem; color: #b91c1c;">Nama Anda disensor di tampilan publik.</div>
+        <div class="warga-hl-card hl-red">
+          <span class="warga-hl-icon">&#128274;</span>
+          <div>
+            <div class="warga-hl-title">Privasi Aman (UU PDP)</div>
+            <div class="warga-hl-desc">Nama disensor di publik.</div>
+          </div>
         </div>
-        <div style="background: #fdf4ff; border: 1.5px solid #f5d0fe; border-radius: 8px; padding: 10px; text-align: center;">
-          <div style="font-size: 1.2rem; margin-bottom: 3px;">&#128172;</div>
-          <div style="font-weight: 800; color: #86198f; font-size: 0.82rem;">Kabar via WhatsApp</div>
-          <div style="font-size: 0.72rem; color: #a21caf;">Perkembangan laporan dikirim otomatis ke HP.</div>
+        <div class="warga-hl-card hl-purple">
+          <span class="warga-hl-icon">&#128172;</span>
+          <div>
+            <div class="warga-hl-title">Update WhatsApp</div>
+            <div class="warga-hl-desc">Kabar dikirim ke nomor HP.</div>
+          </div>
         </div>
       </div>
 
@@ -2199,8 +2612,7 @@
            ======================================================================= -->
       <section class="toc-card" id="daftar-isi">
         <div class="toc-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-            style="width: 20px; height: 20px;">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;">
             <line x1="8" y1="6" x2="21" y2="6"></line>
             <line x1="8" y1="12" x2="21" y2="12"></line>
             <line x1="8" y1="18" x2="21" y2="18"></line>
@@ -2208,55 +2620,55 @@
             <line x1="3" y1="12" x2="3.01" y2="12"></line>
             <line x1="3" y1="18" x2="3.01" y2="18"></line>
           </svg>
-          <span>Poin-Poin Penting Panduan Pengaduan Warga</span>
+          <span>Daftar Isi &amp; Menu Cepat</span>
         </div>
 
         <div class="toc-grid">
           <a href="#poin-1" class="toc-item">
             <span class="toc-num">POIN 1</span>
             <div>
-              <div class="toc-label">Dasar Layanan &amp; Jaminan Privasi (UU PDP)</div>
-              <div class="toc-desc">100% bebas biaya, tanpa akun/login, identitas pelapor dilindungi penuh oleh hukum.</div>
+              <div class="toc-label">Dasar Layanan &amp; Privasi (UU PDP)</div>
+              <div class="toc-desc">Bebas biaya, tanpa login, privasi dijamin.</div>
             </div>
           </a>
 
           <a href="#poin-2" class="toc-item">
             <span class="toc-num">POIN 2</span>
             <div>
-              <div class="toc-label">6 Jenis Masalah Lingkungan yang Dapat Dilaporkan</div>
-              <div class="toc-desc">Sampah liar, limbah cair, asap polusi, pesisir laut, perusakan mangrove, bau/bising.</div>
+              <div class="toc-label">6 Kategori Masalah Lingkungan</div>
+              <div class="toc-desc">Sampah liar, air/sungai, udara, pesisir, dll.</div>
             </div>
           </a>
 
           <a href="#poin-3" class="toc-item">
             <span class="toc-num">POIN 3</span>
             <div>
-              <div class="toc-label">Alur 3 Langkah Mudah Mengirim Pengaduan</div>
-              <div class="toc-desc">Isi identitas diri, tentukan lokasi &amp; foto bukti, centang pernyataan lalu kirim.</div>
+              <div class="toc-label">3 Langkah Mengirim Laporan</div>
+              <div class="toc-desc">Identitas, lokasi kejadian &amp; bukti foto.</div>
             </div>
           </a>
 
           <a href="#poin-4" class="toc-item">
             <span class="toc-num">POIN 4</span>
             <div>
-              <div class="toc-label">Cara Melacak Status Pengaduan (Lacak Tiket)</div>
-              <div class="toc-desc">Masukkan Nomor Tiket atau No. WhatsApp untuk memantau proses verifikasi tim DLH.</div>
+              <div class="toc-label">Cara Melacak Status Aduan</div>
+              <div class="toc-desc">Pantau tiket via nomor tiket / WA.</div>
             </div>
           </a>
 
           <a href="#poin-5" class="toc-item">
             <span class="toc-num">POIN 5</span>
             <div>
-              <div class="toc-label">Arti 5 Status Penanganan Resmi DLH Lembata</div>
-              <div class="toc-desc">Penjelasan resmi status: Baru, Diverifikasi, Ditindaklanjuti, Selesai, dan Ditolak.</div>
+              <div class="toc-label">Arti 5 Status Penanganan Resmi</div>
+              <div class="toc-desc">Baru, Diverifikasi, Tindak lanjut, Selesai, Tolak.</div>
             </div>
           </a>
 
           <a href="#poin-6" class="toc-item">
             <span class="toc-num">POIN 6</span>
             <div>
-              <div class="toc-label">Kontak Helpline &amp; Layanan Bantuan DLH Lembata</div>
-              <div class="toc-desc">WhatsApp 0822-3458-2769, alamat kantor Lewoleba, dan jam layanan pengawasan.</div>
+              <div class="toc-label">Kontak Helpline &amp; Bantuan DLH</div>
+              <div class="toc-desc">Alamat Lewoleba, WA resmi &amp; jam layanan.</div>
             </div>
           </a>
         </div>
@@ -2274,40 +2686,34 @@
           <span class="chapter-tag">KEAMANAN &amp; PRIVASI</span>
         </header>
 
-        <p class="content-text">
+        <p class="content-text" style="margin-bottom: 8px; font-size: 0.8rem;">
           Portal <strong>ECOADU LEMBATA</strong> adalah saluran resmi Pemerintah Kabupaten Lembata melalui Dinas Lingkungan Hidup (DLH) untuk menerima laporan dugaan pencemaran dan kerusakan lingkungan secara cepat, transparan, dan dapat dipertanggungjawabkan.
         </p>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin: 12px 0 16px 0;">
-          <div style="background: #f0fdf4; border: 1.5px solid #a7f3d0; border-radius: 10px; padding: 14px 16px;">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-              <span style="font-size: 1.2rem;">&#128176;</span>
-              <strong style="color: #065f46; font-size: 0.88rem;">100% Bebas Biaya (Gratis)</strong>
+        <div class="poin1-cards-grid">
+          <div class="mini-gov-box bg-mint">
+            <div class="mgb-head">
+              <span>&#128176;</span>
+              <strong>100% Bebas Biaya (Gratis)</strong>
             </div>
-            <p style="font-size: 0.8rem; color: #047857; margin: 0; line-height: 1.5;">
-              Seluruh tahapan pengaduan, mulai dari pengiriman laporan, peninjauan lapangan oleh Pejabat Pengawas Lingkungan Hidup (PPLH), hingga penanganan tuntas <strong>tidak dipungut biaya apapun</strong>.
-            </p>
+            <p>Seluruh tahapan pengaduan, peninjauan lapangan oleh Pejabat Pengawas Lingkungan Hidup (PPLH), hingga penanganan tuntas <strong>tidak dipungut biaya apapun</strong>.</p>
           </div>
 
-          <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 10px; padding: 14px 16px;">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-              <span style="font-size: 1.2rem;">&#128242;</span>
-              <strong style="color: #1e40af; font-size: 0.88rem;">Tanpa Instalasi Aplikasi / Login Akun</strong>
+          <div class="mini-gov-box bg-blue">
+            <div class="mgb-head">
+              <span>&#128242;</span>
+              <strong>Tanpa Instal Aplikasi / Login Akun</strong>
             </div>
-            <p style="font-size: 0.8rem; color: #1d4ed8; margin: 0; line-height: 1.5;">
-              Warga tidak perlu mengunduh aplikasi atau membuat akun dengan kata sandi yang rumit. Formulir dapat dibuka langsung melalui peramban HP Android maupun iPhone.
-            </p>
+            <p>Formulir dapat diakses langsung melalui peramban HP Android maupun iPhone tanpa perlu registrasi akun atau kata sandi yang rumit.</p>
           </div>
         </div>
 
-        <div style="background: #fef2f2; border: 1.5px solid #fecaca; border-radius: 10px; padding: 14px 16px; margin: 12px 0;">
-          <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-            <span style="font-size: 1.2rem;">&#128274;</span>
-            <strong style="color: #991b1b; font-size: 0.88rem;">Jaminan Kerahasiaan Data Pribadi Sesuai UU No. 27 Tahun 2022 (UU PDP)</strong>
+        <div class="mini-gov-box bg-red" style="margin-top: 6px;">
+          <div class="mgb-head">
+            <span>&#128274;</span>
+            <strong>Jaminan Kerahasiaan Data Pribadi Sesuai UU No. 27 Tahun 2022 (UU PDP)</strong>
           </div>
-          <p style="font-size: 0.8rem; color: #7f1d1d; margin: 0; line-height: 1.55;">
-            Identitas pelapor (nama, nomor telepon, dan data pribadi lainnya) <strong>dijamin kerahasiaannya oleh Pemerintah Kabupaten Lembata</strong>. Nama pelapor disamarkan di tampilan publik (contoh: <em>Fr*** K***</em>) dan tidak pernah diberikan kepada pihak terlapor. Data hanya digunakan oleh petugas verifikator DLH untuk kebutuhan klarifikasi dan pelaporan tindak lanjut.
-          </p>
+          <p>Identitas pelapor (nama, nomor telepon, dan data pribadi lainnya) <strong>dijamin kerahasiaannya oleh Pemerintah Kabupaten Lembata</strong>. Nama pelapor disamarkan di tampilan publik (contoh: <em>Fr*** K***</em>) dan tidak pernah diberikan kepada pihak terlapor. Data hanya digunakan oleh petugas verifikator DLH untuk kebutuhan verifikasi dan tindak lanjut.</p>
         </div>
       </section>
 
@@ -2323,75 +2729,34 @@
           <span class="chapter-tag">KATEGORI LAPORAN</span>
         </header>
 
-        <p class="content-text">
-          Dinas Lingkungan Hidup Kabupaten Lembata memfasilitasi penanganan untuk 6 kelompok dugaan pencemaran dan perusakan lingkungan hidup berikut:
+        <p class="content-text" style="margin-bottom: 8px; font-size: 0.8rem;">
+          Dinas Lingkungan Hidup Kabupaten Lembata memfasilitasi penanganan untuk 6 kelompok dugaan pencemaran dan perusakan lingkungan hidup:
         </p>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 10px; margin: 14px 0 16px 0;">
-          <!-- 1. Sampah Liar -->
-          <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 9px; padding: 12px; box-shadow: var(--shadow-sm);">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
-              <span style="font-size: 1.2rem;">&#128465;&#65039;</span>
-              <strong style="color: #0f172a; font-size: 0.84rem;">1. Sampah Liar &amp; Pembakaran Terbuka</strong>
-            </div>
-            <p style="font-size: 0.77rem; color: #475569; margin: 0; line-height: 1.45;">
-              Penumpukan sampah liar di fasilitas umum/jalan/pantai, pembuangan sampah tidak berizin, serta pembakaran sampah yang menghasilkan asap tebal berbahaya.
-            </p>
+        <div class="kategori-grid-compact">
+          <div class="kat-card">
+            <div class="kat-head"><span>&#127754;</span> <strong>1. Laut &amp; Pesisir</strong></div>
+            <p>Sampah pantai wisata, tumpahan solar/minyak perahu, pengeboman/peracunan ikan, atau perusakan terumbu karang.</p>
           </div>
-
-          <!-- 2. Limbah Air -->
-          <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 9px; padding: 12px; box-shadow: var(--shadow-sm);">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
-              <span style="font-size: 1.2rem;">&#128167;</span>
-              <strong style="color: #0f172a; font-size: 0.84rem;">2. Pencemaran Air &amp; Limbah Cair</strong>
-            </div>
-            <p style="font-size: 0.77rem; color: #475569; margin: 0; line-height: 1.45;">
-              Pembuangan limbah oli bekas bengkel, limbah usaha/industri ke parit, got pemukiman, sungai, mata air warga, atau ke wilayah pesisir tanpa IPAL.
-            </p>
+          <div class="kat-card">
+            <div class="kat-head"><span>&#128465;&#65039;</span> <strong>2. Sampah Ilegal &amp; Bau</strong></div>
+            <p>Tumpukan sampah liar di fasilitas umum/jalan/pantai, pembakaran sampah pekat, atau bau busuk peternakan/limbah.</p>
           </div>
-
-          <!-- 3. Polusi Udara -->
-          <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 9px; padding: 12px; box-shadow: var(--shadow-sm);">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
-              <span style="font-size: 1.2rem;">&#128168;</span>
-              <strong style="color: #0f172a; font-size: 0.84rem;">3. Polusi Udara &amp; Asap Tebal</strong>
-            </div>
-            <p style="font-size: 0.77rem; color: #475569; margin: 0; line-height: 1.45;">
-              Asap cerobong usaha industri yang pekat, pembakaran lahan terbuka liar, atau sebaran debu operasional yang mengganggu kesehatan pernapasan warga.
-            </p>
+          <div class="kat-card">
+            <div class="kat-head"><span>&#128167;</span> <strong>3. Air &amp; Sungai</strong></div>
+            <p>Pembuangan oli bekas/limbah cair usaha ke parit, got pemukiman, sungai, atau mata air warga tanpa IPAL.</p>
           </div>
-
-          <!-- 4. Pesisir & Laut -->
-          <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 9px; padding: 12px; box-shadow: var(--shadow-sm);">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
-              <span style="font-size: 1.2rem;">&#127754;</span>
-              <strong style="color: #0f172a; font-size: 0.84rem;">4. Pencemaran Pesisir, Pantai &amp; Laut</strong>
-            </div>
-            <p style="font-size: 0.77rem; color: #475569; margin: 0; line-height: 1.45;">
-              Sampah plastik di garis pantai wisata/nelayan, tumpahan minyak/solar perahu, pengeboman/peracunan ikan, atau perusakan terumbu karang.
-            </p>
+          <div class="kat-card">
+            <div class="kat-head"><span>&#128168;</span> <strong>4. Udara &amp; Asap</strong></div>
+            <p>Asap cerobong usaha industri yang pekat, pembakaran terbuka liar, atau sebaran debu berlebih yang mengganggu kesehatan.</p>
           </div>
-
-          <!-- 5. Perusakan Mangrove -->
-          <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 9px; padding: 12px; box-shadow: var(--shadow-sm);">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
-              <span style="font-size: 1.2rem;">&#127795;</span>
-              <strong style="color: #0f172a; font-size: 0.84rem;">5. Perusakan Mangrove &amp; Sempadan</strong>
-            </div>
-            <p style="font-size: 0.77rem; color: #475569; margin: 0; line-height: 1.45;">
-              Penebangan pohon bakau/mangrove di pesisir pantai Lembata, penyerobotan sempadan sungai atau mata air untuk bangunan tanpa izin lingkungan.
-            </p>
+          <div class="kat-card">
+            <div class="kat-head"><span>&#9763;&#65039;</span> <strong>5. Limbah B3 / Medis</strong></div>
+            <p>Limbah kimia berbahaya, baterai/aki bekas industri, oli limbah, atau limbah medis dibuang sembarangan.</p>
           </div>
-
-          <!-- 6. Kebisingan & Bau -->
-          <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 9px; padding: 12px; box-shadow: var(--shadow-sm);">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 5px;">
-              <span style="font-size: 1.2rem;">&#128227;</span>
-              <strong style="color: #0f172a; font-size: 0.84rem;">6. Kebisingan Usaha &amp; Bau Menyengat</strong>
-            </div>
-            <p style="font-size: 0.77rem; color: #475569; margin: 0; line-height: 1.45;">
-              Suara bising mesin usaha/bengkel melewati batas jam istirahat, serta bau busuk menyengat dari peternakan atau tempat penampungan yang mengganggu pemukiman.
-            </p>
+          <div class="kat-card">
+            <div class="kat-head"><span>&#127795;</span> <strong>6. Kerusakan Lingkungan</strong></div>
+            <p>Penebangan pohon bakau/mangrove di pesisir atau penyerobotan sempadan sungai dan mata air tanpa izin lingkungan.</p>
           </div>
         </div>
       </section>
@@ -2408,66 +2773,39 @@
           <span class="chapter-tag">TATA CARA LAPOR</span>
         </header>
 
-        <p class="content-text">
+        <p class="content-text" style="margin-bottom: 8px; font-size: 0.8rem;">
           Pengisian formulir dirancang sangat praktis dan hanya membutuhkan waktu kurang dari 3 menit melalui 3 langkah berikut:
         </p>
 
-        <!-- 3 Step Container -->
-        <div style="display: flex; flex-direction: column; gap: 12px; margin: 14px 0 16px 0;">
-          
-          <!-- Step 1 -->
-          <div style="display: flex; gap: 14px; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 14px; align-items: flex-start;">
-            <div style="width: 36px; height: 36px; border-radius: 50%; background: #064e3b; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem; flex-shrink: 0;">
-              1
-            </div>
-            <div style="flex: 1;">
-              <strong style="font-size: 0.88rem; color: #0f172a; display: block; margin-bottom: 3px;">Isi Data Identitas Pelapor</strong>
-              <p style="font-size: 0.8rem; color: #475569; margin: 0 0 6px 0; line-height: 1.45;">
-                Masukkan <strong>Nama Lengkap</strong>, <strong>Nomor WhatsApp Aktif</strong> (wajib aktif untuk menerima nomor tiket dan konfirmasi perkembangan), serta <strong>Asal Wilayah / Domisili</strong> Anda.
-              </p>
-              <div style="font-size: 0.74rem; color: #047857; background: #f0fdf4; border: 1px solid #bbf7d0; padding: 4px 8px; border-radius: 6px; display: inline-block;">
-                &#128274; <em>Identitas dilindungi dan tidak diperlihatkan ke pihak terlapor.</em>
-              </div>
+        <div class="steps-compact-list">
+          <div class="step-compact-item">
+            <div class="step-badge">1</div>
+            <div class="step-content">
+              <strong>Isi Data Identitas Pelapor</strong>
+              <p>Masukkan Nama Lengkap, Nomor WhatsApp Aktif (untuk menerima nomor tiket &amp; kabar perkembangan), dan domisili Anda. <em>(Identitas dirahasiakan penuh dan tidak diperlihatkan ke pihak terlapor)</em>.</p>
             </div>
           </div>
 
-          <!-- Step 2 -->
-          <div style="display: flex; gap: 14px; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 14px; align-items: flex-start;">
-            <div style="width: 36px; height: 36px; border-radius: 50%; background: #0284c7; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem; flex-shrink: 0;">
-              2
-            </div>
-            <div style="flex: 1;">
-              <strong style="font-size: 0.88rem; color: #0f172a; display: block; margin-bottom: 3px;">Tentukan Titik Lokasi Kejadian &amp; Lampirkan Bukti Foto</strong>
-              <p style="font-size: 0.8rem; color: #475569; margin: 0 0 6px 0; line-height: 1.45;">
-                Pilih nama <strong>Kecamatan</strong> dan <strong>Desa</strong> dari menu dropdown. Anda juga dapat menggunakan tombol <strong>"Pilih Titik di Peta (GPS)"</strong> untuk menandai titik koordinat kejadian secara presisi. Tuliskan uraian singkat kronologi dan lampirkan foto bukti autentik dari kamera atau galeri HP (maksimal 3 foto).
-              </p>
-              <div style="font-size: 0.74rem; color: #0284c7; background: #eff6ff; border: 1px solid #bfdbfe; padding: 4px 8px; border-radius: 6px; display: inline-block;">
-                &#128248; <em>Foto bukti mempercepat verifikasi lapangan oleh petugas pengawas.</em>
-              </div>
+          <div class="step-compact-item">
+            <div class="step-badge" style="background: #0284c7;">2</div>
+            <div class="step-content">
+              <strong>Tentukan Lokasi Kejadian &amp; Lampirkan Bukti Foto</strong>
+              <p>Pilih Kecamatan &amp; Desa dari menu dropdown, arahkan pin peta ke lokasi kejadian, tuliskan uraian singkat kejadian, dan lampirkan foto bukti autentik dari kamera atau galeri HP (hingga 5 foto).</p>
             </div>
           </div>
 
-          <!-- Step 3 -->
-          <div style="display: flex; gap: 14px; background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 14px; align-items: flex-start;">
-            <div style="width: 36px; height: 36px; border-radius: 50%; background: #059669; color: #ffffff; display: flex; align-items: center; justify-content: center; font-weight: 800; font-size: 0.95rem; flex-shrink: 0;">
-              3
-            </div>
-            <div style="flex: 1;">
-              <strong style="font-size: 0.88rem; color: #0f172a; display: block; margin-bottom: 3px;">Centang Pernyataan Kebenaran Data &amp; Kirim Pengaduan</strong>
-              <p style="font-size: 0.8rem; color: #475569; margin: 0 0 6px 0; line-height: 1.45;">
-                Centang kotak pernyataan tanggung jawab data: <em>"Saya menyatakan bahwa seluruh data, keterangan, dan bukti foto yang disampaikan adalah BENAR sesuai fakta di lapangan serta siap dipertanggungjawabkan."</em> Lalu klik tombol hijau <strong>Kirim Pengaduan</strong>.
-              </p>
-              <div style="font-size: 0.74rem; color: #065f46; background: #ecfdf5; border: 1px solid #a7f3d0; padding: 4px 8px; border-radius: 6px; display: inline-block;">
-                &#127915; <em>Sistem langsung menerbitkan Nomor Tiket Resmi (contoh: <code>#ADU-202611-001</code>).</em>
-              </div>
+          <div class="step-compact-item">
+            <div class="step-badge" style="background: #059669;">3</div>
+            <div class="step-content">
+              <strong>Centang Pernyataan Kebenaran Data &amp; Kirim</strong>
+              <p>Centang kotak pernyataan kebenaran data lalu klik tombol <strong>Kirim Pengaduan</strong>. Sistem langsung menerbitkan Nomor Tiket Resmi (contoh: <code>#ADU-202611-001</code>).</p>
             </div>
           </div>
-
         </div>
 
-        <div style="background: #f8fafc; border: 1px solid #cbd5e1; border-radius: 8px; padding: 12px 14px; font-size: 0.8rem; color: #334155; display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-          <span><strong>Alternatif Lapor Cepat:</strong> Warga juga dapat melapor melalui WhatsApp resmi DLH Lembata dengan klik tombol WhatsApp di bagian bawah portal.</span>
-          <a href="https://wa.me/6282234582769" target="_blank" style="background: #059669; color: #ffffff; font-weight: 700; font-size: 0.76rem; padding: 6px 12px; border-radius: 6px; text-decoration: none;">Hubungi WhatsApp Resmi DLH &rarr;</a>
+        <div class="quick-action-strip">
+          <span>📲 Siap melapor sekarang?</span>
+          <a href="index.html" class="btn-quick-portal">Buka Formulir Aduan &rarr;</a>
         </div>
       </section>
 
@@ -2483,16 +2821,13 @@
           <span class="chapter-tag">TRANSPARANSI LAYANAN</span>
         </header>
 
-        <p class="content-text">
-          Masyarakat dapat memantau setiap perkembangan pemeriksaan dan penanganan laporan secara terbuka dan transparan tanpa harus datang ke kantor DLH:
+        <p class="content-text" style="margin-bottom: 8px; font-size: 0.8rem;">
+          Masyarakat dapat memantau setiap perkembangan pemeriksaan dan penanganan laporan secara terbuka tanpa harus datang ke kantor DLH:
         </p>
 
-        <div style="background: #f8fafc; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 16px; margin: 12px 0;">
-          <div style="display: flex; gap: 10px; align-items: center; margin-bottom: 12px;">
-            <div style="background: #064e3b; color: #ffffff; border-radius: 6px; padding: 4px 8px; font-weight: 800; font-size: 0.8rem;">LANGKAH LACAK</div>
-            <strong style="color: #0f172a; font-size: 0.86rem;">3 Langkah Praktis Melacak Aduan Anda:</strong>
-          </div>
-          <ol style="margin: 0; padding-left: 20px; font-size: 0.8rem; color: #334155; line-height: 1.6;">
+        <div class="lacak-card-compact">
+          <strong style="color: #064e3b; font-size: 0.82rem; display: block; margin-bottom: 6px;">🔍 3 Langkah Praktis Melacak Aduan Anda:</strong>
+          <ol class="lacak-ol">
             <li>Buka portal ECOADU pada tab menu <strong>"Lacak Aduan"</strong>.</li>
             <li>Ketik <strong>Nomor Tiket Aduan</strong> (contoh: <code>ADU-202611-001</code>) ATAU <strong>Nomor WhatsApp</strong> yang Anda daftarkan saat melapor.</li>
             <li>Klik tombol <strong>"Lacak Aduan"</strong>. Sistem akan langsung menampilkan status penanganan terkini, riwayat tanggal, dan catatan resmi dari petugas verifikator DLH.</li>
@@ -2512,71 +2847,31 @@
           <span class="chapter-tag">SOP VERSI 2.0</span>
         </header>
 
-        <p class="content-text">
-          Berdasarkan Standar Operasional Prosedur (SOP) Penanganan Pengaduan Lingkungan Hidup DLH Kabupaten Lembata, terdapat 5 status penanganan resmi:
+        <p class="content-text" style="margin-bottom: 8px; font-size: 0.8rem;">
+          Berdasarkan SOP Penanganan Pengaduan Lingkungan Hidup DLH Kabupaten Lembata, terdapat 5 status penanganan resmi:
         </p>
 
-        <div class="table-responsive" style="margin: 12px 0 16px 0;">
-          <table class="gov-table" style="width: 100%; font-size: 0.8rem;">
-            <thead>
-              <tr style="background: #f1f5f9;">
-                <th style="width: 25%; text-align: left; padding: 10px;">Status Resmi</th>
-                <th style="width: 75%; text-align: left; padding: 10px;">Arti &amp; Tindakan Tim Pengawas Lingkungan Hidup</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr>
-                <td style="padding: 10px; vertical-align: top;">
-                  <span style="display: inline-block; background: #eff6ff; color: #1d4ed8; border: 1px solid #bfdbfe; font-weight: 800; font-size: 0.74rem; padding: 3px 8px; border-radius: 6px;">
-                    &#128309; Baru / Diterima
-                  </span>
-                </td>
-                <td style="padding: 10px; color: #334155; line-height: 1.45;">
-                  Laporan baru saja masuk ke antrean database DLH Lembata. Tim verifikator administrasi sedang menelaah kelengkapan data, lokasi kejadian, dan bukti foto awal.
-                </td>
-              </tr>
-              <tr>
-                <td style="padding: 10px; vertical-align: top;">
-                  <span style="display: inline-block; background: #fffbeb; color: #b45309; border: 1px solid #fde68a; font-weight: 800; font-size: 0.74rem; padding: 3px 8px; border-radius: 6px;">
-                    &#128993; Diverifikasi
-                  </span>
-                </td>
-                <td style="padding: 10px; color: #334155; line-height: 1.45;">
-                  Tim Pejabat Pengawas Lingkungan Hidup (PPLH) turun langsung ke lokasi kejadian untuk pemeriksaan fisik lapangan, mencocokkan fakta, dan mengisi instrumen 5 indikator checklist lingkungan.
-                </td>
-              </tr>
-              <tr>
-                <td style="padding: 10px; vertical-align: top;">
-                  <span style="display: inline-block; background: #fff7ed; color: #c2410c; border: 1px solid #fed7aa; font-weight: 800; font-size: 0.74rem; padding: 3px 8px; border-radius: 6px;">
-                    &#128992; Ditindaklanjuti
-                  </span>
-                </td>
-                <td style="padding: 10px; color: #334155; line-height: 1.45;">
-                  DLH mengambil tindakan penanganan konkret: mediasi para pihak, pengangkutan/pembersihan sampah liar, penerbitan surat teguran/pembinaan, atau penetapan sanksi administratif bagi pelaku pencemaran.
-                </td>
-              </tr>
-              <tr>
-                <td style="padding: 10px; vertical-align: top;">
-                  <span style="display: inline-block; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; font-weight: 800; font-size: 0.74rem; padding: 3px 8px; border-radius: 6px;">
-                    &#128994; Selesai
-                  </span>
-                </td>
-                <td style="padding: 10px; color: #334155; line-height: 1.45;">
-                  Masalah lingkungan telah tuntas ditangani, rekomendasi perbaikan telah dilaksanakan oleh pihak terkait, serta Berita Acara Pemeriksaan resmi telah diterbitkan dan diarsipkan oleh DLH.
-                </td>
-              </tr>
-              <tr>
-                <td style="padding: 10px; vertical-align: top;">
-                  <span style="display: inline-block; background: #fef2f2; color: #b91c1c; border: 1px solid #fecaca; font-weight: 800; font-size: 0.74rem; padding: 3px 8px; border-radius: 6px;">
-                    &#128308; Ditolak
-                  </span>
-                </td>
-                <td style="padding: 10px; color: #334155; line-height: 1.45;">
-                  Laporan dinyatakan ditolak jika setelah pemeriksaan lapangan dugaan pencemaran tidak terbukti faktual, tidak memenuhi unsur pelanggaran lingkungan hidup, atau bukan merupakan ranah kewenangan DLH Kabupaten Lembata.
-                </td>
-              </tr>
-            </tbody>
-          </table>
+        <div class="status-cards-list">
+          <div class="status-card-item st-baru">
+            <div class="st-badge">&#128309; Baru / Diterima</div>
+            <div class="st-desc">Laporan masuk ke antrean database DLH Lembata. Tim sedang menelaah kelengkapan data awal dan bukti foto.</div>
+          </div>
+          <div class="status-card-item st-verif">
+            <div class="st-badge">&#128993; Diverifikasi</div>
+            <div class="st-desc">Tim Pejabat Pengawas (PPLH) turun langsung ke lokasi kejadian untuk pemeriksaan fisik lapangan dan pengisian checklist 5 indikator lingkungan.</div>
+          </div>
+          <div class="status-card-item st-tindak">
+            <div class="st-badge">&#128992; Ditindaklanjuti</div>
+            <div class="st-desc">DLH mengambil tindakan penanganan nyata: mediasi para pihak, pengangkutan sampah, penerbitan surat teguran, atau penetapan sanksi administratif.</div>
+          </div>
+          <div class="status-card-item st-selesai">
+            <div class="st-badge">&#128994; Selesai</div>
+            <div class="st-desc">Masalah lingkungan telah tuntas ditangani, rekomendasi perbaikan telah dilaksanakan, serta Berita Acara Pemeriksaan resmi telah diterbitkan dan diarsipkan.</div>
+          </div>
+          <div class="status-card-item st-tolak">
+            <div class="st-badge">&#128308; Ditolak</div>
+            <div class="st-desc">Laporan dinyatakan ditolak jika setelah pemeriksaan lapangan dugaan pencemaran tidak terbukti faktual, tidak memenuhi unsur pelanggaran, atau bukan kewenangan DLH Lembata.</div>
+          </div>
         </div>
       </section>
 
@@ -2592,54 +2887,49 @@
           <span class="chapter-tag">BANTUAN RESMI</span>
         </header>
 
-        <p class="content-text">
-          Apabila Anda memerlukan informasi lebih lanjut, bantuan kendala pengisian formulir, atau ingin berkonsultasi mengenai masalah lingkungan hidup, silakan menghubungi kami melalui saluran resmi berikut:
+        <p class="content-text" style="margin-bottom: 8px; font-size: 0.8rem;">
+          Apabila Anda memerlukan informasi lebih lanjut atau bantuan kendala teknis, silakan menghubungi kami melalui saluran resmi berikut:
         </p>
 
-        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 12px; margin: 14px 0 20px 0;">
-          <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 14px; box-shadow: var(--shadow-sm);">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-              <span style="font-size: 1.2rem;">&#127970;</span>
-              <strong style="color: #0f172a; font-size: 0.86rem;">Kantor Dinas Lingkungan Hidup</strong>
+        <div class="kontak-compact-card">
+          <div class="kontak-row">
+            <span class="k-icon">&#127970;</span>
+            <div>
+              <strong>Kantor Dinas Lingkungan Hidup:</strong>
+              <div>Jalan Trans Atadei, Lewoleba, Kabupaten Lembata, NTT 86611</div>
             </div>
-            <p style="font-size: 0.78rem; color: #475569; margin: 0; line-height: 1.5;">
-              Jalan Trans Atadei, Lewoleba, Kabupaten Lembata, Nusa Tenggara Timur 86611
-            </p>
+          </div>
+          <div class="kontak-row">
+            <span class="k-icon">&#128241;</span>
+            <div>
+              <strong>Helpline WhatsApp Pengaduan:</strong>
+              <div>+62 822-3458-2769 <span class="badge-resmi">Resmi DLH</span></div>
+            </div>
+          </div>
+          <div class="kontak-row">
+            <span class="k-icon">&#9993;&#65039;</span>
+            <div>
+              <strong>Pos-el (Email) Resmi:</strong>
+              <div>dlh@lembatakab.go.id</div>
+            </div>
+          </div>
+          <div class="kontak-row">
+            <span class="k-icon">&#128340;</span>
+            <div>
+              <strong>Jam Pelayanan Kantor:</strong>
+              <div>Senin &ndash; Jumat, 08.00 &ndash; 16.00 WITA <em>(Layanan aduan online aktif 24 jam)</em></div>
+            </div>
           </div>
 
-          <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 14px; box-shadow: var(--shadow-sm);">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-              <span style="font-size: 1.2rem;">&#128241;</span>
-              <strong style="color: #0f172a; font-size: 0.86rem;">Helpline WhatsApp Pengaduan</strong>
-            </div>
-            <p style="font-size: 0.78rem; color: #475569; margin: 0; line-height: 1.5;">
-              <strong>+62 822-3458-2769</strong> (Resmi Dinas Lingkungan Hidup Kab. Lembata)
-            </p>
-          </div>
-
-          <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 14px; box-shadow: var(--shadow-sm);">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-              <span style="font-size: 1.2rem;">&#9993;&#65039;</span>
-              <strong style="color: #0f172a; font-size: 0.86rem;">Pos-el (Email) Resmi</strong>
-            </div>
-            <p style="font-size: 0.78rem; color: #475569; margin: 0; line-height: 1.5;">
-              <strong>dlh@lembatakab.go.id</strong>
-            </p>
-          </div>
-
-          <div style="background: #ffffff; border: 1.5px solid #e2e8f0; border-radius: 10px; padding: 14px; box-shadow: var(--shadow-sm);">
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
-              <span style="font-size: 1.2rem;">&#128340;</span>
-              <strong style="color: #0f172a; font-size: 0.86rem;">Jam Kerja Pelayanan Kantor</strong>
-            </div>
-            <p style="font-size: 0.78rem; color: #475569; margin: 0; line-height: 1.5;">
-              Senin s.d. Jumat, Pukul 08.00 &ndash; 16.00 WITA<br>
-              <em style="color: #047857; font-size: 0.74rem;">(Pengiriman pengaduan online 24 jam setiap hari)</em>
-            </p>
+          <div class="kontak-actions">
+            <a href="https://wa.me/6282234582769" target="_blank" class="btn-wa-direct">
+              <span>&#128172;</span> Chat WhatsApp DLH
+            </a>
+            <a href="index.html" class="btn-form-direct">
+              <span>&#128241;</span> Buka Formulir Aduan
+            </a>
           </div>
         </div>
-
-
       </section>
 
     </article>
