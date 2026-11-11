@@ -1552,6 +1552,8 @@ class DLHApp {
         desaEl.innerHTML = '<option value="">-- Pilih Desa / Kelurahan --</option>';
         desaEl.value = '';
       }
+      document.querySelectorAll('#categoryChips .chip-item').forEach(c => c.classList.remove('active'));
+      document.querySelectorAll('input[name="radioJenis"]').forEach(r => { r.checked = false; });
       const gpsMsg = document.getElementById('gpsStatusMessage');
       if (gpsMsg) {
         gpsMsg.style.display = 'none';
@@ -1642,6 +1644,18 @@ class DLHApp {
           inputDesa.scrollIntoView({ behavior: 'smooth', block: 'center' });
         }
         this.showToast('⚠️ Silakan pilih Nama Desa / Kelurahan lokasi kejadian terlebih dahulu.', 'warning');
+        return;
+      }
+
+      // 1C. Validasi Pemilihan Jenis Pencemaran Lingkungan
+      const selectedRadio = document.querySelector('input[name="radioJenis"]:checked');
+      if (!selectedRadio) {
+        this._isSubmittingAduan = false;
+        const chipsContainer = document.getElementById('categoryChips');
+        if (chipsContainer) {
+          chipsContainer.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        this.showToast('⚠️ Silakan pilih Jenis Pencemaran Lingkungan terlebih dahulu.', 'warning');
         return;
       }
 
@@ -2022,6 +2036,8 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
           desaEl.innerHTML = '<option value="">-- Pilih Desa / Kelurahan --</option>';
           desaEl.value = '';
         }
+        document.querySelectorAll('#categoryChips .chip-item').forEach(c => c.classList.remove('active'));
+        document.querySelectorAll('input[name="radioJenis"]').forEach(r => { r.checked = false; });
         const gpsMsg = document.getElementById('gpsStatusMessage');
         if (gpsMsg) {
           gpsMsg.style.display = 'none';
