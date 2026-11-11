@@ -221,6 +221,14 @@ class DLHApp {
 
     this.populateDesaDropdown = (kecamatanName, selectedDesa = '') => {
       desaSelect.innerHTML = '<option value="">-- Pilih Desa / Kelurahan --</option>';
+
+      if (!kecamatanName) {
+        desaSelect.value = '';
+        if (typeof this.updateCitizenPinForLocation === 'function') {
+          this.updateCitizenPinForLocation('', '');
+        }
+        return;
+      }
       
       const kecMap = (typeof KECAMATAN_LEMBATA !== 'undefined' ? KECAMATAN_LEMBATA : (window.KECAMATAN_LEMBATA || null));
       let desaList = [];
@@ -232,11 +240,7 @@ class DLHApp {
       }
 
       if (Array.isArray(desaList) && desaList.length > 0) {
-        // Otomatis pilih desa pertama di kecamatan tersebut jika belum ada desa yang dipilih
-        if (!selectedDesa || selectedDesa === '' || selectedDesa === '-- Pilih Desa / Kelurahan --' || selectedDesa.startsWith('--')) {
-          selectedDesa = desaList[0];
-        }
-
+        // Jangan otomatis memilih desa pertama, biarkan warga memilih desanya sendiri
         desaList.forEach(namaDesa => {
           const opt = document.createElement('option');
           opt.value = namaDesa;
@@ -247,7 +251,11 @@ class DLHApp {
           desaSelect.appendChild(opt);
         });
 
-        desaSelect.value = selectedDesa;
+        if (selectedDesa) {
+          desaSelect.value = selectedDesa;
+        } else {
+          desaSelect.value = '';
+        }
       }
 
       // Langsung sesuaikan pin lokasi peta ke kecamatan atau desa terpilih
@@ -259,9 +267,14 @@ class DLHApp {
     window.populateDesaDropdown = this.populateDesaDropdown.bind(this);
     window.updateCitizenPinForLocation = this.updateCitizenPinForLocation.bind(this);
 
-    // Populasi awal berdasarkan nilai awal kecamatan
-    const initialKec = kecSelect.value || 'Nubatukan';
-    this.populateDesaDropdown(initialKec, desaSelect.value || '');
+    // Inisialisasi awal dropdown desa sesuai nilai kecamatan jika sudah ada yang terpilih
+    const initialKec = kecSelect.value || '';
+    if (initialKec) {
+      this.populateDesaDropdown(initialKec, desaSelect.value || '');
+    } else {
+      desaSelect.innerHTML = '<option value="">-- Pilih Desa / Kelurahan --</option>';
+      desaSelect.value = '';
+    }
 
     // Event saat kecamatan diubah
     kecSelect.addEventListener('change', (e) => {
@@ -756,8 +769,8 @@ class DLHApp {
 
     if (!target) {
       target = coordsMap['Nubatukan'];
-      locationLabel = 'Kota Lewoleba (Nubatukan)';
-      targetZoom = 14;
+      locationLabel = 'Kabupaten Lembata';
+      targetZoom = 13;
     }
 
     const latInput = document.getElementById('inputLat');
@@ -772,10 +785,17 @@ class DLHApp {
     if (lngInput) lngInput.value = fixedLng;
     if (badge) badge.textContent = `${fixedLat}, ${fixedLng}`;
 
+    const hasLocationChosen = Boolean(kec || (rawDesa && !rawDesa.startsWith('--')));
+
     if (gpsMsg) {
-      gpsMsg.style.display = 'block';
-      gpsMsg.style.color = '#15803d';
-      gpsMsg.textContent = `🎯 Presisi Tinggi: Pin diselaraskan otomatis ke ${locationLabel} (${fixedLat}, ${fixedLng})`;
+      if (hasLocationChosen) {
+        gpsMsg.style.display = 'block';
+        gpsMsg.style.color = '#15803d';
+        gpsMsg.textContent = `🎯 Presisi Tinggi: Pin diselaraskan otomatis ke ${locationLabel} (${fixedLat}, ${fixedLng})`;
+      } else {
+        gpsMsg.style.display = 'none';
+        gpsMsg.textContent = '';
+      }
     }
 
     if (!this.citizenPinMap && typeof this.initCitizenPinMap === 'function') {
@@ -786,8 +806,12 @@ class DLHApp {
       if (this.citizenPinMarker) {
         try {
           this.citizenPinMarker.setLatLng([fixedLat, fixedLng]);
-          const popupHtml = `<div style="font-family: inherit; font-size: 12px; font-weight: 700; color: #064e3b; text-align: center; padding: 2px 4px;">📍 ${locationLabel}</div>`;
-          this.citizenPinMarker.bindPopup(popupHtml).openPopup();
+          if (hasLocationChosen) {
+            const popupHtml = `<div style="font-family: inherit; font-size: 12px; font-weight: 700; color: #064e3b; text-align: center; padding: 2px 4px;">📍 ${locationLabel}</div>`;
+            this.citizenPinMarker.bindPopup(popupHtml).openPopup();
+          } else {
+            this.citizenPinMarker.closePopup();
+          }
         } catch (e) {}
       }
       try {
@@ -1521,6 +1545,18 @@ class DLHApp {
         boxPernyataan.style.background = '#f0fdf4';
         boxPernyataan.classList.remove('shake-error');
       }
+      const kecEl = document.getElementById('inputKecamatan');
+      const desaEl = document.getElementById('inputDesa');
+      if (kecEl) kecEl.value = '';
+      if (desaEl) {
+        desaEl.innerHTML = '<option value="">-- Pilih Desa / Kelurahan --</option>';
+        desaEl.value = '';
+      }
+      const gpsMsg = document.getElementById('gpsStatusMessage');
+      if (gpsMsg) {
+        gpsMsg.style.display = 'none';
+        gpsMsg.textContent = '';
+      }
     });
 
     const chkPernyataanEl = document.getElementById('checkPernyataanBenar');
@@ -1580,6 +1616,32 @@ class DLHApp {
           msgEl.textContent = phoneValidation.message;
         }
         this.showToast('Periksa Nomor WhatsApp: ' + phoneValidation.message, 'warning');
+        return;
+      }
+
+      // 1B. Validasi Pemilihan Kecamatan & Desa/Kelurahan
+      const inputKec = document.getElementById('inputKecamatan');
+      const inputDesa = document.getElementById('inputDesa');
+      const valKec = (inputKec?.value || '').trim();
+      const valDesa = (inputDesa?.value || '').trim();
+
+      if (!valKec) {
+        this._isSubmittingAduan = false;
+        if (inputKec) {
+          inputKec.focus();
+          inputKec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        this.showToast('⚠️ Silakan pilih Kecamatan lokasi kejadian terlebih dahulu.', 'warning');
+        return;
+      }
+
+      if (!valDesa) {
+        this._isSubmittingAduan = false;
+        if (inputDesa) {
+          inputDesa.focus();
+          inputDesa.scrollIntoView({ behavior: 'smooth', block: 'center' });
+        }
+        this.showToast('⚠️ Silakan pilih Nama Desa / Kelurahan lokasi kejadian terlebih dahulu.', 'warning');
         return;
       }
 
@@ -1707,7 +1769,7 @@ class DLHApp {
           noHp = dHp;
         }
         const alamatPelapor = (document.getElementById('inputAlamat')?.value || '').trim();
-        const kecamatan = document.getElementById('inputKecamatan')?.value || 'Nubatukan';
+        const kecamatan = (document.getElementById('inputKecamatan')?.value || '').trim();
         const desa = (document.getElementById('inputDesa')?.value || '').trim();
         const lokasiDetail = (document.getElementById('inputLokasiDetail')?.value || '').trim();
         const tanggalKejadian = document.getElementById('inputTanggalKejadian')?.value || new Date().toISOString().split('T')[0];
@@ -1953,7 +2015,18 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         }
         const dateInput = document.getElementById('inputTanggalKejadian');
         if (dateInput) dateInput.value = new Date().toISOString().split('T')[0];
-        if (this.populateDesaDropdown) this.populateDesaDropdown('Nubatukan');
+        const kecEl = document.getElementById('inputKecamatan');
+        const desaEl = document.getElementById('inputDesa');
+        if (kecEl) kecEl.value = '';
+        if (desaEl) {
+          desaEl.innerHTML = '<option value="">-- Pilih Desa / Kelurahan --</option>';
+          desaEl.value = '';
+        }
+        const gpsMsg = document.getElementById('gpsStatusMessage');
+        if (gpsMsg) {
+          gpsMsg.style.display = 'none';
+          gpsMsg.textContent = '';
+        }
         const msgNoHp = document.getElementById('noHpValidationMsg');
         if (msgNoHp) msgNoHp.style.display = 'none';
         if (inputNoHp) inputNoHp.classList.remove('input-valid', 'input-invalid');
@@ -2146,7 +2219,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
           fallbackNoHp = fbDigits;
         }
         const fallbackAlamat = (document.getElementById('inputAlamat')?.value || '').trim();
-        const fallbackKec = document.getElementById('inputKecamatan')?.value || 'Nubatukan';
+        const fallbackKec = (document.getElementById('inputKecamatan')?.value || '').trim();
         const fallbackDesa = (document.getElementById('inputDesa')?.value || '').trim();
         const fallbackLokasi = (document.getElementById('inputLokasiDetail')?.value || '').trim();
         const fallbackRadio = document.querySelector('input[name="radioJenis"]:checked');
