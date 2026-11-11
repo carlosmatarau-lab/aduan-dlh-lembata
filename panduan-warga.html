@@ -107,8 +107,7 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      flex-wrap: wrap;
+      gap: 16px;
     }
 
     .brand-quick {
@@ -162,7 +161,7 @@
       display: flex;
       align-items: center;
       gap: 8px;
-      flex-wrap: wrap;
+      flex-shrink: 0;
     }
 
     .btn-top-nav {
@@ -2127,7 +2126,7 @@
           style="background: #064e3b; color: #ffffff; text-decoration: none;"
           title="Kembali ke Halaman Formulir Pengaduan Warga">
           <span>&#128241;</span>
-          <span>Formulir Aduan Warga</span>
+          <span>Formulir Aduan</span>
         </a>
 
         <button type="button" class="btn-top-nav btn-top-print" onclick="window.print()"
@@ -2146,52 +2145,9 @@
     <article class="document-paper">
 
       <!-- =======================================================================
-           KOP SURAT RESMI RAMAH MASYARAKAT
-           ======================================================================= -->
-      <header class="kop-surat-resmi" id="cover">
-        <div class="kop-logo-kiri">
-          <img src="assets/logo-pemkab-lembata.png" alt="Lambang Daerah Kabupaten Lembata"
-            onerror="this.src='https://upload.wikimedia.org/wikipedia/commons/thumb/c/cd/Lambang_Kabupaten_Lembata.png/150px-Lambang_Kabupaten_Lembata.png'">
-        </div>
-        <div class="kop-text-tengah">
-          <h3>PEMERINTAH KABUPATEN LEMBATA</h3>
-          <h2>DINAS LINGKUNGAN HIDUP</h2>
-          <div class="kop-bidang">SALURAN RESMI PENGADUAN LINGKUNGAN HIDUP BAGI MASYARAKAT</div>
-          <p>
-            Jalan Trans Lembata, Lewoleba, Kabupaten Lembata, Nusa Tenggara Timur 86611<br>
-            Laman Pengaduan: <strong>aduan-dlh-lembata.vercel.app</strong> &bull; Pos-el: <strong>dlh@lembatakab.go.id</strong> &bull; Helpline WA: <strong>+62 822-3458-2769</strong>
-          </p>
-        </div>
-        <div class="kop-logo-kanan">
-          <img src="assets/logo-ecoadu.png" alt="Logo Ekosistem Digital Aduan Lingkungan"
-            onerror="this.src='https://placehold.co/100x100/064e3b/ffffff?text=ECOADU'">
-        </div>
-      </header>
-
-      <!-- =======================================================================
-           BANNER DATELINE RAMAH WARGA
-           ======================================================================= -->
-      <aside class="newspaper-dateline-bar" aria-label="Informasi Penerbitan Panduan">
-        <div class="dateline-left">
-          <span><strong>EDISI RESMI PANDUAN MASYARAKAT</strong></span>
-          <span>&bull;</span>
-          <span>KABUPATEN LEMBATA</span>
-          <span>&bull;</span>
-          <span>TAHUN 2026</span>
-        </div>
-        <div class="dateline-right">
-          <span>&#10003; 100% BEBAS BIAYA</span>
-          <span>&bull;</span>
-          <span>&#10003; TANPA LOGIN AKUN</span>
-          <span>&bull;</span>
-          <span>&#10003; PRIVASI TERLINDUNGI UU PDP</span>
-        </div>
-      </aside>
-
-      <!-- =======================================================================
            BANNER JUDUL UTAMA PANDUAN WARGA
            ======================================================================= -->
-      <section class="document-header-box">
+      <section class="document-header-box" id="cover">
         <div class="doc-badge-pill">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
             style="width: 13px; height: 13px;">
