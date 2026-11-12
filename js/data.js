@@ -8,8 +8,9 @@ const STORAGE_KEY = 'dlh_lembata_aduan_v5';
 const LEGACY_STORAGE_KEYS = ['dlh_lembata_aduan_v1', 'dlh_lembata_aduan_v2', 'dlh_lembata_aduan_v3', 'dlh_lembata_aduan_v4', 'dlh_deleted_aduan_ids', 'dlh_cleaned_v2'];
 
 /* ===================================================================
-   DLH LEMBATA REAL-TIME SYNC ENGINE (BROADCASTCHANNEL + STORAGE FALLBACK)
-   Menghubungkan pembaruan data secara langsung (0-latency) antar tab & portal
+   DLH LEMBATA SYNC ENGINE (BROADCASTCHANNEL + STORAGE + GAS POLLING)
+   Sinkronisasi otomatis berkala dengan pembaruan lintas perangkat melalui server
+   (Google Apps Script) serta pertukaran data antartab (BroadcastChannel)
    =================================================================== */
 (function() {
   const CHANNEL_NAME = 'dlh_lembata_realtime_channel';
@@ -1188,10 +1189,29 @@ class AduanDataStore {
     this.isSyncingStats = false;
     this.currentStatsPromise = null;
     this.remoteStats = null;
-    this.lastSyncTime = null;
+    try {
+      const savedSync = localStorage.getItem('dlh_lembata_last_sync_timestamp');
+      this.lastSyncTime = savedSync ? new Date(savedSync) : null;
+    } catch (e) {
+      this.lastSyncTime = null;
+    }
     this.pendingDeletions = {};
     this._activeSyncIds = new Set();
     this.init();
+  }
+
+  getLastSyncTime() {
+    return this.lastSyncTime;
+  }
+
+  getFormattedLastSync() {
+    if (!this.lastSyncTime) return null;
+    const d = (this.lastSyncTime instanceof Date) ? this.lastSyncTime : new Date(this.lastSyncTime);
+    if (isNaN(d.getTime())) return null;
+    const hh = String(d.getHours()).padStart(2, '0');
+    const mm = String(d.getMinutes()).padStart(2, '0');
+    const ss = String(d.getSeconds()).padStart(2, '0');
+    return `${hh}:${mm}:${ss}`;
   }
 
   isDeleted(id) {
@@ -1276,7 +1296,7 @@ class AduanDataStore {
     this._deduplicateList();
     this.save();
 
-    // Sinkronisasi otomatis real-time lintas perangkat (Dual-tier: Stats Ringan 200B + Data Lengkap)
+    // Sinkronisasi otomatis berkala lintas perangkat (Dual-tier: Stats Ringan 200B + Data Lengkap)
     if (this.hasGasConfigured() && !this._pollIntervalStarted) {
       this._pollIntervalStarted = true;
       setTimeout(() => this.syncStatsFromGAS(), 50);
@@ -1532,12 +1552,25 @@ class AduanDataStore {
           };
 
           this.remoteStats = normalized;
+          this.lastStatsSyncTime = new Date();
+          if (!this.lastSyncTime) {
+            this.lastSyncTime = this.lastStatsSyncTime;
+            try {
+              localStorage.setItem('dlh_lembata_last_sync_timestamp', this.lastSyncTime.toISOString());
+            } catch (e) {}
+          }
           try {
             localStorage.setItem('dlh_cached_hero_stats', JSON.stringify(normalized));
           } catch (e) {}
 
           if (typeof window !== 'undefined') {
-            window.dispatchEvent(new CustomEvent('aduanStatsSynced', { detail: normalized }));
+            window.dispatchEvent(new CustomEvent('aduanStatsSynced', {
+              detail: {
+                ...normalized,
+                timestamp: this.lastStatsSyncTime,
+                lastSyncTime: this.lastSyncTime
+              }
+            }));
             if (window.dlhRealtime) {
               window.dlhRealtime.broadcast('STATS_UPDATED', normalized);
             }
@@ -1592,15 +1625,21 @@ class AduanDataStore {
               this.aduanList = valid.map(mapFn).filter(Boolean);
               this.save();
               this.lastSyncTime = new Date();
-              window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent } }));
-              return { success: true, count: this.aduanList.length };
+              try {
+                localStorage.setItem('dlh_lembata_last_sync_timestamp', this.lastSyncTime.toISOString());
+              } catch (e) {}
+              window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent, timestamp: this.lastSyncTime, lastSyncTime: this.lastSyncTime } }));
+              return { success: true, count: this.aduanList.length, timestamp: this.lastSyncTime };
             } else {
               // Sheet kosong 0 baris
               this.aduanList = [];
               this.save();
               this.lastSyncTime = new Date();
-              window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: 0, silent: silent, emptyRemote: true } }));
-              return { success: true, count: 0, emptyRemote: true };
+              try {
+                localStorage.setItem('dlh_lembata_last_sync_timestamp', this.lastSyncTime.toISOString());
+              } catch (e) {}
+              window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: 0, silent: silent, emptyRemote: true, timestamp: this.lastSyncTime, lastSyncTime: this.lastSyncTime } }));
+              return { success: true, count: 0, emptyRemote: true, timestamp: this.lastSyncTime };
             }
           }
         }
@@ -1662,15 +1701,18 @@ class AduanDataStore {
             this.save();
 
             this.lastSyncTime = new Date();
-            window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent } }));
-            window.dispatchEvent(new CustomEvent('aduanStatsSynced', { detail: this.getStats() }));
+            try {
+              localStorage.setItem('dlh_lembata_last_sync_timestamp', this.lastSyncTime.toISOString());
+            } catch (e) {}
+            window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent, timestamp: this.lastSyncTime, lastSyncTime: this.lastSyncTime } }));
+            window.dispatchEvent(new CustomEvent('aduanStatsSynced', { detail: { ...this.getStats(), timestamp: this.lastSyncTime, lastSyncTime: this.lastSyncTime } }));
 
             // Otomatis dorong item lokal pending ke server jika ada
             if (localPending.length > 0) {
               setTimeout(() => this.flushPendingQueue(), 500);
             }
 
-            return { success: true, count: this.aduanList.length, remoteCount: validItems.length, message: `Berhasil sinkronisasi ${validItems.length} aduan dari Google Spreadsheet.` };
+            return { success: true, count: this.aduanList.length, remoteCount: validItems.length, timestamp: this.lastSyncTime, message: `Berhasil sinkronisasi ${validItems.length} aduan dari Google Spreadsheet.` };
           } else {
             // Server kosong: jika ada item lokal pending, dorong ke server; jika tidak ada, reset 0
             const localPending = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id) && item._pendingSync);
@@ -1683,13 +1725,17 @@ class AduanDataStore {
               this.save();
             }
             this.lastSyncTime = new Date();
-            window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent, emptyRemote: true } }));
-            window.dispatchEvent(new CustomEvent('aduanStatsSynced', { detail: this.getStats() }));
+            try {
+              localStorage.setItem('dlh_lembata_last_sync_timestamp', this.lastSyncTime.toISOString());
+            } catch (e) {}
+            window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent, emptyRemote: true, timestamp: this.lastSyncTime, lastSyncTime: this.lastSyncTime } }));
+            window.dispatchEvent(new CustomEvent('aduanStatsSynced', { detail: { ...this.getStats(), timestamp: this.lastSyncTime, lastSyncTime: this.lastSyncTime } }));
             return {
               success: true,
               count: this.aduanList.length,
               remoteCount: 0,
               emptyRemote: true,
+              timestamp: this.lastSyncTime,
               message: 'Terhubung ke Google Spreadsheet!'
             };
           }

@@ -228,7 +228,7 @@ Berdasarkan Surat Keputusan Uraian Tugas Jabatan Pengawas Lingkungan Hidup Ahli 
 3. **Kelengkapan Formulasi Data**: Form memuat field wajib: identitas, kontak, jenis pencemaran, kronologi, foto live kamera, & status.
 4. **Integrasi Informasi Lokasi**: Koordinat GPS otomatis tercatat presisi dan terpeta pada peta spasial interaktif 9 kecamatan Kabupaten Lembata.
 5. **Keterlacakan Status Tindak Lanjut**: Setiap aduan memiliki nomor tiket resmi dan status transparan (*Aduan Masuk, Verifikasi Lapangan, Penanganan, Selesai*).
-6. **Keberhasilan Simulasi & Sinkronisasi**: Sistem sukses diuji pada berbagai perangkat tanpa error, data tersinkronisasi otomatis.
+6. **Keberhasilan Simulasi & Sinkronisasi**: Sistem sukses diuji pada berbagai perangkat tanpa error, data menerapkan sinkronisasi otomatis berkala dengan pembaruan lintas perangkat melalui server (terdapat jeda wajar polling berkala, jaringan, dan waktu respons server).
 7. **Dokumentasi & Evaluasi**: Tersedia laporan evaluasi, media publikasi QR Code, dan Buku Panduan Penggunaan (*manual book*) sistem.
 
 ---

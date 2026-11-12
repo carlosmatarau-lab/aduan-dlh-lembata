@@ -3415,7 +3415,10 @@
 
         <h3 class="sub-heading">6.3. Sinkronisasi Google Spreadsheet / Google Apps Script</h3>
         <p class="content-text">
-          Panduan awal menjelaskan konfigurasi URL Web App Google Apps Script, tombol Simpan URL, Sinkronkan Sekarang, dan Unggah ke Sheets. Penggunaan integrasi harus dibatasi kepada administrator yang ditunjuk. URL endpoint merupakan konfigurasi sistem dan tidak boleh dibagikan secara publik.
+          Sistem menerapkan <strong>Sinkronisasi otomatis berkala dengan pembaruan lintas perangkat melalui server.</strong> Pembaruan lintas perangkat bergantung pada komunikasi server secara berkala, sehingga terdapat jeda wajar yang dipengaruhi oleh interval polling (terjadwal setiap 4 detik saat tab aktif dan 15 detik saat tab di latar belakang), kondisi jaringan internet, serta waktu respons server Google Apps Script (bukan pembaruan seketika tanpa jeda). Untuk pertukaran data instan antar-tab pada peramban yang sama, sistem memanfaatkan saluran <em>BroadcastChannel</em>.
+        </p>
+        <p class="content-text">
+          Penggunaan integrasi harus dibatasi kepada administrator yang ditunjuk. URL endpoint merupakan konfigurasi sistem dan tidak boleh dibagikan secara publik.
         </p>
         <div class="table-responsive" style="margin: 10px 0 14px 0;">
           <table class="gov-table" style="width: 100%; font-size: 0.8rem;">
@@ -3448,9 +3451,9 @@
                 <td>Jalankan hanya setelah backup dan memastikan spreadsheet tujuan benar. Uji dengan data dummy terlebih dahulu.</td>
               </tr>
               <tr>
-                <td><strong>Indikator Cloud GAS</strong></td>
-                <td>Menunjukkan status koneksi menurut antarmuka.</td>
-                <td>Status aktif tidak sama dengan bukti seluruh baris sudah sinkron. Lakukan rekonsiliasi.</td>
+                <td><strong>Indikator Cloud GAS &amp; Waktu Sinkronisasi</strong></td>
+                <td>Menunjukkan status koneksi server serta stempel waktu sinkronisasi terakhir (<code>Terakhir disinkronkan: HH:MM:SS</code>).</td>
+                <td>Pantau jam sinkronisasi terakhir untuk memastikan koneksi aktif dan data terbaru dari server telah masuk. Lakukan rekonsiliasi berkala.</td>
               </tr>
             </tbody>
           </table>

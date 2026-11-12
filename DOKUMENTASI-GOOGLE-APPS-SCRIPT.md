@@ -343,8 +343,9 @@ const DEFAULT_GAS_API_URL = 'https://script.google.com/macros/s/AKfycbwuDJ9X5a27
 Aplikasi portal web DLH secara otomatis akan:
 1. **Satu Kesatuan Data**: Data di HP petugas, laptop, dan masyarakat membaca dari Google Spreadsheet yang sama.
 2. Ketika spreadsheet memiliki 0 data (setelah di-reset), seluruh portal di HP dan laptop otomatis menampilkan 0 aduan (Fresh Start).
-3. Setiap laporan baru yang dikirim dari HP atau laptop langsung tersinkron ke Google Spreadsheet dan mulai dari nomor tiket `ADU-LMB-2026-001`.
-4. Jika koneksi internet terputus, aplikasi otomatis beralih (*fallback*) ke penyimpanan lokal (**LocalStorage**) tanpa terjadi crash / error.
+3. Setiap laporan baru yang dikirim dari HP atau laptop tersinkron ke Google Spreadsheet dan mulai dari nomor tiket `ADU-LMB-2026-001`.
+4. **Mekanisme Sinkronisasi**: Menerapkan sinkronisasi otomatis berkala dengan pembaruan lintas perangkat melalui server. Pembaruan lintas perangkat bergantung pada komunikasi server secara berkala (interval polling 4 detik saat tab aktif dan 15 detik saat tab di latar belakang), sehingga terdapat jeda wajar yang dipengaruhi oleh interval polling, kondisi jaringan internet, dan waktu respons server Google Apps Script (bukan pembaruan seketika tanpa jeda).
+5. Jika koneksi internet terputus, aplikasi otomatis beralih (*fallback*) ke penyimpanan lokal (**LocalStorage**) tanpa terjadi crash / error.
 
 ---
 

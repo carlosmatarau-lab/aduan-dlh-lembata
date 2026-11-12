@@ -4343,7 +4343,7 @@
         <button type="button" class="btn-cloud-compact" id="btnOpenCloudModal" title="Pengaturan &amp; Status Koneksi Google Apps Script">
           <span class="status-dot-pulse" id="cloudStatusDot"></span>
           <span class="cloud-status-title" id="cloudStatusText">Cloud GAS Aktif</span>
-          <span class="cloud-status-detail" id="cloudStatusDetail">• Google Apps Script</span>
+          <span class="cloud-status-detail" id="cloudStatusDetail">• Terakhir disinkronkan: <span id="topLastSyncClock">--:--:--</span></span>
         </button>
       </div>
     </section>
@@ -4511,8 +4511,12 @@
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round" style="width: 20px; height: 20px; display: inline-block; vertical-align: middle;"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/></svg>
             Rekapitulasi Data Pengaduan
           </h2>
-          <p class="table-card-sub">
-            Sinkronisasi form pengaduan masyarakat &amp; Google Spreadsheet DLH Lembata
+          <p class="table-card-sub" style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
+            <span>Sinkronisasi form pengaduan masyarakat &amp; Google Spreadsheet DLH Lembata</span>
+            <span id="tableSyncTimeWrap" style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 6px; color: #065f46; font-size: 0.74rem; font-weight: 600;" title="Waktu pembaruan data terakhir dari server">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px; flex-shrink: 0;"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+              <span>Terakhir disinkronkan: <strong id="tableLastSyncClock" style="font-family: inherit;">--:--:--</strong></span>
+            </span>
           </p>
         </div>
 
@@ -4975,6 +4979,17 @@
       </div>
 
       <div class="modal-body">
+        <!-- Indikator Waktu Sinkronisasi Terakhir di Modal -->
+        <div style="background: #f0fdf4; border: 1px solid #86efac; border-radius: 8px; padding: 10px 14px; margin-bottom: 14px; display: flex; align-items: center; justify-content: space-between; gap: 10px; flex-wrap: wrap;">
+          <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="status-dot-pulse" style="background: #10b981; width: 8px; height: 8px;"></span>
+            <span style="font-size: 0.82rem; font-weight: 700; color: #065f46;" id="modalCloudStatusText">Koneksi Server Aktif</span>
+          </div>
+          <div style="font-size: 0.76rem; color: #047857;" id="modalLastSyncText">
+            Terakhir disinkronkan: <strong id="modalLastSyncClock">--:--:--</strong>
+          </div>
+        </div>
+
         <p style="font-size: 0.88rem; color: #475569; margin-bottom: 16px; line-height: 1.5;">
           Data aduan dan verifikasi petugas dapat tersinkronisasi dua arah secara otomatis dengan Google Spreadsheet resmi Dinas Lingkungan Hidup Kabupaten Lembata melalui URL Web App Google Apps Script.
         </p>
@@ -9404,22 +9419,49 @@
         const btnSyncNow = document.getElementById('btnTriggerSyncNow');
         const btnReset = document.getElementById('btnResetDefaultData');
 
-        const updateStatusIndicator = () => {
-          const isConfigured = window.aduanStore.hasGasConfigured();
+        this.updateStatusIndicator = () => {
+          const isConfigured = window.aduanStore && window.aduanStore.hasGasConfigured();
           const dot = document.getElementById('cloudStatusDot');
           const txt = document.getElementById('cloudStatusText');
           const dtl = document.getElementById('cloudStatusDetail');
+          const topClock = document.getElementById('topLastSyncClock');
+          const syncTime = (window.aduanStore && typeof window.aduanStore.getFormattedLastSync === 'function')
+            ? window.aduanStore.getFormattedLastSync()
+            : null;
 
           if (isConfigured) {
             if (dot) dot.style.background = '#10b981';
             if (txt) txt.textContent = 'Cloud GAS Terhubung';
-            if (dtl) dtl.textContent = 'Google Spreadsheet';
+            if (topClock) {
+              topClock.textContent = syncTime || '--:--:--';
+            } else if (dtl) {
+              dtl.textContent = syncTime ? `• Terakhir disinkronkan: ${syncTime}` : '• Google Spreadsheet';
+            }
           } else {
             if (dot) dot.style.background = '#f59e0b';
             if (txt) txt.textContent = 'Mode Penyimpanan Lokal';
-            if (dtl) dtl.textContent = 'Klik untuk Hubungkan GAS';
+            if (topClock) {
+              topClock.textContent = 'Lokal';
+            } else if (dtl) {
+              dtl.textContent = 'Klik untuk Hubungkan GAS';
+            }
+          }
+
+          const tableClock = document.getElementById('tableLastSyncClock');
+          if (tableClock) {
+            tableClock.textContent = syncTime || (isConfigured ? 'Menghubungkan...' : 'Mode Lokal');
+          }
+
+          const modalSyncClock = document.getElementById('modalLastSyncClock');
+          if (modalSyncClock) {
+            modalSyncClock.textContent = syncTime || (isConfigured ? 'Menghubungkan...' : 'Mode Lokal');
+          }
+          const modalStatusText = document.getElementById('modalCloudStatusText');
+          if (modalStatusText) {
+            modalStatusText.textContent = isConfigured ? 'Koneksi Server Aktif' : 'Mode Penyimpanan Lokal';
           }
         };
+        const updateStatusIndicator = this.updateStatusIndicator;
 
         updateStatusIndicator();
 
@@ -9547,6 +9589,7 @@
           console.warn('Manual sync error:', e);
           this.showToast(`Info Sinkronisasi: ${e.message}`, 'warning');
         } finally {
+          if (typeof this.updateStatusIndicator === 'function') this.updateStatusIndicator();
           this.updateKPIs();
           this.renderTable();
           this.renderMapLayers();
@@ -9618,12 +9661,18 @@
         // Sinkronisasi otomatis antar tab browser via storage event
         window.addEventListener('storage', (e) => {
           if (e.key === 'dlh_lembata_aduan_v5' || e.key === 'dlh_lembata_realtime_ping' || e.key === 'dlh_lembata_aduan_v1') {
+            if (typeof this.updateStatusIndicator === 'function') this.updateStatusIndicator();
             reloadAll();
           }
         });
 
         window.addEventListener('aduanDataSynced', () => {
+          if (typeof this.updateStatusIndicator === 'function') this.updateStatusIndicator();
           reloadAll();
+        });
+
+        window.addEventListener('aduanStatsSynced', () => {
+          if (typeof this.updateStatusIndicator === 'function') this.updateStatusIndicator();
         });
       }
 

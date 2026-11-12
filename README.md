@@ -66,7 +66,7 @@ Aplikasi ini dibangun menggunakan arsitektur **HTML5, CSS3 Modern, dan Vanilla J
    - Pembuatan Berita Acara Pemeriksaan Fisik Lapangan (BAST/BAP) otomatis yang siap cetak / PDF.
 
 4. **📊 Rekapitulasi & Integrasi Google Spreadsheet API**
-   - Sinkronisasi real-time dua arah ke Cloud Google Spreadsheet (Sheet `Data_Aduan` 21 kolom dan Sheet `Log_Aktivitas`).
+   - Sinkronisasi otomatis berkala dengan pembaruan lintas perangkat melalui server (Google Apps Script & Google Spreadsheet Sheet `Data_Aduan` 21 kolom dan Sheet `Log_Aktivitas`). Pembaruan lintas perangkat bergantung pada komunikasi server secara berkala dengan interval polling terjadwal, sehingga terdapat jeda wajar yang dipengaruhi oleh interval polling, kondisi jaringan internet, dan waktu respons server (bukan pembaruan seketika tanpa jeda).
    - Ekspor data laporan akuntabilitas ke format CSV / Excel sekali klik.
 
 ---

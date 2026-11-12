@@ -3421,8 +3421,11 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         : '⚪ Mode Lokal (LocalStorage)';
     }
     if (lastSync) {
-      lastSync.textContent = window.aduanStore.lastSyncTime 
-        ? `Sinkron terakhir: ${window.aduanStore.lastSyncTime.toLocaleTimeString('id-ID')}`
+      const syncFormatted = window.aduanStore.getFormattedLastSync
+        ? window.aduanStore.getFormattedLastSync()
+        : (window.aduanStore.lastSyncTime ? window.aduanStore.lastSyncTime.toLocaleTimeString('id-ID') : null);
+      lastSync.textContent = syncFormatted 
+        ? `Terakhir disinkronkan: ${syncFormatted}`
         : (isConfigured ? 'Siap mengirim & menerima data' : 'Dataset lokal browser');
     }
   }
