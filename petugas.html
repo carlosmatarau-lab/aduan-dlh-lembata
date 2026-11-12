@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="id">
 
 <head>
@@ -3172,17 +3172,171 @@
       color: #ffffff;
       font-size: 0.72rem;
       font-weight: 800;
-      padding: 2px 8px;
+      padding: 3px 10px;
       border-radius: 999px;
       letter-spacing: 0.3px;
+      transition: all 0.2s ease;
+      display: inline-block;
+    }
+
+    .checklist-counter-badge.active-summary {
+      background: #047857;
+      box-shadow: 0 1px 3px rgba(4, 120, 87, 0.25);
     }
 
     .verification-checklist-items {
       display: flex;
       flex-direction: column;
+      gap: 10px;
+    }
+
+    .chk-item-card {
+      background: #ffffff;
+      border: 1px solid #d1fae5;
+      border-radius: 8px;
+      padding: 10px 12px;
+      transition: all 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+    }
+
+    .chk-item-card:hover {
+      border-color: #6ee7b7;
+      box-shadow: 0 2px 5px rgba(5, 150, 105, 0.08);
+    }
+
+    .chk-item-card.state-terpenuhi {
+      background: #f0fdf4;
+      border-color: #34d399;
+    }
+
+    .chk-item-card.state-tidak {
+      background: #fff1f2;
+      border-color: #fca5a5;
+    }
+
+    .chk-item-card.state-tdd {
+      background: #fffbeb;
+      border-color: #fcd34d;
+    }
+
+    .chk-indicator-title {
+      font-size: 0.81rem;
+      font-weight: 700;
+      color: #1e293b;
+      line-height: 1.35;
+      display: flex;
+      align-items: flex-start;
       gap: 7px;
     }
 
+    .chk-badge-num {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: #059669;
+      color: #ffffff;
+      font-size: 0.68rem;
+      font-weight: 800;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .chk-segmented-group {
+      display: flex;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    .chk-pill-opt {
+      display: inline-flex;
+      align-items: center;
+      cursor: pointer;
+      margin: 0;
+      position: relative;
+      user-select: none;
+    }
+
+    .chk-pill-opt input[type="radio"] {
+      position: absolute;
+      opacity: 0;
+      width: 0;
+      height: 0;
+      pointer-events: none;
+    }
+
+    .chk-pill-opt span {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 6px;
+      border: 1.5px solid #cbd5e1;
+      background: #ffffff;
+      color: #475569;
+      transition: all 0.15s ease;
+    }
+
+    .chk-pill-opt:hover span {
+      border-color: #94a3b8;
+      background: #f8fafc;
+      color: #0f172a;
+    }
+
+    .chk-pill-opt input[value="Terpenuhi"]:checked + span {
+      background: #059669;
+      border-color: #059669;
+      color: #ffffff;
+      box-shadow: 0 1px 3px rgba(5, 150, 105, 0.3);
+    }
+
+    .chk-pill-opt input[value="Tidak"]:checked + span {
+      background: #dc2626;
+      border-color: #dc2626;
+      color: #ffffff;
+      box-shadow: 0 1px 3px rgba(220, 38, 38, 0.3);
+    }
+
+    .chk-pill-opt input[value="Tidak Dapat Dinilai"]:checked + span {
+      background: #d97706;
+      border-color: #d97706;
+      color: #ffffff;
+      box-shadow: 0 1px 3px rgba(217, 119, 6, 0.3);
+    }
+
+    .chk-ket-input {
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 0.76rem;
+      padding: 6px 10px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #f8fafc;
+      color: #1e293b;
+      transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .chk-ket-input:focus {
+      outline: none;
+      border-color: #059669;
+      background: #ffffff;
+      box-shadow: 0 0 0 2px rgba(5, 150, 105, 0.15);
+    }
+
+    .chk-ket-input.invalid-highlight {
+      border-color: #dc2626 !important;
+      background: #fff1f2 !important;
+      box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25) !important;
+    }
+
+    /* Fallback / legacy support */
     .chk-item-row {
       display: flex;
       align-items: flex-start;
@@ -4730,41 +4884,131 @@
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
                 Daftar Periksa (Checklist) Verifikasi Lapangan
               </label>
-              <span class="checklist-counter-badge" id="vChecklistCounter">0 dari 5 Indikator Terekam</span>
+              <span class="checklist-counter-badge" id="vChecklistCounter">0 dari 5 Terisi</span>
             </div>
             <p style="font-size: 0.74rem; color: #64748b; margin: 0 0 10px 0; line-height: 1.35;">
-              Instrumen pengawasan faktual Bidang PPKLH DLH Kabupaten Lembata. Centang indikator yang telah diverifikasi di lapangan:
+              Instrumen pengawasan faktual Bidang PPKLH DLH Kabupaten Lembata (SOP 2.0 Bab 4.3). Tentukan status verifikasi setiap indikator di bawah ini:
             </p>
 
             <div class="verification-checklist-items" id="vChecklistContainer">
-              <label class="chk-item-row" for="chkGpsFaktual">
-                <input type="checkbox" id="chkGpsFaktual" class="v-chk-input" value="Lokasi kejadian/koordinat sesuai dengan lokasi faktual" onchange="window.portal && window.portal.onChecklistChange()">
-                <span class="chk-item-text">Lokasi kejadian/koordinat sesuai dengan lokasi faktual</span>
-              </label>
+              <!-- Indikator 1 -->
+              <div class="chk-item-card" id="vChkCard_0">
+                <div class="chk-indicator-title">
+                  <span class="chk-badge-num">1</span>
+                  <span>Lokasi kejadian/koordinat sesuai dengan lokasi faktual</span>
+                </div>
+                <div class="chk-segmented-group">
+                  <label class="chk-pill-opt">
+                    <input type="radio" name="v_chk_status_0" value="Terpenuhi" onchange="window.portal && window.portal.onChecklistChange()" onclick="window.portal && window.portal.toggleChecklistRadio(this)">
+                    <span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Terpenuhi</span>
+                  </label>
+                  <label class="chk-pill-opt">
+                    <input type="radio" name="v_chk_status_0" value="Tidak" onchange="window.portal && window.portal.onChecklistChange()" onclick="window.portal && window.portal.toggleChecklistRadio(this)">
+                    <span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Tidak</span>
+                  </label>
+                  <label class="chk-pill-opt">
+                    <input type="radio" name="v_chk_status_0" value="Tidak Dapat Dinilai" onchange="window.portal && window.portal.onChecklistChange()" onclick="window.portal && window.portal.toggleChecklistRadio(this)">
+                    <span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Tidak Dapat Dinilai</span>
+                  </label>
+                </div>
+                <input type="text" id="vChkKet_0" class="chk-ket-input" placeholder="Keterangan / bukti pengamatan (wajib diisi jika Tidak Dapat Dinilai)..." autocomplete="off">
+              </div>
 
-              <label class="chk-item-row" for="chkVisualObjek">
-                <input type="checkbox" id="chkVisualObjek" class="v-chk-input" value="Objek/indikasi dugaan pencemaran atau kerusakan teridentifikasi" onchange="window.portal && window.portal.onChecklistChange()">
-                <span class="chk-item-text">Objek/indikasi dugaan pencemaran atau kerusakan teridentifikasi</span>
-              </label>
+              <!-- Indikator 2 -->
+              <div class="chk-item-card" id="vChkCard_1">
+                <div class="chk-indicator-title">
+                  <span class="chk-badge-num">2</span>
+                  <span>Objek/indikasi dugaan pencemaran atau kerusakan teridentifikasi</span>
+                </div>
+                <div class="chk-segmented-group">
+                  <label class="chk-pill-opt">
+                    <input type="radio" name="v_chk_status_1" value="Terpenuhi" onchange="window.portal && window.portal.onChecklistChange()" onclick="window.portal && window.portal.toggleChecklistRadio(this)">
+                    <span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Terpenuhi</span>
+                  </label>
+                  <label class="chk-pill-opt">
+                    <input type="radio" name="v_chk_status_1" value="Tidak" onchange="window.portal && window.portal.onChecklistChange()" onclick="window.portal && window.portal.toggleChecklistRadio(this)">
+                    <span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Tidak</span>
+                  </label>
+                  <label class="chk-pill-opt">
+                    <input type="radio" name="v_chk_status_1" value="Tidak Dapat Dinilai" onchange="window.portal && window.portal.onChecklistChange()" onclick="window.portal && window.portal.toggleChecklistRadio(this)">
+                    <span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Tidak Dapat Dinilai</span>
+                  </label>
+                </div>
+                <input type="text" id="vChkKet_1" class="chk-ket-input" placeholder="Keterangan / bukti pengamatan (wajib diisi jika Tidak Dapat Dinilai)..." autocomplete="off">
+              </div>
 
-              <label class="chk-item-row" for="chkSumberPelaku">
-                <input type="checkbox" id="chkSumberPelaku" class="v-chk-input" value="Sumber/pihak terkait diklarifikasi apabila dapat diidentifikasi" onchange="window.portal && window.portal.onChecklistChange()">
-                <span class="chk-item-text">Sumber/pihak terkait diklarifikasi apabila dapat diidentifikasi</span>
-              </label>
+              <!-- Indikator 3 -->
+              <div class="chk-item-card" id="vChkCard_2">
+                <div class="chk-indicator-title">
+                  <span class="chk-badge-num">3</span>
+                  <span>Sumber/pihak terkait diklarifikasi apabila dapat diidentifikasi</span>
+                </div>
+                <div class="chk-segmented-group">
+                  <label class="chk-pill-opt">
+                    <input type="radio" name="v_chk_status_2" value="Terpenuhi" onchange="window.portal && window.portal.onChecklistChange()" onclick="window.portal && window.portal.toggleChecklistRadio(this)">
+                    <span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Terpenuhi</span>
+                  </label>
+                  <label class="chk-pill-opt">
+                    <input type="radio" name="v_chk_status_2" value="Tidak" onchange="window.portal && window.portal.onChecklistChange()" onclick="window.portal && window.portal.toggleChecklistRadio(this)">
+                    <span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Tidak</span>
+                  </label>
+                  <label class="chk-pill-opt">
+                    <input type="radio" name="v_chk_status_2" value="Tidak Dapat Dinilai" onchange="window.portal && window.portal.onChecklistChange()" onclick="window.portal && window.portal.toggleChecklistRadio(this)">
+                    <span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Tidak Dapat Dinilai</span>
+                  </label>
+                </div>
+                <input type="text" id="vChkKet_2" class="chk-ket-input" placeholder="Keterangan / bukti pengamatan (wajib diisi jika Tidak Dapat Dinilai)..." autocomplete="off">
+              </div>
 
-              <label class="chk-item-row" for="chkDokumenSampel">
-                <input type="checkbox" id="chkDokumenSampel" class="v-chk-input" value="Foto/video dan/atau sampel diambil sesuai kebutuhan dan prosedur" onchange="window.portal && window.portal.onChecklistChange()">
-                <span class="chk-item-text">Foto/video dan/atau sampel diambil sesuai kebutuhan dan prosedur</span>
-              </label>
+              <!-- Indikator 4 -->
+              <div class="chk-item-card" id="vChkCard_3">
+                <div class="chk-indicator-title">
+                  <span class="chk-badge-num">4</span>
+                  <span>Foto/video dan/atau sampel diambil sesuai kebutuhan dan prosedur</span>
+                </div>
+                <div class="chk-segmented-group">
+                  <label class="chk-pill-opt">
+                    <input type="radio" name="v_chk_status_3" value="Terpenuhi" onchange="window.portal && window.portal.onChecklistChange()" onclick="window.portal && window.portal.toggleChecklistRadio(this)">
+                    <span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Terpenuhi</span>
+                  </label>
+                  <label class="chk-pill-opt">
+                    <input type="radio" name="v_chk_status_3" value="Tidak" onchange="window.portal && window.portal.onChecklistChange()" onclick="window.portal && window.portal.toggleChecklistRadio(this)">
+                    <span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Tidak</span>
+                  </label>
+                  <label class="chk-pill-opt">
+                    <input type="radio" name="v_chk_status_3" value="Tidak Dapat Dinilai" onchange="window.portal && window.portal.onChecklistChange()" onclick="window.portal && window.portal.toggleChecklistRadio(this)">
+                    <span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Tidak Dapat Dinilai</span>
+                  </label>
+                </div>
+                <input type="text" id="vChkKet_3" class="chk-ket-input" placeholder="Keterangan / bukti pengamatan (wajib diisi jika Tidak Dapat Dinilai)..." autocomplete="off">
+              </div>
 
-              <label class="chk-item-row" for="chkKoordinasiAparat">
-                <input type="checkbox" id="chkKoordinasiAparat" class="v-chk-input" value="Koordinasi dengan aparat desa/kelurahan/pihak terkait dilakukan bila relevan" onchange="window.portal && window.portal.onChecklistChange()">
-                <span class="chk-item-text">Koordinasi dengan aparat desa/kelurahan/pihak terkait dilakukan bila relevan</span>
-              </label>
+              <!-- Indikator 5 -->
+              <div class="chk-item-card" id="vChkCard_4">
+                <div class="chk-indicator-title">
+                  <span class="chk-badge-num">5</span>
+                  <span>Koordinasi dengan aparat desa/kelurahan/pihak terkait dilakukan bila relevan</span>
+                </div>
+                <div class="chk-segmented-group">
+                  <label class="chk-pill-opt">
+                    <input type="radio" name="v_chk_status_4" value="Terpenuhi" onchange="window.portal && window.portal.onChecklistChange()" onclick="window.portal && window.portal.toggleChecklistRadio(this)">
+                    <span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg> Terpenuhi</span>
+                  </label>
+                  <label class="chk-pill-opt">
+                    <input type="radio" name="v_chk_status_4" value="Tidak" onchange="window.portal && window.portal.onChecklistChange()" onclick="window.portal && window.portal.toggleChecklistRadio(this)">
+                    <span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Tidak</span>
+                  </label>
+                  <label class="chk-pill-opt">
+                    <input type="radio" name="v_chk_status_4" value="Tidak Dapat Dinilai" onchange="window.portal && window.portal.onChecklistChange()" onclick="window.portal && window.portal.toggleChecklistRadio(this)">
+                    <span><svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> Tidak Dapat Dinilai</span>
+                  </label>
+                </div>
+                <input type="text" id="vChkKet_4" class="chk-ket-input" placeholder="Keterangan / bukti pengamatan (wajib diisi jika Tidak Dapat Dinilai)..." autocomplete="off">
+              </div>
             </div>
 
             <div style="display: flex; justify-content: flex-end; margin-top: 10px;">
-              <button type="button" class="btn-sync-checklist" onclick="window.portal && window.portal.appendChecklistToHasil()" title="Salin indikator checklist yang terpenuhi ke dalam kolom Hasil Temuan Lapangan">
+              <button type="button" class="btn-sync-checklist" onclick="window.portal && window.portal.appendChecklistToHasil()" title="Salin indikator checklist yang telah dinilai ke dalam kolom Hasil Temuan Lapangan">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px; display: inline-block; vertical-align: middle; margin-right: 4px;"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
                 Salin Checklist ke Catatan Temuan
               </button>
@@ -5378,6 +5622,16 @@
      * SILAPOR DLH LEMBATA — PETUGAS & VERIFIKATOR DASHBOARD CONTROLLER
      * ===================================================================
      */
+    // 5 Indikator Baku Checklist Verifikasi Lapangan (Lampiran A & Bab 4.3 SOP ECOADU Versi 2.0)
+    const VERIFIKASI_INDIKATOR_LIST = [
+      'Lokasi kejadian/koordinat sesuai dengan lokasi faktual',
+      'Objek/indikasi dugaan pencemaran atau kerusakan teridentifikasi',
+      'Sumber/pihak terkait diklarifikasi apabila dapat diidentifikasi',
+      'Foto/video dan/atau sampel diambil sesuai kebutuhan dan prosedur',
+      'Koordinasi dengan aparat desa/kelurahan/pihak terkait dilakukan bila relevan'
+    ];
+    window.VERIFIKASI_INDIKATOR_LIST = VERIFIKASI_INDIKATOR_LIST;
+
     class PetugasPortal {
       constructor() {
         this.filters = {
@@ -6726,62 +6980,192 @@
         }
         this.renderPhotoPreviews();
 
-        // Inisialisasi Instrumen Checklist Verifikasi Lapangan
-        const chkGps = document.getElementById('chkGpsFaktual');
-        const chkVisual = document.getElementById('chkVisualObjek');
-        const chkSumber = document.getElementById('chkSumberPelaku');
-        const chkDokumen = document.getElementById('chkDokumenSampel');
-        const chkKoordinasi = document.getElementById('chkKoordinasiAparat');
+        // Inisialisasi Instrumen Checklist Verifikasi Lapangan (SOP 2.0 Bab 4.3 & Lampiran A)
+        let savedChecklist = item.checklistVerifikasi;
+        if (typeof savedChecklist === 'string' && savedChecklist.trim() && savedChecklist !== '-') {
+          if (savedChecklist.trim().startsWith('[')) {
+            try {
+              savedChecklist = JSON.parse(savedChecklist);
+            } catch (e) {
+              savedChecklist = savedChecklist.split(',').map(s => s.trim()).filter(Boolean);
+            }
+          } else {
+            savedChecklist = savedChecklist.split(',').map(s => s.trim()).filter(Boolean);
+          }
+        }
+        if (!Array.isArray(savedChecklist)) {
+          savedChecklist = [];
+        }
 
-        const savedChecklist = Array.isArray(item.checklistVerifikasi) ? item.checklistVerifikasi : [];
-        const isMatched = (chk, keyword) => {
-          if (isUnverified || !chk) return false;
-          return savedChecklist.some(s => s === chk.value || (keyword && String(s || '').toLowerCase().includes(keyword)));
-        };
-        if (chkGps) chkGps.checked = isMatched(chkGps, 'gps');
-        if (chkVisual) chkVisual.checked = isMatched(chkVisual, 'visual');
-        if (chkSumber) chkSumber.checked = isMatched(chkSumber, 'sumber');
-        if (chkDokumen) chkDokumen.checked = isMatched(chkDokumen, 'sampel') || isMatched(chkDokumen, 'dokumentasi');
-        if (chkKoordinasi) chkKoordinasi.checked = isMatched(chkKoordinasi, 'koordinasi');
+        const indicatorKeywords = [
+          ['lokasi', 'gps', 'koordinat', 'faktual'],
+          ['objek', 'visual', 'indikasi', 'kerusakan', 'pencemaran'],
+          ['sumber', 'pelaku', 'klarifikasi'],
+          ['sampel', 'foto', 'video', 'dokumen', 'prosedur'],
+          ['koordinasi', 'aparat', 'desa', 'kelurahan']
+        ];
+
+        for (let i = 0; i < 5; i++) {
+          const card = document.getElementById(`vChkCard_${i}`);
+          const radios = document.querySelectorAll(`input[name="v_chk_status_${i}"]`);
+          const ketInput = document.getElementById(`vChkKet_${i}`);
+
+          radios.forEach(r => {
+            r.checked = false;
+            r.dataset.wasChecked = 'false';
+          });
+          if (ketInput) {
+            ketInput.value = '';
+            ketInput.classList.remove('invalid-highlight');
+          }
+          if (card) {
+            card.classList.remove('state-terpenuhi', 'state-tidak', 'state-tdd');
+          }
+
+          if (!isUnverified && savedChecklist.length > 0) {
+            const indText = VERIFIKASI_INDIKATOR_LIST[i];
+            const kws = indicatorKeywords[i];
+
+            // 1. Cek format objek baru { indikator, status, keterangan }
+            let foundObj = savedChecklist.find(entry => {
+              if (entry && typeof entry === 'object') {
+                if (entry.indikator === indText) return true;
+                const entryInd = String(entry.indikator || '').toLowerCase();
+                return kws.some(kw => entryInd.includes(kw));
+              }
+              return false;
+            });
+
+            if (!foundObj && savedChecklist[i] && typeof savedChecklist[i] === 'object' && savedChecklist[i].status) {
+              foundObj = savedChecklist[i];
+            }
+
+            if (foundObj) {
+              if (foundObj.status) {
+                const targetRadio = Array.from(radios).find(r => r.value === foundObj.status);
+                if (targetRadio) {
+                  targetRadio.checked = true;
+                  targetRadio.dataset.wasChecked = 'true';
+                }
+              }
+              if (ketInput && foundObj.keterangan) {
+                ketInput.value = foundObj.keterangan;
+              }
+            } else {
+              // 2. Kompatibilitas mundur data lama (array string biasa)
+              const matchedLegacy = savedChecklist.some(s => {
+                if (typeof s !== 'string') return false;
+                const lower = s.toLowerCase();
+                return s === indText || kws.some(kw => lower.includes(kw));
+              });
+              if (matchedLegacy) {
+                const radioTerpenuhi = Array.from(radios).find(r => r.value === 'Terpenuhi');
+                if (radioTerpenuhi) {
+                  radioTerpenuhi.checked = true;
+                  radioTerpenuhi.dataset.wasChecked = 'true';
+                }
+              }
+            }
+          }
+        }
         this.onChecklistChange();
         this.syncBaPenolakanButtonVisibility();
 
         modal.classList.add('show');
       }
 
+      toggleChecklistRadio(radioEl) {
+        if (!radioEl) return;
+        if (radioEl.dataset.wasChecked === 'true') {
+          radioEl.checked = false;
+          radioEl.dataset.wasChecked = 'false';
+        } else {
+          document.querySelectorAll(`input[name="${radioEl.name}"]`).forEach(r => {
+            r.dataset.wasChecked = 'false';
+          });
+          radioEl.dataset.wasChecked = 'true';
+        }
+        this.onChecklistChange();
+      }
+
       onChecklistChange() {
-        const inputs = document.querySelectorAll('.v-chk-input');
-        let checkedCount = 0;
-        inputs.forEach(input => {
-          const row = input.closest('.chk-item-row');
-          if (row) row.classList.toggle('checked', input.checked);
-          if (input.checked) checkedCount++;
-        });
+        let countTerpenuhi = 0;
+        let countTidak = 0;
+        let countTdd = 0;
+
+        for (let i = 0; i < 5; i++) {
+          const card = document.getElementById(`vChkCard_${i}`);
+          const selectedRadio = document.querySelector(`input[name="v_chk_status_${i}"]:checked`);
+          const statusVal = selectedRadio ? selectedRadio.value : '';
+
+          if (card) {
+            card.classList.remove('state-terpenuhi', 'state-tidak', 'state-tdd');
+            if (statusVal === 'Terpenuhi') {
+              card.classList.add('state-terpenuhi');
+              countTerpenuhi++;
+            } else if (statusVal === 'Tidak') {
+              card.classList.add('state-tidak');
+              countTidak++;
+            } else if (statusVal === 'Tidak Dapat Dinilai') {
+              card.classList.add('state-tdd');
+              countTdd++;
+            }
+          }
+        }
+
         const counter = document.getElementById('vChecklistCounter');
-        if (counter) counter.textContent = `${checkedCount} dari 5 Indikator Terekam`;
+        if (counter) {
+          const totalFilled = countTerpenuhi + countTidak + countTdd;
+          if (totalFilled === 0) {
+            counter.textContent = '0 dari 5 Terisi';
+            counter.className = 'checklist-counter-badge';
+          } else {
+            counter.textContent = `${countTerpenuhi} Terpenuhi, ${countTidak} Tidak, ${countTdd} Tidak Dapat Dinilai`;
+            counter.className = 'checklist-counter-badge active-summary';
+          }
+        }
       }
 
       appendChecklistToHasil() {
-        const checkedInputs = Array.from(document.querySelectorAll('.v-chk-input:checked'));
-        if (checkedInputs.length === 0) {
-          this.showToast('Centang minimal satu indikator checklist terlebih dahulu.', 'warning');
+        const activeItems = [];
+        for (let i = 0; i < 5; i++) {
+          const selectedRadio = document.querySelector(`input[name="v_chk_status_${i}"]:checked`);
+          const ketInput = document.getElementById(`vChkKet_${i}`);
+          const statusVal = selectedRadio ? selectedRadio.value : '';
+          const ketVal = ketInput ? ketInput.value.trim() : '';
+          if (statusVal) {
+            activeItems.push({
+              index: i + 1,
+              indikator: VERIFIKASI_INDIKATOR_LIST[i],
+              status: statusVal,
+              keterangan: ketVal
+            });
+          }
+        }
+
+        if (activeItems.length === 0) {
+          this.showToast('Pilih status minimal satu indikator checklist terlebih dahulu.', 'warning');
           return;
         }
+
         const hasilEl = document.getElementById('vHasilVerifikasi');
         if (!hasilEl) return;
         const tglInput = document.getElementById('vTanggalVerifikasi');
         const tglText = tglInput && tglInput.value ? tglInput.value : new Date().toISOString().split('T')[0];
-        const header = `[Hasil Verifikasi Lapangan - ${tglText}]:`;
-        const points = checkedInputs.map(i => `• ${i.value}`).join('\n');
+        const header = `[Hasil Verifikasi Lapangan (Daftar Periksa) - ${tglText}]:`;
+        const points = activeItems.map(item => {
+          return `• ${item.indikator}: [${item.status}]${item.keterangan ? ' - ' + item.keterangan : ''}`;
+        }).join('\n');
         const block = `${header}\n${points}`;
 
         let current = (hasilEl.value || '').trim();
-        const checklistPattern = /\[(?:Hasil Verifikasi Lapangan[^\]]*|Daftar Periksa Lapangan Terpenuhi)\]:[\s\S]*?(?=\n\n|$)/;
+        const checklistPattern = /\[(?:Hasil Verifikasi Lapangan[^\]]*|Daftar Periksa Lapangan[^\]]*)\]:[\s\S]*?(?=\n\n(?=[A-Z\[])|\n\n$|$)/;
         if (checklistPattern.test(current)) {
           hasilEl.value = current.replace(checklistPattern, block).trim();
         } else {
           hasilEl.value = current ? `${current}\n\n${block}` : block;
         }
+        hasilEl.dispatchEvent(new Event('input', { bubbles: true }));
         this.showToast('Indikator checklist berhasil disinkronkan ke Catatan Temuan!', 'success');
       }
 
@@ -7495,16 +7879,58 @@
         };
 
         let checklistHtml = '-';
-        let checklistArr = [];
-        if (Array.isArray(item.checklistVerifikasi)) {
-          checklistArr = item.checklistVerifikasi;
-        } else if (typeof item.checklistVerifikasi === 'string' && item.checklistVerifikasi.trim() && item.checklistVerifikasi !== '-') {
-          checklistArr = item.checklistVerifikasi.split(',').map(s => s.trim()).filter(Boolean);
+        let rawChecklist = item.checklistVerifikasi;
+        if (typeof rawChecklist === 'string' && rawChecklist.trim() && rawChecklist !== '-') {
+          if (rawChecklist.trim().startsWith('[')) {
+            try {
+              rawChecklist = JSON.parse(rawChecklist);
+            } catch (e) {
+              rawChecklist = rawChecklist.split(',').map(s => s.trim()).filter(Boolean);
+            }
+          } else {
+            rawChecklist = rawChecklist.split(',').map(s => s.trim()).filter(Boolean);
+          }
         }
-        if (checklistArr.length > 0) {
-          checklistHtml = '<ul style="margin: 2px 0 0 16px; padding: 0;">' + 
-            checklistArr.map(chk => `<li>• ${escapeHtml(chk)}</li>`).join('') + 
-            '</ul>';
+
+        if (Array.isArray(rawChecklist) && rawChecklist.length > 0) {
+          const rows = rawChecklist.map((chk, idx) => {
+            if (chk && typeof chk === 'object') {
+              const indText = escapeHtml(chk.indikator || (VERIFIKASI_INDIKATOR_LIST[idx] || `Indikator #${idx + 1}`));
+              const stVal = chk.status ? String(chk.status).trim() : 'Belum Dinilai';
+              const ketVal = chk.keterangan ? escapeHtml(chk.keterangan.trim()) : '';
+
+              let badgeColor = '#475569';
+              let badgeBg = '#f1f5f9';
+              let badgeBorder = '#cbd5e1';
+              if (stVal === 'Terpenuhi') {
+                badgeColor = '#065f46';
+                badgeBg = '#d1fae5';
+                badgeBorder = '#10b981';
+              } else if (stVal === 'Tidak') {
+                badgeColor = '#991b1b';
+                badgeBg = '#fee2e2';
+                badgeBorder = '#ef4444';
+              } else if (stVal === 'Tidak Dapat Dinilai') {
+                badgeColor = '#92400e';
+                badgeBg = '#fef3c7';
+                badgeBorder = '#f59e0b';
+              }
+
+              const badgeHtml = `<span style="display:inline-block; font-size:0.75rem; font-weight:700; padding:1px 6px; border-radius:4px; background:${badgeBg}; color:${badgeColor}; border:1px solid ${badgeBorder}; margin-left:4px;">[${escapeHtml(stVal)}]</span>`;
+              const ketHtml = ketVal ? `<div style="font-size:0.75rem; color:#475569; margin-top:2px; font-style:italic; padding-left:14px;">↳ Keterangan / Bukti: ${ketVal}</div>` : '';
+
+              return `<li style="margin-bottom: 5px; line-height: 1.4;">
+                <div>• <strong>${indText}</strong>: ${badgeHtml}</div>
+                ${ketHtml}
+              </li>`;
+            } else {
+              const strVal = escapeHtml(String(chk));
+              return `<li style="margin-bottom: 4px; line-height: 1.4;">
+                • <strong>${strVal}</strong>: <span style="display:inline-block; font-size:0.75rem; font-weight:700; padding:1px 6px; border-radius:4px; background:#d1fae5; color:#065f46; border:1px solid #10b981; margin-left:4px;">[Terpenuhi]</span>
+              </li>`;
+            }
+          });
+          checklistHtml = `<ul style="margin: 3px 0 0 0; padding-left: 12px; list-style: none;">${rows.join('')}</ul>`;
         }
 
         const latLngText = (item.lat && item.lng) ? `${item.lat}, ${item.lng}` : '-';
@@ -9349,6 +9775,36 @@
             const id = document.getElementById('vTargetId').value;
             if (!id) return;
 
+            const selectedStatus = document.getElementById('vStatusSelect').value;
+            const isUnverifiedStatus = (selectedStatus === 'Baru' || selectedStatus === 'Aduan Diterima');
+
+            // Validasi Wajib untuk Indikator yang berstatus "Tidak Dapat Dinilai"
+            if (!isUnverifiedStatus) {
+              for (let i = 0; i < 5; i++) {
+                const selectedRadio = document.querySelector(`input[name="v_chk_status_${i}"]:checked`);
+                const ketInput = document.getElementById(`vChkKet_${i}`);
+                const statusVal = selectedRadio ? selectedRadio.value : '';
+                const ketVal = ketInput ? ketInput.value.trim() : '';
+
+                if (statusVal === 'Tidak Dapat Dinilai' && !ketVal) {
+                  if (ketInput) {
+                    ketInput.classList.add('invalid-highlight');
+                    ketInput.focus();
+                    ketInput.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                    const clearInvalid = () => {
+                      if (ketInput.value.trim()) {
+                        ketInput.classList.remove('invalid-highlight');
+                        ketInput.removeEventListener('input', clearInvalid);
+                      }
+                    };
+                    ketInput.addEventListener('input', clearInvalid);
+                  }
+                  this.showToast(`Indikator #${i + 1}: Keterangan/alasan wajib diisi jika berstatus "Tidak Dapat Dinilai"!`, 'warning');
+                  return;
+                }
+              }
+            }
+
             const btnSimpan = document.getElementById('btnSimpanVerifikasi');
             const originalBtnHtml = btnSimpan ? btnSimpan.innerHTML : '';
             if (btnSimpan) {
@@ -9357,16 +9813,23 @@
             }
 
             try {
-              const selectedStatus = document.getElementById('vStatusSelect').value;
-              const isUnverifiedStatus = (selectedStatus === 'Baru' || selectedStatus === 'Aduan Diterima');
-              const checkedChecklist = Array.from(document.querySelectorAll('.v-chk-input:checked')).map(i => i.value);
+              const checklistData = VERIFIKASI_INDIKATOR_LIST.map((indText, idx) => {
+                const selectedRadio = document.querySelector(`input[name="v_chk_status_${idx}"]:checked`);
+                const ketInput = document.getElementById(`vChkKet_${idx}`);
+                return {
+                  indikator: indText,
+                  status: selectedRadio ? selectedRadio.value : '',
+                  keterangan: ketInput ? ketInput.value.trim() : ''
+                };
+              });
+              const hasAnyStatus = checklistData.some(c => c.status);
 
               const updateData = {
                 status: selectedStatus,
                 petugasVerifikasi: isUnverifiedStatus ? '-' : document.getElementById('vPetugasInput').value.trim(),
                 tanggalVerifikasi: document.getElementById('vTanggalVerifikasi').value,
                 hasilVerifikasi: document.getElementById('vHasilVerifikasi').value.trim(),
-                checklistVerifikasi: isUnverifiedStatus ? [] : checkedChecklist,
+                checklistVerifikasi: (isUnverifiedStatus || !hasAnyStatus) ? [] : checklistData,
                 tindakanDLH: document.getElementById('vTindakanDLH').value.trim(),
                 tanggalSelesai: document.getElementById('vTanggalSelesai').value,
                 nomorBeritaAcara: isUnverifiedStatus ? '' : document.getElementById('vNomorBA').value.trim(),

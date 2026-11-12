@@ -868,6 +868,7 @@ function parseCsvToAduan(csvText) {
       tanggalSelesai: item.Tanggal_Selesai || item.tanggalSelesai || '-',
       nomorBeritaAcara: item.Nomor_Berita_Acara || item.nomorBeritaAcara || '',
       catatanBeritaAcara: item.Catatan_Berita_Acara || item.catatanBeritaAcara || '',
+      checklistVerifikasi: item.Checklist_Verifikasi || item.checklistVerifikasi || [],
       fotoKondisiRiil: item.Foto_Kondisi_Riil || item.fotoKondisiRiil || '',
       timestampVerifikasi: item.Timestamp_Verifikasi || item.timestampVerifikasi || '',
       timestampTindakLanjut: item.Timestamp_Tindak_Lanjut || item.timestampTindakLanjut || '',
@@ -1156,6 +1157,7 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     tanggalSelesai: isFinalUnverified ? '-' : (hasPendingOfficer ? (existing.tanggalSelesai || '-') : (remoteItem.tanggalSelesai || '-')),
     nomorBeritaAcara: isFinalUnverified ? '' : (hasPendingOfficer ? (existing.nomorBeritaAcara || '') : (remoteItem.nomorBeritaAcara || '')),
     catatanBeritaAcara: isFinalUnverified ? '' : (hasPendingOfficer ? (existing.catatanBeritaAcara || '') : (remoteItem.catatanBeritaAcara || '')),
+    checklistVerifikasi: isFinalUnverified ? [] : (hasPendingOfficer ? (existing.checklistVerifikasi || []) : (remoteItem.checklistVerifikasi || (existing ? existing.checklistVerifikasi : []) || [])),
     fotoKondisiRiil: finalFotoRiil,
     fotoVerifikasiList: finalOfficerPhotos,
     timestampVerifikasi: isFinalUnverified ? '' : (hasPendingOfficer ? (existing.timestampVerifikasi || '') : (remoteItem.timestampVerifikasi || '')),
@@ -1271,6 +1273,7 @@ class AduanDataStore {
         item.fotoVerifikasiList = [];
         item.nomorBeritaAcara = '';
         item.catatanBeritaAcara = '';
+        item.checklistVerifikasi = [];
       }
 
       // Pulihkan foto yang tersimpan link Drive dengan data Base64 asli dari cache
@@ -2155,6 +2158,7 @@ class AduanDataStore {
       tanggalSelesai: formData.tanggalSelesai || (existingItem ? existingItem.tanggalSelesai : '-'),
       nomorBeritaAcara: formData.nomorBeritaAcara || (existingItem ? existingItem.nomorBeritaAcara : ''),
       catatanBeritaAcara: formData.catatanBeritaAcara || (existingItem ? existingItem.catatanBeritaAcara : ''),
+      checklistVerifikasi: formData.checklistVerifikasi || (existingItem ? existingItem.checklistVerifikasi : []),
       fotoKondisiRiil: formData.fotoKondisiRiil || (existingItem ? existingItem.fotoKondisiRiil : ''),
       fotoVerifikasiList: formData.fotoVerifikasiList || (existingItem ? existingItem.fotoVerifikasiList : []),
       timestampVerifikasi: formData.timestampVerifikasi || (existingItem ? existingItem.timestampVerifikasi : ''),
@@ -2299,7 +2303,13 @@ class AduanDataStore {
       tindakanDLH: updateData.tindakanDLH || existing.tindakanDLH,
       tanggalSelesai: updateData.status === 'Selesai' ? (updateData.tanggalSelesai || new Date().toISOString().split('T')[0]) : existing.tanggalSelesai,
       // Berita Acara, Checklist Verifikasi & Bukti Foto Fisik Riil
-      checklistVerifikasi: updateData.checklistVerifikasi !== undefined ? updateData.checklistVerifikasi : (existing.checklistVerifikasi || []),
+      checklistVerifikasi: (() => {
+        let chk = updateData.checklistVerifikasi !== undefined ? updateData.checklistVerifikasi : (existing.checklistVerifikasi || []);
+        if (typeof chk === 'string' && chk.trim().startsWith('[')) {
+          try { chk = JSON.parse(chk); } catch (e) {}
+        }
+        return chk;
+      })(),
       nomorBeritaAcara: updateData.nomorBeritaAcara !== undefined ? updateData.nomorBeritaAcara : (existing.nomorBeritaAcara || ''),
       catatanBeritaAcara: updateData.catatanBeritaAcara !== undefined ? updateData.catatanBeritaAcara : (existing.catatanBeritaAcara || ''),
       fotoKondisiRiil: fotoUtama,
