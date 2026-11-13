@@ -207,7 +207,9 @@ const HEADERS_ADUAN = [
   'Foto_Kondisi_Riil',
   'Timestamp_Verifikasi',
   'Timestamp_Tindak_Lanjut',
-  'Timestamp_Selesai'
+  'Timestamp_Selesai',
+  'Alasan_Tidak_Ditindaklanjuti',
+  'Kesimpulan_Petugas'
 ];
 
 
@@ -675,7 +677,9 @@ function mapSheetRowToFrontend(row, fotoStorageMap, isAdmin = true) {
     fotoVerifikasiList: finalOfficerPhotos,
     timestampVerifikasi: isUnverified ? '' : String(row['Timestamp_Verifikasi'] || ''),
     timestampTindakLanjut: isUnverified ? '' : String(row['Timestamp_Tindak_Lanjut'] || ''),
-    timestampSelesai: isUnverified ? '' : String(row['Timestamp_Selesai'] || '')
+    timestampSelesai: isUnverified ? '' : String(row['Timestamp_Selesai'] || ''),
+    alasanTidakDitindaklanjuti: isUnverified ? '' : String(row['Alasan_Tidak_Ditindaklanjuti'] || ''),
+    kesimpulanPetugas: isUnverified ? '' : String(row['Kesimpulan_Petugas'] || '')
   };
 }
 
@@ -925,26 +929,27 @@ function handleGetStats() {
   const rawData = getSheetDataAsObjects(sheet);
 
   let total = rawData.length;
-  let baru = 0, diverifikasi = 0, ditindak = 0, selesai = 0, ditolak = 0;
+  let baru = 0, diverifikasi = 0, ditindak = 0, selesai = 0, tidakDapatDitindaklanjuti = 0;
   const perKecamatan = {};
   const perJenis = {};
 
   rawData.forEach(row => {
-    const status = String(row['Status'] || '');
+    const status = String(row['Status'] || '').trim();
+    const stLower = status.toLowerCase();
     const kec = String(row['Kecamatan'] || '');
     const jenis = String(row['Jenis_Pencemaran'] || '');
 
-    if (status === 'Baru') baru++;
-    else if (status === 'Diverifikasi') diverifikasi++;
-    else if (status === 'Ditindaklanjuti') ditindak++;
-    else if (status === 'Selesai') selesai++;
-    else if (status === 'Ditolak') ditolak++;
+    if (stLower === 'baru' || stLower === 'aduan diterima') baru++;
+    else if (stLower.indexOf('verifikasi') !== -1) diverifikasi++;
+    else if (stLower.indexOf('tidak dapat') !== -1 || stLower.indexOf('tidak ditindak') !== -1 || stLower.indexOf('tolak') !== -1) tidakDapatDitindaklanjuti++;
+    else if (stLower.indexOf('tindak') !== -1 || stLower.indexOf('penanganan') !== -1 || stLower.indexOf('proses') !== -1) ditindak++;
+    else if (stLower.indexOf('selesai') !== -1 || stLower.indexOf('tuntas') !== -1) selesai++;
 
     perKecamatan[kec] = (perKecamatan[kec] || 0) + 1;
     perJenis[jenis] = (perJenis[jenis] || 0) + 1;
   });
 
-  const tingkatPenyelesaian = total > 0 ? Math.round(((selesai + ditolak) / total) * 100) : 0;
+  const tingkatPenyelesaian = total > 0 ? Math.round(((selesai + tidakDapatDitindaklanjuti) / total) * 100) : 0;
 
   return {
     success: true,
@@ -954,7 +959,8 @@ function handleGetStats() {
       diverifikasi: diverifikasi,
       ditindak: ditindak,
       selesai: selesai,
-      ditolak: ditolak,
+      tidakDapatDitindaklanjuti: tidakDapatDitindaklanjuti,
+      ditolak: tidakDapatDitindaklanjuti,
       dalamProses: diverifikasi + ditindak,
       tingkatPenyelesaian: tingkatPenyelesaian,
       perKecamatan: perKecamatan,
@@ -1302,7 +1308,7 @@ function handleAddAduan(formData) {
     const primaryStatus = formData.status || 'Baru';
     const isUnverified = (primaryStatus === 'Baru' || primaryStatus === 'Aduan Diterima' || primaryStatus === 'Verifikasi Administrasi');
 
-    // Susun baris data baru sesuai urutan HEADERS_ADUAN (27 kolom lengkap)
+    // Susun baris data baru sesuai urutan HEADERS_ADUAN (29 kolom lengkap)
     const newRow = [
       newId,                                                  // ID_Aduan
       now,                                                    // Timestamp
@@ -1330,7 +1336,9 @@ function handleAddAduan(formData) {
       isUnverified ? '' : (formData.fotoKondisiRiil || ''),   // Foto_Kondisi_Riil
       isUnverified ? '' : (formData.timestampVerifikasi || ''), // Timestamp_Verifikasi
       isUnverified ? '' : (formData.timestampTindakLanjut || ''), // Timestamp_Tindak_Lanjut
-      isUnverified ? '' : (formData.timestampSelesai || '')   // Timestamp_Selesai
+      isUnverified ? '' : (formData.timestampSelesai || ''),  // Timestamp_Selesai
+      isUnverified ? '' : (formData.alasanTidakDitindaklanjuti || ''), // Alasan_Tidak_Ditindaklanjuti
+      isUnverified ? '' : (formData.kesimpulanPetugas || '')  // Kesimpulan_Petugas
     ];
 
     // Tambahkan baris ke sheet
@@ -1452,6 +1460,8 @@ function handleUpdateVerifikasi(updateData) {
   const colTimeVerif = headers.indexOf('Timestamp_Verifikasi');
   const colTimeTindak = headers.indexOf('Timestamp_Tindak_Lanjut');
   const colTimeSelesai = headers.indexOf('Timestamp_Selesai');
+  const colAlasanTidak = headers.indexOf('Alasan_Tidak_Ditindaklanjuti');
+  const colKesimpulan = headers.indexOf('Kesimpulan_Petugas');
 
   // Update sel-sel yang relevan
   if (updateData.status) {
@@ -1477,6 +1487,12 @@ function handleUpdateVerifikasi(updateData) {
   if (updateData.catatanBeritaAcara !== undefined && colCatatanBA !== -1) {
     sheet.getRange(targetRowIndex, colCatatanBA + 1).setValue(updateData.catatanBeritaAcara);
   }
+  if (updateData.alasanTidakDitindaklanjuti !== undefined && colAlasanTidak !== -1) {
+    sheet.getRange(targetRowIndex, colAlasanTidak + 1).setValue(updateData.alasanTidakDitindaklanjuti);
+  }
+  if (updateData.kesimpulanPetugas !== undefined && colKesimpulan !== -1) {
+    sheet.getRange(targetRowIndex, colKesimpulan + 1).setValue(updateData.kesimpulanPetugas);
+  }
 
   // Timestamps Akuntabilitas Kinerja
   if (updateData.timestampVerifikasi && colTimeVerif !== -1) {
@@ -1497,6 +1513,8 @@ function handleUpdateVerifikasi(updateData) {
     if (colFotoRiil !== -1) sheet.getRange(targetRowIndex, colFotoRiil + 1).setValue('');
     if (colNomorBA !== -1) sheet.getRange(targetRowIndex, colNomorBA + 1).setValue('');
     if (colCatatanBA !== -1) sheet.getRange(targetRowIndex, colCatatanBA + 1).setValue('');
+    if (colAlasanTidak !== -1) sheet.getRange(targetRowIndex, colAlasanTidak + 1).setValue('');
+    if (colKesimpulan !== -1) sheet.getRange(targetRowIndex, colKesimpulan + 1).setValue('');
     purgeFotoStorage(officerPhotoId);
     deleteDriveFilesForId(officerPhotoId);
     for (let k = 1; k <= 6; k++) {
@@ -1659,7 +1677,10 @@ function handleUpdateVerifikasi(updateData) {
           id: targetId,
           namaPelapor: citizenNama,
           status: updateData.status,
-          catatan: updateData.tindakanDLH || updateData.hasilVerifikasi || updateData.catatanBeritaAcara || '-',
+          alasanTidakDitindaklanjuti: updateData.alasanTidakDitindaklanjuti || '',
+          hasilVerifikasi: updateData.hasilVerifikasi || '',
+          kesimpulanPetugas: updateData.kesimpulanPetugas || '',
+          catatan: updateData.tindakanDLH || updateData.kesimpulanPetugas || updateData.hasilVerifikasi || updateData.catatanBeritaAcara || '-',
           petugas: updateData.petugasVerifikasi || '-',
           timestamp: Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm')
         });
@@ -1989,8 +2010,8 @@ function setupSpreadsheet() {
   if (colStatus > 0 && lastRow > 1) {
     const statusRange = sheetAduan.getRange(2, colStatus, lastRow - 1, 1);
     const rule = SpreadsheetApp.newDataValidation()
-      .requireValueInList(['Baru', 'Diverifikasi', 'Ditindaklanjuti', 'Selesai', 'Ditolak'])
-      .setAllowInvalid(false)
+      .requireValueInList(['Baru', 'Diverifikasi', 'Ditindaklanjuti', 'Selesai', 'Tidak Dapat Ditindaklanjuti'])
+      .setAllowInvalid(true)
       .build();
     statusRange.setDataValidation(rule);
   }
@@ -2108,7 +2129,7 @@ function insertSampleData() {
       'Area pasar barter tradisional Wulandoni', -8.5410, 123.4910,
       'Pencemaran Air', 'Diduga air sumur warga tercemar rembesan limbah pengolahan daging paus/ikan.',
       'Saluran drainase tradisional mampet', '2026-09-04', 'https://images.unsplash.com/photo-1584555613497-9ecf9dd06f68?auto=format&fit=crop&w=700&q=80',
-      'Ditolak', 'Tim Gabungan DLH & Dinkes', '2026-09-07',
+      'Tidak Dapat Ditindaklanjuti', 'Tim Gabungan DLH & Dinkes', '2026-09-07',
       'Bukan limbah B3 melainkan drainase umum tersumbat.',
       'Diserahkan kepada pengelola pasar.', '2026-09-08'
     ]
@@ -2934,24 +2955,24 @@ function getStatusKeterangan_(status) {
   if (st === 'diverifikasi' || st === 'verifikasi lapangan') {
     return 'Pemeriksaan / Fakta Lapangan';
   }
+  if (st.indexOf('tidak dapat') !== -1 || st.indexOf('tidak ditindak') !== -1 || st.indexOf('tolak') !== -1) {
+    return 'Belum Dapat Diproses Lebih Lanjut Berdasarkan Hasil Pemeriksaan';
+  }
   if (st === 'ditindaklanjuti' || st === 'dalam penanganan' || st === 'sedang diproses' || st === 'proses') {
     return 'Penanganan / Aksi Berjalan';
   }
   if (st === 'selesai') {
     return 'Tuntas dengan Bukti Penyelesaian';
   }
-  if (st === 'ditolak') {
-    return 'Tidak Memenuhi Syarat / Tidak Terbukti';
-  }
   return '';
 }
 
 /**
  * Template 3: Generator Template Pesan WhatsApp saat Status Aduan Diperbarui Petugas
- * Memuat pemberitahuan perubahan status (Baru, Diverifikasi, Ditindaklanjuti, Selesai, atau Ditolak),
+ * Memuat pemberitahuan perubahan status (Baru, Diverifikasi, Ditindaklanjuti, Selesai, atau Tidak Dapat Ditindaklanjuti),
  * kolom keterangan status, catatan tindak lanjut petugas, No. Tiket, dan tautan portal resmi.
  *
- * @param {Object} data - {id, namaPelapor, status, catatan, petugas, timestamp}
+ * @param {Object} data - {id, namaPelapor, status, catatan, alasanTidakDitindaklanjuti, hasilVerifikasi, kesimpulanPetugas, petugas, timestamp}
  * @return {string}
  */
 function generateStatusUpdateMessage(data) {
@@ -2959,10 +2980,59 @@ function generateStatusUpdateMessage(data) {
   var nama = data.namaPelapor || data.nama || 'Bapak/Ibu';
   var id = data.id || data.ticketId || '-';
   var status = data.status || 'Diverifikasi';
+  var stLower = String(status || '').trim().toLowerCase();
+  var isTidakDapat = (
+    stLower.indexOf('tidak dapat') !== -1 ||
+    stLower.indexOf('tidak ditindak') !== -1 ||
+    stLower.indexOf('tolak') !== -1
+  );
   var keteranganStatus = getStatusKeterangan_(status);
   var catatan = cleanUraianText(data.catatan || data.tindakanDLH || data.hasilVerifikasi || '-');
   var waktu = data.timestamp || Utilities.formatDate(new Date(), 'Asia/Makassar', 'yyyy-MM-dd HH:mm');
   var trackUrl = 'https://aduan-dlh-lembata.vercel.app/?tiket=' + encodeURIComponent(id);
+
+  if (isTidakDapat) {
+    var displayStatus = 'Tidak Dapat Ditindaklanjuti';
+    var alasanText = cleanUraianText(data.alasanTidakDitindaklanjuti || '') || 'Berdasarkan hasil pemeriksaan petugas di lapangan.';
+    var ringkasanParts = [];
+    if (data.hasilVerifikasi && data.hasilVerifikasi !== '-') {
+      ringkasanParts.push(cleanUraianText(data.hasilVerifikasi));
+    }
+    if (data.kesimpulanPetugas && data.kesimpulanPetugas !== '-') {
+      ringkasanParts.push('Kesimpulan: ' + cleanUraianText(data.kesimpulanPetugas));
+    }
+    if (ringkasanParts.length === 0 && catatan && catatan !== '-') {
+      ringkasanParts.push(catatan);
+    }
+    var ringkasanCatatan = ringkasanParts.length > 0 ? ringkasanParts.join(' | ') : '-';
+
+    var politeLines = [
+      '*PEMBARUAN STATUS PENGADUAN - DLH LEMBATA*',
+      '',
+      'Yth. Bapak/Ibu *' + nama + '*,',
+      'Terima kasih telah menyampaikan pengaduan kepada Dinas Lingkungan Hidup Kabupaten Lembata. Pengaduan Anda telah kami terima, catat, dan dilakukan pemeriksaan oleh petugas.',
+      '',
+      '*No. Tiket Pengaduan* : ' + id,
+      '*Status Terbaru* : ' + displayStatus,
+      '*Alasan Hasil Pemeriksaan* : ' + alasanText,
+      '*Ringkasan Catatan Petugas* : ' + ringkasanCatatan,
+      '*Tanggal Pembaruan* : ' + waktu
+    ];
+
+    if (data.petugas && data.petugas !== '-') {
+      politeLines.push('*Petugas Pemeriksa* : ' + data.petugas);
+    }
+
+    politeLines.push(
+      '',
+      'Silakan lihat detail hasil verifikasi dan pelacakan pengaduan Anda melalui tautan resmi berikut:',
+      trackUrl,
+      '',
+      '_Terima kasih atas partisipasi dan kepedulian Anda dalam menjaga kelestarian lingkungan hidup di Kabupaten Lembata._'
+    );
+
+    return politeLines.join('\n');
+  }
 
   var lines = [
     '*PEMBARUAN STATUS ADUAN - DLH LEMBATA*',

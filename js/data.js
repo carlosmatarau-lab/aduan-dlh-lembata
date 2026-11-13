@@ -911,7 +911,11 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     (remoteItem.tindakanDLH && remoteItem.tindakanDLH !== '-') ? {
       waktu: remoteItem.tanggalVerifikasi && remoteItem.tanggalVerifikasi !== '-' ? `${remoteItem.tanggalVerifikasi} 10:00` : (remoteItem.timestamp || '-'),
       petugas: remoteItem.petugasVerifikasi && remoteItem.petugasVerifikasi !== '-' ? remoteItem.petugasVerifikasi : 'Tim Lapangan DLH',
-      kategori: remoteItem.status === 'Selesai' ? 'Penyelesaian Kasus' : (remoteItem.status === 'Ditindaklanjuti' || remoteItem.status === 'Dalam Penanganan' ? 'Tindakan Lapangan' : 'Verifikasi Lapangan'),
+      kategori: remoteItem.status === 'Selesai'
+        ? 'Penyelesaian Kasus'
+        : ((String(remoteItem.status || '').toLowerCase().includes('tidak dapat') || String(remoteItem.status || '').toLowerCase().includes('tidak ditindak') || String(remoteItem.status || '').toLowerCase().includes('tolak'))
+          ? 'Hasil Pemeriksaan'
+          : ((remoteItem.status === 'Ditindaklanjuti' || remoteItem.status === 'Dalam Penanganan') ? 'Tindakan Lapangan' : 'Verifikasi Lapangan')),
       status: remoteItem.status || 'Dalam Penanganan',
       tindakan: remoteItem.tindakanDLH,
       hasil: remoteItem.hasilVerifikasi !== '-' ? remoteItem.hasilVerifikasi : '',
@@ -1160,6 +1164,10 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     tanggalSelesai: isFinalUnverified ? '-' : (hasPendingOfficer ? (existing.tanggalSelesai || '-') : (remoteItem.tanggalSelesai || '-')),
     nomorBeritaAcara: isFinalUnverified ? '' : (hasPendingOfficer ? (existing.nomorBeritaAcara || '') : (remoteItem.nomorBeritaAcara || '')),
     catatanBeritaAcara: isFinalUnverified ? '' : (hasPendingOfficer ? (existing.catatanBeritaAcara || '') : (remoteItem.catatanBeritaAcara || '')),
+    alasanTidakDitindaklanjuti: isFinalUnverified ? '' : (hasPendingOfficer ? (existing && existing.alasanTidakDitindaklanjuti || '') : (remoteItem.alasanTidakDitindaklanjuti || (existing ? existing.alasanTidakDitindaklanjuti : '') || '')),
+    alasanKategoriTidakDitindaklanjuti: isFinalUnverified ? '' : (hasPendingOfficer ? (existing && existing.alasanKategoriTidakDitindaklanjuti || '') : (remoteItem.alasanKategoriTidakDitindaklanjuti || (existing ? existing.alasanKategoriTidakDitindaklanjuti : '') || '')),
+    alasanLainTidakDitindaklanjuti: isFinalUnverified ? '' : (hasPendingOfficer ? (existing && existing.alasanLainTidakDitindaklanjuti || '') : (remoteItem.alasanLainTidakDitindaklanjuti || (existing ? existing.alasanLainTidakDitindaklanjuti : '') || '')),
+    kesimpulanPetugas: isFinalUnverified ? '' : (hasPendingOfficer ? (existing && existing.kesimpulanPetugas || '') : (remoteItem.kesimpulanPetugas || (existing ? existing.kesimpulanPetugas : '') || '')),
     checklistVerifikasi: isFinalUnverified ? [] : (hasPendingOfficer ? (existing.checklistVerifikasi || []) : (remoteItem.checklistVerifikasi || (existing ? existing.checklistVerifikasi : []) || [])),
     hambatanPemeriksaan: isFinalUnverified ? false : (hasPendingOfficer ? Boolean(existing && existing.hambatanPemeriksaan) : (remoteItem.hambatanPemeriksaan !== undefined ? Boolean(remoteItem.hambatanPemeriksaan) : Boolean(existing && existing.hambatanPemeriksaan))),
     jenisHambatan: isFinalUnverified ? '' : (hasPendingOfficer ? (existing && existing.jenisHambatan || '') : (remoteItem.jenisHambatan || (existing ? existing.jenisHambatan : '') || '')),
@@ -1554,7 +1562,8 @@ class AduanDataStore {
             baru: Number(d.baru) || 0,
             dalamProses: (typeof d.dalamProses !== 'undefined') ? Number(d.dalamProses) : (Number(d.diverifikasi || 0) + Number(d.ditindak || 0)),
             selesai: Number(d.selesai) || 0,
-            ditolak: Number(d.ditolak) || 0,
+            tidakDapatDitindaklanjuti: Number(d.tidakDapatDitindaklanjuti ?? d.ditolak) || 0,
+            ditolak: Number(d.tidakDapatDitindaklanjuti ?? d.ditolak) || 0,
             tingkatPenyelesaian: Number(d.tingkatPenyelesaian) || 0,
             diverifikasi: Number(d.diverifikasi) || 0,
             ditindak: Number(d.ditindak) || 0,
@@ -2324,6 +2333,10 @@ class AduanDataStore {
       })(),
       nomorBeritaAcara: updateData.nomorBeritaAcara !== undefined ? updateData.nomorBeritaAcara : (existing.nomorBeritaAcara || ''),
       catatanBeritaAcara: updateData.catatanBeritaAcara !== undefined ? updateData.catatanBeritaAcara : (existing.catatanBeritaAcara || ''),
+      alasanTidakDitindaklanjuti: updateData.alasanTidakDitindaklanjuti !== undefined ? String(updateData.alasanTidakDitindaklanjuti || '') : (existing.alasanTidakDitindaklanjuti || ''),
+      alasanKategoriTidakDitindaklanjuti: updateData.alasanKategoriTidakDitindaklanjuti !== undefined ? String(updateData.alasanKategoriTidakDitindaklanjuti || '') : (existing.alasanKategoriTidakDitindaklanjuti || ''),
+      alasanLainTidakDitindaklanjuti: updateData.alasanLainTidakDitindaklanjuti !== undefined ? String(updateData.alasanLainTidakDitindaklanjuti || '') : (existing.alasanLainTidakDitindaklanjuti || ''),
+      kesimpulanPetugas: updateData.kesimpulanPetugas !== undefined ? String(updateData.kesimpulanPetugas || '') : (existing.kesimpulanPetugas || ''),
       // Hambatan Pemeriksaan Lapangan (SOP 2.0 Bab 2.2 & Lampiran D)
       hambatanPemeriksaan: updateData.hambatanPemeriksaan !== undefined ? Boolean(updateData.hambatanPemeriksaan) : Boolean(existing.hambatanPemeriksaan),
       jenisHambatan: updateData.jenisHambatan !== undefined ? String(updateData.jenisHambatan || '') : (existing.jenisHambatan || ''),
@@ -2362,6 +2375,8 @@ class AduanDataStore {
           tanggalSelesai: updatedRecord.tanggalSelesai,
           nomorBeritaAcara: updatedRecord.nomorBeritaAcara,
           catatanBeritaAcara: updatedRecord.catatanBeritaAcara,
+          alasanTidakDitindaklanjuti: updatedRecord.alasanTidakDitindaklanjuti,
+          kesimpulanPetugas: updatedRecord.kesimpulanPetugas,
           fotoKondisiRiil: updatedRecord.fotoKondisiRiil,
           fotoVerifikasiList: updatedRecord.fotoVerifikasiList,
           timestampVerifikasi: updatedRecord.timestampVerifikasi,
@@ -2562,7 +2577,7 @@ class AduanDataStore {
     let sedangDiverif = 0;
     let dalamPenanganan = 0;
     let selesai = 0;
-    let ditolak = 0;
+    let tidakDapatDitindaklanjuti = 0;
 
     const perKecamatan = {};
     const perJenis = {};
@@ -2573,8 +2588,8 @@ class AduanDataStore {
       const stLower = rawSt.toLowerCase();
       if (stLower.includes('selesai') || stLower.includes('tuntas')) {
         selesai++;
-      } else if (stLower.includes('tolak')) {
-        ditolak++;
+      } else if (stLower.includes('tidak dapat') || stLower.includes('tidak ditindak') || stLower.includes('tolak')) {
+        tidakDapatDitindaklanjuti++;
       } else if (stLower.includes('tindak') || stLower.includes('penanganan') || stLower.includes('proses')) {
         dalamPenanganan++;
       } else if (stLower.includes('verif') || stLower.includes('sedang')) {
@@ -2592,7 +2607,7 @@ class AduanDataStore {
 
     const baru = aduanDiterima; // alias for KPI
     const dalamProses = verifAdmin + menungguVerif + sedangDiverif + dalamPenanganan;
-    const tingkatPenyelesaian = total > 0 ? Math.round(((selesai + ditolak) / total) * 100) : 0;
+    const tingkatPenyelesaian = total > 0 ? Math.round(((selesai + tidakDapatDitindaklanjuti) / total) * 100) : 0;
 
     const computed = {
       total,
@@ -2605,7 +2620,8 @@ class AduanDataStore {
       diverifikasi: sedangDiverif,
       ditindak: dalamPenanganan,
       selesai,
-      ditolak,
+      tidakDapatDitindaklanjuti,
+      ditolak: tidakDapatDitindaklanjuti,
       dalamProses,
       tingkatPenyelesaian,
       perKecamatan,
@@ -2644,7 +2660,9 @@ class AduanDataStore {
       'Tindakan_DLH',
       'Tanggal_Selesai',
       'Nomor_Berita_Acara',
-      'Catatan_Berita_Acara'
+      'Catatan_Berita_Acara',
+      'Alasan_Tidak_Ditindaklanjuti',
+      'Kesimpulan_Petugas'
     ];
 
     // Helper sanitasi sel CSV agar rapi dan tidak merusak baris di Excel / Google Sheets
@@ -2685,7 +2703,9 @@ class AduanDataStore {
       cleanCell(item.tindakanDLH || '-'),
       cleanCell(item.tanggalSelesai || '-'),
       cleanCell(item.nomorBeritaAcara || '-'),
-      cleanCell(item.catatanBeritaAcara || '-')
+      cleanCell(item.catatanBeritaAcara || '-'),
+      cleanCell(item.alasanTidakDitindaklanjuti || '-'),
+      cleanCell(item.kesimpulanPetugas || '-')
     ]);
 
     // Tambahkan UTF-8 Byte Order Mark (\uFEFF) untuk kompatibilitas penuh Excel & Google Sheets

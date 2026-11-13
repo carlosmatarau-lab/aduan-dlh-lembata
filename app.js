@@ -91,8 +91,19 @@ class DLHApp {
     } catch (e) {}
   }
 
+  isTidakDapatDitindaklanjuti(status) {
+    const st = String(status || '').toLowerCase();
+    return st.includes('tidak dapat') || st.includes('tidak ditindak') || st.includes('tolak');
+  }
+
+  getDisplayStatusLabel(status) {
+    if (this.isTidakDapatDitindaklanjuti(status)) return 'Tidak Dapat Ditindaklanjuti';
+    return status || 'Aduan Masuk';
+  }
+
   getStatusBadgeClass(status) {
     if (!status) return 'badge-aduan-diterima';
+    if (this.isTidakDapatDitindaklanjuti(status)) return 'badge-tidak-dapat-ditindaklanjuti';
     return 'badge-' + status.toLowerCase().replace(/[^a-z0-9]/g, '-').replace(/-+/g, '-');
   }
 
@@ -2625,21 +2636,48 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         return;
       }
 
+      const displayStatus = this.getDisplayStatusLabel(item.status);
+      const isTidakDapat = this.isTidakDapatDitindaklanjuti(item.status);
+      const actualAlasan = (item.alasanTidakDitindaklanjuti && item.alasanTidakDitindaklanjuti !== '-') ? item.alasanTidakDitindaklanjuti : '';
+      const actualHasil = (item.hasilVerifikasi && item.hasilVerifikasi !== '-') ? item.hasilVerifikasi : '';
+      const actualKesimpulan = (item.kesimpulanPetugas && item.kesimpulanPetugas !== '-') ? item.kesimpulanPetugas : '';
+      const actualTindakan = (item.tindakanDLH && item.tindakanDLH !== '-') ? item.tindakanDLH : '';
+
       resultBox.style.display = 'block';
       resultBox.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 8px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
           <div>
             <span style="font-size: 0.7rem; color: #64748b; font-weight: 700;">NO. TIKET RESMI:</span>
             <div style="font-family: monospace; font-weight: 900; color: #059669; font-size: 1.15rem;">${item.id}</div>
           </div>
-          <span class="badge ${this.getStatusBadgeClass(item.status)}">${item.status || 'Aduan Masuk'}</span>
+          <span class="badge ${this.getStatusBadgeClass(item.status)}">${displayStatus}</span>
         </div>
-        <div style="font-size: 0.82rem; color: #334155; line-height: 1.5;">
+        ${isTidakDapat ? `
+          <div style="margin: 8px 0 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #64748b; border-radius: 8px; padding: 10px 12px;">
+            <div style="display: flex; align-items: center; gap: 6px; font-size: 0.74rem; font-weight: 800; color: #334155; letter-spacing: 0.03em; margin-bottom: 4px;">
+              <span>TIDAK DAPAT DITINDAKLANJUTI</span>
+            </div>
+            <p style="margin: 0; font-size: 0.79rem; color: #475569; line-height: 1.55;">
+              Terima kasih telah menyampaikan pengaduan kepada Dinas Lingkungan Hidup Kabupaten Lembata. Pengaduan Anda telah diterima dan dilakukan pemeriksaan oleh petugas. Berdasarkan hasil pemeriksaan, laporan belum dapat ditindaklanjuti lebih lanjut dengan alasan sebagaimana tercantum pada hasil verifikasi.
+            </p>
+            <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 0.7rem; font-weight: 700; color: #475569;">
+              <span style="background: #dcfce7; color: #166534; padding: 2px 7px; border-radius: 99px;">1. Diterima</span>
+              <span>→</span>
+              <span style="background: #ede9fe; color: #6d28d9; padding: 2px 7px; border-radius: 99px;">2. Diperiksa</span>
+              <span>→</span>
+              <span style="background: #e2e8f0; color: #334155; padding: 2px 7px; border-radius: 99px;">3. Tidak Dapat Ditindaklanjuti</span>
+            </div>
+          </div>
+        ` : ''}
+        <div style="font-size: 0.82rem; color: #334155; line-height: 1.55;">
           <div><strong>Jenis:</strong> <span style="color:#059669; font-weight:700;">${item.jenisPencemaran}</span></div>
           <div><strong>Lokasi:</strong> Kec. ${item.kecamatan}, ${window.formatWilayahAdministratif ? window.formatWilayahAdministratif(item.desa) : 'Desa ' + item.desa}</div>
           <div><strong>Waktu Lapor:</strong> ${item.timestamp}</div>
-          ${item.petugasVerifikasi && item.petugasVerifikasi !== '-' ? `<div style="margin-top: 4px; color: #047857;"><strong>Petugas DLH:</strong> ${item.petugasVerifikasi}</div>` : '<div style="margin-top: 4px; color: #d97706;"><em>Menunggu penugasan tim verifikator lapangan DLH.</em></div>'}
-          ${item.tindakanDLH && item.tindakanDLH !== '-' ? `<div style="margin-top: 2px; color: #0284c7;"><strong>Tindak Lanjut:</strong> ${item.tindakanDLH}</div>` : ''}
+          ${item.petugasVerifikasi && item.petugasVerifikasi !== '-' ? `<div style="margin-top: 4px; color: #047857;"><strong>Petugas DLH:</strong> ${item.petugasVerifikasi}${item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' ? ` (${item.tanggalVerifikasi})` : ''}</div>` : '<div style="margin-top: 4px; color: #d97706;"><em>Menunggu penugasan tim verifikator lapangan DLH.</em></div>'}
+          ${actualAlasan ? `<div style="margin-top: 6px; background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 7px 9px; color: #334155;"><strong>Alasan Hasil Pemeriksaan:</strong><br>${actualAlasan}</div>` : ''}
+          ${actualHasil ? `<div style="margin-top: 5px; color: #1e293b;"><strong>Uraian Hasil Pemeriksaan:</strong> ${actualHasil}</div>` : ''}
+          ${actualKesimpulan ? `<div style="margin-top: 4px; color: #1e293b;"><strong>Kesimpulan Petugas:</strong> ${actualKesimpulan}</div>` : ''}
+          ${(!isTidakDapat || !actualKesimpulan) && actualTindakan ? `<div style="margin-top: 4px; color: #0284c7;"><strong>${isTidakDapat ? 'Keterangan / Tindak Lanjut:' : 'Tindak Lanjut:'}</strong> ${actualTindakan}</div>` : ''}
         </div>
       `;
     };
@@ -2846,13 +2884,24 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
     }
 
     body.innerHTML = `
-      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0;">
+      <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; padding-bottom: 10px; border-bottom: 1px solid #e2e8f0; flex-wrap: wrap; gap: 8px;">
         <div>
           <span style="font-size: 0.75rem; color: #64748b;">KODE REGISTER:</span>
           <h2 style="font-size: 1.3rem; color: #059669; font-weight: 800;">${item.id}</h2>
         </div>
-        <span class="badge ${this.getStatusBadgeClass(item.status)}">${item.status || 'Aduan Masuk'}</span>
+        <span class="badge ${this.getStatusBadgeClass(item.status)}">${this.getDisplayStatusLabel(item.status)}</span>
       </div>
+
+      ${this.isTidakDapatDitindaklanjuti(item.status) ? `
+        <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-left: 4px solid #64748b; padding: 12px 14px; border-radius: 10px; margin-bottom: 14px;">
+          <div style="font-weight: 800; font-size: 0.82rem; color: #334155; letter-spacing: 0.03em; margin-bottom: 4px;">
+            TIDAK DAPAT DITINDAKLANJUTI
+          </div>
+          <p style="margin: 0; font-size: 0.82rem; color: #475569; line-height: 1.55;">
+            Terima kasih telah menyampaikan pengaduan kepada Dinas Lingkungan Hidup Kabupaten Lembata. Pengaduan Anda telah diterima dan dilakukan pemeriksaan oleh petugas. Berdasarkan hasil pemeriksaan, laporan belum dapat ditindaklanjuti lebih lanjut dengan alasan sebagaimana tercantum pada hasil verifikasi.
+          </p>
+        </div>
+      ` : ''}
 
       <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 14px; font-size: 0.85rem;">
         <div style="background: #f0fdf4; border: 1.5px solid #bbf7d0; padding: 10px; border-radius: 8px;">
@@ -2895,19 +2944,29 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         </div>
       ` : ''}
 
-      ${(!isUnverified && ((item.hasilVerifikasi && item.hasilVerifikasi !== '-') || (item.tindakanDLH && item.tindakanDLH !== '-') || item.nomorBeritaAcara)) ? `
-        <div style="background: #f0fdf4; border: 1.5px solid #86efac; padding: 14px; border-radius: 10px; margin-bottom: 14px; font-size: 0.86rem; color: #14532d;">
-          <div style="font-weight: 800; font-size: 0.9rem; color: #166534; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
-            <span>📋</span> HASIL PEMERIKSAAN &amp; TINDAK LANJUT RESMI DLH:
+      ${(!isUnverified && ((item.alasanTidakDitindaklanjuti && item.alasanTidakDitindaklanjuti !== '-') || (item.hasilVerifikasi && item.hasilVerifikasi !== '-') || (item.kesimpulanPetugas && item.kesimpulanPetugas !== '-') || (item.tindakanDLH && item.tindakanDLH !== '-') || item.nomorBeritaAcara)) ? `
+        <div style="background: ${this.isTidakDapatDitindaklanjuti(item.status) ? '#f8fafc' : '#f0fdf4'}; border: 1.5px solid ${this.isTidakDapatDitindaklanjuti(item.status) ? '#cbd5e1' : '#86efac'}; padding: 14px; border-radius: 10px; margin-bottom: 14px; font-size: 0.86rem; color: ${this.isTidakDapatDitindaklanjuti(item.status) ? '#1e293b' : '#14532d'};">
+          <div style="font-weight: 800; font-size: 0.9rem; color: ${this.isTidakDapatDitindaklanjuti(item.status) ? '#334155' : '#166534'}; margin-bottom: 8px; display: flex; align-items: center; gap: 6px;">
+            <span>📋</span> HASIL PEMERIKSAAN &amp; ${this.isTidakDapatDitindaklanjuti(item.status) ? 'KESIMPULAN VERIFIKASI' : 'TINDAK LANJUT RESMI'} DLH:
           </div>
+          ${(item.alasanTidakDitindaklanjuti && item.alasanTidakDitindaklanjuti !== '-') ? `
+            <div style="margin-bottom: 6px; background: #ffffff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 8px 10px;">
+              <strong>Alasan Hasil Pemeriksaan:</strong><br>${item.alasanTidakDitindaklanjuti}
+            </div>
+          ` : ''}
           ${(item.hasilVerifikasi && item.hasilVerifikasi !== '-') ? `
             <div style="margin-bottom: 6px;">
-              <strong>Hasil Pemeriksaan Lapangan:</strong><br>${item.hasilVerifikasi}
+              <strong>Uraian Hasil Pemeriksaan Lapangan:</strong><br>${item.hasilVerifikasi}
+            </div>
+          ` : ''}
+          ${(item.kesimpulanPetugas && item.kesimpulanPetugas !== '-') ? `
+            <div style="margin-bottom: 6px;">
+              <strong>Kesimpulan Petugas:</strong><br>${item.kesimpulanPetugas}
             </div>
           ` : ''}
           ${(item.tindakanDLH && item.tindakanDLH !== '-') ? `
             <div style="margin-bottom: 6px;">
-              <strong>Tindakan &amp; Rekomendasi DLH:</strong><br>${item.tindakanDLH}
+              <strong>${this.isTidakDapatDitindaklanjuti(item.status) ? 'Keterangan / Rekomendasi DLH:' : 'Tindakan &amp; Rekomendasi DLH:'}</strong><br>${item.tindakanDLH}
             </div>
           ` : ''}
           ${(item.nomorBeritaAcara) ? `

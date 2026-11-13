@@ -1631,10 +1631,11 @@ body {
   border: 1px solid #a7f3d0 !important;
 }
 
+.mac-badge-tidak-dapat-ditindaklanjuti,
 .mac-badge-ditolak {
   background: #f8fafc !important;
   color: #475569 !important;
-  border: 1px solid #e2e8f0 !important;
+  border: 1px solid #cbd5e1 !important;
 }
 
 .mac-row-title {

@@ -53,7 +53,7 @@ Aplikasi ini dibangun menggunakan arsitektur **HTML5, CSS3 Modern, dan Vanilla J
      7. Atadei (Kalikasa)
      8. Omesuri (Balauring)
      9. Buyasuri (Wairiang)
-   - Indikator pin warna dinamis: Merah (Aduan Masuk), Kuning (Verifikasi Lapangan), Hijau (Selesai Ditangani), Abu-abu (Ditolak/Tidak Terbukti).
+   - Indikator pin warna dinamis: Merah (Aduan Masuk), Kuning (Verifikasi Lapangan), Hijau (Selesai Ditangani), Abu-abu (Tidak Dapat Ditindaklanjuti).
 
 2. **📸 Form Aduan Publik dengan Deteksi Koordinat GPS & Kamera Langsung**
    - Tangkapan lokasi presisi satu klik via Geolocation API.

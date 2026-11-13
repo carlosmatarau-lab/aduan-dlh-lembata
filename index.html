@@ -2640,10 +2640,11 @@
       border: 1px solid #a7f3d0 !important;
     }
 
+    .mac-badge-tidak-dapat-ditindaklanjuti,
     .mac-badge-ditolak {
       background: #f8fafc !important;
       color: #475569 !important;
-      border: 1px solid #e2e8f0 !important;
+      border: 1px solid #cbd5e1 !important;
     }
 
     .mac-row-title {
@@ -3868,9 +3869,11 @@
       color: #15803d;
     }
 
+    .badge-tidak-dapat-ditindaklanjuti,
     .badge-ditolak {
       background: #f1f5f9;
-      color: #64748b;
+      color: #475569;
+      border: 1px solid #cbd5e1;
     }
 
     /* Buttons */
@@ -6484,8 +6487,8 @@
               <p style="font-size: 0.76rem; color: #64748b; margin: 0; line-height: 1.4;">Aduan telah tuntas diselesaikan dan berita acara diarsipkan.</p>
             </div>
             <div style="background: white; border: 1px solid #e2e8f0; border-radius: 10px; padding: 10px 12px;">
-              <span class="badge badge-ditolak" style="display: inline-block; margin-bottom: 4px;">Ditolak</span>
-              <p style="font-size: 0.76rem; color: #64748b; margin: 0; line-height: 1.4;">Laporan tidak memenuhi syarat atau fakta tidak terbukti di lapangan.</p>
+              <span class="badge badge-tidak-dapat-ditindaklanjuti" style="display: inline-block; margin-bottom: 4px;">Tidak Dapat Ditindaklanjuti</span>
+              <p style="font-size: 0.76rem; color: #64748b; margin: 0; line-height: 1.4;">Laporan telah diperiksa petugas dan belum dapat diproses lebih lanjut sesuai alasan hasil verifikasi.</p>
             </div>
           </div>
 
@@ -6610,7 +6613,7 @@
                       <option value="Diverifikasi">Diverifikasi Lapangan</option>
                       <option value="Ditindaklanjuti">Ditindaklanjuti</option>
                       <option value="Selesai">Selesai</option>
-                      <option value="Ditolak">Ditolak</option>
+                      <option value="Tidak Dapat Ditindaklanjuti">Tidak Dapat Ditindaklanjuti</option>
                     </select>
                   </div>
                   <div class="map-filter-col">
@@ -6701,9 +6704,9 @@
                 <span class="legend-dot" style="background: #059669;"></span>
                 <span class="legend-text">Selesai Ditangani</span>
               </div>
-              <div class="legend-item" data-status-filter="Ditolak" title="Klik untuk saring status ini">
+              <div class="legend-item" data-status-filter="Tidak Dapat Ditindaklanjuti" title="Klik untuk saring status ini">
                 <span class="legend-dot" style="background: #64748b;"></span>
-                <span class="legend-text">Ditolak / Tidak Terbukti</span>
+                <span class="legend-text">Tidak Dapat Ditindaklanjuti</span>
               </div>
             </div>
           </div>

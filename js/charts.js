@@ -27,13 +27,13 @@ class AnalyticsEngine {
     if (!canvas) return;
     const ctx = canvas.getContext('2d');
 
-    const labels = ['Aduan Diterima', 'Verifikasi Lapangan', 'Dalam Penanganan', 'Selesai', 'Ditolak'];
+    const labels = ['Aduan Diterima', 'Verifikasi Lapangan', 'Dalam Penanganan', 'Selesai', 'Tidak Dapat Ditindaklanjuti'];
     const dataValues = [
       stats.aduanDiterima || stats.baru || 0,
       (stats.verifAdmin || 0) + (stats.menungguVerif || 0) + (stats.sedangDiverif || stats.diverifikasi || 0),
       stats.dalamPenanganan || stats.ditindak || 0,
       stats.selesai || 0,
-      stats.ditolak || 0
+      stats.tidakDapatDitindaklanjuti ?? stats.ditolak ?? 0
     ];
     const colors = ['#f59e0b', '#8b5cf6', '#2563eb', '#059669', '#64748b'];
 

@@ -172,8 +172,21 @@ class LembataMapEngine {
     return '';
   }
 
+  /* Cek apakah status termasuk kategori Tidak Dapat Ditindaklanjuti (termasuk kompatibilitas data lama) */
+  isTidakDapatDitindaklanjuti(status) {
+    const st = String(status || '').toLowerCase();
+    return st.includes('tidak dapat') || st.includes('tidak ditindak') || st.includes('tolak');
+  }
+
+  /* Label tampilan ramah warga agar status lama Ditolak tetap tampil sebagai Tidak Dapat Ditindaklanjuti */
+  getDisplayStatus(status) {
+    if (this.isTidakDapatDitindaklanjuti(status)) return 'Tidak Dapat Ditindaklanjuti';
+    return status || 'Baru';
+  }
+
   /* Warna Status Aduan */
   getMarkerColor(status) {
+    if (this.isTidakDapatDitindaklanjuti(status)) return '#64748b'; // Abu-abu netral
     switch (status) {
       case 'Baru':
       case 'Aduan Diterima': return '#f59e0b'; // Amber / Kuning Jingga
@@ -184,7 +197,6 @@ class LembataMapEngine {
       case 'Dalam Penanganan':
       case 'Ditindaklanjuti': return '#2563eb'; // Biru
       case 'Selesai': return '#059669'; // Hijau
-      case 'Ditolak': return '#64748b'; // Abu-abu
       default: return '#10b981';
     }
   }
@@ -192,7 +204,8 @@ class LembataMapEngine {
   /* Custom Leaflet Pin Icon (Gov Clean Pin dengan Dot Putih Solid dan Halo Denyut) */
   createPinIcon(item) {
     const color = this.getMarkerColor(item.status);
-    const isActivelyHandled = item.status !== 'Selesai' && item.status !== 'Ditolak';
+    const stLower = String(item.status || '').toLowerCase();
+    const isActivelyHandled = !stLower.includes('selesai') && !stLower.includes('tuntas') && !this.isTidakDapatDitindaklanjuti(item.status);
 
     return L.divIcon({
       className: 'custom-leaflet-marker-wrapper',
@@ -215,20 +228,21 @@ class LembataMapEngine {
     if (!filterStatus || filterStatus === 'all') return true;
     const isSt = String(itemStatus || 'Baru').toLowerCase();
     const target = filterStatus.toLowerCase();
+    const isTidakDapat = this.isTidakDapatDitindaklanjuti(itemStatus);
     if (target === 'baru') {
       return isSt.includes('baru') || isSt === 'aduan diterima' || isSt.includes('masuk');
     }
     if (target === 'diverifikasi') {
       return isSt.includes('verif') || isSt.includes('sedang');
     }
+    if (target.includes('tidak dapat') || target.includes('tidak ditindak') || target === 'ditolak') {
+      return isTidakDapat;
+    }
     if (target === 'ditindaklanjuti') {
-      return isSt.includes('tindak') || isSt.includes('penanganan') || isSt.includes('proses');
+      return !isTidakDapat && (isSt.includes('tindak') || isSt.includes('penanganan') || isSt.includes('proses'));
     }
     if (target === 'selesai') {
       return isSt.includes('selesai') || isSt.includes('tuntas');
-    }
-    if (target === 'ditolak') {
-      return isSt.includes('tolak');
     }
     return isSt.includes(target);
   }
@@ -265,7 +279,8 @@ class LembataMapEngine {
 
         const color = this.getMarkerColor(item.status);
         const catIcon = this.getCategoryIcon(item.jenisPencemaran);
-        const badgeClass = (item.status || 'baru').toLowerCase().replace(/[^a-z0-9]/g, '-');
+        const displayStatus = this.getDisplayStatus(item.status);
+        const badgeClass = displayStatus.toLowerCase().replace(/[^a-z0-9]/g, '-');
 
         // Sanitasi teks uraian (pisahkan aduan asli dari tag sistem backend internal)
         let cleanUraian = (item.uraian || '-').trim();
@@ -298,7 +313,7 @@ class LembataMapEngine {
           <div class="map-tooltip-content">
             <div class="tt-header">
               <span class="tt-id">${item.id}</span>
-              <span class="tt-status" style="background: ${color}25; color: ${color};">${item.status}</span>
+              <span class="tt-status" style="background: ${color}25; color: ${color};">${displayStatus}</span>
             </div>
             <div class="tt-title">${item.jenisPencemaran}</div>
             <div class="tt-loc">${desaKelFormatted}, Kec. ${item.kecamatan}</div>
@@ -318,7 +333,7 @@ class LembataMapEngine {
           <div class="map-popup-card">
             <div class="popup-head">
               <span class="popup-id">${item.id}</span>
-              <span class="badge badge-${badgeClass}">${item.status}</span>
+              <span class="badge badge-${badgeClass}">${displayStatus}</span>
             </div>
             
             <div class="popup-cat">
@@ -439,7 +454,7 @@ class LembataMapEngine {
     filteredData.forEach(item => {
       const s = String(item.status || '').toLowerCase();
       if (s.includes('selesai')) selesai++;
-      else if (s.includes('tolak')) { /* ditolak tidak masuk proses aktif */ }
+      else if (this.isTidakDapatDitindaklanjuti(item.status)) { /* status tidak dapat ditindaklanjuti tidak masuk proses aktif */ }
       else if (s === 'aduan diterima' || s === 'baru') baru++;
       else proses++;
     });

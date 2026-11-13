@@ -71,7 +71,7 @@ Skrip Google Apps Script akan **secara otomatis membuat sheet dan 21 baris heade
 | 13 | `Sumber_Dugaan` | Teks | Pihak / industri / oknum sumber pencemaran |
 | 14 | `Tanggal_Kejadian`| Tanggal | Tanggal saat pencemaran terpantau |
 | 15 | `Link_Foto_Bukti` | URL | URL bukti foto (Google Drive / Cloud Storage) |
-| 16 | `Status` | Teks | `Baru`, `Diverifikasi`, `Ditindaklanjuti`, `Selesai`, `Ditolak` |
+| 16 | `Status` | Teks | `Baru`, `Diverifikasi`, `Ditindaklanjuti`, `Selesai`, `Tidak Dapat Ditindaklanjuti` |
 | 17 | `Petugas_Verifikasi`| Teks | Nama & jabatan verifikator DLH Lembata |
 | 18 | `Tanggal_Verifikasi`| Tanggal | Waktu pemeriksaan fisik lapangan |
 | 19 | `Hasil_Verifikasi`| Teks | Temuan faktual di lokasi kejadian |
@@ -213,6 +213,7 @@ Semua respons dikembalikan dalam format standar JSON:
       "diverifikasi": 1,
       "ditindaklanjuti": 1,
       "selesai": 3,
+      "tidakDapatDitindaklanjuti": 0,
       "ditolak": 0,
       "tingkatPenyelesaian": 50.0,
       "byKecamatan": { "Nubatukan": 2, "Lebatukan": 1, "Atadei": 1 },
