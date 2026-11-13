@@ -3439,26 +3439,34 @@
     .chk-guide-list {
       display: flex;
       flex-direction: column;
-      gap: 5px;
+      gap: 7px;
     }
 
     .chk-guide-row {
-      display: flex;
-      align-items: flex-start;
-      gap: 7px;
+      display: grid;
+      grid-template-columns: 134px minmax(0, 1fr);
+      align-items: start;
+      gap: 10px;
       min-width: 0;
+    }
+
+    .chk-guide-row:not(:last-child) {
+      padding-bottom: 7px;
+      border-bottom: 1px dashed #e2e8f0;
     }
 
     .chk-guide-badge {
       display: inline-flex;
       align-items: center;
-      gap: 3px;
-      font-size: 0.68rem;
+      justify-content: center;
+      gap: 4px;
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 0.69rem;
       font-weight: 800;
-      padding: 1px 7px;
+      padding: 3px 8px;
       border-radius: 5px;
       white-space: nowrap;
-      flex-shrink: 0;
       margin-top: 1px;
     }
 
@@ -3482,9 +3490,10 @@
 
     .chk-guide-text {
       color: #475569;
-      flex: 1;
       min-width: 0;
-      word-break: break-word;
+      text-align: left;
+      line-height: 1.45;
+      overflow-wrap: break-word;
     }
 
     .checklist-counter-badge {
@@ -3673,13 +3682,33 @@
       }
 
       .chk-status-guide {
-        padding: 8px 9px;
-        font-size: 0.71rem;
+        padding: 9px 10px;
+        font-size: 0.72rem;
+      }
+
+      .chk-guide-list {
+        gap: 6px;
       }
 
       .chk-guide-row {
+        display: flex;
         flex-direction: column;
-        gap: 3px;
+        align-items: flex-start;
+        gap: 4px;
+      }
+
+      .chk-guide-row:not(:last-child) {
+        padding-bottom: 6px;
+      }
+
+      .chk-guide-badge {
+        width: auto;
+        justify-content: flex-start;
+        padding: 2px 8px;
+      }
+
+      .chk-guide-text {
+        width: 100%;
       }
 
       .chk-item-card {
@@ -5530,8 +5559,7 @@
               <span class="checklist-counter-badge" id="vChecklistCounter">0 dari 5 Terisi</span>
             </div>
             <p style="font-size: 0.74rem; color: #64748b; margin: 0 0 8px 0; line-height: 1.35;">
-              Instrumen pengawasan faktual Bidang PPKLH DLH Kabupaten Lembata (SOP 2.0 Bab 4.3). Tentukan status
-              verifikasi setiap indikator di bawah ini:
+              Instrumen pengawasan faktual DLH Lembata. Tentukan status verifikasi setiap indikator di bawah ini:
             </p>
 
             <div class="chk-status-guide">
@@ -5541,7 +5569,7 @@
                   <line x1="12" y1="16" x2="12" y2="12" />
                   <line x1="12" y1="8" x2="12.01" y2="8" />
                 </svg>
-                Panduan Pilihan Status (SOP Bab 4.3):
+                Panduan Pilihan Status:
               </div>
               <div class="chk-guide-list">
                 <div class="chk-guide-row">
