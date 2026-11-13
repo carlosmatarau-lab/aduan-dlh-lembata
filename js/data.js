@@ -869,6 +869,9 @@ function parseCsvToAduan(csvText) {
       nomorBeritaAcara: item.Nomor_Berita_Acara || item.nomorBeritaAcara || '',
       catatanBeritaAcara: item.Catatan_Berita_Acara || item.catatanBeritaAcara || '',
       checklistVerifikasi: item.Checklist_Verifikasi || item.checklistVerifikasi || [],
+      hambatanPemeriksaan: Boolean(item.Hambatan_Pemeriksaan !== undefined ? item.Hambatan_Pemeriksaan : item.hambatanPemeriksaan),
+      jenisHambatan: item.Jenis_Hambatan || item.jenisHambatan || '',
+      uraianHambatan: item.Uraian_Hambatan || item.uraianHambatan || '',
       fotoKondisiRiil: item.Foto_Kondisi_Riil || item.fotoKondisiRiil || '',
       timestampVerifikasi: item.Timestamp_Verifikasi || item.timestampVerifikasi || '',
       timestampTindakLanjut: item.Timestamp_Tindak_Lanjut || item.timestampTindakLanjut || '',
@@ -1158,6 +1161,9 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     nomorBeritaAcara: isFinalUnverified ? '' : (hasPendingOfficer ? (existing.nomorBeritaAcara || '') : (remoteItem.nomorBeritaAcara || '')),
     catatanBeritaAcara: isFinalUnverified ? '' : (hasPendingOfficer ? (existing.catatanBeritaAcara || '') : (remoteItem.catatanBeritaAcara || '')),
     checklistVerifikasi: isFinalUnverified ? [] : (hasPendingOfficer ? (existing.checklistVerifikasi || []) : (remoteItem.checklistVerifikasi || (existing ? existing.checklistVerifikasi : []) || [])),
+    hambatanPemeriksaan: isFinalUnverified ? false : (hasPendingOfficer ? Boolean(existing && existing.hambatanPemeriksaan) : (remoteItem.hambatanPemeriksaan !== undefined ? Boolean(remoteItem.hambatanPemeriksaan) : Boolean(existing && existing.hambatanPemeriksaan))),
+    jenisHambatan: isFinalUnverified ? '' : (hasPendingOfficer ? (existing && existing.jenisHambatan || '') : (remoteItem.jenisHambatan || (existing ? existing.jenisHambatan : '') || '')),
+    uraianHambatan: isFinalUnverified ? '' : (hasPendingOfficer ? (existing && existing.uraianHambatan || '') : (remoteItem.uraianHambatan || (existing ? existing.uraianHambatan : '') || '')),
     fotoKondisiRiil: finalFotoRiil,
     fotoVerifikasiList: finalOfficerPhotos,
     timestampVerifikasi: isFinalUnverified ? '' : (hasPendingOfficer ? (existing.timestampVerifikasi || '') : (remoteItem.timestampVerifikasi || '')),
@@ -1274,6 +1280,9 @@ class AduanDataStore {
         item.nomorBeritaAcara = '';
         item.catatanBeritaAcara = '';
         item.checklistVerifikasi = [];
+        item.hambatanPemeriksaan = false;
+        item.jenisHambatan = '';
+        item.uraianHambatan = '';
       }
 
       // Pulihkan foto yang tersimpan link Drive dengan data Base64 asli dari cache
@@ -2159,6 +2168,9 @@ class AduanDataStore {
       nomorBeritaAcara: formData.nomorBeritaAcara || (existingItem ? existingItem.nomorBeritaAcara : ''),
       catatanBeritaAcara: formData.catatanBeritaAcara || (existingItem ? existingItem.catatanBeritaAcara : ''),
       checklistVerifikasi: formData.checklistVerifikasi || (existingItem ? existingItem.checklistVerifikasi : []),
+      hambatanPemeriksaan: formData.hambatanPemeriksaan !== undefined ? Boolean(formData.hambatanPemeriksaan) : (existingItem ? Boolean(existingItem.hambatanPemeriksaan) : false),
+      jenisHambatan: formData.jenisHambatan || (existingItem ? existingItem.jenisHambatan : ''),
+      uraianHambatan: formData.uraianHambatan || (existingItem ? existingItem.uraianHambatan : ''),
       fotoKondisiRiil: formData.fotoKondisiRiil || (existingItem ? existingItem.fotoKondisiRiil : ''),
       fotoVerifikasiList: formData.fotoVerifikasiList || (existingItem ? existingItem.fotoVerifikasiList : []),
       timestampVerifikasi: formData.timestampVerifikasi || (existingItem ? existingItem.timestampVerifikasi : ''),
@@ -2312,6 +2324,10 @@ class AduanDataStore {
       })(),
       nomorBeritaAcara: updateData.nomorBeritaAcara !== undefined ? updateData.nomorBeritaAcara : (existing.nomorBeritaAcara || ''),
       catatanBeritaAcara: updateData.catatanBeritaAcara !== undefined ? updateData.catatanBeritaAcara : (existing.catatanBeritaAcara || ''),
+      // Hambatan Pemeriksaan Lapangan (SOP 2.0 Bab 2.2 & Lampiran D)
+      hambatanPemeriksaan: updateData.hambatanPemeriksaan !== undefined ? Boolean(updateData.hambatanPemeriksaan) : Boolean(existing.hambatanPemeriksaan),
+      jenisHambatan: updateData.jenisHambatan !== undefined ? String(updateData.jenisHambatan || '') : (existing.jenisHambatan || ''),
+      uraianHambatan: updateData.uraianHambatan !== undefined ? String(updateData.uraianHambatan || '') : (existing.uraianHambatan || ''),
       fotoKondisiRiil: fotoUtama,
       fotoVerifikasiList: fotoList,
       // Timestamps akuntabilitas kinerja
