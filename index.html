@@ -678,11 +678,11 @@
 
     .alur-steps-track {
       display: flex;
-      align-items: flex-start;
+      align-items: stretch;
       justify-content: space-between;
       position: relative;
-      margin-top: 10px;
-      padding: 0 4px;
+      margin-top: 14px;
+      gap: 10px;
     }
 
     .alur-step-item {
@@ -693,49 +693,60 @@
       align-items: center;
       position: relative;
       z-index: 2;
+      background: #ffffff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 14px 10px 12px;
+      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .alur-step-item:hover {
+      border-color: #a7f3d0;
+      background: #f0fdf4;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.08);
     }
 
     .alur-step-icon {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
       background: #ecfdf5;
-      border: 2px solid #a7f3d0;
+      border: 1px solid #a7f3d0;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 8px;
-      box-shadow: 0 2px 6px rgba(16, 185, 129, 0.15);
-      transition: all 0.2s;
+      transition: all 0.2s ease;
     }
 
     .alur-step-item:hover .alur-step-icon {
-      transform: scale(1.08);
-      background: #d1fae5;
+      background: #059669;
+      border-color: #059669;
+    }
+
+    .alur-step-item:hover .alur-step-icon svg {
+      stroke: #ffffff;
     }
 
     .alur-step-label {
-      font-size: 0.8rem;
+      font-size: 0.82rem;
       font-weight: 800;
       color: #0f172a;
-      line-height: 1.2;
-      margin-bottom: 2px;
+      line-height: 1.25;
+      margin-bottom: 3px;
     }
 
     .alur-step-sub {
       font-size: 0.7rem;
       color: #64748b;
       font-weight: 500;
-      line-height: 1.2;
+      line-height: 1.25;
     }
 
     .alur-step-line {
-      flex: 0.6;
-      height: 2px;
-      background: #cbd5e1;
-      margin-top: 22px;
-      position: relative;
-      z-index: 1;
+      display: none;
     }
 
     .mini-map-container {
@@ -5825,7 +5836,7 @@
 
       <div class="header-right-portal">
         <div class="lentera-badge-wrap" title="Dinas Lingkungan Hidup Kabupaten Lembata">
-          <span class="lentera-dlh-pill">🏛️ DLH KAB. LEMBATA</span>
+          <span class="lentera-dlh-pill">DLH KAB. LEMBATA</span>
         </div>
       </div>
     </div>
@@ -5863,7 +5874,7 @@
                 </svg>
               </span>
               <div class="btn-hero-text">
-                <div class="btn-hero-tag">✏️ AJUKAN</div>
+                <div class="btn-hero-tag">AJUKAN</div>
                 <div class="btn-hero-title">ADUAN BARU</div>
               </div>
             </button>
@@ -5876,7 +5887,7 @@
                 </svg>
               </span>
               <div class="btn-hero-text">
-                <div class="btn-hero-tag">🔍 LACAK</div>
+                <div class="btn-hero-tag">LACAK</div>
                 <div class="btn-hero-title">STATUS ADUAN</div>
               </div>
             </button>
@@ -6027,7 +6038,7 @@
 
           <div style="margin-top: 14px; text-align: center;">
             <button type="button" class="btn-buka-peta-spasial" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);" onclick="window.app && window.app.switchTab('form')">
-              ✍️ Mulai Buat Aduan Sekarang ➔
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Mulai Buat Aduan Sekarang &rarr;
             </button>
           </div>
         </div>
@@ -6036,19 +6047,19 @@
         <div class="bottom-card card-peta-mini">
           <div class="bottom-card-header" style="justify-content: space-between;">
             <h3 class="bottom-card-title">PETA SEBARAN ADUAN</h3>
-            <span style="font-size: 0.72rem; color: #047857; font-weight: 700; background: #ecfdf5; padding: 2px 8px; border-radius: 999px;">🏝️ Pulau Lembata</span>
+            <span style="font-size: 0.72rem; color: #047857; font-weight: 700; background: #ecfdf5; padding: 2px 8px; border-radius: 999px;">Wilayah Lembata</span>
           </div>
 
           <div class="mini-map-container" id="miniMapContainer">
             <div id="miniMapPreview" class="mini-map-canvas"></div>
             <button type="button" class="btn-expand-mini-map" onclick="window.app && window.app.switchTab('peta')" title="Buka Peta Spasial Penuh">
-              ⛶
+              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
             </button>
           </div>
 
           <div class="mini-map-actions-row">
             <button type="button" class="btn-buka-peta-spasial" onclick="window.app && window.app.switchTab('peta')">
-              Buka Peta Spasial ↗
+              Buka Peta Spasial &rarr;
             </button>
           </div>
         </div>
