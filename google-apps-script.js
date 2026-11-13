@@ -2921,9 +2921,35 @@ function generatePetugasAlert(data) {
 }
 
 /**
+ * Helper keterangan deskriptif status penanganan aduan (selaras dengan dropdown dashboard petugas)
+ *
+ * @param {string} status
+ * @return {string}
+ */
+function getStatusKeterangan_(status) {
+  var st = String(status || '').trim().toLowerCase();
+  if (st === 'baru' || st === 'aduan diterima') {
+    return 'Menunggu Telaah Awal';
+  }
+  if (st === 'diverifikasi' || st === 'verifikasi lapangan') {
+    return 'Pemeriksaan / Fakta Lapangan';
+  }
+  if (st === 'ditindaklanjuti' || st === 'dalam penanganan' || st === 'sedang diproses' || st === 'proses') {
+    return 'Penanganan / Aksi Berjalan';
+  }
+  if (st === 'selesai') {
+    return 'Tuntas dengan Bukti Penyelesaian';
+  }
+  if (st === 'ditolak') {
+    return 'Tidak Memenuhi Syarat / Tidak Terbukti';
+  }
+  return '';
+}
+
+/**
  * Template 3: Generator Template Pesan WhatsApp saat Status Aduan Diperbarui Petugas
- * Memuat pemberitahuan perubahan status (Diverifikasi, Dalam Penanganan, Selesai, atau Ditolak),
- * catatan tindak lanjut petugas, No. Tiket, dan tautan portal resmi.
+ * Memuat pemberitahuan perubahan status (Baru, Diverifikasi, Ditindaklanjuti, Selesai, atau Ditolak),
+ * kolom keterangan status, catatan tindak lanjut petugas, No. Tiket, dan tautan portal resmi.
  *
  * @param {Object} data - {id, namaPelapor, status, catatan, petugas, timestamp}
  * @return {string}
@@ -2933,6 +2959,7 @@ function generateStatusUpdateMessage(data) {
   var nama = data.namaPelapor || data.nama || 'Bapak/Ibu';
   var id = data.id || data.ticketId || '-';
   var status = data.status || 'Diverifikasi';
+  var keteranganStatus = getStatusKeterangan_(status);
   var catatan = cleanUraianText(data.catatan || data.tindakanDLH || data.hasilVerifikasi || '-');
   var waktu = data.timestamp || Utilities.formatDate(new Date(), 'Asia/Makassar', 'yyyy-MM-dd HH:mm');
   var trackUrl = 'https://aduan-dlh-lembata.vercel.app/?tiket=' + encodeURIComponent(id);
@@ -2942,9 +2969,14 @@ function generateStatusUpdateMessage(data) {
     '',
     'Halo *' + nama + '*, terdapat pembaruan status atas pengaduan Anda:',
     '*No. Tiket* : ' + id,
-    '*Status Terbaru* : ' + status,
-    '*Waktu Pembaruan* : ' + waktu
+    '*Status Terbaru* : ' + status
   ];
+
+  if (keteranganStatus) {
+    lines.push('*Keterangan Status* : ' + keteranganStatus);
+  }
+
+  lines.push('*Waktu Pembaruan* : ' + waktu);
 
   if (data.petugas && data.petugas !== '-') {
     lines.push('*Petugas* : ' + data.petugas);
