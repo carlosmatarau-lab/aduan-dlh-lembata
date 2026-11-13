@@ -2708,7 +2708,7 @@
         <div style="background: #fff1f2; border: 1.5px solid #fecdd3; border-radius: 8px; padding: 12px 14px; margin: 12px 0 16px 0;">
           <strong style="color: #9f1239; font-size: 0.82rem; display: block; margin-bottom: 4px;">&#9888;&#65039; PENTING &ndash; HAMBATAN PEMERIKSAAN BUKAN STATUS DITOLAK</strong>
           <p style="font-size: 0.78rem; color: #881337; margin: 0; line-height: 1.55;">
-            Jika pihak terlapor menolak/menunda pemeriksaan, catat sebagai <strong>&ldquo;Hambatan Pemeriksaan&rdquo;</strong> pada catatan kejadian atau penanda khusus. <strong>Jangan otomatis mengubah pengaduan menjadi Ditolak</strong>. Laporan tetap harus dinilai berdasarkan bukti yang tersedia dan arahan koordinator/pejabat berwenang. Jika aplikasi belum menyediakan penanda hambatan, catat pada kolom kronologi/catatan dan minta administrator menambahkan field khusus.
+            Jika pihak terlapor menolak/menunda pemeriksaan atau terdapat kendala akses/keselamatan, centang penanda khusus <strong>&ldquo;Terdapat Hambatan / Penolakan Pemeriksaan di Lapangan&rdquo;</strong> pada form verifikasi, pilih jenis hambatan (<em>Penolakan Akses oleh Terlapor</em>, <em>Lokasi Terkunci / Tidak Ada Pihak di Tempat</em>, <em>Faktor Cuaca / Keselamatan Tim</em>, atau <em>Kendala Teknis / Akses Geografis Lainnya</em>), lalu isi uraian fakta dan saksi lapangan. <strong>Jangan otomatis mengubah pengaduan menjadi Ditolak</strong> (sistem menjaga status tetap pada <em>Diverifikasi</em> atau <em>Ditindaklanjuti</em>). Laporan tetap harus dinilai berdasarkan bukti yang tersedia dan arahan koordinator/pejabat berwenang.
           </p>
         </div>
 
@@ -2949,25 +2949,25 @@
           <table class="gov-table" style="width: 100%; font-size: 0.8rem;">
             <thead>
               <tr style="background: #f1f5f9;">
-                <th style="width: 20%;">Tombol</th>
-                <th style="width: 45%;">Fungsi Menurut Panduan Awal</th>
+                <th style="width: 24%;">Tombol</th>
+                <th style="width: 41%;">Fungsi pada Tampilan Sistem</th>
                 <th style="width: 35%;">Langkah Aman</th>
               </tr>
             </thead>
             <tbody>
               <tr>
-                <td><strong>Detail</strong></td>
-                <td>Membuka rincian laporan dan bagian-bagian data pengaduan.</td>
+                <td><strong>Detail / Rincian / Lihat Rincian</strong></td>
+                <td>Membuka modal rincian laporan dan seluruh unsur data pengaduan (label <em>Detail</em> di kartu ponsel, <em>Rincian</em> di panel split-screen, dan <em>Lihat Rincian</em> pada menu <code>⋮</code> tabel).</td>
                 <td>Buka hanya untuk tiket yang menjadi tugas; jangan menyalin identitas ke kanal tidak resmi.</td>
               </tr>
               <tr>
-                <td><strong>Tanggapi</strong></td>
-                <td>Membuka formulir verifikasi / pencatatan hasil pemeriksaan.</td>
+                <td><strong>Tanggapi / Verifikasi</strong></td>
+                <td>Membuka formulir verifikasi, checklist 5 indikator, penanda hambatan, dan cetak BA (label <em>Tanggapi</em> di kartu ponsel; <em>Verifikasi</em> di tabel &amp; split-screen).</td>
                 <td>Isi setelah pemeriksaan/penelaahan benar-benar dilakukan; jangan mengisi hasil fiktif.</td>
               </tr>
               <tr>
-                <td><strong>WhatsApp</strong></td>
-                <td>Membuka percakapan dengan nomor pelapor.</td>
+                <td><strong>WA / Hubungi Pelapor (WA)</strong></td>
+                <td>Membuka percakapan WhatsApp dengan nomor pelapor.</td>
                 <td>Gunakan bahasa kedinasan, perkenalkan diri, konfirmasi seperlunya, dan jangan mengirim data pihak lain.</td>
               </tr>
             </tbody>
@@ -2988,7 +2988,7 @@
           Kotak pencarian pada dokumen awal mencakup ID tiket, nama pelapor, nomor WhatsApp, kecamatan/desa, jenis pencemaran, atau kata kunci kronologi. Filter kecamatan dan status dapat digunakan bersama pencarian. Setelah selesai, tekan <strong>Reset Filter</strong> agar seluruh dataset kembali terlihat.
         </p>
 
-        <h3 class="sub-heading">3.8. Membaca Rincian Laporan (Modal Detail 7 Seksi)</h3>
+        <h3 class="sub-heading">3.8. Membaca Rincian Laporan (Modal Detail &ndash; 7 Unsur Rincian)</h3>
         <div class="table-responsive" style="margin: 10px 0 16px 0;">
           <table class="gov-table" style="width: 100%; font-size: 0.8rem;">
             <thead>
@@ -3023,8 +3023,8 @@
                 <td>Pelaporan sebelumnya ke pemerintah desa, kepolisian, atau instansi terkait lainnya.</td>
               </tr>
               <tr>
-                <td><strong>7. Bukti dan pemeriksaan</strong></td>
-                <td>Foto warga, dokumentasi petugas, hasil pemeriksaan checklist, dan dokumen Berita Acara.</td>
+                <td><strong>7. Bukti, pemeriksaan &amp; hambatan</strong></td>
+                <td>Foto warga, dokumentasi petugas, hasil pemeriksaan checklist, catatan hambatan/penolakan lapangan (bila ada), serta tombol cetak Berita Acara.</td>
               </tr>
             </tbody>
           </table>
@@ -3052,33 +3052,33 @@
             <tbody>
               <tr>
                 <td><strong>Verifikasi / Tanggapi</strong></td>
-                <td>Mencatat hasil telaah atau pemeriksaan dan 5 indikator checklist.</td>
+                <td>Mencatat hasil telaah atau pemeriksaan, 5 indikator checklist, dan penanda hambatan lapangan.</td>
                 <td>Hanya petugas yang ditugaskan; catatan harus faktual.</td>
               </tr>
               <tr>
                 <td><strong>Cetak BA Pemeriksaan</strong></td>
-                <td>Membuat dokumen pemeriksaan dari data tiket resmi.</td>
+                <td>Membuat dokumen Berita Acara Pemeriksaan Lapangan dari Modal Detail tiket resmi.</td>
                 <td>Periksa judul, nomor, isi, lampiran, dan penandatangan sebelum digunakan.</td>
               </tr>
               <tr>
-                <td><strong>Cetak BA Penolakan</strong></td>
-                <td>Membuat catatan penolakan/hambatan pemeriksaan lapangan.</td>
+                <td><strong>Cetak BA Penolakan / BA Hambatan</strong></td>
+                <td>Tersedia pada Modal Verifikasi dan Modal Detail apabila penanda hambatan pemeriksaan dicentang/terdeteksi.</td>
                 <td>Tidak otomatis menetapkan status aduan Ditolak atau sanksi pidana.</td>
               </tr>
               <tr>
-                <td><strong>Rute Maps</strong></td>
-                <td>Membuka lokasi kejadian untuk navigasi lapangan.</td>
+                <td><strong>Titik GPS / Buka Peta &amp; Sorot di Peta</strong></td>
+                <td>Tautan <em>Titik GPS</em> (tabel) / <em>Buka Peta ↗</em> (Modal Detail) membuka navigasi Google Maps; tombol <em>Sorot di Peta</em> / <em>Sorot Peta</em> memfokuskan marker di peta dashboard.</td>
                 <td>Validasi titik dan akses; jangan mengandalkan rute tanpa pemeriksaan lokasi.</td>
               </tr>
               <tr>
-                <td><strong>WhatsApp</strong></td>
-                <td>Menghubungi pelapor untuk klarifikasi resmi.</td>
+                <td><strong>Hubungi Pelapor (WA) / WA</strong></td>
+                <td>Menghubungi pelapor via WhatsApp untuk klarifikasi resmi.</td>
                 <td>Gunakan kanal resmi dan batasi informasi pribadi.</td>
               </tr>
               <tr>
-                <td><strong>Hapus</strong></td>
-                <td>Menghapus data tertentu pada sistem.</td>
-                <td>Dibatasi untuk administrator berwenang; utamakan tandai/arsipkan; semua tindakan harus tercatat di audit log.</td>
+                <td><strong>Hapus Laporan / Hapus</strong></td>
+                <td>Menghapus data laporan tertentu (tersedia pada menu <code>⋮</code> baris tabel dan Modal Detail).</td>
+                <td>Dibatasi untuk administrator berwenang; utamakan tandai/arsipkan dan pastikan pencatatan alasan kedinasan sebelum menghapus permanen.</td>
               </tr>
             </tbody>
           </table>
@@ -3118,7 +3118,7 @@
 
         <h3 class="sub-heading">4.3. Instrumen Lima Indikator Verifikasi</h3>
         <p class="content-text">
-          Dokumen awal menggunakan lima indikator checklist. Dalam versi ini indikator tetap dipertahankan, tetapi ketentuannya diperjelas agar tidak terjadi pertentangan antara kewajiban, kondisi bersyarat, dan rekomendasi. Checklist adalah instrumen pencatatan; bukan rumus otomatis untuk menetapkan pelanggaran atau menolak laporan.
+          Pada formulir verifikasi dashboard, masing-masing dari lima indikator menyediakan 3 pilihan status (<strong>Terpenuhi</strong>, <strong>Tidak</strong>, dan <strong>Tidak Dapat Dinilai</strong>) beserta kolom <em>Keterangan / bukti pengamatan</em> yang wajib diisi apabila status <strong>Tidak Dapat Dinilai</strong> dipilih. Checklist adalah instrumen pencatatan objektif, bukan rumus otomatis untuk menetapkan pelanggaran atau menolak laporan.
         </p>
         <div class="table-responsive" style="margin: 10px 0 14px 0;">
           <table class="gov-table" style="width: 100%; font-size: 0.8rem;">
@@ -3246,7 +3246,7 @@
         <div style="background: #eff6ff; border: 1.5px solid #bfdbfe; border-radius: 8px; padding: 12px 14px; margin: 12px 0 16px 0;">
           <strong style="color: #1e40af; font-size: 0.82rem; display: block; margin-bottom: 4px;">&#9888;&#65039; PENAMAAN DOKUMEN</strong>
           <p style="font-size: 0.78rem; color: #1d4ed8; margin: 0; line-height: 1.55;">
-            Dokumen awal menyebut keluaran tombol aplikasi sebagai &ldquo;BAST&rdquo;. Dalam naskah ini digunakan istilah netral <strong>&ldquo;Berita Acara Pemeriksaan/Verifikasi&rdquo;</strong> sampai nomenklatur resmi DLH ditetapkan. Pastikan label tombol aplikasi dan judul dokumen hasil cetak disamakan. Istilah BAST sering digunakan untuk berita acara serah terima, sehingga perlu dipastikan tidak menimbulkan salah pengertian.
+            Panduan terdahulu sempat menyebut istilah &ldquo;BAST&rdquo;. Dalam sistem dan naskah operasional ini digunakan nomenklatur resmi <strong>&ldquo;Berita Acara Pemeriksaan Lapangan&rdquo;</strong> (tombol <em>Cetak BA Pemeriksaan</em>) serta <strong>&ldquo;Berita Acara Penolakan / Hambatan Pemeriksaan Lapangan&rdquo;</strong> (tombol <em>Cetak BA Penolakan</em> / <em>Cetak BA Hambatan</em>) agar tidak tertukar dengan Berita Acara Serah Terima (BAST).
           </p>
         </div>
 
@@ -3301,7 +3301,7 @@
 
         <h3 class="sub-heading">5.3. Berita Acara Penolakan atau Hambatan Pemeriksaan</h3>
         <p class="content-text">
-          Dokumen ini mencatat keadaan ketika pemeriksaan tidak dapat dilaksanakan seluruhnya atau sebagian karena penolakan, penghalangan, tidak ada pihak yang dapat ditemui, akses tidak tersedia, atau sebab lain. Gunakan judul yang sesuai fakta; jangan menyatakan &ldquo;penolakan&rdquo; apabila faktanya hanya tidak ada orang di lokasi atau petugas tidak mendapat akses karena alasan keselamatan.
+          Dokumen ini mencatat keadaan ketika pemeriksaan tidak dapat dilaksanakan seluruhnya atau sebagian karena penolakan, penghalangan, tidak ada pihak yang dapat ditemui, akses tidak tersedia, atau sebab lain. Sistem menyesuaikan judul cetak secara adaptif berdasarkan jenis hambatan: <strong>Berita Acara Penolakan Pemeriksaan Lapangan</strong> apabila terlapor menolak akses, dan <strong>Berita Acara Hambatan Pemeriksaan Lapangan</strong> apabila kendala berupa lokasi terkunci, cuaca/keselamatan tim, atau hambatan teknis lainnya.
         </p>
         <div class="table-responsive" style="margin: 10px 0 14px 0;">
           <table class="gov-table" style="width: 100%; font-size: 0.8rem;">

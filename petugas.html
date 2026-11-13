@@ -3408,6 +3408,83 @@
       border-radius: 12px;
       padding: 14px 16px;
       margin-bottom: 16px;
+      box-sizing: border-box;
+      max-width: 100%;
+      min-width: 0;
+    }
+
+    .chk-status-guide {
+      background: #ffffff;
+      border: 1px solid #bbf7d0;
+      border-radius: 8px;
+      padding: 9px 11px;
+      margin: 0 0 11px 0;
+      font-size: 0.73rem;
+      line-height: 1.45;
+      color: #334155;
+      box-sizing: border-box;
+      max-width: 100%;
+    }
+
+    .chk-status-guide-title {
+      font-weight: 800;
+      color: #065f46;
+      margin-bottom: 6px;
+      font-size: 0.74rem;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .chk-guide-list {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+    }
+
+    .chk-guide-row {
+      display: flex;
+      align-items: flex-start;
+      gap: 7px;
+      min-width: 0;
+    }
+
+    .chk-guide-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 3px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      padding: 1px 7px;
+      border-radius: 5px;
+      white-space: nowrap;
+      flex-shrink: 0;
+      margin-top: 1px;
+    }
+
+    .chk-guide-badge.ok {
+      background: #dcfce7;
+      color: #065f46;
+      border: 1px solid #86efac;
+    }
+
+    .chk-guide-badge.no {
+      background: #fee2e2;
+      color: #991b1b;
+      border: 1px solid #fca5a5;
+    }
+
+    .chk-guide-badge.tdd {
+      background: #fef3c7;
+      color: #92400e;
+      border: 1px solid #fcd34d;
+    }
+
+    .chk-guide-text {
+      color: #475569;
+      flex: 1;
+      min-width: 0;
+      word-break: break-word;
     }
 
     .checklist-counter-badge {
@@ -3443,6 +3520,9 @@
       flex-direction: column;
       gap: 8px;
       box-shadow: 0 1px 2px rgba(0, 0, 0, 0.03);
+      box-sizing: border-box;
+      max-width: 100%;
+      min-width: 0;
     }
 
     .chk-item-card:hover {
@@ -3555,14 +3635,22 @@
     }
 
     .chk-ket-input {
+      display: block;
       width: 100%;
+      max-width: 100%;
+      min-width: 0;
       box-sizing: border-box;
-      font-size: 0.76rem;
-      padding: 6px 10px;
+      font-family: inherit;
+      font-size: 0.77rem;
+      line-height: 1.4;
+      min-height: 44px;
+      padding: 7px 10px;
       border-radius: 6px;
       border: 1px solid #cbd5e1;
       background: #f8fafc;
       color: #1e293b;
+      resize: vertical;
+      overflow-wrap: break-word;
       transition: border-color 0.15s ease, background-color 0.15s ease, box-shadow 0.15s ease;
     }
 
@@ -3577,6 +3665,42 @@
       border-color: #dc2626 !important;
       background: #fff1f2 !important;
       box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.25) !important;
+    }
+
+    @media (max-width: 640px) {
+      .verification-checklist-box {
+        padding: 11px 10px;
+      }
+
+      .chk-status-guide {
+        padding: 8px 9px;
+        font-size: 0.71rem;
+      }
+
+      .chk-guide-row {
+        flex-direction: column;
+        gap: 3px;
+      }
+
+      .chk-item-card {
+        padding: 9px 10px;
+        gap: 7px;
+      }
+
+      .chk-segmented-group {
+        gap: 5px;
+      }
+
+      .chk-pill-opt span {
+        font-size: 0.72rem;
+        padding: 5px 8px;
+      }
+
+      .chk-ket-input {
+        font-size: 0.78rem;
+        padding: 8px 10px;
+        min-height: 48px;
+      }
     }
 
     /* Fallback / legacy support */
@@ -5405,10 +5529,35 @@
               </label>
               <span class="checklist-counter-badge" id="vChecklistCounter">0 dari 5 Terisi</span>
             </div>
-            <p style="font-size: 0.74rem; color: #64748b; margin: 0 0 10px 0; line-height: 1.35;">
+            <p style="font-size: 0.74rem; color: #64748b; margin: 0 0 8px 0; line-height: 1.35;">
               Instrumen pengawasan faktual Bidang PPKLH DLH Kabupaten Lembata (SOP 2.0 Bab 4.3). Tentukan status
               verifikasi setiap indikator di bawah ini:
             </p>
+
+            <div class="chk-status-guide">
+              <div class="chk-status-guide-title">
+                <svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <circle cx="12" cy="12" r="10" />
+                  <line x1="12" y1="16" x2="12" y2="12" />
+                  <line x1="12" y1="8" x2="12.01" y2="8" />
+                </svg>
+                Panduan Pilihan Status (SOP Bab 4.3):
+              </div>
+              <div class="chk-guide-list">
+                <div class="chk-guide-row">
+                  <span class="chk-guide-badge ok">&#10003; Terpenuhi</span>
+                  <span class="chk-guide-text">Sudah diperiksa dan <strong>sesuai/terlaksana</strong> di lapangan (lokasi sesuai, indikasi terlihat, pihak diklarifikasi, foto/sampel diambil, atau koordinasi dilakukan).</span>
+                </div>
+                <div class="chk-guide-row">
+                  <span class="chk-guide-badge no">&#10005; Tidak</span>
+                  <span class="chk-guide-text">Sudah diperiksa, namun faktanya <strong>tidak terpenuhi / tidak ditemukan / tidak dilakukan</strong> meski kondisi lapangan memungkinkan untuk dinilai.</span>
+                </div>
+                <div class="chk-guide-row">
+                  <span class="chk-guide-badge tdd">&#9432; Tidak Dapat Dinilai</span>
+                  <span class="chk-guide-text">Belum bisa dipastikan karena <strong>kendala objektif</strong> (akses ditolak, lokasi terkunci/kosong, cuaca/keselamatan, atau sumber anonim). <strong>Wajib isi keterangan/alasan.</strong></span>
+                </div>
+              </div>
+            </div>
 
             <div class="verification-checklist-items" id="vChecklistContainer">
               <!-- Indikator 1 -->
@@ -5449,9 +5598,9 @@
                       </svg> Tidak Dapat Dinilai</span>
                   </label>
                 </div>
-                <input type="text" id="vChkKet_0" class="chk-ket-input"
+                <textarea id="vChkKet_0" class="chk-ket-input" rows="2"
                   placeholder="Keterangan / bukti pengamatan (wajib diisi jika Tidak Dapat Dinilai)..."
-                  autocomplete="off">
+                  autocomplete="off"></textarea>
               </div>
 
               <!-- Indikator 2 -->
@@ -5492,9 +5641,9 @@
                       </svg> Tidak Dapat Dinilai</span>
                   </label>
                 </div>
-                <input type="text" id="vChkKet_1" class="chk-ket-input"
+                <textarea id="vChkKet_1" class="chk-ket-input" rows="2"
                   placeholder="Keterangan / bukti pengamatan (wajib diisi jika Tidak Dapat Dinilai)..."
-                  autocomplete="off">
+                  autocomplete="off"></textarea>
               </div>
 
               <!-- Indikator 3 -->
@@ -5535,9 +5684,9 @@
                       </svg> Tidak Dapat Dinilai</span>
                   </label>
                 </div>
-                <input type="text" id="vChkKet_2" class="chk-ket-input"
+                <textarea id="vChkKet_2" class="chk-ket-input" rows="2"
                   placeholder="Keterangan / bukti pengamatan (wajib diisi jika Tidak Dapat Dinilai)..."
-                  autocomplete="off">
+                  autocomplete="off"></textarea>
               </div>
 
               <!-- Indikator 4 -->
@@ -5578,9 +5727,9 @@
                       </svg> Tidak Dapat Dinilai</span>
                   </label>
                 </div>
-                <input type="text" id="vChkKet_3" class="chk-ket-input"
+                <textarea id="vChkKet_3" class="chk-ket-input" rows="2"
                   placeholder="Keterangan / bukti pengamatan (wajib diisi jika Tidak Dapat Dinilai)..."
-                  autocomplete="off">
+                  autocomplete="off"></textarea>
               </div>
 
               <!-- Indikator 5 -->
@@ -5621,9 +5770,9 @@
                       </svg> Tidak Dapat Dinilai</span>
                   </label>
                 </div>
-                <input type="text" id="vChkKet_4" class="chk-ket-input"
+                <textarea id="vChkKet_4" class="chk-ket-input" rows="2"
                   placeholder="Keterangan / bukti pengamatan (wajib diisi jika Tidak Dapat Dinilai)..."
-                  autocomplete="off">
+                  autocomplete="off"></textarea>
               </div>
             </div>
 
