@@ -642,21 +642,22 @@
     }
 
     /* ===================================================================
-       DUA KARTU BAWAH: ALUR PENGADUAN & PETA SEBARAN (SESUAI GAMBAR 2)
+       DUA KARTU BAWAH: ALUR PENGADUAN & PETA SEBARAN
        =================================================================== */
     .silapor-bottom-grid {
       display: grid;
-      grid-template-columns: 1.4fr 1fr;
+      grid-template-columns: 1.62fr 1fr;
       gap: 16px;
       margin-bottom: 20px;
+      align-items: stretch;
     }
 
     .bottom-card {
       background: #ffffff;
       border: 1px solid #e2e8f0;
-      border-radius: 16px;
+      border-radius: 18px;
       padding: 18px 20px;
-      box-shadow: 0 4px 16px rgba(6, 78, 59, 0.04);
+      box-shadow: 0 4px 16px rgba(6, 78, 59, 0.05);
       display: flex;
       flex-direction: column;
     }
@@ -676,77 +677,259 @@
       margin: 0;
     }
 
-    .alur-steps-track {
-      display: flex;
-      align-items: stretch;
-      justify-content: space-between;
+    /* Desain Baru Kartu Alur Pengaduan Digital */
+    .bottom-card.card-alur {
+      padding: 0;
+      overflow: hidden;
+      border: 1px solid #d1e7da;
+      box-shadow: 0 10px 28px rgba(6, 78, 59, 0.08);
+      background: #ffffff;
+    }
+
+    .alur-showcase {
+      display: grid;
+      grid-template-columns: 192px 1fr;
+      flex: 1;
+      height: 100%;
       position: relative;
-      margin-top: 14px;
+      background: #ffffff;
+    }
+
+    .alur-sidebar {
+      position: relative;
+      background: linear-gradient(155deg, #0b6e35 0%, #159449 55%, #0c783a 100%);
+      padding: 22px 26px 0 18px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      overflow: hidden;
+      color: #ffffff;
+    }
+
+    .alur-sidebar::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: radial-gradient(circle at 22% 18%, rgba(167, 243, 208, 0.22), transparent 55%),
+                  radial-gradient(circle at 75% 78%, rgba(52, 211, 153, 0.22), transparent 55%);
+      pointer-events: none;
+    }
+
+    .alur-sidebar-wave-right {
+      position: absolute;
+      top: 0;
+      right: -1px;
+      height: 100%;
+      width: 30px;
+      z-index: 3;
+      pointer-events: none;
+    }
+
+    .alur-sidebar-wave-bottom {
+      display: none;
+    }
+
+    .alur-sidebar-copy {
+      position: relative;
+      z-index: 2;
+    }
+
+    .alur-sidebar-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 1.24rem;
+      font-weight: 800;
+      line-height: 1.15;
+      color: #ffffff;
+      margin: 0;
+      letter-spacing: -0.01em;
+    }
+
+    .alur-sidebar-divider {
+      width: 100%;
+      height: 1px;
+      background: rgba(255, 255, 255, 0.24);
+      margin: 10px 0 8px;
+    }
+
+    .alur-sidebar-sub {
+      font-size: 0.77rem;
+      font-style: italic;
+      font-weight: 500;
+      line-height: 1.32;
+      color: rgba(240, 253, 244, 0.94);
+      margin: 0;
+    }
+
+    .alur-phone-wrap {
+      position: relative;
+      z-index: 2;
+      margin-top: 8px;
+      display: flex;
+      justify-content: flex-start;
+      align-items: flex-end;
+      line-height: 0;
+    }
+
+    .alur-phone-svg {
+      width: 146px;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 8px 14px rgba(4, 47, 24, 0.28));
+    }
+
+    .alur-main-pane {
+      position: relative;
+      padding: 26px 16px 18px 8px;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      background: #ffffff;
+      overflow: hidden;
+    }
+
+    .alur-bottom-wave {
+      position: absolute;
+      left: -24px;
+      right: 0;
+      bottom: 0;
+      width: calc(100% + 24px);
+      height: 92px;
+      z-index: 1;
+      pointer-events: none;
+    }
+
+    .alur-steps-track {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 10px;
+      position: relative;
+      z-index: 2;
+      margin-top: 0;
     }
 
     .alur-step-item {
-      flex: 1;
       text-align: center;
       display: flex;
       flex-direction: column;
       align-items: center;
       position: relative;
-      z-index: 2;
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 14px 10px 12px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.03);
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      background: linear-gradient(180deg, #ffffff 0%, #f1f7fe 100%);
+      border: 1px solid #e2edf8;
+      border-radius: 14px;
+      padding: 22px 8px 14px;
+      box-shadow: 0 8px 18px rgba(15, 42, 74, 0.06);
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease, border-color 0.2s ease;
     }
 
     .alur-step-item:hover {
-      border-color: #a7f3d0;
-      background: #f0fdf4;
-      transform: translateY(-2px);
-      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.08);
+      border-color: #bbf7d0;
+      transform: translateY(-3px);
+      box-shadow: 0 12px 24px rgba(6, 95, 70, 0.11);
     }
 
+    .alur-step-badge {
+      position: absolute;
+      top: -13px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 26px;
+      height: 26px;
+      border-radius: 50%;
+      color: #ffffff;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border: 2px solid #ffffff;
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.16);
+      z-index: 3;
+    }
+
+    .alur-step-badge.badge-1 { background: linear-gradient(135deg, #16a34a 0%, #0b823c 100%); }
+    .alur-step-badge.badge-2 { background: linear-gradient(135deg, #3ba3ff 0%, #1d75e8 100%); }
+    .alur-step-badge.badge-3 { background: linear-gradient(135deg, #fb923c 0%, #ea580c 100%); }
+    .alur-step-badge.badge-4 { background: linear-gradient(135deg, #8b5cf6 0%, #6d28d9 100%); }
+
     .alur-step-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
+      width: 50px;
+      height: 50px;
+      background: transparent;
+      border: none;
       display: flex;
       align-items: center;
       justify-content: center;
       margin-bottom: 8px;
-      transition: all 0.2s ease;
+      transition: transform 0.2s ease;
     }
 
     .alur-step-item:hover .alur-step-icon {
-      background: #059669;
-      border-color: #059669;
-    }
-
-    .alur-step-item:hover .alur-step-icon svg {
-      stroke: #ffffff;
+      transform: scale(1.06);
     }
 
     .alur-step-label {
-      font-size: 0.82rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.8rem;
       font-weight: 800;
       color: #0f172a;
-      line-height: 1.25;
-      margin-bottom: 3px;
+      line-height: 1.22;
+      margin-bottom: 5px;
     }
 
     .alur-step-sub {
-      font-size: 0.7rem;
-      color: #64748b;
+      font-size: 0.68rem;
+      color: #475569;
       font-weight: 500;
-      line-height: 1.25;
+      line-height: 1.28;
     }
 
-    .alur-step-line {
-      display: none;
+    .alur-cta-wrap {
+      position: relative;
+      z-index: 2;
+      margin-top: 16px;
+      display: flex;
+      justify-content: center;
+    }
+
+    .btn-alur-cta {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      background: linear-gradient(135deg, #159449 0%, #07632d 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 999px;
+      padding: 8px 24px 8px 10px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.9rem;
+      font-weight: 700;
+      letter-spacing: 0.15px;
+      cursor: pointer;
+      box-shadow: 0 8px 20px rgba(7, 99, 45, 0.26);
+      transition: transform 0.2s ease, box-shadow 0.2s ease;
+    }
+
+    .btn-alur-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 12px 24px rgba(7, 99, 45, 0.34);
+    }
+
+    .btn-alur-cta:active {
+      transform: scale(0.98);
+    }
+
+    .btn-alur-cta-icon {
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      background: #ffffff;
+      color: #0b7838;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
     }
 
     .mini-map-container {
@@ -835,11 +1018,14 @@
       transform: translateY(-1px);
     }
 
-    @media (max-width: 860px) {
-      .silapor-hero-container {
+    @media (max-width: 1080px) {
+      .silapor-bottom-grid {
         grid-template-columns: 1fr;
       }
-      .silapor-bottom-grid {
+    }
+
+    @media (max-width: 860px) {
+      .silapor-hero-container {
         grid-template-columns: 1fr;
       }
     }
@@ -4421,28 +4607,100 @@
         border: 1px solid #e2e8f0;
       }
 
+      .bottom-card.card-alur {
+        padding: 0;
+        border-radius: 16px;
+        border: 1px solid #d1e7da;
+      }
+
       .bottom-card-title {
         font-size: 0.88rem;
       }
 
-      /* PENTING: Sembunyikan garis alur agar grid 2x2 rapi dan tidak ada celah kosong */
-      .alur-step-line {
-        display: none !important;
+      /* Alur Pengaduan Mobile Layout (Proporsional & Rapi) */
+      .alur-showcase {
+        grid-template-columns: 1fr;
+      }
+
+      .alur-showcase > * {
+        min-width: 0;
+      }
+
+      .alur-sidebar {
+        flex-direction: row;
+        align-items: flex-end;
+        justify-content: space-between;
+        padding: 14px 16px 20px;
+        min-height: 112px;
+      }
+
+      .alur-sidebar-wave-right {
+        display: none;
+      }
+
+      .alur-sidebar-wave-bottom {
+        display: block;
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -1px;
+        width: 100%;
+        height: 18px;
+        z-index: 3;
+        pointer-events: none;
+      }
+
+      .alur-sidebar-copy {
+        align-self: center;
+        padding-right: 10px;
+      }
+
+      .alur-sidebar-title {
+        font-size: 1.12rem;
+        line-height: 1.15;
+      }
+
+      .alur-sidebar-divider {
+        margin: 6px 0 5px;
+      }
+
+      .alur-sidebar-sub {
+        font-size: 0.72rem;
+      }
+
+      .alur-phone-wrap {
+        margin-top: 0;
+        margin-bottom: -14px;
+        flex-shrink: 0;
+      }
+
+      .alur-phone-svg {
+        width: 90px;
+      }
+
+      .alur-main-pane {
+        padding: 22px 12px 16px;
+      }
+
+      .alur-bottom-wave {
+        left: 0;
+        width: 100%;
+        height: 76px;
       }
 
       .alur-steps-track {
         display: grid;
         grid-template-columns: 1fr 1fr;
-        gap: 8px;
-        margin-top: 8px;
+        gap: 20px 10px;
+        margin-top: 2px;
         padding: 0;
       }
 
       .alur-step-item {
-        background: #f8fafc;
-        border: 1.5px solid #e2e8f0;
-        border-radius: 12px;
-        padding: 12px 8px;
+        background: linear-gradient(180deg, #ffffff 0%, #f1f7fe 100%);
+        border: 1px solid #e2edf8;
+        border-radius: 13px;
+        padding: 20px 8px 12px;
         display: flex;
         flex-direction: column;
         align-items: center;
@@ -4451,36 +4709,51 @@
       }
 
       .alur-step-item:active {
-        transform: scale(0.97);
-        background: #f0fdf4;
-        border-color: #86efac;
+        transform: scale(0.98);
+      }
+
+      .alur-step-badge {
+        top: -12px;
+        width: 24px;
+        height: 24px;
+        font-size: 0.74rem;
       }
 
       .alur-step-icon {
-        width: 36px;
-        height: 36px;
+        width: 42px;
+        height: 42px;
         margin-bottom: 6px;
-        border-width: 1.5px;
       }
 
       .alur-step-icon svg {
-        width: 18px;
-        height: 18px;
+        width: 40px;
+        height: 40px;
       }
 
       .alur-step-label {
-        font-size: 0.76rem;
+        font-size: 0.78rem;
         font-weight: 800;
         color: #0f172a;
-        margin-bottom: 2px;
+        margin-bottom: 3px;
         line-height: 1.2;
       }
 
       .alur-step-sub {
-        font-size: 0.65rem;
-        color: #059669;
-        font-weight: 700;
-        line-height: 1.2;
+        font-size: 0.66rem;
+        color: #475569;
+        font-weight: 500;
+        line-height: 1.25;
+      }
+
+      .alur-cta-wrap {
+        margin-top: 16px;
+      }
+
+      .btn-alur-cta {
+        width: 100%;
+        max-width: 320px;
+        padding: 8px 18px 8px 10px;
+        font-size: 0.84rem;
       }
 
       /* Mini Map Preview */
@@ -5977,80 +6250,192 @@
            DUA KARTU BAWAH: ALUR PENGADUAN DIGITAL & PETA SEBARAN (GAMBAR 2)
            =============================================================== -->
       <section class="silapor-bottom-grid">
-        <!-- Kartu Kiri: Alur Pengaduan Digital (Sesuai Aturan) -->
+        <!-- Kartu Kiri: Alur Pengaduan Digital (Desain Showcase Gambar 2) -->
         <div class="bottom-card card-alur">
-          <div class="bottom-card-header">
-            <h3 class="bottom-card-title">ALUR PENGADUAN DIGITAL</h3>
-          </div>
+          <div class="alur-showcase">
+            <!-- Panel Kiri Hijau Melengkung -->
+            <div class="alur-sidebar">
+              <!-- Kurva Putih Samping Kanan (Desktop) -->
+              <svg class="alur-sidebar-wave-right" viewBox="0 0 36 280" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M22,0 C-4,65 36,120 12,190 C2,225 18,258 8,280 L36,280 L36,0 Z" fill="#ffffff"/>
+              </svg>
+              <!-- Kurva Putih Bawah (Mobile) -->
+              <svg class="alur-sidebar-wave-bottom" viewBox="0 0 360 22" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M0,10 C95,24 220,-2 360,12 L360,22 L0,22 Z" fill="#ffffff"/>
+              </svg>
 
-          <div class="alur-steps-track">
-            <!-- Step 1: Pengisian Data Pelapor -->
-            <div class="alur-step-item">
-              <div class="alur-step-icon" title="Data Pelapor dijamin 100% rahasia">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path>
-                  <circle cx="12" cy="7" r="4"></circle>
+              <div class="alur-sidebar-copy">
+                <h3 class="alur-sidebar-title">Alur<br>Pengaduan<br>Digital</h3>
+                <div class="alur-sidebar-divider"></div>
+                <p class="alur-sidebar-sub">Mudah, Cepat<br>dan Transparan</p>
+              </div>
+
+              <!-- Ilustrasi Tangan Memegang Ponsel ECOADU LEMBATA -->
+              <div class="alur-phone-wrap" aria-hidden="true">
+                <svg class="alur-phone-svg" viewBox="0 0 180 175" xmlns="http://www.w3.org/2000/svg">
+                  <defs>
+                    <linearGradient id="alurSkin" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#f6ae85"/>
+                      <stop offset="100%" stop-color="#dc8155"/>
+                    </linearGradient>
+                    <linearGradient id="alurPhoneFrame" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#334155"/>
+                      <stop offset="100%" stop-color="#0f172a"/>
+                    </linearGradient>
+                    <linearGradient id="alurLeafGrad" x1="0" y1="0" x2="1" y2="1">
+                      <stop offset="0%" stop-color="#22c55e"/>
+                      <stop offset="100%" stop-color="#0d7a3e"/>
+                    </linearGradient>
+                  </defs>
+                  <!-- Pergelangan & Telapak Tangan Belakang -->
+                  <path d="M18,175 C20,140 34,116 42,96 L142,102 C146,125 138,154 128,175 Z" fill="#cb6e44"/>
+                  <!-- Bodi Smartphone -->
+                  <g transform="rotate(-4 95 92)">
+                    <rect x="38" y="14" width="102" height="154" rx="16" fill="url(#alurPhoneFrame)"/>
+                    <!-- Layar Putih -->
+                    <rect x="44" y="21" width="90" height="140" rx="11" fill="#ffffff"/>
+                    <!-- Notch Speaker -->
+                    <rect x="73" y="25" width="32" height="4" rx="2" fill="#cbd5e1"/>
+                    <!-- Logo Daun Kembar ECOADU -->
+                    <g transform="translate(89, 72)">
+                      <path d="M-2,6 C-16,-2 -20,-18 -6,-26 C2,-16 4,-4 -2,6 Z" fill="url(#alurLeafGrad)"/>
+                      <path d="M1,6 C17,-2 22,-18 7,-27 C0,-17 -2,-5 1,6 Z" fill="#16a34a" opacity="0.92"/>
+                      <path d="M-2,5 C-7,-5 -9,-14 -6,-21" fill="none" stroke="#dcfce7" stroke-width="1.3" stroke-linecap="round"/>
+                      <path d="M2,5 C8,-5 10,-14 7,-21" fill="none" stroke="#dcfce7" stroke-width="1.3" stroke-linecap="round"/>
+                    </g>
+                    <!-- Teks ECOADU LEMBATA di Layar -->
+                    <text x="89" y="102" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="800" font-size="14.5" fill="#0f172a" letter-spacing="0.4">ECOADU</text>
+                    <text x="89" y="117" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="700" font-size="10.5" fill="#15803d" letter-spacing="1.1">LEMBATA</text>
+                  </g>
+                  <!-- Jari-jari Kanan Menggenggam -->
+                  <rect x="131" y="64" width="19" height="13" rx="6.5" fill="url(#alurSkin)" transform="rotate(-6 140 70)"/>
+                  <rect x="132" y="81" width="21" height="13" rx="6.5" fill="url(#alurSkin)" transform="rotate(-6 142 87)"/>
+                  <rect x="129" y="98" width="18" height="12" rx="6" fill="url(#alurSkin)" transform="rotate(-6 138 104)"/>
+                  <!-- Ibu Jari Kiri & Lengan Bawah -->
+                  <path d="M14,175 L34,112 C38,99 47,96 54,101 C61,106 60,118 53,129 L46,142 C60,148 76,154 96,156 L89,175 Z" fill="url(#alurSkin)"/>
                 </svg>
               </div>
-              <div class="alur-step-label">1. Isi Data Pelapor</div>
-              <div class="alur-step-sub">Kerahasiaan Terjamin</div>
             </div>
 
-            <div class="alur-step-line"></div>
+            <!-- Panel Kanan: 4 Kartu Langkah + Wave Hijau + Tombol CTA -->
+            <div class="alur-main-pane">
+              <!-- Wave Hijau Pastel Bawah -->
+              <svg class="alur-bottom-wave" viewBox="0 0 600 96" preserveAspectRatio="none" aria-hidden="true">
+                <path d="M0,58 C120,26 240,84 395,48 C485,27 548,22 600,32 L600,96 L0,96 Z" fill="#e2f6ea"/>
+                <path d="M0,74 C165,48 310,92 480,58 C535,47 572,45 600,52 L600,96 L0,96 Z" fill="#cbeeda" opacity="0.85"/>
+              </svg>
 
-            <!-- Step 2: Ambil Foto & Lokasi -->
-            <div class="alur-step-item">
-              <div class="alur-step-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
-                  <circle cx="12" cy="13" r="4"></circle>
-                </svg>
+              <div class="alur-steps-track">
+                <!-- Step 1: Isi Data Pelapor -->
+                <div class="alur-step-item">
+                  <span class="alur-step-badge badge-1">1</span>
+                  <div class="alur-step-icon" title="Data Pelapor dijamin 100% rahasia">
+                    <svg width="46" height="46" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <defs>
+                        <linearGradient id="stepUserGrad" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%" stop-color="#34d399"/>
+                          <stop offset="100%" stop-color="#059669"/>
+                        </linearGradient>
+                      </defs>
+                      <circle cx="21" cy="16" r="8.5" fill="url(#stepUserGrad)"/>
+                      <path d="M6,38 C6,29.5 13,25.5 21,25.5 C29,25.5 35.5,29.5 35.5,38 C35.5,39.5 34.3,40.5 32.8,40.5 L8.7,40.5 C7.2,40.5 6,39.5 6,38 Z" fill="url(#stepUserGrad)"/>
+                      <circle cx="35.5" cy="31.5" r="8.5" fill="#16a34a" stroke="#ffffff" stroke-width="2"/>
+                      <path d="M35.5,27.5 V35.5 M31.5,31.5 H39.5" stroke="#ffffff" stroke-width="2.4" stroke-linecap="round"/>
+                    </svg>
+                  </div>
+                  <div class="alur-step-label">Isi Data Pelapor</div>
+                  <div class="alur-step-sub">Kerahasiaan Terjamin</div>
+                </div>
+
+                <!-- Step 2: Foto & Lokasi -->
+                <div class="alur-step-item">
+                  <span class="alur-step-badge badge-2">2</span>
+                  <div class="alur-step-icon">
+                    <svg width="46" height="46" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <defs>
+                        <linearGradient id="stepCamGrad" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%" stop-color="#38bdf8"/>
+                          <stop offset="100%" stop-color="#1d4ed8"/>
+                        </linearGradient>
+                        <linearGradient id="stepLensGrad" x1="0" y1="0" x2="0" y2="1">
+                          <stop offset="0%" stop-color="#38bdf8"/>
+                          <stop offset="55%" stop-color="#fbbf24"/>
+                          <stop offset="100%" stop-color="#ea580c"/>
+                        </linearGradient>
+                      </defs>
+                      <rect x="8" y="9" width="9" height="4.5" rx="2" fill="#0284c7"/>
+                      <rect x="17.5" y="7" width="13" height="6" rx="2.5" fill="#0ea5e9"/>
+                      <rect x="4" y="12" width="40" height="27" rx="7" fill="url(#stepCamGrad)"/>
+                      <circle cx="24" cy="25.5" r="10" fill="#ffffff"/>
+                      <circle cx="24" cy="25.5" r="7.5" fill="url(#stepLensGrad)"/>
+                      <path d="M18,29 L22,23 L25.5,27 L28.5,24 L31,29 Z" fill="#1e3a8a" opacity="0.72"/>
+                      <circle cx="27.5" cy="21" r="1.8" fill="#fef08a"/>
+                      <circle cx="38" cy="17.5" r="2" fill="#fb923c"/>
+                    </svg>
+                  </div>
+                  <div class="alur-step-label">Foto &amp; Lokasi</div>
+                  <div class="alur-step-sub">GPS &amp; Bukti Faktual</div>
+                </div>
+
+                <!-- Step 3: Kirim Laporan -->
+                <div class="alur-step-item">
+                  <span class="alur-step-badge badge-3">3</span>
+                  <div class="alur-step-icon">
+                    <svg width="46" height="46" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <defs>
+                        <linearGradient id="stepPlaneGrad" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%" stop-color="#60a5fa"/>
+                          <stop offset="100%" stop-color="#1d78f2"/>
+                        </linearGradient>
+                      </defs>
+                      <polygon points="43,7 5,22 19,27.5" fill="url(#stepPlaneGrad)"/>
+                      <polygon points="43,7 19,27.5 23,41" fill="#0284c7"/>
+                      <polygon points="43,7 27,36 19,27.5" fill="#38bdf8"/>
+                      <polygon points="19,27.5 23,41 28.5,31.5" fill="#1e40af" opacity="0.78"/>
+                    </svg>
+                  </div>
+                  <div class="alur-step-label">Kirim Laporan</div>
+                  <div class="alur-step-sub">Uraian Pencemaran</div>
+                </div>
+
+                <!-- Step 4: Penanganan DLH -->
+                <div class="alur-step-item">
+                  <span class="alur-step-badge badge-4">4</span>
+                  <div class="alur-step-icon">
+                    <svg width="46" height="46" viewBox="0 0 48 48" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+                      <defs>
+                        <linearGradient id="stepShieldGrad" x1="0" y1="0" x2="1" y2="1">
+                          <stop offset="0%" stop-color="#6366f1"/>
+                          <stop offset="100%" stop-color="#312e81"/>
+                        </linearGradient>
+                      </defs>
+                      <path d="M24,5 L40,11.5 V23.5 C40,33.5 32.8,40.8 24,44 C15.2,40.8 8,33.5 8,23.5 V11.5 Z" fill="url(#stepShieldGrad)"/>
+                      <path d="M24,8.5 L36.8,13.7 V23.5 C36.8,31.5 31,37.4 24,40.2 C17,37.4 11.2,31.5 11.2,23.5 V13.7 Z" fill="#4f46e5" stroke="#a5b4fc" stroke-width="1.2" stroke-opacity="0.65"/>
+                      <path d="M17.5,24.2 L22,28.8 L31.2,19.4" fill="none" stroke="#ffffff" stroke-width="3.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                  </div>
+                  <div class="alur-step-label">Penanganan DLH</div>
+                  <div class="alur-step-sub">Verifikasi Lapangan</div>
+                </div>
               </div>
-              <div class="alur-step-label">2. Foto &amp; Lokasi</div>
-              <div class="alur-step-sub">GPS &amp; Bukti Faktual</div>
-            </div>
 
-            <div class="alur-step-line"></div>
-
-            <!-- Step 3: Kirim Laporan -->
-            <div class="alur-step-item">
-              <div class="alur-step-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <line x1="22" y1="2" x2="11" y2="13"></line>
-                  <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
-                </svg>
+              <div class="alur-cta-wrap">
+                <button type="button" class="btn-alur-cta" onclick="window.app && window.app.switchTab('form')">
+                  <span class="btn-alur-cta-icon" aria-hidden="true">
+                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                  </span>
+                  <span>Mulai Buat Aduan Sekarang</span>
+                </button>
               </div>
-              <div class="alur-step-label">3. Kirim Laporan</div>
-              <div class="alur-step-sub">Uraian Pencemaran</div>
             </div>
-
-            <div class="alur-step-line"></div>
-
-            <!-- Step 4: Verifikasi & Penanganan -->
-            <div class="alur-step-item">
-              <div class="alur-step-icon">
-                <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#047857" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path>
-                  <path d="m9 12 2 2 4-4"></path>
-                </svg>
-              </div>
-              <div class="alur-step-label">4. Penanganan DLH</div>
-              <div class="alur-step-sub">Verifikasi Lapangan</div>
-            </div>
-          </div>
-
-          <div style="margin-top: 14px; text-align: center;">
-            <button type="button" class="btn-buka-peta-spasial" style="width: 100%; justify-content: center; background: linear-gradient(135deg, #059669 0%, #047857 100%); color: white; box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);" onclick="window.app && window.app.switchTab('form')">
-              <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="margin-right: 6px;"><path d="M12 20h9"/><path d="M16.5 3.5a2.121 2.121 0 0 1 3 3L7 19l-4 1 1-4L16.5 3.5z"/></svg> Mulai Buat Aduan Sekarang &rarr;
-            </button>
           </div>
         </div>
 
         <!-- Kartu Kanan: Peta Sebaran Aduan (Mini Preview) -->
         <div class="bottom-card card-peta-mini">
-          <div class="bottom-card-header" style="justify-content: space-between;">
+          <div class="bottom-card-header" style="justify-content: space-between; gap: 8px;">
             <h3 class="bottom-card-title">PETA SEBARAN ADUAN</h3>
-            <span style="font-size: 0.72rem; color: #047857; font-weight: 700; background: #ecfdf5; padding: 2px 8px; border-radius: 999px;">Wilayah Lembata</span>
+            <span style="font-size: 0.72rem; color: #047857; font-weight: 700; background: #ecfdf5; padding: 3px 9px; border-radius: 999px; white-space: nowrap; flex-shrink: 0;">Wilayah Lembata</span>
           </div>
 
           <div class="mini-map-container" id="miniMapContainer">
