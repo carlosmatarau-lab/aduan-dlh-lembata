@@ -670,6 +670,7 @@
       background: currentColor;
       display: inline-block;
       margin-right: 4px;
+      flex-shrink: 0;
     }
 
     .badge-baru {
@@ -4161,7 +4162,16 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      flex-wrap: wrap;
+      gap: 6px 8px;
+    }
+
+    .aduan-card-header .badge {
+      max-width: 100%;
+      white-space: normal;
+      line-height: 1.25;
+      font-size: 0.68rem;
+      padding: 3px 8px;
     }
 
     .aduan-card-ticket {
@@ -4467,6 +4477,7 @@
     .gov-card-main {
       flex: 1 1 auto;
       min-width: 0;
+      overflow: hidden;
     }
 
     .gov-card-meta-top {
@@ -4474,7 +4485,8 @@
       align-items: center;
       justify-content: space-between;
       gap: 8px;
-      margin-bottom: 3px;
+      margin-bottom: 4px;
+      flex-wrap: wrap;
     }
 
     .gov-card-reg {
@@ -4531,7 +4543,21 @@
     }
 
     .gov-card-badge-wrap {
-      flex-shrink: 0;
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+      max-width: 100%;
+    }
+
+    .gov-card-badge-wrap .badge {
+      max-width: 100%;
+      white-space: normal;
+      line-height: 1.25;
+      font-size: 0.68rem;
+      padding: 3px 9px;
+      text-align: left;
     }
 
     .gov-status-badge {
@@ -10542,9 +10568,9 @@
                     <span class="gov-card-dot-sep">•</span>
                     <span class="gov-card-loc">${this.escHtml(desaLabel)}, ${this.escHtml(kecLabel)}</span>
                   </div>
-                </div>
-                <div class="gov-card-badge-wrap">
-                  ${this.getStatusBadgeHtml(item.status)}
+                  <div class="gov-card-badge-wrap">
+                    ${this.getStatusBadgeHtml(item.status)}
+                  </div>
                 </div>
               </div>
               <div class="gov-card-actions">
