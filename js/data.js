@@ -1356,17 +1356,32 @@ const SYNC_LOCK_TIMEOUT_MS = 8000;
 const PHOTO_IDB_NAME = 'ecoadu_photo_queue_db';
 const PHOTO_IDB_STORE = 'photo_queue';
 
+function isSafeHttpsEndpoint(val) {
+  if (!val || typeof val !== 'string') return false;
+  const tr = val.trim();
+  if (!tr.startsWith('https://')) return false;
+  try {
+    const parsed = new URL(tr);
+    const host = (parsed.hostname || '').toLowerCase();
+    if (!host || !host.includes('.') || host.endsWith('.local')) return false;
+    if (/^\d{1,3}(?:\.\d{1,3}){3}$/.test(host) || host.includes(':')) return false;
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 class AduanDataStore {
   constructor() {
     this.mapRemoteRecord = this.mapRemoteRecord.bind(this);
     this.aduanList = [];
     const saved = localStorage.getItem(GAS_CONFIG_KEY);
-    // Otomatis sinkronkan dan migrasikan URL lama ke URL deployment baru yang aktif
-    if (saved && !saved.includes('AKfycbwuDJ9X5a27GnVuuiU1keHexKXzG3OITUxwOomwHGt-1S53DdqfAfguDInXwtbh9ljKMw')) {
+    // Otomatis sinkronkan dan migrasikan URL lama/non-HTTPS ke URL deployment HTTPS resmi yang aktif
+    if (saved && (!isSafeHttpsEndpoint(saved) || !saved.includes('AKfycbwuDJ9X5a27GnVuuiU1keHexKXzG3OITUxwOomwHGt-1S53DdqfAfguDInXwtbh9ljKMw'))) {
       localStorage.setItem(GAS_CONFIG_KEY, DEFAULT_GAS_API_URL);
       this.gasApiUrl = DEFAULT_GAS_API_URL;
     } else {
-      this.gasApiUrl = (saved && saved.trim().startsWith('http')) ? saved.trim() : DEFAULT_GAS_API_URL;
+      this.gasApiUrl = isSafeHttpsEndpoint(saved) ? saved.trim() : DEFAULT_GAS_API_URL;
     }
     this.isSyncing = false;
     this.currentSyncPromise = null;
@@ -2044,7 +2059,7 @@ class AduanDataStore {
 
   hasGasConfigured() {
     const url = this.getGasUrl();
-    return !!(url && url.trim().startsWith('http'));
+    return isSafeHttpsEndpoint(url);
   }
 
   async fetchPhotoBase64FromGAS(aduanId, photoIdx = 0, isOfficer = false) {
@@ -2161,14 +2176,14 @@ class AduanDataStore {
   }
 
   getGasUrl() {
-    if (this.gasApiUrl && this.gasApiUrl.trim().startsWith('http') && this.gasApiUrl.includes('AKfycbwuDJ9X5a27GnVuuiU1keHexKXzG3OITUxwOomwHGt-1S53DdqfAfguDInXwtbh9ljKMw')) {
+    if (isSafeHttpsEndpoint(this.gasApiUrl) && this.gasApiUrl.includes('AKfycbwuDJ9X5a27GnVuuiU1keHexKXzG3OITUxwOomwHGt-1S53DdqfAfguDInXwtbh9ljKMw')) {
       return this.gasApiUrl.trim();
     }
     const stored = (localStorage.getItem(GAS_CONFIG_KEY) || '').trim();
-    if (stored && stored.startsWith('http') && stored.includes('AKfycbwuDJ9X5a27GnVuuiU1keHexKXzG3OITUxwOomwHGt-1S53DdqfAfguDInXwtbh9ljKMw')) {
+    if (isSafeHttpsEndpoint(stored) && stored.includes('AKfycbwuDJ9X5a27GnVuuiU1keHexKXzG3OITUxwOomwHGt-1S53DdqfAfguDInXwtbh9ljKMw')) {
       return stored;
     }
-    if (window.GAS_API_URL && String(window.GAS_API_URL).trim().startsWith('http')) {
+    if (window.GAS_API_URL && isSafeHttpsEndpoint(String(window.GAS_API_URL))) {
       return String(window.GAS_API_URL).trim();
     }
     return DEFAULT_GAS_API_URL;
@@ -2176,7 +2191,7 @@ class AduanDataStore {
 
   setGasUrl(url) {
     const cleanUrl = (url || '').trim();
-    if (cleanUrl && cleanUrl.startsWith('http')) {
+    if (isSafeHttpsEndpoint(cleanUrl)) {
       this.gasApiUrl = cleanUrl;
       localStorage.setItem(GAS_CONFIG_KEY, cleanUrl);
     } else {
@@ -3325,7 +3340,7 @@ class AduanDataStore {
       const onlyHttp = (val) => {
         if (!val || typeof val !== 'string') return '';
         const tr = val.trim();
-        if (!tr.startsWith('http') || tr.includes('action=viewFoto') || tr.includes('script.google.com')) return '';
+        if (!isSafeHttpsEndpoint(tr) || tr.includes('action=viewFoto') || tr.includes('script.google.com')) return '';
         return tr;
       };
 

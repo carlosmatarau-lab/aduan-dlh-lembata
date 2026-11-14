@@ -348,8 +348,8 @@
 
       function applyUrl(targetUrl) {
         if (!targetUrl) return;
-        let cleanUrl = targetUrl.trim();
-        if (!cleanUrl.startsWith('http://') && !cleanUrl.startsWith('https://')) {
+        let cleanUrl = targetUrl.trim().replace(/^http:\/\//i, 'https://');
+        if (!cleanUrl.startsWith('https://')) {
           cleanUrl = 'https://' + cleanUrl;
         }
 
@@ -358,13 +358,13 @@
         btnDownloadHd.href = `https://api.qrserver.com/v1/create-qr-code/?size=1000x1000&format=png&data=${encoded}`;
         urlDisplayLink.href = cleanUrl;
         
-        let label = cleanUrl.replace(/^https?:\/\//, '').replace(/\/$/, '');
+        let label = cleanUrl.replace(/^https:\/\//i, '').replace(/\/$/, '');
         urlDisplayText.textContent = label;
         inputCustomUrl.value = cleanUrl;
       }
 
-      // Auto-detect domain if hosted online (e.g. vercel.app)
-      if (window.location.protocol.startsWith('http') && !window.location.hostname.includes('localhost') && !window.location.hostname.includes('127.0.0.1')) {
+      // Auto-detect domain if hosted online over HTTPS (e.g. aduan-dlh-lembata.vercel.app)
+      if (window.location.protocol === 'https:') {
         const detected = window.location.origin;
         applyUrl(detected);
       }
