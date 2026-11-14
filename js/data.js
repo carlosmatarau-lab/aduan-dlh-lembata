@@ -1059,10 +1059,34 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
   const hasPendingOfficer = Boolean(existing && existing._pendingOfficerSync);
   const isRecentEdit = Boolean(existing && existing._lastOfficerEditTime && (Date.now() - existing._lastOfficerEditTime < OPTIMISTIC_GRACE_MS));
   const isRecentLocalAdd = Boolean(existing && existing._lastLocalEditTime && (Date.now() - existing._lastLocalEditTime < OPTIMISTIC_GRACE_MS));
-  const protectOptimisticOfficer = Boolean(hasPendingOfficer || isRecentEdit);
+  const isUnverifiedStVal = (st) => {
+    const s = String(st || '').trim();
+    return !s || s === '-' || s === 'Baru' || s === 'Aduan Diterima' || s === 'Verifikasi Administrasi';
+  };
+  const existingIsVerified = Boolean(existing && !isUnverifiedStVal(existing.status));
+  const remoteIsUnverified = isUnverifiedStVal(remoteItem.status);
+  const isTidakDapatLegacyCompat = Boolean(
+    String(remoteItem.status || '').trim() === 'Ditolak' && (
+      (existing && existing.status === 'Tidak Dapat Ditindaklanjuti') ||
+      String(remoteItem.hasilVerifikasi || '').includes('Daftar Periksa') ||
+      (remoteItem.alasanTidakDitindaklanjuti && String(remoteItem.alasanTidakDitindaklanjuti).trim()) ||
+      (remoteItem.kesimpulanPetugas && String(remoteItem.kesimpulanPetugas).trim())
+    )
+  );
+  // Jangan pernah menurunkan tiket yang sudah diverifikasi kembali ke 'Aduan Diterima'/'Baru',
+  // dan pertahankan label 'Tidak Dapat Ditindaklanjuti' bila server menggunakan kompatibilitas 'Ditolak'
+  const protectOptimisticOfficer = Boolean(
+    hasPendingOfficer ||
+    isRecentEdit ||
+    (existingIsVerified && remoteIsUnverified)
+  );
   const wasExplicitlyCleared = Boolean(existing && existing._officerPhotoCleared);
-  const finalStatus = (protectOptimisticOfficer && existing && existing.status) ? existing.status : (remoteItem.status || 'Baru');
-  const isFinalUnverified = (!finalStatus || finalStatus === 'Baru' || finalStatus === 'Aduan Diterima' || finalStatus === 'Verifikasi Administrasi' || finalStatus === '-');
+  const finalStatus = isTidakDapatLegacyCompat
+    ? 'Tidak Dapat Ditindaklanjuti'
+    : ((protectOptimisticOfficer && existing && existing.status)
+      ? existing.status
+      : (remoteItem.status || 'Baru'));
+  const isFinalUnverified = isUnverifiedStVal(finalStatus);
 
   // Konsolidasi foto kondisi riil petugas dengan Non-Destructive Safe Merge (Terisolasi dari Foto Warga)
   let finalOfficerPhotos = [];
@@ -1664,6 +1688,10 @@ class AduanDataStore {
       const mergedInput = this._mergeSafeDeltaWithExisting(signal.delta, existing);
       const mapped = mapRemoteAduanRecord(mergedInput, this.aduanList, (id) => this.isDeleted(id));
       if (!mapped) return false;
+
+      if (signal.aksi === 'updateVerifikasi' || (mapped.status && mapped.status !== 'Baru' && mapped.status !== 'Aduan Diterima')) {
+        mapped._lastOfficerEditTime = Date.now();
+      }
 
       if (existingIdx !== -1) {
         this.aduanList[existingIdx] = mapped;
@@ -3067,6 +3095,11 @@ class AduanDataStore {
 
           const metaRes = await this.postToGAS('updateVerifikasi', metaPayload);
           if (metaRes && metaRes.success) {
+            // Jika status 'Tidak Dapat Ditindaklanjuti' ditolak DataValidation lama di spreadsheet sebelum Code.gs diperbarui,
+            // kirim fallback kompatibilitas expectedStatus='Ditolak' tanpa memicu WA ganda
+            if (updatedRecord.status === 'Tidak Dapat Ditindaklanjuti') {
+              this._ensureTidakDapatSavedOnSheet(cleanId, updatedRecord).catch(() => { });
+            }
             // Phase 2: Unggah foto Base64 petugas di latar belakang (tanpa menahan UI)
             this.postToGAS('updateVerifikasi', photoOnlyPayload).then(async (photoRes) => {
               if (photoRes && photoRes.success) {
@@ -3097,6 +3130,9 @@ class AduanDataStore {
           };
           const res = await this.postToGAS('updateVerifikasi', payload);
           if (res && res.success) {
+            if (updatedRecord.status === 'Tidak Dapat Ditindaklanjuti') {
+              await this._ensureTidakDapatSavedOnSheet(cleanId, updatedRecord).catch(() => { });
+            }
             const freshIdx = this.aduanList.findIndex(x => String(x.id).trim().toUpperCase() === cleanId);
             if (freshIdx !== -1) {
               delete this.aduanList[freshIdx]._pendingOfficerSync;
@@ -3112,6 +3148,30 @@ class AduanDataStore {
     }
 
     return updatedRecord;
+  }
+
+  async _ensureTidakDapatSavedOnSheet(cleanId, updatedRecord) {
+    try {
+      if (!this.hasGasConfigured() || typeof fetch !== 'function') return;
+      const checkUrl = `${this.gasApiUrl}?action=getById&id=${encodeURIComponent(cleanId)}&_t=${Date.now()}`;
+      const r = await fetch(checkUrl, { method: 'GET', redirect: 'follow', cache: 'no-store' });
+      if (!r || !r.ok) return;
+      const j = await r.json();
+      const remoteSt = j && j.data && !Array.isArray(j.data) && j.data.status ? String(j.data.status).trim() : '';
+      if (remoteSt && remoteSt !== 'Tidak Dapat Ditindaklanjuti' && remoteSt !== 'Ditolak') {
+        await this.postToGAS('updateVerifikasi', {
+          id: cleanId,
+          expectedStatus: 'Ditolak',
+          skipWaNotification: true,
+          petugasVerifikasi: updatedRecord.petugasVerifikasi,
+          tanggalVerifikasi: updatedRecord.tanggalVerifikasi,
+          hasilVerifikasi: updatedRecord.hasilVerifikasi,
+          tindakanDLH: updatedRecord.tindakanDLH,
+          alasanTidakDitindaklanjuti: updatedRecord.alasanTidakDitindaklanjuti,
+          kesimpulanPetugas: updatedRecord.kesimpulanPetugas
+        });
+      }
+    } catch (e) { }
   }
 
   async deleteOfficerPhoto(id, photoIndex) {

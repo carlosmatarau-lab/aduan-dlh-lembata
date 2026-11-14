@@ -640,7 +640,9 @@ function getSheetDataAsObjects(sheet) {
 
   return rows.map((row, rIdx) => {
     const obj = {};
-    headers.forEach((h, i) => {
+    headers.forEach((rawH, i) => {
+      const h = String(rawH || '').trim();
+      if (!h) return;
       let val = row[i] !== undefined ? row[i] : '';
       if ((h === 'Link_Foto_Bukti' || h === 'Foto_Kondisi_Riil') && richTextRows && richTextRows[rIdx] && richTextRows[rIdx][i]) {
         const cellRt = richTextRows[rIdx][i];
@@ -661,7 +663,12 @@ function getSheetDataAsObjects(sheet) {
           }
         }
       }
-      obj[h] = val;
+      // Jangan menimpa nilai kolom yang sudah terisi dengan kolom duplikat yang kosong
+      const isCurrentEmpty = (obj[h] === undefined || obj[h] === null || String(obj[h]).trim() === '' || String(obj[h]).trim() === '-');
+      const isNewNonEmpty = (val !== undefined && val !== null && String(val).trim() !== '' && String(val).trim() !== '-');
+      if (isCurrentEmpty || isNewNonEmpty) {
+        obj[h] = val;
+      }
     });
     return obj;
   });
@@ -1700,58 +1707,64 @@ function handleUpdateVerifikasi(updateData) {
     }
   }
 
+  // Helper untuk memperbarui seluruh kolom jika terdapat duplikasi nama header di spreadsheet
+  const setColValues_ = function(colName, val, clearValidation) {
+    headers.forEach(function(h, cIdx) {
+      if (String(h || '').trim() === colName) {
+        const cell = sheet.getRange(targetRowIndex, cIdx + 1);
+        if (clearValidation) {
+          try {
+            if (typeof cell.clearDataValidations === 'function') cell.clearDataValidations();
+            else if (typeof cell.setDataValidation === 'function') cell.setDataValidation(null);
+          } catch (eDv) { }
+        }
+        cell.setValue(val);
+        data[targetRowIndex - 1][cIdx] = val;
+      }
+    });
+  };
+
   // Update sel-sel yang relevan & sinkronkan array memori baris (data[targetRowIndex - 1])
+  // Bersihkan DataValidation lama pada sel Status agar 'Tidak Dapat Ditindaklanjuti' tidak ditolak oleh aturan lama
   if (updateData.status && colStatus !== -1) {
-    sheet.getRange(targetRowIndex, colStatus + 1).setValue(updateData.status);
-    data[targetRowIndex - 1][colStatus] = updateData.status;
+    setColValues_('Status', updateData.status, true);
   }
   if (updateData.petugasVerifikasi && colPetugas !== -1) {
-    sheet.getRange(targetRowIndex, colPetugas + 1).setValue(updateData.petugasVerifikasi);
-    data[targetRowIndex - 1][colPetugas] = updateData.petugasVerifikasi;
+    setColValues_('Petugas_Verifikasi', updateData.petugasVerifikasi, false);
   }
   if (updateData.tanggalVerifikasi && colTglVerif !== -1) {
-    sheet.getRange(targetRowIndex, colTglVerif + 1).setValue(updateData.tanggalVerifikasi);
-    data[targetRowIndex - 1][colTglVerif] = updateData.tanggalVerifikasi;
+    setColValues_('Tanggal_Verifikasi', updateData.tanggalVerifikasi, false);
   }
   if (updateData.hasilVerifikasi && colHasil !== -1) {
-    sheet.getRange(targetRowIndex, colHasil + 1).setValue(updateData.hasilVerifikasi);
-    data[targetRowIndex - 1][colHasil] = updateData.hasilVerifikasi;
+    setColValues_('Hasil_Verifikasi', updateData.hasilVerifikasi, false);
   }
   if (updateData.tindakanDLH && colTindakan !== -1) {
-    sheet.getRange(targetRowIndex, colTindakan + 1).setValue(updateData.tindakanDLH);
-    data[targetRowIndex - 1][colTindakan] = updateData.tindakanDLH;
+    setColValues_('Tindakan_DLH', updateData.tindakanDLH, false);
   }
 
   // Berita Acara (BAST) & Catatan Pemeriksaan
   if (updateData.nomorBeritaAcara !== undefined && colNomorBA !== -1) {
-    sheet.getRange(targetRowIndex, colNomorBA + 1).setValue(updateData.nomorBeritaAcara);
-    data[targetRowIndex - 1][colNomorBA] = updateData.nomorBeritaAcara;
+    setColValues_('Nomor_Berita_Acara', updateData.nomorBeritaAcara, false);
   }
   if (updateData.catatanBeritaAcara !== undefined && colCatatanBA !== -1) {
-    sheet.getRange(targetRowIndex, colCatatanBA + 1).setValue(updateData.catatanBeritaAcara);
-    data[targetRowIndex - 1][colCatatanBA] = updateData.catatanBeritaAcara;
+    setColValues_('Catatan_Berita_Acara', updateData.catatanBeritaAcara, false);
   }
   if (updateData.alasanTidakDitindaklanjuti !== undefined && colAlasanTidak !== -1) {
-    sheet.getRange(targetRowIndex, colAlasanTidak + 1).setValue(updateData.alasanTidakDitindaklanjuti);
-    data[targetRowIndex - 1][colAlasanTidak] = updateData.alasanTidakDitindaklanjuti;
+    setColValues_('Alasan_Tidak_Ditindaklanjuti', updateData.alasanTidakDitindaklanjuti, false);
   }
   if (updateData.kesimpulanPetugas !== undefined && colKesimpulan !== -1) {
-    sheet.getRange(targetRowIndex, colKesimpulan + 1).setValue(updateData.kesimpulanPetugas);
-    data[targetRowIndex - 1][colKesimpulan] = updateData.kesimpulanPetugas;
+    setColValues_('Kesimpulan_Petugas', updateData.kesimpulanPetugas, false);
   }
 
   // Timestamps Akuntabilitas Kinerja
   if (updateData.timestampVerifikasi && colTimeVerif !== -1) {
-    sheet.getRange(targetRowIndex, colTimeVerif + 1).setValue(updateData.timestampVerifikasi);
-    data[targetRowIndex - 1][colTimeVerif] = updateData.timestampVerifikasi;
+    setColValues_('Timestamp_Verifikasi', updateData.timestampVerifikasi, false);
   }
   if (updateData.timestampTindakLanjut && colTimeTindak !== -1) {
-    sheet.getRange(targetRowIndex, colTimeTindak + 1).setValue(updateData.timestampTindakLanjut);
-    data[targetRowIndex - 1][colTimeTindak] = updateData.timestampTindakLanjut;
+    setColValues_('Timestamp_Tindak_Lanjut', updateData.timestampTindakLanjut, false);
   }
   if (updateData.timestampSelesai && colTimeSelesai !== -1) {
-    sheet.getRange(targetRowIndex, colTimeSelesai + 1).setValue(updateData.timestampSelesai);
-    data[targetRowIndex - 1][colTimeSelesai] = updateData.timestampSelesai;
+    setColValues_('Timestamp_Selesai', updateData.timestampSelesai, false);
   }
 
   // Foto Kondisi Riil Pemeriksaan Petugas
