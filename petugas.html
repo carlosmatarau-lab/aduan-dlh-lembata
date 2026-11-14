@@ -438,18 +438,26 @@
       border: 1px solid var(--border);
       border-radius: 18px;
       box-shadow: 0 4px 16px rgba(0, 0, 0, 0.05);
-      overflow: hidden;
+      overflow: visible;
     }
 
     .table-card-header {
-      padding: 20px 24px;
+      padding: 18px 24px;
       background: #ffffff;
       border-bottom: 1px solid var(--border);
+      border-radius: 17px 17px 0 0;
+      position: relative;
+      z-index: 35;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      flex-wrap: wrap;
+      flex-wrap: nowrap;
       gap: 16px;
+    }
+
+    .table-card-header > div:first-child {
+      flex: 1 1 auto;
+      min-width: 0;
     }
 
     .table-card-title {
@@ -468,11 +476,87 @@
       margin-top: 2px;
     }
 
-    .table-header-buttons {
-      display: flex;
+    .table-header-actions-wrap {
+      position: relative;
+      flex: 0 0 auto;
+      margin-left: auto;
+      z-index: 40;
+    }
+
+    .btn-mobile-opsi-data {
+      display: inline-flex;
       align-items: center;
-      gap: 8px;
-      flex-wrap: wrap;
+      justify-content: center;
+      gap: 7px;
+      height: 38px;
+      padding: 0 14px;
+      border-radius: 10px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      background: #ecfdf5;
+      color: #065f46;
+      border: 1.5px solid #10b981;
+      box-shadow: 0 2px 6px rgba(5, 150, 105, 0.12);
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.18s ease;
+    }
+
+    .btn-mobile-opsi-data:hover {
+      background: #d1fae5;
+      border-color: #059669;
+      transform: translateY(-1px);
+    }
+
+    .btn-mobile-opsi-data.active {
+      background: #059669;
+      color: #ffffff;
+      border-color: #047857;
+      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.24);
+    }
+
+    .btn-mobile-opsi-data.active .chevron-pengaturan {
+      transform: rotate(180deg);
+    }
+
+    .table-header-buttons {
+      display: none;
+    }
+
+    .table-header-buttons.mobile-opsi-open {
+      display: flex;
+      flex-direction: column;
+      position: absolute;
+      top: calc(100% + 8px);
+      right: 0;
+      left: auto;
+      width: 230px;
+      max-width: calc(100vw - 32px);
+      background: #ffffff;
+      border: 1.5px solid #cbd5e1;
+      border-radius: 13px;
+      padding: 7px;
+      gap: 5px;
+      box-shadow: 0 14px 32px -4px rgba(15, 23, 42, 0.22), 0 4px 12px rgba(15, 23, 42, 0.08);
+      z-index: 600;
+    }
+
+    .settings-dropdown-label {
+      font-size: 0.66rem;
+      font-weight: 800;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      color: #64748b;
+      padding: 4px 8px 3px 8px;
+      border-bottom: 1px solid #f1f5f9;
+      margin-bottom: 1px;
+      pointer-events: none;
+    }
+
+    .settings-dropdown-divider {
+      height: 1px;
+      background: #f1f5f9;
+      margin: 2px 4px;
     }
 
     .btn-action-tool {
@@ -490,10 +574,33 @@
       transition: all 0.2s ease;
     }
 
+    .table-header-buttons.mobile-opsi-open .btn-action-tool,
+    .table-header-buttons.mobile-opsi-open #btnResetOfficialData {
+      width: 100%;
+      height: 37px;
+      padding: 0 11px;
+      font-size: 0.78rem;
+      font-weight: 700;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      text-align: left;
+      gap: 8px;
+      margin: 0;
+      box-sizing: border-box;
+      white-space: nowrap;
+    }
+
     .btn-action-tool:hover {
       background: #f1f5f9;
       color: #0f172a;
       transform: translateY(-1px);
+    }
+
+    .table-header-buttons.mobile-opsi-open .btn-action-tool:hover {
+      transform: none;
+      filter: brightness(0.97);
     }
 
     .btn-action-tool.btn-export {
@@ -931,6 +1038,7 @@
       padding: 14px 24px;
       background: #f8fafc;
       border-top: 1px solid var(--border);
+      border-radius: 0 0 17px 17px;
       display: flex;
       justify-content: space-between;
       align-items: center;
@@ -2408,42 +2516,6 @@
         line-height: 1.35 !important;
       }
 
-      .table-header-buttons {
-        width: 100% !important;
-        display: grid !important;
-        grid-template-columns: 1fr 1fr !important;
-        gap: 8px !important;
-        margin-top: 4px !important;
-        padding-bottom: 0 !important;
-        overflow: visible !important;
-        white-space: normal !important;
-      }
-
-      .table-header-buttons .btn-action-tool {
-        width: 100% !important;
-        height: 40px !important;
-        padding: 0 10px !important;
-        font-size: 0.76rem !important;
-        font-weight: 700 !important;
-        border-radius: 10px !important;
-        display: flex !important;
-        align-items: center !important;
-        justify-content: center !important;
-        text-align: center !important;
-        gap: 6px !important;
-        box-sizing: border-box !important;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05) !important;
-        white-space: nowrap !important;
-      }
-
-      #btnResetOfficialData {
-        grid-column: 1 / -1 !important;
-        width: 100% !important;
-        height: 38px !important;
-        border-radius: 10px !important;
-        margin-top: 2px !important;
-      }
-
       /* Toolbar Filter Tabel */
       .filter-toolbar {
         padding: 10px 12px !important;
@@ -2791,15 +2863,10 @@
       }
     }
 
-    /* Default Desktop (> 768px): sembunyikan tombol pemicu dropdown Opsi Data mobile */
-    .btn-mobile-opsi-data {
-      display: none;
-    }
-
     /* ===================================================================
        OPTIMASI TATA LETAK ATAS KHUSUS MOBILE (<= 768px):
        1. Header Utama Ramping 1 Baris + Tombol Navigasi Ikon Ringkas
-       2. Tombol Aksi Tabel Diringkas ke Menu Dropdown Opsi Data
+       2. Tombol Pengaturan Khusus Ringkas di Header Tabel
        3. Filter Toolbar Padat 2 Baris Grid
        =================================================================== */
     @media (max-width: 768px) {
@@ -3871,21 +3938,93 @@
 
       .portal-container.command-center-wide {
         max-width: 1680px;
-        padding: 20px 24px 60px 24px;
+        padding: 16px 24px 36px 24px;
         transition: max-width 0.25s ease;
       }
 
-      /* Split-Screen Active on Desktop */
+      /* Split-Screen Active on Desktop: Dual-Pane Command Center */
       .command-center-layout.split-mode {
         display: grid;
-        grid-template-columns: minmax(360px, 0.95fr) minmax(440px, 1.05fr);
-        gap: 20px;
-        align-items: start;
+        grid-template-columns: minmax(0, 0.92fr) minmax(0, 1.08fr);
+        gap: 18px;
+        align-items: stretch;
+        width: 100%;
+        max-width: 100%;
       }
 
       .command-center-layout.split-mode .table-container-card {
         order: 1;
         margin-bottom: 0;
+        min-width: 0;
+        width: 100%;
+        max-width: 100%;
+        height: calc(100vh - 96px);
+        min-height: 600px;
+        max-height: 880px;
+        display: flex;
+        flex-direction: column;
+        border: 1px solid #cbd5e1;
+        box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
+      }
+
+      .command-center-layout.split-mode .table-card-header {
+        padding: 14px 16px;
+        gap: 10px;
+        flex-shrink: 0;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+      }
+
+      .command-center-layout.split-mode .table-card-title {
+        font-size: 1.05rem;
+      }
+
+      .command-center-layout.split-mode .table-card-sub {
+        font-size: 0.76rem;
+        margin-top: 3px;
+      }
+
+      .command-center-layout.split-mode .btn-mobile-opsi-data {
+        height: 34px;
+        padding: 0 11px;
+        font-size: 0.76rem;
+        border-radius: 9px;
+      }
+
+      .command-center-layout.split-mode .filter-toolbar {
+        padding: 10px 16px;
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+        gap: 8px;
+        align-items: center;
+        flex-shrink: 0;
+        background: #f8fafc;
+      }
+
+      .command-center-layout.split-mode .filter-toolbar .search-box-wrap {
+        grid-column: 1 / -1;
+        min-width: 0;
+        width: 100%;
+      }
+
+      .command-center-layout.split-mode .filter-toolbar .search-input {
+        padding: 8px 12px 8px 34px;
+        font-size: 0.8rem;
+        border-radius: 8px;
+      }
+
+      .command-center-layout.split-mode .filter-toolbar .filter-select {
+        min-width: 0;
+        width: 100%;
+        padding: 7px 10px;
+        font-size: 0.78rem;
+        border-radius: 8px;
+      }
+
+      .command-center-layout.split-mode .filter-toolbar .btn-reset-filter {
+        padding: 7px 12px;
+        font-size: 0.76rem;
+        border-radius: 8px;
+        white-space: nowrap;
       }
 
       .command-center-layout.split-mode .table-responsive {
@@ -3894,6 +4033,19 @@
 
       .command-center-layout.split-mode .aduan-compact-feed {
         display: flex !important;
+        flex: 1 1 auto;
+        min-height: 0;
+        max-height: none;
+        padding: 12px 14px;
+        background: #f1f5f9;
+        gap: 10px;
+      }
+
+      .command-center-layout.split-mode .table-footer {
+        padding: 10px 16px;
+        font-size: 0.75rem;
+        flex-shrink: 0;
+        background: #ffffff;
       }
 
       .command-center-layout.split-mode .officer-map-card {
@@ -3902,27 +4054,33 @@
         top: 76px;
         z-index: 25;
         margin-bottom: 0;
+        min-width: 0;
+        width: 100%;
+        max-width: 100%;
         height: calc(100vh - 96px);
-        min-height: 580px;
+        min-height: 600px;
+        max-height: 880px;
         display: flex;
         flex-direction: column;
-        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.06);
+        border: 1px solid #cbd5e1;
+        box-shadow: 0 8px 28px rgba(15, 23, 42, 0.06);
       }
 
       .command-center-layout.split-mode .officer-map-card .petugas-map-canvas {
-        flex: 1;
+        flex: 1 1 auto;
         height: auto;
-        min-height: 320px;
+        min-height: 300px;
       }
 
       /* ===================================================================
          OPTIMASI KOMPAK & SIMETRIS KONTROL PETA (KHUSUS SPLIT-SCREEN DESKTOP >= 1024px)
          =================================================================== */
       .command-center-layout.split-mode .officer-map-card .map-card-header {
-        padding: 10px 14px;
+        padding: 12px 16px;
         display: flex;
         flex-direction: column;
-        gap: 6px;
+        gap: 8px;
+        background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
       }
 
       .command-center-layout.split-mode .officer-map-card .map-card-header>div:first-child {
@@ -3930,10 +4088,12 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
+        gap: 8px;
+        min-width: 0;
       }
 
       .command-center-layout.split-mode .officer-map-card .map-card-title {
-        font-size: 0.98rem;
+        font-size: 1.02rem;
         font-weight: 800;
         margin: 0;
       }
@@ -3947,20 +4107,22 @@
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
         flex-wrap: wrap;
+        min-width: 0;
       }
 
       .command-center-layout.split-mode .officer-map-card .map-mode-pill-group {
         display: inline-flex;
-        padding: 2px;
+        padding: 3px;
         gap: 2px;
         background: #f1f5f9;
         border-radius: 999px;
+        flex-shrink: 0;
       }
 
       .command-center-layout.split-mode .officer-map-card .btn-map-mode {
-        padding: 4px 8px;
+        padding: 4px 10px;
         font-size: 0.72rem;
         border-radius: 999px;
       }
@@ -3968,70 +4130,109 @@
       .command-center-layout.split-mode .officer-map-card .map-action-row-group {
         display: inline-flex;
         align-items: center;
-        gap: 5px;
+        gap: 6px;
+        flex-wrap: wrap;
+        max-width: 100%;
+        min-width: 0;
       }
 
       .command-center-layout.split-mode .officer-map-card .map-basemap-select {
-        padding: 3px 6px;
-        font-size: 0.72rem;
-        height: 28px;
-        border-radius: 6px;
-        max-width: 150px;
+        padding: 4px 8px;
+        font-size: 0.73rem;
+        height: 29px;
+        border-radius: 8px;
+        max-width: 165px;
+        min-width: 115px;
       }
 
       .command-center-layout.split-mode .officer-map-card .btn-focus-lmb {
-        padding: 3px 8px;
-        font-size: 0.72rem;
-        height: 28px;
-        border-radius: 6px;
+        padding: 4px 10px;
+        font-size: 0.73rem;
+        height: 29px;
+        border-radius: 8px;
+        white-space: nowrap;
       }
 
       .command-center-layout.split-mode .officer-map-card .map-filter-strip {
-        padding: 6px 14px;
+        padding: 8px 16px;
         display: flex;
         justify-content: space-between;
         align-items: center;
-        gap: 6px;
+        gap: 8px;
+        flex-wrap: wrap;
         background: #f8fafc;
       }
 
       .command-center-layout.split-mode .officer-map-card .map-stat-indicator {
-        font-size: 0.71rem;
+        font-size: 0.73rem;
+        flex: 1 1 170px;
+        min-width: 0;
+      }
+
+      .command-center-layout.split-mode .officer-map-card .map-stat-indicator #mapPointsSummary {
         white-space: nowrap;
         overflow: hidden;
         text-overflow: ellipsis;
-        max-width: 48%;
+        display: block;
       }
 
       .command-center-layout.split-mode .officer-map-card .map-filter-group {
         display: flex;
-        gap: 4px;
+        gap: 6px;
         align-items: center;
+        flex-wrap: wrap;
+        max-width: 100%;
       }
 
       .command-center-layout.split-mode .officer-map-card .map-mini-select {
-        padding: 3px 5px;
-        font-size: 0.71rem;
-        height: 26px;
-        border-radius: 6px;
-        max-width: 125px;
+        padding: 4px 7px;
+        font-size: 0.72rem;
+        height: 28px;
+        border-radius: 7px;
+        max-width: 145px;
+      }
+
+      .command-center-layout.split-mode .officer-map-card .map-legend-footer {
+        padding: 8px 16px;
+        gap: 8px 14px;
+        flex-wrap: wrap;
+        font-size: 0.72rem;
+        background: #ffffff;
+      }
+
+      .command-center-layout.split-mode .officer-map-card .heatmap-legend-gradient {
+        gap: 6px;
+        flex-wrap: wrap;
+      }
+
+      .command-center-layout.split-mode .officer-map-card .gradient-bar {
+        width: 92px;
+        height: 8px;
+      }
+
+      .command-center-layout.split-mode .officer-map-card .map-legend-items {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 6px 10px;
       }
 
       /* Popup Leaflet Anti-Terpotong (Desktop Mode) */
       .command-center-layout.split-mode .custom-dlh-popup .leaflet-popup-content-wrapper,
       .custom-dlh-popup .leaflet-popup-content-wrapper {
-        border-radius: 10px;
-        box-shadow: 0 8px 24px rgba(0, 0, 0, 0.2);
+        border-radius: 12px;
+        box-shadow: 0 10px 28px rgba(15, 23, 42, 0.22);
         border: 1px solid #cbd5e1;
         overflow: hidden;
       }
 
       .command-center-layout.split-mode .custom-dlh-popup .leaflet-popup-content,
       .custom-dlh-popup .leaflet-popup-content {
-        margin: 8px 10px 6px 10px !important;
+        margin: 11px 13px 10px 13px !important;
         font-size: 0.76rem !important;
-        max-width: 270px !important;
-        line-height: 1.35 !important;
+        width: 278px !important;
+        max-width: 300px !important;
+        line-height: 1.4 !important;
+        overflow-x: hidden !important;
       }
 
       .custom-dlh-popup .leaflet-popup-tip {
@@ -4042,20 +4243,39 @@
     /* Styling Global Popup Leaflet Anti-Terpotong (Mode Penuh & Split, Desktop & Mobile) */
     .custom-dlh-popup .leaflet-popup-content-wrapper {
       padding: 0;
-      border-radius: 10px;
-      box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+      border-radius: 12px;
+      box-shadow: 0 10px 28px rgba(15, 23, 42, 0.2);
       border: 1px solid #cbd5e1;
       overflow: hidden;
       background: #ffffff;
     }
 
     .custom-dlh-popup .leaflet-popup-content {
-      margin: 8px 10px 6px 10px !important;
-      line-height: 1.35 !important;
+      margin: 11px 13px 10px 13px !important;
+      line-height: 1.4 !important;
       font-size: 0.76rem !important;
-      max-width: 270px !important;
-      max-height: 220px;
+      max-width: 295px !important;
+      max-height: 275px;
+      overflow-x: hidden !important;
       overflow-y: auto;
+    }
+
+    .dlh-map-popup-inner {
+      width: 100%;
+      box-sizing: border-box;
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+
+    .dlh-map-popup-inner .badge {
+      font-size: 0.65rem;
+      padding: 2px 8px;
+      white-space: normal;
+      max-width: 100%;
+      line-height: 1.25;
+      letter-spacing: 0.2px;
     }
 
     .custom-dlh-popup .leaflet-popup-tip-container {
@@ -4067,18 +4287,18 @@
     }
 
     .custom-dlh-popup a.leaflet-popup-close-button {
-      top: 6px !important;
-      right: 6px !important;
+      top: 8px !important;
+      right: 8px !important;
       color: #64748b !important;
       font-size: 15px !important;
-      width: 18px !important;
-      height: 18px !important;
-      line-height: 18px !important;
+      width: 20px !important;
+      height: 20px !important;
+      line-height: 20px !important;
       text-align: center !important;
       padding: 0 !important;
       border-radius: 50% !important;
-      background: rgba(241, 245, 249, 0.85) !important;
-      border: none !important;
+      background: #f1f5f9 !important;
+      border: 1px solid #e2e8f0 !important;
     }
 
     .custom-dlh-popup a.leaflet-popup-close-button:hover {
@@ -4120,42 +4340,89 @@
 
     .aduan-compact-card {
       background: #ffffff;
-      border: 1.5px solid #e2e8f0;
+      border: 1px solid #e2e8f0;
+      border-left: 4px solid #cbd5e1;
       border-radius: 12px;
       padding: 12px 14px;
       cursor: pointer;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      box-shadow: 0 1px 3px rgba(15, 23, 42, 0.04);
       display: flex;
       flex-direction: column;
       gap: 6px;
       user-select: none;
+      flex-shrink: 0;
+    }
+
+    .aduan-compact-card.status-stripe-baru {
+      border-left-color: #f59e0b;
+    }
+
+    .aduan-compact-card.status-stripe-verif {
+      border-left-color: #6366f1;
+    }
+
+    .aduan-compact-card.status-stripe-tindak {
+      border-left-color: #2563eb;
+    }
+
+    .aduan-compact-card.status-stripe-selesai {
+      border-left-color: #10b981;
+    }
+
+    .aduan-compact-card.status-stripe-tidak-dapat {
+      border-left-color: #64748b;
     }
 
     .aduan-compact-card:hover {
-      border-color: #34d399;
-      background: #f0fdf4;
+      border-color: #10b981;
+      border-left-color: #059669;
+      background: #f8fffb;
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.1);
+      box-shadow: 0 6px 16px rgba(5, 150, 105, 0.1);
     }
 
     .aduan-compact-card.is-active {
       border-color: #059669 !important;
+      border-left-color: #059669 !important;
       background: #ecfdf5 !important;
-      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.35), 0 6px 16px rgba(5, 150, 105, 0.18) !important;
+      box-shadow: 0 0 0 2px rgba(16, 185, 129, 0.28), 0 8px 20px rgba(5, 150, 105, 0.16) !important;
       transform: translateY(-1px);
     }
 
-    .aduan-compact-card.is-active::before {
-      content: '';
-      position: absolute;
-      left: 0;
-      top: 10px;
-      bottom: 10px;
-      width: 4px;
-      background: linear-gradient(180deg, #059669 0%, #10b981 100%);
-      border-radius: 0 4px 4px 0;
+    .aduan-card-snippet {
+      font-size: 0.75rem;
+      color: #475569;
+      line-height: 1.4;
+      display: -webkit-box;
+      -webkit-line-clamp: 2;
+      -webkit-box-orient: vertical;
+      overflow: hidden;
+      margin: 0;
+    }
+
+    .btn-pin-jump {
+      margin-left: auto;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 8px;
+      border-radius: 999px;
+      border: 1px solid #a7f3d0;
+      background: #ecfdf5;
+      color: #047857;
+      font-size: 0.68rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.15s ease;
+    }
+
+    .btn-pin-jump:hover {
+      background: #059669;
+      color: #ffffff;
+      border-color: #047857;
     }
 
     .aduan-card-header {
@@ -5293,7 +5560,8 @@
               <span class="legend-chip"><span class="chip-dot dot-yellow"></span> Sedang Diverifikasi</span>
               <span class="legend-chip"><span class="chip-dot dot-blue"></span> Ditindaklanjuti</span>
               <span class="legend-chip"><span class="chip-dot dot-green"></span> Tuntas</span>
-              <span class="legend-chip"><span class="chip-dot" style="background: #64748b;"></span> Tidak Dapat Ditindaklanjuti</span>
+              <span class="legend-chip"><span class="chip-dot" style="background: #64748b;"></span> Tidak Dapat
+                Ditindaklanjuti</span>
             </div>
           </div>
         </section>
@@ -5313,49 +5581,32 @@
                 </svg>
                 Rekapitulasi Data Pengaduan
               </h2>
-              <p class="table-card-sub"
-                style="display: flex; align-items: center; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
-                <span>Sinkronisasi form pengaduan masyarakat &amp; Google Spreadsheet DLH Lembata</span>
-                <span id="tableSyncTimeWrap"
-                  style="display: inline-flex; align-items: center; gap: 5px; padding: 3px 9px; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 6px; color: #065f46; font-size: 0.74rem; font-weight: 600;"
-                  title="Waktu pembaruan data terakhir dari server">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                    style="width: 12px; height: 12px; flex-shrink: 0;">
-                    <circle cx="12" cy="12" r="10" />
-                    <polyline points="12 6 12 12 16 14" />
-                  </svg>
-                  <span>Terakhir disinkronkan: <strong id="tableLastSyncClock"
-                      style="font-family: inherit;">--:--:--</strong></span>
-                </span>
+              <p class="table-card-sub">
+                Sinkronisasi form pengaduan masyarakat &amp; Google Spreadsheet DLH Lembata
               </p>
             </div>
 
             <div class="table-header-actions-wrap">
-              <!-- Tombol Ringkas Menu Opsi Data (Khusus Layar Mobile <= 768px) -->
+              <!-- Tombol Pengaturan Khusus (Desktop & Mobile) -->
               <button type="button" class="btn-mobile-opsi-data" id="btnToggleMobileOpsi"
-                onclick="window.portal && window.portal.toggleMobileOpsiMenu(event)" title="Menu Opsi Data Aduan"
-                aria-expanded="false">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"
+                onclick="window.portal && window.portal.toggleMobileOpsiMenu(event)"
+                title="Pengaturan Data, Sinkronisasi &amp; Ekspor"
+                aria-expanded="false" aria-haspopup="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
                   stroke-linejoin="round"
-                  style="width: 15px; height: 15px; display: inline-block; vertical-align: middle;">
-                  <line x1="4" y1="21" x2="4" y2="14" />
-                  <line x1="4" y1="10" x2="4" y2="3" />
-                  <line x1="12" y1="21" x2="12" y2="12" />
-                  <line x1="12" y1="8" x2="12" y2="3" />
-                  <line x1="20" y1="21" x2="20" y2="16" />
-                  <line x1="20" y1="12" x2="20" y2="3" />
-                  <line x1="1" y1="14" x2="7" y2="14" />
-                  <line x1="9" y1="8" x2="15" y2="8" />
-                  <line x1="17" y1="16" x2="23" y2="16" />
+                  style="width: 15px; height: 15px; display: inline-block; vertical-align: middle; flex-shrink: 0;">
+                  <circle cx="12" cy="12" r="3" />
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
                 </svg>
-                Opsi Data
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
-                  style="width: 12px; height: 12px; display: inline-block;">
+                <span>Pengaturan</span>
+                <svg class="chevron-pengaturan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
+                  style="width: 12px; height: 12px; display: inline-block; transition: transform 0.2s ease;">
                   <polyline points="6 9 12 15 18 9" />
                 </svg>
               </button>
 
-              <div class="table-header-buttons" id="tableHeaderButtonsMenu">
+              <div class="table-header-buttons" id="tableHeaderButtonsMenu" role="menu" aria-label="Menu Pengaturan Data">
+                <div class="settings-dropdown-label">Pengaturan &amp; Alat Data</div>
                 <!-- Refresh / Sync Manual -->
                 <button type="button" class="btn-action-tool" id="btnManualSync"
                   onclick="if(window.portal) window.portal.manualSync();" title="Segarkan data dari penyimpanan">
@@ -5407,6 +5658,8 @@
                   </svg>
                   Ekspor CSV
                 </button>
+
+                <div class="settings-dropdown-divider"></div>
 
                 <!-- Reset Standar Bersih: 0 Aduan Fresh Start -->
                 <button type="button" class="btn-action-tool" id="btnResetOfficialData"
@@ -5513,8 +5766,10 @@
               <em>DLH Lembata — Transparan &bull; Akuntabel &bull; Tanggap</em>
             </div>
           </div>
-          <div class="sync-footer-note" style="padding: 8px 18px 12px; font-size: 0.74rem; color: #64748b; font-style: italic; line-height: 1.5; border-top: 1px dashed #e2e8f0; background: #f8fafc;">
-            * Catatan Sinkronisasi: Sistem menerapkan sinkronisasi real-time lintas perangkat berbasis sinyal push otomatis melalui server, dengan perlindungan antrean aman untuk seluruh lampiran foto.
+          <div class="sync-footer-note"
+            style="padding: 8px 18px 12px; font-size: 0.74rem; color: #64748b; font-style: italic; line-height: 1.5; border-top: 1px dashed #e2e8f0; background: #f8fafc;">
+            * Catatan Sinkronisasi: Sistem menerapkan sinkronisasi real-time lintas perangkat berbasis sinyal push
+            otomatis melalui server, dengan perlindungan antrean aman untuk seluruh lampiran foto.
           </div>
         </section>
 
@@ -5583,25 +5838,34 @@
               <option value="Diverifikasi">Diverifikasi (Pemeriksaan / Fakta Lapangan)</option>
               <option value="Ditindaklanjuti">Ditindaklanjuti (Penanganan / Aksi Berjalan)</option>
               <option value="Selesai">Selesai (Tuntas dengan Bukti Penyelesaian)</option>
-              <option value="Tidak Dapat Ditindaklanjuti">Tidak Dapat Ditindaklanjuti (Berdasarkan Hasil Pemeriksaan)</option>
+              <option value="Tidak Dapat Ditindaklanjuti">Tidak Dapat Ditindaklanjuti (Berdasarkan Hasil Pemeriksaan)
+              </option>
             </select>
             <div id="vLegacyDitolakNotice"
               style="display: none; margin-top: 8px; padding: 8px 10px; background: #fffbeb; border: 1px solid #fde68a; border-radius: 8px; font-size: 0.76rem; color: #92400e; line-height: 1.45;">
-              <strong>Penyesuaian Data Lama:</strong> Data sebelumnya tercatat dengan status lama dan ditampilkan sebagai <em>Tidak Dapat Ditindaklanjuti</em>. Mohon lengkapi/periksa kembali alasan hasil pemeriksaan dan kesimpulan petugas sebelum menyimpan.
+              <strong>Penyesuaian Data Lama:</strong> Data sebelumnya tercatat dengan status lama dan ditampilkan
+              sebagai <em>Tidak Dapat Ditindaklanjuti</em>. Mohon lengkapi/periksa kembali alasan hasil pemeriksaan dan
+              kesimpulan petugas sebelum menyimpan.
             </div>
           </div>
 
           <!-- Panel Alasan & Kesimpulan Khusus Status "Tidak Dapat Ditindaklanjuti" -->
           <div id="vTidakDitindaklanjutiWrap"
             style="display: none; background: #f8fafc; border: 1.5px solid #cbd5e1; border-left: 4px solid #64748b; border-radius: 10px; padding: 14px; margin-bottom: 16px;">
-            <div style="font-weight: 800; font-size: 0.82rem; color: #334155; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
-              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" style="color: #475569; flex-shrink: 0;">
-                <circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/>
+            <div
+              style="font-weight: 800; font-size: 0.82rem; color: #334155; margin-bottom: 4px; display: flex; align-items: center; gap: 6px;">
+              <svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2"
+                style="color: #475569; flex-shrink: 0;">
+                <circle cx="12" cy="12" r="10" />
+                <line x1="12" y1="16" x2="12" y2="12" />
+                <line x1="12" y1="8" x2="12.01" y2="8" />
               </svg>
               <span>Keterangan Wajib: Hasil Pemeriksaan Tidak Dapat Ditindaklanjuti</span>
             </div>
             <p style="margin: 0 0 12px; font-size: 0.75rem; color: #475569; line-height: 1.45;">
-              Setiap pengaduan tetap diterima, dicatat, dan dihargai. Keputusan ini diambil berdasarkan hasil pemeriksaan lapangan dan kewenangan petugas (bukan otomatis dari pilihan alasan atau hambatan pemeriksaan).
+              Setiap pengaduan tetap diterima, dicatat, dan dihargai. Keputusan ini diambil berdasarkan hasil
+              pemeriksaan lapangan dan kewenangan petugas (bukan otomatis dari pilihan alasan atau hambatan
+              pemeriksaan).
             </p>
 
             <div class="form-group-modal" style="margin-bottom: 10px;">
@@ -5611,10 +5875,14 @@
               <select id="vAlasanTidakDitindaklanjuti" class="form-control-modal"
                 onchange="window.portal && window.portal.onAlasanTidakDitindaklanjutiChange()">
                 <option value="">-- Pilih Alasan Hasil Pemeriksaan --</option>
-                <option value="Tidak ditemukan indikasi pencemaran atau kerusakan lingkungan berdasarkan pemeriksaan.">1. Tidak ditemukan indikasi pencemaran atau kerusakan lingkungan berdasarkan pemeriksaan.</option>
-                <option value="Tidak ditemukan bukti atau objek yang dilaporkan pada saat pemeriksaan.">2. Tidak ditemukan bukti atau objek yang dilaporkan pada saat pemeriksaan.</option>
-                <option value="Pengaduan berada di luar kewenangan Dinas Lingkungan Hidup.">3. Pengaduan berada di luar kewenangan Dinas Lingkungan Hidup.</option>
-                <option value="Alasan lain yang harus dijelaskan oleh petugas.">4. Alasan lain yang harus dijelaskan oleh petugas.</option>
+                <option value="Tidak ditemukan indikasi pencemaran atau kerusakan lingkungan berdasarkan pemeriksaan.">
+                  1. Tidak ditemukan indikasi pencemaran atau kerusakan lingkungan berdasarkan pemeriksaan.</option>
+                <option value="Tidak ditemukan bukti atau objek yang dilaporkan pada saat pemeriksaan.">2. Tidak
+                  ditemukan bukti atau objek yang dilaporkan pada saat pemeriksaan.</option>
+                <option value="Pengaduan berada di luar kewenangan Dinas Lingkungan Hidup.">3. Pengaduan berada di luar
+                  kewenangan Dinas Lingkungan Hidup.</option>
+                <option value="Alasan lain yang harus dijelaskan oleh petugas.">4. Alasan lain yang harus dijelaskan
+                  oleh petugas.</option>
               </select>
             </div>
 
@@ -5635,7 +5903,8 @@
             </div>
 
             <div style="font-size: 0.72rem; color: #64748b; line-height: 1.4;">
-              Catatan: Kolom <strong>Uraian Hasil Pemeriksaan (Hasil Temuan Fakta Lapangan)</strong> di bawah wajib diisi, dan dokumentasi pendukung dapat diunggah pada bagian Foto Kondisi Riil apabila tersedia.
+              Catatan: Kolom <strong>Uraian Hasil Pemeriksaan (Hasil Temuan Fakta Lapangan)</strong> di bawah wajib
+              diisi, dan dokumentasi pendukung dapat diunggah pada bagian Foto Kondisi Riil apabila tersedia.
             </div>
           </div>
 
@@ -5687,15 +5956,20 @@
               <div class="chk-guide-list">
                 <div class="chk-guide-row">
                   <span class="chk-guide-badge ok">&#10003; Terpenuhi</span>
-                  <span class="chk-guide-text">Sudah diperiksa dan <strong>sesuai/terlaksana</strong> di lapangan (lokasi sesuai, indikasi terlihat, pihak diklarifikasi, foto/sampel diambil, atau koordinasi dilakukan).</span>
+                  <span class="chk-guide-text">Sudah diperiksa dan <strong>sesuai/terlaksana</strong> di lapangan
+                    (lokasi sesuai, indikasi terlihat, pihak diklarifikasi, foto/sampel diambil, atau koordinasi
+                    dilakukan).</span>
                 </div>
                 <div class="chk-guide-row">
                   <span class="chk-guide-badge no">&#10005; Tidak</span>
-                  <span class="chk-guide-text">Sudah diperiksa, namun faktanya <strong>tidak terpenuhi / tidak ditemukan / tidak dilakukan</strong> meski kondisi lapangan memungkinkan untuk dinilai.</span>
+                  <span class="chk-guide-text">Sudah diperiksa, namun faktanya <strong>tidak terpenuhi / tidak ditemukan
+                      / tidak dilakukan</strong> meski kondisi lapangan memungkinkan untuk dinilai.</span>
                 </div>
                 <div class="chk-guide-row">
                   <span class="chk-guide-badge tdd">&#9432; Tidak Dapat Dinilai</span>
-                  <span class="chk-guide-text">Belum bisa dipastikan karena <strong>kendala objektif</strong> (akses ditolak, lokasi terkunci/kosong, cuaca/keselamatan, atau sumber anonim). <strong>Wajib isi keterangan/alasan.</strong></span>
+                  <span class="chk-guide-text">Belum bisa dipastikan karena <strong>kendala objektif</strong> (akses
+                    ditolak, lokasi terkunci/kosong, cuaca/keselamatan, atau sumber anonim). <strong>Wajib isi
+                      keterangan/alasan.</strong></span>
                 </div>
               </div>
             </div>
@@ -5954,8 +6228,7 @@
               <button type="button" class="btn-gov-chip"
                 onclick="window.portal.applyResponseTemplate('koordinasi')">Koordinasi
                 Desa</button>
-              <button type="button" class="btn-gov-chip"
-                onclick="window.portal.applyResponseTemplate('selesai')">Tuntas
+              <button type="button" class="btn-gov-chip" onclick="window.portal.applyResponseTemplate('selesai')">Tuntas
                 Ditangani</button>
               <button type="button" class="btn-gov-chip"
                 style="color: #991b1b; border-color: #fca5a5; background: #fef2f2;"
@@ -5966,7 +6239,8 @@
           <!-- Hasil Temuan Lapangan -->
           <div class="form-group-modal">
             <label class="form-label-modal" for="vHasilVerifikasi">
-              Uraian Hasil Pemeriksaan (Fakta Lapangan) <span id="vHasilRequiredStar" style="color: #e11d48; display: none;">*</span>
+              Uraian Hasil Pemeriksaan (Fakta Lapangan) <span id="vHasilRequiredStar"
+                style="color: #e11d48; display: none;">*</span>
             </label>
             <textarea id="vHasilVerifikasi" class="form-control-modal" rows="3"
               placeholder="Jelaskan kondisi faktual di lapangan saat dilakukan inspeksi fisik (volume sampah, aroma bau, tingkat kekeruhan air, luas area terdampak, dsb)..."></textarea>
@@ -6111,36 +6385,53 @@
 
           <!-- PENANDA KHUSUS HAMBATAN / PENOLAKAN PEMERIKSAAN (SOP 2.0 Bab 2.2 & Lampiran D) -->
           <div class="form-group-modal hambatan-pemeriksaan-box" id="vHambatanCard">
-            <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin: 0; user-select: none;">
-              <input type="checkbox" id="vCheckHambatanPemeriksaan" style="width: 18px; height: 18px; accent-color: #dc2626; cursor: pointer; flex-shrink: 0;" onchange="window.portal && window.portal.onHambatanToggle()">
-              <span style="font-weight: 800; color: #991b1b; font-size: 0.86rem; display: flex; align-items: center; gap: 6px;">
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/></svg>
+            <label
+              style="display: flex; align-items: center; gap: 10px; cursor: pointer; margin: 0; user-select: none;">
+              <input type="checkbox" id="vCheckHambatanPemeriksaan"
+                style="width: 18px; height: 18px; accent-color: #dc2626; cursor: pointer; flex-shrink: 0;"
+                onchange="window.portal && window.portal.onHambatanToggle()">
+              <span
+                style="font-weight: 800; color: #991b1b; font-size: 0.86rem; display: flex; align-items: center; gap: 6px;">
+                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2">
+                  <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z" />
+                  <line x1="12" y1="9" x2="12" y2="13" />
+                  <line x1="12" y1="17" x2="12.01" y2="17" />
+                </svg>
                 Terdapat Hambatan / Penolakan Pemeriksaan di Lapangan
               </span>
             </label>
             <p style="font-size: 0.73rem; color: #7f1d1d; margin: 4px 0 0 28px; line-height: 1.35;">
-              Aktifkan bila tim menghadapi penolakan akses oleh pihak terlapor, lokasi terkunci, faktor cuaca buruk, atau hambatan teknis lainnya.
+              Aktifkan bila tim menghadapi penolakan akses oleh pihak terlapor, lokasi terkunci, faktor cuaca buruk,
+              atau hambatan teknis lainnya.
             </p>
 
             <!-- Panel Isian Khusus Hambatan Pemeriksaan -->
-            <div id="vHambatanFieldsWrap" style="display: none; margin-top: 12px; padding-top: 10px; border-top: 1px dashed #fca5a5;">
+            <div id="vHambatanFieldsWrap"
+              style="display: none; margin-top: 12px; padding-top: 10px; border-top: 1px dashed #fca5a5;">
               <div class="form-group-modal" style="margin-bottom: 10px;">
-                <label class="form-label-modal" for="vJenisHambatan" style="color: #991b1b; font-weight: 700; font-size: 0.8rem;">
+                <label class="form-label-modal" for="vJenisHambatan"
+                  style="color: #991b1b; font-weight: 700; font-size: 0.8rem;">
                   Jenis Hambatan Lapangan <span style="color: #dc2626;">*</span>
                 </label>
-                <select id="vJenisHambatan" class="form-control-modal" style="border-color: #fca5a5; background: #ffffff;" onchange="window.portal && window.portal.onJenisHambatanChange()">
+                <select id="vJenisHambatan" class="form-control-modal"
+                  style="border-color: #fca5a5; background: #ffffff;"
+                  onchange="window.portal && window.portal.onJenisHambatanChange()">
                   <option value="Penolakan Akses oleh Terlapor">Penolakan Akses oleh Terlapor</option>
-                  <option value="Lokasi Terkunci / Tidak Ada Pihak di Tempat">Lokasi Terkunci / Tidak Ada Pihak di Tempat</option>
+                  <option value="Lokasi Terkunci / Tidak Ada Pihak di Tempat">Lokasi Terkunci / Tidak Ada Pihak di
+                    Tempat</option>
                   <option value="Faktor Cuaca / Keselamatan Tim">Faktor Cuaca / Keselamatan Tim</option>
-                  <option value="Kendala Teknis / Akses Geografis Lainnya">Kendala Teknis / Akses Geografis Lainnya</option>
+                  <option value="Kendala Teknis / Akses Geografis Lainnya">Kendala Teknis / Akses Geografis Lainnya
+                  </option>
                 </select>
               </div>
 
               <div class="form-group-modal" style="margin-bottom: 0;">
-                <label class="form-label-modal" for="vUraianHambatan" style="color: #991b1b; font-weight: 700; font-size: 0.8rem;">
+                <label class="form-label-modal" for="vUraianHambatan"
+                  style="color: #991b1b; font-weight: 700; font-size: 0.8rem;">
                   Uraian Fakta Hambatan &amp; Saksi Lapangan <span style="color: #dc2626;">*</span>
                 </label>
-                <textarea id="vUraianHambatan" class="form-control-modal" rows="3" style="border-color: #fca5a5; background: #ffffff;"
+                <textarea id="vUraianHambatan" class="form-control-modal" rows="3"
+                  style="border-color: #fca5a5; background: #ffffff;"
                   placeholder="Catat kronologi objektif hambatan/penolakan, identitas pihak terlapor/penjaga, nama aparat desa/kelurahan atau saksi yang mendampingi..."></textarea>
               </div>
             </div>
@@ -7483,41 +7774,55 @@
               );
               const mapWaUrl = mapWaPhone ? `https://wa.me/${mapWaPhone}?text=${mapWaText}` : '';
 
+              const rawPopupUraian = String(item.uraian || '')
+                .split(/---|\r?\n\s*\[(?:PENYELESAIAN_DIINGINKAN|RIWAYAT_INSTANSI)\]/i)[0]
+                .replace(/\s+/g, ' ')
+                .trim();
+              const cleanPopupUraian = rawPopupUraian && rawPopupUraian !== '-'
+                ? (rawPopupUraian.length > 88 ? rawPopupUraian.substring(0, 88).trim() + '...' : rawPopupUraian)
+                : '';
+              const popupDateStr = (this.formatShortStepDate ? this.formatShortStepDate(item.timestamp || item.tanggalKejadian) : '') || '';
+
               const popupHtml = `
-                <div class="dlh-map-popup-inner" style="font-family: inherit; font-size: 0.78rem; min-width: 210px; max-width: 260px; line-height: 1.35;">
-                  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px; border-bottom: 1px solid #e2e8f0; padding-bottom: 3px; padding-right: 18px;">
-                    <strong style="color: #065f46; font-family: monospace; font-size: 0.8rem;">${item.id}</strong>
+                <div class="dlh-map-popup-inner" style="font-family: inherit; font-size: 0.76rem; line-height: 1.4;">
+                  <div style="display: flex; justify-content: space-between; align-items: center; gap: 6px; padding-right: 22px;">
+                    <span style="display: inline-block; color: #065f46; background: #ecfdf5; border: 1px solid #a7f3d0; border-radius: 5px; padding: 1px 7px; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-weight: 800; font-size: 0.73rem; white-space: nowrap;">${this.escHtml(item.id)}</span>
+                    ${popupDateStr ? `<span style="color: #64748b; font-size: 0.69rem; font-weight: 600; white-space: nowrap;">${this.escHtml(popupDateStr)}</span>` : ''}
+                  </div>
+                  <div style="padding-bottom: 6px; border-bottom: 1px solid #e2e8f0; display: flex; flex-wrap: wrap; align-items: center;">
                     ${this.getStatusBadgeHtml(item.status)}
                   </div>
-                  <div style="font-weight: 800; color: #0f172a; margin-bottom: 2px; font-size: 0.8rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;">${this.escHtml(item.namaPelapor)}</div>
-                  <div style="color: #64748b; font-size: 0.72rem; margin-bottom: 3px; display: flex; align-items: center; gap: 4px;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 11px; height: 11px; flex-shrink: 0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                    <span>Kec. ${this.escHtml(item.kecamatan)}, Desa ${this.escHtml(item.desa || '-')}</span>
+                  <div>
+                    <div style="font-weight: 800; color: #0f172a; font-size: 0.84rem; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-bottom: 2px;">${this.escHtml(item.namaPelapor)}</div>
+                    <div style="color: #475569; font-size: 0.72rem; display: flex; align-items: center; gap: 5px; margin-bottom: 2px;">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="#64748b" stroke-width="2" style="width: 12px; height: 12px; flex-shrink: 0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                      <span style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">Kec. ${this.escHtml(item.kecamatan)}, Desa ${this.escHtml(item.desa || '-')}</span>
+                    </div>
+                    <div style="color: #047857; font-weight: 700; display: flex; align-items: center; gap: 5px; font-size: 0.73rem;">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px; flex-shrink: 0;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
+                      <span style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${this.escHtml(item.jenisPencemaran)}</span>
+                    </div>
                   </div>
-                  <div style="color: #047857; font-weight: 700; margin-bottom: 4px; display: flex; align-items: center; gap: 4px; font-size: 0.74rem;">
-                    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 11px; height: 11px; flex-shrink: 0;"><path d="M20.59 13.41l-7.17 7.17a2 2 0 0 1-2.83 0L2 12V2h10l8.59 8.59a2 2 0 0 1 0 2.82z"/><line x1="7" y1="7" x2="7.01" y2="7"/></svg>
-                    <span>${this.escHtml(item.jenisPencemaran)}</span>
-                  </div>
-                  <div style="color: #475569; font-size: 0.72rem; margin-bottom: 6px; max-height: 28px; line-height: 1.3; overflow: hidden; text-overflow: ellipsis;">
-                    "${this.escHtml((item.uraian || '').substring(0, 65))}..."
-                  </div>
-                  ${mapWaUrl ? `
-                    <div style="margin-bottom: 6px;">
-                      <a href="${mapWaUrl}" target="_blank" rel="noopener noreferrer" 
-                         style="display: flex; align-items: center; justify-content: center; gap: 5px; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; border-radius: 6px; padding: 3px 6px; font-size: 0.72rem; font-weight: 700; text-decoration: none;">
-                        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
-                        Hubungi Pelapor (${mapDisplayPhone})
-                      </a>
+                  ${cleanPopupUraian ? `
+                    <div style="background: #f8fafc; border-left: 2.5px solid #cbd5e1; border-radius: 0 5px 5px 0; padding: 5px 8px; color: #334155; font-size: 0.71rem; line-height: 1.38; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; word-break: break-word;">
+                      ${this.escHtml(cleanPopupUraian)}
                     </div>
                   ` : ''}
-                  <div style="display: flex; gap: 6px;">
-                    <button type="button" class="btn-tbl btn-tbl-detail" style="flex: 1; padding: 4px; font-size: 0.72rem; display: inline-flex; align-items: center; justify-content: center; gap: 4px;" onclick="window.portal.showDetailModal('${item.id}')">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 11px; height: 11px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
-                      Rincian
+                  ${mapWaUrl ? `
+                    <a href="${mapWaUrl}" target="_blank" rel="noopener noreferrer" 
+                       style="display: flex; align-items: center; justify-content: center; gap: 5px; background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; border-radius: 7px; padding: 5px 8px; font-size: 0.72rem; font-weight: 700; text-decoration: none; white-space: nowrap;">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px; flex-shrink: 0;"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+                      <span>Hubungi Pelapor (${mapDisplayPhone})</span>
+                    </a>
+                  ` : ''}
+                  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+                    <button type="button" class="btn-tbl btn-tbl-detail" style="padding: 6px 8px; font-size: 0.73rem; border-radius: 7px; display: inline-flex; align-items: center; justify-content: center; gap: 4px;" onclick="window.portal.showDetailModal('${item.id}')">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px;"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg>
+                      <span>Rincian</span>
                     </button>
-                    <button type="button" class="btn-tbl btn-tbl-verify" style="flex: 1; padding: 4px; font-size: 0.72rem; display: inline-flex; align-items: center; justify-content: center; gap: 4px;" onclick="window.portal.openVerifikasiModal('${item.id}')">
-                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 11px; height: 11px;"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
-                      Verifikasi
+                    <button type="button" class="btn-tbl btn-tbl-verify" style="padding: 6px 8px; font-size: 0.73rem; border-radius: 7px; display: inline-flex; align-items: center; justify-content: center; gap: 4px;" onclick="window.portal.openVerifikasiModal('${item.id}')">
+                      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 12px; height: 12px;"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+                      <span>Verifikasi</span>
                     </button>
                   </div>
                 </div>
@@ -7529,7 +7834,9 @@
                 autoPanPaddingTopLeft: [16, 70],
                 autoPanPaddingBottomRight: [16, 16],
                 autoPanPadding: [16, 20],
-                maxHeight: 250,
+                minWidth: 255,
+                maxWidth: 300,
+                maxHeight: 290,
                 closeButton: true
               });
               this.markersGroup.addLayer(marker);
@@ -7694,6 +8001,23 @@
 
           this.showToast(`Menyorot lokasi aduan ${id} (${item.desa || item.kecamatan}) di peta`, 'success');
         }
+      }
+
+      previewMarkerPulse(idAduan, active) {
+        const layout = document.getElementById('commandCenterLayout');
+        if (!layout || !layout.classList.contains('split-mode') || !idAduan) return;
+        const markerMap = this.markerMap || this.markersById || window.markerMap || {};
+        const marker = markerMap[idAduan];
+        if (!marker) return;
+        try {
+          const el = marker.getElement ? marker.getElement() : marker._icon;
+          if (!el) return;
+          if (active) {
+            el.classList.add('highlight-pulse');
+          } else if (this.selectedAduanId !== idAduan) {
+            el.classList.remove('highlight-pulse');
+          }
+        } catch (e) { }
       }
 
       /**
@@ -8886,8 +9210,8 @@
         const displayJenisHambatan = (item.jenisHambatan && item.jenisHambatan !== '-')
           ? item.jenisHambatan
           : (String(item.catatanBeritaAcara || '').toLowerCase().includes('tolak') || String(item.hasilVerifikasi || '').toLowerCase().includes('tolak')
-              ? 'Penolakan Akses oleh Terlapor'
-              : 'Kendala Teknis / Akses Geografis Lainnya');
+            ? 'Penolakan Akses oleh Terlapor'
+            : 'Kendala Teknis / Akses Geografis Lainnya');
         const displayUraianHambatan = (item.uraianHambatan && item.uraianHambatan !== '-') ? item.uraianHambatan : '';
         const isMurniPenolakan = (displayJenisHambatan === 'Penolakan Akses oleh Terlapor');
 
@@ -9699,14 +10023,14 @@
         const alasanKeterangan = (item.catatanBeritaAcara && item.catatanBeritaAcara !== '-')
           ? escapeHtml(item.catatanBeritaAcara)
           : (isMurniPenolakan
-              ? 'Pihak penanggung jawab usaha/kegiatan menyatakan keberatan untuk diperiksa di lapangan dan menolak menandatangani Berita Acara Pemeriksaan.'
-              : `Pemeriksaan lapangan terhambat oleh faktor: ${jenisHambatan}. Informasi lebih lanjut dikoordinasikan dengan aparat setempat.`);
+            ? 'Pihak penanggung jawab usaha/kegiatan menyatakan keberatan untuk diperiksa di lapangan dan menolak menandatangani Berita Acara Pemeriksaan.'
+            : `Pemeriksaan lapangan terhambat oleh faktor: ${jenisHambatan}. Informasi lebih lanjut dikoordinasikan dengan aparat setempat.`);
 
         const tindakLanjut = (item.tindakanDLH && item.tindakanDLH !== '-' && item.tindakanDLH !== 'Aduan telah dicatat ke sistem.')
           ? escapeHtml(item.tindakanDLH)
           : (isMurniPenolakan
-              ? 'Penerbitan Berita Acara Penolakan Pemeriksaan Lapangan, koordinasi bersama Pemerintah Desa/Kelurahan setempat, serta pemanggilan resmi penanggung jawab usaha ke Kantor Dinas Lingkungan Hidup Kabupaten Lembata.'
-              : 'Penerbitan Berita Acara Hambatan Pemeriksaan Lapangan, penjadwalan ulang peninjauan lapangan, serta koordinasi teknis bersama pemerintah desa/kelurahan dan instansi terkait.');
+            ? 'Penerbitan Berita Acara Penolakan Pemeriksaan Lapangan, koordinasi bersama Pemerintah Desa/Kelurahan setempat, serta pemanggilan resmi penanggung jawab usaha ke Kantor Dinas Lingkungan Hidup Kabupaten Lembata.'
+            : 'Penerbitan Berita Acara Hambatan Pemeriksaan Lapangan, penjadwalan ulang peninjauan lapangan, serta koordinasi teknis bersama pemerintah desa/kelurahan dan instansi terkait.');
 
         const printWin = window.open('', '_blank');
         if (!printWin) {
@@ -10639,20 +10963,30 @@
           const kecLabel = item.kecamatan ? `Kec. ${item.kecamatan}` : 'Kab. Lembata';
           const rawDate = item.timestamp || item.tanggalKejadian || '';
           const formattedDate = (this.formatShortStepDate ? this.formatShortStepDate(rawDate) : null) || rawDate || '-';
+          const uraianPreview = (item.uraian && item.uraian !== '-') ? String(item.uraian).replace(/\s+/g, ' ').trim() : '';
           const hasGps = Boolean(item.lat && item.lng);
+
+          const stNorm = this.normalizeStatus(item.status);
+          let stripeClass = 'status-stripe-baru';
+          if (stNorm.key === 'tidak-dapat-ditindaklanjuti' || stNorm.key === 'ditolak') stripeClass = 'status-stripe-tidak-dapat';
+          else if (stNorm.key === 'diverifikasi') stripeClass = 'status-stripe-verif';
+          else if (stNorm.key === 'ditindaklanjuti') stripeClass = 'status-stripe-tindak';
+          else if (stNorm.key === 'selesai') stripeClass = 'status-stripe-selesai';
 
           const waPhone = this.formatWhatsAppPhone ? this.formatWhatsAppPhone(item.noHp) : '';
           const waUrl = waPhone ? `https://wa.me/${waPhone}` : '';
           const isActive = this.selectedAduanId === id;
 
           return `
-            <div class="aduan-compact-card ${isActive ? 'is-active' : ''}"
+            <div class="aduan-compact-card ${stripeClass} ${isActive ? 'is-active' : ''}"
                  data-id="${this.escHtml(id)}"
                  tabindex="0"
                  role="button"
+                 onmouseenter="window.portal.previewMarkerPulse('${this.escHtml(id)}', true)"
+                 onmouseleave="window.portal.previewMarkerPulse('${this.escHtml(id)}', false)"
                  onclick="window.portal.highlightAduanInList('${this.escHtml(id)}', true)">
               <div class="aduan-card-header">
-                <div style="display: flex; align-items: center; gap: 4px; flex-wrap: wrap;">
+                <div style="display: flex; align-items: center; gap: 5px; flex-wrap: wrap;">
                   <span class="aduan-card-ticket">${this.escHtml(id)}</span>
                   ${(item._pendingSync || item._pendingOfficerSync) ? `
                     <span class="badge-pending-sync" style="font-size: 0.6rem; padding: 1px 4px;" title="Belum tersinkron ke cloud">
@@ -10663,10 +10997,13 @@
                 <div>${this.getStatusBadgeHtml(item.status)}</div>
               </div>
               <div class="aduan-card-title">${this.escHtml(jenis)}</div>
+              ${uraianPreview ? `<p class="aduan-card-snippet">${this.escHtml(uraianPreview)}</p>` : ''}
               <div class="aduan-card-loc">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px; flex-shrink: 0;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
-                <span>${this.escHtml(desaLabel)}, ${this.escHtml(kecLabel)}</span>
-                ${hasGps ? '<span style="color: #059669; font-size: 0.68rem; font-weight: 700; background: #ecfdf5; padding: 1px 4px; border-radius: 4px; margin-left: auto;">📍 GPS</span>' : ''}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 13px; height: 13px; flex-shrink: 0; color: #059669;"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"/><circle cx="12" cy="10" r="3"/></svg>
+                <span style="min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap;">${this.escHtml(desaLabel)}, ${this.escHtml(kecLabel)}</span>
+                ${hasGps
+              ? `<button type="button" class="btn-pin-jump" onclick="event.stopPropagation(); window.portal.highlightAduanInList('${this.escHtml(id)}', true);" title="Terbang & buka pin lokasi di peta">📍 Sorot Pin</button>`
+              : '<span style="margin-left: auto; font-size: 0.66rem; color: #94a3b8; font-weight: 600;">Tanpa GPS</span>'}
               </div>
               <div class="aduan-card-submeta">
                 <span>👤 ${this.escHtml(pelapor)}</span>
