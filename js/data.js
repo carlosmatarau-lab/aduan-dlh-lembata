@@ -1419,6 +1419,192 @@ class AduanDataStore {
     return 0;
   }
 
+  _parseDoorbellEventData(rawJsonStr) {
+    if (!rawJsonStr) return null;
+    try {
+      const payload = typeof rawJsonStr === 'string' ? JSON.parse(rawJsonStr) : rawJsonStr;
+      if (!payload || typeof payload !== 'object') return null;
+      const incomingTs = this._extractSignalTs(payload);
+      let body = payload;
+      if (payload.path === '/' && payload.data && typeof payload.data === 'object') {
+        body = payload.data;
+      } else if (
+        payload.data &&
+        typeof payload.data === 'object' &&
+        ('ts' in payload.data || 'aksi' in payload.data || 'delta' in payload.data || 'tiket' in payload.data || 'ticketId' in payload.data)
+      ) {
+        body = payload.data;
+      }
+      const aksi = body && typeof body.aksi === 'string' ? body.aksi.trim() : '';
+      const rawTiket = body ? (body.tiket || body.ticketId || (body.delta && body.delta.id) || '') : '';
+      const tiket = rawTiket ? String(rawTiket).trim().toUpperCase() : '';
+      const delta = (body && body.delta && typeof body.delta === 'object') ? body.delta : null;
+      return { ts: incomingTs, aksi: aksi, tiket: tiket, delta: delta };
+    } catch (e) {
+      return null;
+    }
+  }
+
+  _mergeSafeDeltaWithExisting(delta, existing) {
+    const base = existing ? { ...existing } : {};
+    const cleanDelta = {};
+    const isNonEmpty = (v) => v !== undefined && v !== null && String(v).trim() !== '';
+
+    // Perlindungan Identitas Pelapor: pertahankan nama utuh, noHp, dan alamatPelapor di memori petugas
+    const existingHasRealName = Boolean(
+      existing &&
+      existing.namaPelapor &&
+      existing.namaPelapor !== '-' &&
+      existing.namaPelapor !== 'Masyarakat' &&
+      existing.namaPelapor !== 'Anonim' &&
+      !String(existing.namaPelapor).includes('***')
+    );
+    if (existingHasRealName) {
+      cleanDelta.namaPelapor = existing.namaPelapor;
+    } else if (isNonEmpty(delta.namaPelapor)) {
+      cleanDelta.namaPelapor = delta.namaPelapor;
+    }
+
+    const existingHasPhone = Boolean(existing && existing.noHp && existing.noHp !== '-');
+    if (existingHasPhone && (!delta.noHp || delta.noHp === '-')) {
+      cleanDelta.noHp = existing.noHp;
+    } else if (isNonEmpty(delta.noHp)) {
+      cleanDelta.noHp = delta.noHp;
+    }
+
+    const existingHasRealAddr = Boolean(
+      existing &&
+      existing.alamatPelapor &&
+      existing.alamatPelapor !== '-' &&
+      !String(existing.alamatPelapor).includes('Dirahasiakan')
+    );
+    if (existingHasRealAddr && (!delta.alamatPelapor || delta.alamatPelapor === '-' || String(delta.alamatPelapor).includes('Dirahasiakan'))) {
+      cleanDelta.alamatPelapor = existing.alamatPelapor;
+    } else if (isNonEmpty(delta.alamatPelapor)) {
+      cleanDelta.alamatPelapor = delta.alamatPelapor;
+    }
+
+    const scalarKeys = [
+      'id', 'timestamp', 'kecamatan', 'desa', 'lokasiDetail',
+      'jenisPencemaran', 'uraian', 'status', 'petugasVerifikasi',
+      'tanggalVerifikasi', 'hasilVerifikasi', 'tindakanDLH', 'tanggalSelesai',
+      'nomorBeritaAcara', 'catatanBeritaAcara',
+      'alasanTidakDitindaklanjuti', 'kesimpulanPetugas',
+      'timestampVerifikasi', 'timestampTindakLanjut', 'timestampSelesai'
+    ];
+    scalarKeys.forEach((key) => {
+      if (isNonEmpty(delta[key])) {
+        cleanDelta[key] = delta[key];
+      }
+    });
+
+    if (delta.lat !== undefined && delta.lat !== null && delta.lat !== '' && !isNaN(Number(delta.lat))) {
+      cleanDelta.lat = Number(delta.lat);
+    }
+    if (delta.lng !== undefined && delta.lng !== null && delta.lng !== '' && !isNaN(Number(delta.lng))) {
+      cleanDelta.lng = Number(delta.lng);
+    }
+
+    // Perlindungan Foto Warga & Petugas (Non-Destructive Safe Merge): jangan menimpa foto valid dengan nilai kosong
+    const deltaLinkFoto = (typeof delta.linkFoto === 'string') ? delta.linkFoto.trim() : '';
+    const deltaFotoBukti = (typeof delta.fotoBukti === 'string') ? delta.fotoBukti.trim() : '';
+    const incomingCitizenUrl = deltaLinkFoto.startsWith('http') ? deltaLinkFoto : (deltaFotoBukti.startsWith('http') ? deltaFotoBukti : '');
+    if (incomingCitizenUrl) {
+      cleanDelta.linkFoto = incomingCitizenUrl;
+      cleanDelta.fotoBukti = incomingCitizenUrl;
+      cleanDelta.linkFotoBukti = incomingCitizenUrl;
+      cleanDelta.buktiFotoList = undefined;
+    } else if (existing) {
+      if (existing.linkFoto) cleanDelta.linkFoto = existing.linkFoto;
+      if (existing.linkFotoBukti) cleanDelta.linkFotoBukti = existing.linkFotoBukti;
+      if (existing.fotoBukti) cleanDelta.fotoBukti = existing.fotoBukti;
+      if (Array.isArray(existing.buktiFotoList) && existing.buktiFotoList.length > 0) {
+        cleanDelta.buktiFotoList = [...existing.buktiFotoList];
+      }
+      if (existing.foto) cleanDelta.foto = existing.foto;
+      if (existing.fotoWarga) cleanDelta.fotoWarga = existing.fotoWarga;
+      if (existing.lampiran) cleanDelta.lampiran = existing.lampiran;
+    }
+
+    const incomingOfficerUrl = (typeof delta.fotoKondisiRiil === 'string' && delta.fotoKondisiRiil.trim().startsWith('http'))
+      ? delta.fotoKondisiRiil.trim()
+      : '';
+    if (incomingOfficerUrl) {
+      cleanDelta.fotoKondisiRiil = incomingOfficerUrl;
+      cleanDelta.fotoPetugas = incomingOfficerUrl;
+      cleanDelta.fotoVerifikasiList = undefined;
+    } else if (existing) {
+      if (existing.fotoKondisiRiil) cleanDelta.fotoKondisiRiil = existing.fotoKondisiRiil;
+      if (Array.isArray(existing.fotoVerifikasiList) && existing.fotoVerifikasiList.length > 0) {
+        cleanDelta.fotoVerifikasiList = [...existing.fotoVerifikasiList];
+      }
+      if (existing.fotoPetugas) cleanDelta.fotoPetugas = existing.fotoPetugas;
+    }
+
+    return { ...base, ...cleanDelta };
+  }
+
+  _emitInstantHydrationEvents(detailExtra = {}) {
+    this.lastSyncTime = new Date();
+    try {
+      localStorage.setItem('dlh_lembata_last_sync_timestamp', this.lastSyncTime.toISOString());
+    } catch (e) { }
+    if (typeof window !== 'undefined') {
+      const baseDetail = {
+        count: this.aduanList.length,
+        silent: true,
+        deltaHydrated: true,
+        timestamp: this.lastSyncTime,
+        lastSyncTime: this.lastSyncTime,
+        ...detailExtra
+      };
+      window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: baseDetail }));
+      window.dispatchEvent(new CustomEvent('aduanStatsSynced', { detail: { ...this.getStats(), timestamp: this.lastSyncTime, lastSyncTime: this.lastSyncTime } }));
+      window.dispatchEvent(new CustomEvent('aduanDataChanged', { detail: baseDetail }));
+      if (window.analyticsEngine && typeof window.analyticsEngine.renderAll === 'function') {
+        try { window.analyticsEngine.renderAll(); } catch (e) { }
+      }
+    }
+  }
+
+  _applyRealtimeDeltaSignal(signal) {
+    if (!signal || typeof signal !== 'object') return false;
+
+    // 1. Penghapusan instan saat sinyal deleteAduan tiba
+    if (signal.aksi === 'deleteAduan' && signal.tiket) {
+      const delId = String(signal.tiket).trim().toUpperCase();
+      this.markDeleted(delId);
+      const prevLen = (this.aduanList || []).length;
+      this.aduanList = (this.aduanList || []).filter(item => item && String(item.id).trim().toUpperCase() !== delId);
+      this.save();
+      this._emitInstantHydrationEvents({ aksi: 'deleteAduan', id: delId, removed: this.aduanList.length !== prevLen });
+      return true;
+    }
+
+    // 2. Sisip / perbarui tiket seketika dari objek delta aman
+    if (signal.delta && typeof signal.delta === 'object' && signal.delta.id) {
+      const deltaId = String(signal.delta.id).trim().toUpperCase();
+      if (!deltaId || this.isDeleted(deltaId)) return false;
+
+      const existingIdx = (this.aduanList || []).findIndex(x => x && x.id && String(x.id).trim().toUpperCase() === deltaId);
+      const existing = existingIdx !== -1 ? this.aduanList[existingIdx] : null;
+      const mergedInput = this._mergeSafeDeltaWithExisting(signal.delta, existing);
+      const mapped = mapRemoteAduanRecord(mergedInput, this.aduanList, (id) => this.isDeleted(id));
+      if (!mapped) return false;
+
+      if (existingIdx !== -1) {
+        this.aduanList[existingIdx] = mapped;
+      } else {
+        this.aduanList.unshift(mapped);
+      }
+      this.save();
+      this._emitInstantHydrationEvents({ aksi: signal.aksi || (existing ? 'updateVerifikasi' : 'addAduan'), id: deltaId });
+      return true;
+    }
+
+    return false;
+  }
+
   initRealtimeDoorbell(forceReconnect = false) {
     if (typeof EventSource === 'undefined') return null;
     if (!this._doorbellUrl) this._doorbellUrl = FIREBASE_DOORBELL_URL;
@@ -1445,14 +1631,15 @@ class AduanDataStore {
       const handleDoorbellEvent = (ev) => {
         if (!ev || !ev.data) return;
         try {
-          const payload = JSON.parse(ev.data);
-          const incomingTs = this._extractSignalTs(payload);
-          if (incomingTs > this.lastSignalTs) {
-            this.lastSignalTs = incomingTs;
-            // Sinyal bel masuk: picu sinkronisasi server seketika (0 ms delay)
-            this.syncStatsFromGAS();
-            this.syncFromGAS(true);
-          }
+          const signal = this._parseDoorbellEventData(ev.data);
+          if (!signal || !(signal.ts > this.lastSignalTs)) return;
+
+          this.lastSignalTs = signal.ts;
+          // Fase Instan (<1ms): render delta / hapus tiket di memori lokal seketika tanpa menunggu getAll
+          this._applyRealtimeDeltaSignal(signal);
+          // Rekonsiliasi penuh di latar belakang (0 ms delay) untuk foto lengkap & sinkron resmi
+          this.syncStatsFromGAS();
+          this.syncFromGAS(true);
         } catch (err) { }
       };
 

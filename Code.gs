@@ -322,6 +322,7 @@ function doPost(e) {
     }
 
     let result;
+    let bellRung = false;
 
     switch (action) {
       case 'loginPetugas':
@@ -335,12 +336,36 @@ function doPost(e) {
         result = handleAddAduan(payloadData);
 
         // ==============================================================================
-        // STRICT ISOLATED DISPATCH: NOTIFIKASI WHATSAPP PELAPOR VS PETUGAS
-        // Memastikan rute pesan konfirmasi tanda terima HANYA ke pelapor dan alert HANYA ke petugas
+        // ZERO WA LATENCY: BUNYIKAN BEL FIREBASE SEBELUM PENGIRIMAN WHATSAPP FONNTE
+        // Memangkas jeda 2-4 detik agar perangkat lain menerima delta instan < 1 detik
         // ==============================================================================
         if (result && result.success && result.data) {
           const ticketId = result.data.id || '';
           const timestamp = result.data.timestamp || new Date().toISOString();
+          const deltaAdd = buildSafeDelta_({
+            id: ticketId,
+            timestamp: timestamp,
+            namaPelapor: payloadData.namaPelapor || 'Anonim',
+            kecamatan: payloadData.kecamatan || 'Nubatukan',
+            desa: payloadData.desa || '-',
+            lokasiDetail: payloadData.lokasiDetail || '-',
+            lat: result.data.lat !== undefined ? result.data.lat : payloadData.lat,
+            lng: result.data.lng !== undefined ? result.data.lng : payloadData.lng,
+            jenisPencemaran: payloadData.jenisPencemaran || 'Lainnya',
+            uraian: payloadData.uraian || '-',
+            status: result.data.status || payloadData.status || 'Baru',
+            petugasVerifikasi: payloadData.petugasVerifikasi || '-',
+            hasilVerifikasi: 'Menunggu penugasan verifikator lapangan.',
+            tindakanDLH: 'Aduan telah dicatat ke sistem.',
+            nomorBeritaAcara: '',
+            catatanBeritaAcara: '',
+            linkFoto: result.data.linkFoto || result.data.fotoBukti || '',
+            fotoKondisiRiil: ''
+          });
+          bunyikanBelSinkronisasi_('addAduan', ticketId, deltaAdd);
+          bellRung = true;
+
+          // STRICT ISOLATED DISPATCH: NOTIFIKASI WHATSAPP PELAPOR VS PETUGAS
           try {
             dispatchWhatsAppNotifications(payloadData, ticketId, timestamp);
           } catch (errDispatch) {
@@ -385,6 +410,11 @@ function doPost(e) {
         result = { success: false, error: 'Aksi POST tidak dikenali: ' + action };
     }
 
+    if (result && result.bellRung) {
+      bellRung = true;
+      delete result.bellRung;
+    }
+
     const doorbellActions = [
       'addAduan',
       'updateVerifikasi',
@@ -393,13 +423,14 @@ function doPost(e) {
       'resetData',
       'resetToZero'
     ];
-    if (result && result.success && doorbellActions.includes(action)) {
+    if (!bellRung && result && result.success && doorbellActions.includes(action)) {
       const targetTicketId =
         (result.data && result.data.id) ||
         (body && body.data && body.data.id) ||
         (body && body.id) ||
         '';
-      bunyikanBelSinkronisasi_(action, targetTicketId);
+      bunyikanBelSinkronisasi_(action, targetTicketId, null);
+      bellRung = true;
     }
 
     return createJsonResponse(result);
@@ -415,16 +446,98 @@ function doPost(e) {
 // ==================================================================================
 
 /**
- * Mengirim sinyal stempel waktu terbaru ke Firebase Realtime Database
+ * Mengambil hanya tautan foto berawalan http/https agar Base64 tidak pernah dikirim ke Firebase.
+ */
+function onlyHttpPhoto_(val) {
+  if (!val || typeof val !== 'string') return '';
+  const trimmed = val.trim();
+  if (!trimmed || trimmed === '-' || trimmed.indexOf('data:image') !== -1) return '';
+  const parts = trimmed.split(/[\s,]+/).map(s => s.trim()).filter(s => s.indexOf('http') === 0);
+  return parts.length > 0 ? parts.join(', ') : '';
+}
+
+/**
+ * Mengambil URL HTTP dari sel spreadsheet termasuk sel RichText hyperlink.
+ */
+function extractCellHttpUrl_(sheet, rowIdx1, colIdx0, rawCellVal) {
+  const direct = onlyHttpPhoto_(String(rawCellVal || ''));
+  if (direct) return direct;
+  if (!sheet || colIdx0 === -1 || rowIdx1 < 2) return '';
+  try {
+    const rt = sheet.getRange(rowIdx1, colIdx0 + 1).getRichTextValue();
+    if (!rt) return '';
+    const runs = rt.getRuns ? rt.getRuns() : [];
+    const urls = [];
+    for (let i = 0; i < runs.length; i++) {
+      const u = runs[i].getLinkUrl();
+      if (u && typeof u === 'string' && u.indexOf('http') === 0 && urls.indexOf(u) === -1) {
+        urls.push(u);
+      }
+    }
+    if (urls.length > 0) return urls.join(', ');
+    const single = rt.getLinkUrl ? rt.getLinkUrl() : '';
+    return (single && typeof single === 'string' && single.indexOf('http') === 0) ? single : '';
+  } catch (e) {
+    return '';
+  }
+}
+
+/**
+ * Membentuk objek delta aman UU PDP untuk sinyal Firebase:
+ * - namaPelapor disensor via maskCitizenName()
+ * - Tidak memuat noHp maupun alamatPelapor
+ * - Foto hanya dikirim bila berawalan http
+ */
+function buildSafeDelta_(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const linkHttp = onlyHttpPhoto_(raw.linkFoto || raw.fotoBukti || '');
+  const riilHttp = onlyHttpPhoto_(raw.fotoKondisiRiil || '');
+  const latVal = (raw.lat !== undefined && raw.lat !== null && raw.lat !== '' && !isNaN(Number(raw.lat))) ? Number(raw.lat) : '';
+  const lngVal = (raw.lng !== undefined && raw.lng !== null && raw.lng !== '' && !isNaN(Number(raw.lng))) ? Number(raw.lng) : '';
+  return {
+    id: String(raw.id || '').trim().toUpperCase(),
+    timestamp: String(raw.timestamp || ''),
+    namaPelapor: raw.namaPelapor ? maskCitizenName(raw.namaPelapor) : '-',
+    kecamatan: String(raw.kecamatan || ''),
+    desa: String(raw.desa || ''),
+    lokasiDetail: String(raw.lokasiDetail || ''),
+    lat: latVal,
+    lng: lngVal,
+    jenisPencemaran: String(raw.jenisPencemaran || ''),
+    uraian: String(raw.uraian || ''),
+    status: String(raw.status || ''),
+    petugasVerifikasi: String(raw.petugasVerifikasi || ''),
+    hasilVerifikasi: String(raw.hasilVerifikasi || ''),
+    tindakanDLH: String(raw.tindakanDLH || ''),
+    nomorBeritaAcara: String(raw.nomorBeritaAcara || ''),
+    catatanBeritaAcara: String(raw.catatanBeritaAcara || ''),
+    ...(raw.tanggalVerifikasi ? { tanggalVerifikasi: String(raw.tanggalVerifikasi) } : {}),
+    ...(raw.tanggalSelesai ? { tanggalSelesai: String(raw.tanggalSelesai) } : {}),
+    ...(raw.alasanTidakDitindaklanjuti ? { alasanTidakDitindaklanjuti: String(raw.alasanTidakDitindaklanjuti) } : {}),
+    ...(raw.kesimpulanPetugas ? { kesimpulanPetugas: String(raw.kesimpulanPetugas) } : {}),
+    ...(raw.timestampVerifikasi ? { timestampVerifikasi: String(raw.timestampVerifikasi) } : {}),
+    ...(raw.timestampTindakLanjut ? { timestampTindakLanjut: String(raw.timestampTindakLanjut) } : {}),
+    ...(raw.timestampSelesai ? { timestampSelesai: String(raw.timestampSelesai) } : {}),
+    linkFoto: linkHttp,
+    fotoKondisiRiil: riilHttp
+  };
+}
+
+/**
+ * Mengirim sinyal stempel waktu terbaru dan delta aman ke Firebase Realtime Database
  * menggunakan metode PUT non-blocking agar seluruh klien aktif langsung menyinkronkan data.
  */
-function bunyikanBelSinkronisasi_(aksi, ticketId) {
+function bunyikanBelSinkronisasi_(aksi, ticketId, deltaData) {
   try {
     if (!FIREBASE_SIGNAL_URL) return false;
+    const cleanTicket = String(ticketId || '').trim().toUpperCase();
+    const safeDelta = (deltaData && typeof deltaData === 'object') ? buildSafeDelta_(deltaData) : null;
     const payload = {
       ts: Date.now(),
       aksi: String(aksi || ''),
-      ticketId: String(ticketId || '')
+      tiket: cleanTicket,
+      ticketId: cleanTicket,
+      delta: safeDelta
     };
     const res = UrlFetchApp.fetch(FIREBASE_SIGNAL_URL, {
       method: 'put',
@@ -790,41 +903,53 @@ function handleGetAll(isAdmin) {
   const sheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
   const rawData = getSheetDataAsObjects(sheet);
 
-  // Ambil cache foto jika ada di sheet Foto_Storage
+  // Optimasi latensi: lewati pemindaian sheet Foto_Storage (Base64 berat)
+  // bila seluruh tautan foto non-kosong pada Data_Aduan sudah berawalan http
+  const needsFotoStorageScan = rawData.some(row => {
+    const lf = String(row['Link_Foto_Bukti'] || '').trim();
+    const fr = String(row['Foto_Kondisi_Riil'] || '').trim();
+    const lfNeeds = lf && lf !== '-' && !lf.startsWith('http');
+    const frNeeds = fr && fr !== '-' && !fr.startsWith('http');
+    return lfNeeds || frNeeds;
+  });
+
+  // Ambil cache foto HANYA jika masih ada tautan non-http di Data_Aduan
   const storageMap = {};
-  try {
-    const storageSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_FOTO);
-    if (storageSheet) {
-      const sData = storageSheet.getDataRange().getValues();
-      for (let i = sData.length - 1; i >= 1; i--) {
-        const sid = String(sData[i][0] || '').trim().toUpperCase();
-        if (!sid || storageMap[sid]) continue; // Simpan entri TERBARU saja
-        let sb64 = '';
-        // Gabungkan seluruh chunk mulai dari kolom D (index 3) ke kanan
-        for (let c = 3; c < sData[i].length; c++) {
-          sb64 += String(sData[i][c] || '');
-        }
-        // Fallback untuk format lama jika belum dipisah chunk
-        if (!sb64 || !sb64.startsWith('data:image')) {
-          for (let c = 1; c < sData[i].length; c++) {
-            const val = String(sData[i][c] || '').trim();
-            if (val.startsWith('data:image')) {
-              sb64 = val;
-              break;
+  if (needsFotoStorageScan) {
+    try {
+      const storageSheet = SpreadsheetApp.getActiveSpreadsheet().getSheetByName(SHEET_NAME_FOTO);
+      if (storageSheet) {
+        const sData = storageSheet.getDataRange().getValues();
+        for (let i = sData.length - 1; i >= 1; i--) {
+          const sid = String(sData[i][0] || '').trim().toUpperCase();
+          if (!sid || storageMap[sid]) continue; // Simpan entri TERBARU saja
+          let sb64 = '';
+          // Gabungkan seluruh chunk mulai dari kolom D (index 3) ke kanan
+          for (let c = 3; c < sData[i].length; c++) {
+            sb64 += String(sData[i][c] || '');
+          }
+          // Fallback untuk format lama jika belum dipisah chunk
+          if (!sb64 || !sb64.startsWith('data:image')) {
+            for (let c = 1; c < sData[i].length; c++) {
+              const val = String(sData[i][c] || '').trim();
+              if (val.startsWith('data:image')) {
+                sb64 = val;
+                break;
+              }
+            }
+          }
+          const sUrl = String(sData[i][2] || '').trim();
+          if (sid) {
+            if (sb64 && sb64.startsWith('data:image')) {
+              storageMap[sid] = sb64;
+            } else if (sUrl && sUrl.startsWith('http')) {
+              storageMap[sid] = sUrl;
             }
           }
         }
-        const sUrl = String(sData[i][2] || '').trim();
-        if (sid) {
-          if (sb64 && sb64.startsWith('data:image')) {
-            storageMap[sid] = sb64;
-          } else if (sUrl && sUrl.startsWith('http')) {
-            storageMap[sid] = sUrl;
-          }
-        }
       }
-    }
-  } catch (e) { }
+    } catch (e) { }
+  }
 
   // Deduplikasi rekaman berdasar ID_Aduan & Konten (Jaminan 0 Duplikasi di Seluruh Portal)
   const seenIds = {};
@@ -1449,7 +1574,9 @@ function handleAddAduan(formData) {
       data: {
         id: newId,
         timestamp: now,
-        status: 'Baru',
+        status: primaryStatus,
+        lat: lat,
+        lng: lng,
         linkFoto: primaryUrl,
         fotoBukti: primaryUrl,
         linkFotoClickable: cellFotoValue,
@@ -1561,6 +1688,7 @@ function handleUpdateVerifikasi(updateData) {
   // Foto Kondisi Riil Pemeriksaan Petugas
   const officerPhotoId = targetId + '_PETUGAS';
   const isUnverifiedStatus = (updateData.status === 'Baru' || updateData.status === 'Aduan Diterima' || updateData.status === 'Verifikasi Administrasi');
+  let updatedRiilUrls = [];
 
   if (isUnverifiedStatus) {
     if (colFotoRiil !== -1) sheet.getRange(targetRowIndex, colFotoRiil + 1).setValue('');
@@ -1656,6 +1784,8 @@ function handleUpdateVerifikasi(updateData) {
         }
       });
 
+      updatedRiilUrls = targetRiilUrls.slice();
+
       // Simpan hyperlink visual ke sheet Data_Aduan kolom Foto_Kondisi_Riil
       if (targetRiilUrls.length === 1) {
         try {
@@ -1715,6 +1845,60 @@ function handleUpdateVerifikasi(updateData) {
   writeLog('UPDATE_VERIFIKASI', 'ID: ' + targetId + ' → Status: ' + (updateData.status || '-') + ' | Petugas: ' + (updateData.petugasVerifikasi || '-'));
 
   // ==================================================================================
+  // ZERO WA LATENCY: BUNYIKAN BEL FIREBASE SEBELUM PENGIRIMAN WHATSAPP FONNTE
+  // ==================================================================================
+  try {
+    const rowArr = data[targetRowIndex - 1] || [];
+    const rowVal = (colName, fallbackVal) => {
+      const idx = headers.indexOf(colName);
+      return (idx !== -1 && rowArr[idx] !== undefined && rowArr[idx] !== null) ? String(rowArr[idx]) : (fallbackVal || '');
+    };
+    const resolvedLinkFoto = onlyHttpPhoto_(updateData.linkFoto || '') || extractCellHttpUrl_(sheet, targetRowIndex, colFoto, colFoto !== -1 ? rowArr[colFoto] : '');
+    const riilWasExplicitlyCleared = (Array.isArray(updateData.fotoVerifikasiList) && updateData.fotoVerifikasiList.length === 0) || updateData.fotoKondisiRiil === '';
+    const resolvedFotoRiil = isUnverifiedStatus
+      ? ''
+      : (updatedRiilUrls.length > 0
+        ? onlyHttpPhoto_(updatedRiilUrls.join(', '))
+        : (riilWasExplicitlyCleared
+          ? ''
+          : extractCellHttpUrl_(sheet, targetRowIndex, colFotoRiil, colFotoRiil !== -1 ? rowArr[colFotoRiil] : '')));
+    const resolvedTglSelesai = (updateData.status === 'Selesai')
+      ? (updateData.tanggalSelesai || Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd'))
+      : (updateData.tanggalSelesai || rowVal('Tanggal_Selesai', ''));
+
+    const deltaVerif = buildSafeDelta_({
+      id: targetId,
+      timestamp: rowVal('Timestamp', ''),
+      namaPelapor: rowVal('Nama_Pelapor', 'Anonim'),
+      kecamatan: rowVal('Kecamatan', ''),
+      desa: rowVal('Desa_Kelurahan', ''),
+      lokasiDetail: rowVal('Lokasi_Detail', ''),
+      lat: rowVal('Latitude', ''),
+      lng: rowVal('Longitude', ''),
+      jenisPencemaran: rowVal('Jenis_Pencemaran', ''),
+      uraian: rowVal('Uraian_Aduan', ''),
+      status: updateData.status || rowVal('Status', ''),
+      petugasVerifikasi: updateData.petugasVerifikasi || rowVal('Petugas_Verifikasi', ''),
+      tanggalVerifikasi: updateData.tanggalVerifikasi || rowVal('Tanggal_Verifikasi', ''),
+      hasilVerifikasi: updateData.hasilVerifikasi || rowVal('Hasil_Verifikasi', ''),
+      tindakanDLH: updateData.tindakanDLH || rowVal('Tindakan_DLH', ''),
+      tanggalSelesai: resolvedTglSelesai,
+      nomorBeritaAcara: updateData.nomorBeritaAcara !== undefined ? updateData.nomorBeritaAcara : rowVal('Nomor_Berita_Acara', ''),
+      catatanBeritaAcara: updateData.catatanBeritaAcara !== undefined ? updateData.catatanBeritaAcara : rowVal('Catatan_Berita_Acara', ''),
+      alasanTidakDitindaklanjuti: updateData.alasanTidakDitindaklanjuti !== undefined ? updateData.alasanTidakDitindaklanjuti : rowVal('Alasan_Tidak_Ditindaklanjuti', ''),
+      kesimpulanPetugas: updateData.kesimpulanPetugas !== undefined ? updateData.kesimpulanPetugas : rowVal('Kesimpulan_Petugas', ''),
+      timestampVerifikasi: updateData.timestampVerifikasi || rowVal('Timestamp_Verifikasi', ''),
+      timestampTindakLanjut: updateData.timestampTindakLanjut || rowVal('Timestamp_Tindak_Lanjut', ''),
+      timestampSelesai: updateData.timestampSelesai || rowVal('Timestamp_Selesai', ''),
+      linkFoto: resolvedLinkFoto,
+      fotoKondisiRiil: resolvedFotoRiil
+    });
+    bunyikanBelSinkronisasi_('updateVerifikasi', targetId, deltaVerif);
+  } catch (errBellVerif) {
+    Logger.log('[updateVerifikasi] Non-blocking bell error: ' + errBellVerif.message);
+  }
+
+  // ==================================================================================
   // NOTIFIKASI WHATSAPP KE PELAPOR SAAT STATUS DIPERBARUI (TEMPLATE 3)
   // Non-blocking & fault-tolerant: kegagalan WA tidak menggagalkan update database
   // ==================================================================================
@@ -1748,6 +1932,7 @@ function handleUpdateVerifikasi(updateData) {
 
   return {
     success: true,
+    bellRung: true,
     message: 'Status aduan ' + targetId + ' berhasil diperbarui menjadi "' + (updateData.status || '-') + '".',
     data: {
       id: targetId,
