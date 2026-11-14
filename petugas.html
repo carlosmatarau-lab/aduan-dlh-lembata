@@ -6741,7 +6741,7 @@
   <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 
   <!-- Scripts: Data Engine & Portal Controller -->
-  <script src="js/data.js?v=20261021_realtime_02"></script>
+  <script src="js/data.js?v=20261115_fix_status_01"></script>
   <script>
     // Safeguard prototype jika browser masih memuat file js lama dari cache
     if (typeof AduanDataStore !== 'undefined') {
@@ -8147,10 +8147,31 @@
 
         // Set form fields
         const rawStatusStr = String(item.status || 'Diverifikasi').trim();
+        const isCurrentlyUnverified = (!rawStatusStr || rawStatusStr === 'Baru' || rawStatusStr === 'Aduan Diterima' || rawStatusStr === 'Verifikasi Administrasi' || rawStatusStr === '-');
         const isLegacyDitolak = rawStatusStr.toLowerCase().includes('tolak');
-        const resolvedSelectStatus = this.isTidakDapatDitindaklanjuti(rawStatusStr) ? 'Tidak Dapat Ditindaklanjuti' : rawStatusStr;
+        let resolvedSelectStatus = 'Diverifikasi';
+        if (this.isTidakDapatDitindaklanjuti(rawStatusStr)) {
+          resolvedSelectStatus = 'Tidak Dapat Ditindaklanjuti';
+        } else if (isCurrentlyUnverified) {
+          // Saat petugas membuka modal Verifikasi pada tiket baru ("Aduan Diterima" / "Baru"),
+          // otomatis arahkan pilihan default ke "Diverifikasi" agar status tidak tertinggal di "Aduan Diterima"
+          resolvedSelectStatus = 'Diverifikasi';
+        } else if (rawStatusStr.toLowerCase().includes('tindak') || rawStatusStr.toLowerCase().includes('penanganan')) {
+          resolvedSelectStatus = 'Ditindaklanjuti';
+        } else if (rawStatusStr.toLowerCase().includes('selesai') || rawStatusStr.toLowerCase().includes('tuntas')) {
+          resolvedSelectStatus = 'Selesai';
+        } else if (rawStatusStr.toLowerCase().includes('verifikasi')) {
+          resolvedSelectStatus = 'Diverifikasi';
+        } else {
+          resolvedSelectStatus = rawStatusStr;
+        }
         const vStatusEl = document.getElementById('vStatusSelect');
-        if (vStatusEl) vStatusEl.value = resolvedSelectStatus;
+        if (vStatusEl) {
+          vStatusEl.value = resolvedSelectStatus;
+          if (!vStatusEl.value) {
+            vStatusEl.value = 'Diverifikasi';
+          }
+        }
 
         const legacyNotice = document.getElementById('vLegacyDitolakNotice');
         if (legacyNotice) legacyNotice.style.display = isLegacyDitolak ? 'block' : 'none';
@@ -11268,7 +11289,21 @@
             const id = document.getElementById('vTargetId').value;
             if (!id) return;
 
-            const selectedStatus = document.getElementById('vStatusSelect').value;
+            let selectedStatus = (document.getElementById('vStatusSelect').value || '').trim();
+            const rawHasilInput = (document.getElementById('vHasilVerifikasi') ? document.getElementById('vHasilVerifikasi').value.trim() : '');
+            const rawTindakanInput = (document.getElementById('vTindakanDLH') ? document.getElementById('vTindakanDLH').value.trim() : '');
+            const rawCatatanBAInput = (document.getElementById('vCatatanBA') ? document.getElementById('vCatatanBA').value.trim() : '');
+            const hasOfficerPhotosInput = Array.isArray(this.tempUploadedPhotos) && this.tempUploadedPhotos.length > 0;
+            const hasOfficerWorkInput = Boolean(rawHasilInput || rawTindakanInput || rawCatatanBAInput || hasOfficerPhotosInput);
+
+            // Jika dropdown kosong (mis. dari status "Aduan Diterima") atau masih "Baru" padahal petugas telah mengisi hasil/tindakan/foto verifikasi,
+            // otomatis naikkan status menjadi "Diverifikasi" agar pembaruan status tersimpan dan tampil di tabel
+            if (!selectedStatus || ((selectedStatus === 'Baru' || selectedStatus === 'Aduan Diterima') && hasOfficerWorkInput)) {
+              selectedStatus = 'Diverifikasi';
+              const vStatusEl = document.getElementById('vStatusSelect');
+              if (vStatusEl) vStatusEl.value = 'Diverifikasi';
+            }
+
             const isUnverifiedStatus = (selectedStatus === 'Baru' || selectedStatus === 'Aduan Diterima');
             const isTidakDapatStatus = (selectedStatus === 'Tidak Dapat Ditindaklanjuti');
 

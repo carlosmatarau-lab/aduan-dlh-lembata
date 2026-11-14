@@ -1507,7 +1507,38 @@ class AduanDataStore {
       'alasanTidakDitindaklanjuti', 'kesimpulanPetugas',
       'timestampVerifikasi', 'timestampTindakLanjut', 'timestampSelesai'
     ];
+    const verifScalarKeys = new Set([
+      'status', 'petugasVerifikasi', 'tanggalVerifikasi', 'hasilVerifikasi',
+      'tindakanDLH', 'tanggalSelesai', 'nomorBeritaAcara', 'catatanBeritaAcara',
+      'alasanTidakDitindaklanjuti', 'kesimpulanPetugas',
+      'timestampVerifikasi', 'timestampTindakLanjut', 'timestampSelesai'
+    ]);
+    const isUnverifiedStatusVal = (st) => {
+      const s = String(st || '').trim();
+      return !s || s === '-' || s === 'Baru' || s === 'Aduan Diterima' || s === 'Verifikasi Administrasi';
+    };
+    const isRecentOfficerEdit = Boolean(
+      existing && (
+        existing._pendingOfficerSync ||
+        (existing._lastOfficerEditTime && (Date.now() - existing._lastOfficerEditTime < 12000))
+      )
+    );
+    const existingIsVerified = Boolean(existing && !isUnverifiedStatusVal(existing.status));
+    const deltaStatusIsUnverified = isUnverifiedStatusVal(delta.status);
+    const protectExistingVerif = Boolean(
+      existing && (
+        isRecentOfficerEdit ||
+        (existingIsVerified && deltaStatusIsUnverified)
+      )
+    );
+
     scalarKeys.forEach((key) => {
+      if (protectExistingVerif && verifScalarKeys.has(key)) {
+        if (isNonEmpty(existing[key])) {
+          cleanDelta[key] = existing[key];
+          return;
+        }
+      }
       if (isNonEmpty(delta[key])) {
         cleanDelta[key] = delta[key];
       }
@@ -2900,6 +2931,34 @@ class AduanDataStore {
     );
     const hasBase64Officer = fotoList.some(p => typeof p === 'string' && p.startsWith('data:image'));
 
+    // Pastikan status verifikasi tidak tertahan di 'Aduan Diterima' / 'Baru' ketika petugas telah mengisi hasil verifikasi
+    const isUnverifiedSt = (st) => {
+      const s = String(st || '').trim();
+      return !s || s === '-' || s === 'Baru' || s === 'Aduan Diterima' || s === 'Verifikasi Administrasi';
+    };
+    const hasOfficerVerifInput = Boolean(
+      (updateData.hasilVerifikasi && updateData.hasilVerifikasi !== '-' && updateData.hasilVerifikasi !== 'Menunggu penugasan verifikator lapangan.') ||
+      (updateData.tindakanDLH && updateData.tindakanDLH !== '-' && updateData.tindakanDLH !== 'Aduan telah dicatat ke sistem.') ||
+      fotoList.length > 0 ||
+      updateData.nomorBeritaAcara ||
+      updateData.catatanBeritaAcara ||
+      updateData.kesimpulanPetugas
+    );
+    const reqStatusTrimmed = String(updateData.status || '').trim();
+    const resolvedStatus = isUnverifiedSt(reqStatusTrimmed)
+      ? (!isUnverifiedSt(existing.status)
+        ? existing.status
+        : (hasOfficerVerifInput ? 'Diverifikasi' : (reqStatusTrimmed || existing.status || 'Diverifikasi')))
+      : reqStatusTrimmed;
+
+    const todayIso = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')}`;
+    const resolvedTanggalVerifikasi = updateData.tanggalVerifikasi ||
+      ((existing.tanggalVerifikasi && existing.tanggalVerifikasi !== '-') ? existing.tanggalVerifikasi : (!isUnverifiedSt(resolvedStatus) ? todayIso : existing.tanggalVerifikasi));
+
+    if (!timestampVerifikasi && (resolvedTanggalVerifikasi || !isUnverifiedSt(resolvedStatus))) {
+      timestampVerifikasi = (resolvedTanggalVerifikasi && resolvedTanggalVerifikasi !== '-') ? `${resolvedTanggalVerifikasi} 09:30` : formattedNow;
+    }
+
     const updatedRecord = {
       ...existing,
       // Isolasi Ketat Foto Warga vs Foto Petugas:
@@ -2911,12 +2970,12 @@ class AduanDataStore {
       ...(existing.foto !== undefined ? { foto: existing.foto } : {}),
       ...(existing.fotoWarga !== undefined ? { fotoWarga: existing.fotoWarga } : {}),
       ...(existing.lampiran !== undefined ? { lampiran: existing.lampiran } : {}),
-      status: updateData.status || existing.status,
+      status: resolvedStatus,
       petugasVerifikasi: updateData.petugasVerifikasi || existing.petugasVerifikasi,
-      tanggalVerifikasi: updateData.tanggalVerifikasi || existing.tanggalVerifikasi,
+      tanggalVerifikasi: resolvedTanggalVerifikasi,
       hasilVerifikasi: updateData.hasilVerifikasi || existing.hasilVerifikasi,
       tindakanDLH: updateData.tindakanDLH || existing.tindakanDLH,
-      tanggalSelesai: updateData.status === 'Selesai' ? (updateData.tanggalSelesai || new Date().toISOString().split('T')[0]) : existing.tanggalSelesai,
+      tanggalSelesai: resolvedStatus === 'Selesai' ? (updateData.tanggalSelesai || todayIso) : existing.tanggalSelesai,
       // Berita Acara, Checklist Verifikasi & Bukti Foto Fisik Riil
       checklistVerifikasi: (() => {
         let chk = updateData.checklistVerifikasi !== undefined ? updateData.checklistVerifikasi : (existing.checklistVerifikasi || []);
@@ -2979,10 +3038,18 @@ class AduanDataStore {
         };
 
         if (hasBase64Officer) {
+          // Tandai tiket sedang sinkronisasi aktif agar flushPendingQueue tidak menembak duplikat bersamaan
+          this._activeSyncIds = this._activeSyncIds || new Set();
+          this._activeSyncIds.add(cleanId);
+
           // Phase 1: Simpan foto penuh ke IndexedDB & kirim metadata ringan terlebih dahulu
           const officerQueueKey = 'VERIF_' + cleanId;
           const photoOnlyPayload = {
             id: cleanId,
+            expectedStatus: updatedRecord.status,
+            tanggalVerifikasi: updatedRecord.tanggalVerifikasi,
+            hasilVerifikasi: updatedRecord.hasilVerifikasi,
+            tindakanDLH: updatedRecord.tindakanDLH,
             petugasVerifikasi: updatedRecord.petugasVerifikasi,
             fotoKondisiRiil: updatedRecord.fotoKondisiRiil,
             fotoVerifikasiList: updatedRecord.fotoVerifikasiList
@@ -3011,7 +3078,12 @@ class AduanDataStore {
                 }
                 setTimeout(() => this.syncFromGAS(true), 300);
               }
-            }).catch(err => console.warn('Gagal unggah latar belakang foto petugas, antrean IndexedDB aktif:', err));
+            }).catch(err => console.warn('Gagal unggah latar belakang foto petugas, antrean IndexedDB aktif:', err))
+              .finally(() => {
+                if (this._activeSyncIds) this._activeSyncIds.delete(cleanId);
+              });
+          } else {
+            if (this._activeSyncIds) this._activeSyncIds.delete(cleanId);
           }
         } else {
           const payload = {

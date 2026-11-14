@@ -1670,46 +1670,88 @@ function handleUpdateVerifikasi(updateData) {
   const colAlasanTidak = headers.indexOf('Alasan_Tidak_Ditindaklanjuti');
   const colKesimpulan = headers.indexOf('Kesimpulan_Petugas');
 
-  // Update sel-sel yang relevan
-  if (updateData.status) {
+  // Safeguard: pastikan status tidak tertahan di 'Aduan Diterima' / 'Baru' ketika petugas menyimpan hasil verifikasi
+  const isUnverifiedSheetStatus_ = function(st) {
+    const s = String(st || '').trim();
+    return !s || s === '-' || s === 'Baru' || s === 'Aduan Diterima' || s === 'Verifikasi Administrasi';
+  };
+  const hasExplicitStatus = Boolean(updateData.status && String(updateData.status).trim());
+  const currentSheetStatus = (colStatus !== -1) ? String(data[targetRowIndex - 1][colStatus] || '').trim() : '';
+  const hasOfficerVerifWork = Boolean(
+    (updateData.hasilVerifikasi && updateData.hasilVerifikasi !== '-' && updateData.hasilVerifikasi !== 'Menunggu penugasan verifikator lapangan.') ||
+    (updateData.tindakanDLH && updateData.tindakanDLH !== '-' && updateData.tindakanDLH !== 'Aduan telah dicatat ke sistem.') ||
+    (Array.isArray(updateData.fotoVerifikasiList) && updateData.fotoVerifikasiList.length > 0) ||
+    (updateData.fotoKondisiRiil && updateData.fotoKondisiRiil !== '-') ||
+    updateData.nomorBeritaAcara ||
+    updateData.catatanBeritaAcara ||
+    updateData.kesimpulanPetugas ||
+    (updateData.petugasVerifikasi && updateData.petugasVerifikasi !== '-' && updateData.petugasVerifikasi !== 'Tim Verifikasi Lapangan DLH Lembata')
+  );
+  const rawIncomingStatus = String(updateData.status || updateData.expectedStatus || '').trim();
+  if (isUnverifiedSheetStatus_(rawIncomingStatus) && hasOfficerVerifWork) {
+    updateData.status = !isUnverifiedSheetStatus_(currentSheetStatus) ? currentSheetStatus : 'Diverifikasi';
+  } else if (!updateData.status && updateData.expectedStatus) {
+    updateData.status = String(updateData.expectedStatus).trim();
+  }
+  if (!isUnverifiedSheetStatus_(updateData.status) && !updateData.tanggalVerifikasi) {
+    const currentSheetTglVerif = (colTglVerif !== -1) ? String(data[targetRowIndex - 1][colTglVerif] || '').trim() : '';
+    if (!currentSheetTglVerif || currentSheetTglVerif === '-') {
+      updateData.tanggalVerifikasi = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd');
+    }
+  }
+
+  // Update sel-sel yang relevan & sinkronkan array memori baris (data[targetRowIndex - 1])
+  if (updateData.status && colStatus !== -1) {
     sheet.getRange(targetRowIndex, colStatus + 1).setValue(updateData.status);
+    data[targetRowIndex - 1][colStatus] = updateData.status;
   }
-  if (updateData.petugasVerifikasi) {
+  if (updateData.petugasVerifikasi && colPetugas !== -1) {
     sheet.getRange(targetRowIndex, colPetugas + 1).setValue(updateData.petugasVerifikasi);
+    data[targetRowIndex - 1][colPetugas] = updateData.petugasVerifikasi;
   }
-  if (updateData.tanggalVerifikasi) {
+  if (updateData.tanggalVerifikasi && colTglVerif !== -1) {
     sheet.getRange(targetRowIndex, colTglVerif + 1).setValue(updateData.tanggalVerifikasi);
+    data[targetRowIndex - 1][colTglVerif] = updateData.tanggalVerifikasi;
   }
-  if (updateData.hasilVerifikasi) {
+  if (updateData.hasilVerifikasi && colHasil !== -1) {
     sheet.getRange(targetRowIndex, colHasil + 1).setValue(updateData.hasilVerifikasi);
+    data[targetRowIndex - 1][colHasil] = updateData.hasilVerifikasi;
   }
-  if (updateData.tindakanDLH) {
+  if (updateData.tindakanDLH && colTindakan !== -1) {
     sheet.getRange(targetRowIndex, colTindakan + 1).setValue(updateData.tindakanDLH);
+    data[targetRowIndex - 1][colTindakan] = updateData.tindakanDLH;
   }
 
   // Berita Acara (BAST) & Catatan Pemeriksaan
   if (updateData.nomorBeritaAcara !== undefined && colNomorBA !== -1) {
     sheet.getRange(targetRowIndex, colNomorBA + 1).setValue(updateData.nomorBeritaAcara);
+    data[targetRowIndex - 1][colNomorBA] = updateData.nomorBeritaAcara;
   }
   if (updateData.catatanBeritaAcara !== undefined && colCatatanBA !== -1) {
     sheet.getRange(targetRowIndex, colCatatanBA + 1).setValue(updateData.catatanBeritaAcara);
+    data[targetRowIndex - 1][colCatatanBA] = updateData.catatanBeritaAcara;
   }
   if (updateData.alasanTidakDitindaklanjuti !== undefined && colAlasanTidak !== -1) {
     sheet.getRange(targetRowIndex, colAlasanTidak + 1).setValue(updateData.alasanTidakDitindaklanjuti);
+    data[targetRowIndex - 1][colAlasanTidak] = updateData.alasanTidakDitindaklanjuti;
   }
   if (updateData.kesimpulanPetugas !== undefined && colKesimpulan !== -1) {
     sheet.getRange(targetRowIndex, colKesimpulan + 1).setValue(updateData.kesimpulanPetugas);
+    data[targetRowIndex - 1][colKesimpulan] = updateData.kesimpulanPetugas;
   }
 
   // Timestamps Akuntabilitas Kinerja
   if (updateData.timestampVerifikasi && colTimeVerif !== -1) {
     sheet.getRange(targetRowIndex, colTimeVerif + 1).setValue(updateData.timestampVerifikasi);
+    data[targetRowIndex - 1][colTimeVerif] = updateData.timestampVerifikasi;
   }
   if (updateData.timestampTindakLanjut && colTimeTindak !== -1) {
     sheet.getRange(targetRowIndex, colTimeTindak + 1).setValue(updateData.timestampTindakLanjut);
+    data[targetRowIndex - 1][colTimeTindak] = updateData.timestampTindakLanjut;
   }
   if (updateData.timestampSelesai && colTimeSelesai !== -1) {
     sheet.getRange(targetRowIndex, colTimeSelesai + 1).setValue(updateData.timestampSelesai);
+    data[targetRowIndex - 1][colTimeSelesai] = updateData.timestampSelesai;
   }
 
   // Foto Kondisi Riil Pemeriksaan Petugas
@@ -1930,7 +1972,7 @@ function handleUpdateVerifikasi(updateData) {
   // NOTIFIKASI WHATSAPP KE PELAPOR SAAT STATUS DIPERBARUI (TEMPLATE 3)
   // Non-blocking & fault-tolerant: kegagalan WA tidak menggagalkan update database
   // ==================================================================================
-  if (updateData.status) {
+  if (hasExplicitStatus && updateData.status && !updateData.skipWaNotification) {
     try {
       const colNoHp = headers.indexOf('No_HP');
       const colNama = headers.indexOf('Nama_Pelapor');
