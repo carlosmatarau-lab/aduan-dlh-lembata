@@ -12,7 +12,7 @@ const LEGACY_STORAGE_KEYS = ['dlh_lembata_aduan_v1', 'dlh_lembata_aduan_v2', 'dl
    Sinkronisasi otomatis berkala dengan pembaruan lintas perangkat melalui server
    (Google Apps Script) serta pertukaran data antartab (BroadcastChannel)
    =================================================================== */
-(function() {
+(function () {
   const CHANNEL_NAME = 'dlh_lembata_realtime_channel';
   const STORAGE_PING_KEY = 'dlh_lembata_realtime_ping';
   let bc = null;
@@ -38,12 +38,12 @@ const LEGACY_STORAGE_KEYS = ['dlh_lembata_aduan_v1', 'dlh_lembata_aduan_v2', 'dl
     if (bc) {
       try {
         bc.postMessage(msg);
-      } catch (e) {}
+      } catch (e) { }
     }
 
     try {
       localStorage.setItem(STORAGE_PING_KEY, JSON.stringify(msg));
-    } catch (e) {}
+    } catch (e) { }
 
     window.dispatchEvent(new CustomEvent('dlhRealtimeLocalMsg', { detail: msg }));
   }
@@ -64,7 +64,7 @@ const LEGACY_STORAGE_KEYS = ['dlh_lembata_aduan_v1', 'dlh_lembata_aduan_v2', 'dl
       try {
         const parsed = JSON.parse(ev.newValue);
         notify(parsed);
-      } catch (e) {}
+      } catch (e) { }
     } else if (ev.key === STORAGE_KEY) {
       notify({ type: 'STORAGE_RAW_UPDATED', timestamp: Date.now() });
     }
@@ -72,7 +72,7 @@ const LEGACY_STORAGE_KEYS = ['dlh_lembata_aduan_v1', 'dlh_lembata_aduan_v2', 'dl
 
   window.dlhRealtime = {
     broadcast: broadcast,
-    listen: function(fn) {
+    listen: function (fn) {
       if (typeof fn === 'function') listeners.push(fn);
     }
   };
@@ -831,7 +831,7 @@ function parseCsvToAduan(csvText) {
       kecamatan: item.Kecamatan || item.kecamatan || 'Nubatukan',
       desa: item.Desa_Kelurahan || item.desa || '-',
       lokasiDetail: item.Lokasi_Detail || item.lokasiDetail || '-',
-      lat: (function() {
+      lat: (function () {
         const rawLat = parseFloat(item.Latitude || item.lat);
         const rawLng = parseFloat(item.Longitude || item.lng);
         const desaLow = String(item.Desa_Kelurahan || item.desa || '').trim().toLowerCase();
@@ -841,7 +841,7 @@ function parseCsvToAduan(csvText) {
         }
         return rawLat;
       })(),
-      lng: (function() {
+      lng: (function () {
         const rawLat = parseFloat(item.Latitude || item.lat);
         const rawLng = parseFloat(item.Longitude || item.lng);
         const desaLow = String(item.Desa_Kelurahan || item.desa || '').trim().toLowerCase();
@@ -923,56 +923,72 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     } : null
   );
 
-  const existingPhotos = existing ? (Array.isArray(existing.buktiFotoList) ? existing.buktiFotoList : (existing.fotoBukti ? [existing.fotoBukti] : [])) : [];
-  
-  let remotePhotos = [];
-  if (Array.isArray(remoteItem.buktiFotoList) && remoteItem.buktiFotoList.length > 0) {
-    remotePhotos = remoteItem.buktiFotoList;
-  } else {
-    const rawPhotoStr = (remoteItem.linkFoto && remoteItem.linkFoto !== '-') ? remoteItem.linkFoto : (remoteItem.fotoBukti && remoteItem.fotoBukti !== '-' ? remoteItem.fotoBukti : '');
-    if (rawPhotoStr && typeof rawPhotoStr === 'string') {
-      const matches = rawPhotoStr.match(/(data:image\/[a-zA-Z0-9\+\/\-\.]+;base64,[A-Za-z0-9\+\/\=]+|https?:\/\/[^\s,]+)/g);
-      if (matches && matches.length > 0) {
-        remotePhotos = matches;
-      } else if (rawPhotoStr.startsWith('data:') || rawPhotoStr.startsWith('http')) {
-        remotePhotos = [rawPhotoStr.trim()];
-      }
-    }
-  }
-
-  // Format tautan drive dan pastikan hanya item foto valid yang disertakan
-  const validRemote = remotePhotos.map(p => {
-    if (typeof p !== 'string') return '';
-    let tr = p.trim();
-    if (!tr || tr === '-' || tr.includes('#ERROR')) return '';
-    if (tr.includes('Buka') && tr.includes('Foto Bukti')) return '';
+  const normalizePhotoUrl = (raw) => {
+    if (typeof raw !== 'string') return '';
+    const tr = raw.trim();
+    if (!tr || tr === '-' || tr === 'null' || tr === 'undefined' || tr.includes('#ERROR')) return '';
+    if (tr.includes('Buka') && (tr.includes('Foto Bukti') || tr.includes('Foto Petugas'))) return '';
     const dMatch = tr.match(/(?:\/file\/d\/|googleusercontent\.com\/d\/|[?&]id=)([a-zA-Z0-9_-]+)/);
     if (dMatch && dMatch[1] && !tr.startsWith('data:image')) {
       return `https://drive.google.com/thumbnail?id=${dMatch[1]}&sz=w1600`;
     }
     return tr;
-  }).filter(Boolean);
+  };
 
-  // Penentuan finalPhotos: Pertahankan seluruh multi-foto valid dari remote, lokal, dan cache
+  const extractPhotosFromListOrField = (arrVal, fallbackFields = []) => {
+    const out = [];
+    const pushUnique = (val) => {
+      const norm = normalizePhotoUrl(val);
+      if (norm && !out.includes(norm)) out.push(norm);
+    };
+    if (Array.isArray(arrVal) && arrVal.length > 0) {
+      arrVal.forEach(p => pushUnique((p && p.dataUrl) ? p.dataUrl : p));
+    }
+    fallbackFields.forEach(rawVal => {
+      if (!rawVal || typeof rawVal !== 'string') return;
+      const trimmed = rawVal.trim();
+      if (!trimmed || trimmed === '-' || trimmed === 'null') return;
+      const matches = trimmed.match(/(data:image\/[a-zA-Z0-9\+\/\-\.]+;base64,[A-Za-z0-9\+\/\=]+|https?:\/\/[^\s,]+)/g);
+      if (matches && matches.length > 0) {
+        matches.forEach(m => pushUnique(m));
+      } else if (trimmed.startsWith('data:') || trimmed.startsWith('http')) {
+        pushUnique(trimmed);
+      }
+    });
+    return out;
+  };
+
+  const existingPhotos = existing
+    ? extractPhotosFromListOrField(existing.buktiFotoList, [existing.linkFotoBukti, existing.fotoBukti, existing.fotoWarga, existing.foto, existing.lampiran])
+    : [];
+
+  const validRemote = extractPhotosFromListOrField(remoteItem.buktiFotoList, [
+    remoteItem.linkFoto,
+    remoteItem.linkFotoBukti,
+    remoteItem.fotoBukti,
+    remoteItem.fotoWarga,
+    remoteItem.foto,
+    remoteItem.lampiran
+  ]);
+
+  // Non-Destructive Safe Merge: jangan pernah menimpa URL/data foto warga yang valid dengan nilai kosong/null
   let finalPhotos = [];
   if (validRemote.length > 0) {
     finalPhotos = validRemote.map((remPhoto, idx) => {
-      // Jika remote sudah Base64 kualitas penuh, pakai remote
       if (remPhoto && remPhoto.startsWith('data:image')) return remPhoto;
-      // Gunakan Base64 lokal HANYA jika ada di index yang bersangkutan untuk meningkatkan ketajaman visual
       const localBase64 = (existingPhotos[idx] && typeof existingPhotos[idx] === 'string' && existingPhotos[idx].startsWith('data:image'))
         ? existingPhotos[idx]
         : null;
       if (localBase64) return localBase64;
       try {
         const cached = localStorage.getItem('dlh_photo_cache_' + cleanId + '_' + idx) ||
-                       localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_' + idx);
+          localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_' + idx);
         if (cached && cached.startsWith('data:image')) return cached;
-      } catch (e) {}
+      } catch (e) { }
+      if (!remPhoto && existingPhotos[idx]) return existingPhotos[idx];
       return remPhoto;
     });
 
-    // Pertahankan multi-foto dari rekaman lokal jika server mengembalikan foto lebih sedikit
     if (existingPhotos.length > finalPhotos.length) {
       for (let k = finalPhotos.length; k < existingPhotos.length; k++) {
         if (existingPhotos[k] && !finalPhotos.includes(existingPhotos[k])) {
@@ -980,15 +996,14 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
         }
       }
     }
-    // Periksa juga cache lokal untuk indeks multi-foto (foto 2, 3, dst)
     for (let k = finalPhotos.length; k < 6; k++) {
       try {
         const cached = localStorage.getItem('dlh_photo_cache_' + cleanId + '_' + k) ||
-                       localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_' + k);
+          localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_' + k);
         if (cached && cached.startsWith('data:image') && !finalPhotos.includes(cached)) {
           finalPhotos.push(cached);
         }
-      } catch (e) {}
+      } catch (e) { }
     }
   } else if (existingPhotos.length > 0) {
     finalPhotos = [...existingPhotos];
@@ -996,59 +1011,47 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     for (let k = 0; k < 6; k++) {
       try {
         const cached = localStorage.getItem('dlh_photo_cache_' + cleanId + '_' + k) ||
-                       localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_' + k);
+          localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_' + k);
         if (cached && cached.startsWith('data:image') && !finalPhotos.includes(cached)) {
           finalPhotos.push(cached);
         }
-      } catch (e) {}
+      } catch (e) { }
     }
   }
 
-  // Perbarui cache lokal untuk index aktif dan bersihkan cache kadaluarsa HANYA di luar jumlah foto aktif
   for (let i = 0; i < finalPhotos.length; i++) {
     if (finalPhotos[i] && finalPhotos[i].startsWith('data:image')) {
       try {
         localStorage.setItem('dlh_photo_cache_' + cleanId + '_' + i, finalPhotos[i]);
-      } catch (e) {}
+      } catch (e) { }
     }
   }
   for (let i = finalPhotos.length; i < 6; i++) {
     try {
       localStorage.removeItem('dlh_photo_cache_' + cleanId + '_' + i);
       localStorage.removeItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_' + i);
-    } catch (e) {}
+    } catch (e) { }
   }
   const finalFoto = finalPhotos[0] || '';
 
   const isUnverified = (!remoteItem.status || remoteItem.status === 'Baru' || remoteItem.status === 'Aduan Diterima' || remoteItem.status === 'Verifikasi Administrasi' || remoteItem.status === '-');
 
   // Multi-foto dokumentasi fisik riil petugas
-  let resolvedOfficerPhotos = [];
-  if (Array.isArray(remoteItem.fotoVerifikasiList) && remoteItem.fotoVerifikasiList.length > 0) {
-    remoteItem.fotoVerifikasiList.forEach(p => {
-      const s = (p && p.dataUrl) ? p.dataUrl : (typeof p === 'string' ? p : '');
-      if (s && s.trim() && s.trim() !== '-' && !resolvedOfficerPhotos.includes(s.trim())) {
-        resolvedOfficerPhotos.push(s.trim());
-      }
-    });
-  } else if (remoteItem.fotoKondisiRiil && remoteItem.fotoKondisiRiil !== '-') {
-    const rawRiil = String(remoteItem.fotoKondisiRiil).trim();
-    const matchesRiil = rawRiil.match(/(data:image\/[a-zA-Z0-9\+\/\-\.]+;base64,[A-Za-z0-9\+\/\=]+|https?:\/\/[^\s,]+)/g);
-    if (matchesRiil && matchesRiil.length > 0) {
-      matchesRiil.forEach(s => {
-        if (s.trim() && !resolvedOfficerPhotos.includes(s.trim())) resolvedOfficerPhotos.push(s.trim());
-      });
-    } else if (rawRiil) {
-      resolvedOfficerPhotos.push(rawRiil);
-    }
-  }
+  const resolvedOfficerPhotos = extractPhotosFromListOrField(remoteItem.fotoVerifikasiList, [
+    remoteItem.fotoKondisiRiil,
+    remoteItem.fotoPetugas
+  ]);
+  const existingOfficerPhotos = existing
+    ? extractPhotosFromListOrField(existing.fotoVerifikasiList, [existing.fotoKondisiRiil, existing.fotoPetugas])
+    : [];
 
   const hasPendingOfficer = Boolean(existing && existing._pendingOfficerSync);
   const isRecentEdit = Boolean(existing && existing._lastOfficerEditTime && (Date.now() - existing._lastOfficerEditTime < 15000));
+  const wasExplicitlyCleared = Boolean(existing && existing._officerPhotoCleared);
   const finalStatus = (hasPendingOfficer && isRecentEdit) ? existing.status : (remoteItem.status || 'Baru');
   const isFinalUnverified = (!finalStatus || finalStatus === 'Baru' || finalStatus === 'Aduan Diterima' || finalStatus === 'Verifikasi Administrasi' || finalStatus === '-');
 
-  // Konsolidasi foto kondisi riil petugas: Cloud Server adalah Single Source of Truth
+  // Konsolidasi foto kondisi riil petugas dengan Non-Destructive Safe Merge
   let finalOfficerPhotos = [];
   let finalFotoRiil = '';
 
@@ -1059,47 +1062,59 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
       try {
         localStorage.removeItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + i);
         localStorage.removeItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_PETUGAS_' + i);
-      } catch (e) {}
+      } catch (e) { }
     }
   } else if (hasPendingOfficer && isRecentEdit) {
-    // Pertahankan perubahan lokal HANYA jika sedang dalam proses kirim (15 detik terakhir)
-    finalOfficerPhotos = Array.isArray(existing.fotoVerifikasiList) ? [...existing.fotoVerifikasiList] : [];
-    finalFotoRiil = existing.fotoKondisiRiil || (finalOfficerPhotos[0] || '');
-  } else {
-    // Sinkronisasi penuh dari server (menghapus tuntas foto lama / mengganti dengan foto baru dari HP)
-    finalOfficerPhotos = [...resolvedOfficerPhotos];
+    finalOfficerPhotos = [...existingOfficerPhotos];
     finalFotoRiil = finalOfficerPhotos[0] || '';
-
-    // Perbarui cache lokal untuk foto yang aktif dari server
-    if (finalOfficerPhotos.length > 0) {
-      for (let i = 0; i < finalOfficerPhotos.length; i++) {
-        if (finalOfficerPhotos[i] && finalOfficerPhotos[i].startsWith('data:image')) {
-          try {
-            localStorage.setItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + i, finalOfficerPhotos[i]);
-            if (i === 0) localStorage.setItem('dlh_photo_cache_' + cleanId + '_PETUGAS', finalOfficerPhotos[i]);
-          } catch (e) {}
+  } else if (resolvedOfficerPhotos.length > 0) {
+    finalOfficerPhotos = resolvedOfficerPhotos.map((remP, idx) => {
+      if (remP && remP.startsWith('data:image')) return remP;
+      const localB64 = (existingOfficerPhotos[idx] && existingOfficerPhotos[idx].startsWith('data:image')) ? existingOfficerPhotos[idx] : null;
+      return localB64 || remP;
+    });
+    if (!wasExplicitlyCleared && existingOfficerPhotos.length > finalOfficerPhotos.length) {
+      for (let k = finalOfficerPhotos.length; k < existingOfficerPhotos.length; k++) {
+        if (existingOfficerPhotos[k] && !finalOfficerPhotos.includes(existingOfficerPhotos[k])) {
+          finalOfficerPhotos.push(existingOfficerPhotos[k]);
         }
       }
-      for (let i = finalOfficerPhotos.length; i < 10; i++) {
+    }
+    finalFotoRiil = finalOfficerPhotos[0] || '';
+
+    for (let i = 0; i < finalOfficerPhotos.length; i++) {
+      if (finalOfficerPhotos[i] && finalOfficerPhotos[i].startsWith('data:image')) {
         try {
-          localStorage.removeItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + i);
-          localStorage.removeItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_PETUGAS_' + i);
-        } catch (e) {}
+          localStorage.setItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + i, finalOfficerPhotos[i]);
+          if (i === 0) localStorage.setItem('dlh_photo_cache_' + cleanId + '_PETUGAS', finalOfficerPhotos[i]);
+        } catch (e) { }
       }
-    } else {
-      for (let i = 0; i < 10; i++) {
-        try {
-          localStorage.removeItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + i);
-          localStorage.removeItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_PETUGAS_' + i);
-        } catch (e) {}
-      }
+    }
+    for (let i = finalOfficerPhotos.length; i < 10; i++) {
+      try {
+        localStorage.removeItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + i);
+        localStorage.removeItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_PETUGAS_' + i);
+      } catch (e) { }
+    }
+  } else if (!wasExplicitlyCleared && existingOfficerPhotos.length > 0) {
+    // Non-Destructive Safe Merge: server mengirim nilai kosong/null sementara lokal sudah punya foto petugas valid
+    finalOfficerPhotos = [...existingOfficerPhotos];
+    finalFotoRiil = finalOfficerPhotos[0] || '';
+  } else {
+    finalOfficerPhotos = [];
+    finalFotoRiil = '';
+    for (let i = 0; i < 10; i++) {
+      try {
+        localStorage.removeItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + i);
+        localStorage.removeItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_PETUGAS_' + i);
+      } catch (e) { }
     }
   }
   if (finalOfficerPhotos.length === 0) {
     try {
       localStorage.removeItem('dlh_photo_cache_' + cleanId + '_PETUGAS');
       localStorage.removeItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_PETUGAS');
-    } catch (e) {}
+    } catch (e) { }
   }
 
   // Resolusi Titik Koordinat Presisi Geografis Nyata
@@ -1156,6 +1171,9 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     fotoBukti: finalFoto,
     linkFotoBukti: finalFoto,
     buktiFotoList: finalPhotos,
+    ...(normalizePhotoUrl(remoteItem.foto) || normalizePhotoUrl(existing && existing.foto) || finalFoto ? { foto: normalizePhotoUrl(remoteItem.foto) || normalizePhotoUrl(existing && existing.foto) || finalFoto } : {}),
+    ...(normalizePhotoUrl(remoteItem.fotoWarga) || normalizePhotoUrl(existing && existing.fotoWarga) || finalFoto ? { fotoWarga: normalizePhotoUrl(remoteItem.fotoWarga) || normalizePhotoUrl(existing && existing.fotoWarga) || finalFoto } : {}),
+    ...(normalizePhotoUrl(remoteItem.lampiran) || normalizePhotoUrl(existing && existing.lampiran) ? { lampiran: normalizePhotoUrl(remoteItem.lampiran) || normalizePhotoUrl(existing && existing.lampiran) } : {}),
     status: finalStatus,
     petugasVerifikasi: isFinalUnverified ? '-' : (hasPendingOfficer ? (existing.petugasVerifikasi || '-') : (remoteItem.petugasVerifikasi || '-')),
     tanggalVerifikasi: isFinalUnverified ? '-' : (hasPendingOfficer ? (existing.tanggalVerifikasi || '-') : (remoteItem.tanggalVerifikasi || '-')),
@@ -1174,6 +1192,8 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     uraianHambatan: isFinalUnverified ? '' : (hasPendingOfficer ? (existing && existing.uraianHambatan || '') : (remoteItem.uraianHambatan || (existing ? existing.uraianHambatan : '') || '')),
     fotoKondisiRiil: finalFotoRiil,
     fotoVerifikasiList: finalOfficerPhotos,
+    ...(finalFotoRiil ? { fotoPetugas: finalFotoRiil } : {}),
+    ...(wasExplicitlyCleared ? { _officerPhotoCleared: true } : {}),
     timestampVerifikasi: isFinalUnverified ? '' : (hasPendingOfficer ? (existing.timestampVerifikasi || '') : (remoteItem.timestampVerifikasi || '')),
     timestampTindakLanjut: isFinalUnverified ? '' : (hasPendingOfficer ? (existing.timestampTindakLanjut || '') : (remoteItem.timestampTindakLanjut || '')),
     timestampSelesai: isFinalUnverified ? '' : (hasPendingOfficer ? (existing.timestampSelesai || '') : (remoteItem.timestampSelesai || '')),
@@ -1183,10 +1203,14 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
   };
 }
 
-// Konfigurasi Kunci Penyimpanan & URL Web App Google Apps Script
+// Konfigurasi Kunci Penyimpanan, Web App Google Apps Script & Sinyal Bel Pintu Firebase SSE
 const GAS_CONFIG_KEY = 'dlh_gas_api_url';
 const DELETED_STORAGE_KEY = 'dlh_deleted_aduan_ids';
 const DEFAULT_GAS_API_URL = 'https://script.google.com/macros/s/AKfycbwuDJ9X5a27GnVuuiU1keHexKXzG3OITUxwOomwHGt-1S53DdqfAfguDInXwtbh9ljKMw/exec';
+const FIREBASE_DOORBELL_URL = 'https://ecoadu-lembata-signal-default-rtdb.asia-southeast1.firebasedatabase.app/ecoadu_signal.json';
+const SYNC_LOCK_TIMEOUT_MS = 8000;
+const PHOTO_IDB_NAME = 'ecoadu_photo_queue_db';
+const PHOTO_IDB_STORE = 'photo_queue';
 
 class AduanDataStore {
   constructor() {
@@ -1202,9 +1226,15 @@ class AduanDataStore {
     }
     this.isSyncing = false;
     this.currentSyncPromise = null;
+    this._syncLockStartedAt = 0;
+    this._syncLockTimer = null;
     this.isSyncingStats = false;
     this.currentStatsPromise = null;
     this.remoteStats = null;
+    this.lastSignalTs = 0;
+    this._doorbellUrl = FIREBASE_DOORBELL_URL;
+    this._doorbellSource = null;
+    this._doorbellReconnectTimer = null;
     try {
       const savedSync = localStorage.getItem('dlh_lembata_last_sync_timestamp');
       this.lastSyncTime = savedSync ? new Date(savedSync) : null;
@@ -1254,12 +1284,12 @@ class AduanDataStore {
   init() {
     // 1. Bersihkan seluruh penyimpanan lokal usang & blacklist masa lalu agar sinkron 100% antar perangkat
     LEGACY_STORAGE_KEYS.forEach(key => {
-      try { localStorage.removeItem(key); } catch (e) {}
+      try { localStorage.removeItem(key); } catch (e) { }
     });
     try {
       localStorage.removeItem(DELETED_STORAGE_KEY);
       localStorage.removeItem('dlh_deleted_aduan_ids');
-    } catch (e) {}
+    } catch (e) { }
     const stored = localStorage.getItem(STORAGE_KEY);
     if (stored) {
       try {
@@ -1302,7 +1332,7 @@ class AduanDataStore {
               try {
                 const cached = localStorage.getItem('dlh_photo_cache_' + cId + '_' + pIdx);
                 if (cached && cached.startsWith('data:image')) return cached;
-              } catch (e) {}
+              } catch (e) { }
             }
             return p;
           });
@@ -1316,17 +1346,21 @@ class AduanDataStore {
     this._deduplicateList();
     this.save();
 
-    // Sinkronisasi otomatis berkala lintas perangkat (Dual-tier: Stats Ringan 200B + Data Lengkap)
+    // Sinkronisasi Hybrid Real-Time "Bel Pintu" (EventSource SSE) + Polling Fallback Hemat Kuota
     if (this.hasGasConfigured() && !this._pollIntervalStarted) {
       this._pollIntervalStarted = true;
       setTimeout(() => this.syncStatsFromGAS(), 50);
       setTimeout(() => this.syncFromGAS(true), 250);
+      setTimeout(() => this.flushPendingQueue(), 900);
 
-      // Polling cerdas: 4 detik saat tab aktif, 15 detik saat tab di latar belakang
+      // Sambungkan pendengar EventSource ke Firebase Realtime Database
+      this.initRealtimeDoorbell();
+
+      // Polling fallback hemat kuota: 20 detik saat tab aktif, 45 detik saat tab di latar belakang
       let pollTimer = null;
       const restartPolling = () => {
         if (pollTimer) clearInterval(pollTimer);
-        const ms = (typeof document !== 'undefined' && document.hidden) ? 15000 : 4000;
+        const ms = (typeof document !== 'undefined' && document.hidden) ? 45000 : 20000;
         pollTimer = setInterval(() => {
           this.syncStatsFromGAS();
           this.syncFromGAS(true);
@@ -1334,21 +1368,25 @@ class AduanDataStore {
       };
       restartPolling();
 
-      // Sinkronkan instan saat tab dibuka kembali, window fokus, atau koneksi pulih
+      // Sinkronkan instan & sambung ulang stream saat tab dibuka kembali, fokus, atau koneksi pulih
       if (typeof window !== 'undefined') {
         window.addEventListener('focus', () => {
+          this.initRealtimeDoorbell(false);
           this.syncStatsFromGAS();
           this.syncFromGAS(true);
           restartPolling();
         });
         window.addEventListener('online', () => {
+          this.initRealtimeDoorbell(true);
           this.syncStatsFromGAS();
           this.syncFromGAS(true);
+          this.flushPendingQueue();
           restartPolling();
         });
         if (typeof document !== 'undefined') {
           document.addEventListener('visibilitychange', () => {
             if (document.visibilityState === 'visible') {
+              this.initRealtimeDoorbell(false);
               this.syncStatsFromGAS();
               this.syncFromGAS(true);
             }
@@ -1357,6 +1395,219 @@ class AduanDataStore {
         }
       }
     }
+  }
+
+  _extractSignalTs(payload) {
+    if (!payload || typeof payload !== 'object') return 0;
+    let rawTs = null;
+    if (payload.data && typeof payload.data === 'object' && payload.data.ts !== undefined && payload.data.ts !== null) {
+      rawTs = payload.data.ts;
+    } else if (payload.path === '/ts' && payload.data !== undefined && payload.data !== null) {
+      rawTs = payload.data;
+    } else if (payload.ts !== undefined && payload.ts !== null) {
+      rawTs = payload.ts;
+    } else if (typeof payload.data === 'number' || (typeof payload.data === 'string' && payload.data.trim())) {
+      rawTs = payload.data;
+    }
+    if (rawTs === null || rawTs === undefined) return 0;
+    const asNum = Number(rawTs);
+    if (!isNaN(asNum) && asNum > 0) return asNum;
+    if (typeof rawTs === 'string') {
+      const parsed = Date.parse(rawTs);
+      if (!isNaN(parsed) && parsed > 0) return parsed;
+    }
+    return 0;
+  }
+
+  initRealtimeDoorbell(forceReconnect = false) {
+    if (typeof EventSource === 'undefined') return null;
+    if (!this._doorbellUrl) this._doorbellUrl = FIREBASE_DOORBELL_URL;
+
+    if (this._doorbellReconnectTimer) {
+      clearTimeout(this._doorbellReconnectTimer);
+      this._doorbellReconnectTimer = null;
+    }
+
+    // Pertahankan stream jika masih CONNECTING (0) atau OPEN (1) kecuali forceReconnect
+    if (!forceReconnect && this._doorbellSource && this._doorbellSource.readyState !== 2) {
+      return this._doorbellSource;
+    }
+
+    if (this._doorbellSource) {
+      try { this._doorbellSource.close(); } catch (e) { }
+      this._doorbellSource = null;
+    }
+
+    try {
+      const es = new EventSource(this._doorbellUrl);
+      this._doorbellSource = es;
+
+      const handleDoorbellEvent = (ev) => {
+        if (!ev || !ev.data) return;
+        try {
+          const payload = JSON.parse(ev.data);
+          const incomingTs = this._extractSignalTs(payload);
+          if (incomingTs > this.lastSignalTs) {
+            this.lastSignalTs = incomingTs;
+            // Sinyal bel masuk: picu sinkronisasi server seketika (0 ms delay)
+            this.syncStatsFromGAS();
+            this.syncFromGAS(true);
+          }
+        } catch (err) { }
+      };
+
+      es.addEventListener('put', handleDoorbellEvent);
+      es.addEventListener('patch', handleDoorbellEvent);
+
+      es.onerror = () => {
+        if (this._doorbellSource === es) {
+          try { es.close(); } catch (e) { }
+          this._doorbellSource = null;
+        }
+        if (this._doorbellReconnectTimer) clearTimeout(this._doorbellReconnectTimer);
+        this._doorbellReconnectTimer = setTimeout(() => {
+          this._doorbellReconnectTimer = null;
+          if (typeof navigator === 'undefined' || navigator.onLine !== false) {
+            this.initRealtimeDoorbell(true);
+            this.syncStatsFromGAS();
+            this.syncFromGAS(true);
+          }
+        }, 3000);
+      };
+
+      return es;
+    } catch (err) {
+      console.warn('Gagal menginisialisasi EventSource Bel Pintu:', err);
+      return null;
+    }
+  }
+
+  _openPhotoQueueDB() {
+    return new Promise((resolve) => {
+      if (typeof indexedDB === 'undefined' || this._idbUnavailable) {
+        resolve(null);
+        return;
+      }
+      let settled = false;
+      const done = (val) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(guard);
+        resolve(val);
+      };
+      const isFileProto = typeof window !== 'undefined' && window.location && window.location.protocol === 'file:';
+      const guard = setTimeout(() => {
+        if (isFileProto) this._idbUnavailable = true;
+        done(null);
+      }, 400);
+      try {
+        const req = indexedDB.open(PHOTO_IDB_NAME, 1);
+        req.onupgradeneeded = (ev) => {
+          try {
+            const db = ev.target.result;
+            if (!db.objectStoreNames.contains(PHOTO_IDB_STORE)) {
+              db.createObjectStore(PHOTO_IDB_STORE, { keyPath: 'queueKey' });
+            }
+          } catch (e) { }
+        };
+        req.onsuccess = (ev) => done(ev.target.result);
+        req.onerror = () => {
+          if (isFileProto) this._idbUnavailable = true;
+          done(null);
+        };
+        req.onblocked = () => done(null);
+      } catch (e) {
+        this._idbUnavailable = true;
+        done(null);
+      }
+    });
+  }
+
+  async _idbPutPhotoJob(job) {
+    if (!job || !job.queueKey) return false;
+    this._memPhotoQueue = this._memPhotoQueue || new Map();
+    this._memPhotoQueue.set(job.queueKey, job);
+    const db = await this._openPhotoQueueDB();
+    if (!db) return true;
+    return new Promise((resolve) => {
+      let settled = false;
+      const done = (val) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(guard);
+        try { db.close(); } catch (e) { }
+        resolve(val);
+      };
+      const guard = setTimeout(() => done(true), 400);
+      try {
+        const tx = db.transaction(PHOTO_IDB_STORE, 'readwrite');
+        tx.objectStore(PHOTO_IDB_STORE).put(job);
+        tx.oncomplete = () => done(true);
+        tx.onerror = () => done(false);
+        tx.onabort = () => done(false);
+      } catch (e) {
+        done(false);
+      }
+    });
+  }
+
+  async _idbGetAllPhotoJobs() {
+    this._memPhotoQueue = this._memPhotoQueue || new Map();
+    const db = await this._openPhotoQueueDB();
+    if (!db) return Array.from(this._memPhotoQueue.values());
+    return new Promise((resolve) => {
+      let settled = false;
+      const done = (val) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(guard);
+        try { db.close(); } catch (e) { }
+        resolve(val);
+      };
+      const guard = setTimeout(() => done(Array.from(this._memPhotoQueue.values())), 400);
+      try {
+        const tx = db.transaction(PHOTO_IDB_STORE, 'readonly');
+        const req = tx.objectStore(PHOTO_IDB_STORE).getAll();
+        req.onsuccess = () => {
+          const list = Array.isArray(req.result) ? req.result : [];
+          if (list.length === 0 && this._memPhotoQueue.size > 0) {
+            done(Array.from(this._memPhotoQueue.values()));
+            return;
+          }
+          done(list);
+        };
+        req.onerror = () => done(Array.from(this._memPhotoQueue.values()));
+      } catch (e) {
+        done(Array.from(this._memPhotoQueue.values()));
+      }
+    });
+  }
+
+  async _idbDeletePhotoJob(queueKey) {
+    if (!queueKey) return false;
+    if (this._memPhotoQueue) this._memPhotoQueue.delete(queueKey);
+    const db = await this._openPhotoQueueDB();
+    if (!db) return true;
+    return new Promise((resolve) => {
+      let settled = false;
+      const done = (val) => {
+        if (settled) return;
+        settled = true;
+        clearTimeout(guard);
+        try { db.close(); } catch (e) { }
+        resolve(val);
+      };
+      const guard = setTimeout(() => done(true), 400);
+      try {
+        const tx = db.transaction(PHOTO_IDB_STORE, 'readwrite');
+        tx.objectStore(PHOTO_IDB_STORE).delete(queueKey);
+        tx.oncomplete = () => done(true);
+        tx.onerror = () => done(false);
+        tx.onabort = () => done(false);
+      } catch (e) {
+        done(false);
+      }
+    });
   }
 
   getAuthToken() {
@@ -1375,7 +1626,7 @@ class AduanDataStore {
           return 'DLH_LEMBATA_SECURE_TOKEN_2026';
         }
       }
-    } catch (e) {}
+    } catch (e) { }
     return '';
   }
 
@@ -1395,13 +1646,13 @@ class AduanDataStore {
     try {
       const cached = isOff
         ? (localStorage.getItem('dlh_photo_cache_' + baseId + '_PETUGAS_' + pIdx) ||
-           localStorage.getItem('dlh_photo_cache_' + baseId.toLowerCase() + '_PETUGAS_' + pIdx) ||
-           (pIdx === 0 ? (localStorage.getItem('dlh_photo_cache_' + baseId + '_PETUGAS') || localStorage.getItem('dlh_photo_cache_' + baseId.toLowerCase() + '_PETUGAS')) : null))
+          localStorage.getItem('dlh_photo_cache_' + baseId.toLowerCase() + '_PETUGAS_' + pIdx) ||
+          (pIdx === 0 ? (localStorage.getItem('dlh_photo_cache_' + baseId + '_PETUGAS') || localStorage.getItem('dlh_photo_cache_' + baseId.toLowerCase() + '_PETUGAS')) : null))
         : (localStorage.getItem('dlh_photo_cache_' + baseId + '_' + pIdx) ||
-           localStorage.getItem('dlh_photo_cache_' + baseId.toLowerCase() + '_' + pIdx) ||
-           (pIdx === 0 ? (localStorage.getItem('dlh_photo_cache_' + baseId) || localStorage.getItem('dlh_photo_cache_' + baseId.toLowerCase())) : null));
+          localStorage.getItem('dlh_photo_cache_' + baseId.toLowerCase() + '_' + pIdx) ||
+          (pIdx === 0 ? (localStorage.getItem('dlh_photo_cache_' + baseId) || localStorage.getItem('dlh_photo_cache_' + baseId.toLowerCase())) : null));
       if (cached && cached.startsWith('data:image')) return cached;
-    } catch (e) {}
+    } catch (e) { }
 
     // 2. Fetch rekaman dari GAS endpoint via action getById
     try {
@@ -1421,7 +1672,7 @@ class AduanDataStore {
         } else {
           photos = Array.isArray(item.buktiFotoList) ? item.buktiFotoList : (item.fotoBukti ? [item.fotoBukti] : []);
         }
-        
+
         const photo = photos[pIdx] || photos[0];
         if (photo && photo.startsWith('data:image')) {
           try {
@@ -1431,7 +1682,7 @@ class AduanDataStore {
             } else {
               localStorage.setItem('dlh_photo_cache_' + baseId + '_' + pIdx, photo);
             }
-          } catch (e) {}
+          } catch (e) { }
 
           const idx = this.aduanList.findIndex(x => x && x.id && x.id.trim().toUpperCase() === baseId);
           if (idx !== -1) {
@@ -1471,7 +1722,7 @@ class AduanDataStore {
           } else {
             localStorage.setItem('dlh_photo_cache_' + baseId + '_' + pIdx, json.base64);
           }
-        } catch (e) {}
+        } catch (e) { }
         const idx = this.aduanList.findIndex(x => x && x.id && x.id.trim().toUpperCase() === baseId);
         if (idx !== -1) {
           if (isOff) {
@@ -1578,11 +1829,11 @@ class AduanDataStore {
             this.lastSyncTime = this.lastStatsSyncTime;
             try {
               localStorage.setItem('dlh_lembata_last_sync_timestamp', this.lastSyncTime.toISOString());
-            } catch (e) {}
+            } catch (e) { }
           }
           try {
             localStorage.setItem('dlh_cached_hero_stats', JSON.stringify(normalized));
-          } catch (e) {}
+          } catch (e) { }
 
           if (typeof window !== 'undefined') {
             window.dispatchEvent(new CustomEvent('aduanStatsSynced', {
@@ -1615,15 +1866,38 @@ class AduanDataStore {
       return { success: false, reason: 'URL Web App Google Apps Script belum disetel.' };
     }
 
-    // Jika sedang dalam proses sinkronisasi, tunggu promise yang sedang aktif daripada tumpang tindih
+    // Pengunci isSyncing dengan batas waktu aman 8 detik agar sinyal bel tidak pernah terkunci permanen
     if (this.isSyncing) {
-      if (this.currentSyncPromise) {
-        return await this.currentSyncPromise;
+      const lockAge = this._syncLockStartedAt ? (Date.now() - this._syncLockStartedAt) : 0;
+      if (lockAge < SYNC_LOCK_TIMEOUT_MS) {
+        if (this.currentSyncPromise) {
+          return await this.currentSyncPromise;
+        }
+        return { success: true, silent: true, message: 'Sinkronisasi cloud sedang berjalan...' };
       }
-      return { success: true, silent: true, message: 'Sinkronisasi cloud sedang berjalan...' };
+      // Lock melewati timeout 8 detik: lepas pengunci lama agar sinkronisasi terbaru tetap jalan
+      if (this._syncLockTimer) {
+        clearTimeout(this._syncLockTimer);
+        this._syncLockTimer = null;
+      }
+      this.isSyncing = false;
+      this.currentSyncPromise = null;
     }
 
     this.isSyncing = true;
+    this._syncLockStartedAt = Date.now();
+    const lockToken = Symbol('syncLock');
+    this._activeSyncLockToken = lockToken;
+    if (this._syncLockTimer) clearTimeout(this._syncLockTimer);
+    this._syncLockTimer = setTimeout(() => {
+      if (this._activeSyncLockToken === lockToken) {
+        this.isSyncing = false;
+        this.currentSyncPromise = null;
+        this._syncLockStartedAt = 0;
+        this._syncLockTimer = null;
+      }
+    }, SYNC_LOCK_TIMEOUT_MS);
+
     this.currentSyncPromise = (async () => {
       try {
         let endpoint = this.getGasUrl();
@@ -1648,7 +1922,7 @@ class AduanDataStore {
               this.lastSyncTime = new Date();
               try {
                 localStorage.setItem('dlh_lembata_last_sync_timestamp', this.lastSyncTime.toISOString());
-              } catch (e) {}
+              } catch (e) { }
               window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent, timestamp: this.lastSyncTime, lastSyncTime: this.lastSyncTime } }));
               return { success: true, count: this.aduanList.length, timestamp: this.lastSyncTime };
             } else {
@@ -1658,7 +1932,7 @@ class AduanDataStore {
               this.lastSyncTime = new Date();
               try {
                 localStorage.setItem('dlh_lembata_last_sync_timestamp', this.lastSyncTime.toISOString());
-              } catch (e) {}
+              } catch (e) { }
               window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: 0, silent: silent, emptyRemote: true, timestamp: this.lastSyncTime, lastSyncTime: this.lastSyncTime } }));
               return { success: true, count: 0, emptyRemote: true, timestamp: this.lastSyncTime };
             }
@@ -1724,7 +1998,7 @@ class AduanDataStore {
             this.lastSyncTime = new Date();
             try {
               localStorage.setItem('dlh_lembata_last_sync_timestamp', this.lastSyncTime.toISOString());
-            } catch (e) {}
+            } catch (e) { }
             window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent, timestamp: this.lastSyncTime, lastSyncTime: this.lastSyncTime } }));
             window.dispatchEvent(new CustomEvent('aduanStatsSynced', { detail: { ...this.getStats(), timestamp: this.lastSyncTime, lastSyncTime: this.lastSyncTime } }));
 
@@ -1748,7 +2022,7 @@ class AduanDataStore {
             this.lastSyncTime = new Date();
             try {
               localStorage.setItem('dlh_lembata_last_sync_timestamp', this.lastSyncTime.toISOString());
-            } catch (e) {}
+            } catch (e) { }
             window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: silent, emptyRemote: true, timestamp: this.lastSyncTime, lastSyncTime: this.lastSyncTime } }));
             window.dispatchEvent(new CustomEvent('aduanStatsSynced', { detail: { ...this.getStats(), timestamp: this.lastSyncTime, lastSyncTime: this.lastSyncTime } }));
             return {
@@ -1770,8 +2044,15 @@ class AduanDataStore {
         }
         return { success: false, error: errMsg };
       } finally {
-        this.isSyncing = false;
-        this.currentSyncPromise = null;
+        if (this._activeSyncLockToken === lockToken) {
+          if (this._syncLockTimer) {
+            clearTimeout(this._syncLockTimer);
+            this._syncLockTimer = null;
+          }
+          this.isSyncing = false;
+          this.currentSyncPromise = null;
+          this._syncLockStartedAt = 0;
+        }
       }
     })();
 
@@ -1802,7 +2083,7 @@ class AduanDataStore {
           });
           delete item._pendingOfficerSync;
           pushedCount++;
-        } catch (e) {}
+        } catch (e) { }
       }
     }
     if (pushedCount > 0) {
@@ -1817,8 +2098,35 @@ class AduanDataStore {
     this._isFlushing = true;
     try {
       this._activeSyncIds = this._activeSyncIds || new Set();
+
+      // 0. Pulihkan & kirim antrean foto tahan banting dari IndexedDB
+      const idbJobs = await this._idbGetAllPhotoJobs();
+      for (const job of idbJobs) {
+        if (!job || !job.id || !job.queueKey) continue;
+        const cleanId = String(job.id).trim().toUpperCase();
+        if (this.isDeleted(cleanId) || this._activeSyncIds.has(cleanId)) continue;
+        try {
+          this._activeSyncIds.add(cleanId);
+          const action = job.type === 'officer' ? 'updateVerifikasi' : 'addAduan';
+          const payload = job.payload ? { ...job.payload } : { id: cleanId };
+          const res = await this.postToGAS(action, payload);
+          if (res && res.success) {
+            await this._idbDeletePhotoJob(job.queueKey);
+            const idx = this.aduanList.findIndex(x => x && String(x.id).trim().toUpperCase() === cleanId);
+            if (idx !== -1) {
+              delete this.aduanList[idx]._pendingSync;
+              delete this.aduanList[idx]._pendingOfficerSync;
+              delete this.aduanList[idx]._syncingNow;
+            }
+          }
+        } catch (e) {
+        } finally {
+          this._activeSyncIds.delete(cleanId);
+        }
+      }
+
       // 1. Flush aduan baru pending (hindari item yang sedang dalam proses kirim instan)
-      const pendingItems = (this.aduanList || []).filter(item => 
+      const pendingItems = (this.aduanList || []).filter(item =>
         item && item.id && item._pendingSync && !item._syncingNow && !this._activeSyncIds.has(item.id)
       );
       for (const item of pendingItems) {
@@ -1828,6 +2136,7 @@ class AduanDataStore {
           const res = await this.postToGAS('addAduan', item);
           if (res && res.success) {
             delete item._pendingSync;
+            await this._idbDeletePhotoJob('ADD_' + String(item.id).trim().toUpperCase());
           }
         } catch (e) {
         } finally {
@@ -1931,7 +2240,7 @@ class AduanDataStore {
             keysToRemove.push(k);
           }
         }
-        keysToRemove.forEach(k => { try { localStorage.removeItem(k); } catch (ign) {} });
+        keysToRemove.forEach(k => { try { localStorage.removeItem(k); } catch (ign) { } });
 
         // Pangkas Base64 dari aduan lama selain aduan paling baru
         const pruned = (this.aduanList || []).map((item, idx) => {
@@ -1964,7 +2273,7 @@ class AduanDataStore {
     try {
       const stats = this.getStats();
       localStorage.setItem('dlh_cached_hero_stats', JSON.stringify(stats));
-    } catch (e) {}
+    } catch (e) { }
   }
 
   getAll() {
@@ -2021,7 +2330,7 @@ class AduanDataStore {
     this.aduanList = [];
     this.save();
     LEGACY_STORAGE_KEYS.forEach(k => {
-      try { localStorage.removeItem(k); } catch (e) {}
+      try { localStorage.removeItem(k); } catch (e) { }
     });
     if (window.dlhRealtime) {
       window.dlhRealtime.broadcast('DATA_RESET', { count: 0 });
@@ -2035,7 +2344,7 @@ class AduanDataStore {
     this.aduanList = [];
     this.save();
     LEGACY_STORAGE_KEYS.forEach(k => {
-      try { localStorage.removeItem(k); } catch (e) {}
+      try { localStorage.removeItem(k); } catch (e) { }
     });
 
     // 2. Broadcast ke semua tab & perangkat lokal secara instan (0-latency)
@@ -2136,15 +2445,15 @@ class AduanDataStore {
         if (photoStr && typeof photoStr === 'string' && photoStr.startsWith('data:image') && photoStr.length < 450000) {
           try {
             localStorage.setItem('dlh_photo_cache_' + newId + '_' + idx, photoStr);
-          } catch (e) {}
+          } catch (e) { }
         }
       });
       for (let i = mergedPhotos.length; i < 6; i++) {
         try {
           localStorage.removeItem('dlh_photo_cache_' + newId + '_' + i);
-        } catch (e) {}
+        } catch (e) { }
       }
-    } catch (e) {}
+    } catch (e) { }
 
     const newRecord = {
       id: newId,
@@ -2217,15 +2526,33 @@ class AduanDataStore {
         payloadToSend.buktiFotoList = [fotoUtama];
       }
 
+      const hasBase64Citizen = (payloadToSend.buktiFotoList || []).some(p => typeof p === 'string' && p.startsWith('data:image'));
+      const queueKey = 'ADD_' + newId;
+      if (hasBase64Citizen) {
+        await Promise.race([
+          this._idbPutPhotoJob({
+            queueKey: queueKey,
+            type: 'citizen',
+            id: newId,
+            payload: payloadToSend,
+            createdAt: Date.now()
+          }),
+          new Promise(r => setTimeout(r, 80))
+        ]);
+      }
+
       const sendPromise = this.postToGAS('addAduan', payloadToSend);
 
-      // Tangani penyelesaian request secara asynchronous mandiri
-      sendPromise.then(res => {
+      // Tangani penyelesaian request di latar belakang tanpa menahan tampilan tiket baru
+      sendPromise.then(async (res) => {
         const idx = this.aduanList.findIndex(x => x.id === newId);
         if (idx !== -1) {
           delete this.aduanList[idx]._syncingNow;
           if (res && res.success) {
             delete this.aduanList[idx]._pendingSync;
+            if (hasBase64Citizen) {
+              await this._idbDeletePhotoJob(queueKey);
+            }
             const remoteData = (res.response && res.response.data) ? res.response.data : null;
             if (remoteData && remoteData.linkFoto && remoteData.linkFoto.startsWith('http')) {
               this.aduanList[idx].fotoBukti = remoteData.fotoBukti || remoteData.linkFoto;
@@ -2238,7 +2565,7 @@ class AduanDataStore {
           }
         }
       }).catch(err => {
-        console.warn('Gagal sinkron instan ke Google Apps Script, antrean pending aktif:', err);
+        console.warn('Gagal sinkron instan ke Google Apps Script, antrean IndexedDB aktif:', err);
         const idx = this.aduanList.findIndex(x => x.id === newId);
         if (idx !== -1) {
           delete this.aduanList[idx]._syncingNow;
@@ -2247,11 +2574,13 @@ class AduanDataStore {
         this._activeSyncIds.delete(newId);
       });
 
-      // Tunggu respons GAS dengan batas waktu aman agar data dipastikan sampai sebelum UI berpindah
-      try {
-        const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ timeout: true }), 25000));
-        await Promise.race([sendPromise, timeoutPromise]);
-      } catch (err) {}
+      // Two-Phase Instant Commit: jika ada unggahan foto Base64, kembalikan tiket seketika agar UI tidak tertahan
+      if (!hasBase64Citizen) {
+        try {
+          const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ timeout: true }), 2500));
+          await Promise.race([sendPromise, timeoutPromise]);
+        } catch (err) { }
+      }
     }
 
     return newRecord;
@@ -2298,12 +2627,12 @@ class AduanDataStore {
       try {
         localStorage.removeItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + k);
         localStorage.removeItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_PETUGAS_' + k);
-      } catch (e) {}
+      } catch (e) { }
     }
     try {
       localStorage.removeItem('dlh_photo_cache_' + cleanId + '_PETUGAS');
       localStorage.removeItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_PETUGAS');
-    } catch (e) {}
+    } catch (e) { }
 
     // Simpan salinan cadangan foto Base64 petugas yang baru ke cache lokal
     fotoList.forEach((photoStr, idx) => {
@@ -2311,9 +2640,15 @@ class AduanDataStore {
         try {
           localStorage.setItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + idx, photoStr);
           if (idx === 0) localStorage.setItem('dlh_photo_cache_' + cleanId + '_PETUGAS', photoStr);
-        } catch (e) {}
+        } catch (e) { }
       }
     });
+
+    const explicitOfficerPhotoClear = Boolean(
+      (Array.isArray(updateData.fotoVerifikasiList) && updateData.fotoVerifikasiList.length === 0) ||
+      (updateData.fotoKondisiRiil === '' && !Array.isArray(updateData.fotoVerifikasiList))
+    );
+    const hasBase64Officer = fotoList.some(p => typeof p === 'string' && p.startsWith('data:image'));
 
     const updatedRecord = {
       ...existing,
@@ -2327,7 +2662,7 @@ class AduanDataStore {
       checklistVerifikasi: (() => {
         let chk = updateData.checklistVerifikasi !== undefined ? updateData.checklistVerifikasi : (existing.checklistVerifikasi || []);
         if (typeof chk === 'string' && chk.trim().startsWith('[')) {
-          try { chk = JSON.parse(chk); } catch (e) {}
+          try { chk = JSON.parse(chk); } catch (e) { }
         }
         return chk;
       })(),
@@ -2343,6 +2678,8 @@ class AduanDataStore {
       uraianHambatan: updateData.uraianHambatan !== undefined ? String(updateData.uraianHambatan || '') : (existing.uraianHambatan || ''),
       fotoKondisiRiil: fotoUtama,
       fotoVerifikasiList: fotoList,
+      ...(fotoUtama ? { fotoPetugas: fotoUtama } : {}),
+      _officerPhotoCleared: explicitOfficerPhotoClear ? true : (fotoList.length > 0 ? false : Boolean(existing._officerPhotoCleared)),
       // Timestamps akuntabilitas kinerja
       timestampVerifikasi: timestampVerifikasi,
       timestampTindakLanjut: timestampTindakLanjut,
@@ -2362,10 +2699,10 @@ class AduanDataStore {
       window.dlhRealtime.broadcast('TINDAK_LANJUT_UPDATED', { id: cleanId, item: updatedRecord, updateData: updateData });
     }
 
-    // Kirim sinkronisasi langsung ke Google Apps Script dan tunggu responsnya
+    // Two-Phase Instant Commit ke Google Apps Script + IndexedDB Photo Queue
     if (this.hasGasConfigured()) {
       try {
-        const payload = {
+        const metaPayload = {
           id: cleanId,
           status: updatedRecord.status,
           petugasVerifikasi: updatedRecord.petugasVerifikasi,
@@ -2377,21 +2714,66 @@ class AduanDataStore {
           catatanBeritaAcara: updatedRecord.catatanBeritaAcara,
           alasanTidakDitindaklanjuti: updatedRecord.alasanTidakDitindaklanjuti,
           kesimpulanPetugas: updatedRecord.kesimpulanPetugas,
-          fotoKondisiRiil: updatedRecord.fotoKondisiRiil,
-          fotoVerifikasiList: updatedRecord.fotoVerifikasiList,
           timestampVerifikasi: updatedRecord.timestampVerifikasi,
           timestampTindakLanjut: updatedRecord.timestampTindakLanjut,
           timestampSelesai: updatedRecord.timestampSelesai
         };
-        const res = await this.postToGAS('updateVerifikasi', payload);
-        if (res && res.success) {
-          const freshIdx = this.aduanList.findIndex(x => String(x.id).trim().toUpperCase() === cleanId);
-          if (freshIdx !== -1) {
-            delete this.aduanList[freshIdx]._pendingOfficerSync;
-            this.save();
+
+        if (hasBase64Officer) {
+          // Phase 1: Simpan foto penuh ke IndexedDB & kirim metadata ringan terlebih dahulu
+          const officerQueueKey = 'VERIF_' + cleanId;
+          const photoOnlyPayload = {
+            id: cleanId,
+            petugasVerifikasi: updatedRecord.petugasVerifikasi,
+            fotoKondisiRiil: updatedRecord.fotoKondisiRiil,
+            fotoVerifikasiList: updatedRecord.fotoVerifikasiList
+          };
+          await Promise.race([
+            this._idbPutPhotoJob({
+              queueKey: officerQueueKey,
+              type: 'officer',
+              id: cleanId,
+              payload: photoOnlyPayload,
+              createdAt: Date.now()
+            }),
+            new Promise(r => setTimeout(r, 80))
+          ]);
+
+          const metaRes = await this.postToGAS('updateVerifikasi', metaPayload);
+          if (metaRes && metaRes.success) {
+            // Phase 2: Unggah foto Base64 petugas di latar belakang (tanpa menahan UI)
+            this.postToGAS('updateVerifikasi', photoOnlyPayload).then(async (photoRes) => {
+              if (photoRes && photoRes.success) {
+                await this._idbDeletePhotoJob(officerQueueKey);
+                const freshIdx = this.aduanList.findIndex(x => String(x.id).trim().toUpperCase() === cleanId);
+                if (freshIdx !== -1) {
+                  delete this.aduanList[freshIdx]._pendingOfficerSync;
+                  this.save();
+                }
+                setTimeout(() => this.syncFromGAS(true), 300);
+              }
+            }).catch(err => console.warn('Gagal unggah latar belakang foto petugas, antrean IndexedDB aktif:', err));
           }
-          // Segera lakukan sinkronisasi background untuk mengambil URL teranyar dari server
-          setTimeout(() => this.syncFromGAS(true), 300);
+        } else {
+          const payload = {
+            ...metaPayload,
+            ...(Array.isArray(updateData.fotoVerifikasiList) || updateData.fotoKondisiRiil !== undefined
+              ? {
+                fotoKondisiRiil: updatedRecord.fotoKondisiRiil,
+                fotoVerifikasiList: updatedRecord.fotoVerifikasiList
+              }
+              : {})
+          };
+          const res = await this.postToGAS('updateVerifikasi', payload);
+          if (res && res.success) {
+            const freshIdx = this.aduanList.findIndex(x => String(x.id).trim().toUpperCase() === cleanId);
+            if (freshIdx !== -1) {
+              delete this.aduanList[freshIdx]._pendingOfficerSync;
+              this.save();
+            }
+            // Segera lakukan sinkronisasi background untuk mengambil URL teranyar dari server
+            setTimeout(() => this.syncFromGAS(true), 300);
+          }
         }
       } catch (err) {
         console.warn('Gagal kirim updateVerifikasi ke GAS, tetap tersimpan lokal dengan status pending:', err);
@@ -2427,19 +2809,19 @@ class AduanDataStore {
       try {
         localStorage.removeItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + k);
         localStorage.removeItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_PETUGAS_' + k);
-      } catch (e) {}
+      } catch (e) { }
     }
     try {
       localStorage.removeItem('dlh_photo_cache_' + cleanId + '_PETUGAS');
       localStorage.removeItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_PETUGAS');
-    } catch (e) {}
+    } catch (e) { }
 
     currentPhotos.forEach((p, pIdx) => {
       if (p && typeof p === 'string' && p.startsWith('data:image')) {
         try {
           localStorage.setItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + pIdx, p);
           if (pIdx === 0) localStorage.setItem('dlh_photo_cache_' + cleanId + '_PETUGAS', p);
-        } catch (e) {}
+        } catch (e) { }
       }
     });
 
@@ -2447,6 +2829,8 @@ class AduanDataStore {
       ...existing,
       fotoKondisiRiil: newFotoUtama,
       fotoVerifikasiList: currentPhotos,
+      fotoPetugas: newFotoUtama,
+      _officerPhotoCleared: currentPhotos.length === 0,
       _pendingOfficerSync: true,
       _lastOfficerEditTime: Date.now()
     };
@@ -2552,7 +2936,7 @@ class AduanDataStore {
   getStats() {
     this._deduplicateList();
     const cleanList = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id));
-    
+
     // Jika list lokal masih kosong (misal baru buka laman warga pada sinyal lemah),
     // gunakan remoteStats dari Google Spreadsheet atau cache statistik lokal yang tersimpan
     if (cleanList.length === 0) {
@@ -2567,7 +2951,7 @@ class AduanDataStore {
             return parsed;
           }
         }
-      } catch (e) {}
+      } catch (e) { }
     }
 
     const total = cleanList.length;
@@ -2630,7 +3014,7 @@ class AduanDataStore {
 
     try {
       localStorage.setItem('dlh_cached_hero_stats', JSON.stringify(computed));
-    } catch (e) {}
+    } catch (e) { }
 
     return computed;
   }
@@ -2728,18 +3112,21 @@ class AduanDataStore {
 }
 
 // Global instance & prototype safeguards
-AduanDataStore.prototype.mapRemoteRecord = function(remoteItem) {
+AduanDataStore.prototype.mapRemoteRecord = function (remoteItem) {
   return mapRemoteAduanRecord(remoteItem, this.aduanList, (id) => this.isDeleted(id));
 };
 window.mapRemoteAduanRecord = mapRemoteAduanRecord;
 window.AduanDataStore = AduanDataStore;
 window.aduanStore = new AduanDataStore();
+window.initRealtimeDoorbell = function (forceReconnect = false) {
+  return window.aduanStore ? window.aduanStore.initRealtimeDoorbell(forceReconnect) : null;
+};
 
 /**
  * Global Self-Healing Handler untuk kegagalan load gambar foto bukti
  * Mencari cadangan thumbnail Drive, local cache Base64, dan fetch async dari GAS
  */
-window.handleAduanPhotoError = function(imgEl, aduanId, photoIdx, isOfficerParam) {
+window.handleAduanPhotoError = function (imgEl, aduanId, photoIdx, isOfficerParam) {
   if (!imgEl) return;
   const cleanId = String(aduanId || '').trim().toUpperCase();
   const idx = parseInt(photoIdx || '0', 10) || 0;
@@ -2754,18 +3141,18 @@ window.handleAduanPhotoError = function(imgEl, aduanId, photoIdx, isOfficerParam
   try {
     const cached = isOfficer
       ? (localStorage.getItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + idx) ||
-         localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_PETUGAS_' + idx) ||
-         (idx === 0 ? (localStorage.getItem('dlh_photo_cache_' + cleanId + '_PETUGAS') || localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_PETUGAS')) : null))
+        localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_PETUGAS_' + idx) ||
+        (idx === 0 ? (localStorage.getItem('dlh_photo_cache_' + cleanId + '_PETUGAS') || localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_PETUGAS')) : null))
       : (localStorage.getItem('dlh_photo_cache_' + cleanId + '_' + idx) ||
-         localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_' + idx) ||
-         (idx === 0 ? (localStorage.getItem('dlh_photo_cache_' + cleanId) || localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase())) : null));
+        localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_' + idx) ||
+        (idx === 0 ? (localStorage.getItem('dlh_photo_cache_' + cleanId) || localStorage.getItem('dlh_photo_cache_' + cleanId.toLowerCase())) : null));
     if (cached && cached.startsWith('data:image')) {
       imgEl.src = cached;
       imgEl.style.display = 'block';
       if (imgEl.nextElementSibling) imgEl.nextElementSibling.style.display = 'none';
       return;
     }
-  } catch(e) {}
+  } catch (e) { }
 
   // 2. Coba alternatif Google Drive URL tanpa referrer jika ada fileId terdeteksi
   const orig = imgEl.dataset.original || imgEl.src || '';

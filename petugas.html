@@ -5487,6 +5487,9 @@
               <em>DLH Lembata — Transparan &bull; Akuntabel &bull; Tanggap</em>
             </div>
           </div>
+          <div class="sync-footer-note" style="padding: 8px 18px 12px; font-size: 0.74rem; color: #64748b; font-style: italic; line-height: 1.5; border-top: 1px dashed #e2e8f0; background: #f8fafc;">
+            * Catatan Sinkronisasi: Sistem menerapkan sinkronisasi real-time lintas perangkat berbasis sinyal push otomatis melalui server, dengan perlindungan antrean aman untuk seluruh lampiran foto.
+          </div>
         </section>
 
       </div> <!-- /#commandCenterLayout (Split-Screen Wrapper) -->
@@ -11436,15 +11439,21 @@
         const btnSyncNow = document.getElementById('btnTriggerSyncNow');
         const btnReset = document.getElementById('btnResetDefaultData');
 
-        this.updateStatusIndicator = () => {
+        this.updateStatusIndicator = (overrideTimestamp = null) => {
           const isConfigured = window.aduanStore && window.aduanStore.hasGasConfigured();
           const dot = document.getElementById('cloudStatusDot');
           const txt = document.getElementById('cloudStatusText');
           const dtl = document.getElementById('cloudStatusDetail');
           const topClock = document.getElementById('topLastSyncClock');
-          const syncTime = (window.aduanStore && typeof window.aduanStore.getFormattedLastSync === 'function')
+          let syncTime = (window.aduanStore && typeof window.aduanStore.getFormattedLastSync === 'function')
             ? window.aduanStore.getFormattedLastSync()
             : null;
+          if (!syncTime && overrideTimestamp) {
+            const d = (overrideTimestamp instanceof Date) ? overrideTimestamp : new Date(overrideTimestamp);
+            if (!isNaN(d.getTime())) {
+              syncTime = `${String(d.getHours()).padStart(2, '0')}:${String(d.getMinutes()).padStart(2, '0')}:${String(d.getSeconds()).padStart(2, '0')}`;
+            }
+          }
 
           if (isConfigured) {
             if (dot) dot.style.background = '#10b981';
@@ -11683,8 +11692,10 @@
           }
         });
 
-        window.addEventListener('aduanDataSynced', () => {
-          if (typeof this.updateStatusIndicator === 'function') this.updateStatusIndicator();
+        window.addEventListener('aduanDataSynced', (e) => {
+          if (typeof this.updateStatusIndicator === 'function') {
+            this.updateStatusIndicator(e && e.detail ? e.detail.timestamp : null);
+          }
           reloadAll();
         });
 

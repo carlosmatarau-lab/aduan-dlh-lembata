@@ -37,6 +37,7 @@ const SHEET_NAME_ADUAN = 'Data_Aduan';
 const SHEET_NAME_LOG = 'Log_Aktivitas';
 const SHEET_NAME_FOTO = 'Foto_Storage';
 const DEFAULT_GAS_URL = 'https://script.google.com/macros/s/AKfycbwuDJ9X5a27GnVuuiU1keHexKXzG3OITUxwOomwHGt-1S53DdqfAfguDInXwtbh9ljKMw/exec';
+const FIREBASE_SIGNAL_URL = 'https://ecoadu-lembata-signal-default-rtdb.asia-southeast1.firebasedatabase.app/ecoadu_signal.json';
 
 // ===== KONFIGURASI KEAMANAN & AUTENTIKASI PETUGAS =====
 const SCRIPT_PROP_KEY_TOKEN = 'AUTH_SECRET_TOKEN';
@@ -384,10 +385,62 @@ function doPost(e) {
         result = { success: false, error: 'Aksi POST tidak dikenali: ' + action };
     }
 
+    const doorbellActions = [
+      'addAduan',
+      'updateVerifikasi',
+      'deleteAduan',
+      'deleteOfficerPhoto',
+      'resetData',
+      'resetToZero'
+    ];
+    if (result && result.success && doorbellActions.includes(action)) {
+      const targetTicketId =
+        (result.data && result.data.id) ||
+        (body && body.data && body.data.id) ||
+        (body && body.id) ||
+        '';
+      bunyikanBelSinkronisasi_(action, targetTicketId);
+    }
+
     return createJsonResponse(result);
 
   } catch (err) {
     return createJsonResponse({ success: false, error: err.message });
+  }
+}
+
+
+// ==================================================================================
+// FUNGSI SINYAL BEL PINTU REAL-TIME (FIREBASE RTDB)
+// ==================================================================================
+
+/**
+ * Mengirim sinyal stempel waktu terbaru ke Firebase Realtime Database
+ * menggunakan metode PUT non-blocking agar seluruh klien aktif langsung menyinkronkan data.
+ */
+function bunyikanBelSinkronisasi_(aksi, ticketId) {
+  try {
+    if (!FIREBASE_SIGNAL_URL) return false;
+    const payload = {
+      ts: Date.now(),
+      aksi: String(aksi || ''),
+      ticketId: String(ticketId || '')
+    };
+    const res = UrlFetchApp.fetch(FIREBASE_SIGNAL_URL, {
+      method: 'put',
+      contentType: 'application/json',
+      payload: JSON.stringify(payload),
+      muteHttpExceptions: true
+    });
+    const code = res && res.getResponseCode ? res.getResponseCode() : 0;
+    if (code >= 200 && code < 300) {
+      return true;
+    }
+    Logger.log('[bunyikanBelSinkronisasi_] HTTP ' + code + ': ' + (res && res.getContentText ? res.getContentText() : ''));
+    return false;
+  } catch (err) {
+    Logger.log('[bunyikanBelSinkronisasi_] Non-blocking error: ' + err.message);
+    return false;
   }
 }
 
