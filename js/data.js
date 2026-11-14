@@ -957,7 +957,7 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
       if (!rawVal || typeof rawVal !== 'string') return;
       const trimmed = rawVal.trim();
       if (!trimmed || trimmed === '-' || trimmed === 'null') return;
-      const matches = trimmed.match(/(data:image\/[a-zA-Z0-9\+\/\-\.]+;base64,[A-Za-z0-9\+\/\=]+|https?:\/\/[^\s,]+)/g);
+      const matches = trimmed.match(/(data:image\/[^;]+;base64,[^,\s]+|https?:\/\/[^\s,]+)/g);
       if (matches && matches.length > 0) {
         matches.forEach(m => pushUnique(m));
       } else if (trimmed.startsWith('data:') || trimmed.startsWith('http')) {
@@ -1056,8 +1056,10 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
 
   // Optimistic Grace Period (12 detik = 12000 ms) untuk mencegah respons getAll usang mengembalikan status lama
   const OPTIMISTIC_GRACE_MS = 12000;
+  const isFromServerGetAll = Boolean(remoteItem && remoteItem._fromServerGetAll);
   const hasPendingOfficer = Boolean(existing && existing._pendingOfficerSync);
   const isRecentEdit = Boolean(existing && existing._lastOfficerEditTime && (Date.now() - existing._lastOfficerEditTime < OPTIMISTIC_GRACE_MS));
+  const isLocalRecentOfficerEdit = Boolean(hasPendingOfficer || isRecentEdit);
   const isRecentLocalAdd = Boolean(existing && existing._lastLocalEditTime && (Date.now() - existing._lastLocalEditTime < OPTIMISTIC_GRACE_MS));
   const isUnverifiedStVal = (st) => {
     const s = String(st || '').trim();
@@ -1080,7 +1082,14 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     isRecentEdit ||
     (existingIsVerified && remoteIsUnverified)
   );
-  const wasExplicitlyCleared = Boolean(existing && existing._officerPhotoCleared);
+  const remoteExplicitPhotoClear = Boolean(
+    remoteItem._officerPhotoCleared ||
+    (remoteItem.officerPhotoCount !== undefined && remoteItem.officerPhotoCount !== null && Number(remoteItem.officerPhotoCount) === 0)
+  );
+  const wasExplicitlyCleared = Boolean(
+    remoteExplicitPhotoClear ||
+    (!isFromServerGetAll && existing && existing._officerPhotoCleared && resolvedOfficerPhotos.length === 0)
+  );
   const finalStatus = isTidakDapatLegacyCompat
     ? 'Tidak Dapat Ditindaklanjuti'
     : ((protectOptimisticOfficer && existing && existing.status)
@@ -1088,14 +1097,39 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
       : (remoteItem.status || 'Baru'));
   const isFinalUnverified = isUnverifiedStVal(finalStatus);
 
-  // Konsolidasi foto kondisi riil petugas dengan Non-Destructive Safe Merge (Terisolasi dari Foto Warga)
+  // Konsolidasi foto kondisi riil petugas dengan Non-Destructive Safe Merge & Akurasi Lintas Perangkat (Terisolasi dari Foto Warga)
   let finalOfficerPhotos = [];
   let finalFotoRiil = '';
 
-  if (isFinalUnverified) {
+  if (isFinalUnverified || remoteExplicitPhotoClear) {
     finalOfficerPhotos = [];
     finalFotoRiil = '';
     for (let i = 0; i < 10; i++) {
+      try {
+        localStorage.removeItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + i);
+        localStorage.removeItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_PETUGAS_' + i);
+      } catch (e) { }
+    }
+  } else if (isLocalRecentOfficerEdit && (existingOfficerPhotos.length > 0 || (existing && existing._officerPhotoCleared))) {
+    // Pertahankan foto optimistik pada perangkat tempat petugas baru saja melakukan penyimpanan (< 12 detik)
+    finalOfficerPhotos = (existing && existing._officerPhotoCleared) ? [] : [...existingOfficerPhotos];
+    finalFotoRiil = finalOfficerPhotos[0] || '';
+  } else if (isFromServerGetAll) {
+    // Saat sinkronisasi penuh getAll dari server (yang selalu memindai Foto_Storage secara utuh)
+    // dan tidak ada edit lokal yang belum terkirim di perangkat ini, ikuti daftar foto petugas resmi dari server
+    // agar penambahan, penggantian, maupun penghapusan foto petugas sinkron 100% antar perangkat.
+    finalOfficerPhotos = [...resolvedOfficerPhotos];
+    finalFotoRiil = finalOfficerPhotos[0] || '';
+
+    for (let i = 0; i < finalOfficerPhotos.length; i++) {
+      if (finalOfficerPhotos[i] && finalOfficerPhotos[i].startsWith('data:image')) {
+        try {
+          localStorage.setItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + i, finalOfficerPhotos[i]);
+          if (i === 0) localStorage.setItem('dlh_photo_cache_' + cleanId + '_PETUGAS', finalOfficerPhotos[i]);
+        } catch (e) { }
+      }
+    }
+    for (let i = finalOfficerPhotos.length; i < 10; i++) {
       try {
         localStorage.removeItem('dlh_photo_cache_' + cleanId + '_PETUGAS_' + i);
         localStorage.removeItem('dlh_photo_cache_' + cleanId.toLowerCase() + '_PETUGAS_' + i);
@@ -1117,6 +1151,9 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
         }
       }
     }
+    if (remoteItem.officerPhotoCount !== undefined && remoteItem.officerPhotoCount !== null && Number(remoteItem.officerPhotoCount) >= 0) {
+      finalOfficerPhotos = finalOfficerPhotos.slice(0, Number(remoteItem.officerPhotoCount));
+    }
     finalFotoRiil = finalOfficerPhotos[0] || '';
 
     for (let i = 0; i < finalOfficerPhotos.length; i++) {
@@ -1134,8 +1171,10 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
       } catch (e) { }
     }
   } else if (!wasExplicitlyCleared && existingOfficerPhotos.length > 0) {
-    // Non-Destructive Safe Merge: server mengirim nilai kosong/null sementara lokal sudah punya foto petugas valid
-    finalOfficerPhotos = [...existingOfficerPhotos];
+    // Non-Destructive Safe Merge: sinyal delta mengirim nilai kosong/null sementara lokal sudah punya foto petugas valid
+    finalOfficerPhotos = (remoteItem.officerPhotoCount !== undefined && remoteItem.officerPhotoCount !== null && Number(remoteItem.officerPhotoCount) >= 0)
+      ? existingOfficerPhotos.slice(0, Number(remoteItem.officerPhotoCount))
+      : [...existingOfficerPhotos];
     finalFotoRiil = finalOfficerPhotos[0] || '';
   } else {
     finalOfficerPhotos = [];
@@ -1187,6 +1226,71 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     }
   }
 
+  const resolvedHasilVerif = isFinalUnverified ? '-' : (protectOptimisticOfficer ? (existing.hasilVerifikasi || '-') : (remoteItem.hasilVerifikasi || '-'));
+  const resolvedCatatanBA = isFinalUnverified ? '' : (protectOptimisticOfficer ? (existing.catatanBeritaAcara || '') : (remoteItem.catatanBeritaAcara || ''));
+
+  // Rekonstruksi otomatis checklistVerifikasi, kesimpulanPetugas, alasanTidakDitindaklanjuti, dan hambatanPemeriksaan
+  // jika bersumber dari teks terformat di Google Spreadsheet agar lintas perangkat selalu identik 100%
+  let resolvedChecklist = [];
+  if (!isFinalUnverified) {
+    if (protectOptimisticOfficer && existing && Array.isArray(existing.checklistVerifikasi) && existing.checklistVerifikasi.length > 0) {
+      resolvedChecklist = existing.checklistVerifikasi;
+    } else if (Array.isArray(remoteItem.checklistVerifikasi) && remoteItem.checklistVerifikasi.length > 0) {
+      resolvedChecklist = remoteItem.checklistVerifikasi;
+    } else if (existing && Array.isArray(existing.checklistVerifikasi) && existing.checklistVerifikasi.length > 0 && !isFromServerGetAll) {
+      resolvedChecklist = existing.checklistVerifikasi;
+    } else if (typeof resolvedHasilVerif === 'string' && resolvedHasilVerif.includes('[Hasil Verifikasi Lapangan (Daftar Periksa)')) {
+      const parsedItems = [];
+      const lineRegex = /^([1-5])\.\s+(.+?):\s+(Ya|Tidak|Tidak Relevan)(?:\s+\((.+)\))?$/gm;
+      let m;
+      while ((m = lineRegex.exec(resolvedHasilVerif)) !== null) {
+        parsedItems.push({
+          no: parseInt(m[1], 10),
+          indikator: m[2].trim(),
+          hasil: m[3].trim(),
+          keterangan: m[4] ? m[4].trim() : ''
+        });
+      }
+      if (parsedItems.length > 0) resolvedChecklist = parsedItems;
+      else if (existing && Array.isArray(existing.checklistVerifikasi)) resolvedChecklist = existing.checklistVerifikasi;
+    } else if (existing && Array.isArray(existing.checklistVerifikasi)) {
+      resolvedChecklist = existing.checklistVerifikasi;
+    }
+  }
+
+  let resolvedKesimpulan = '';
+  if (!isFinalUnverified) {
+    if (protectOptimisticOfficer && existing && existing.kesimpulanPetugas) {
+      resolvedKesimpulan = existing.kesimpulanPetugas;
+    } else if (remoteItem.kesimpulanPetugas) {
+      resolvedKesimpulan = remoteItem.kesimpulanPetugas;
+    } else if (typeof resolvedHasilVerif === 'string') {
+      const mKes = resolvedHasilVerif.match(/\[Hasil Verifikasi Lapangan \(Daftar Periksa\)\s*—\s*Kesimpulan:\s*([^\]]+)\]/i);
+      if (mKes && mKes[1]) resolvedKesimpulan = mKes[1].trim();
+    }
+    if (!resolvedKesimpulan && existing && existing.kesimpulanPetugas) {
+      resolvedKesimpulan = existing.kesimpulanPetugas;
+    }
+  }
+
+  let resolvedAlasanTidak = isFinalUnverified ? '' : (protectOptimisticOfficer ? (existing && existing.alasanTidakDitindaklanjuti || '') : (remoteItem.alasanTidakDitindaklanjuti || (existing ? existing.alasanTidakDitindaklanjuti : '') || ''));
+  if (!isFinalUnverified && !resolvedAlasanTidak && typeof resolvedHasilVerif === 'string') {
+    const mAlasan = resolvedHasilVerif.match(/\[Alasan Tidak Dapat Ditindaklanjuti:\s*([^\]]+)\]/i);
+    if (mAlasan && mAlasan[1]) resolvedAlasanTidak = mAlasan[1].trim();
+  }
+
+  let resolvedHambatanFlag = isFinalUnverified ? false : (protectOptimisticOfficer ? Boolean(existing && existing.hambatanPemeriksaan) : (remoteItem.hambatanPemeriksaan !== undefined ? Boolean(remoteItem.hambatanPemeriksaan) : Boolean(existing && existing.hambatanPemeriksaan)));
+  let resolvedJenisHambatan = isFinalUnverified ? '' : (protectOptimisticOfficer ? (existing && existing.jenisHambatan || '') : (remoteItem.jenisHambatan || (existing ? existing.jenisHambatan : '') || ''));
+  let resolvedUraianHambatan = isFinalUnverified ? '' : (protectOptimisticOfficer ? (existing && existing.uraianHambatan || '') : (remoteItem.uraianHambatan || (existing ? existing.uraianHambatan : '') || ''));
+  if (!isFinalUnverified && typeof resolvedCatatanBA === 'string' && resolvedCatatanBA.includes('[HAMBATAN PEMERIKSAAN LAPANGAN')) {
+    resolvedHambatanFlag = true;
+    const mHam = resolvedCatatanBA.match(/\[HAMBATAN PEMERIKSAAN LAPANGAN\s*-\s*([^\]]+)\]:\s*([^\n]+)/i);
+    if (mHam) {
+      if (!resolvedJenisHambatan && mHam[1]) resolvedJenisHambatan = mHam[1].trim();
+      if (!resolvedUraianHambatan && mHam[2]) resolvedUraianHambatan = mHam[2].trim();
+    }
+  }
+
   return {
     id: cleanId,
     timestamp: remoteItem.timestamp || '-',
@@ -1214,23 +1318,23 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     status: finalStatus,
     petugasVerifikasi: isFinalUnverified ? '-' : (protectOptimisticOfficer ? (existing.petugasVerifikasi || '-') : (remoteItem.petugasVerifikasi || '-')),
     tanggalVerifikasi: isFinalUnverified ? '-' : (protectOptimisticOfficer ? (existing.tanggalVerifikasi || '-') : (remoteItem.tanggalVerifikasi || '-')),
-    hasilVerifikasi: isFinalUnverified ? '-' : (protectOptimisticOfficer ? (existing.hasilVerifikasi || '-') : (remoteItem.hasilVerifikasi || '-')),
+    hasilVerifikasi: resolvedHasilVerif,
     tindakanDLH: isFinalUnverified ? '-' : (protectOptimisticOfficer ? (existing.tindakanDLH || '-') : (remoteItem.tindakanDLH || '-')),
     tanggalSelesai: isFinalUnverified ? '-' : (protectOptimisticOfficer ? (existing.tanggalSelesai || '-') : (remoteItem.tanggalSelesai || '-')),
     nomorBeritaAcara: isFinalUnverified ? '' : (protectOptimisticOfficer ? (existing.nomorBeritaAcara || '') : (remoteItem.nomorBeritaAcara || '')),
-    catatanBeritaAcara: isFinalUnverified ? '' : (protectOptimisticOfficer ? (existing.catatanBeritaAcara || '') : (remoteItem.catatanBeritaAcara || '')),
-    alasanTidakDitindaklanjuti: isFinalUnverified ? '' : (protectOptimisticOfficer ? (existing && existing.alasanTidakDitindaklanjuti || '') : (remoteItem.alasanTidakDitindaklanjuti || (existing ? existing.alasanTidakDitindaklanjuti : '') || '')),
+    catatanBeritaAcara: resolvedCatatanBA,
+    alasanTidakDitindaklanjuti: resolvedAlasanTidak,
     alasanKategoriTidakDitindaklanjuti: isFinalUnverified ? '' : (protectOptimisticOfficer ? (existing && existing.alasanKategoriTidakDitindaklanjuti || '') : (remoteItem.alasanKategoriTidakDitindaklanjuti || (existing ? existing.alasanKategoriTidakDitindaklanjuti : '') || '')),
     alasanLainTidakDitindaklanjuti: isFinalUnverified ? '' : (protectOptimisticOfficer ? (existing && existing.alasanLainTidakDitindaklanjuti || '') : (remoteItem.alasanLainTidakDitindaklanjuti || (existing ? existing.alasanLainTidakDitindaklanjuti : '') || '')),
-    kesimpulanPetugas: isFinalUnverified ? '' : (protectOptimisticOfficer ? (existing && existing.kesimpulanPetugas || '') : (remoteItem.kesimpulanPetugas || (existing ? existing.kesimpulanPetugas : '') || '')),
-    checklistVerifikasi: isFinalUnverified ? [] : (protectOptimisticOfficer ? (existing.checklistVerifikasi || []) : (remoteItem.checklistVerifikasi || (existing ? existing.checklistVerifikasi : []) || [])),
-    hambatanPemeriksaan: isFinalUnverified ? false : (protectOptimisticOfficer ? Boolean(existing && existing.hambatanPemeriksaan) : (remoteItem.hambatanPemeriksaan !== undefined ? Boolean(remoteItem.hambatanPemeriksaan) : Boolean(existing && existing.hambatanPemeriksaan))),
-    jenisHambatan: isFinalUnverified ? '' : (protectOptimisticOfficer ? (existing && existing.jenisHambatan || '') : (remoteItem.jenisHambatan || (existing ? existing.jenisHambatan : '') || '')),
-    uraianHambatan: isFinalUnverified ? '' : (protectOptimisticOfficer ? (existing && existing.uraianHambatan || '') : (remoteItem.uraianHambatan || (existing ? existing.uraianHambatan : '') || '')),
+    kesimpulanPetugas: resolvedKesimpulan,
+    checklistVerifikasi: resolvedChecklist,
+    hambatanPemeriksaan: resolvedHambatanFlag,
+    jenisHambatan: resolvedJenisHambatan,
+    uraianHambatan: resolvedUraianHambatan,
     fotoKondisiRiil: finalFotoRiil,
     fotoVerifikasiList: finalOfficerPhotos,
     ...(finalFotoRiil ? { fotoPetugas: finalFotoRiil } : {}),
-    ...(wasExplicitlyCleared ? { _officerPhotoCleared: true } : {}),
+    ...((wasExplicitlyCleared && finalOfficerPhotos.length === 0) ? { _officerPhotoCleared: true } : {}),
     timestampVerifikasi: isFinalUnverified ? '' : (protectOptimisticOfficer ? (existing.timestampVerifikasi || '') : (remoteItem.timestampVerifikasi || '')),
     timestampTindakLanjut: isFinalUnverified ? '' : (protectOptimisticOfficer ? (existing.timestampTindakLanjut || '') : (remoteItem.timestampTindakLanjut || '')),
     timestampSelesai: isFinalUnverified ? '' : (protectOptimisticOfficer ? (existing.timestampSelesai || '') : (remoteItem.timestampSelesai || '')),
@@ -1238,6 +1342,7 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     riwayatTindakan: Array.isArray(remoteItem.riwayatTindakan) ? remoteItem.riwayatTindakan : (rekamTerakhir ? [rekamTerakhir] : []),
     ...(hasPendingOfficer ? { _pendingOfficerSync: true } : {}),
     ...(isRecentEdit && existing && existing._lastOfficerEditTime ? { _lastOfficerEditTime: existing._lastOfficerEditTime } : {}),
+    ...(isLocalRecentOfficerEdit && existing && existing._lastLocalOfficerSubmitTime ? { _lastLocalOfficerSubmitTime: existing._lastLocalOfficerSubmitTime } : {}),
     ...(isRecentLocalAdd && existing && existing._lastLocalEditTime ? { _lastLocalEditTime: existing._lastLocalEditTime } : {})
   };
 }
@@ -1528,13 +1633,15 @@ class AduanDataStore {
       'jenisPencemaran', 'uraian', 'status', 'petugasVerifikasi',
       'tanggalVerifikasi', 'hasilVerifikasi', 'tindakanDLH', 'tanggalSelesai',
       'nomorBeritaAcara', 'catatanBeritaAcara',
-      'alasanTidakDitindaklanjuti', 'kesimpulanPetugas',
+      'alasanTidakDitindaklanjuti', 'alasanKategoriTidakDitindaklanjuti', 'alasanLainTidakDitindaklanjuti',
+      'kesimpulanPetugas', 'jenisHambatan', 'uraianHambatan',
       'timestampVerifikasi', 'timestampTindakLanjut', 'timestampSelesai'
     ];
     const verifScalarKeys = new Set([
       'status', 'petugasVerifikasi', 'tanggalVerifikasi', 'hasilVerifikasi',
       'tindakanDLH', 'tanggalSelesai', 'nomorBeritaAcara', 'catatanBeritaAcara',
-      'alasanTidakDitindaklanjuti', 'kesimpulanPetugas',
+      'alasanTidakDitindaklanjuti', 'alasanKategoriTidakDitindaklanjuti', 'alasanLainTidakDitindaklanjuti',
+      'kesimpulanPetugas', 'jenisHambatan', 'uraianHambatan',
       'timestampVerifikasi', 'timestampTindakLanjut', 'timestampSelesai'
     ]);
     const isUnverifiedStatusVal = (st) => {
@@ -1567,6 +1674,21 @@ class AduanDataStore {
         cleanDelta[key] = delta[key];
       }
     });
+
+    if (delta.hambatanPemeriksaan !== undefined) {
+      cleanDelta.hambatanPemeriksaan = protectExistingVerif
+        ? Boolean(existing && existing.hambatanPemeriksaan)
+        : Boolean(delta.hambatanPemeriksaan);
+    }
+    if (Array.isArray(delta.checklistVerifikasi) && delta.checklistVerifikasi.length > 0 && !protectExistingVerif) {
+      cleanDelta.checklistVerifikasi = delta.checklistVerifikasi;
+    }
+    if (delta.officerPhotoCount !== undefined && delta.officerPhotoCount !== null && !protectExistingVerif) {
+      cleanDelta.officerPhotoCount = Number(delta.officerPhotoCount);
+      if (Number(delta.officerPhotoCount) === 0) {
+        cleanDelta._officerPhotoCleared = true;
+      }
+    }
 
     if (delta.lat !== undefined && delta.lat !== null && delta.lat !== '' && !isNaN(Number(delta.lat))) {
       cleanDelta.lat = Number(delta.lat);
@@ -1624,7 +1746,11 @@ class AduanDataStore {
         (Array.isArray(existing.fotoVerifikasiList) && existing.fotoVerifikasiList.some(p => typeof p === 'string' && p.startsWith('data:image')))
       )
     );
-    if (incomingOfficerUrl && !existingHasBase64Officer) {
+    if (cleanDelta._officerPhotoCleared) {
+      cleanDelta.fotoKondisiRiil = '';
+      cleanDelta.fotoVerifikasiList = [];
+      delete cleanDelta.fotoPetugas;
+    } else if (incomingOfficerUrl && !existingHasBase64Officer) {
       cleanDelta.fotoKondisiRiil = incomingOfficerUrl;
       cleanDelta.fotoPetugas = incomingOfficerUrl;
       if (!existing || !Array.isArray(existing.fotoVerifikasiList) || existing.fotoVerifikasiList.length === 0) {
@@ -1633,7 +1759,9 @@ class AduanDataStore {
     } else if (existing) {
       if (existing.fotoKondisiRiil) cleanDelta.fotoKondisiRiil = existing.fotoKondisiRiil;
       if (Array.isArray(existing.fotoVerifikasiList) && existing.fotoVerifikasiList.length > 0) {
-        cleanDelta.fotoVerifikasiList = [...existing.fotoVerifikasiList];
+        cleanDelta.fotoVerifikasiList = (cleanDelta.officerPhotoCount !== undefined && Number(cleanDelta.officerPhotoCount) >= 0)
+          ? existing.fotoVerifikasiList.slice(0, Number(cleanDelta.officerPhotoCount))
+          : [...existing.fotoVerifikasiList];
       }
       if (existing.fotoPetugas) cleanDelta.fotoPetugas = existing.fotoPetugas;
     }
@@ -1688,10 +1816,6 @@ class AduanDataStore {
       const mergedInput = this._mergeSafeDeltaWithExisting(signal.delta, existing);
       const mapped = mapRemoteAduanRecord(mergedInput, this.aduanList, (id) => this.isDeleted(id));
       if (!mapped) return false;
-
-      if (signal.aksi === 'updateVerifikasi' || (mapped.status && mapped.status !== 'Baru' && mapped.status !== 'Aduan Diterima')) {
-        mapped._lastOfficerEditTime = Date.now();
-      }
 
       if (existingIdx !== -1) {
         this.aduanList[existingIdx] = mapped;
@@ -2250,8 +2374,8 @@ class AduanDataStore {
             const serverIdSet = new Set(validItems.map(item => String(item.id).trim().toUpperCase()));
 
             const mapFn = typeof this.mapRemoteRecord === 'function'
-              ? (item) => this.mapRemoteRecord(item)
-              : (item) => mapRemoteAduanRecord(item, this.aduanList, (id) => this.isDeleted(id));
+              ? (item) => this.mapRemoteRecord(item && typeof item === 'object' ? { ...item, _fromServerGetAll: true } : item)
+              : (item) => mapRemoteAduanRecord(item && typeof item === 'object' ? { ...item, _fromServerGetAll: true } : item, this.aduanList, (id) => this.isDeleted(id));
             const mappedServerItems = validItems.map(mapFn).filter(Boolean);
             // Deduplikasi item dari server (Cegah kemunculan 2 laporan untuk 1 aduan)
             const seenIds = new Set();
@@ -2367,6 +2491,10 @@ class AduanDataStore {
     let pushedCount = 0;
     for (const item of (this.aduanList || [])) {
       if (item && item._pendingOfficerSync) {
+        const cleanId = String(item.id || '').trim().toUpperCase();
+        if (this._activeSyncIds && this._activeSyncIds.has(cleanId)) {
+          continue;
+        }
         try {
           await this.postToGAS('updateVerifikasi', {
             id: item.id,
@@ -2378,8 +2506,16 @@ class AduanDataStore {
             tanggalSelesai: item.tanggalSelesai,
             nomorBeritaAcara: item.nomorBeritaAcara,
             catatanBeritaAcara: item.catatanBeritaAcara,
+            alasanTidakDitindaklanjuti: item.alasanTidakDitindaklanjuti,
+            kesimpulanPetugas: item.kesimpulanPetugas,
+            checklistVerifikasi: item.checklistVerifikasi,
+            hambatanPemeriksaan: item.hambatanPemeriksaan,
+            jenisHambatan: item.jenisHambatan,
+            uraianHambatan: item.uraianHambatan,
             fotoKondisiRiil: item.fotoKondisiRiil,
             fotoVerifikasiList: item.fotoVerifikasiList,
+            explicitPhotoClear: Boolean(item._officerPhotoCleared),
+            skipWaNotification: true,
             timestampVerifikasi: item.timestampVerifikasi,
             timestampTindakLanjut: item.timestampTindakLanjut,
             timestampSelesai: item.timestampSelesai
@@ -3031,7 +3167,8 @@ class AduanDataStore {
       timestampTindakLanjut: timestampTindakLanjut,
       timestampSelesai: timestampSelesai,
       _pendingOfficerSync: true,
-      _lastOfficerEditTime: Date.now()
+      _lastOfficerEditTime: Date.now(),
+      _lastLocalOfficerSubmitTime: Date.now()
     };
 
     const curIdx = this.aduanList.findIndex(item => String(item.id).trim().toUpperCase() === cleanId);
@@ -3044,6 +3181,12 @@ class AduanDataStore {
     if (window.dlhRealtime) {
       window.dlhRealtime.broadcast('TINDAK_LANJUT_UPDATED', { id: cleanId, item: updatedRecord, updateData: updateData });
     }
+
+    // Pancarkan sinyal bel real-time lintas perangkat (0 ms delay untuk status & metadata SOP 2.0)
+    this._ringFirebaseDoorbellFromClient('updateVerifikasi', cleanId, updatedRecord, {
+      officerPhotoCount: fotoList.length,
+      photoReady: !hasBase64Officer
+    });
 
     // Two-Phase Instant Commit ke Google Apps Script + IndexedDB Photo Queue
     if (this.hasGasConfigured()) {
@@ -3059,7 +3202,14 @@ class AduanDataStore {
           nomorBeritaAcara: updatedRecord.nomorBeritaAcara,
           catatanBeritaAcara: updatedRecord.catatanBeritaAcara,
           alasanTidakDitindaklanjuti: updatedRecord.alasanTidakDitindaklanjuti,
+          alasanKategoriTidakDitindaklanjuti: updatedRecord.alasanKategoriTidakDitindaklanjuti,
+          alasanLainTidakDitindaklanjuti: updatedRecord.alasanLainTidakDitindaklanjuti,
           kesimpulanPetugas: updatedRecord.kesimpulanPetugas,
+          checklistVerifikasi: updatedRecord.checklistVerifikasi,
+          hambatanPemeriksaan: updatedRecord.hambatanPemeriksaan,
+          jenisHambatan: updatedRecord.jenisHambatan,
+          uraianHambatan: updatedRecord.uraianHambatan,
+          explicitPhotoClear: explicitOfficerPhotoClear,
           timestampVerifikasi: updatedRecord.timestampVerifikasi,
           timestampTindakLanjut: updatedRecord.timestampTindakLanjut,
           timestampSelesai: updatedRecord.timestampSelesai
@@ -3109,6 +3259,12 @@ class AduanDataStore {
                   delete this.aduanList[freshIdx]._pendingOfficerSync;
                   this.save();
                 }
+                // Bunyikan bel kedua begitu foto Base64 petugas selesai tersimpan di Foto_Storage
+                // agar perangkat lain langsung menarik foto petugas terbaru via getAll
+                this._ringFirebaseDoorbellFromClient('updateVerifikasi', cleanId, updatedRecord, {
+                  officerPhotoCount: fotoList.length,
+                  photoReady: true
+                });
                 setTimeout(() => this.syncFromGAS(true), 300);
               }
             }).catch(err => console.warn('Gagal unggah latar belakang foto petugas, antrean IndexedDB aktif:', err))
@@ -3138,6 +3294,10 @@ class AduanDataStore {
               delete this.aduanList[freshIdx]._pendingOfficerSync;
               this.save();
             }
+            this._ringFirebaseDoorbellFromClient('updateVerifikasi', cleanId, updatedRecord, {
+              officerPhotoCount: fotoList.length,
+              photoReady: true
+            });
             // Segera lakukan sinkronisasi background untuk mengambil URL teranyar dari server
             setTimeout(() => this.syncFromGAS(true), 300);
           }
@@ -3148,6 +3308,78 @@ class AduanDataStore {
     }
 
     return updatedRecord;
+  }
+
+  _ringFirebaseDoorbellFromClient(aksi, ticketId, record, extra = {}) {
+    try {
+      if (typeof window === 'undefined' || typeof EventSource === 'undefined' || typeof fetch !== 'function') return;
+      if (!this.hasGasConfigured() || String(this.gasApiUrl || '').includes('mock')) return;
+      const targetUrl = this._doorbellUrl || FIREBASE_DOORBELL_URL;
+      if (!targetUrl || !String(targetUrl).startsWith('https://')) return;
+
+      const maskName = (name) => {
+        const s = String(name || '').trim();
+        if (!s || s === '-' || s.toLowerCase() === 'anonim') return 'Anonim';
+        return s.split(/\s+/).map(w => w.length <= 2 ? w[0] + '*' : w.slice(0, 2) + '*'.repeat(Math.min(w.length - 2, 4))).join(' ');
+      };
+      const onlyHttp = (val) => {
+        if (!val || typeof val !== 'string') return '';
+        const tr = val.trim();
+        if (!tr.startsWith('http') || tr.includes('action=viewFoto') || tr.includes('script.google.com')) return '';
+        return tr;
+      };
+
+      const rec = record || {};
+      const delta = {
+        id: String(ticketId || rec.id || '').trim().toUpperCase(),
+        timestamp: String(rec.timestamp || ''),
+        namaPelapor: maskName(rec.namaPelapor),
+        kecamatan: String(rec.kecamatan || ''),
+        desa: String(rec.desa || ''),
+        lokasiDetail: String(rec.lokasiDetail || ''),
+        lat: (rec.lat !== undefined && rec.lat !== null && !isNaN(Number(rec.lat))) ? Number(rec.lat) : '',
+        lng: (rec.lng !== undefined && rec.lng !== null && !isNaN(Number(rec.lng))) ? Number(rec.lng) : '',
+        jenisPencemaran: String(rec.jenisPencemaran || ''),
+        uraian: String(rec.uraian || ''),
+        status: String(rec.status || ''),
+        petugasVerifikasi: String(rec.petugasVerifikasi || ''),
+        tanggalVerifikasi: String(rec.tanggalVerifikasi || ''),
+        hasilVerifikasi: String(rec.hasilVerifikasi || ''),
+        tindakanDLH: String(rec.tindakanDLH || ''),
+        tanggalSelesai: String(rec.tanggalSelesai || ''),
+        nomorBeritaAcara: String(rec.nomorBeritaAcara || ''),
+        catatanBeritaAcara: String(rec.catatanBeritaAcara || ''),
+        alasanTidakDitindaklanjuti: String(rec.alasanTidakDitindaklanjuti || ''),
+        alasanKategoriTidakDitindaklanjuti: String(rec.alasanKategoriTidakDitindaklanjuti || ''),
+        alasanLainTidakDitindaklanjuti: String(rec.alasanLainTidakDitindaklanjuti || ''),
+        kesimpulanPetugas: String(rec.kesimpulanPetugas || ''),
+        hambatanPemeriksaan: Boolean(rec.hambatanPemeriksaan),
+        jenisHambatan: String(rec.jenisHambatan || ''),
+        uraianHambatan: String(rec.uraianHambatan || ''),
+        ...(Array.isArray(rec.checklistVerifikasi) && rec.checklistVerifikasi.length > 0 ? { checklistVerifikasi: rec.checklistVerifikasi } : {}),
+        ...(extra.officerPhotoCount !== undefined ? { officerPhotoCount: Number(extra.officerPhotoCount) } : {}),
+        ...(extra.photoReady !== undefined ? { photoReady: Boolean(extra.photoReady) } : {}),
+        timestampVerifikasi: String(rec.timestampVerifikasi || ''),
+        timestampTindakLanjut: String(rec.timestampTindakLanjut || ''),
+        timestampSelesai: String(rec.timestampSelesai || ''),
+        linkFoto: onlyHttp(rec.linkFoto || rec.fotoBukti || ''),
+        fotoKondisiRiil: onlyHttp(rec.fotoKondisiRiil || '')
+      };
+
+      const signalPayload = {
+        ts: Date.now(),
+        aksi: String(aksi || 'updateVerifikasi'),
+        tiket: String(ticketId || delta.id || ''),
+        delta
+      };
+
+      fetch(targetUrl, {
+        method: 'PUT',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(signalPayload),
+        keepalive: true
+      }).catch(() => { });
+    } catch (e) { }
   }
 
   async _ensureTidakDapatSavedOnSheet(cleanId, updatedRecord) {
@@ -3223,7 +3455,8 @@ class AduanDataStore {
       fotoPetugas: newFotoUtama,
       _officerPhotoCleared: currentPhotos.length === 0,
       _pendingOfficerSync: true,
-      _lastOfficerEditTime: Date.now()
+      _lastOfficerEditTime: Date.now(),
+      _lastLocalOfficerSubmitTime: Date.now()
     };
 
     const curIdx = this.aduanList.findIndex(item => String(item.id).trim().toUpperCase() === cleanId);
@@ -3242,9 +3475,16 @@ class AduanDataStore {
       });
     }
 
+    this._ringFirebaseDoorbellFromClient('updateVerifikasi', cleanId, updatedRecord, {
+      officerPhotoCount: currentPhotos.length,
+      photoReady: true
+    });
+
     // Kirim sinkronisasi ke Google Apps Script
     if (this.hasGasConfigured()) {
       try {
+        this._activeSyncIds = this._activeSyncIds || new Set();
+        this._activeSyncIds.add(cleanId);
         const res = await this.postToGAS('updateVerifikasi', {
           id: cleanId,
           status: updatedRecord.status,
@@ -3255,8 +3495,12 @@ class AduanDataStore {
           tanggalSelesai: updatedRecord.tanggalSelesai,
           nomorBeritaAcara: updatedRecord.nomorBeritaAcara,
           catatanBeritaAcara: updatedRecord.catatanBeritaAcara,
+          alasanTidakDitindaklanjuti: updatedRecord.alasanTidakDitindaklanjuti,
+          kesimpulanPetugas: updatedRecord.kesimpulanPetugas,
           fotoKondisiRiil: newFotoUtama,
           fotoVerifikasiList: currentPhotos,
+          explicitPhotoClear: currentPhotos.length === 0,
+          skipWaNotification: true,
           timestampVerifikasi: updatedRecord.timestampVerifikasi,
           timestampTindakLanjut: updatedRecord.timestampTindakLanjut,
           timestampSelesai: updatedRecord.timestampSelesai
@@ -3267,10 +3511,16 @@ class AduanDataStore {
             delete this.aduanList[freshIdx]._pendingOfficerSync;
             this.save();
           }
+          this._ringFirebaseDoorbellFromClient('updateVerifikasi', cleanId, updatedRecord, {
+            officerPhotoCount: currentPhotos.length,
+            photoReady: true
+          });
           setTimeout(() => this.syncFromGAS(true), 300);
         }
       } catch (err) {
         console.warn('Gagal hapus foto di cloud:', err);
+      } finally {
+        if (this._activeSyncIds) this._activeSyncIds.delete(cleanId);
       }
     }
 

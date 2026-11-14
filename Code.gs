@@ -517,7 +517,15 @@ function buildSafeDelta_(raw) {
     ...(raw.tanggalVerifikasi ? { tanggalVerifikasi: String(raw.tanggalVerifikasi) } : {}),
     ...(raw.tanggalSelesai ? { tanggalSelesai: String(raw.tanggalSelesai) } : {}),
     ...(raw.alasanTidakDitindaklanjuti ? { alasanTidakDitindaklanjuti: String(raw.alasanTidakDitindaklanjuti) } : {}),
+    ...(raw.alasanKategoriTidakDitindaklanjuti ? { alasanKategoriTidakDitindaklanjuti: String(raw.alasanKategoriTidakDitindaklanjuti) } : {}),
+    ...(raw.alasanLainTidakDitindaklanjuti ? { alasanLainTidakDitindaklanjuti: String(raw.alasanLainTidakDitindaklanjuti) } : {}),
     ...(raw.kesimpulanPetugas ? { kesimpulanPetugas: String(raw.kesimpulanPetugas) } : {}),
+    ...(raw.hambatanPemeriksaan !== undefined ? { hambatanPemeriksaan: Boolean(raw.hambatanPemeriksaan) } : {}),
+    ...(raw.jenisHambatan ? { jenisHambatan: String(raw.jenisHambatan) } : {}),
+    ...(raw.uraianHambatan ? { uraianHambatan: String(raw.uraianHambatan) } : {}),
+    ...(Array.isArray(raw.checklistVerifikasi) && raw.checklistVerifikasi.length > 0 ? { checklistVerifikasi: raw.checklistVerifikasi } : {}),
+    ...(raw.officerPhotoCount !== undefined && raw.officerPhotoCount !== null ? { officerPhotoCount: Number(raw.officerPhotoCount) } : {}),
+    ...(raw.photoReady ? { photoReady: true } : {}),
     ...(raw.timestampVerifikasi ? { timestampVerifikasi: String(raw.timestampVerifikasi) } : {}),
     ...(raw.timestampTindakLanjut ? { timestampTindakLanjut: String(raw.timestampTindakLanjut) } : {}),
     ...(raw.timestampSelesai ? { timestampSelesai: String(raw.timestampSelesai) } : {}),
@@ -1799,12 +1807,42 @@ function handleUpdateVerifikasi(updateData) {
     }
 
     if (rawOfficerPhotos.length > 0 && colFotoRiil !== -1) {
-      // Bersihkan foto petugas lama sebelum menyimpan foto baru
+      // Cadangkan Base64 Foto_Storage yang sudah ada sebelum membersihkan baris lama,
+      // agar jika daftar foto mengirim ulang tautan http lama + foto Base64 baru, foto lama tidak hilang dari Foto_Storage.
+      const existingB64ByUrl = {};
+      const existingB64ByIdx = [];
+      try {
+        const ssCheck = getSpreadsheet();
+        const fotoSheetExisting = ssCheck.getSheetByName(SHEET_NAME_FOTO);
+        if (fotoSheetExisting && fotoSheetExisting.getLastRow() > 1) {
+          const fRows = fotoSheetExisting.getDataRange().getValues();
+          for (let r = 1; r < fRows.length; r++) {
+            const rKey = String(fRows[r][0] || '').trim().toUpperCase();
+            if (rKey === officerPhotoId || rKey.startsWith(officerPhotoId + '_')) {
+              let b64Chunks = '';
+              for (let c = 3; c < fRows[r].length; c++) {
+                if (fRows[r][c]) b64Chunks += String(fRows[r][c]);
+              }
+              b64Chunks = b64Chunks.trim();
+              if (b64Chunks.startsWith('data:image')) {
+                const linkVal = String(fRows[r][2] || '').trim();
+                if (linkVal) existingB64ByUrl[linkVal] = b64Chunks;
+                const suffix = rKey.substring(officerPhotoId.length);
+                const mIdx = suffix.match(/^_(\d+)$/);
+                const idxSlot = mIdx ? Math.max(0, parseInt(mIdx[1], 10) - 1) : 0;
+                if (!existingB64ByIdx[idxSlot]) existingB64ByIdx[idxSlot] = b64Chunks;
+              }
+            }
+          }
+        }
+      } catch (eBackupRead) {
+        Logger.log('Read existing officer backup warn: ' + eBackupRead.message);
+      }
+
+      // Bersihkan baris Foto_Storage petugas lama sebelum menulis daftar terindeks terbaru
       purgeFotoStorage(officerPhotoId);
-      deleteDriveFilesForId(officerPhotoId);
       for (let k = 1; k <= 6; k++) {
         purgeFotoStorage(officerPhotoId + '_' + k);
-        deleteDriveFilesForId(officerPhotoId + '_' + k);
       }
 
       const webAppUrl = getWebAppUrl();
@@ -1819,6 +1857,29 @@ function handleUpdateVerifikasi(updateData) {
 
         if (trimmed.startsWith('http')) {
           targetRiilUrls.push(trimmed);
+          const preservedB64 = existingB64ByUrl[trimmed] || existingB64ByIdx[idx] || '';
+          if (preservedB64 && preservedB64.startsWith('data:image')) {
+            try {
+              if (!storageSheet) {
+                storageSheet = getOrCreateSheet(SHEET_NAME_FOTO, ['ID_Aduan', 'Timestamp', 'Link_Buka_Foto', 'Base64_Data']);
+              }
+              const CHUNK_SIZE = 40000;
+              const rowData = [photoKey, nowStr, trimmed];
+              for (let k = 0; k < preservedB64.length; k += CHUNK_SIZE) {
+                rowData.push(preservedB64.substring(k, k + CHUNK_SIZE));
+              }
+              storageSheet.appendRow(rowData);
+              if (idx === 0) {
+                const aliasRow = [officerPhotoId + '_1', nowStr, trimmed];
+                for (let k = 0; k < preservedB64.length; k += CHUNK_SIZE) {
+                  aliasRow.push(preservedB64.substring(k, k + CHUNK_SIZE));
+                }
+                storageSheet.appendRow(aliasRow);
+              }
+            } catch (ePreserve) {
+              Logger.log('Officer preserve storage warn: ' + ePreserve.message);
+            }
+          }
         } else if (trimmed.startsWith('data:image')) {
           let driveUrl = '';
           try {
@@ -1900,7 +1961,7 @@ function handleUpdateVerifikasi(updateData) {
           sheet.getRange(targetRowIndex, colFotoRiil + 1).setValue(targetRiilUrls.join(', '));
         }
       }
-    } else if (colFotoRiil !== -1 && (Array.isArray(updateData.fotoVerifikasiList) || updateData.fotoKondisiRiil === '')) {
+    } else if (colFotoRiil !== -1 && updateData.explicitPhotoClear !== false && (updateData.explicitPhotoClear === true || (Array.isArray(updateData.fotoVerifikasiList) && updateData.fotoVerifikasiList.length === 0 && updateData.fotoKondisiRiil === ''))) {
       // Jika daftar foto dikosongkan secara sengaja (hapus semua foto)
       sheet.getRange(targetRowIndex, colFotoRiil + 1).setValue('');
       purgeFotoStorage(officerPhotoId);
@@ -1937,7 +1998,7 @@ function handleUpdateVerifikasi(updateData) {
       return (idx !== -1 && rowArr[idx] !== undefined && rowArr[idx] !== null) ? String(rowArr[idx]) : (fallbackVal || '');
     };
     const resolvedLinkFoto = extractCellHttpUrl_(sheet, targetRowIndex, colFoto, colFoto !== -1 ? rowArr[colFoto] : '');
-    const riilWasExplicitlyCleared = (Array.isArray(updateData.fotoVerifikasiList) && updateData.fotoVerifikasiList.length === 0) || updateData.fotoKondisiRiil === '';
+    const riilWasExplicitlyCleared = Boolean(updateData.explicitPhotoClear === true || (updateData.explicitPhotoClear !== false && Array.isArray(updateData.fotoVerifikasiList) && updateData.fotoVerifikasiList.length === 0 && updateData.fotoKondisiRiil === ''));
     const resolvedFotoRiil = isUnverifiedStatus
       ? ''
       : (updatedRiilUrls.length > 0
@@ -1945,6 +2006,11 @@ function handleUpdateVerifikasi(updateData) {
         : (riilWasExplicitlyCleared
           ? ''
           : extractCellHttpUrl_(sheet, targetRowIndex, colFotoRiil, colFotoRiil !== -1 ? rowArr[colFotoRiil] : '')));
+    const resolvedOfficerPhotoCount = isUnverifiedStatus
+      ? 0
+      : (updatedRiilUrls.length > 0
+        ? updatedRiilUrls.length
+        : (riilWasExplicitlyCleared ? 0 : undefined));
     const resolvedTglSelesai = (updateData.status === 'Selesai')
       ? (updateData.tanggalSelesai || Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd'))
       : (updateData.tanggalSelesai || rowVal('Tanggal_Selesai', ''));
@@ -1969,7 +2035,15 @@ function handleUpdateVerifikasi(updateData) {
       nomorBeritaAcara: updateData.nomorBeritaAcara !== undefined ? updateData.nomorBeritaAcara : rowVal('Nomor_Berita_Acara', ''),
       catatanBeritaAcara: updateData.catatanBeritaAcara !== undefined ? updateData.catatanBeritaAcara : rowVal('Catatan_Berita_Acara', ''),
       alasanTidakDitindaklanjuti: updateData.alasanTidakDitindaklanjuti !== undefined ? updateData.alasanTidakDitindaklanjuti : rowVal('Alasan_Tidak_Ditindaklanjuti', ''),
+      alasanKategoriTidakDitindaklanjuti: updateData.alasanKategoriTidakDitindaklanjuti || '',
+      alasanLainTidakDitindaklanjuti: updateData.alasanLainTidakDitindaklanjuti || '',
       kesimpulanPetugas: updateData.kesimpulanPetugas !== undefined ? updateData.kesimpulanPetugas : rowVal('Kesimpulan_Petugas', ''),
+      hambatanPemeriksaan: updateData.hambatanPemeriksaan,
+      jenisHambatan: updateData.jenisHambatan || '',
+      uraianHambatan: updateData.uraianHambatan || '',
+      checklistVerifikasi: Array.isArray(updateData.checklistVerifikasi) ? updateData.checklistVerifikasi : undefined,
+      officerPhotoCount: resolvedOfficerPhotoCount,
+      photoReady: updatedRiilUrls.length > 0 ? true : undefined,
       timestampVerifikasi: updateData.timestampVerifikasi || rowVal('Timestamp_Verifikasi', ''),
       timestampTindakLanjut: updateData.timestampTindakLanjut || rowVal('Timestamp_Tindak_Lanjut', ''),
       timestampSelesai: updateData.timestampSelesai || rowVal('Timestamp_Selesai', ''),
@@ -2109,7 +2183,74 @@ function handleDeleteOfficerPhoto(data) {
   }
 
   const officerPhotoId = targetId + '_PETUGAS';
-  if (photoIndex >= 0) {
+  if (photoIndex >= 0 && existingUrls.length > 0) {
+    // Baca baris Foto_Storage petugas yang ada, hapus indeks photoIndex, lalu tulis ulang indeks sisanya secara berurutan
+    const remainingStorageEntries = [];
+    try {
+      const fotoSheet = ss.getSheetByName(SHEET_NAME_FOTO);
+      if (fotoSheet && fotoSheet.getLastRow() > 1) {
+        const fRows = fotoSheet.getDataRange().getValues();
+        const slotMap = {};
+        for (let r = 1; r < fRows.length; r++) {
+          const rKey = String(fRows[r][0] || '').trim().toUpperCase();
+          if (rKey === officerPhotoId || rKey.startsWith(officerPhotoId + '_')) {
+            let b64Chunks = '';
+            for (let c = 3; c < fRows[r].length; c++) {
+              if (fRows[r][c]) b64Chunks += String(fRows[r][c]);
+            }
+            b64Chunks = b64Chunks.trim();
+            if (b64Chunks.startsWith('data:image')) {
+              const suffix = rKey.substring(officerPhotoId.length);
+              const mIdx = suffix.match(/^_(\d+)$/);
+              const idxSlot = mIdx ? Math.max(0, parseInt(mIdx[1], 10) - 1) : 0;
+              if (!slotMap[idxSlot]) {
+                slotMap[idxSlot] = { link: String(fRows[r][2] || '').trim(), b64: b64Chunks };
+              }
+            }
+          }
+        }
+        const maxSlot = Math.max(...Object.keys(slotMap).map(Number), -1);
+        for (let s = 0; s <= maxSlot; s++) {
+          if (s !== photoIndex && slotMap[s]) {
+            remainingStorageEntries.push(slotMap[s]);
+          }
+        }
+      }
+    } catch (eReadDel) {
+      Logger.log('DeleteOfficerPhoto read storage warn: ' + eReadDel.message);
+    }
+
+    const specificKey = (photoIndex === 0) ? officerPhotoId : (officerPhotoId + '_' + (photoIndex + 1));
+    deleteDriveFilesForId(specificKey);
+    deleteDriveFilesForId(officerPhotoId + '_' + (photoIndex + 1));
+    purgeFotoStorage(officerPhotoId);
+
+    if (remainingStorageEntries.length > 0) {
+      try {
+        const storageSheet = getOrCreateSheet(SHEET_NAME_FOTO, ['ID_Aduan', 'Timestamp', 'Link_Buka_Foto', 'Base64_Data']);
+        const nowStr = Utilities.formatDate(new Date(), Session.getScriptTimeZone(), 'yyyy-MM-dd HH:mm');
+        const CHUNK_SIZE = 40000;
+        remainingStorageEntries.forEach((entry, newIdx) => {
+          const newKey = (newIdx === 0) ? officerPhotoId : (officerPhotoId + '_' + (newIdx + 1));
+          const viewUrl = existingUrls[newIdx] || entry.link || '';
+          const rowData = [newKey, nowStr, viewUrl];
+          for (let k = 0; k < entry.b64.length; k += CHUNK_SIZE) {
+            rowData.push(entry.b64.substring(k, k + CHUNK_SIZE));
+          }
+          storageSheet.appendRow(rowData);
+          if (newIdx === 0) {
+            const aliasRow = [officerPhotoId + '_1', nowStr, viewUrl];
+            for (let k = 0; k < entry.b64.length; k += CHUNK_SIZE) {
+              aliasRow.push(entry.b64.substring(k, k + CHUNK_SIZE));
+            }
+            storageSheet.appendRow(aliasRow);
+          }
+        });
+      } catch (eRewriteDel) {
+        Logger.log('DeleteOfficerPhoto rewrite storage warn: ' + eRewriteDel.message);
+      }
+    }
+  } else if (photoIndex >= 0) {
     const specificKey = (photoIndex === 0) ? officerPhotoId : (officerPhotoId + '_' + (photoIndex + 1));
     purgeFotoStorage(specificKey);
     deleteDriveFilesForId(specificKey);
@@ -2160,6 +2301,21 @@ function handleDeleteOfficerPhoto(data) {
   writeLog('DELETE_OFFICER_PHOTO', 'ID: ' + targetId + ' | FotoIdx: ' + photoIndex + ' | Sisa: ' + existingUrls.length);
 
   SpreadsheetApp.flush();
+
+  try {
+    const rowArr = data[targetRowIndex - 1] || [];
+    const colStatus = headers.indexOf('Status');
+    const currentStatus = (colStatus !== -1 && rowArr[colStatus]) ? String(rowArr[colStatus]) : '';
+    const deltaDelPhoto = buildSafeDelta_({
+      id: targetId,
+      status: currentStatus,
+      officerPhotoCount: existingUrls.length,
+      fotoKondisiRiil: existingUrls.length > 0 ? onlyHttpPhoto_(existingUrls.join(', ')) : ''
+    });
+    bunyikanBelSinkronisasi_('updateVerifikasi', targetId, deltaDelPhoto);
+  } catch (eBellDelPhoto) {
+    Logger.log('DeleteOfficerPhoto bell warn: ' + eBellDelPhoto.message);
+  }
 
   return {
     success: true,

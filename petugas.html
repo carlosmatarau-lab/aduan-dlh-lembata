@@ -5917,23 +5917,23 @@
             </div>
             <div class="gov-template-chips">
               <button type="button" class="btn-gov-chip"
-                onclick="window.portal && window.portal.applyResponseTemplate('verifikasi')">Verifikasi
+                onclick="window.portal.applyResponseTemplate('verifikasi')">Verifikasi
                 Faktual</button>
               <button type="button" class="btn-gov-chip"
-                onclick="window.portal && window.portal.applyResponseTemplate('teguran')">Teguran
+                onclick="window.portal.applyResponseTemplate('teguran')">Teguran
                 Tertulis</button>
               <button type="button" class="btn-gov-chip"
-                onclick="window.portal && window.portal.applyResponseTemplate('pembersihan')">Pembersihan /
+                onclick="window.portal.applyResponseTemplate('pembersihan')">Pembersihan /
                 Angkut</button>
               <button type="button" class="btn-gov-chip"
-                onclick="window.portal && window.portal.applyResponseTemplate('koordinasi')">Koordinasi
+                onclick="window.portal.applyResponseTemplate('koordinasi')">Koordinasi
                 Desa</button>
               <button type="button" class="btn-gov-chip"
-                onclick="window.portal && window.portal.applyResponseTemplate('selesai')">Tuntas
+                onclick="window.portal.applyResponseTemplate('selesai')">Tuntas
                 Ditangani</button>
               <button type="button" class="btn-gov-chip"
                 style="color: #991b1b; border-color: #fca5a5; background: #fef2f2;"
-                onclick="window.portal && window.portal.applyResponseTemplate('penolakan')">Penolakan Terlapor</button>
+                onclick="window.portal.applyResponseTemplate('penolakan')">Penolakan Terlapor</button>
             </div>
           </div>
 
@@ -6672,7 +6672,7 @@
             </button>
           </div>
 
-          <button type="button" onclick="window.portal && window.portal.openPhotoInNewWindow()"
+          <button type="button" onclick="window.portal.openPhotoInNewWindow()"
             style="background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               style="width: 13px; height: 13px;">
@@ -6682,7 +6682,7 @@
             </svg>
             Tab Baru
           </button>
-          <button type="button" onclick="window.portal && window.portal.downloadCurrentPhoto()"
+          <button type="button" onclick="window.portal.downloadCurrentPhoto()"
             style="background: #059669; color: #fff; border: none; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-size: 0.78rem; font-weight: 600; display: inline-flex; align-items: center; gap: 4px;">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
               style="width: 13px; height: 13px;">
@@ -6692,7 +6692,7 @@
             </svg>
             Unduh
           </button>
-          <button type="button" onclick="window.portal && window.portal.closeLightbox()"
+          <button type="button" onclick="window.portal.closeLightbox()"
             style="background: #ef4444; color: #fff; border: none; width: 32px; height: 32px; border-radius: 6px; cursor: pointer; font-size: 1.3rem; line-height: 1; display: flex; align-items: center; justify-content: center; font-weight: 800;">
             &times;
           </button>
@@ -6741,7 +6741,7 @@
   <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 
   <!-- Scripts: Data Engine & Portal Controller -->
-  <script src="js/data.js?v=20261115_fix_status_02"></script>
+  <script src="js/data.js?v=20261115_fix_sync_03"></script>
   <script>
     // Safeguard prototype jika browser masih memuat file js lama dari cache
     if (typeof AduanDataStore !== 'undefined') {
@@ -7997,14 +7997,17 @@
                     ctx.imageSmoothingQuality = 'high';
                     ctx.drawImage(img, 0, 0, width, height);
                     this.tempUploadedPhotos.push(canvas.toDataURL('image/jpeg', 0.82));
+                    this._tempPhotosModified = true;
                   } catch (err) {
                     this.tempUploadedPhotos.push(dataUrl);
+                    this._tempPhotosModified = true;
                   }
                   loaded++;
                   this.renderPhotoPreviews();
                 };
                 img.onerror = () => {
                   this.tempUploadedPhotos.push(dataUrl);
+                  this._tempPhotosModified = true;
                   loaded++;
                   this.renderPhotoPreviews();
                 };
@@ -8079,6 +8082,7 @@
 
       replaceUploadedPhotos() {
         this.tempUploadedPhotos = [];
+        this._tempPhotosModified = true;
         this.renderPhotoPreviews();
         const cam = document.getElementById('vFotoKameraInput');
         const fil = document.getElementById('vFotoRiilInput');
@@ -8088,6 +8092,7 @@
 
       clearAllUploadedPhotos() {
         this.tempUploadedPhotos = [];
+        this._tempPhotosModified = true;
         this.renderPhotoPreviews();
         const successBanner = document.getElementById('vUploadSuccessBanner');
         if (successBanner) successBanner.style.display = 'none';
@@ -8096,6 +8101,7 @@
 
       removeUploadedPhoto(idx) {
         this.tempUploadedPhotos.splice(idx, 1);
+        this._tempPhotosModified = true;
         this.renderPhotoPreviews();
         this.showToast(`Foto ke-${idx + 1} telah dihapus dari formulir.`, 'info');
       }
@@ -8223,6 +8229,7 @@
 
         // Foto verifikasi riil (HANYA dimuat jika laporan SUDAH pernah diverifikasi sebelumnya)
         this.tempUploadedPhotos = [];
+        this._tempPhotosModified = false;
         if (!isUnverified) {
           if (Array.isArray(item.fotoVerifikasiList) && item.fotoVerifikasiList.length > 0) {
             this.tempUploadedPhotos = [...item.fotoVerifikasiList];
@@ -9311,25 +9318,19 @@
         }
 
         // Ekstraksi Foto Pemeriksaan Fisik Petugas
+        const isUnverifiedForPrint = (!item.status || item.status === 'Baru' || item.status === 'Aduan Diterima' || item.status === 'Verifikasi Administrasi');
         let officerPhotos = [];
-        if (Array.isArray(item.fotoVerifikasiList)) {
-          item.fotoVerifikasiList.forEach(p => {
-            if (p && typeof p === 'string' && p.trim() && p !== '-' && !officerPhotos.includes(p.trim())) {
-              officerPhotos.push(p.trim());
-            }
-          });
-        }
-        if (officerPhotos.length === 0 && item.fotoKondisiRiil && item.fotoKondisiRiil !== '-' && typeof item.fotoKondisiRiil === 'string') {
-          officerPhotos.push(item.fotoKondisiRiil.trim());
-        }
-        for (let oIdx = 0; oIdx < 6; oIdx++) {
-          try {
-            const cachedOff = localStorage.getItem(`dlh_officer_photo_${cleanAduanId}_${oIdx}`) ||
-              localStorage.getItem(`dlh_officer_photo_${cleanAduanId.toLowerCase()}_${oIdx}`);
-            if (cachedOff && cachedOff.startsWith('data:image') && !officerPhotos.includes(cachedOff)) {
-              officerPhotos.push(cachedOff);
-            }
-          } catch (e) { }
+        if (!isUnverifiedForPrint && !item._officerPhotoCleared) {
+          if (Array.isArray(item.fotoVerifikasiList)) {
+            item.fotoVerifikasiList.forEach(p => {
+              if (p && typeof p === 'string' && p.trim() && p !== '-' && !officerPhotos.includes(p.trim())) {
+                officerPhotos.push(p.trim());
+              }
+            });
+          }
+          if (officerPhotos.length === 0 && item.fotoKondisiRiil && item.fotoKondisiRiil !== '-' && typeof item.fotoKondisiRiil === 'string') {
+            officerPhotos.push(item.fotoKondisiRiil.trim());
+          }
         }
 
         const citizenFormatted = citizenPhotos.map(p => this.formatPhotoUrl(p) || p).filter(Boolean);
@@ -11416,8 +11417,15 @@
                 alasanKategoriTidakDitindaklanjuti: isTidakDapatStatus ? alasanKategoriVal : '',
                 alasanLainTidakDitindaklanjuti: isTidakDapatStatus ? alasanLainVal : '',
                 kesimpulanPetugas: isTidakDapatStatus ? kesimpulanVal : '',
-                fotoKondisiRiil: isUnverifiedStatus ? '' : (this.tempUploadedPhotos[0] || ''),
-                fotoVerifikasiList: isUnverifiedStatus ? [] : [...this.tempUploadedPhotos]
+                ...(isUnverifiedStatus
+                  ? { fotoKondisiRiil: '', fotoVerifikasiList: [], explicitPhotoClear: true }
+                  : (this._tempPhotosModified || this.tempUploadedPhotos.length > 0
+                    ? {
+                      fotoKondisiRiil: this.tempUploadedPhotos[0] || '',
+                      fotoVerifikasiList: [...this.tempUploadedPhotos],
+                      explicitPhotoClear: Boolean(this._tempPhotosModified && this.tempUploadedPhotos.length === 0)
+                    }
+                    : { explicitPhotoClear: false }))
               };
 
               const updated = await window.aduanStore.updateVerifikasi(id, updateData);
