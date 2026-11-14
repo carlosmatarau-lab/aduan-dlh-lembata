@@ -7876,12 +7876,17 @@
           const m = clean.match(/=HYPERLINK\("([^"]+)"/i);
           if (m) clean = m[1];
         }
-        if (clean.includes('Buka') && clean.includes('Foto Bukti')) return '';
+        if (clean.includes('Buka') && (clean.includes('Foto Bukti') || clean.includes('Foto Petugas') || clean.includes('Foto ('))) return '';
         if (clean.startsWith('📸')) return '';
         if (clean.startsWith('data:image')) return clean;
-        const driveMatch = clean.match(/(?:\/file\/d\/|googleusercontent\.com\/d\/|[?&]id=)([a-zA-Z0-9_-]+)/);
-        if (driveMatch && driveMatch[1]) {
-          return `https://drive.google.com/thumbnail?id=${driveMatch[1]}&sz=w1600`;
+        if (clean.includes('action=viewFoto') || clean.includes('action=viewImage') || clean.includes('script.google.com')) return '';
+        if (clean.includes('drive.google.com') || clean.includes('docs.google.com') || clean.includes('googleusercontent.com')) {
+          const driveMatch = clean.match(/(?:\/file\/d\/|googleusercontent\.com\/d\/|[?&]id=)([a-zA-Z0-9_-]+)/);
+          if (driveMatch && driveMatch[1]) {
+            const driveId = driveMatch[1];
+            if (/^(ADU-|DLH-)/i.test(driveId) || driveId.includes('_FOTO') || driveId.includes('_PETUGAS')) return '';
+            return `https://drive.google.com/thumbnail?id=${driveId}&sz=w1600`;
+          }
         }
         if (clean.startsWith('http')) return clean;
         return '';
