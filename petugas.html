@@ -7096,7 +7096,7 @@
   <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 
   <!-- Scripts: Data Engine & Portal Controller -->
-  <script src="js/data.js?v=20261115_verified_sync_01"></script>
+  <script src="js/data.js?v=20261115_verified_sync_02"></script>
   <script>
     // Safeguard prototype jika browser masih memuat file js lama dari cache
     if (typeof AduanDataStore !== 'undefined') {
@@ -7238,6 +7238,9 @@
             if (document.visibilityState !== 'visible') return;
             if (!window.aduanStore || !window.aduanStore.hasGasConfigured()) return;
             if (this._isPollingNow) return;
+            if (window.aduanStore.isSyncing && window.aduanStore._inFlightGetAllRequest && window.aduanStore._syncLockStartedAt && (Date.now() - window.aduanStore._syncLockStartedAt < 25000)) {
+              return;
+            }
             this._isPollingNow = true;
             try {
               const pollRes = await window.aduanStore.syncFromGAS(true);

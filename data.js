@@ -1296,6 +1296,9 @@ class AduanDataStore {
     this.lastSignalTs = 0;
     this.isServerSynced = false;
     this._serverConfirmed = false;
+    this._hasFullServerList = false;
+    this._inFlightGetAllRequest = false;
+    this._lastLocalMutationAt = 0;
     this._lastVerifiedCacheAt = 0;
     this._lastSharedStateAt = 0;
     this._doorbellUrl = FIREBASE_DOORBELL_URL;
@@ -1358,6 +1361,7 @@ class AduanDataStore {
     } catch (e) {}
 
     // 2. Prioritaskan Verified Cache terpusat ('ecoadu_verified_cache') agar lintas halaman & tab instan (0 ms)
+    this._hasFullServerList = false;
     const hydratedFromVerified = this.hydrateFromVerifiedCache(true);
     if (!hydratedFromVerified) {
       this.isServerSynced = false;
@@ -1926,9 +1930,9 @@ class AduanDataStore {
             } catch (e) {}
           }
           try {
-            localStorage.setItem('dlh_cached_hero_stats', JSON.stringify({ ...normalized, serverConfirmed: true }));
+            localStorage.setItem('dlh_cached_hero_stats', JSON.stringify({ ...normalized, serverConfirmed: true, updatedAt: Date.now() }));
           } catch (e) {}
-          if (this.aduanList && this.aduanList.length > 0) {
+          if ((this._hasFullServerList && (this.aduanList || []).length > 0) || (normalized.total === 0 && (this.aduanList || []).length === 0)) {
             this.writeVerifiedCache('gas_stats', { serverConfirmed: true });
           }
 
@@ -1963,25 +1967,28 @@ class AduanDataStore {
       return { success: false, reason: 'URL Web App Google Apps Script belum disetel.' };
     }
 
-    // Pengunci isSyncing dengan batas waktu aman 8 detik agar sinyal bel tidak pernah terkunci permanen
+    // Pengunci isSyncing dengan batas waktu aman 8 detik (atau 28 detik jika request getAll sedang aktif)
     if (this.isSyncing) {
       const lockAge = this._syncLockStartedAt ? (Date.now() - this._syncLockStartedAt) : 0;
-      if (lockAge < SYNC_LOCK_TIMEOUT_MS) {
+      const effectiveLockTimeout = this._inFlightGetAllRequest ? 28000 : SYNC_LOCK_TIMEOUT_MS;
+      if (lockAge < effectiveLockTimeout) {
         if (this.currentSyncPromise) {
           return await this.currentSyncPromise;
         }
         return { success: true, silent: true, message: 'Sinkronisasi cloud sedang berjalan...' };
       }
-      // Lock melewati timeout 8 detik: lepas pengunci lama agar sinkronisasi terbaru tetap jalan
+      // Lock melewati timeout: lepas pengunci lama agar sinkronisasi terbaru tetap jalan
       if (this._syncLockTimer) {
         clearTimeout(this._syncLockTimer);
         this._syncLockTimer = null;
       }
       this.isSyncing = false;
+      this._inFlightGetAllRequest = false;
       this.currentSyncPromise = null;
     }
 
     this.isSyncing = true;
+    this._inFlightGetAllRequest = true;
     this._syncLockStartedAt = Date.now();
     const lockToken = Symbol('syncLock');
     this._activeSyncLockToken = lockToken;
@@ -1989,11 +1996,12 @@ class AduanDataStore {
     this._syncLockTimer = setTimeout(() => {
       if (this._activeSyncLockToken === lockToken) {
         this.isSyncing = false;
+        this._inFlightGetAllRequest = false;
         this.currentSyncPromise = null;
         this._syncLockStartedAt = 0;
         this._syncLockTimer = null;
       }
-    }, SYNC_LOCK_TIMEOUT_MS);
+    }, 28000);
 
     this.currentSyncPromise = (async () => {
       try {
@@ -2096,6 +2104,7 @@ class AduanDataStore {
             this._deduplicateList();
             this.isServerSynced = true;
             this._serverConfirmed = true;
+            this._hasFullServerList = true;
             this.remoteStats = null;
             this.save('gas_all', { serverConfirmed: true });
 
@@ -2117,6 +2126,7 @@ class AduanDataStore {
             const localPending = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id) && item._pendingSync);
             this.isServerSynced = true;
             this._serverConfirmed = true;
+            this._hasFullServerList = true;
             if (localPending.length > 0) {
               this.aduanList = localPending;
               this.remoteStats = null;
@@ -2163,6 +2173,7 @@ class AduanDataStore {
             this._syncLockTimer = null;
           }
           this.isSyncing = false;
+          this._inFlightGetAllRequest = false;
           this.currentSyncPromise = null;
           this._syncLockStartedAt = 0;
         }
@@ -2340,44 +2351,68 @@ class AduanDataStore {
   }
 
   _stripPhotoDataUrls(list, keepFirstItem = false) {
+    const cleanStr = (val) => (typeof val === 'string' && val.startsWith('http')) ? val : '';
+    const cleanArr = (arr) => Array.isArray(arr) ? arr.filter(p => typeof p === 'string' && p.startsWith('http')) : [];
     return (list || []).map((item, idx) => {
+      if (!item || typeof item !== 'object') return item;
       if (keepFirstItem && idx === 0) return item;
-      return {
-        ...item,
-        fotoBukti: (item.fotoBukti && item.fotoBukti.startsWith('http')) ? item.fotoBukti : '',
-        linkFotoBukti: (item.linkFotoBukti && item.linkFotoBukti.startsWith('http')) ? item.linkFotoBukti : '',
-        buktiFotoList: (item.buktiFotoList || []).filter(p => typeof p === 'string' && p.startsWith('http')),
-        fotoKondisiRiil: (item.fotoKondisiRiil && item.fotoKondisiRiil.startsWith('http')) ? item.fotoKondisiRiil : '',
-        fotoVerifikasiList: (item.fotoVerifikasiList || []).filter(p => typeof p === 'string' && p.startsWith('http'))
-      };
+      const cloned = { ...item };
+      Object.keys(cloned).forEach(k => {
+        const v = cloned[k];
+        if (typeof v === 'string' && (v.startsWith('data:image') || (v.startsWith('data:') && v.length > 2000))) {
+          cloned[k] = '';
+        } else if (Array.isArray(v) && v.some(el => typeof el === 'string' && (el.startsWith('data:image') || (el.startsWith('data:') && el.length > 2000)))) {
+          cloned[k] = v.filter(el => typeof el === 'string' && !el.startsWith('data:'));
+        }
+      });
+      cloned.fotoBukti = cleanStr(cloned.fotoBukti);
+      cloned.linkFotoBukti = cleanStr(cloned.linkFotoBukti);
+      cloned.linkFoto = cleanStr(cloned.linkFoto);
+      cloned.foto = cleanStr(cloned.foto);
+      cloned.fotoWarga = cleanStr(cloned.fotoWarga);
+      cloned.lampiran = cleanStr(cloned.lampiran);
+      cloned.fotoPetugas = cleanStr(cloned.fotoPetugas);
+      cloned.buktiFotoList = cleanArr(cloned.buktiFotoList);
+      cloned.fotoKondisiRiil = cleanStr(cloned.fotoKondisiRiil);
+      cloned.fotoVerifikasiList = cleanArr(cloned.fotoVerifikasiList);
+      return cloned;
     });
   }
 
-  _persistAduanListOnly() {
+  _clearLegacyStorageCaches() {
     try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(this.aduanList));
+      const keysToRemove = [];
+      for (let i = 0; i < localStorage.length; i++) {
+        const k = localStorage.key(i);
+        if (k && (k.startsWith('dlh_photo_cache_') || k.startsWith('dlh_lembata_aduan_v1'))) {
+          keysToRemove.push(k);
+        }
+      }
+      keysToRemove.forEach(k => { try { localStorage.removeItem(k); } catch (ign) {} });
+    } catch (e) {}
+  }
+
+  _prepareListForStorage(list, maxChars = 350000) {
+    const arr = Array.isArray(list) ? list : [];
+    try {
+      const raw = JSON.stringify(arr);
+      if (raw.length <= maxChars) return arr;
+    } catch (e) {}
+    return this._stripPhotoDataUrls(arr, false);
+  }
+
+  _persistAduanListOnly() {
+    const boundedList = this._prepareListForStorage(this.aduanList, 350000);
+    try {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(boundedList));
     } catch (e) {
       console.warn('LocalStorage quota exceeded in save(), membersihkan cache foto lokal...', e);
+      this._clearLegacyStorageCaches();
       try {
-        const keysToRemove = [];
-        for (let i = 0; i < localStorage.length; i++) {
-          const k = localStorage.key(i);
-          if (k && (k.startsWith('dlh_photo_cache_') || k.startsWith('dlh_lembata_aduan_v1'))) {
-            keysToRemove.push(k);
-          }
-        }
-        keysToRemove.forEach(k => { try { localStorage.removeItem(k); } catch (ign) {} });
-
-        const pruned = this._stripPhotoDataUrls(this.aduanList, true);
-        localStorage.setItem(STORAGE_KEY, JSON.stringify(pruned));
-      } catch (innerErr) {
-        console.warn('Fallback save error, stripping all Base64 from localStorage:', innerErr);
-        try {
-          const textOnly = this._stripPhotoDataUrls(this.aduanList, false);
-          localStorage.setItem(STORAGE_KEY, JSON.stringify(textOnly));
-        } catch (finalErr) {
-          console.warn('Cannot write to localStorage:', finalErr);
-        }
+        const textOnly = this._stripPhotoDataUrls(this.aduanList, false);
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(textOnly));
+      } catch (finalErr) {
+        console.warn('Cannot write to localStorage:', finalErr);
       }
     }
   }
@@ -2405,42 +2440,47 @@ class AduanDataStore {
     if (!serverConfirmed) {
       return null;
     }
-    this.isServerSynced = true;
-    this._serverConfirmed = true;
 
     const cleanList = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id));
+    if (source === 'gas_stats' && !this._hasFullServerList && cleanList.length > 0) {
+      return null;
+    }
+
+    this.isServerSynced = true;
+    this._serverConfirmed = true;
+    if (source && source !== 'gas_stats') {
+      this._hasFullServerList = true;
+    }
+
     const nowTs = Date.now();
     const buildPayload = (list) => ({
       updatedAt: nowTs,
       data: list
     });
 
-    let written = buildPayload(cleanList);
+    const boundedList = this._prepareListForStorage(cleanList, 350000);
+    let written = buildPayload(boundedList);
     try {
       localStorage.setItem(VERIFIED_CACHE_KEY, JSON.stringify(written));
       this._lastVerifiedCacheAt = nowTs;
       this._lastSharedStateAt = nowTs;
     } catch (e) {
+      this._clearLegacyStorageCaches();
       try {
-        written = buildPayload(this._stripPhotoDataUrls(cleanList, true));
+        written = buildPayload(this._stripPhotoDataUrls(cleanList, false));
         localStorage.setItem(VERIFIED_CACHE_KEY, JSON.stringify(written));
         this._lastVerifiedCacheAt = nowTs;
         this._lastSharedStateAt = nowTs;
-      } catch (e2) {
-        try {
-          written = buildPayload(this._stripPhotoDataUrls(cleanList, false));
-          localStorage.setItem(VERIFIED_CACHE_KEY, JSON.stringify(written));
-          this._lastVerifiedCacheAt = nowTs;
-          this._lastSharedStateAt = nowTs;
-        } catch (e3) {}
-      }
+      } catch (e3) {}
     }
 
     try {
       const hasStats = Boolean(this.remoteStats && typeof this.remoteStats.total === 'number');
-      const useRemoteStats = cleanList.length === 0 && hasStats && source === 'gas_stats';
+      const useRemoteStats = hasStats && (!this._hasFullServerList || cleanList.length === 0 || (this.remoteStats.total > cleanList.length));
       const statsObj = useRemoteStats ? this.remoteStats : this._computeStatsFromList(cleanList);
-      localStorage.setItem('dlh_cached_hero_stats', JSON.stringify({ ...statsObj, serverConfirmed: true, updatedAt: nowTs }));
+      if (this._hasFullServerList || useRemoteStats || cleanList.length === 0) {
+        localStorage.setItem('dlh_cached_hero_stats', JSON.stringify({ ...statsObj, serverConfirmed: true, updatedAt: nowTs }));
+      }
     } catch (e) {}
 
     return written;
@@ -2479,7 +2519,11 @@ class AduanDataStore {
     });
     this.aduanList = [...filteredCached, ...newerPending];
     this._deduplicateList();
-    this.remoteStats = null;
+    this._hasFullServerList = filteredCached.length > 0 || !(this.remoteStats && this.remoteStats.total > 0);
+    const statsTimeMs = this.lastStatsSyncTime instanceof Date ? this.lastStatsSyncTime.getTime() : 0;
+    if (!(this.remoteStats && statsTimeMs > incomingTs)) {
+      this.remoteStats = null;
+    }
 
     if (incomingTs > 0) {
       this.lastSyncTime = new Date(incomingTs);
@@ -2515,6 +2559,9 @@ class AduanDataStore {
 
   save(source = 'store', options = {}) {
     this._deduplicateList();
+    if (source && !String(source).startsWith('gas_') && source !== 'reset_local' && source !== 'store') {
+      this._lastLocalMutationAt = Date.now();
+    }
     this._persistAduanListOnly();
     // Hanya simpan ke ecoadu_verified_cache jika data sudah terverifikasi berasal dari respons sukses server
     if (options && options.serverConfirmed === true) {
@@ -2575,6 +2622,9 @@ class AduanDataStore {
     this.pendingDeletions = {};
     this.aduanList = [];
     this.remoteStats = null;
+    this.isServerSynced = false;
+    this._serverConfirmed = false;
+    this._hasFullServerList = false;
     this.save('reset_local');
     LEGACY_STORAGE_KEYS.forEach(k => {
       try { localStorage.removeItem(k); } catch (e) {}
@@ -3213,6 +3263,9 @@ class AduanDataStore {
   resetToDefault() {
     this.aduanList = [...INITIAL_ADUAN_DATA];
     this.remoteStats = null;
+    this.isServerSynced = false;
+    this._serverConfirmed = false;
+    this._hasFullServerList = false;
     this.save('reset_local');
   }
 
@@ -3276,6 +3329,12 @@ class AduanDataStore {
   getStats() {
     this._deduplicateList();
     const cleanList = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id));
+    const hasRemoteStats = Boolean(this.remoteStats && typeof this.remoteStats.total === 'number');
+    const hasRecentLocalMutation = Boolean(this._lastLocalMutationAt && (Date.now() - this._lastLocalMutationAt < 15000));
+
+    if (hasRemoteStats && (cleanList.length === 0 || !this._hasFullServerList || (!hasRecentLocalMutation && this.remoteStats.total > cleanList.length))) {
+      return this.remoteStats;
+    }
 
     if (cleanList.length === 0) {
       if (this.remoteStats && typeof this.remoteStats.total === 'number') {
@@ -3294,10 +3353,20 @@ class AduanDataStore {
           }
         }
       } catch (e) {}
+    } else if (!this._hasFullServerList && !hasRecentLocalMutation && this.hasGasConfigured()) {
+      try {
+        const cached = localStorage.getItem('dlh_cached_hero_stats');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && typeof parsed.total === 'number' && parsed.serverConfirmed === true && parsed.total > cleanList.length) {
+            return parsed;
+          }
+        }
+      } catch (e) {}
     }
 
     const computed = this._computeStatsFromList(cleanList);
-    if (cleanList.length > 0 || this._serverConfirmed) {
+    if (this._hasFullServerList || (cleanList.length === 0 && this._serverConfirmed)) {
       try {
         localStorage.setItem('dlh_cached_hero_stats', JSON.stringify({ ...computed, serverConfirmed: true }));
       } catch (e) {}

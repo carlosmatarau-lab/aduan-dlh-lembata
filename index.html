@@ -7462,9 +7462,9 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Application Logic -->
-  <script charset="UTF-8" src="js/data.js?v=20261115_verified_sync_01"></script>
-  <script charset="UTF-8" src="js/map.js?v=20261115_verified_sync_01"></script>
-  <script charset="UTF-8" src="js/app.js?v=20261115_verified_sync_01"></script>
+  <script charset="UTF-8" src="js/data.js?v=20261115_verified_sync_02"></script>
+  <script charset="UTF-8" src="js/map.js?v=20261115_verified_sync_02"></script>
+  <script charset="UTF-8" src="js/app.js?v=20261115_verified_sync_02"></script>
 
   <!-- ===================================================================
        SCRIPTS: SPLASH SCREEN & PORTAL TRANSITION HANDLER
@@ -7536,16 +7536,9 @@
       const bootAt = Date.now();
       let lastResumeFetchAt = 0;
 
-      function applyVerifiedCacheToPage() {
+      function refreshUIFromStore() {
         if (typeof window.hydrateEcoaduVerifiedCacheUI === 'function') {
           window.hydrateEcoaduVerifiedCacheUI();
-        }
-        if (window.aduanStore) {
-          if (typeof window.aduanStore.hydrateFromVerifiedCache === 'function') {
-            window.aduanStore.hydrateFromVerifiedCache(true);
-          } else {
-            window.aduanStore.init();
-          }
         }
         if (window.app) {
           if (typeof window.app.updateKPIs === 'function') window.app.updateKPIs();
@@ -7558,7 +7551,19 @@
         }
       }
 
-      function triggerAntiCacheGasFetch(forceBypassThrottle) {
+      function applyVerifiedCacheToPage() {
+        if (window.aduanStore) {
+          const verifiedNow = typeof window.aduanStore.readVerifiedCache === 'function' ? window.aduanStore.readVerifiedCache() : null;
+          if (verifiedNow && typeof window.aduanStore.hydrateFromVerifiedCache === 'function') {
+            window.aduanStore.hydrateFromVerifiedCache(true);
+          } else if (!verifiedNow && typeof window.aduanStore.init === 'function' && !window.aduanStore.isServerSynced) {
+            window.aduanStore.init();
+          }
+        }
+        refreshUIFromStore();
+      }
+
+      function triggerAntiCacheGasFetch(forceBypassThrottle, isBackgroundPoll) {
         const now = Date.now();
         if (!forceBypassThrottle && now - lastResumeFetchAt < 150) return;
         lastResumeFetchAt = now;
@@ -7572,7 +7577,13 @@
         if (typeof store.syncStatsFromGAS === 'function') {
           tasks.push(store.syncStatsFromGAS());
         }
-        if (typeof store.syncFromGAS === 'function') {
+        const activeFullSyncInFlight = Boolean(
+          store.isSyncing &&
+          store._inFlightGetAllRequest &&
+          store._syncLockStartedAt &&
+          (now - store._syncLockStartedAt < 25000)
+        );
+        if (typeof store.syncFromGAS === 'function' && !(isBackgroundPoll && activeFullSyncInFlight)) {
           tasks.push(store.syncFromGAS(true));
         }
 
@@ -7585,7 +7596,7 @@
         }
 
         Promise.allSettled(tasks).then(() => {
-          applyVerifiedCacheToPage();
+          refreshUIFromStore();
         }).catch(() => {});
       }
 
@@ -7602,7 +7613,7 @@
               return;
             }
             applyVerifiedCacheToPage();
-            triggerAntiCacheGasFetch(false);
+            triggerAntiCacheGasFetch(false, false);
           };
         }
       } catch (e) {}
@@ -7624,26 +7635,26 @@
 
         const isInitialColdPageshow = !event.persisted && !isBackForward && (Date.now() - bootAt < 600);
         if (!isInitialColdPageshow) {
-          triggerAntiCacheGasFetch(Boolean(event.persisted || isBackForward));
+          triggerAntiCacheGasFetch(Boolean(event.persisted || isBackForward), false);
         }
       });
 
       document.addEventListener('visibilitychange', function() {
         if (document.visibilityState === 'visible') {
           applyVerifiedCacheToPage();
-          triggerAntiCacheGasFetch(false);
+          triggerAntiCacheGasFetch(false, false);
         }
       });
 
       window.addEventListener('focus', function() {
         applyVerifiedCacheToPage();
-        triggerAntiCacheGasFetch(false);
+        triggerAntiCacheGasFetch(false, false);
       });
 
       // Polling latar belakang setiap 5000 ms (5 detik) khusus saat tab aktif terlihat
       setInterval(function() {
         if (document.visibilityState === 'visible') {
-          triggerAntiCacheGasFetch(true);
+          triggerAntiCacheGasFetch(true, true);
         }
       }, 5000);
 
