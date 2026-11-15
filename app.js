@@ -2347,19 +2347,40 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
      5. REAL-TIME SYNCHRONIZATION LISTENER (PORTAL WARGA)
      =================================================================== */
   setupRealtimeSync() {
+    const refreshFromStore = (forceHydrate = false) => {
+      if (window.aduanStore) {
+        if (forceHydrate && typeof window.aduanStore.hydrateFromSharedState === 'function') {
+          window.aduanStore.hydrateFromSharedState(true);
+        } else {
+          window.aduanStore.init();
+        }
+      }
+      this.updateKPIs();
+      this.renderTable();
+      if (window.lembataMap) {
+        window.lembataMap.renderMarkers();
+        window.lembataMap.initMiniMap('miniMapPreview');
+      }
+    };
+
     // 1. Dengarkan event lokal ketika agregat statistik diperbarui
     window.addEventListener('aduanStatsSynced', () => {
       this.updateKPIs();
+      if (window.lembataMap && window.aduanStore) {
+        window.lembataMap.updateMapStats(window.aduanStore.getAll(), window.aduanStore.getAll());
+      }
     });
 
-    // 2. Dengarkan event storage lintas tab/jendela browser
+    // 2. Dengarkan event lokal pembaruan shared state lintas halaman
+    window.addEventListener('ecoaduSharedStateUpdated', () => {
+      refreshFromStore(false);
+    });
+
+    // 3. Dengarkan event storage lintas tab/jendela browser
+    const sharedKey = window.ECOADU_SHARED_STATE_KEY || 'ecoadu_shared_state';
     window.addEventListener('storage', (e) => {
-      if (e.key === 'dlh_cached_hero_stats' || e.key === 'dlh_lembata_aduan_v5') {
-        if (window.aduanStore) {
-          window.aduanStore.init();
-        }
-        this.updateKPIs();
-        this.renderTable();
+      if (e.key === sharedKey || e.key === 'dlh_cached_hero_stats' || e.key === 'dlh_lembata_aduan_v5') {
+        refreshFromStore(true);
       }
     });
 
@@ -2377,15 +2398,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         msg.type === 'DATA_RESET' ||
         msg.type === 'STATS_UPDATED'
       ) {
-        if (window.aduanStore) {
-          window.aduanStore.init();
-        }
-        this.updateKPIs();
-        this.renderTable();
-        if (window.lembataMap) {
-          window.lembataMap.renderMarkers();
-          window.lembataMap.initMiniMap('miniMapPreview');
-        }
+        refreshFromStore(true);
       }
     });
   }
@@ -2467,10 +2480,15 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
     });
 
     if (filtered.length === 0) {
+      const hasSearch = Boolean(this.tableFilters && this.tableFilters.search);
+      const isLoading = !hasSearch && window.aduanStore && typeof window.aduanStore.hasReadyStats === 'function' && !window.aduanStore.hasReadyStats();
+      const emptyMsg = isLoading
+        ? 'Memuat data aduan terbaru dari server...'
+        : 'Tidak ada data aduan yang cocok dengan pencarian.';
       tbody.innerHTML = `
         <tr>
           <td colspan="6" style="text-align: center; padding: 28px; color: #64748b;">
-            Tidak ada data aduan yang cocok dengan pencarian.
+            ${emptyMsg}
           </td>
         </tr>
       `;
@@ -2511,40 +2529,69 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
   }
 
   updateKPIs() {
-    let stats = window.aduanStore ? window.aduanStore.getStats() : null;
-    if (!stats || typeof stats.total !== 'number') {
+    const store = window.aduanStore;
+    let stats = store ? store.getStats() : null;
+    let isReady = false;
+
+    if (store && typeof store.hasReadyStats === 'function') {
+      isReady = store.hasReadyStats();
+    } else if (store) {
+      isReady = Boolean(stats && typeof stats.total === 'number');
+    }
+
+    if (!isReady || !stats || typeof stats.total !== 'number') {
       try {
-        const cached = localStorage.getItem('dlh_cached_hero_stats');
-        if (cached) stats = JSON.parse(cached);
+        const sharedKey = window.ECOADU_SHARED_STATE_KEY || 'ecoadu_shared_state';
+        const rawShared = localStorage.getItem(sharedKey);
+        if (rawShared) {
+          const parsedShared = JSON.parse(rawShared);
+          if (parsedShared && parsedShared.stats && typeof parsedShared.stats.total === 'number' &&
+              (parsedShared.serverConfirmed || parsedShared.stats.total > 0)) {
+            stats = parsedShared.stats;
+            isReady = true;
+          }
+        }
       } catch (e) {}
     }
-    if (!stats) stats = { total: 0, baru: 0, dalamProses: 0, selesai: 0 };
-    
-    const elTotal = document.getElementById('kpiTotal');
-    const elBaru = document.getElementById('kpiBaru');
-    const elProses = document.getElementById('kpiProses');
-    const elSelesai = document.getElementById('kpiSelesai');
 
-    if (elTotal) elTotal.textContent = (stats.total || 0).toLocaleString('id-ID');
-    if (elBaru) elBaru.textContent = (stats.baru || 0).toLocaleString('id-ID');
-    if (elProses) elProses.textContent = (stats.dalamProses || 0).toLocaleString('id-ID');
-    if (elSelesai) elSelesai.textContent = (stats.selesai || 0).toLocaleString('id-ID');
+    if (!isReady || !stats || typeof stats.total !== 'number') {
+      try {
+        const cached = localStorage.getItem('dlh_cached_hero_stats');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && typeof parsed.total === 'number' && (parsed.serverConfirmed === true || parsed.total > 0)) {
+            stats = parsed;
+            isReady = true;
+          }
+        }
+      } catch (e) {}
+    }
 
-    // Metrik Dashboard Publik Masyarakat & Hero Section (100% Sinkron Data Real Aduan)
-    const userTotal = document.getElementById('userKpiTotal');
-    const userProses = document.getElementById('userKpiProses');
-    const userSelesai = document.getElementById('userKpiSelesai');
-    if (userTotal) userTotal.textContent = (stats.total || 0).toLocaleString('id-ID');
-    if (userProses) userProses.textContent = (stats.dalamProses || 0).toLocaleString('id-ID');
-    if (userSelesai) userSelesai.textContent = (stats.selesai || 0).toLocaleString('id-ID');
+    const targets = [
+      ['kpiTotal', stats ? stats.total : null],
+      ['kpiBaru', stats ? stats.baru : null],
+      ['kpiProses', stats ? stats.dalamProses : null],
+      ['kpiSelesai', stats ? stats.selesai : null],
+      ['userKpiTotal', stats ? stats.total : null],
+      ['userKpiProses', stats ? stats.dalamProses : null],
+      ['userKpiSelesai', stats ? stats.selesai : null],
+      ['heroStatTotal', stats ? stats.total : null],
+      ['heroStatProses', stats ? stats.dalamProses : null],
+      ['heroStatSelesai', stats ? stats.selesai : null]
+    ];
 
-    // Hero Section Stat Card (Sinkron Murni dengan Data Real Database/Spreadsheet)
-    const heroTotal = document.getElementById('heroStatTotal');
-    const heroProses = document.getElementById('heroStatProses');
-    const heroSelesai = document.getElementById('heroStatSelesai');
-    if (heroTotal) heroTotal.textContent = (stats.total || 0).toLocaleString('id-ID');
-    if (heroProses) heroProses.textContent = (stats.dalamProses || 0).toLocaleString('id-ID');
-    if (heroSelesai) heroSelesai.textContent = (stats.selesai || 0).toLocaleString('id-ID');
+    const shouldShowLoading = !isReady || !stats || typeof stats.total !== 'number';
+    targets.forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (shouldShowLoading) {
+        el.classList.add('stat-loading');
+        el.textContent = '...';
+      } else {
+        el.classList.remove('stat-loading');
+        el.textContent = Number(val || 0).toLocaleString('id-ID');
+      }
+    });
   }
 
   scrollToForm() {
@@ -3452,14 +3499,21 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
 
     const btnReset = document.getElementById('btnResetDefaultData');
     if (btnReset) {
-      btnReset.addEventListener('click', () => {
-        if (confirm('Muat ulang dataset simulasi default Kabupaten Lembata?')) {
-          window.aduanStore.resetToDefault();
+      btnReset.addEventListener('click', async () => {
+        if (confirm('Muat ulang dan sinkronkan ulang data aduan terbaru dari server DLH Lembata?')) {
+          if (typeof window.aduanStore.resetToOfficialDefaults === 'function') {
+            window.aduanStore.resetToOfficialDefaults();
+          } else {
+            window.aduanStore.resetToDefault();
+          }
+          if (window.aduanStore.hasGasConfigured && window.aduanStore.hasGasConfigured()) {
+            await window.aduanStore.syncFromGAS(false);
+          }
           this.updateKPIs();
           this.renderTable();
           if (window.lembataMap) window.lembataMap.renderMarkers();
           this.updateCloudUI();
-          this.showToast('Data dikembalikan ke standar awal Lembata.', 'info');
+          this.showToast('Data berhasil disinkronkan ulang dari server.', 'info');
         }
       });
     }

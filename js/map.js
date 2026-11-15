@@ -439,13 +439,59 @@ class LembataMapEngine {
   }
 
   /* Perbarui Mini KPI Bar di Atas Peta */
-  updateMapStats(filteredData, allData) {
+  updateMapStats(filteredData = [], allData = []) {
     const statTotal = document.getElementById('mapStatTotal');
     const statBaru = document.getElementById('mapStatBaru');
     const statProses = document.getElementById('mapStatProses');
     const statSelesai = document.getElementById('mapStatSelesai');
     const badgeCount = document.getElementById('mapFilteredCountBadge');
     const mobiCount = document.getElementById('mobiAduanCount');
+
+    const store = window.aduanStore;
+    const statsReady = store
+      ? (typeof store.hasReadyStats === 'function'
+          ? store.hasReadyStats()
+          : (Boolean(store._serverConfirmed) || (allData && allData.length > 0) || Boolean(store.remoteStats)))
+      : (allData && allData.length > 0);
+
+    const setStatEl = (el, value, loading) => {
+      if (!el) return;
+      el.classList.toggle('stat-loading', Boolean(loading));
+      el.textContent = loading ? '...' : value;
+    };
+
+    const kecLabel = this.activeFilter.kecamatan === 'all' ? 'Seluruh Lembata' : `Kec. ${this.activeFilter.kecamatan}`;
+
+    if (!statsReady) {
+      setStatEl(statTotal, '', true);
+      setStatEl(statBaru, '', true);
+      setStatEl(statProses, '', true);
+      setStatEl(statSelesai, '', true);
+      setStatEl(mobiCount, '', true);
+      if (badgeCount) {
+        badgeCount.innerHTML = `<span class="badge-count-num stat-loading">Memuat...</span><span class="badge-sub-label"> Data Terpantau (${kecLabel})</span>`;
+      }
+      return;
+    }
+
+    const isUnfiltered = this.activeFilter.status === 'all' &&
+      this.activeFilter.kecamatan === 'all' &&
+      this.activeFilter.jenis === 'all';
+    const remoteStats = store && store.remoteStats && typeof store.remoteStats.total === 'number'
+      ? store.remoteStats
+      : null;
+
+    if (isUnfiltered && (!allData || allData.length === 0) && remoteStats) {
+      setStatEl(statTotal, remoteStats.total || 0, false);
+      setStatEl(statBaru, remoteStats.baru || 0, false);
+      setStatEl(statProses, remoteStats.dalamProses || 0, false);
+      setStatEl(statSelesai, remoteStats.selesai || 0, false);
+      setStatEl(mobiCount, remoteStats.total || 0, false);
+      if (badgeCount) {
+        badgeCount.innerHTML = `<span class="badge-count-num">${remoteStats.total || 0} Titik</span><span class="badge-sub-label"> Terpantau (${kecLabel})</span>`;
+      }
+      return;
+    }
 
     let baru = 0;
     let proses = 0;
@@ -459,14 +505,13 @@ class LembataMapEngine {
       else proses++;
     });
 
-    if (statTotal) statTotal.textContent = filteredData.length;
-    if (statBaru) statBaru.textContent = baru;
-    if (statProses) statProses.textContent = proses;
-    if (statSelesai) statSelesai.textContent = selesai;
-    if (mobiCount) mobiCount.textContent = filteredData.length;
+    setStatEl(statTotal, filteredData.length, false);
+    setStatEl(statBaru, baru, false);
+    setStatEl(statProses, proses, false);
+    setStatEl(statSelesai, selesai, false);
+    setStatEl(mobiCount, filteredData.length, false);
 
     if (badgeCount) {
-      const kecLabel = this.activeFilter.kecamatan === 'all' ? 'Seluruh Lembata' : `Kec. ${this.activeFilter.kecamatan}`;
       badgeCount.innerHTML = `<span class="badge-count-num">${filteredData.length} Titik</span><span class="badge-sub-label"> Terpantau (${kecLabel})</span>`;
     }
   }

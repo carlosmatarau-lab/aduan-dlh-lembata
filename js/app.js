@@ -41,8 +41,8 @@ class DLHApp {
     // Sinkronisasi cepat statistik live dari Google Spreadsheet (Ultra-cepat untuk sinyal lemah)
     if (window.aduanStore && typeof window.aduanStore.syncStatsFromGAS === 'function') {
       window.aduanStore.syncStatsFromGAS().then(() => {
-        try { this.updateKPIs(); } catch (e) {}
-      }).catch(() => {});
+        try { this.updateKPIs(); } catch (e) { }
+      }).catch(() => { });
     }
 
     // Set default date to today
@@ -51,7 +51,7 @@ class DLHApp {
       if (dateInput) {
         dateInput.value = new Date().toISOString().split('T')[0];
       }
-    } catch (e) {}
+    } catch (e) { }
 
     // Init map with slight delay
     setTimeout(() => {
@@ -67,7 +67,7 @@ class DLHApp {
       if (targetTab && ['beranda', 'form', 'lapor', 'lacak', 'peta'].includes(targetTab)) {
         setTimeout(() => this.switchTab(targetTab), 100);
       }
-    } catch(e) {}
+    } catch (e) { }
 
     // Buka otomatis detail/foto aduan jika dibuka dari tautan WhatsApp (?lihatFoto=ADU-LMB-...)
     try {
@@ -88,7 +88,7 @@ class DLHApp {
           }
         }, 350);
       }
-    } catch (e) {}
+    } catch (e) { }
   }
 
   isTidakDapatDitindaklanjuti(status) {
@@ -159,7 +159,7 @@ class DLHApp {
     // Refresh mini map jika kembali ke tab beranda
     if (tabName === 'beranda' && window.lembataMap && window.lembataMap.miniMapInstance) {
       setTimeout(() => {
-        try { window.lembataMap.miniMapInstance.invalidateSize(); } catch(e) {}
+        try { window.lembataMap.miniMapInstance.invalidateSize(); } catch (e) { }
       }, 100);
     }
 
@@ -240,7 +240,7 @@ class DLHApp {
         }
         return;
       }
-      
+
       const kecMap = (typeof KECAMATAN_LEMBATA !== 'undefined' ? KECAMATAN_LEMBATA : (window.KECAMATAN_LEMBATA || null));
       let desaList = [];
 
@@ -608,7 +608,7 @@ class DLHApp {
     if (this.citizenPinMap) {
       try {
         this.citizenPinMap.invalidateSize();
-      } catch (e) {}
+      } catch (e) { }
       return;
     }
 
@@ -751,7 +751,7 @@ class DLHApp {
       // 0. Kunci terikat kecamatan (menghindari tabrakan nama desa yang sama di kecamatan berbeda)
       if (desaDict[scopedKey]) {
         target = [desaDict[scopedKey].lat, desaDict[scopedKey].lng];
-      // 1. Exact match ke DESA_COORDINATES terlebih dahulu (tanpa .includes())
+        // 1. Exact match ke DESA_COORDINATES terlebih dahulu (tanpa .includes())
       } else if (desaDict[lowerRaw]) {
         target = [desaDict[lowerRaw].lat, desaDict[lowerRaw].lng];
       } else if (cleanDesa && desaDict[cleanDesa]) {
@@ -810,7 +810,7 @@ class DLHApp {
     }
 
     if (!this.citizenPinMap && typeof this.initCitizenPinMap === 'function') {
-      try { this.initCitizenPinMap(); } catch(e) {}
+      try { this.initCitizenPinMap(); } catch (e) { }
     }
 
     if (this.citizenPinMap) {
@@ -823,7 +823,7 @@ class DLHApp {
           } else {
             this.citizenPinMarker.closePopup();
           }
-        } catch (e) {}
+        } catch (e) { }
       }
       try {
         const size = this.citizenPinMap.getSize();
@@ -833,11 +833,11 @@ class DLHApp {
           this.citizenPinMap.setView([fixedLat, fixedLng], targetZoom);
         }
       } catch (err) {
-        try { this.citizenPinMap.setView([fixedLat, fixedLng], targetZoom); } catch(e) {}
+        try { this.citizenPinMap.setView([fixedLat, fixedLng], targetZoom); } catch (e) { }
       }
       setTimeout(() => {
         if (this.citizenPinMap) {
-          try { this.citizenPinMap.invalidateSize(); } catch(e) {}
+          try { this.citizenPinMap.invalidateSize(); } catch (e) { }
         }
       }, 200);
     }
@@ -888,7 +888,7 @@ class DLHApp {
         if (this.citizenPinMarker && this.citizenPinMap) {
           this.citizenPinMarker.setLatLng([lat, lng]);
           this.citizenPinMap.setView([lat, lng], 16);
-          try { this.citizenPinMap.invalidateSize(); } catch(e) {}
+          try { this.citizenPinMap.invalidateSize(); } catch (e) { }
         } else if (typeof this.initCitizenPinMap === 'function') {
           this.initCitizenPinMap();
           if (this.citizenPinMarker && this.citizenPinMap) {
@@ -925,7 +925,7 @@ class DLHApp {
           },
           { enableHighAccuracy: true, timeout: 10000, maximumAge: 0 }
         );
-      } catch (e) {}
+      } catch (e) { }
 
       setTimeout(() => {
         if (bestPosition) {
@@ -976,7 +976,7 @@ class DLHApp {
           mediaItem.dataUrl = res;
           return res;
         }
-      } catch (e) {}
+      } catch (e) { }
     }
 
     const file = mediaItem.file || (mediaItem instanceof Blob ? mediaItem : null);
@@ -995,7 +995,7 @@ class DLHApp {
           const vUrl = URL.createObjectURL(file);
           video.src = vUrl;
           const timer = setTimeout(() => {
-            try { URL.revokeObjectURL(vUrl); } catch (e) {}
+            try { URL.revokeObjectURL(vUrl); } catch (e) { }
             resolve(null);
           }, 8000);
           video.onloadeddata = () => { video.currentTime = 0.5; };
@@ -1122,7 +1122,7 @@ class DLHApp {
         const objectUrl = URL.createObjectURL(file);
         const img = new Image();
         const loadTimer = setTimeout(() => {
-          try { URL.revokeObjectURL(objectUrl); } catch (e) {}
+          try { URL.revokeObjectURL(objectUrl); } catch (e) { }
           fallbackToFileReader();
         }, 4000);
 
@@ -1249,7 +1249,7 @@ class DLHApp {
       animCard.style.display = 'block';
       try {
         animCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      } catch (e) {}
+      } catch (e) { }
 
       let progress = 0;
       if (animPercent) animPercent.textContent = '0%';
@@ -1341,7 +1341,7 @@ class DLHApp {
         removeBtn.onclick = (e) => {
           e.stopPropagation();
           if (media.previewUrl && String(media.previewUrl).startsWith('blob:')) {
-            try { URL.revokeObjectURL(media.previewUrl); } catch (e) {}
+            try { URL.revokeObjectURL(media.previewUrl); } catch (e) { }
           }
           this.selectedMediaFiles.splice(idx, 1);
           renderPreviews();
@@ -1387,7 +1387,7 @@ class DLHApp {
                   reader.readAsDataURL(f);
                 });
                 if (recovered) mediaItem.dataUrl = recovered;
-              } catch(e) {}
+              } catch (e) { }
               mediaItem.isCompressing = false;
               renderPreviews();
               return mediaItem.dataUrl;
@@ -1715,7 +1715,7 @@ class DLHApp {
         // Kumpulkan dan sinkronkan seluruh file bukti foto sesuai yang dikirim pengadu (2, 3, atau hingga 5 foto)
         const expectedCount = (this.selectedMediaFiles || []).length;
         updateSubmitProgress(30, 'Menyelaraskan seluruh berkas bukti foto...', `Memeriksa ${expectedCount} bukti foto...`);
-        
+
         const mediaPromises = (this.selectedMediaFiles || []).map(async (item) => {
           if (!item) return null;
           if (item.dataUrl && typeof item.dataUrl === 'string' && item.dataUrl.startsWith('data:image')) {
@@ -1728,7 +1728,7 @@ class DLHApp {
                 item.dataUrl = res;
                 return res;
               }
-            } catch (e) {}
+            } catch (e) { }
           }
           return await this.compressMediaFile(item);
         });
@@ -1769,7 +1769,7 @@ class DLHApp {
                   rawResults[i] = recovered;
                   this.selectedMediaFiles[i].dataUrl = recovered;
                 }
-              } catch (e) {}
+              } catch (e) { }
             }
           }
         }
@@ -1922,7 +1922,7 @@ class DLHApp {
           try {
             arr.unshift(newRecord);
             localStorage.setItem('dlh_lembata_aduan_v2', JSON.stringify(arr));
-          } catch(e) {}
+          } catch (e) { }
         }
 
         this.showToast(`💾 Laporan ${newRecord.id} tersimpan di arsip database DLH Lembata!`, 'success');
@@ -1935,8 +1935,8 @@ class DLHApp {
           : 'Koordinat belum disetel';
 
         // Susun Format Pesan WhatsApp: LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA
-        const waMessage = 
-`*LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA*
+        const waMessage =
+          `*LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA*
 --------------------------------------------------
 📌 *NOMOR REGISTER:* ${newRecord.id}
 📅 *WAKTU LAPOR:* ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
@@ -1969,9 +1969,9 @@ ${penyelesaian || 'Sesuai dengan ketentuan peraturan perundang-undangan lingkung
 ${riwayatWaText}
 
 📸 *BUKTI FOTO KEJADIAN:*
-${buktiList.length > 0 
-  ? `• Status: ${buktiList.length} Foto Bukti Terlampir Bersama Laporan Ini` 
-  : '• Status: Pelapor tidak melampirkan foto bukti.'}
+${buktiList.length > 0
+            ? `• Status: ${buktiList.length} Foto Bukti Terlampir Bersama Laporan Ini`
+            : '• Status: Pelapor tidak melampirkan foto bukti.'}
 
 *PERNYATAAN PELAPOR:*
 ☑️ Menyatakan dengan sadar bahwa seluruh data & bukti yang dilaporkan adalah BENAR dan siap dipertanggungjawabkan.
@@ -2022,7 +2022,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         }
         (this.selectedMediaFiles || []).forEach(m => {
           if (m && m.previewUrl && String(m.previewUrl).startsWith('blob:')) {
-            try { URL.revokeObjectURL(m.previewUrl); } catch (e) {}
+            try { URL.revokeObjectURL(m.previewUrl); } catch (e) { }
           }
         });
         this.selectedMediaFiles = [];
@@ -2112,7 +2112,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
                 await navigator.clipboard.writeText(ticketText);
                 copied = true;
               }
-            } catch (clipErr) {}
+            } catch (clipErr) { }
             if (!copied) {
               try {
                 const ta = document.createElement('textarea');
@@ -2124,7 +2124,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
                 ta.select();
                 copied = document.execCommand('copy');
                 document.body.removeChild(ta);
-              } catch (copyErr) {}
+              } catch (copyErr) { }
             }
             const origCopyLabel = '📄 Salin Tiket';
             btnCopyTicket.textContent = copied ? '✓ Tiket Disalin' : 'Tekan lama nomor tiket untuk menyalin';
@@ -2293,8 +2293,8 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         const fbYr = String(new Date().getFullYear()).slice(-2);
         const fallbackId = `ADU-${fbYr}-${fbCode}`;
 
-        const safeWaMessage = 
-`*LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA*
+        const safeWaMessage =
+          `*LAYANAN PENGADUAN LINGKUNGAN MASYARAKAT KABUPATEN LEMBATA*
 --------------------------------------------------
 📌 *NOMOR REGISTER:* ${fallbackId}
 📅 *WAKTU LAPOR:* ${new Date().toLocaleDateString('id-ID', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
@@ -2347,19 +2347,40 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
      5. REAL-TIME SYNCHRONIZATION LISTENER (PORTAL WARGA)
      =================================================================== */
   setupRealtimeSync() {
+    const refreshFromStore = (forceHydrate = false) => {
+      if (window.aduanStore) {
+        if (forceHydrate && typeof window.aduanStore.hydrateFromSharedState === 'function') {
+          window.aduanStore.hydrateFromSharedState(true);
+        } else {
+          window.aduanStore.init();
+        }
+      }
+      this.updateKPIs();
+      this.renderTable();
+      if (window.lembataMap) {
+        window.lembataMap.renderMarkers();
+        window.lembataMap.initMiniMap('miniMapPreview');
+      }
+    };
+
     // 1. Dengarkan event lokal ketika agregat statistik diperbarui
     window.addEventListener('aduanStatsSynced', () => {
       this.updateKPIs();
+      if (window.lembataMap && window.aduanStore) {
+        window.lembataMap.updateMapStats(window.aduanStore.getAll(), window.aduanStore.getAll());
+      }
     });
 
-    // 2. Dengarkan event storage lintas tab/jendela browser
+    // 2. Dengarkan event lokal pembaruan shared state lintas halaman
+    window.addEventListener('ecoaduSharedStateUpdated', () => {
+      refreshFromStore(false);
+    });
+
+    // 3. Dengarkan event storage lintas tab/jendela browser
+    const sharedKey = window.ECOADU_SHARED_STATE_KEY || 'ecoadu_shared_state';
     window.addEventListener('storage', (e) => {
-      if (e.key === 'dlh_cached_hero_stats' || e.key === 'dlh_lembata_aduan_v5') {
-        if (window.aduanStore) {
-          window.aduanStore.init();
-        }
-        this.updateKPIs();
-        this.renderTable();
+      if (e.key === sharedKey || e.key === 'dlh_cached_hero_stats' || e.key === 'dlh_lembata_aduan_v5') {
+        refreshFromStore(true);
       }
     });
 
@@ -2377,15 +2398,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         msg.type === 'DATA_RESET' ||
         msg.type === 'STATS_UPDATED'
       ) {
-        if (window.aduanStore) {
-          window.aduanStore.init();
-        }
-        this.updateKPIs();
-        this.renderTable();
-        if (window.lembataMap) {
-          window.lembataMap.renderMarkers();
-          window.lembataMap.initMiniMap('miniMapPreview');
-        }
+        refreshFromStore(true);
       }
     });
   }
@@ -2455,7 +2468,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
     const data = window.aduanStore ? window.aduanStore.getAll() : [];
     const filtered = data.filter(item => {
       const q = this.tableFilters.search;
-      const matchSearch = !q || 
+      const matchSearch = !q ||
         item.id.toLowerCase().includes(q) ||
         item.namaPelapor.toLowerCase().includes(q) ||
         item.kecamatan.toLowerCase().includes(q) ||
@@ -2467,10 +2480,15 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
     });
 
     if (filtered.length === 0) {
+      const hasSearch = Boolean(this.tableFilters && this.tableFilters.search);
+      const isLoading = !hasSearch && window.aduanStore && typeof window.aduanStore.hasReadyStats === 'function' && !window.aduanStore.hasReadyStats();
+      const emptyMsg = isLoading
+        ? 'Memuat data aduan terbaru dari server...'
+        : 'Tidak ada data aduan yang cocok dengan pencarian.';
       tbody.innerHTML = `
         <tr>
           <td colspan="6" style="text-align: center; padding: 28px; color: #64748b;">
-            Tidak ada data aduan yang cocok dengan pencarian.
+            ${emptyMsg}
           </td>
         </tr>
       `;
@@ -2511,40 +2529,69 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
   }
 
   updateKPIs() {
-    let stats = window.aduanStore ? window.aduanStore.getStats() : null;
-    if (!stats || typeof stats.total !== 'number') {
+    const store = window.aduanStore;
+    let stats = store ? store.getStats() : null;
+    let isReady = false;
+
+    if (store && typeof store.hasReadyStats === 'function') {
+      isReady = store.hasReadyStats();
+    } else if (store) {
+      isReady = Boolean(stats && typeof stats.total === 'number');
+    }
+
+    if (!isReady || !stats || typeof stats.total !== 'number') {
+      try {
+        const sharedKey = window.ECOADU_SHARED_STATE_KEY || 'ecoadu_shared_state';
+        const rawShared = localStorage.getItem(sharedKey);
+        if (rawShared) {
+          const parsedShared = JSON.parse(rawShared);
+          if (parsedShared && parsedShared.stats && typeof parsedShared.stats.total === 'number' &&
+            (parsedShared.serverConfirmed || parsedShared.stats.total > 0)) {
+            stats = parsedShared.stats;
+            isReady = true;
+          }
+        }
+      } catch (e) { }
+    }
+
+    if (!isReady || !stats || typeof stats.total !== 'number') {
       try {
         const cached = localStorage.getItem('dlh_cached_hero_stats');
-        if (cached) stats = JSON.parse(cached);
-      } catch (e) {}
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && typeof parsed.total === 'number' && (parsed.serverConfirmed === true || parsed.total > 0)) {
+            stats = parsed;
+            isReady = true;
+          }
+        }
+      } catch (e) { }
     }
-    if (!stats) stats = { total: 0, baru: 0, dalamProses: 0, selesai: 0 };
-    
-    const elTotal = document.getElementById('kpiTotal');
-    const elBaru = document.getElementById('kpiBaru');
-    const elProses = document.getElementById('kpiProses');
-    const elSelesai = document.getElementById('kpiSelesai');
 
-    if (elTotal) elTotal.textContent = (stats.total || 0).toLocaleString('id-ID');
-    if (elBaru) elBaru.textContent = (stats.baru || 0).toLocaleString('id-ID');
-    if (elProses) elProses.textContent = (stats.dalamProses || 0).toLocaleString('id-ID');
-    if (elSelesai) elSelesai.textContent = (stats.selesai || 0).toLocaleString('id-ID');
+    const targets = [
+      ['kpiTotal', stats ? stats.total : null],
+      ['kpiBaru', stats ? stats.baru : null],
+      ['kpiProses', stats ? stats.dalamProses : null],
+      ['kpiSelesai', stats ? stats.selesai : null],
+      ['userKpiTotal', stats ? stats.total : null],
+      ['userKpiProses', stats ? stats.dalamProses : null],
+      ['userKpiSelesai', stats ? stats.selesai : null],
+      ['heroStatTotal', stats ? stats.total : null],
+      ['heroStatProses', stats ? stats.dalamProses : null],
+      ['heroStatSelesai', stats ? stats.selesai : null]
+    ];
 
-    // Metrik Dashboard Publik Masyarakat & Hero Section (100% Sinkron Data Real Aduan)
-    const userTotal = document.getElementById('userKpiTotal');
-    const userProses = document.getElementById('userKpiProses');
-    const userSelesai = document.getElementById('userKpiSelesai');
-    if (userTotal) userTotal.textContent = (stats.total || 0).toLocaleString('id-ID');
-    if (userProses) userProses.textContent = (stats.dalamProses || 0).toLocaleString('id-ID');
-    if (userSelesai) userSelesai.textContent = (stats.selesai || 0).toLocaleString('id-ID');
-
-    // Hero Section Stat Card (Sinkron Murni dengan Data Real Database/Spreadsheet)
-    const heroTotal = document.getElementById('heroStatTotal');
-    const heroProses = document.getElementById('heroStatProses');
-    const heroSelesai = document.getElementById('heroStatSelesai');
-    if (heroTotal) heroTotal.textContent = (stats.total || 0).toLocaleString('id-ID');
-    if (heroProses) heroProses.textContent = (stats.dalamProses || 0).toLocaleString('id-ID');
-    if (heroSelesai) heroSelesai.textContent = (stats.selesai || 0).toLocaleString('id-ID');
+    const shouldShowLoading = !isReady || !stats || typeof stats.total !== 'number';
+    targets.forEach(([id, val]) => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      if (shouldShowLoading) {
+        el.classList.add('stat-loading');
+        el.textContent = '...';
+      } else {
+        el.classList.remove('stat-loading');
+        el.textContent = Number(val || 0).toLocaleString('id-ID');
+      }
+    });
   }
 
   scrollToForm() {
@@ -2617,7 +2664,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       btnTrack.innerHTML = '<span>⏳</span> Melacak...';
 
       if (window.aduanStore && window.aduanStore.hasGasConfigured()) {
-        try { await window.aduanStore.syncFromGAS(true); } catch(e) {}
+        try { await window.aduanStore.syncFromGAS(true); } catch (e) { }
       }
 
       btnTrack.disabled = false;
@@ -2769,7 +2816,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
               parsed.forEach(extractPhotos);
               return;
             }
-          } catch(e) {}
+          } catch (e) { }
         }
         if (trimmed.includes('Buka') && trimmed.includes('Foto Bukti')) return;
         if (trimmed.startsWith('📸')) return;
@@ -2798,25 +2845,25 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
     for (let cIdx = 0; cIdx < photoList.length; cIdx++) {
       try {
         const cVal = localStorage.getItem('dlh_photo_cache_' + cleanAduanId + '_' + cIdx) ||
-                     localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + cIdx) ||
-                     (cIdx === 0 ? (localStorage.getItem('dlh_photo_cache_' + cleanAduanId) || localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase())) : null);
+          localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + cIdx) ||
+          (cIdx === 0 ? (localStorage.getItem('dlh_photo_cache_' + cleanAduanId) || localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase())) : null);
         if (cVal && cVal.startsWith('data:image')) {
           if (!photoList[cIdx] || !photoList[cIdx].startsWith('data:image')) {
             photoList[cIdx] = cVal;
           }
         }
-      } catch (e) {}
+      } catch (e) { }
     }
 
     // Periksa juga jika ada foto tambahan ke-2, ke-3, dst. yang tersimpan di cache lokal
     for (let extraIdx = photoList.length; extraIdx < 6; extraIdx++) {
       try {
         const extraVal = localStorage.getItem('dlh_photo_cache_' + cleanAduanId + '_' + extraIdx) ||
-                         localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + extraIdx);
+          localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + extraIdx);
         if (extraVal && extraVal.startsWith('data:image') && !photoList.includes(extraVal)) {
           photoList.push(extraVal);
         }
-      } catch (e) {}
+      } catch (e) { }
     }
 
     // Resolusi awal: Ganti tautan non-Base64 dengan data gambar jernih dari cache lokal jika tersedia
@@ -2824,10 +2871,10 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       if (typeof rawP === 'string' && rawP.startsWith('data:image')) return rawP;
       try {
         const cached = localStorage.getItem('dlh_photo_cache_' + cleanAduanId + '_' + pIdx) ||
-                       localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + pIdx) ||
-                       (pIdx === 0 ? localStorage.getItem('dlh_photo_cache_' + cleanAduanId) : null);
+          localStorage.getItem('dlh_photo_cache_' + cleanAduanId.toLowerCase() + '_' + pIdx) ||
+          (pIdx === 0 ? localStorage.getItem('dlh_photo_cache_' + cleanAduanId) : null);
         if (cached && cached.startsWith('data:image')) return cached;
-      } catch (e) {}
+      } catch (e) { }
       return rawP;
     });
 
@@ -2847,9 +2894,9 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         if (typeof rawP === 'string' && rawP.startsWith('data:image')) return rawP;
         try {
           const cached = localStorage.getItem('dlh_photo_cache_' + cleanAduanId + '_PETUGAS_' + pIdx) ||
-                         localStorage.getItem('dlh_photo_cache_' + cleanAduanId + '_PETUGAS');
+            localStorage.getItem('dlh_photo_cache_' + cleanAduanId + '_PETUGAS');
           if (cached && cached.startsWith('data:image')) return cached;
-        } catch (e) {}
+        } catch (e) { }
         return rawP;
       });
     }
@@ -2988,11 +3035,11 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
           </div>
           <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px;">
             ${photoList.map((rawSrc, i) => {
-              const displaySrc = this.formatPhotoUrl(rawSrc);
-              const safeSrc = (displaySrc || rawSrc).replace(/'/g, "\\'");
-              const origSafe = (rawSrc || '').replace(/'/g, "\\'");
-              const photoDomId = `imgDetailCitizen_${cleanAduanId}_${i}`;
-              return `
+      const displaySrc = this.formatPhotoUrl(rawSrc);
+      const safeSrc = (displaySrc || rawSrc).replace(/'/g, "\\'");
+      const origSafe = (rawSrc || '').replace(/'/g, "\\'");
+      const photoDomId = `imgDetailCitizen_${cleanAduanId}_${i}`;
+      return `
                 <div style="background: #f8fafc; border: 1.5px solid #cbd5e1; border-radius: 10px; padding: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 6px;">
                   <div onclick="window.app.openLightboxByIndex('citizen', ${i})"
                        style="cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid #059669; background: #0f172a; position: relative; height: 125px; transition: transform 0.2s;"
@@ -3004,7 +3051,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
                          data-original="${origSafe}"
                          data-aduan-id="${cleanAduanId}"
                          data-photo-idx="${i}"
-                         alt="Bukti Foto ${i+1}"
+                         alt="Bukti Foto ${i + 1}"
                          referrerpolicy="no-referrer"
                          loading="eager"
                          onerror="window.handleAduanPhotoError(this, '${cleanAduanId}', ${i});"
@@ -3024,7 +3071,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
                   </button>
                 </div>
               `;
-            }).join('')}
+    }).join('')}
           </div>
         </div>
       ` : ''}
@@ -3037,11 +3084,11 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
           </div>
           <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 12px;">
             ${officerPhotos.map((rawSrc, i) => {
-              const displaySrc = this.formatPhotoUrl(rawSrc);
-              const safeSrc = (displaySrc || rawSrc).replace(/'/g, "\\'");
-              const origSafe = (rawSrc || '').replace(/'/g, "\\'");
-              const photoDomId = `imgDetailOfficer_${cleanAduanId}_${i}`;
-              return `
+      const displaySrc = this.formatPhotoUrl(rawSrc);
+      const safeSrc = (displaySrc || rawSrc).replace(/'/g, "\\'");
+      const origSafe = (rawSrc || '').replace(/'/g, "\\'");
+      const photoDomId = `imgDetailOfficer_${cleanAduanId}_${i}`;
+      return `
                 <div style="background: #ffffff; border: 1.5px solid #86efac; border-radius: 10px; padding: 6px; box-shadow: 0 2px 6px rgba(0,0,0,0.06); display: flex; flex-direction: column; gap: 6px;">
                   <div onclick="window.app.openLightboxByIndex('officer', ${i})"
                        style="cursor: pointer; border-radius: 8px; overflow: hidden; border: 2px solid #16a34a; background: #0f172a; position: relative; height: 125px; transition: transform 0.2s;"
@@ -3053,7 +3100,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
                          data-original="${origSafe}"
                          data-aduan-id="${cleanAduanId}"
                          data-photo-idx="${i}"
-                         alt="Foto Fisik ${i+1}"
+                         alt="Foto Fisik ${i + 1}"
                          referrerpolicy="no-referrer"
                          loading="eager"
                          data-is-officer="true"
@@ -3074,7 +3121,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
                   </button>
                 </div>
               `;
-            }).join('')}
+    }).join('')}
           </div>
         </div>
       ` : ''}
@@ -3092,7 +3139,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
   openLightboxByIndex(type, index) {
     const rawList = (type === 'officer') ? (this._currentOfficerPhotos || []) : (this._currentCitizenPhotos || []);
     const cleanAduanId = (this._currentModalItem && this._currentModalItem.id) ? String(this._currentModalItem.id).trim().toUpperCase() : '';
-    
+
     // Buat daftar URL foto yang sudah terformat dan terhubung dengan elemen DOM jika ada
     const resolvedList = rawList.map((raw, i) => {
       const domId = (type === 'officer') ? `imgDetailOfficer_${cleanAduanId}_${i}` : `imgDetailCitizen_${cleanAduanId}_${i}`;
@@ -3106,7 +3153,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
     const safeIndex = Math.max(0, Math.min(index, resolvedList.length - 1));
     const currentSrc = resolvedList[safeIndex] || '';
     const baseCaption = (type === 'officer' ? 'Dokumentasi Petugas' : 'Bukti Foto Pelapor') + (this._currentModalItem ? ' • ' + this._currentModalItem.id : '');
-    
+
     this.openLightbox(currentSrc, baseCaption, resolvedList, safeIndex);
   }
 
@@ -3308,7 +3355,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       const endPan = (e) => {
         if (this.isPanningLightbox) {
           this.isPanningLightbox = false;
-          try { viewport.releasePointerCapture(e.pointerId); } catch(err) {}
+          try { viewport.releasePointerCapture(e.pointerId); } catch (err) { }
           this.updateLightboxTransform();
         }
       };
@@ -3452,14 +3499,21 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
 
     const btnReset = document.getElementById('btnResetDefaultData');
     if (btnReset) {
-      btnReset.addEventListener('click', () => {
-        if (confirm('Muat ulang dataset simulasi default Kabupaten Lembata?')) {
-          window.aduanStore.resetToDefault();
+      btnReset.addEventListener('click', async () => {
+        if (confirm('Muat ulang dan sinkronkan ulang data aduan terbaru dari server DLH Lembata?')) {
+          if (typeof window.aduanStore.resetToOfficialDefaults === 'function') {
+            window.aduanStore.resetToOfficialDefaults();
+          } else {
+            window.aduanStore.resetToDefault();
+          }
+          if (window.aduanStore.hasGasConfigured && window.aduanStore.hasGasConfigured()) {
+            await window.aduanStore.syncFromGAS(false);
+          }
           this.updateKPIs();
           this.renderTable();
           if (window.lembataMap) window.lembataMap.renderMarkers();
           this.updateCloudUI();
-          this.showToast('Data dikembalikan ke standar awal Lembata.', 'info');
+          this.showToast('Data berhasil disinkronkan ulang dari server.', 'info');
         }
       });
     }
@@ -3475,7 +3529,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
     if (dot) dot.style.background = isConfigured ? '#10b981' : '#94a3b8';
     if (text) text.textContent = isConfigured ? 'Sheets Cloud' : 'Mode Lokal';
     if (detail) {
-      detail.innerHTML = isConfigured 
+      detail.innerHTML = isConfigured
         ? '<span style="color: #059669;">🟢 Terhubung ke Google Spreadsheet API</span>'
         : '⚪ Mode Lokal (LocalStorage)';
     }
@@ -3483,7 +3537,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       const syncFormatted = window.aduanStore.getFormattedLastSync
         ? window.aduanStore.getFormattedLastSync()
         : (window.aduanStore.lastSyncTime ? window.aduanStore.lastSyncTime.toLocaleTimeString('id-ID') : null);
-      lastSync.textContent = syncFormatted 
+      lastSync.textContent = syncFormatted
         ? `Terakhir disinkronkan: ${syncFormatted}`
         : (isConfigured ? 'Siap mengirim & menerima data' : 'Dataset lokal browser');
     }

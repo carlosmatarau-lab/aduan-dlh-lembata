@@ -5110,6 +5110,17 @@
         will-change: auto !important;
       }
     }
+
+    @keyframes ecoaduStatPulse {
+      0%, 100% { opacity: 0.42; }
+      50% { opacity: 0.9; }
+    }
+
+    .kpi-val.stat-loading,
+    .stat-loading {
+      animation: ecoaduStatPulse 1.2s ease-in-out infinite;
+      color: #64748b !important;
+    }
   </style>
 </head>
 
@@ -5331,7 +5342,7 @@
             </svg>
           </div>
           <div class="kpi-info">
-            <div class="kpi-val" id="kpiTotal">0</div>
+            <div class="kpi-val stat-loading" id="kpiTotal">...</div>
             <div class="kpi-title">Total Aduan</div>
           </div>
         </div>
@@ -5348,7 +5359,7 @@
             </svg>
           </div>
           <div class="kpi-info">
-            <div class="kpi-val" id="kpiBaru">0</div>
+            <div class="kpi-val stat-loading" id="kpiBaru">...</div>
             <div class="kpi-title">Belum Verifikasi</div>
           </div>
         </div>
@@ -5364,7 +5375,7 @@
             </svg>
           </div>
           <div class="kpi-info">
-            <div class="kpi-val" id="kpiProses">0</div>
+            <div class="kpi-val stat-loading" id="kpiProses">...</div>
             <div class="kpi-title">Dalam Proses</div>
           </div>
         </div>
@@ -5381,7 +5392,7 @@
             </svg>
           </div>
           <div class="kpi-info">
-            <div class="kpi-val" id="kpiSelesai">0</div>
+            <div class="kpi-val stat-loading" id="kpiSelesai">...</div>
             <div class="kpi-title">Tuntas Selesai</div>
           </div>
         </div>
@@ -5399,7 +5410,7 @@
             </svg>
           </div>
           <div class="kpi-info">
-            <div class="kpi-val" id="kpiTidakDapatDitindaklanjuti">0</div>
+            <div class="kpi-val stat-loading" id="kpiTidakDapatDitindaklanjuti">...</div>
             <div class="kpi-title">Tidak Dapat Ditindaklanjuti</div>
           </div>
         </div>
@@ -7041,7 +7052,7 @@
   <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 
   <!-- Scripts: Data Engine & Portal Controller -->
-  <script src="js/data.js?v=20261115_fix_sync_03"></script>
+  <script src="js/data.js?v=20261115_sync_shared_01"></script>
   <script>
     // Safeguard prototype jika browser masih memuat file js lama dari cache
     if (typeof AduanDataStore !== 'undefined') {
@@ -7151,11 +7162,22 @@
         try { this.renderTable(); } catch (e) { console.error('renderTable:', e); }
         try { this.initMap(); } catch (e) { console.error('initMap:', e); }
 
+        if (window.aduanStore && typeof window.aduanStore.hasReadyStats === 'function' && window.aduanStore.hasReadyStats()) {
+          this.syncSharedStateToStorage('petugas-init');
+        }
+
+        window.addEventListener('pagehide', () => {
+          if (window.aduanStore && typeof window.aduanStore.hasReadyStats === 'function' && window.aduanStore.hasReadyStats()) {
+            this.syncSharedStateToStorage('petugas-pagehide');
+          }
+        });
+
         // SINKRONISASI OTOMATIS DARI GOOGLE SPREADSHEET SAAT DASHBOARD DIBUKA
         if (window.aduanStore && window.aduanStore.hasGasConfigured()) {
           try {
             const syncRes = await window.aduanStore.syncFromGAS(true);
             if (syncRes && syncRes.success) {
+              this.syncSharedStateToStorage('petugas-load', 'STATS_UPDATED');
               this.updateKPIs();
               this.renderTable();
               this.renderMapLayers();
@@ -7164,6 +7186,40 @@
             console.warn('Initial cloud sync error:', e);
           }
         }
+      }
+
+      syncSharedStateToStorage(source = 'petugas', broadcastType = null, broadcastPayload = null) {
+        const store = window.aduanStore;
+        if (!store) return null;
+        let written = null;
+        if (typeof store.writeSharedState === 'function') {
+          written = store.writeSharedState(source, { force: true, serverConfirmed: true });
+        } else if (typeof store.save === 'function') {
+          store.save(source, { force: true, serverConfirmed: true });
+        } else {
+          try {
+            const list = typeof store.getAll === 'function' ? store.getAll() : (store.aduanList || []);
+            const stats = typeof store.getStats === 'function' ? store.getStats() : null;
+            const payload = {
+              aduanList: list,
+              stats: stats,
+              updatedAt: Date.now(),
+              serverConfirmed: true,
+              source: source
+            };
+            localStorage.setItem(window.ECOADU_SHARED_STATE_KEY || 'ecoadu_shared_state', JSON.stringify(payload));
+            written = payload;
+          } catch (e) {}
+        }
+
+        if (broadcastType && window.dlhRealtime && typeof window.dlhRealtime.broadcast === 'function') {
+          window.dlhRealtime.broadcast(broadcastType, {
+            ...(broadcastPayload || {}),
+            updatedAt: (written && written.updatedAt) || Date.now(),
+            source
+          });
+        }
+        return written;
       }
 
       /* ===================================================================
@@ -7413,6 +7469,9 @@
               } catch (e) { }
             }
 
+            if (window.aduanStore && typeof window.aduanStore.hasReadyStats === 'function' && window.aduanStore.hasReadyStats()) {
+              this.syncSharedStateToStorage('petugas-login', 'STATS_UPDATED');
+            }
             this.updateKPIs();
             this.renderTable();
             this.renderMapLayers();
@@ -8132,6 +8191,7 @@
 
           this.closeAllModals();
           if (success) {
+            this.syncSharedStateToStorage('petugas-delete', 'STATS_UPDATED', { id });
             this.showToast(`Laporan aduan ${id} berhasil dihapus permanen.`, 'success');
             this.updateKPIs();
             this.renderTable();
@@ -8159,6 +8219,7 @@
         try {
           const success = await window.aduanStore.deleteOfficerPhoto(id, photoIndex);
           if (success) {
+            this.syncSharedStateToStorage('petugas-photo-delete', 'ADUAN_UPDATED', { id });
             this.showToast(`Foto ke-${photoIndex + 1} berhasil dihapus & data disinkronkan!`, 'success');
             this.updateKPIs();
             this.renderTable();
@@ -8188,6 +8249,7 @@
           });
 
           if (updated) {
+            this.syncSharedStateToStorage('petugas-photo-clear', 'ADUAN_UPDATED', { id });
             this.showToast('Seluruh foto petugas berhasil dihapus & disinkronkan!', 'success');
             this.updateKPIs();
             this.renderTable();
@@ -10590,19 +10652,32 @@
       }
 
       updateKPIs() {
-        const stats = window.aduanStore ? window.aduanStore.getStats() : { total: 0, baru: 0, dalamProses: 0, selesai: 0, tidakDapatDitindaklanjuti: 0 };
+        const store = window.aduanStore;
+        const statsReady = store
+          ? (typeof store.hasReadyStats === 'function' ? store.hasReadyStats() : true)
+          : false;
+        const stats = store ? store.getStats() : null;
 
-        const elTotal = document.getElementById('kpiTotal');
-        const elBaru = document.getElementById('kpiBaru');
-        const elProses = document.getElementById('kpiProses');
-        const elSelesai = document.getElementById('kpiSelesai');
-        const elTidakDapat = document.getElementById('kpiTidakDapatDitindaklanjuti');
+        const targets = [
+          ['kpiTotal', stats ? stats.total : null],
+          ['kpiBaru', stats ? stats.baru : null],
+          ['kpiProses', stats ? stats.dalamProses : null],
+          ['kpiSelesai', stats ? stats.selesai : null],
+          ['kpiTidakDapatDitindaklanjuti', stats ? (stats.tidakDapatDitindaklanjuti ?? stats.ditolak ?? 0) : null]
+        ];
 
-        if (elTotal) elTotal.textContent = stats.total;
-        if (elBaru) elBaru.textContent = stats.baru;
-        if (elProses) elProses.textContent = stats.dalamProses;
-        if (elSelesai) elSelesai.textContent = stats.selesai;
-        if (elTidakDapat) elTidakDapat.textContent = stats.tidakDapatDitindaklanjuti ?? stats.ditolak ?? 0;
+        const showLoading = !statsReady || !stats || typeof stats.total !== 'number';
+        targets.forEach(([id, val]) => {
+          const el = document.getElementById(id);
+          if (!el) return;
+          if (showLoading) {
+            el.classList.add('stat-loading');
+            el.textContent = '...';
+          } else {
+            el.classList.remove('stat-loading');
+            el.textContent = val ?? 0;
+          }
+        });
       }
 
       filterByKpi(status) {
@@ -11770,6 +11845,7 @@
 
               const updated = await window.aduanStore.updateVerifikasi(id, updateData);
               if (updated) {
+                this.syncSharedStateToStorage('petugas-verifikasi', 'ADUAN_UPDATED', { id });
                 this.closeAllModals();
                 this.updateKPIs();
                 this.renderTable();
@@ -11965,6 +12041,7 @@
               } else {
                 window.aduanStore.resetToDefault();
               }
+              this.syncSharedStateToStorage('petugas-reset', 'DATA_RESET', { count: 0 });
               this.updateKPIs();
               this.renderTable();
               this.renderMapLayers();
@@ -11991,6 +12068,7 @@
             }
             const res = await window.aduanStore.syncFromGAS(false);
             if (res && res.success) {
+              this.syncSharedStateToStorage('petugas-manual-sync', 'STATS_UPDATED');
               const remoteCount = res.remoteCount !== undefined ? res.remoteCount : (res.count || 0);
               this.showToast(`Berhasil menyinkronkan ${remoteCount} aduan dari Google Spreadsheet.`, 'success');
             } else if (res && res.error) {
@@ -12033,12 +12111,14 @@
 
         if (window.aduanStore && typeof window.aduanStore.resetDatabaseToZero === 'function') {
           const res = await window.aduanStore.resetDatabaseToZero();
+          this.syncSharedStateToStorage('petugas-reset', 'DATA_RESET', { count: 0 });
           this.updateKPIs();
           this.renderTable();
           this.renderMapLayers();
           this.showToast(res.message || 'Penyegaran Berhasil! Sistem kini bersih (0 aduan) siap untuk pengujian baru.', 'success');
         } else if (window.aduanStore && typeof window.aduanStore.resetToOfficialDefaults === 'function') {
           window.aduanStore.resetToOfficialDefaults();
+          this.syncSharedStateToStorage('petugas-reset', 'DATA_RESET', { count: 0 });
           this.updateKPIs();
           this.renderTable();
           this.renderMapLayers();
@@ -12047,7 +12127,10 @@
       }
 
       setupRealtimeListener() {
-        const reloadAll = () => {
+        const reloadAll = (hydrateFirst = false) => {
+          if (hydrateFirst && window.aduanStore && typeof window.aduanStore.hydrateFromSharedState === 'function') {
+            window.aduanStore.hydrateFromSharedState(true);
+          }
           this.updateKPIs();
           this.renderTable();
           this.renderMapLayers();
@@ -12061,7 +12144,7 @@
           window.dlhRealtime.listen((msg) => {
             if (!msg || !msg.type) return;
 
-            reloadAll();
+            reloadAll(true);
 
             if (msg.type === 'ADUAN_BARU') {
               const payload = msg.payload || msg.data || {};
@@ -12073,10 +12156,11 @@
         }
 
         // Sinkronisasi otomatis antar tab browser via storage event
+        const sharedKey = window.ECOADU_SHARED_STATE_KEY || 'ecoadu_shared_state';
         window.addEventListener('storage', (e) => {
-          if (e.key === 'dlh_lembata_aduan_v5' || e.key === 'dlh_lembata_realtime_ping' || e.key === 'dlh_lembata_aduan_v1') {
+          if (e.key === sharedKey || e.key === 'dlh_lembata_aduan_v5' || e.key === 'dlh_lembata_realtime_ping' || e.key === 'dlh_lembata_aduan_v1') {
             if (typeof this.updateStatusIndicator === 'function') this.updateStatusIndicator();
-            reloadAll();
+            reloadAll(true);
           }
         });
 
@@ -12084,11 +12168,12 @@
           if (typeof this.updateStatusIndicator === 'function') {
             this.updateStatusIndicator(e && e.detail ? e.detail.timestamp : null);
           }
-          reloadAll();
+          reloadAll(false);
         });
 
         window.addEventListener('aduanStatsSynced', () => {
           if (typeof this.updateStatusIndicator === 'function') this.updateStatusIndicator();
+          this.updateKPIs();
         });
       }
 
@@ -12395,6 +12480,7 @@
           }
 
           const record = await window.aduanStore.addAduan(this.currentParsedWaData);
+          this.syncSharedStateToStorage('petugas-wa-import', 'STATS_UPDATED', { id: record ? record.id : '' });
           this.closeAllModals();
           this.updateKPIs();
           this.renderTable();

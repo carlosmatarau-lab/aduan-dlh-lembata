@@ -6053,6 +6053,17 @@
         padding: 5px 10px;
       }
     }
+
+    @keyframes ecoaduStatPulse {
+      0%, 100% { opacity: 0.42; }
+      50% { opacity: 0.9; }
+    }
+
+    .stat-loading {
+      animation: ecoaduStatPulse 1.2s ease-in-out infinite;
+      color: #64748b !important;
+      letter-spacing: 0.08em;
+    }
   </style>
 </head>
 
@@ -6183,7 +6194,7 @@
             </div>
             <div>
               <div class="stat-row-lbl">Total Aduan</div>
-              <div class="stat-row-val" id="heroStatTotal">-</div>
+              <div class="stat-row-val stat-loading" id="heroStatTotal">...</div>
             </div>
           </div>
 
@@ -6196,7 +6207,7 @@
             </div>
             <div>
               <div class="stat-row-lbl">Dalam Penanganan</div>
-              <div class="stat-row-val" id="heroStatProses">-</div>
+              <div class="stat-row-val stat-loading" id="heroStatProses">...</div>
             </div>
           </div>
 
@@ -6208,42 +6219,106 @@
             </div>
             <div>
               <div class="stat-row-lbl">Selesai</div>
-              <div class="stat-row-val" id="heroStatSelesai">-</div>
+              <div class="stat-row-val stat-loading" id="heroStatSelesai">...</div>
             </div>
           </div>
         </div>
-        <!-- Fast Instant Hydration: Menampilkan angka statistik dari cache lokal sebelum pembaruan server lengkap -->
+        <!-- Fast Instant Hydration: Render instan (0 ms) dari ecoadu_shared_state / cache terkonfirmasi -->
         <script>
           (function() {
-            try {
-              var s = null;
-              var cached = localStorage.getItem('dlh_cached_hero_stats');
-              if (cached) {
-                s = JSON.parse(cached);
-              } else {
-                var raw = localStorage.getItem('dlh_lembata_aduan_v5');
-                if (raw) {
-                  var list = JSON.parse(raw);
-                  if (Array.isArray(list) && list.length > 0) {
-                    var dp = 0, sl = 0;
-                    for (var i = 0; i < list.length; i++) {
-                      var st = list[i].status;
-                      if (st === 'Selesai') sl++;
-                      else if (st === 'Dalam Penanganan' || st === 'Sedang Diverifikasi' || st === 'Verifikasi Administrasi' || st === 'Menunggu Verifikasi Lapangan' || st === 'Diverifikasi' || st === 'Ditindaklanjuti') dp++;
+            function computeStatsFromList(list) {
+              var br = 0, dp = 0, sl = 0, total = 0;
+              for (var i = 0; i < list.length; i++) {
+                var item = list[i];
+                if (!item || !item.id) continue;
+                if (String(item.id).toUpperCase() === 'ADU-LMB-2026-001' &&
+                    (item.namaPelapor === 'Carlos Matarau' || item.status === 'Ditolak')) {
+                  continue;
+                }
+                total++;
+                var st = String(item.status || '').trim().toLowerCase();
+                if (st === 'selesai') sl++;
+                else if (st === 'tidak dapat ditindaklanjuti' || st === 'ditolak') {}
+                else if (st === 'aduan diterima' || st === 'baru') br++;
+                else dp++;
+              }
+              return { total: total, baru: br, dalamProses: dp, selesai: sl };
+            }
+
+            window.hydrateEcoaduSharedStateUI = function() {
+              try {
+                var s = null;
+                var isValid = false;
+                var sharedRaw = localStorage.getItem('ecoadu_shared_state');
+                if (sharedRaw) {
+                  var sharedObj = JSON.parse(sharedRaw);
+                  if (sharedObj) {
+                    if (sharedObj.stats && typeof sharedObj.stats.total === 'number' &&
+                        (sharedObj.serverConfirmed === true || sharedObj.stats.total > 0)) {
+                      s = sharedObj.stats;
+                      isValid = true;
+                    } else if (Array.isArray(sharedObj.aduanList) &&
+                        (sharedObj.serverConfirmed === true || sharedObj.aduanList.length > 0)) {
+                      s = computeStatsFromList(sharedObj.aduanList);
+                      isValid = true;
                     }
-                    s = { total: list.length, dalamProses: dp, selesai: sl };
                   }
                 }
+
+                if (!isValid) {
+                  var cached = localStorage.getItem('dlh_cached_hero_stats');
+                  if (cached) {
+                    var parsedCached = JSON.parse(cached);
+                    if (parsedCached && typeof parsedCached.total === 'number' &&
+                        (parsedCached.serverConfirmed === true || parsedCached.total > 0)) {
+                      s = parsedCached;
+                      isValid = true;
+                    }
+                  }
+                }
+
+                if (!isValid) {
+                  var raw = localStorage.getItem('dlh_lembata_aduan_v5');
+                  if (raw) {
+                    var list = JSON.parse(raw);
+                    if (Array.isArray(list) && list.length > 0) {
+                      s = computeStatsFromList(list);
+                      isValid = true;
+                    }
+                  }
+                }
+
+                var targets = [
+                  ['heroStatTotal', s ? s.total : null, true],
+                  ['heroStatProses', s ? s.dalamProses : null, true],
+                  ['heroStatSelesai', s ? s.selesai : null, true],
+                  ['mapStatTotal', s ? s.total : null, false],
+                  ['mapStatBaru', s ? s.baru : null, false],
+                  ['mapStatProses', s ? s.dalamProses : null, false],
+                  ['mapStatSelesai', s ? s.selesai : null, false],
+                  ['mobiAduanCount', s ? s.total : null, false]
+                ];
+
+                for (var i = 0; i < targets.length; i++) {
+                  var el = document.getElementById(targets[i][0]);
+                  if (!el) continue;
+                  if (isValid && s) {
+                    el.classList.remove('stat-loading');
+                    el.textContent = targets[i][2]
+                      ? Number(targets[i][1] || 0).toLocaleString('id-ID')
+                      : String(Number(targets[i][1] || 0));
+                  } else {
+                    el.classList.add('stat-loading');
+                    el.textContent = '...';
+                  }
+                }
+                return isValid;
+              } catch (e) {
+                return false;
               }
-              if (s && typeof s.total !== 'undefined') {
-                var elT = document.getElementById('heroStatTotal');
-                var elP = document.getElementById('heroStatProses');
-                var elS = document.getElementById('heroStatSelesai');
-                if (elT) elT.textContent = Number(s.total || 0).toLocaleString('id-ID');
-                if (elP) elP.textContent = Number(s.dalamProses || 0).toLocaleString('id-ID');
-                if (elS) elS.textContent = Number(s.selesai || 0).toLocaleString('id-ID');
-              }
-            } catch (e) {}
+            };
+
+            window.hydrateEcoaduSharedStateUI();
           })();
         </script>
       </section>
@@ -6940,25 +7015,30 @@
             <div class="map-stats-strip">
               <div class="map-stat-chip">
                 <span class="mstat-dot dot-total"></span>
-                <span class="mstat-num" id="mapStatTotal">0</span>
+                <span class="mstat-num stat-loading" id="mapStatTotal">...</span>
                 <span class="mstat-lbl">Total</span>
               </div>
               <div class="map-stat-chip chip-amber">
                 <span class="mstat-dot dot-baru"></span>
-                <span class="mstat-num" id="mapStatBaru">0</span>
+                <span class="mstat-num stat-loading" id="mapStatBaru">...</span>
                 <span class="mstat-lbl">Masuk</span>
               </div>
               <div class="map-stat-chip chip-blue">
                 <span class="mstat-dot dot-proses"></span>
-                <span class="mstat-num" id="mapStatProses">0</span>
+                <span class="mstat-num stat-loading" id="mapStatProses">...</span>
                 <span class="mstat-lbl">Proses</span>
               </div>
               <div class="map-stat-chip chip-green">
                 <span class="mstat-dot dot-selesai"></span>
-                <span class="mstat-num" id="mapStatSelesai">0</span>
+                <span class="mstat-num stat-loading" id="mapStatSelesai">...</span>
                 <span class="mstat-lbl">Selesai</span>
               </div>
             </div>
+            <script>
+              if (typeof window.hydrateEcoaduSharedStateUI === 'function') {
+                window.hydrateEcoaduSharedStateUI();
+              }
+            </script>
 
             <!-- Mobile Filter Toggle Bar (Hanya tampil di mobile < 768px) -->
             <div class="map-filter-toggle-row" id="mapFilterToggleRow">
@@ -7411,9 +7491,9 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Application Logic -->
-  <script charset="UTF-8" src="js/data.js?v=20261115_fix_status_02"></script>
-  <script charset="UTF-8" src="js/map.js?v=20261029_clean_gov_gis"></script>
-  <script charset="UTF-8" src="js/app.js?v=20261027_sort_01"></script>
+  <script charset="UTF-8" src="js/data.js?v=20261115_sync_shared_01"></script>
+  <script charset="UTF-8" src="js/map.js?v=20261115_sync_shared_01"></script>
+  <script charset="UTF-8" src="js/app.js?v=20261115_sync_shared_01"></script>
 
   <!-- ===================================================================
        SCRIPTS: SPLASH SCREEN & PORTAL TRANSITION HANDLER
@@ -7478,6 +7558,99 @@
           handoffOverlay.style.display = 'none';
         }
       });
+    })();
+
+    // 3. Sinkronisasi Shared State & Anti-Cache Fetch saat Navigasi Kembali / Tab Aktif
+    (function initIndexSharedSyncAndLifecycle() {
+      const bootAt = Date.now();
+      let lastResumeFetchAt = 0;
+
+      function applySharedStateToPage() {
+        if (typeof window.hydrateEcoaduSharedStateUI === 'function') {
+          window.hydrateEcoaduSharedStateUI();
+        }
+        if (window.aduanStore) {
+          if (typeof window.aduanStore.hydrateFromSharedState === 'function') {
+            window.aduanStore.hydrateFromSharedState(true);
+          } else {
+            window.aduanStore.init();
+          }
+        }
+        if (window.app) {
+          if (typeof window.app.updateKPIs === 'function') window.app.updateKPIs();
+          if (typeof window.app.renderTable === 'function') window.app.renderTable();
+          if (typeof window.app.updateCloudUI === 'function') window.app.updateCloudUI();
+        }
+        if (window.lembataMap) {
+          if (typeof window.lembataMap.renderMarkers === 'function') window.lembataMap.renderMarkers();
+          if (typeof window.lembataMap.initMiniMap === 'function') window.lembataMap.initMiniMap('miniMapPreview');
+        }
+      }
+
+      function triggerAntiCacheGasFetch() {
+        const now = Date.now();
+        if (now - lastResumeFetchAt < 150) return;
+        lastResumeFetchAt = now;
+
+        const store = window.aduanStore;
+        if (!store || typeof store.hasGasConfigured !== 'function' || !store.hasGasConfigured()) {
+          return;
+        }
+
+        const tasks = [];
+        if (typeof store.syncStatsFromGAS === 'function') {
+          tasks.push(store.syncStatsFromGAS());
+        }
+        if (typeof store.syncFromGAS === 'function') {
+          tasks.push(store.syncFromGAS(true));
+        }
+
+        if (tasks.length === 0 && typeof store.getActiveGasUrl === 'function') {
+          const gasUrl = store.getActiveGasUrl();
+          if (gasUrl) {
+            const sep = gasUrl.indexOf('?') === -1 ? '?' : '&';
+            tasks.push(fetch(gasUrl + sep + 't=' + Date.now() + '&action=getAll', { method: 'GET', mode: 'cors' }));
+          }
+        }
+
+        Promise.allSettled(tasks).then(() => {
+          applySharedStateToPage();
+        }).catch(() => {});
+      }
+
+      window.addEventListener('pageshow', function(event) {
+        let isBackForward = false;
+        try {
+          if (window.performance && typeof window.performance.getEntriesByType === 'function') {
+            const navEntries = window.performance.getEntriesByType('navigation');
+            if (navEntries && navEntries.length > 0 && navEntries[0].type === 'back_forward') {
+              isBackForward = true;
+            }
+          } else if (window.performance && window.performance.navigation) {
+            isBackForward = window.performance.navigation.type === 2;
+          }
+        } catch (e) {}
+
+        applySharedStateToPage();
+
+        // Hindari duplikasi fetch tepat pada cold load awal (< 600ms) kecuali bfcache / back_forward
+        const isInitialColdPageshow = !event.persisted && !isBackForward && (Date.now() - bootAt < 600);
+        if (!isInitialColdPageshow) {
+          triggerAntiCacheGasFetch();
+        }
+      });
+
+      document.addEventListener('visibilitychange', function() {
+        if (document.visibilityState === 'visible') {
+          applySharedStateToPage();
+          triggerAntiCacheGasFetch();
+        }
+      });
+
+      window.refreshEcoaduFromSharedAndServer = function() {
+        applySharedStateToPage();
+        triggerAntiCacheGasFetch();
+      };
     })();
   </script>
 </body>

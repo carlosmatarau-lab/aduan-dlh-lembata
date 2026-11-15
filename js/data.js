@@ -5,7 +5,11 @@
  */
 
 const STORAGE_KEY = 'dlh_lembata_aduan_v5';
+const SHARED_STATE_KEY = 'ecoadu_shared_state';
 const LEGACY_STORAGE_KEYS = ['dlh_lembata_aduan_v1', 'dlh_lembata_aduan_v2', 'dlh_lembata_aduan_v3', 'dlh_lembata_aduan_v4', 'dlh_deleted_aduan_ids', 'dlh_cleaned_v2'];
+if (typeof window !== 'undefined') {
+  window.ECOADU_SHARED_STATE_KEY = SHARED_STATE_KEY;
+}
 
 /* ===================================================================
    DLH LEMBATA SYNC ENGINE (BROADCASTCHANNEL + STORAGE + GAS POLLING)
@@ -65,8 +69,8 @@ const LEGACY_STORAGE_KEYS = ['dlh_lembata_aduan_v1', 'dlh_lembata_aduan_v2', 'dl
         const parsed = JSON.parse(ev.newValue);
         notify(parsed);
       } catch (e) { }
-    } else if (ev.key === STORAGE_KEY) {
-      notify({ type: 'STORAGE_RAW_UPDATED', timestamp: Date.now() });
+    } else if (ev.key === STORAGE_KEY || ev.key === SHARED_STATE_KEY) {
+      notify({ type: 'STORAGE_RAW_UPDATED', key: ev.key, timestamp: Date.now() });
     }
   });
 
@@ -1391,6 +1395,8 @@ class AduanDataStore {
     this.currentStatsPromise = null;
     this.remoteStats = null;
     this.lastSignalTs = 0;
+    this._serverConfirmed = false;
+    this._lastSharedStateAt = 0;
     this._doorbellUrl = FIREBASE_DOORBELL_URL;
     this._doorbellSource = null;
     this._doorbellReconnectTimer = null;
@@ -1449,23 +1455,43 @@ class AduanDataStore {
       localStorage.removeItem(DELETED_STORAGE_KEY);
       localStorage.removeItem('dlh_deleted_aduan_ids');
     } catch (e) { }
-    const stored = localStorage.getItem(STORAGE_KEY);
-    if (stored) {
-      try {
-        const parsed = JSON.parse(stored);
-        this.aduanList = Array.isArray(parsed) ? parsed.filter(item => {
-          if (!item || !item.id) return false;
-          // Hapus sisa cache dummy Carlos Matarau jika tersimpan dari sesi lama
-          if (String(item.id).toUpperCase() === 'ADU-LMB-2026-001' && (item.namaPelapor === 'Carlos Matarau' || item.status === 'Ditolak')) {
-            return false;
-          }
-          return !this.isDeleted(item.id);
-        }) : [];
-      } catch (e) {
+
+    // 2. Prioritaskan Shared State terpusat ('ecoadu_shared_state') agar lintas halaman & tab instan (0 ms)
+    const hydratedFromShared = this.hydrateFromSharedState(true);
+    if (!hydratedFromShared) {
+      const stored = localStorage.getItem(STORAGE_KEY);
+      if (stored) {
+        try {
+          const parsed = JSON.parse(stored);
+          this.aduanList = Array.isArray(parsed) ? parsed.filter(item => {
+            if (!item || !item.id) return false;
+            // Hapus sisa cache dummy dari sesi lama
+            if (String(item.id).toUpperCase() === 'ADU-LMB-2026-001' && (item.namaPelapor === 'Carlos Matarau' || item.status === 'Ditolak')) {
+              return false;
+            }
+            return !this.isDeleted(item.id);
+          }) : [];
+        } catch (e) {
+          this.aduanList = [];
+        }
+      } else {
         this.aduanList = [];
       }
-    } else {
-      this.aduanList = [];
+
+      if (this.aduanList.length > 0) {
+        this._serverConfirmed = true;
+      } else {
+        // Jangan biarkan cache kosong tak terkonfirmasi menampilkan angka 0 sebelum server menjawab
+        try {
+          const rawStats = localStorage.getItem('dlh_cached_hero_stats');
+          if (rawStats) {
+            const parsedStats = JSON.parse(rawStats);
+            if (!parsedStats || (!parsedStats.serverConfirmed && Number(parsedStats.total || 0) === 0)) {
+              localStorage.removeItem('dlh_cached_hero_stats');
+            }
+          }
+        } catch (e) { }
+      }
     }
 
     // Bersihkan foto petugas lama jika ada pada aduan baru / belum diverifikasi
@@ -1503,7 +1529,12 @@ class AduanDataStore {
     });
 
     this._deduplicateList();
-    this.save();
+    if (this.aduanList.length > 0 || hydratedFromShared) {
+      this._persistAduanListOnly();
+      if (!hydratedFromShared && this.aduanList.length > 0) {
+        this.writeSharedState('init_legacy');
+      }
+    }
 
     // Sinkronisasi Hybrid Real-Time "Bel Pintu" (EventSource SSE) + Polling Fallback Hemat Kuota
     if (this.hasGasConfigured() && !this._pollIntervalStarted) {
@@ -2218,7 +2249,7 @@ class AduanDataStore {
           return null;
         }
         const sep = endpoint.includes('?') ? '&' : '?';
-        const url = `${endpoint}${sep}action=getStats&_t=${Date.now()}`;
+        const url = `${endpoint}${sep}t=${Date.now()}&action=getStats&_t=${Date.now()}`;
 
         const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
         const timeoutId = controller ? setTimeout(() => controller.abort(), 6000) : null;
@@ -2251,6 +2282,7 @@ class AduanDataStore {
           };
 
           this.remoteStats = normalized;
+          this._serverConfirmed = true;
           this.lastStatsSyncTime = new Date();
           if (!this.lastSyncTime) {
             this.lastSyncTime = this.lastStatsSyncTime;
@@ -2259,8 +2291,9 @@ class AduanDataStore {
             } catch (e) { }
           }
           try {
-            localStorage.setItem('dlh_cached_hero_stats', JSON.stringify(normalized));
+            localStorage.setItem('dlh_cached_hero_stats', JSON.stringify({ ...normalized, serverConfirmed: true }));
           } catch (e) { }
+          this.writeSharedState('gas_stats', { serverConfirmed: true });
 
           if (typeof window !== 'undefined') {
             window.dispatchEvent(new CustomEvent('aduanStatsSynced', {
@@ -2340,7 +2373,7 @@ class AduanDataStore {
           const match = endpoint.match(/\/d\/([a-zA-Z0-9-_]+)/);
           if (match) {
             const sheetId = match[1];
-            endpoint = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Data_Aduan`;
+            endpoint = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Data_Aduan&t=${Date.now()}`;
             const response = await fetch(endpoint);
             if (!response.ok) throw new Error(`Gagal membaca sheet (HTTP ${response.status})`);
             const csvText = await response.text();
@@ -2351,7 +2384,8 @@ class AduanDataStore {
                 ? (item) => this.mapRemoteRecord(item)
                 : (item) => mapRemoteAduanRecord(item, this.aduanList, (id) => this.isDeleted(id));
               this.aduanList = valid.map(mapFn).filter(Boolean);
-              this.save();
+              this._serverConfirmed = true;
+              this.save('gas_csv', { serverConfirmed: true });
               this.lastSyncTime = new Date();
               try {
                 localStorage.setItem('dlh_lembata_last_sync_timestamp', this.lastSyncTime.toISOString());
@@ -2361,7 +2395,8 @@ class AduanDataStore {
             } else {
               // Sheet kosong 0 baris
               this.aduanList = [];
-              this.save();
+              this._serverConfirmed = true;
+              this.save('gas_csv_empty', { serverConfirmed: true });
               this.lastSyncTime = new Date();
               try {
                 localStorage.setItem('dlh_lembata_last_sync_timestamp', this.lastSyncTime.toISOString());
@@ -2374,7 +2409,7 @@ class AduanDataStore {
 
         // Endpoint resmi Google Apps Script Web App
         const authToken = this.getAuthToken();
-        endpoint = `${endpoint}${endpoint.includes('?') ? '&' : '?'}action=getAll&_t=${Date.now()}`;
+        endpoint = `${endpoint}${endpoint.includes('?') ? '&' : '?'}t=${Date.now()}&action=getAll&_t=${Date.now()}`;
         if (authToken) {
           endpoint += `&token=${encodeURIComponent(authToken)}`;
         }
@@ -2427,7 +2462,9 @@ class AduanDataStore {
 
             this.aduanList = [...uniqueServerItems, ...localPending];
             this._deduplicateList();
-            this.save();
+            this._serverConfirmed = true;
+            this.remoteStats = null;
+            this.save('gas_all', { serverConfirmed: true });
 
             this.lastSyncTime = new Date();
             try {
@@ -2449,13 +2486,21 @@ class AduanDataStore {
               const isRecentLocalAdd = Boolean(item._lastLocalEditTime && (Date.now() - item._lastLocalEditTime < 12000));
               return Boolean(item._pendingSync) || isRecentLocalAdd;
             });
+            this._serverConfirmed = true;
             if (localPending.length > 0) {
               this.aduanList = localPending;
-              this.save();
+              this.remoteStats = null;
+              this.save('gas_all_pending', { serverConfirmed: true });
               setTimeout(() => this.flushPendingQueue(), 500);
             } else {
               this.aduanList = [];
-              this.save();
+              this.remoteStats = {
+                total: 0, baru: 0, aduanDiterima: 0, verifAdmin: 0, menungguVerif: 0,
+                sedangDiverif: 0, dalamPenanganan: 0, diverifikasi: 0, ditindak: 0,
+                selesai: 0, tidakDapatDitindaklanjuti: 0, ditolak: 0, dalamProses: 0,
+                tingkatPenyelesaian: 0, perKecamatan: {}, perJenis: {}, lastSync: Date.now()
+              };
+              this.save('gas_all_empty', { serverConfirmed: true });
             }
             this.lastSyncTime = new Date();
             try {
@@ -2680,8 +2725,21 @@ class AduanDataStore {
     });
   }
 
-  save() {
-    this._deduplicateList();
+  _stripPhotoDataUrls(list, keepFirstItem = false) {
+    return (list || []).map((item, idx) => {
+      if (keepFirstItem && idx === 0) return item;
+      return {
+        ...item,
+        fotoBukti: (item.fotoBukti && item.fotoBukti.startsWith('http')) ? item.fotoBukti : '',
+        linkFotoBukti: (item.linkFotoBukti && item.linkFotoBukti.startsWith('http')) ? item.linkFotoBukti : '',
+        buktiFotoList: (item.buktiFotoList || []).filter(p => typeof p === 'string' && p.startsWith('http')),
+        fotoKondisiRiil: (item.fotoKondisiRiil && item.fotoKondisiRiil.startsWith('http')) ? item.fotoKondisiRiil : '',
+        fotoVerifikasiList: (item.fotoVerifikasiList || []).filter(p => typeof p === 'string' && p.startsWith('http'))
+      };
+    });
+  }
+
+  _persistAduanListOnly() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(this.aduanList));
     } catch (e) {
@@ -2696,38 +2754,167 @@ class AduanDataStore {
         }
         keysToRemove.forEach(k => { try { localStorage.removeItem(k); } catch (ign) { } });
 
-        // Pangkas Base64 dari aduan lama selain aduan paling baru
-        const pruned = (this.aduanList || []).map((item, idx) => {
-          if (idx > 0) {
-            return {
-              ...item,
-              fotoBukti: (item.fotoBukti && item.fotoBukti.startsWith('http')) ? item.fotoBukti : '',
-              linkFotoBukti: (item.linkFotoBukti && item.linkFotoBukti.startsWith('http')) ? item.linkFotoBukti : '',
-              buktiFotoList: (item.buktiFotoList || []).filter(p => typeof p === 'string' && p.startsWith('http'))
-            };
-          }
-          return item;
-        });
+        const pruned = this._stripPhotoDataUrls(this.aduanList, true);
         localStorage.setItem(STORAGE_KEY, JSON.stringify(pruned));
       } catch (innerErr) {
         console.warn('Fallback save error, stripping all Base64 from localStorage:', innerErr);
         try {
-          const textOnly = (this.aduanList || []).map(item => ({
-            ...item,
-            fotoBukti: (item.fotoBukti && item.fotoBukti.startsWith('http')) ? item.fotoBukti : '',
-            linkFotoBukti: (item.linkFotoBukti && item.linkFotoBukti.startsWith('http')) ? item.linkFotoBukti : '',
-            buktiFotoList: (item.buktiFotoList || []).filter(p => typeof p === 'string' && p.startsWith('http'))
-          }));
+          const textOnly = this._stripPhotoDataUrls(this.aduanList, false);
           localStorage.setItem(STORAGE_KEY, JSON.stringify(textOnly));
         } catch (finalErr) {
           console.warn('Cannot write to localStorage:', finalErr);
         }
       }
     }
+  }
+
+  readSharedState() {
     try {
-      const stats = this.getStats();
-      localStorage.setItem('dlh_cached_hero_stats', JSON.stringify(stats));
+      const raw = localStorage.getItem(SHARED_STATE_KEY);
+      if (!raw) return null;
+      const parsed = JSON.parse(raw);
+      if (!parsed || typeof parsed !== 'object') return null;
+      if (typeof parsed.updatedAt !== 'number' || parsed.updatedAt <= 0) return null;
+      const hasValidList = Array.isArray(parsed.aduanList) && (parsed.aduanList.length > 0 || parsed.serverConfirmed === true);
+      const hasValidStats = Boolean(
+        parsed.stats &&
+        typeof parsed.stats.total === 'number' &&
+        (parsed.serverConfirmed === true || parsed.stats.total > 0)
+      );
+      if (!hasValidList && !hasValidStats) return null;
+      return parsed;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  writeSharedState(source = 'store', options = {}) {
+    const force = Boolean(options && options.force);
+    const serverConfirmed = Boolean(this._serverConfirmed || (options && options.serverConfirmed));
+    const cleanList = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id));
+    const hasStats = Boolean(this.remoteStats && typeof this.remoteStats.total === 'number');
+    if (!force && !serverConfirmed && cleanList.length === 0 && !hasStats) {
+      return null;
+    }
+    if (serverConfirmed) {
+      this._serverConfirmed = true;
+    }
+
+    const nowTs = Date.now();
+    const useRemoteStats = cleanList.length === 0 && hasStats && source === 'gas_stats';
+    const statsObj = useRemoteStats ? this.remoteStats : this._computeStatsFromList(cleanList);
+    const buildPayload = (list) => ({
+      aduanList: list,
+      stats: statsObj,
+      updatedAt: nowTs,
+      serverConfirmed: Boolean(this._serverConfirmed || cleanList.length > 0),
+      source: String(source || 'store')
+    });
+
+    let written = buildPayload(cleanList);
+    try {
+      localStorage.setItem(SHARED_STATE_KEY, JSON.stringify(written));
+      this._lastSharedStateAt = nowTs;
+    } catch (e) {
+      try {
+        written = buildPayload(this._stripPhotoDataUrls(cleanList, true));
+        localStorage.setItem(SHARED_STATE_KEY, JSON.stringify(written));
+        this._lastSharedStateAt = nowTs;
+      } catch (e2) {
+        try {
+          written = buildPayload(this._stripPhotoDataUrls(cleanList, false));
+          localStorage.setItem(SHARED_STATE_KEY, JSON.stringify(written));
+          this._lastSharedStateAt = nowTs;
+        } catch (e3) { }
+      }
+    }
+
+    try {
+      if (written && written.serverConfirmed) {
+        localStorage.setItem('dlh_cached_hero_stats', JSON.stringify({ ...statsObj, serverConfirmed: true, updatedAt: nowTs }));
+      }
     } catch (e) { }
+    return written;
+  }
+
+  hydrateFromSharedState(forceReload = false) {
+    const shared = this.readSharedState();
+    if (!shared) return false;
+    const incomingTs = Number(shared.updatedAt || 0);
+    if (!forceReload && this._lastSharedStateAt && incomingTs <= this._lastSharedStateAt) {
+      return true;
+    }
+    this._lastSharedStateAt = incomingTs;
+    if (shared.serverConfirmed) {
+      this._serverConfirmed = true;
+    }
+
+    if (Array.isArray(shared.aduanList)) {
+      const filteredShared = shared.aduanList.filter(item => {
+        if (!item || !item.id) return false;
+        if (String(item.id).toUpperCase() === 'ADU-LMB-2026-001' && (item.namaPelapor === 'Carlos Matarau' || item.status === 'Ditolak')) {
+          return false;
+        }
+        return !this.isDeleted(item.id);
+      });
+      const sharedIdSet = new Set(filteredShared.map(x => String(x.id).trim().toUpperCase()));
+      const newerPending = (this.aduanList || []).filter(item => {
+        if (!item || !item.id || this.isDeleted(item.id)) return false;
+        const cid = String(item.id).trim().toUpperCase();
+        if (sharedIdSet.has(cid)) return false;
+        const localTs = Math.max(Number(item._lastLocalEditTime || 0), Number(item._lastOfficerEditTime || 0));
+        return Boolean(item._pendingSync || item._pendingOfficerSync) && localTs > incomingTs;
+      });
+      this.aduanList = [...filteredShared, ...newerPending];
+      this._deduplicateList();
+      if (filteredShared.length > 0) this._serverConfirmed = true;
+    }
+
+    if (shared.stats && typeof shared.stats.total === 'number') {
+      if ((this.aduanList || []).length === 0) {
+        this.remoteStats = shared.stats;
+      } else {
+        this.remoteStats = null;
+      }
+      if (shared.serverConfirmed || shared.stats.total > 0) this._serverConfirmed = true;
+    }
+
+    if (incomingTs > 0) {
+      this.lastSyncTime = new Date(incomingTs);
+      try {
+        localStorage.setItem('dlh_lembata_last_sync_timestamp', this.lastSyncTime.toISOString());
+      } catch (e) { }
+    }
+
+    this._persistAduanListOnly();
+    return true;
+  }
+
+  hasReadyStats() {
+    const cleanList = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id));
+    if (cleanList.length > 0) return true;
+    if (this._serverConfirmed === true) return true;
+    if (this.remoteStats && typeof this.remoteStats.total === 'number') return true;
+    if (this.readSharedState()) return true;
+    try {
+      const cached = localStorage.getItem('dlh_cached_hero_stats');
+      if (cached) {
+        const parsed = JSON.parse(cached);
+        if (parsed && typeof parsed.total === 'number' && (parsed.serverConfirmed === true || parsed.total > 0)) {
+          return true;
+        }
+      }
+    } catch (e) { }
+    return false;
+  }
+
+  save(source = 'store', options = {}) {
+    this._deduplicateList();
+    this._persistAduanListOnly();
+    const cleanList = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id));
+    if (cleanList.length > 0 || this._serverConfirmed || (options && options.serverConfirmed)) {
+      this.writeSharedState(source, options);
+    }
   }
 
   getAll() {
@@ -2782,7 +2969,9 @@ class AduanDataStore {
   resetToOfficialDefaults() {
     this.pendingDeletions = {};
     this.aduanList = [];
-    this.save();
+    this.remoteStats = null;
+    this._serverConfirmed = true;
+    this.save('reset', { serverConfirmed: true });
     LEGACY_STORAGE_KEYS.forEach(k => {
       try { localStorage.removeItem(k); } catch (e) { }
     });
@@ -2796,7 +2985,9 @@ class AduanDataStore {
     // 1. Kosongkan memori & penyimpanan lokal (0 aduan)
     this.pendingDeletions = {};
     this.aduanList = [];
-    this.save();
+    this.remoteStats = null;
+    this._serverConfirmed = true;
+    this.save('reset', { serverConfirmed: true });
     LEGACY_STORAGE_KEYS.forEach(k => {
       try { localStorage.removeItem(k); } catch (e) { }
     });
@@ -2959,7 +3150,9 @@ class AduanDataStore {
       this.aduanList.unshift(newRecord);
     }
     this._deduplicateList();
-    this.save();
+    this.remoteStats = null;
+    this._serverConfirmed = true;
+    this.save('addAduan', { serverConfirmed: true });
 
     // Broadcast Real-Time ke tab/portal petugas secara langsung
     if (window.dlhRealtime) {
@@ -3190,7 +3383,9 @@ class AduanDataStore {
     if (curIdx !== -1) {
       this.aduanList[curIdx] = updatedRecord;
     }
-    this.save();
+    this.remoteStats = null;
+    this._serverConfirmed = true;
+    this.save('updateVerifikasi', { serverConfirmed: true });
 
     // Broadcast Real-Time ke tab/portal warga secara langsung
     if (window.dlhRealtime) {
@@ -3478,7 +3673,9 @@ class AduanDataStore {
     if (curIdx !== -1) {
       this.aduanList[curIdx] = updatedRecord;
     }
-    this.save();
+    this.remoteStats = null;
+    this._serverConfirmed = true;
+    this.save('deleteOfficerPhoto', { serverConfirmed: true });
 
     // Broadcast ke tab lain
     if (window.dlhRealtime) {
@@ -3563,7 +3760,9 @@ class AduanDataStore {
       deleted = this.aduanList.splice(index, 1)[0];
     }
     this.aduanList = this.aduanList.filter(item => String(item.id).trim().toUpperCase() !== cleanId);
-    this.save();
+    this.remoteStats = null;
+    this._serverConfirmed = true;
+    this.save('deleteAduan', { serverConfirmed: true });
 
     // 3. Broadcast Real-Time ke tab / jendela lain
     if (window.dlhRealtime) {
@@ -3586,31 +3785,14 @@ class AduanDataStore {
 
   resetToDefault() {
     this.aduanList = [...INITIAL_ADUAN_DATA];
-    this.save();
+    this.remoteStats = null;
+    this._serverConfirmed = true;
+    this.save('reset', { serverConfirmed: true });
   }
 
-  getStats() {
-    this._deduplicateList();
-    const cleanList = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id));
-
-    // Jika list lokal masih kosong (misal baru buka laman warga pada sinyal lemah),
-    // gunakan remoteStats dari Google Spreadsheet atau cache statistik lokal yang tersimpan
-    if (cleanList.length === 0) {
-      if (this.remoteStats && typeof this.remoteStats.total === 'number') {
-        return this.remoteStats;
-      }
-      try {
-        const cached = localStorage.getItem('dlh_cached_hero_stats');
-        if (cached) {
-          const parsed = JSON.parse(cached);
-          if (parsed && typeof parsed.total === 'number') {
-            return parsed;
-          }
-        }
-      } catch (e) { }
-    }
-
-    const total = cleanList.length;
+  _computeStatsFromList(cleanList) {
+    const list = Array.isArray(cleanList) ? cleanList : [];
+    const total = list.length;
     let aduanDiterima = 0;
     let verifAdmin = 0;
     let menungguVerif = 0;
@@ -3622,7 +3804,7 @@ class AduanDataStore {
     const perKecamatan = {};
     const perJenis = {};
 
-    cleanList.forEach(item => {
+    list.forEach(item => {
       // By Status: Penyelarasan 5 Status Baku SOP 2.0 & Kompatibilitas Alias Lama
       const rawSt = String(item.status || 'Baru').trim();
       const stLower = rawSt.toLowerCase();
@@ -3638,18 +3820,15 @@ class AduanDataStore {
         aduanDiterima++;
       }
 
-      // By Kecamatan
       if (item.kecamatan) perKecamatan[item.kecamatan] = (perKecamatan[item.kecamatan] || 0) + 1;
-
-      // By Jenis
       if (item.jenisPencemaran) perJenis[item.jenisPencemaran] = (perJenis[item.jenisPencemaran] || 0) + 1;
     });
 
-    const baru = aduanDiterima; // alias for KPI
+    const baru = aduanDiterima;
     const dalamProses = verifAdmin + menungguVerif + sedangDiverif + dalamPenanganan;
     const tingkatPenyelesaian = total > 0 ? Math.round(((selesai + tidakDapatDitindaklanjuti) / total) * 100) : 0;
 
-    const computed = {
+    return {
       total,
       baru,
       aduanDiterima,
@@ -3667,10 +3846,38 @@ class AduanDataStore {
       perKecamatan,
       perJenis
     };
+  }
 
-    try {
-      localStorage.setItem('dlh_cached_hero_stats', JSON.stringify(computed));
-    } catch (e) { }
+  getStats() {
+    this._deduplicateList();
+    const cleanList = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id));
+
+    // Jika list lokal masih kosong, gunakan remoteStats / shared state hanya jika sudah valid
+    if (cleanList.length === 0) {
+      if (this.remoteStats && typeof this.remoteStats.total === 'number') {
+        return this.remoteStats;
+      }
+      const shared = this.readSharedState();
+      if (shared && shared.stats && typeof shared.stats.total === 'number') {
+        return shared.stats;
+      }
+      try {
+        const cached = localStorage.getItem('dlh_cached_hero_stats');
+        if (cached) {
+          const parsed = JSON.parse(cached);
+          if (parsed && typeof parsed.total === 'number' && (parsed.serverConfirmed === true || parsed.total > 0)) {
+            return parsed;
+          }
+        }
+      } catch (e) { }
+    }
+
+    const computed = this._computeStatsFromList(cleanList);
+    if (cleanList.length > 0 || this._serverConfirmed) {
+      try {
+        localStorage.setItem('dlh_cached_hero_stats', JSON.stringify({ ...computed, serverConfirmed: true }));
+      } catch (e) { }
+    }
 
     return computed;
   }
