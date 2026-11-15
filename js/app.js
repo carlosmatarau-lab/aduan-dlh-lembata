@@ -2349,7 +2349,9 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
   setupRealtimeSync() {
     const refreshFromStore = (forceHydrate = false) => {
       if (window.aduanStore) {
-        if (forceHydrate && typeof window.aduanStore.hydrateFromSharedState === 'function') {
+        if (forceHydrate && typeof window.aduanStore.hydrateFromVerifiedCache === 'function') {
+          window.aduanStore.hydrateFromVerifiedCache(true);
+        } else if (forceHydrate && typeof window.aduanStore.hydrateFromSharedState === 'function') {
           window.aduanStore.hydrateFromSharedState(true);
         } else {
           window.aduanStore.init();
@@ -2371,15 +2373,18 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       }
     });
 
-    // 2. Dengarkan event lokal pembaruan shared state lintas halaman
+    // 2. Dengarkan event lokal pembaruan verified cache lintas halaman
+    window.addEventListener('ecoaduVerifiedCacheUpdated', () => {
+      refreshFromStore(false);
+    });
     window.addEventListener('ecoaduSharedStateUpdated', () => {
       refreshFromStore(false);
     });
 
     // 3. Dengarkan event storage lintas tab/jendela browser
-    const sharedKey = window.ECOADU_SHARED_STATE_KEY || 'ecoadu_shared_state';
+    const verifiedKey = window.ECOADU_VERIFIED_CACHE_KEY || 'ecoadu_verified_cache';
     window.addEventListener('storage', (e) => {
-      if (e.key === sharedKey || e.key === 'dlh_cached_hero_stats' || e.key === 'dlh_lembata_aduan_v5') {
+      if (e.key === verifiedKey || e.key === 'dlh_cached_hero_stats' || e.key === 'dlh_lembata_aduan_v5') {
         refreshFromStore(true);
       }
     });
@@ -2390,6 +2395,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       if (!msg || !msg.type) return;
 
       if (
+        msg.type === 'VERIFIED_CACHE_UPDATED' ||
         msg.type === 'ADUAN_BARU' ||
         msg.type === 'STORAGE_RAW_UPDATED' ||
         msg.type === 'TINDAK_LANJUT_UPDATED' ||
@@ -2541,13 +2547,26 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
 
     if (!isReady || !stats || typeof stats.total !== 'number') {
       try {
-        const sharedKey = window.ECOADU_SHARED_STATE_KEY || 'ecoadu_shared_state';
-        const rawShared = localStorage.getItem(sharedKey);
-        if (rawShared) {
-          const parsedShared = JSON.parse(rawShared);
-          if (parsedShared && parsedShared.stats && typeof parsedShared.stats.total === 'number' &&
-            (parsedShared.serverConfirmed || parsedShared.stats.total > 0)) {
-            stats = parsedShared.stats;
+        const verifiedKey = window.ECOADU_VERIFIED_CACHE_KEY || 'ecoadu_verified_cache';
+        const rawCache = localStorage.getItem(verifiedKey);
+        if (rawCache) {
+          const parsedCache = JSON.parse(rawCache);
+          if (parsedCache && typeof parsedCache.updatedAt === 'number' && parsedCache.updatedAt > 0 && Array.isArray(parsedCache.data)) {
+            if (store && typeof store._computeStatsFromList === 'function') {
+              stats = store._computeStatsFromList(parsedCache.data);
+            } else {
+              let br = 0, dp = 0, sl = 0, tot = 0;
+              parsedCache.data.forEach(it => {
+                if (!it || !it.id) return;
+                tot++;
+                const st = String(it.status || '').trim().toLowerCase();
+                if (st === 'selesai') sl++;
+                else if (st === 'tidak dapat ditindaklanjuti' || st === 'ditolak') {}
+                else if (st === 'aduan diterima' || st === 'baru') br++;
+                else dp++;
+              });
+              stats = { total: tot, baru: br, dalamProses: dp, selesai: sl };
+            }
             isReady = true;
           }
         }
@@ -2559,7 +2578,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         const cached = localStorage.getItem('dlh_cached_hero_stats');
         if (cached) {
           const parsed = JSON.parse(cached);
-          if (parsed && typeof parsed.total === 'number' && (parsed.serverConfirmed === true || parsed.total > 0)) {
+          if (parsed && typeof parsed.total === 'number' && parsed.serverConfirmed === true) {
             stats = parsed;
             isReady = true;
           }

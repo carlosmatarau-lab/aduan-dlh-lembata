@@ -5,10 +5,13 @@
  */
 
 const STORAGE_KEY = 'dlh_lembata_aduan_v5';
-const SHARED_STATE_KEY = 'ecoadu_shared_state';
-const LEGACY_STORAGE_KEYS = ['dlh_lembata_aduan_v1', 'dlh_lembata_aduan_v2', 'dlh_lembata_aduan_v3', 'dlh_lembata_aduan_v4', 'dlh_deleted_aduan_ids', 'dlh_cleaned_v2'];
+const VERIFIED_CACHE_KEY = 'ecoadu_verified_cache';
+const SHARED_STATE_KEY = VERIFIED_CACHE_KEY;
+const SYNC_BROADCAST_CHANNEL = 'ecoadu_sync';
+const LEGACY_STORAGE_KEYS = ['dlh_lembata_aduan_v1', 'dlh_lembata_aduan_v2', 'dlh_lembata_aduan_v3', 'dlh_lembata_aduan_v4', 'dlh_deleted_aduan_ids', 'dlh_cleaned_v2', 'ecoadu_shared_state'];
 if (typeof window !== 'undefined') {
-  window.ECOADU_SHARED_STATE_KEY = SHARED_STATE_KEY;
+  window.ECOADU_VERIFIED_CACHE_KEY = VERIFIED_CACHE_KEY;
+  window.ECOADU_SHARED_STATE_KEY = VERIFIED_CACHE_KEY;
 }
 
 /* ===================================================================
@@ -19,11 +22,15 @@ if (typeof window !== 'undefined') {
 (function () {
   const CHANNEL_NAME = 'dlh_lembata_realtime_channel';
   const STORAGE_PING_KEY = 'dlh_lembata_realtime_ping';
+  const INSTANCE_ID = Math.random().toString(36).substring(2, 10);
+  const seenMsgIds = new Set();
   let bc = null;
+  let bcSync = null;
 
   try {
     if (typeof BroadcastChannel !== 'undefined') {
       bc = new BroadcastChannel(CHANNEL_NAME);
+      bcSync = new BroadcastChannel(SYNC_BROADCAST_CHANNEL);
     }
   } catch (err) {
     console.warn('BroadcastChannel not supported, using storage fallback:', err);
@@ -31,17 +38,38 @@ if (typeof window !== 'undefined') {
 
   const listeners = [];
 
+  function rememberMsgId(msgId) {
+    if (!msgId) return false;
+    if (seenMsgIds.has(msgId)) return true;
+    seenMsgIds.add(msgId);
+    if (seenMsgIds.size > 120) {
+      const first = seenMsgIds.values().next().value;
+      if (first) seenMsgIds.delete(first);
+    }
+    return false;
+  }
+
   function broadcast(type, payload = {}) {
+    const msgId = INSTANCE_ID + '_' + Date.now() + '_' + Math.random().toString(36).substring(2, 6);
+    rememberMsgId(msgId);
     const msg = {
+      msgId: msgId,
       type: type,
       payload: payload,
       timestamp: Date.now(),
-      sender: Math.random().toString(36).substring(2, 9)
+      updatedAt: Date.now(),
+      sender: INSTANCE_ID
     };
 
     if (bc) {
       try {
         bc.postMessage(msg);
+      } catch (e) { }
+    }
+
+    if (bcSync) {
+      try {
+        bcSync.postMessage(msg);
       } catch (e) { }
     }
 
@@ -54,6 +82,8 @@ if (typeof window !== 'undefined') {
 
   function notify(msg) {
     if (!msg || !msg.type) return;
+    if (msg.sender === INSTANCE_ID) return;
+    if (msg.msgId && rememberMsgId(msg.msgId)) return;
     listeners.forEach(fn => {
       try { fn(msg); } catch (e) { console.error('Realtime callback error:', e); }
     });
@@ -62,6 +92,16 @@ if (typeof window !== 'undefined') {
   if (bc) {
     bc.onmessage = (ev) => notify(ev.data);
   }
+  if (bcSync) {
+    bcSync.onmessage = (ev) => {
+      const data = ev && ev.data ? ev.data : null;
+      if (typeof data === 'string') {
+        notify({ type: data, timestamp: Date.now() });
+      } else if (data && typeof data === 'object') {
+        notify(data.type ? data : { type: 'VERIFIED_CACHE_UPDATED', payload: data, timestamp: data.updatedAt || Date.now(), msgId: data.msgId, sender: data.sender });
+      }
+    };
+  }
 
   window.addEventListener('storage', (ev) => {
     if (ev.key === STORAGE_PING_KEY && ev.newValue) {
@@ -69,13 +109,16 @@ if (typeof window !== 'undefined') {
         const parsed = JSON.parse(ev.newValue);
         notify(parsed);
       } catch (e) { }
-    } else if (ev.key === STORAGE_KEY || ev.key === SHARED_STATE_KEY) {
+    } else if (ev.key === STORAGE_KEY || ev.key === VERIFIED_CACHE_KEY) {
       notify({ type: 'STORAGE_RAW_UPDATED', key: ev.key, timestamp: Date.now() });
     }
   });
 
   window.dlhRealtime = {
+    instanceId: INSTANCE_ID,
     broadcast: broadcast,
+    syncChannelName: SYNC_BROADCAST_CHANNEL,
+    getSyncChannel: function () { return bcSync; },
     listen: function (fn) {
       if (typeof fn === 'function') listeners.push(fn);
     }
@@ -1395,6 +1438,7 @@ class AduanDataStore {
     this.currentStatsPromise = null;
     this.remoteStats = null;
     this.lastSignalTs = 0;
+    this.isServerSynced = false;
     this._serverConfirmed = false;
     this._lastSharedStateAt = 0;
     this._doorbellUrl = FIREBASE_DOORBELL_URL;
@@ -1456,17 +1500,22 @@ class AduanDataStore {
       localStorage.removeItem('dlh_deleted_aduan_ids');
     } catch (e) { }
 
-    // 2. Prioritaskan Shared State terpusat ('ecoadu_shared_state') agar lintas halaman & tab instan (0 ms)
-    const hydratedFromShared = this.hydrateFromSharedState(true);
-    if (!hydratedFromShared) {
+    // 2. Prioritaskan Cache Terverifikasi Server ('ecoadu_verified_cache') agar lintas halaman & tab instan (0 ms)
+    this.isServerSynced = false;
+    this._serverConfirmed = false;
+    const hydratedFromVerified = this.hydrateFromVerifiedCache(true);
+    if (!hydratedFromVerified) {
       const stored = localStorage.getItem(STORAGE_KEY);
       if (stored) {
         try {
           const parsed = JSON.parse(stored);
+          // Tanpa 'ecoadu_verified_cache', pertahankan hanya item antrean lokal pending (_pendingSync/_pendingOfficerSync)
           this.aduanList = Array.isArray(parsed) ? parsed.filter(item => {
             if (!item || !item.id) return false;
-            // Hapus sisa cache dummy dari sesi lama
             if (String(item.id).toUpperCase() === 'ADU-LMB-2026-001' && (item.namaPelapor === 'Carlos Matarau' || item.status === 'Ditolak')) {
+              return false;
+            }
+            if (this.hasGasConfigured() && !item._pendingSync && !item._pendingOfficerSync) {
               return false;
             }
             return !this.isDeleted(item.id);
@@ -1478,20 +1527,10 @@ class AduanDataStore {
         this.aduanList = [];
       }
 
-      if (this.aduanList.length > 0) {
-        this._serverConfirmed = true;
-      } else {
-        // Jangan biarkan cache kosong tak terkonfirmasi menampilkan angka 0 sebelum server menjawab
-        try {
-          const rawStats = localStorage.getItem('dlh_cached_hero_stats');
-          if (rawStats) {
-            const parsedStats = JSON.parse(rawStats);
-            if (!parsedStats || (!parsedStats.serverConfirmed && Number(parsedStats.total || 0) === 0)) {
-              localStorage.removeItem('dlh_cached_hero_stats');
-            }
-          }
-        } catch (e) { }
-      }
+      // Tanpa cache server terverifikasi, hapus cache statistik lama agar loading "..." tampil hingga server menjawab
+      try {
+        localStorage.removeItem('dlh_cached_hero_stats');
+      } catch (e) { }
     }
 
     // Bersihkan foto petugas lama jika ada pada aduan baru / belum diverifikasi
@@ -1529,11 +1568,8 @@ class AduanDataStore {
     });
 
     this._deduplicateList();
-    if (this.aduanList.length > 0 || hydratedFromShared) {
+    if (this.aduanList.length > 0 || hydratedFromVerified) {
       this._persistAduanListOnly();
-      if (!hydratedFromShared && this.aduanList.length > 0) {
-        this.writeSharedState('init_legacy');
-      }
     }
 
     // Sinkronisasi Hybrid Real-Time "Bel Pintu" (EventSource SSE) + Polling Fallback Hemat Kuota
@@ -2257,6 +2293,7 @@ class AduanDataStore {
         const response = await fetch(url, {
           method: 'GET',
           mode: 'cors',
+          cache: 'no-store',
           signal: controller ? controller.signal : undefined
         });
         if (timeoutId) clearTimeout(timeoutId);
@@ -2282,6 +2319,7 @@ class AduanDataStore {
           };
 
           this.remoteStats = normalized;
+          this.isServerSynced = true;
           this._serverConfirmed = true;
           this.lastStatsSyncTime = new Date();
           if (!this.lastSyncTime) {
@@ -2293,7 +2331,9 @@ class AduanDataStore {
           try {
             localStorage.setItem('dlh_cached_hero_stats', JSON.stringify({ ...normalized, serverConfirmed: true }));
           } catch (e) { }
-          this.writeSharedState('gas_stats', { serverConfirmed: true });
+          if ((this.aduanList || []).length > 0 || normalized.total === 0) {
+            this.writeVerifiedCache('gas_stats', { serverConfirmed: true });
+          }
 
           if (typeof window !== 'undefined') {
             window.dispatchEvent(new CustomEvent('aduanStatsSynced', {
@@ -2374,7 +2414,7 @@ class AduanDataStore {
           if (match) {
             const sheetId = match[1];
             endpoint = `https://docs.google.com/spreadsheets/d/${sheetId}/gviz/tq?tqx=out:csv&sheet=Data_Aduan&t=${Date.now()}`;
-            const response = await fetch(endpoint);
+            const response = await fetch(endpoint, { cache: 'no-store' });
             if (!response.ok) throw new Error(`Gagal membaca sheet (HTTP ${response.status})`);
             const csvText = await response.text();
             const parsedData = parseCsvToAduan(csvText);
@@ -2384,6 +2424,7 @@ class AduanDataStore {
                 ? (item) => this.mapRemoteRecord(item)
                 : (item) => mapRemoteAduanRecord(item, this.aduanList, (id) => this.isDeleted(id));
               this.aduanList = valid.map(mapFn).filter(Boolean);
+              this.isServerSynced = true;
               this._serverConfirmed = true;
               this.save('gas_csv', { serverConfirmed: true });
               this.lastSyncTime = new Date();
@@ -2395,6 +2436,7 @@ class AduanDataStore {
             } else {
               // Sheet kosong 0 baris
               this.aduanList = [];
+              this.isServerSynced = true;
               this._serverConfirmed = true;
               this.save('gas_csv_empty', { serverConfirmed: true });
               this.lastSyncTime = new Date();
@@ -2413,7 +2455,7 @@ class AduanDataStore {
         if (authToken) {
           endpoint += `&token=${encodeURIComponent(authToken)}`;
         }
-        const response = await fetch(endpoint, { method: 'GET', mode: 'cors' });
+        const response = await fetch(endpoint, { method: 'GET', mode: 'cors', cache: 'no-store' });
         if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
         const json = await response.json();
 
@@ -2462,6 +2504,7 @@ class AduanDataStore {
 
             this.aduanList = [...uniqueServerItems, ...localPending];
             this._deduplicateList();
+            this.isServerSynced = true;
             this._serverConfirmed = true;
             this.remoteStats = null;
             this.save('gas_all', { serverConfirmed: true });
@@ -2486,6 +2529,7 @@ class AduanDataStore {
               const isRecentLocalAdd = Boolean(item._lastLocalEditTime && (Date.now() - item._lastLocalEditTime < 12000));
               return Boolean(item._pendingSync) || isRecentLocalAdd;
             });
+            this.isServerSynced = true;
             this._serverConfirmed = true;
             if (localPending.length > 0) {
               this.aduanList = localPending;
@@ -2768,116 +2812,99 @@ class AduanDataStore {
     }
   }
 
-  readSharedState() {
+  readVerifiedCache() {
     try {
-      const raw = localStorage.getItem(SHARED_STATE_KEY);
+      const raw = localStorage.getItem(VERIFIED_CACHE_KEY);
       if (!raw) return null;
       const parsed = JSON.parse(raw);
       if (!parsed || typeof parsed !== 'object') return null;
       if (typeof parsed.updatedAt !== 'number' || parsed.updatedAt <= 0) return null;
-      const hasValidList = Array.isArray(parsed.aduanList) && (parsed.aduanList.length > 0 || parsed.serverConfirmed === true);
-      const hasValidStats = Boolean(
-        parsed.stats &&
-        typeof parsed.stats.total === 'number' &&
-        (parsed.serverConfirmed === true || parsed.stats.total > 0)
-      );
-      if (!hasValidList && !hasValidStats) return null;
-      return parsed;
+      if (!Array.isArray(parsed.data)) return null;
+      return { updatedAt: parsed.updatedAt, data: parsed.data };
     } catch (e) {
       return null;
     }
   }
 
-  writeSharedState(source = 'store', options = {}) {
-    const force = Boolean(options && options.force);
-    const serverConfirmed = Boolean(this._serverConfirmed || (options && options.serverConfirmed));
-    const cleanList = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id));
-    const hasStats = Boolean(this.remoteStats && typeof this.remoteStats.total === 'number');
-    if (!force && !serverConfirmed && cleanList.length === 0 && !hasStats) {
+  readSharedState() {
+    return this.readVerifiedCache();
+  }
+
+  writeVerifiedCache(source = 'server', options = {}) {
+    const serverConfirmed = Boolean(this.isServerSynced || this._serverConfirmed || (options && options.serverConfirmed));
+    if (!serverConfirmed) {
       return null;
     }
-    if (serverConfirmed) {
-      this._serverConfirmed = true;
-    }
+    this.isServerSynced = true;
+    this._serverConfirmed = true;
 
+    const cleanList = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id));
+    const hasStats = Boolean(this.remoteStats && typeof this.remoteStats.total === 'number');
     const nowTs = Date.now();
     const useRemoteStats = cleanList.length === 0 && hasStats && source === 'gas_stats';
     const statsObj = useRemoteStats ? this.remoteStats : this._computeStatsFromList(cleanList);
     const buildPayload = (list) => ({
-      aduanList: list,
-      stats: statsObj,
       updatedAt: nowTs,
-      serverConfirmed: Boolean(this._serverConfirmed || cleanList.length > 0),
-      source: String(source || 'store')
+      data: list
     });
 
     let written = buildPayload(cleanList);
     try {
-      localStorage.setItem(SHARED_STATE_KEY, JSON.stringify(written));
+      localStorage.setItem(VERIFIED_CACHE_KEY, JSON.stringify(written));
       this._lastSharedStateAt = nowTs;
     } catch (e) {
       try {
         written = buildPayload(this._stripPhotoDataUrls(cleanList, true));
-        localStorage.setItem(SHARED_STATE_KEY, JSON.stringify(written));
+        localStorage.setItem(VERIFIED_CACHE_KEY, JSON.stringify(written));
         this._lastSharedStateAt = nowTs;
       } catch (e2) {
         try {
           written = buildPayload(this._stripPhotoDataUrls(cleanList, false));
-          localStorage.setItem(SHARED_STATE_KEY, JSON.stringify(written));
+          localStorage.setItem(VERIFIED_CACHE_KEY, JSON.stringify(written));
           this._lastSharedStateAt = nowTs;
         } catch (e3) { }
       }
     }
 
     try {
-      if (written && written.serverConfirmed) {
-        localStorage.setItem('dlh_cached_hero_stats', JSON.stringify({ ...statsObj, serverConfirmed: true, updatedAt: nowTs }));
-      }
+      localStorage.setItem('dlh_cached_hero_stats', JSON.stringify({ ...statsObj, serverConfirmed: true, updatedAt: nowTs }));
     } catch (e) { }
     return written;
   }
 
-  hydrateFromSharedState(forceReload = false) {
-    const shared = this.readSharedState();
-    if (!shared) return false;
-    const incomingTs = Number(shared.updatedAt || 0);
+  writeSharedState(source = 'server', options = {}) {
+    return this.writeVerifiedCache(source, options);
+  }
+
+  hydrateFromVerifiedCache(forceReload = false) {
+    const cache = this.readVerifiedCache();
+    if (!cache) return false;
+    const incomingTs = Number(cache.updatedAt || 0);
     if (!forceReload && this._lastSharedStateAt && incomingTs <= this._lastSharedStateAt) {
       return true;
     }
     this._lastSharedStateAt = incomingTs;
-    if (shared.serverConfirmed) {
-      this._serverConfirmed = true;
-    }
+    this.isServerSynced = true;
+    this._serverConfirmed = true;
 
-    if (Array.isArray(shared.aduanList)) {
-      const filteredShared = shared.aduanList.filter(item => {
-        if (!item || !item.id) return false;
-        if (String(item.id).toUpperCase() === 'ADU-LMB-2026-001' && (item.namaPelapor === 'Carlos Matarau' || item.status === 'Ditolak')) {
-          return false;
-        }
-        return !this.isDeleted(item.id);
-      });
-      const sharedIdSet = new Set(filteredShared.map(x => String(x.id).trim().toUpperCase()));
-      const newerPending = (this.aduanList || []).filter(item => {
-        if (!item || !item.id || this.isDeleted(item.id)) return false;
-        const cid = String(item.id).trim().toUpperCase();
-        if (sharedIdSet.has(cid)) return false;
-        const localTs = Math.max(Number(item._lastLocalEditTime || 0), Number(item._lastOfficerEditTime || 0));
-        return Boolean(item._pendingSync || item._pendingOfficerSync) && localTs > incomingTs;
-      });
-      this.aduanList = [...filteredShared, ...newerPending];
-      this._deduplicateList();
-      if (filteredShared.length > 0) this._serverConfirmed = true;
-    }
-
-    if (shared.stats && typeof shared.stats.total === 'number') {
-      if ((this.aduanList || []).length === 0) {
-        this.remoteStats = shared.stats;
-      } else {
-        this.remoteStats = null;
+    const filteredCache = cache.data.filter(item => {
+      if (!item || !item.id) return false;
+      if (String(item.id).toUpperCase() === 'ADU-LMB-2026-001' && (item.namaPelapor === 'Carlos Matarau' || item.status === 'Ditolak')) {
+        return false;
       }
-      if (shared.serverConfirmed || shared.stats.total > 0) this._serverConfirmed = true;
-    }
+      return !this.isDeleted(item.id);
+    });
+    const cacheIdSet = new Set(filteredCache.map(x => String(x.id).trim().toUpperCase()));
+    const newerPending = (this.aduanList || []).filter(item => {
+      if (!item || !item.id || this.isDeleted(item.id)) return false;
+      const cid = String(item.id).trim().toUpperCase();
+      if (cacheIdSet.has(cid)) return false;
+      const localTs = Math.max(Number(item._lastLocalEditTime || 0), Number(item._lastOfficerEditTime || 0));
+      return Boolean(item._pendingSync || item._pendingOfficerSync) && localTs > incomingTs;
+    });
+    this.aduanList = [...filteredCache, ...newerPending];
+    this._deduplicateList();
+    this.remoteStats = null;
 
     if (incomingTs > 0) {
       this.lastSyncTime = new Date(incomingTs);
@@ -2890,30 +2917,24 @@ class AduanDataStore {
     return true;
   }
 
+  hydrateFromSharedState(forceReload = false) {
+    return this.hydrateFromVerifiedCache(forceReload);
+  }
+
   hasReadyStats() {
-    const cleanList = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id));
-    if (cleanList.length > 0) return true;
-    if (this._serverConfirmed === true) return true;
+    if (this.isServerSynced === true || this._serverConfirmed === true) return true;
+    if (this.readVerifiedCache()) return true;
     if (this.remoteStats && typeof this.remoteStats.total === 'number') return true;
-    if (this.readSharedState()) return true;
-    try {
-      const cached = localStorage.getItem('dlh_cached_hero_stats');
-      if (cached) {
-        const parsed = JSON.parse(cached);
-        if (parsed && typeof parsed.total === 'number' && (parsed.serverConfirmed === true || parsed.total > 0)) {
-          return true;
-        }
-      }
-    } catch (e) { }
+    const cleanList = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id));
+    if (!this.hasGasConfigured() && cleanList.length > 0) return true;
     return false;
   }
 
   save(source = 'store', options = {}) {
     this._deduplicateList();
     this._persistAduanListOnly();
-    const cleanList = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id));
-    if (cleanList.length > 0 || this._serverConfirmed || (options && options.serverConfirmed)) {
-      this.writeSharedState(source, options);
+    if (options && options.serverConfirmed === true) {
+      this.writeVerifiedCache(source, options);
     }
   }
 
@@ -2970,8 +2991,13 @@ class AduanDataStore {
     this.pendingDeletions = {};
     this.aduanList = [];
     this.remoteStats = null;
-    this._serverConfirmed = true;
-    this.save('reset', { serverConfirmed: true });
+    this.isServerSynced = false;
+    this._serverConfirmed = false;
+    this.save('reset_local');
+    try {
+      localStorage.removeItem(VERIFIED_CACHE_KEY);
+      localStorage.removeItem('dlh_cached_hero_stats');
+    } catch (e) { }
     LEGACY_STORAGE_KEYS.forEach(k => {
       try { localStorage.removeItem(k); } catch (e) { }
     });
@@ -2986,18 +3012,18 @@ class AduanDataStore {
     this.pendingDeletions = {};
     this.aduanList = [];
     this.remoteStats = null;
-    this._serverConfirmed = true;
-    this.save('reset', { serverConfirmed: true });
+    this.isServerSynced = false;
+    this._serverConfirmed = false;
+    this.save('reset_local');
+    try {
+      localStorage.removeItem(VERIFIED_CACHE_KEY);
+      localStorage.removeItem('dlh_cached_hero_stats');
+    } catch (e) { }
     LEGACY_STORAGE_KEYS.forEach(k => {
       try { localStorage.removeItem(k); } catch (e) { }
     });
 
-    // 2. Broadcast ke semua tab & perangkat lokal secara instan (0-latency)
-    if (window.dlhRealtime) {
-      window.dlhRealtime.broadcast('DATA_RESET', { count: 0 });
-    }
-
-    // 3. Panggil API Google Apps Script untuk mengosongkan sheet Data_Aduan menjadi 0 baris
+    // 2. Panggil API Google Apps Script untuk mengosongkan sheet Data_Aduan menjadi 0 baris
     let gasSuccess = false;
     let gasMsg = '';
     if (this.hasGasConfigured()) {
@@ -3009,7 +3035,7 @@ class AduanDataStore {
         } else {
           // Fallback via GET
           const getUrl = `${this.gasApiUrl}${this.gasApiUrl.includes('?') ? '&' : '?'}action=resetToZero&_t=${Date.now()}`;
-          const getRes = await fetch(getUrl, { method: 'GET', mode: 'cors' });
+          const getRes = await fetch(getUrl, { method: 'GET', mode: 'cors', cache: 'no-store' });
           const getJson = await getRes.json();
           if (getJson && getJson.success) {
             gasSuccess = true;
@@ -3021,8 +3047,18 @@ class AduanDataStore {
       }
     }
 
+    // 3. Perbarui ecoadu_verified_cache & broadcast ecoadu_sync HANYA setelah server mengonfirmasi
+    if (gasSuccess) {
+      this.isServerSynced = true;
+      this._serverConfirmed = true;
+      this.save('resetToZero', { serverConfirmed: true });
+      if (window.dlhRealtime) {
+        window.dlhRealtime.broadcast('DATA_RESET', { count: 0, serverConfirmed: true });
+      }
+    }
+
     // 4. Picu event lokal agar tampilan tabel & dashboard langsung kosong 0 aduan
-    window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: 0, silent: false, emptyRemote: true } }));
+    window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: 0, silent: false, emptyRemote: true, gasSynced: gasSuccess } }));
 
     return {
       success: true,
@@ -3151,10 +3187,9 @@ class AduanDataStore {
     }
     this._deduplicateList();
     this.remoteStats = null;
-    this._serverConfirmed = true;
-    this.save('addAduan', { serverConfirmed: true });
+    this.save('addAduan_local');
 
-    // Broadcast Real-Time ke tab/portal petugas secara langsung
+    // Broadcast lokal ke tab aktif jika ada penambahan antrean
     if (window.dlhRealtime) {
       window.dlhRealtime.broadcast('ADUAN_BARU', { id: newRecord.id, item: newRecord });
     }
@@ -3214,7 +3249,12 @@ class AduanDataStore {
                 }
               }
             }
-            this.save();
+            this.isServerSynced = true;
+            this._serverConfirmed = true;
+            this.save('addAduan', { serverConfirmed: true });
+            if (window.dlhRealtime) {
+              window.dlhRealtime.broadcast('VERIFIED_CACHE_UPDATED', { id: newId, action: 'addAduan' });
+            }
           }
         }
       }).catch(err => {
@@ -3384,10 +3424,9 @@ class AduanDataStore {
       this.aduanList[curIdx] = updatedRecord;
     }
     this.remoteStats = null;
-    this._serverConfirmed = true;
-    this.save('updateVerifikasi', { serverConfirmed: true });
+    this.save('updateVerifikasi_local');
 
-    // Broadcast Real-Time ke tab/portal warga secara langsung
+    // Broadcast Real-Time lokal sementara ke tab/portal
     if (window.dlhRealtime) {
       window.dlhRealtime.broadcast('TINDAK_LANJUT_UPDATED', { id: cleanId, item: updatedRecord, updateData: updateData });
     }
@@ -3397,6 +3436,8 @@ class AduanDataStore {
       officerPhotoCount: fotoList.length,
       photoReady: !hasBase64Officer
     });
+
+    let serverSaveConfirmed = false;
 
     // Two-Phase Instant Commit ke Google Apps Script + IndexedDB Photo Queue
     if (this.hasGasConfigured()) {
@@ -3455,6 +3496,14 @@ class AduanDataStore {
 
           const metaRes = await this.postToGAS('updateVerifikasi', metaPayload);
           if (metaRes && metaRes.success) {
+            serverSaveConfirmed = true;
+            this.isServerSynced = true;
+            this._serverConfirmed = true;
+            this.save('updateVerifikasi_meta', { serverConfirmed: true });
+            if (window.dlhRealtime) {
+              window.dlhRealtime.broadcast('VERIFIED_CACHE_UPDATED', { id: cleanId, action: 'updateVerifikasi', item: updatedRecord });
+            }
+
             // Jika status 'Tidak Dapat Ditindaklanjuti' ditolak DataValidation lama di spreadsheet sebelum Code.gs diperbarui,
             // kirim fallback kompatibilitas expectedStatus='Ditolak' tanpa memicu WA ganda
             if (updatedRecord.status === 'Tidak Dapat Ditindaklanjuti') {
@@ -3467,7 +3516,12 @@ class AduanDataStore {
                 const freshIdx = this.aduanList.findIndex(x => String(x.id).trim().toUpperCase() === cleanId);
                 if (freshIdx !== -1) {
                   delete this.aduanList[freshIdx]._pendingOfficerSync;
-                  this.save();
+                }
+                this.isServerSynced = true;
+                this._serverConfirmed = true;
+                this.save('updateVerifikasi_photo', { serverConfirmed: true });
+                if (window.dlhRealtime) {
+                  window.dlhRealtime.broadcast('VERIFIED_CACHE_UPDATED', { id: cleanId, action: 'updateVerifikasi_photo', item: updatedRecord });
                 }
                 // Bunyikan bel kedua begitu foto Base64 petugas selesai tersimpan di Foto_Storage
                 // agar perangkat lain langsung menarik foto petugas terbaru via getAll
@@ -3496,13 +3550,19 @@ class AduanDataStore {
           };
           const res = await this.postToGAS('updateVerifikasi', payload);
           if (res && res.success) {
+            serverSaveConfirmed = true;
             if (updatedRecord.status === 'Tidak Dapat Ditindaklanjuti') {
               await this._ensureTidakDapatSavedOnSheet(cleanId, updatedRecord).catch(() => { });
             }
             const freshIdx = this.aduanList.findIndex(x => String(x.id).trim().toUpperCase() === cleanId);
             if (freshIdx !== -1) {
               delete this.aduanList[freshIdx]._pendingOfficerSync;
-              this.save();
+            }
+            this.isServerSynced = true;
+            this._serverConfirmed = true;
+            this.save('updateVerifikasi', { serverConfirmed: true });
+            if (window.dlhRealtime) {
+              window.dlhRealtime.broadcast('VERIFIED_CACHE_UPDATED', { id: cleanId, action: 'updateVerifikasi', item: updatedRecord });
             }
             this._ringFirebaseDoorbellFromClient('updateVerifikasi', cleanId, updatedRecord, {
               officerPhotoCount: fotoList.length,
@@ -3517,6 +3577,8 @@ class AduanDataStore {
       }
     }
 
+    updatedRecord._serverSaveConfirmed = serverSaveConfirmed;
+    this._lastVerifikasiServerConfirmed = serverSaveConfirmed;
     return updatedRecord;
   }
 
@@ -3674,10 +3736,9 @@ class AduanDataStore {
       this.aduanList[curIdx] = updatedRecord;
     }
     this.remoteStats = null;
-    this._serverConfirmed = true;
-    this.save('deleteOfficerPhoto', { serverConfirmed: true });
+    this.save('deleteOfficerPhoto_local');
 
-    // Broadcast ke tab lain
+    // Broadcast lokal ke tab lain
     if (window.dlhRealtime) {
       window.dlhRealtime.broadcast('ADUAN_UPDATED', {
         id: cleanId,
@@ -3691,6 +3752,8 @@ class AduanDataStore {
       officerPhotoCount: currentPhotos.length,
       photoReady: true
     });
+
+    this._lastPhotoDeleteConfirmed = false;
 
     // Kirim sinkronisasi ke Google Apps Script
     if (this.hasGasConfigured()) {
@@ -3718,10 +3781,16 @@ class AduanDataStore {
           timestampSelesai: updatedRecord.timestampSelesai
         });
         if (res && res.success) {
+          this._lastPhotoDeleteConfirmed = true;
           const freshIdx = this.aduanList.findIndex(x => String(x.id).trim().toUpperCase() === cleanId);
           if (freshIdx !== -1) {
             delete this.aduanList[freshIdx]._pendingOfficerSync;
-            this.save();
+          }
+          this.isServerSynced = true;
+          this._serverConfirmed = true;
+          this.save('deleteOfficerPhoto', { serverConfirmed: true });
+          if (window.dlhRealtime) {
+            window.dlhRealtime.broadcast('VERIFIED_CACHE_UPDATED', { id: cleanId, action: 'deleteOfficerPhoto', item: updatedRecord });
           }
           this._ringFirebaseDoorbellFromClient('updateVerifikasi', cleanId, updatedRecord, {
             officerPhotoCount: currentPhotos.length,
@@ -3736,6 +3805,7 @@ class AduanDataStore {
       }
     }
 
+    updatedRecord._serverSaveConfirmed = this._lastPhotoDeleteConfirmed;
     return updatedRecord;
   }
 
@@ -3761,17 +3831,28 @@ class AduanDataStore {
     }
     this.aduanList = this.aduanList.filter(item => String(item.id).trim().toUpperCase() !== cleanId);
     this.remoteStats = null;
-    this._serverConfirmed = true;
-    this.save('deleteAduan', { serverConfirmed: true });
+    this.save('deleteAduan_local');
 
     // 3. Broadcast Real-Time ke tab / jendela lain
     if (window.dlhRealtime) {
       window.dlhRealtime.broadcast('ADUAN_DELETED', { id: cleanId });
     }
 
-    // 4. Kirim HANYA SATU permintaan POST ke Google Apps Script (menghindari duplikasi request race condition)
+    // 4. Kirim HANYA SATU permintaan POST ke Google Apps Script dan perbarui ecoadu_verified_cache saat dikonfirmasi server
     if (this.hasGasConfigured()) {
       this.postToGAS('deleteAduan', { id: cleanId })
+        .then((res) => {
+          if (res && res.success) {
+            this.isServerSynced = true;
+            this._serverConfirmed = true;
+            this.save('deleteAduan', { serverConfirmed: true });
+            if (window.dlhRealtime) {
+              window.dlhRealtime.broadcast('VERIFIED_CACHE_UPDATED', { id: cleanId, action: 'deleteAduan' });
+            }
+            window.dispatchEvent(new CustomEvent('ecoaduDeleteConfirmed', { detail: { id: cleanId, serverConfirmed: true } }));
+            setTimeout(() => this.syncFromGAS(true), 200);
+          }
+        })
         .catch(err => console.warn('Gagal menghapus di Google Apps Script:', err))
         .finally(() => {
           this._activeDeleteIds.delete(cleanId);
@@ -3786,8 +3867,13 @@ class AduanDataStore {
   resetToDefault() {
     this.aduanList = [...INITIAL_ADUAN_DATA];
     this.remoteStats = null;
-    this._serverConfirmed = true;
-    this.save('reset', { serverConfirmed: true });
+    this.isServerSynced = false;
+    this._serverConfirmed = false;
+    this.save('reset_local');
+    try {
+      localStorage.removeItem(VERIFIED_CACHE_KEY);
+      localStorage.removeItem('dlh_cached_hero_stats');
+    } catch (e) { }
   }
 
   _computeStatsFromList(cleanList) {

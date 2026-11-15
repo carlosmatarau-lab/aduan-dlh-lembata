@@ -6223,7 +6223,7 @@
             </div>
           </div>
         </div>
-        <!-- Fast Instant Hydration: Render instan (0 ms) dari ecoadu_shared_state / cache terkonfirmasi -->
+        <!-- Fast Instant Hydration: Render instan (0 ms) hanya dari ecoadu_verified_cache -->
         <script>
           (function() {
             function computeStatsFromList(list) {
@@ -6245,46 +6245,16 @@
               return { total: total, baru: br, dalamProses: dp, selesai: sl };
             }
 
-            window.hydrateEcoaduSharedStateUI = function() {
+            window.hydrateEcoaduVerifiedCacheUI = function() {
               try {
                 var s = null;
                 var isValid = false;
-                var sharedRaw = localStorage.getItem('ecoadu_shared_state');
-                if (sharedRaw) {
-                  var sharedObj = JSON.parse(sharedRaw);
-                  if (sharedObj) {
-                    if (sharedObj.stats && typeof sharedObj.stats.total === 'number' &&
-                        (sharedObj.serverConfirmed === true || sharedObj.stats.total > 0)) {
-                      s = sharedObj.stats;
-                      isValid = true;
-                    } else if (Array.isArray(sharedObj.aduanList) &&
-                        (sharedObj.serverConfirmed === true || sharedObj.aduanList.length > 0)) {
-                      s = computeStatsFromList(sharedObj.aduanList);
-                      isValid = true;
-                    }
-                  }
-                }
-
-                if (!isValid) {
-                  var cached = localStorage.getItem('dlh_cached_hero_stats');
-                  if (cached) {
-                    var parsedCached = JSON.parse(cached);
-                    if (parsedCached && typeof parsedCached.total === 'number' &&
-                        (parsedCached.serverConfirmed === true || parsedCached.total > 0)) {
-                      s = parsedCached;
-                      isValid = true;
-                    }
-                  }
-                }
-
-                if (!isValid) {
-                  var raw = localStorage.getItem('dlh_lembata_aduan_v5');
-                  if (raw) {
-                    var list = JSON.parse(raw);
-                    if (Array.isArray(list) && list.length > 0) {
-                      s = computeStatsFromList(list);
-                      isValid = true;
-                    }
+                var rawCache = localStorage.getItem('ecoadu_verified_cache');
+                if (rawCache) {
+                  var parsedCache = JSON.parse(rawCache);
+                  if (parsedCache && typeof parsedCache.updatedAt === 'number' && parsedCache.updatedAt > 0 && Array.isArray(parsedCache.data)) {
+                    s = computeStatsFromList(parsedCache.data);
+                    isValid = true;
                   }
                 }
 
@@ -6318,7 +6288,8 @@
               }
             };
 
-            window.hydrateEcoaduSharedStateUI();
+            window.hydrateEcoaduSharedStateUI = window.hydrateEcoaduVerifiedCacheUI;
+            window.hydrateEcoaduVerifiedCacheUI();
           })();
         </script>
       </section>
@@ -7491,9 +7462,9 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Application Logic -->
-  <script charset="UTF-8" src="js/data.js?v=20261115_sync_shared_01"></script>
-  <script charset="UTF-8" src="js/map.js?v=20261115_sync_shared_01"></script>
-  <script charset="UTF-8" src="js/app.js?v=20261115_sync_shared_01"></script>
+  <script charset="UTF-8" src="js/data.js?v=20261115_verified_sync_01"></script>
+  <script charset="UTF-8" src="js/map.js?v=20261115_verified_sync_01"></script>
+  <script charset="UTF-8" src="js/app.js?v=20261115_verified_sync_01"></script>
 
   <!-- ===================================================================
        SCRIPTS: SPLASH SCREEN & PORTAL TRANSITION HANDLER
@@ -7560,18 +7531,18 @@
       });
     })();
 
-    // 3. Sinkronisasi Shared State & Anti-Cache Fetch saat Navigasi Kembali / Tab Aktif
-    (function initIndexSharedSyncAndLifecycle() {
+    // 3. Sinkronisasi Verified Cache ('ecoadu_verified_cache'), BroadcastChannel ('ecoadu_sync'), Anti-Cache Fetch & Polling 5 detik
+    (function initIndexVerifiedSyncAndLifecycle() {
       const bootAt = Date.now();
       let lastResumeFetchAt = 0;
 
-      function applySharedStateToPage() {
-        if (typeof window.hydrateEcoaduSharedStateUI === 'function') {
-          window.hydrateEcoaduSharedStateUI();
+      function applyVerifiedCacheToPage() {
+        if (typeof window.hydrateEcoaduVerifiedCacheUI === 'function') {
+          window.hydrateEcoaduVerifiedCacheUI();
         }
         if (window.aduanStore) {
-          if (typeof window.aduanStore.hydrateFromSharedState === 'function') {
-            window.aduanStore.hydrateFromSharedState(true);
+          if (typeof window.aduanStore.hydrateFromVerifiedCache === 'function') {
+            window.aduanStore.hydrateFromVerifiedCache(true);
           } else {
             window.aduanStore.init();
           }
@@ -7587,9 +7558,9 @@
         }
       }
 
-      function triggerAntiCacheGasFetch() {
+      function triggerAntiCacheGasFetch(forceBypassThrottle) {
         const now = Date.now();
-        if (now - lastResumeFetchAt < 150) return;
+        if (!forceBypassThrottle && now - lastResumeFetchAt < 150) return;
         lastResumeFetchAt = now;
 
         const store = window.aduanStore;
@@ -7609,14 +7580,32 @@
           const gasUrl = store.getActiveGasUrl();
           if (gasUrl) {
             const sep = gasUrl.indexOf('?') === -1 ? '?' : '&';
-            tasks.push(fetch(gasUrl + sep + 't=' + Date.now() + '&action=getAll', { method: 'GET', mode: 'cors' }));
+            tasks.push(fetch(gasUrl + sep + 't=' + Date.now() + '&action=getAll', { method: 'GET', mode: 'cors', cache: 'no-store' }));
           }
         }
 
         Promise.allSettled(tasks).then(() => {
-          applySharedStateToPage();
+          applyVerifiedCacheToPage();
         }).catch(() => {});
       }
+
+      // Jalankan hidrasi verified cache 0 ms & validasi server latar belakang saat halaman siap
+      applyVerifiedCacheToPage();
+
+      // Dengarkan BroadcastChannel('ecoadu_sync') dari petugas.html atau tab lain (abaikan self-echo)
+      try {
+        if (typeof BroadcastChannel !== 'undefined') {
+          const ecoaduSyncBc = new BroadcastChannel('ecoadu_sync');
+          ecoaduSyncBc.onmessage = function(ev) {
+            const d = ev && ev.data ? ev.data : null;
+            if (d && d.sender && window.dlhRealtime && d.sender === window.dlhRealtime.instanceId) {
+              return;
+            }
+            applyVerifiedCacheToPage();
+            triggerAntiCacheGasFetch(false);
+          };
+        }
+      } catch (e) {}
 
       window.addEventListener('pageshow', function(event) {
         let isBackForward = false;
@@ -7631,26 +7620,38 @@
           }
         } catch (e) {}
 
-        applySharedStateToPage();
+        applyVerifiedCacheToPage();
 
-        // Hindari duplikasi fetch tepat pada cold load awal (< 600ms) kecuali bfcache / back_forward
         const isInitialColdPageshow = !event.persisted && !isBackForward && (Date.now() - bootAt < 600);
         if (!isInitialColdPageshow) {
-          triggerAntiCacheGasFetch();
+          triggerAntiCacheGasFetch(Boolean(event.persisted || isBackForward));
         }
       });
 
       document.addEventListener('visibilitychange', function() {
         if (document.visibilityState === 'visible') {
-          applySharedStateToPage();
-          triggerAntiCacheGasFetch();
+          applyVerifiedCacheToPage();
+          triggerAntiCacheGasFetch(false);
         }
       });
 
-      window.refreshEcoaduFromSharedAndServer = function() {
-        applySharedStateToPage();
-        triggerAntiCacheGasFetch();
+      window.addEventListener('focus', function() {
+        applyVerifiedCacheToPage();
+        triggerAntiCacheGasFetch(false);
+      });
+
+      // Polling latar belakang setiap 5000 ms (5 detik) khusus saat tab aktif terlihat
+      setInterval(function() {
+        if (document.visibilityState === 'visible') {
+          triggerAntiCacheGasFetch(true);
+        }
+      }, 5000);
+
+      window.refreshEcoaduFromVerifiedAndServer = function() {
+        applyVerifiedCacheToPage();
+        triggerAntiCacheGasFetch(true);
       };
+      window.refreshEcoaduFromSharedAndServer = window.refreshEcoaduFromVerifiedAndServer;
     })();
   </script>
 </body>
