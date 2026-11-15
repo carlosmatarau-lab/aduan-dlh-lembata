@@ -677,18 +677,19 @@
       margin: 0;
     }
 
-    /* Desain Kartu Alur Pengaduan Digital (Simpel & Profesional) */
+    /* Desain Kartu Alur Pengaduan Digital (Interaktif & Berwibawa) */
     .bottom-card.card-alur {
       padding: 0;
       overflow: hidden;
-      border: 1px solid #d1e7dd;
-      box-shadow: 0 4px 18px rgba(6, 78, 59, 0.05);
+      border: 1px solid #cbd5e1;
+      border-top: 3px solid #064e3b;
+      box-shadow: 0 6px 22px rgba(6, 78, 59, 0.07);
       background: #ffffff;
     }
 
     .alur-showcase {
       display: grid;
-      grid-template-columns: 174px 1fr;
+      grid-template-columns: 180px 1fr;
       flex: 1;
       height: 100%;
       position: relative;
@@ -697,8 +698,8 @@
 
     .alur-sidebar {
       position: relative;
-      background: linear-gradient(165deg, #065f46 0%, #064e3b 100%);
-      padding: 20px 16px 0 16px;
+      background: linear-gradient(170deg, #043927 0%, #064e3b 62%, #065f46 100%);
+      padding: 18px 16px 0 16px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -712,26 +713,41 @@
       z-index: 2;
     }
 
+    .alur-sidebar-eyebrow {
+      display: inline-block;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.56rem;
+      font-weight: 800;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      color: #fde68a;
+      background: rgba(251, 191, 36, 0.12);
+      border: 1px solid rgba(251, 191, 36, 0.32);
+      padding: 2px 7px;
+      border-radius: 4px;
+      margin-bottom: 7px;
+    }
+
     .alur-sidebar-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.14rem;
+      font-size: 1.1rem;
       font-weight: 700;
-      line-height: 1.2;
+      line-height: 1.18;
       color: #ffffff;
       margin: 0;
       letter-spacing: -0.01em;
     }
 
     .alur-sidebar-divider {
-      width: 32px;
-      height: 3px;
+      width: 34px;
+      height: 2.5px;
       border-radius: 999px;
-      background: #34d399;
-      margin: 10px 0 8px;
+      background: linear-gradient(90deg, #fbbf24 0%, #34d399 100%);
+      margin: 9px 0 7px;
     }
 
     .alur-sidebar-sub {
-      font-size: 0.76rem;
+      font-size: 0.72rem;
       font-weight: 500;
       line-height: 1.38;
       color: #d1fae5;
@@ -741,7 +757,7 @@
     .alur-phone-wrap {
       position: relative;
       z-index: 2;
-      margin-top: 10px;
+      margin-top: 8px;
       display: flex;
       justify-content: center;
       align-items: flex-end;
@@ -749,128 +765,281 @@
     }
 
     .alur-phone-svg {
-      width: 130px;
+      width: 128px;
       height: auto;
       display: block;
-      filter: drop-shadow(0 6px 14px rgba(2, 44, 34, 0.28));
+      filter: drop-shadow(0 8px 16px rgba(2, 44, 34, 0.34));
     }
 
     .alur-main-pane {
       position: relative;
-      padding: 18px 18px;
+      padding: 16px 18px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       background: #ffffff;
+      gap: 10px;
     }
 
     .alur-pane-header {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      margin-bottom: 12px;
+      gap: 10px;
     }
 
     .alur-pane-eyebrow {
       font-family: 'Outfit', sans-serif;
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 800;
       letter-spacing: 0.06em;
       text-transform: uppercase;
-      color: #475569;
+      color: #334155;
       margin: 0;
     }
 
+    .alur-progress-group {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
     .alur-pane-pill {
-      font-size: 0.7rem;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.68rem;
       font-weight: 700;
-      color: #047857;
+      color: #064e3b;
       background: #ecfdf5;
       border: 1px solid #a7f3d0;
-      padding: 3px 9px;
+      padding: 2px 9px;
       border-radius: 999px;
       white-space: nowrap;
     }
 
-    .alur-steps-track {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
+    .alur-progress-bars {
+      display: flex;
+      gap: 3px;
+      align-items: center;
     }
 
-    .alur-step-item {
-      display: flex;
-      flex-direction: row;
-      align-items: center;
-      gap: 11px;
-      text-align: left;
+    .alur-prog-seg {
+      width: 14px;
+      height: 4px;
+      border-radius: 99px;
+      background: #e2e8f0;
+      transition: background-color 0.22s ease, width 0.22s ease;
+    }
+
+    .alur-prog-seg.is-done {
+      background: #10b981;
+    }
+
+    .alur-prog-seg.is-active {
+      width: 22px;
+      background: #064e3b;
+    }
+
+    /* Interactive Step Tabs */
+    .alur-step-tabs {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+    }
+
+    .alur-step-tab {
+      appearance: none;
       background: #f8fafc;
       border: 1px solid #e2e8f0;
-      border-radius: 12px;
-      padding: 11px 12px;
-      transition: border-color 0.18s ease, background-color 0.18s ease, transform 0.18s ease;
+      border-radius: 10px;
+      padding: 8px 6px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      cursor: pointer;
+      color: #475569;
+      text-align: center;
+      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+      position: relative;
     }
 
-    .alur-step-item:hover {
-      border-color: #6ee7b7;
+    .alur-step-tab:hover {
       background: #f0fdf4;
+      border-color: #6ee7b7;
+      color: #064e3b;
       transform: translateY(-1px);
     }
 
-    .alur-step-icon {
-      width: 38px;
-      height: 38px;
-      border-radius: 10px;
-      background: #ffffff;
-      border: 1px solid #d1fae5;
+    .alur-step-tab.is-active {
+      background: #064e3b;
+      border-color: #064e3b;
+      color: #ffffff;
+      box-shadow: 0 4px 12px rgba(6, 78, 59, 0.2);
+      transform: translateY(-1px);
+    }
+
+    .alur-step-tab-top {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .alur-tab-num {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 800;
       color: #059669;
-      display: flex;
+      letter-spacing: 0.03em;
+    }
+
+    .alur-step-tab.is-active .alur-tab-num {
+      color: #fde68a;
+    }
+
+    .alur-tab-icon {
+      display: inline-flex;
       align-items: center;
       justify-content: center;
+      color: #059669;
+    }
+
+    .alur-step-tab.is-active .alur-tab-icon {
+      color: #6ee7b7;
+    }
+
+    .alur-tab-label {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.69rem;
+      font-weight: 700;
+      line-height: 1.15;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      max-width: 100%;
+    }
+
+    /* Interactive Stage Preview */
+    .alur-detail-stage {
+      background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
+      border: 1px solid #cbd5e1;
+      border-left: 3.5px solid #064e3b;
+      border-radius: 10px;
+      padding: 12px 14px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      min-height: 98px;
+      justify-content: space-between;
+    }
+
+    @keyframes alurStageFadeIn {
+      from { opacity: 0.35; transform: translateY(3px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .alur-detail-stage.is-animating {
+      animation: alurStageFadeIn 0.24s ease;
+    }
+
+    .alur-stage-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    .alur-stage-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.88rem;
+      font-weight: 800;
+      color: #0f172a;
+      margin: 0;
+      line-height: 1.25;
+    }
+
+    .alur-stage-tag {
+      font-size: 0.66rem;
+      font-weight: 700;
+      color: #064e3b;
+      background: #ffffff;
+      border: 1px solid #a7f3d0;
+      padding: 2px 8px;
+      border-radius: 999px;
+      white-space: nowrap;
+    }
+
+    .alur-stage-desc {
+      font-size: 0.75rem;
+      color: #334155;
+      line-height: 1.42;
+      margin: 0;
+    }
+
+    .alur-stage-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      margin-top: 2px;
+      flex-wrap: wrap;
+    }
+
+    .alur-stage-checks {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .alur-check-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 0.68rem;
+      font-weight: 600;
+      color: #0f172a;
+    }
+
+    .alur-check-pill svg {
+      color: #059669;
       flex-shrink: 0;
     }
 
-    .alur-step-body {
-      min-width: 0;
-      flex: 1;
+    .alur-nav-btns {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
     }
 
-    .alur-step-title-row {
-      display: flex;
-      flex-direction: column;
-      gap: 1px;
-      margin-bottom: 2px;
-    }
-
-    .alur-step-num {
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.63rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: #059669;
-      line-height: 1.1;
-    }
-
-    .alur-step-label {
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.83rem;
-      font-weight: 700;
+    .alur-nav-btn {
+      width: 24px;
+      height: 24px;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #ffffff;
       color: #0f172a;
-      line-height: 1.2;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.15s ease;
     }
 
-    .alur-step-sub {
-      font-size: 0.7rem;
-      color: #64748b;
-      font-weight: 500;
-      line-height: 1.28;
+    .alur-nav-btn:hover:not(:disabled) {
+      border-color: #064e3b;
+      color: #064e3b;
+      background: #ecfdf5;
+    }
+
+    .alur-nav-btn:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
     }
 
     .alur-cta-wrap {
-      margin-top: 14px;
-      padding-top: 12px;
+      padding-top: 10px;
       border-top: 1px solid #f1f5f9;
       display: flex;
       align-items: center;
@@ -884,8 +1053,8 @@
       align-items: center;
       gap: 5px;
       font-size: 0.7rem;
-      font-weight: 500;
-      color: #64748b;
+      font-weight: 600;
+      color: #475569;
       white-space: nowrap;
     }
 
@@ -898,25 +1067,26 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 6px;
-      background: #047857;
+      gap: 7px;
+      background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
       color: #ffffff;
       border: none;
-      border-radius: 10px;
-      padding: 8px 14px;
+      border-radius: 9px;
+      padding: 8px 15px;
       font-family: 'Outfit', sans-serif;
       font-size: 0.79rem;
       font-weight: 700;
+      letter-spacing: 0.01em;
       white-space: nowrap;
       cursor: pointer;
-      box-shadow: 0 2px 8px rgba(4, 120, 87, 0.18);
-      transition: background-color 0.18s ease, transform 0.18s ease, box-shadow 0.18s ease;
+      box-shadow: 0 3px 10px rgba(6, 78, 59, 0.22);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
     }
 
     .btn-alur-cta:hover {
-      background: #065f46;
+      filter: brightness(1.06);
       transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(4, 120, 87, 0.26);
+      box-shadow: 0 5px 14px rgba(6, 78, 59, 0.3);
     }
 
     .btn-alur-cta:active {
@@ -4617,7 +4787,7 @@
         font-size: 0.88rem;
       }
 
-      /* Alur Pengaduan Mobile Layout (Simpel, Proporsional & Rapi) */
+      /* Alur Pengaduan Mobile Layout (Interaktif & Berwibawa) */
       .alur-showcase {
         grid-template-columns: 1fr;
       }
@@ -4630,7 +4800,7 @@
         flex-direction: row;
         align-items: flex-end;
         justify-content: space-between;
-        padding: 16px 16px 0;
+        padding: 15px 15px 0;
         min-height: 112px;
         border-right: none;
         border-bottom: 1px solid #d1fae5;
@@ -4638,11 +4808,11 @@
 
       .alur-sidebar-copy {
         align-self: center;
-        padding: 0 12px 14px 0;
+        padding: 0 10px 14px 0;
       }
 
       .alur-sidebar-title {
-        font-size: 1.06rem;
+        font-size: 1.04rem;
         line-height: 1.18;
       }
 
@@ -4651,7 +4821,7 @@
       }
 
       .alur-sidebar-sub {
-        font-size: 0.72rem;
+        font-size: 0.7rem;
       }
 
       .alur-phone-wrap {
@@ -4665,32 +4835,38 @@
       }
 
       .alur-main-pane {
-        padding: 16px;
+        padding: 14px;
+        gap: 10px;
       }
 
       .alur-pane-header {
-        margin-bottom: 10px;
+        margin-bottom: 0;
       }
 
-      .alur-steps-track {
-        display: grid;
-        grid-template-columns: 1fr;
-        gap: 8px;
+      .alur-progress-bars {
+        display: none;
       }
 
-      .alur-step-item {
-        padding: 10px 12px;
-        border-radius: 10px;
+      .alur-step-tabs {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 6px;
       }
 
-      .alur-step-icon {
-        width: 34px;
-        height: 34px;
+      .alur-step-tab {
+        flex-direction: row;
+        justify-content: flex-start;
+        padding: 8px 10px;
+        gap: 6px;
+      }
+
+      .alur-detail-stage {
+        padding: 11px 12px;
+        min-height: 0;
       }
 
       .alur-cta-wrap {
-        margin-top: 12px;
-        padding-top: 12px;
+        margin-top: 2px;
+        padding-top: 10px;
         flex-direction: column;
         align-items: stretch;
         gap: 8px;
@@ -6246,15 +6422,16 @@
            DUA KARTU BAWAH: ALUR PENGADUAN DIGITAL & PETA SEBARAN (GAMBAR 2)
            =============================================================== -->
       <section class="silapor-bottom-grid">
-        <!-- Kartu Kiri: Alur Pengaduan Digital (Desain Simpel & Profesional) -->
-        <div class="bottom-card card-alur">
+        <!-- Kartu Kiri: Alur Pengaduan Digital (Interaktif & Berwibawa) -->
+        <div class="bottom-card card-alur" id="alurPengaduanSection">
           <div class="alur-showcase">
-            <!-- Panel Kiri Brand Hijau + Ilustrasi Tangan Memegang HP -->
+            <!-- Panel Kiri Brand Hijau Tua Resmi + Ilustrasi Tangan Memegang HP Interaktif -->
             <div class="alur-sidebar">
               <div class="alur-sidebar-copy">
+                <span class="alur-sidebar-eyebrow">Standar Layanan</span>
                 <h3 class="alur-sidebar-title">Alur<br>Pengaduan<br>Digital</h3>
                 <div class="alur-sidebar-divider"></div>
-                <p class="alur-sidebar-sub">Mudah, cepat,<br>dan transparan</p>
+                <p class="alur-sidebar-sub">Terukur, transparan,<br>dan akuntabel</p>
               </div>
 
               <!-- Ilustrasi Tangan Memegang Ponsel ECOADU LEMBATA -->
@@ -6284,15 +6461,20 @@
                     <!-- Notch Speaker -->
                     <rect x="73" y="25" width="32" height="4" rx="2" fill="#cbd5e1"/>
                     <!-- Logo Daun Kembar ECOADU -->
-                    <g transform="translate(89, 72)">
+                    <g transform="translate(89, 64)">
                       <path d="M-2,6 C-16,-2 -20,-18 -6,-26 C2,-16 4,-4 -2,6 Z" fill="url(#alurLeafGrad)"/>
                       <path d="M1,6 C17,-2 22,-18 7,-27 C0,-17 -2,-5 1,6 Z" fill="#16a34a" opacity="0.92"/>
                       <path d="M-2,5 C-7,-5 -9,-14 -6,-21" fill="none" stroke="#dcfce7" stroke-width="1.3" stroke-linecap="round"/>
                       <path d="M2,5 C8,-5 10,-14 7,-21" fill="none" stroke="#dcfce7" stroke-width="1.3" stroke-linecap="round"/>
                     </g>
                     <!-- Teks ECOADU LEMBATA di Layar -->
-                    <text x="89" y="102" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="800" font-size="14.5" fill="#0f172a" letter-spacing="0.4">ECOADU</text>
-                    <text x="89" y="117" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="700" font-size="10.5" fill="#15803d" letter-spacing="1.1">LEMBATA</text>
+                    <text x="89" y="92" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="800" font-size="14" fill="#0f172a" letter-spacing="0.4">ECOADU</text>
+                    <text x="89" y="106" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="700" font-size="9.5" fill="#15803d" letter-spacing="1.1">LEMBATA</text>
+                    <!-- Indikator Tahap Aktif di Layar Ponsel -->
+                    <rect x="48" y="116" width="82" height="28" rx="6" fill="#f0fdf4" stroke="#a7f3d0" stroke-width="1"/>
+                    <text id="alurPhoneStepTag" x="89" y="128" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="800" font-size="6.4" fill="#064e3b" letter-spacing="0.2">01 · IDENTITAS</text>
+                    <rect x="58" y="134" width="62" height="4" rx="2" fill="#d1fae5"/>
+                    <rect id="alurPhoneProgressBar" x="58" y="134" width="15.5" height="4" rx="2" fill="#059669"/>
                   </g>
                   <!-- Jari-jari Kanan Menggenggam -->
                   <rect x="131" y="64" width="19" height="13" rx="6.5" fill="url(#alurSkin)" transform="rotate(-6 140 70)"/>
@@ -6304,69 +6486,89 @@
               </div>
             </div>
 
-            <!-- Panel Kanan: 4 Tahapan Ringkas + Tombol CTA -->
+            <!-- Panel Kanan: Stepper Interaktif + Detail Tahap + CTA -->
             <div class="alur-main-pane">
-              <div>
-                <div class="alur-pane-header">
-                  <span class="alur-pane-eyebrow">Tahapan Pelaporan</span>
-                  <span class="alur-pane-pill">4 Langkah Mudah</span>
+              <div class="alur-pane-header">
+                <span class="alur-pane-eyebrow">Prosedur Resmi</span>
+                <div class="alur-progress-group">
+                  <div class="alur-progress-bars" id="alurProgressBars" aria-hidden="true">
+                    <span class="alur-prog-seg is-active"></span>
+                    <span class="alur-prog-seg"></span>
+                    <span class="alur-prog-seg"></span>
+                    <span class="alur-prog-seg"></span>
+                  </div>
+                  <span class="alur-pane-pill" id="alurStepCounter">Tahap 1 / 4</span>
                 </div>
+              </div>
 
-                <div class="alur-steps-track">
-                  <!-- Step 1 -->
-                  <div class="alur-step-item">
-                    <div class="alur-step-icon" aria-hidden="true">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    </div>
-                    <div class="alur-step-body">
-                      <div class="alur-step-title-row">
-                        <span class="alur-step-num">Langkah 01</span>
-                        <span class="alur-step-label">Isi Data Pelapor</span>
-                      </div>
-                      <div class="alur-step-sub">Identitas aman &amp; terjaga</div>
-                    </div>
+              <!-- Tab Pemilih 4 Tahapan -->
+              <div class="alur-step-tabs" role="tablist" aria-label="Tahapan Alur Pengaduan">
+                <button type="button" class="alur-step-tab is-active" role="tab" aria-selected="true" data-alur-step="0">
+                  <span class="alur-step-tab-top">
+                    <span class="alur-tab-num">01</span>
+                    <span class="alur-tab-icon" aria-hidden="true">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
+                    </span>
+                  </span>
+                  <span class="alur-tab-label">Identitas</span>
+                </button>
+
+                <button type="button" class="alur-step-tab" role="tab" aria-selected="false" data-alur-step="1">
+                  <span class="alur-step-tab-top">
+                    <span class="alur-tab-num">02</span>
+                    <span class="alur-tab-icon" aria-hidden="true">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
+                    </span>
+                  </span>
+                  <span class="alur-tab-label">Foto &amp; GPS</span>
+                </button>
+
+                <button type="button" class="alur-step-tab" role="tab" aria-selected="false" data-alur-step="2">
+                  <span class="alur-step-tab-top">
+                    <span class="alur-tab-num">03</span>
+                    <span class="alur-tab-icon" aria-hidden="true">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+                    </span>
+                  </span>
+                  <span class="alur-tab-label">Kirim</span>
+                </button>
+
+                <button type="button" class="alur-step-tab" role="tab" aria-selected="false" data-alur-step="3">
+                  <span class="alur-step-tab-top">
+                    <span class="alur-tab-num">04</span>
+                    <span class="alur-tab-icon" aria-hidden="true">
+                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
+                    </span>
+                  </span>
+                  <span class="alur-tab-label">Penanganan</span>
+                </button>
+              </div>
+
+              <!-- Panel Detail Tahap Aktif -->
+              <div class="alur-detail-stage" id="alurDetailStage" role="tabpanel" aria-live="polite">
+                <div class="alur-stage-head">
+                  <h4 class="alur-stage-title" id="alurStageTitle">01. Pengisian Identitas Pelapor</h4>
+                  <span class="alur-stage-tag" id="alurStageTag">Kerahasiaan Terjamin</span>
+                </div>
+                <p class="alur-stage-desc" id="alurStageDesc">Masukkan nama, nomor WhatsApp aktif untuk notifikasi resmi, serta wilayah kecamatan dan desa lokasi kejadian.</p>
+                <div class="alur-stage-foot">
+                  <div class="alur-stage-checks" id="alurStageChecks">
+                    <span class="alur-check-pill">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      Identitas dilindungi
+                    </span>
+                    <span class="alur-check-pill">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
+                      Notifikasi WhatsApp
+                    </span>
                   </div>
-
-                  <!-- Step 2 -->
-                  <div class="alur-step-item">
-                    <div class="alur-step-icon" aria-hidden="true">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                    </div>
-                    <div class="alur-step-body">
-                      <div class="alur-step-title-row">
-                        <span class="alur-step-num">Langkah 02</span>
-                        <span class="alur-step-label">Foto &amp; Lokasi</span>
-                      </div>
-                      <div class="alur-step-sub">Titik GPS &amp; bukti faktual</div>
-                    </div>
-                  </div>
-
-                  <!-- Step 3 -->
-                  <div class="alur-step-item">
-                    <div class="alur-step-icon" aria-hidden="true">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                    </div>
-                    <div class="alur-step-body">
-                      <div class="alur-step-title-row">
-                        <span class="alur-step-num">Langkah 03</span>
-                        <span class="alur-step-label">Kirim Laporan</span>
-                      </div>
-                      <div class="alur-step-sub">Uraian dugaan pencemaran</div>
-                    </div>
-                  </div>
-
-                  <!-- Step 4 -->
-                  <div class="alur-step-item">
-                    <div class="alur-step-icon" aria-hidden="true">
-                      <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-                    </div>
-                    <div class="alur-step-body">
-                      <div class="alur-step-title-row">
-                        <span class="alur-step-num">Langkah 04</span>
-                        <span class="alur-step-label">Penanganan DLH</span>
-                      </div>
-                      <div class="alur-step-sub">Verifikasi &amp; tindak lanjut</div>
-                    </div>
+                  <div class="alur-nav-btns">
+                    <button type="button" class="alur-nav-btn" id="alurPrevStepBtn" aria-label="Tahap sebelumnya" disabled>
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
+                    </button>
+                    <button type="button" class="alur-nav-btn" id="alurNextStepBtn" aria-label="Tahap berikutnya">
+                      <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
+                    </button>
                   </div>
                 </div>
               </div>
@@ -6374,12 +6576,12 @@
               <div class="alur-cta-wrap">
                 <span class="alur-cta-note">
                   <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                  Identitas terlindungi
+                  Identitas aman
                 </span>
                 <button type="button" class="btn-alur-cta" onclick="window.app && window.app.switchTab('form')">
                   <span>Mulai Buat Aduan Sekarang</span>
                   <span class="btn-alur-cta-icon" aria-hidden="true">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                   </span>
                 </button>
               </div>
@@ -7571,6 +7773,125 @@
         triggerAntiCacheGasFetch(true);
       };
       window.refreshEcoaduFromSharedAndServer = window.refreshEcoaduFromVerifiedAndServer;
+    })();
+
+    // 4. Stepper Interaktif Alur Pengaduan Digital (Terisolasi tanpa memengaruhi modul lain)
+    (function initInteractiveAlurStepper() {
+      const root = document.getElementById('alurPengaduanSection');
+      if (!root) return;
+
+      const STEPS = [
+        {
+          phoneTag: '01 · IDENTITAS',
+          title: '01. Pengisian Identitas Pelapor',
+          tag: 'Kerahasiaan Terjamin',
+          desc: 'Masukkan nama, nomor WhatsApp aktif untuk notifikasi resmi, serta wilayah kecamatan dan desa lokasi kejadian.',
+          checks: ['Identitas dilindungi', 'Notifikasi WhatsApp']
+        },
+        {
+          phoneTag: '02 · BUKTI GPS',
+          title: '02. Unggah Bukti Foto & Lokasi GPS',
+          tag: 'Akurasi Spasial',
+          desc: 'Lampirkan foto kondisi lapangan dan tandai titik koordinat peta agar tim DLH Lembata dapat menelusuri lokasi dengan presisi.',
+          checks: ['Deteksi GPS otomatis', 'Multi-foto bukti']
+        },
+        {
+          phoneTag: '03 · KIRIM ADUAN',
+          title: '03. Uraian Kejadian & Kirim Laporan',
+          tag: 'Resi Real-Time',
+          desc: 'Jelaskan kronologi dugaan pencemaran dan kirim aduan untuk langsung memperoleh Nomor Tiket pelacakan resmi.',
+          checks: ['Tiket terbit otomatis', 'Sinkron real-time']
+        },
+        {
+          phoneTag: '04 · PENANGANAN',
+          title: '04. Verifikasi & Penanganan Tim DLH',
+          tag: 'Transparan & Terukur',
+          desc: 'Petugas DLH melakukan pemeriksaan lapangan, mendokumentasikan Berita Acara, dan memperbarui progres hingga tuntas.',
+          checks: ['Verifikasi faktual', 'Progres terpantau']
+        }
+      ];
+
+      const tabs = Array.from(root.querySelectorAll('[data-alur-step]'));
+      const stage = document.getElementById('alurDetailStage');
+      const titleEl = document.getElementById('alurStageTitle');
+      const tagEl = document.getElementById('alurStageTag');
+      const descEl = document.getElementById('alurStageDesc');
+      const checksEl = document.getElementById('alurStageChecks');
+      const counterEl = document.getElementById('alurStepCounter');
+      const progBars = Array.from(root.querySelectorAll('#alurProgressBars .alur-prog-seg'));
+      const prevBtn = document.getElementById('alurPrevStepBtn');
+      const nextBtn = document.getElementById('alurNextStepBtn');
+      const phoneTagEl = document.getElementById('alurPhoneStepTag');
+      const phoneBarEl = document.getElementById('alurPhoneProgressBar');
+
+      let activeIdx = 0;
+
+      function renderCheckPill(label) {
+        const span = document.createElement('span');
+        span.className = 'alur-check-pill';
+        span.innerHTML = '<svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>';
+        span.appendChild(document.createTextNode(' ' + label));
+        return span;
+      }
+
+      function setActiveStep(idx, animate) {
+        const nextIdx = Math.max(0, Math.min(STEPS.length - 1, Number(idx) || 0));
+        activeIdx = nextIdx;
+        const step = STEPS[nextIdx];
+
+        tabs.forEach((btn, i) => {
+          const isCur = i === nextIdx;
+          btn.classList.toggle('is-active', isCur);
+          btn.setAttribute('aria-selected', isCur ? 'true' : 'false');
+        });
+
+        progBars.forEach((seg, i) => {
+          seg.classList.toggle('is-active', i === nextIdx);
+          seg.classList.toggle('is-done', i < nextIdx);
+        });
+
+        if (counterEl) counterEl.textContent = 'Tahap ' + (nextIdx + 1) + ' / ' + STEPS.length;
+        if (titleEl) titleEl.textContent = step.title;
+        if (tagEl) tagEl.textContent = step.tag;
+        if (descEl) descEl.textContent = step.desc;
+        if (checksEl) {
+          checksEl.innerHTML = '';
+          step.checks.forEach(c => checksEl.appendChild(renderCheckPill(c)));
+        }
+        if (phoneTagEl) phoneTagEl.textContent = step.phoneTag;
+        if (phoneBarEl) phoneBarEl.setAttribute('width', String(((nextIdx + 1) / STEPS.length) * 62));
+
+        if (prevBtn) prevBtn.disabled = nextIdx === 0;
+        if (nextBtn) nextBtn.disabled = nextIdx === STEPS.length - 1;
+
+        if (animate && stage) {
+          stage.classList.remove('is-animating');
+          void stage.offsetWidth;
+          stage.classList.add('is-animating');
+        }
+      }
+
+      tabs.forEach((btn) => {
+        btn.addEventListener('click', () => {
+          setActiveStep(Number(btn.getAttribute('data-alur-step')), true);
+        });
+        btn.addEventListener('keydown', (e) => {
+          if (e.key === 'ArrowRight') {
+            e.preventDefault();
+            const target = Math.min(STEPS.length - 1, activeIdx + 1);
+            setActiveStep(target, true);
+            tabs[target] && tabs[target].focus();
+          } else if (e.key === 'ArrowLeft') {
+            e.preventDefault();
+            const target = Math.max(0, activeIdx - 1);
+            setActiveStep(target, true);
+            tabs[target] && tabs[target].focus();
+          }
+        });
+      });
+
+      if (prevBtn) prevBtn.addEventListener('click', () => setActiveStep(activeIdx - 1, true));
+      if (nextBtn) nextBtn.addEventListener('click', () => setActiveStep(activeIdx + 1, true));
     })();
   </script>
 </body>
