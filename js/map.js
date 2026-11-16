@@ -14,7 +14,7 @@ function formatWilayahAdministratif(rawNama) {
   let clean = String(rawNama).trim();
 
   const daftarKelurahan = [
-    'lewoleba', 'lewoleba utara', 'lewoleba selatan', 
+    'lewoleba', 'lewoleba utara', 'lewoleba selatan',
     'lewoleba tengah', 'lewoleba timur', 'lewoleba barat', 'selandoro'
   ];
 
@@ -153,7 +153,7 @@ class LembataMapEngine {
       setTimeout(() => {
         try {
           if (this.map) this.map.invalidateSize();
-        } catch (e) {}
+        } catch (e) { }
       }, 250);
     } catch (err) {
       console.error('Error saat inisialisasi Leaflet:', err);
@@ -450,8 +450,8 @@ class LembataMapEngine {
     const store = window.aduanStore;
     const statsReady = store
       ? (typeof store.hasReadyStats === 'function'
-          ? store.hasReadyStats()
-          : (Boolean(store._serverConfirmed) || (allData && allData.length > 0) || Boolean(store.remoteStats)))
+        ? store.hasReadyStats()
+        : (Boolean(store._serverConfirmed) || (allData && allData.length > 0) || Boolean(store.remoteStats)))
       : (allData && allData.length > 0);
 
     const setStatEl = (el, value, loading) => {
@@ -717,18 +717,18 @@ class LembataMapEngine {
             
             <!-- Titik-titik aduan -->
             ${filtered.map((item) => {
-              const normX = ((item.lng - 123.3) / 0.7) * 580 + 160;
-              const normY = ((item.lat - (-8.1)) / (-0.5)) * 260 + 90;
-              const col = this.getMarkerColor(item.status);
+      const normX = ((item.lng - 123.3) / 0.7) * 580 + 160;
+      const normY = ((item.lat - (-8.1)) / (-0.5)) * 260 + 90;
+      const col = this.getMarkerColor(item.status);
 
-              return `
+      return `
                 <g class="svg-pin" cursor="pointer" onclick="window.app.showDetailModal('${item.id}')">
                   <circle cx="${normX}" cy="${normY}" r="12" fill="${col}" fill-opacity="0.3" />
                   <circle cx="${normX}" cy="${normY}" r="6" fill="${col}" stroke="#ffffff" stroke-width="2" />
                   <text x="${normX + 10}" y="${normY + 4}" font-size="10" font-weight="bold" fill="#0f172a">${item.id}</text>
                 </g>
               `;
-            }).join('')}
+    }).join('')}
           </svg>
         </div>
       </div>
@@ -740,9 +740,15 @@ class LembataMapEngine {
     const el = document.getElementById(containerId);
     if (!el || typeof L === 'undefined') return;
 
+    if (this._miniMapTimer) {
+      clearTimeout(this._miniMapTimer);
+      this._miniMapTimer = null;
+    }
+
     // Bersihkan jika sudah pernah diinisialisasi
     if (this.miniMapInstance) {
-      try { this.miniMapInstance.remove(); } catch(e) {}
+      try { this.miniMapInstance.remove(); } catch (e) { }
+      this.miniMapInstance = null;
     }
 
     try {
@@ -753,8 +759,8 @@ class LembataMapEngine {
 
       this.miniMapInstance = L.map(containerId, {
         center: [-8.37, 123.56],
-        zoom: 10.5,
-        zoomSnap: 0.25,
+        zoom: 10,
+        zoomSnap: 0.5,
         zoomDelta: 0.5,
         minZoom: 8,
         maxZoom: 14,
@@ -764,7 +770,10 @@ class LembataMapEngine {
         touchZoom: false,
         scrollWheelZoom: false,
         doubleClickZoom: false,
-        boxZoom: false
+        boxZoom: false,
+        zoomAnimation: false,
+        fadeAnimation: false,
+        markerZoomAnimation: false
       });
 
       // Layer 1: Citra Satelit Nyata Esri (Lembata terlihat hijau kontras di atas laut biru gelap)
@@ -779,13 +788,16 @@ class LembataMapEngine {
       }).addTo(this.miniMapInstance);
 
       // Posisikan seluruh Pulau Lembata pas & luas di kontainer mini map
-      this.miniMapInstance.fitBounds(bounds, { padding: [6, 6] });
-      setTimeout(() => {
-        if (this.miniMapInstance) {
-          this.miniMapInstance.invalidateSize();
-          this.miniMapInstance.fitBounds(bounds, { padding: [6, 6] });
+      this.miniMapInstance.fitBounds(bounds, { padding: [6, 6], animate: false });
+      const activeMiniMap = this.miniMapInstance;
+      this._miniMapTimer = setTimeout(() => {
+        if (this.miniMapInstance && this.miniMapInstance === activeMiniMap && document.body.contains(el)) {
+          try {
+            this.miniMapInstance.invalidateSize(false);
+            this.miniMapInstance.fitBounds(bounds, { padding: [6, 6], animate: false });
+          } catch (err) { }
         }
-      }, 250);
+      }, 280);
 
       // Render pin titik aduan murni dari data real database/store
       const data = window.aduanStore ? window.aduanStore.getAll() : [];
@@ -808,7 +820,7 @@ class LembataMapEngine {
       el.onclick = () => {
         if (window.app) window.app.switchTab('peta');
       };
-    } catch(err) {
+    } catch (err) {
       console.warn('Gagal memuat mini map Leaflet:', err);
       this.initMiniMapFallback(containerId);
     }
@@ -840,7 +852,7 @@ window.lembataMap = new LembataMapEngine();
 /**
  * Toggle Bilah Filter & Wilayah pada Perangkat Seluler (< 768px)
  */
-window.toggleMapFiltersMobile = function() {
+window.toggleMapFiltersMobile = function () {
   const container = document.getElementById('mapFiltersCollapsible');
   const btnText = document.getElementById('filterToggleBtnText');
   const arrow = document.getElementById('filterToggleArrow');
@@ -861,14 +873,14 @@ window.toggleMapFiltersMobile = function() {
 /**
  * Pengalih Tampilan Mobile (Disederhanakan karena Peta Spasial adalah satu-satunya tampilan utama)
  */
-window.switchMobileMapView = function(mode) {
+window.switchMobileMapView = function (mode) {
   const viewPanel = document.getElementById('mapViewPanel');
   if (viewPanel) viewPanel.style.display = 'block';
   if (window.lembataMap && window.lembataMap.map) {
     setTimeout(() => {
       try {
         window.lembataMap.map.invalidateSize();
-      } catch(e) {}
+      } catch (e) { }
     }, 80);
   }
 };
@@ -880,12 +892,12 @@ window.addEventListener('resize', () => {
   if (window.lembataMap && window.lembataMap.map) {
     try {
       window.lembataMap.map.invalidateSize();
-    } catch(e) {}
+    } catch (e) { }
   }
 });
 
 // Global helper aliases untuk kompatibilitas sorot peta & buka detail
-window.sorotDiPeta = function(a, b, c) {
+window.sorotDiPeta = function (a, b, c) {
   const id = c || (typeof a === 'string' ? a : null);
   const lat = (typeof a === 'number') ? a : null;
   const lng = (typeof b === 'number') ? b : null;
@@ -903,11 +915,11 @@ window.sorotDiPeta = function(a, b, c) {
   }
 };
 
-window.highlightOnMap = function(id) {
+window.highlightOnMap = function (id) {
   if (window.sorotDiPeta) window.sorotDiPeta(id);
 };
 
-window.bukaDetail = function(id) {
+window.bukaDetail = function (id) {
   if (window.app && typeof window.app.showDetailModal === 'function') {
     window.app.showDetailModal(id);
   } else if (window.portal && typeof window.portal.showDetailModal === 'function') {
