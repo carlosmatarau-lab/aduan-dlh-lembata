@@ -70,14 +70,10 @@
 
     body {
       font-family: 'Plus Jakarta Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-      background-color: #f0fdf4;
+      background-color: #f2f7f4;
       background-image:
-        radial-gradient(at 0% 0%, rgba(16, 185, 129, 0.16) 0px, transparent 50%),
-        radial-gradient(at 100% 0%, rgba(5, 150, 105, 0.18) 0px, transparent 50%),
-        radial-gradient(at 50% 20%, rgba(52, 211, 153, 0.12) 0px, transparent 60%),
-        radial-gradient(at 100% 100%, rgba(6, 78, 59, 0.14) 0px, transparent 55%),
-        radial-gradient(at 0% 100%, rgba(16, 185, 129, 0.12) 0px, transparent 50%),
-        url("data:image/svg+xml,%3Csvg width='70' height='70' viewBox='0 0 70 70' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M35 6 C44 14 50 26 42 38 C34 50 20 44 18 32 C16 20 24 10 35 6 Z M35 64 C26 56 20 44 28 32 C36 20 50 26 52 38 C54 50 46 60 35 64 Z' fill='%23059669' fill-opacity='0.035' fill-rule='evenodd'/%3E%3C/svg%3E");
+        url("data:image/svg+xml,%3Csvg width='84' height='84' viewBox='0 0 84 84' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M42 10 C52 20 58 34 48 48 C38 62 22 54 20 40 C18 26 28 14 42 10 Z' fill='none' stroke='%23059669' stroke-opacity='0.06' stroke-width='1.2'/%3E%3Ccircle cx='12' cy='72' r='2' fill='%23059669' fill-opacity='0.07'/%3E%3C/svg%3E"),
+        linear-gradient(180deg, #eff6f1 0%, #f5f9f6 55%, #eef4f0 100%);
       background-attachment: fixed;
       color: var(--text-main);
       line-height: 1.5;
@@ -87,11 +83,20 @@
       -webkit-font-smoothing: antialiased;
     }
 
+    body:has(#pane-beranda.active) {
+      background-color: #021810;
+      background-image:
+        url("data:image/svg+xml,%3Csvg width='84' height='84' viewBox='0 0 84 84' xmlns='http://www.w3.org/2000/svg'%3E%3Cpath d='M42 10 C52 20 58 34 48 48 C38 62 22 54 20 40 C18 26 28 14 42 10 Z' fill='none' stroke='%2334d399' stroke-opacity='0.045' stroke-width='1.1'/%3E%3Ccircle cx='12' cy='72' r='1.8' fill='%2334d399' fill-opacity='0.05'/%3E%3C/svg%3E"),
+        radial-gradient(ellipse 75% 42% at 72% 18%, rgba(16, 185, 129, 0.17) 0%, transparent 65%),
+        radial-gradient(ellipse 60% 38% at 16% 82%, rgba(5, 150, 105, 0.14) 0%, transparent 65%),
+        linear-gradient(180deg, #021810 0%, #03261a 38%, #053625 74%, #022217 100%);
+    }
+
     /* Top Nature Accent Ribbon */
     .nature-top-ribbon {
       height: 4px;
       width: 100%;
-      background: linear-gradient(90deg, #022c22 0%, #064e3b 25%, #10b981 50%, #064e3b 75%, #022c22 100%);
+      background: linear-gradient(90deg, #043927 0%, #059669 40%, #eab308 72%, #047857 100%);
       position: sticky;
       top: 0;
       z-index: 101;
@@ -101,18 +106,138 @@
    HEADER
    =================================================================== */
     .app-header {
-      background: rgba(255, 255, 255, 0.88);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-bottom: 1px solid rgba(16, 185, 129, 0.2);
-      box-shadow: 0 4px 20px -2px rgba(6, 78, 59, 0.05);
+      background: #ffffff;
+      border-bottom: 1.5px solid #dbe7df;
+      box-shadow: 0 3px 14px rgba(6, 78, 59, 0.05);
       position: sticky;
       top: 0;
       z-index: 100;
+      transition: background-color 0.25s ease, border-color 0.25s ease;
+    }
+
+    body:has(#pane-beranda.active) .app-header {
+      background: rgba(2, 24, 16, 0.96);
+      backdrop-filter: blur(10px);
+      -webkit-backdrop-filter: blur(10px);
+      border-bottom: none;
+      box-shadow: none;
+    }
+
+    body:has(#pane-beranda.active) .brand-title-instansi {
+      background: linear-gradient(110deg, #ffffff 0%, #a7f3d0 50%, #ffffff 100%);
+      background-size: 200% 100%;
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      filter: none;
+    }
+
+    body:has(#pane-beranda.active) .brand-sub-kab {
+      color: #9ad1b9;
+    }
+
+    .header-editorial-nav {
+      display: none;
+      align-items: center;
+      gap: 24px;
+    }
+
+    body:has(#pane-beranda.active) .header-editorial-nav {
+      display: flex;
+    }
+
+    .header-nav-link {
+      position: relative;
+      appearance: none;
+      background: transparent;
+      border: none;
+      color: #cbe6da;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.74rem;
+      font-weight: 700;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      cursor: pointer;
+      padding: 6px 2px;
+      transition: color 0.18s ease;
+    }
+
+    .header-nav-link::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      height: 2px;
+      border-radius: 999px;
+      background: #6ee7b7;
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .header-nav-link:hover,
+    .header-nav-link:focus-visible {
+      color: #ffffff;
+      outline: none;
+    }
+
+    .header-nav-link:hover::after,
+    .header-nav-link:focus-visible::after {
+      transform: scaleX(1);
+    }
+
+    .header-cta-white {
+      display: none;
+      appearance: none;
+      background: #ffffff;
+      color: #021810;
+      border: 1.5px solid #ffffff;
+      border-radius: 8px;
+      padding: 9px 17px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.73rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      cursor: pointer;
+      white-space: nowrap;
+      box-shadow: 0 4px 14px rgba(0, 0, 0, 0.28);
+      transition: transform 0.16s ease, background-color 0.16s ease, box-shadow 0.16s ease;
+    }
+
+    body:has(#pane-beranda.active) .header-cta-white {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+
+    .header-cta-white:hover {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+      transform: translateY(-1px);
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.34);
+    }
+
+    .header-cta-white:focus-visible {
+      outline: 2px solid #6ee7b7;
+      outline-offset: 2px;
+    }
+
+    @media (max-width: 920px) {
+      body:has(#pane-beranda.active) .header-editorial-nav {
+        display: none;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .header-cta-white {
+        padding: 7px 12px;
+        font-size: 0.68rem;
+      }
     }
 
     .header-inner {
-      max-width: 1080px;
+      max-width: 1120px;
       margin: 0 auto;
       padding: 12px 20px;
       display: flex;
@@ -230,24 +355,25 @@
       gap: 14px;
     }
 
-    .lentera-badge-wrap {
-      display: inline-flex;
-      align-items: center;
+    @keyframes ecoPulseDot {
+      0%, 100% {
+        transform: scale(1);
+        box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.55);
+      }
+      50% {
+        transform: scale(1.12);
+        box-shadow: 0 0 0 5px rgba(16, 185, 129, 0);
+      }
     }
 
-    .lentera-dlh-pill {
-      display: inline-flex;
-      align-items: center;
-      gap: 6px;
-      background: rgba(5, 150, 105, 0.08);
-      border: 1px solid rgba(5, 150, 105, 0.28);
-      color: #065f46;
-      font-size: 0.76rem;
-      font-weight: 800;
-      padding: 5px 12px;
-      border-radius: 999px;
-      letter-spacing: 0.4px;
-      white-space: nowrap;
+    .live-eco-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      display: inline-block;
+      flex-shrink: 0;
+      animation: ecoPulseDot 2.2s ease-in-out infinite;
     }
 
     /* Footer Brand - Bebas Animasi (Seperti Semula) */
@@ -410,6 +536,12 @@
       padding: 24px 16px 60px 16px;
     }
 
+    .main-wrap:has(#pane-beranda.active) {
+      max-width: 1120px;
+      padding: 14px 20px 56px 20px;
+      overflow-x: clip;
+    }
+
     .tab-content {
       display: none;
       animation: fadeIn 0.25s ease-out forwards;
@@ -492,141 +624,404 @@
     }
 
     /* ===================================================================
-       HERO CONTAINER & STATS PANEL (SESUAI GAMBAR 2)
+       HERO EDITORIAL INTERACTIVE SHOWCASE (BERWIBAWA & INTERAKTIF)
        =================================================================== */
     .silapor-hero-container {
+      position: relative;
+      overflow: visible;
+      background: transparent;
+      border: none;
+      border-radius: 0;
+      padding: 20px 0 36px;
       display: grid;
-      grid-template-columns: 1fr 290px;
-      gap: 16px;
-      margin-bottom: 18px;
+      grid-template-columns: 0.92fr 1.16fr;
+      gap: 32px;
+      align-items: center;
+      margin-bottom: 16px;
+      box-shadow: none;
+    }
+
+    .silapor-hero-container::before {
+      content: '';
+      position: absolute;
+      top: -60px;
+      left: -80px;
+      width: 360px;
+      height: 360px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.14) 0%, transparent 70%);
+      pointer-events: none;
+      z-index: 0;
+    }
+
+    .silapor-hero-container::after {
+      content: '';
+      position: absolute;
+      top: 10px;
+      right: 12px;
+      width: 320px;
+      height: 320px;
+      border-radius: 50%;
+      border: 1.5px solid rgba(167, 243, 208, 0.08);
+      box-shadow: 0 0 0 42px rgba(167, 243, 208, 0.025);
+      pointer-events: none;
+      z-index: 0;
     }
 
     .hero-left-banner {
-      background: #194a36;
-      border-radius: 16px;
-      padding: 28px 32px;
+      position: relative;
+      z-index: 2;
       color: #ffffff;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      box-shadow: 0 8px 24px -4px rgba(6, 78, 59, 0.25);
+      justify-content: center;
+      gap: 18px;
     }
 
     .hero-main-heading {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.65rem;
+      font-size: clamp(1.9rem, 3.2vw, 2.58rem);
       font-weight: 800;
-      line-height: 1.25;
+      line-height: 1.08;
       color: #ffffff;
-      margin-bottom: 6px;
-      letter-spacing: -0.2px;
+      margin: 0 0 16px;
+      letter-spacing: -0.03em;
     }
 
-    .hero-sub-heading {
-      font-size: 0.95rem;
-      color: #d1fae5;
-      margin-bottom: 24px;
+    .hero-editorial-points {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+
+    .hero-editorial-points li {
+      font-size: 0.87rem;
       font-weight: 500;
-    }
-
-    .hero-actions-row {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 14px;
-    }
-
-    .btn-hero-action {
-      background: #ffffff;
-      border: none;
-      border-radius: 14px;
-      padding: 14px 18px;
+      color: #d7efe4;
+      line-height: 1.48;
       display: flex;
-      align-items: center;
-      gap: 12px;
-      cursor: pointer;
-      text-align: left;
-      transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
-      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+      align-items: flex-start;
+      gap: 9px;
     }
 
-    .btn-hero-action:hover {
-      background: #f0fdf4;
-      transform: translateY(-2px);
-      box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
-    }
-
-    .btn-hero-icon {
-      width: 42px;
-      height: 42px;
-      border-radius: 10px;
-      background: #ecfdf5;
-      display: flex;
+    .hero-editorial-points li::before {
+      content: '✓';
+      width: 17px;
+      height: 17px;
+      margin-top: 2px;
+      border-radius: 50%;
+      background: rgba(16, 185, 129, 0.18);
+      border: 1px solid rgba(52, 211, 153, 0.42);
+      color: #6ee7b7;
+      font-size: 0.65rem;
+      font-weight: 800;
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
     }
 
-    .btn-hero-tag {
-      font-size: 0.72rem;
-      font-weight: 800;
-      color: #059669;
-      letter-spacing: 0.3px;
+    .hero-actions-row {
+      display: flex;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 10px;
+      margin-top: 4px;
+    }
+
+    .btn-hero-action {
+      appearance: none;
+      border-radius: 9px;
+      padding: 13px 21px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      cursor: pointer;
+      text-align: left;
+      transition: transform 0.18s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
+    }
+
+    .btn-hero-action:focus-visible {
+      outline: 2px solid #6ee7b7;
+      outline-offset: 2px;
+    }
+
+    .btn-hero-action--primary {
+      background: #ffffff;
+      border: 1.5px solid #ffffff;
+      color: #021810;
+      box-shadow: 0 10px 24px rgba(0, 0, 0, 0.28);
+    }
+
+    .btn-hero-action--primary:hover {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+      transform: translateY(-2px);
+      box-shadow: 0 14px 28px rgba(0, 0, 0, 0.36);
+    }
+
+    .btn-hero-action--ghost {
+      background: rgba(6, 78, 59, 0.4);
+      border: 1.5px solid rgba(167, 243, 208, 0.38);
+      color: #ffffff;
+    }
+
+    .btn-hero-action--ghost:hover {
+      background: rgba(16, 185, 129, 0.22);
+      border-color: #6ee7b7;
+      transform: translateY(-2px);
+    }
+
+    .btn-hero-action:active {
+      transform: scale(0.98);
+    }
+
+    .btn-hero-icon {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .btn-hero-text {
+      display: flex;
+      align-items: baseline;
+      gap: 6px;
     }
 
     .btn-hero-title {
       font-family: 'Outfit', sans-serif;
+      font-size: 0.78rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      line-height: 1.1;
+    }
+
+    .btn-hero-arrow {
+      font-family: 'Outfit', sans-serif;
       font-size: 0.95rem;
       font-weight: 800;
-      color: #0f172a;
-      line-height: 1.15;
+      transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .btn-hero-action:hover .btn-hero-arrow {
+      transform: translateX(4px);
+    }
+
+    /* Interactive Layered Showcase Deck (Kanan Hero) */
+    .hero-showcase-deck {
+      position: relative;
+      z-index: 2;
+      height: 434px;
+      width: 100%;
+    }
+
+    .deck-card {
+      position: absolute;
+      border-radius: 15px;
+      transition: transform 0.26s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.26s ease, border-color 0.2s ease;
+    }
+
+    .deck-card:hover,
+    .deck-card:focus-within,
+    .deck-card.is-deck-front {
+      z-index: 20 !important;
+      transform: translateY(-4px);
+    }
+
+    /* Card 1: Top-Right Nature & Quick Topic Selector */
+    .deck-card-nature {
+      top: 0;
+      right: 0;
+      width: 79%;
+      z-index: 2;
+      background: linear-gradient(155deg, #0b3927 0%, #135239 62%, #196848 100%);
+      border: 1px solid rgba(167, 243, 208, 0.3);
+      padding: 16px 18px 32px;
+      color: #ffffff;
+      box-shadow: 0 18px 38px rgba(0, 0, 0, 0.38);
+    }
+
+    .deck-card-nature::before {
+      content: '';
+      position: absolute;
+      inset: 0;
+      border-radius: inherit;
+      background: radial-gradient(circle at 92% 14%, rgba(52, 211, 153, 0.24) 0%, transparent 55%);
+      pointer-events: none;
+    }
+
+    .deck-eyebrow {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 800;
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      color: #fde68a;
+      margin-bottom: 4px;
+      display: block;
+    }
+
+    .deck-nature-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.96rem;
+      font-weight: 800;
+      color: #ffffff;
+      margin: 0 0 10px;
+      line-height: 1.25;
+    }
+
+    .hero-quick-topics {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      flex-wrap: wrap;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-topic-chip {
+      appearance: none;
+      background: rgba(2, 24, 16, 0.6);
+      border: 1px solid rgba(167, 243, 208, 0.3);
+      color: #ecfdf5;
+      font-family: inherit;
+      font-size: 0.69rem;
+      font-weight: 600;
+      padding: 4.5px 9.5px;
+      border-radius: 999px;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      white-space: nowrap;
+      transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+    }
+
+    .hero-topic-chip:hover {
+      background: #ffffff;
+      border-color: #ffffff;
+      color: #021810;
+      font-weight: 700;
+      transform: translateY(-1px);
+    }
+
+    .hero-topic-chip:focus-visible {
+      outline: 2px solid #fde68a;
+      outline-offset: 2px;
+    }
+
+    .hero-topic-chip:active {
+      transform: scale(0.96);
+    }
+
+    /* Card 2: Middle-Left Live Stats & Resolution Window */
+    .deck-card-stats {
+      top: 140px;
+      left: 0;
+      width: 59%;
+      z-index: 4;
+      background: #ffffff;
+      border: 1px solid #d5e3da;
+      padding: 13px 26px 14px 15px;
+      box-shadow: 0 24px 48px rgba(0, 0, 0, 0.44);
+    }
+
+    .deck-win-bar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-bottom: 9px;
+      margin-bottom: 9px;
+      border-bottom: 1px solid #eef2f6;
+    }
+
+    .deck-win-dots {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .deck-win-dots span {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #cbd5e1;
+    }
+
+    .deck-win-dots span:first-child { background: #10b981; }
+
+    .deck-win-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.63rem;
+      font-weight: 800;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      color: #475569;
     }
 
     .hero-right-stats {
-      background: #e3ebe4;
-      border-radius: 16px;
-      padding: 14px;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      border: 1px solid rgba(16, 185, 129, 0.15);
-    }
-
-    .hero-stat-pill {
-      background: #ffffff;
-      border-radius: 10px;
-      padding: 9px 12px;
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      font-size: 0.8rem;
-      font-weight: 700;
-      color: #1e293b;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      gap: 7px;
     }
 
     .hero-stat-row {
-      background: #ffffff;
+      background: #f8faf9;
+      border: 1px solid #e2e8f0;
+      border-left: 3.5px solid #059669;
       border-radius: 10px;
-      padding: 9px 12px;
+      padding: 7px 10px;
       display: flex;
       align-items: center;
-      gap: 12px;
-      box-shadow: 0 1px 3px rgba(0, 0, 0, 0.04);
+      gap: 10px;
+      cursor: pointer;
+      transition: transform 0.16s ease, border-color 0.16s ease, background-color 0.16s ease;
+    }
+
+    .hero-stat-row[data-stat-tone="amber"] {
+      border-left-color: #d97706;
+    }
+
+    .hero-stat-row[data-stat-tone="green"] {
+      border-left-color: #16a34a;
+    }
+
+    .hero-stat-row:hover {
+      background: #ecfdf5;
+      border-color: #6ee7b7;
+      transform: translateX(2px);
     }
 
     .stat-row-icon {
-      width: 34px;
-      height: 34px;
+      width: 30px;
+      height: 30px;
       border-radius: 8px;
-      background: #f1f5f9;
+      background: #eef2f6;
       display: flex;
       align-items: center;
       justify-content: center;
       flex-shrink: 0;
     }
 
+    .stat-row-icon svg {
+      width: 16px;
+      height: 16px;
+    }
+
+    .stat-row-meta {
+      flex: 1;
+      min-width: 0;
+    }
+
     .stat-row-lbl {
-      font-size: 0.72rem;
+      font-size: 0.68rem;
       font-weight: 600;
       color: #64748b;
       line-height: 1.1;
@@ -634,37 +1029,239 @@
 
     .stat-row-val {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.25rem;
+      font-size: 1.12rem;
       font-weight: 800;
       color: #0f172a;
       line-height: 1.1;
       margin-top: 1px;
     }
 
+    .stat-row-arrow {
+      font-size: 0.8rem;
+      font-weight: 800;
+      color: #94a3b8;
+      flex-shrink: 0;
+      transition: transform 0.16s ease, color 0.16s ease;
+    }
+
+    .hero-stat-row:hover .stat-row-arrow {
+      color: #059669;
+      transform: translate(2px, -2px);
+    }
+
+    .hero-progress-card {
+      background: #f1f7f3;
+      border: 1px solid #d5e3da;
+      border-radius: 9px;
+      padding: 7px 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      cursor: pointer;
+      transition: background-color 0.16s ease, border-color 0.16s ease;
+    }
+
+    .hero-progress-card:hover,
+    .hero-progress-card:focus-visible {
+      background: #ecfdf5;
+      border-color: #6ee7b7;
+      outline: none;
+    }
+
+    .hero-progress-head {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      font-size: 0.66rem;
+      font-weight: 700;
+      color: #334155;
+    }
+
+    .hero-progress-pct {
+      font-family: 'Outfit', sans-serif;
+      font-weight: 800;
+      color: #047857;
+    }
+
+    .hero-progress-track {
+      height: 5px;
+      width: 100%;
+      border-radius: 999px;
+      background: #dce7df;
+      overflow: hidden;
+    }
+
+    .hero-progress-fill {
+      height: 100%;
+      width: 0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #059669 0%, #10b981 100%);
+      transition: width 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    /* Card 3: Bottom-Right Olive-Gold Editorial Ticket & Map Card */
+    .deck-card-track {
+      bottom: 0;
+      right: 0;
+      width: 45%;
+      z-index: 6;
+      background: linear-gradient(145deg, #c2b323 0%, #a59718 100%);
+      border: 1px solid rgba(254, 240, 138, 0.45);
+      padding: 15px 16px;
+      color: #031d14;
+      box-shadow: 0 22px 44px rgba(0, 0, 0, 0.46);
+    }
+
+    .deck-track-title {
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.92rem;
+      font-weight: 800;
+      color: #021810;
+      margin: 0 0 8px;
+      line-height: 1.2;
+    }
+
+    .deck-track-form {
+      display: flex;
+      gap: 6px;
+      margin-bottom: 9px;
+    }
+
+    .deck-track-input {
+      flex: 1;
+      min-width: 0;
+      border: 1.5px solid rgba(2, 24, 16, 0.2);
+      border-radius: 8px;
+      padding: 7px 9px;
+      font-size: 0.72rem;
+      font-weight: 700;
+      font-family: monospace;
+      color: #021810;
+      background: rgba(255, 255, 255, 0.92);
+      outline: none;
+    }
+
+    .deck-track-input:focus {
+      border-color: #021810;
+      background: #ffffff;
+    }
+
+    .deck-track-btn {
+      appearance: none;
+      background: #021810;
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      padding: 7px 11px;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.72rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: background-color 0.16s ease, transform 0.16s ease;
+    }
+
+    .deck-track-btn:hover {
+      background: #064e3b;
+      transform: translateY(-1px);
+    }
+
+    .deck-track-foot {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      padding-top: 8px;
+      border-top: 1px solid rgba(2, 24, 16, 0.14);
+    }
+
+    .deck-track-link {
+      appearance: none;
+      background: transparent;
+      border: none;
+      padding: 0;
+      font-family: 'Outfit', sans-serif;
+      font-size: 0.71rem;
+      font-weight: 800;
+      color: #021810;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+    }
+
+    .deck-track-link:hover {
+      text-decoration: underline;
+    }
+
+    @media (max-width: 980px) {
+      .silapor-hero-container {
+        grid-template-columns: 1fr;
+        padding: 16px 0 26px;
+        gap: 24px;
+      }
+
+      .hero-showcase-deck {
+        height: auto;
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+        gap: 12px;
+      }
+
+      .deck-card {
+        position: relative;
+        top: auto;
+        right: auto;
+        bottom: auto;
+        left: auto;
+        width: 100%;
+        padding: 15px 16px;
+      }
+
+      .deck-card-nature {
+        grid-column: 1 / -1;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .hero-showcase-deck {
+        grid-template-columns: 1fr;
+      }
+    }
+
     /* ===================================================================
-       DUA KARTU BAWAH: ALUR PENGADUAN & PETA SEBARAN
+       DUA KARTU BAWAH: ALUR PENGADUAN & PETA SEBARAN (MENYATU DENGAN TEMA)
        =================================================================== */
     .silapor-bottom-grid {
       display: grid;
-      grid-template-columns: 1.62fr 1fr;
+      grid-template-columns: 1.36fr 1fr;
       gap: 16px;
       margin-bottom: 20px;
+      padding-top: 8px;
+      border-top: none;
       align-items: stretch;
     }
 
     .bottom-card {
-      background: #ffffff;
-      border: 1px solid #e2e8f0;
-      border-radius: 18px;
+      background: rgba(5, 42, 29, 0.72);
+      border: none;
+      border-radius: 16px;
       padding: 18px 20px;
-      box-shadow: 0 4px 16px rgba(6, 78, 59, 0.05);
+      box-shadow: none;
       display: flex;
       flex-direction: column;
+    }
+
+    body:has(#pane-beranda.active) .bottom-card,
+    body:has(#pane-beranda.active) .bottom-card.card-alur {
+      border: none;
+      box-shadow: none;
     }
 
     .bottom-card-header {
       display: flex;
       align-items: center;
+      flex-wrap: wrap;
       margin-bottom: 12px;
     }
 
@@ -672,40 +1269,54 @@
       font-family: 'Outfit', sans-serif;
       font-size: 0.95rem;
       font-weight: 800;
-      color: #0f172a;
+      color: #ffffff;
       letter-spacing: 0.4px;
       margin: 0;
     }
 
-    /* Desain Kartu Alur Pengaduan Digital (Interaktif & Berwibawa) */
+    .peta-region-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.72rem;
+      color: #a7f3d0;
+      font-weight: 700;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(52, 211, 153, 0.32);
+      padding: 3px 10px;
+      border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
+    }
+
+    /* Desain Kartu Alur Pengaduan Digital (Harmonis & Menyatu Tanpa Garis Pemisah) */
     .bottom-card.card-alur {
       padding: 0;
       overflow: hidden;
-      border: 1px solid #cbd5e1;
-      border-top: 3px solid #064e3b;
-      box-shadow: 0 6px 22px rgba(6, 78, 59, 0.07);
-      background: #ffffff;
+      border: none;
+      box-shadow: none;
+      background: rgba(5, 42, 29, 0.72);
     }
 
     .alur-showcase {
       display: grid;
-      grid-template-columns: 180px 1fr;
+      grid-template-columns: 206px 1fr;
       flex: 1;
       height: 100%;
       position: relative;
-      background: #ffffff;
+      background: transparent;
     }
 
     .alur-sidebar {
       position: relative;
-      background: linear-gradient(170deg, #043927 0%, #064e3b 62%, #065f46 100%);
-      padding: 18px 16px 0 16px;
+      background: rgba(2, 31, 21, 0.48);
+      border-right: none;
+      padding: 18px 10px 0 14px;
       display: flex;
       flex-direction: column;
       justify-content: space-between;
       overflow: hidden;
       color: #ffffff;
-      border-right: 1px solid #d1fae5;
     }
 
     .alur-sidebar-copy {
@@ -713,44 +1324,44 @@
       z-index: 2;
     }
 
-    .alur-sidebar-eyebrow {
-      display: inline-block;
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.56rem;
-      font-weight: 800;
-      letter-spacing: 0.09em;
-      text-transform: uppercase;
-      color: #fde68a;
-      background: rgba(251, 191, 36, 0.12);
-      border: 1px solid rgba(251, 191, 36, 0.32);
-      padding: 2px 7px;
-      border-radius: 4px;
-      margin-bottom: 7px;
-    }
-
     .alur-sidebar-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 1.1rem;
-      font-weight: 700;
+      font-size: 1.14rem;
+      font-weight: 800;
       line-height: 1.18;
       color: #ffffff;
       margin: 0;
-      letter-spacing: -0.01em;
+      letter-spacing: -0.015em;
     }
 
     .alur-sidebar-divider {
-      width: 34px;
-      height: 2.5px;
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      margin: 10px 0 9px;
+    }
+
+    .alur-sidebar-divider::before {
+      content: '';
+      width: 28px;
+      height: 3.5px;
       border-radius: 999px;
-      background: linear-gradient(90deg, #fbbf24 0%, #34d399 100%);
-      margin: 9px 0 7px;
+      background: #eab308;
+    }
+
+    .alur-sidebar-divider::after {
+      content: '';
+      width: 10px;
+      height: 3.5px;
+      border-radius: 999px;
+      background: #10b981;
     }
 
     .alur-sidebar-sub {
-      font-size: 0.72rem;
+      font-size: 0.71rem;
       font-weight: 500;
-      line-height: 1.38;
-      color: #d1fae5;
+      line-height: 1.4;
+      color: #c7e6d8;
       margin: 0;
     }
 
@@ -765,10 +1376,16 @@
     }
 
     .alur-phone-svg {
-      width: 128px;
+      width: 184px;
+      max-width: 100%;
       height: auto;
       display: block;
-      filter: drop-shadow(0 8px 16px rgba(2, 44, 34, 0.34));
+      filter: drop-shadow(0 10px 18px rgba(1, 20, 14, 0.44));
+      transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .card-alur:hover .alur-phone-svg {
+      transform: translateY(-3px) rotate(1deg);
     }
 
     .alur-main-pane {
@@ -777,25 +1394,16 @@
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      background: #ffffff;
+      background: transparent;
       gap: 10px;
+      min-width: 0;
     }
 
     .alur-pane-header {
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end;
       gap: 10px;
-    }
-
-    .alur-pane-eyebrow {
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.7rem;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: #334155;
-      margin: 0;
     }
 
     .alur-progress-group {
@@ -808,17 +1416,17 @@
       font-family: 'Outfit', sans-serif;
       font-size: 0.68rem;
       font-weight: 700;
-      color: #064e3b;
-      background: #ecfdf5;
-      border: 1px solid #a7f3d0;
-      padding: 2px 9px;
+      color: #a7f3d0;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(52, 211, 153, 0.32);
+      padding: 2px 10px;
       border-radius: 999px;
       white-space: nowrap;
     }
 
     .alur-progress-bars {
       display: flex;
-      gap: 3px;
+      gap: 4px;
       align-items: center;
     }
 
@@ -826,31 +1434,35 @@
       width: 14px;
       height: 4px;
       border-radius: 99px;
-      background: #e2e8f0;
+      background: rgba(167, 243, 208, 0.18);
       transition: background-color 0.22s ease, width 0.22s ease;
     }
 
     .alur-prog-seg.is-done {
-      background: #10b981;
+      background: #34d399;
     }
 
     .alur-prog-seg.is-active {
       width: 22px;
-      background: #064e3b;
+      background: #ffffff;
     }
 
-    /* Interactive Step Tabs */
+    /* Interactive Connected Step Tabs */
     .alur-step-tabs {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 6px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 4px;
+      width: 100%;
     }
 
     .alur-step-tab {
       appearance: none;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
+      flex: 1 1 auto;
+      min-width: 0;
+      background: rgba(2, 24, 16, 0.52);
+      border: 1px solid rgba(167, 243, 208, 0.22);
+      border-radius: 11px;
       padding: 8px 6px;
       display: flex;
       flex-direction: column;
@@ -858,78 +1470,85 @@
       justify-content: center;
       gap: 4px;
       cursor: pointer;
-      color: #475569;
+      color: #cbe6da;
       text-align: center;
       transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
       position: relative;
     }
 
     .alur-step-tab:hover {
-      background: #f0fdf4;
-      border-color: #6ee7b7;
-      color: #064e3b;
-      transform: translateY(-1px);
+      background: rgba(16, 185, 129, 0.18);
+      border-color: rgba(110, 231, 183, 0.48);
+      color: #ffffff;
+      transform: translateY(-2px);
+    }
+
+    .alur-step-tab:focus-visible {
+      outline: 2px solid #6ee7b7;
+      outline-offset: 2px;
     }
 
     .alur-step-tab.is-active {
-      background: #064e3b;
-      border-color: #064e3b;
-      color: #ffffff;
-      box-shadow: 0 4px 12px rgba(6, 78, 59, 0.2);
+      background: #ffffff;
+      border-color: #ffffff;
+      color: #021810;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.24);
       transform: translateY(-1px);
-    }
-
-    .alur-step-tab-top {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-    }
-
-    .alur-tab-num {
-      font-family: 'Outfit', sans-serif;
-      font-size: 0.65rem;
-      font-weight: 800;
-      color: #059669;
-      letter-spacing: 0.03em;
-    }
-
-    .alur-step-tab.is-active .alur-tab-num {
-      color: #fde68a;
     }
 
     .alur-tab-icon {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      color: #059669;
+      color: #6ee7b7;
+      flex-shrink: 0;
     }
 
     .alur-step-tab.is-active .alur-tab-icon {
-      color: #6ee7b7;
+      color: #043927;
     }
 
     .alur-tab-label {
       font-family: 'Outfit', sans-serif;
-      font-size: 0.69rem;
+      font-size: 0.68rem;
       font-weight: 700;
       line-height: 1.15;
       white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
       max-width: 100%;
+    }
+
+    @keyframes alurArrowNudge {
+      0%, 100% { transform: translateX(0); }
+      50% { transform: translateX(2.5px); }
+    }
+
+    .alur-step-arrow {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      color: rgba(167, 243, 208, 0.35);
+      transition: color 0.2s ease;
+    }
+
+    .alur-step-arrow.is-active,
+    .alur-step-arrow.is-done {
+      color: #34d399;
+    }
+
+    .alur-step-arrow.is-active svg {
+      animation: alurArrowNudge 1.6s ease-in-out infinite;
     }
 
     /* Interactive Stage Preview */
     .alur-detail-stage {
-      background: linear-gradient(180deg, #f8fafc 0%, #f1f5f9 100%);
-      border: 1px solid #cbd5e1;
-      border-left: 3.5px solid #064e3b;
-      border-radius: 10px;
-      padding: 12px 14px;
+      background: transparent;
+      border-top: 1px solid rgba(110, 231, 183, 0.14);
+      padding: 12px 0 2px;
       display: flex;
       flex-direction: column;
-      gap: 6px;
-      min-height: 98px;
+      gap: 7px;
+      flex: 1;
       justify-content: space-between;
     }
 
@@ -944,82 +1563,98 @@
 
     .alur-stage-head {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      flex-wrap: wrap;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 6px;
     }
 
     .alur-stage-title {
       font-family: 'Outfit', sans-serif;
-      font-size: 0.88rem;
+      font-size: 0.98rem;
       font-weight: 800;
-      color: #0f172a;
+      color: #ffffff;
       margin: 0;
       line-height: 1.25;
+      letter-spacing: -0.01em;
     }
 
     .alur-stage-tag {
-      font-size: 0.66rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.67rem;
       font-weight: 700;
-      color: #064e3b;
-      background: #ffffff;
-      border: 1px solid #a7f3d0;
-      padding: 2px 8px;
+      color: #a7f3d0;
+      background: rgba(16, 185, 129, 0.14);
+      border: 1px solid rgba(52, 211, 153, 0.32);
+      padding: 2.5px 10px;
       border-radius: 999px;
       white-space: nowrap;
     }
 
+    .alur-stage-tag[hidden] {
+      display: none;
+    }
+
+    .alur-stage-tag::before {
+      content: '';
+      width: 5.5px;
+      height: 5.5px;
+      border-radius: 50%;
+      background: #10b981;
+      flex-shrink: 0;
+    }
+
     .alur-stage-desc {
-      font-size: 0.75rem;
-      color: #334155;
-      line-height: 1.42;
-      margin: 0;
+      font-size: 0.77rem;
+      color: #cbe6da;
+      line-height: 1.5;
+      margin: 2px 0 0;
     }
 
     .alur-stage-foot {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      margin-top: 2px;
+      gap: 10px;
+      margin-top: 4px;
       flex-wrap: wrap;
     }
 
     .alur-stage-checks {
       display: flex;
       align-items: center;
-      gap: 10px;
+      gap: 12px;
       flex-wrap: wrap;
     }
 
     .alur-check-pill {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      font-size: 0.68rem;
+      gap: 5px;
+      font-size: 0.69rem;
       font-weight: 600;
-      color: #0f172a;
+      color: #d1fae5;
     }
 
     .alur-check-pill svg {
-      color: #059669;
+      color: #34d399;
       flex-shrink: 0;
     }
 
     .alur-nav-btns {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 6px;
     }
 
     .alur-nav-btn {
-      width: 24px;
-      height: 24px;
-      border-radius: 6px;
-      border: 1px solid #cbd5e1;
-      background: #ffffff;
-      color: #0f172a;
+      width: 28px;
+      height: 28px;
+      border-radius: 50%;
+      border: 1px solid rgba(110, 231, 183, 0.34);
+      background: rgba(2, 24, 16, 0.55);
+      color: #a7f3d0;
       display: inline-flex;
       align-items: center;
       justify-content: center;
@@ -1028,65 +1663,58 @@
     }
 
     .alur-nav-btn:hover:not(:disabled) {
-      border-color: #064e3b;
-      color: #064e3b;
-      background: #ecfdf5;
+      border-color: #ffffff;
+      color: #021810;
+      background: #ffffff;
+      transform: scale(1.06);
     }
 
     .alur-nav-btn:disabled {
-      opacity: 0.4;
+      border-color: rgba(167, 243, 208, 0.14);
+      color: rgba(167, 243, 208, 0.3);
+      background: rgba(2, 24, 16, 0.25);
       cursor: not-allowed;
     }
 
     .alur-cta-wrap {
       padding-top: 10px;
-      border-top: 1px solid #f1f5f9;
+      border-top: 1px solid rgba(110, 231, 183, 0.14);
       display: flex;
       align-items: center;
-      justify-content: space-between;
+      justify-content: flex-end;
       gap: 10px;
-      flex-wrap: wrap;
-    }
-
-    .alur-cta-note {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      font-size: 0.7rem;
-      font-weight: 600;
-      color: #475569;
-      white-space: nowrap;
-    }
-
-    .alur-cta-note svg {
-      color: #059669;
-      flex-shrink: 0;
     }
 
     .btn-alur-cta {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      gap: 7px;
-      background: linear-gradient(135deg, #064e3b 0%, #047857 100%);
-      color: #ffffff;
-      border: none;
+      gap: 8px;
+      background: #ffffff;
+      color: #021810;
+      border: 1.5px solid #ffffff;
       border-radius: 9px;
-      padding: 8px 15px;
+      padding: 9px 17px;
       font-family: 'Outfit', sans-serif;
       font-size: 0.79rem;
-      font-weight: 700;
+      font-weight: 800;
       letter-spacing: 0.01em;
       white-space: nowrap;
       cursor: pointer;
-      box-shadow: 0 3px 10px rgba(6, 78, 59, 0.22);
-      transition: transform 0.18s ease, box-shadow 0.18s ease, filter 0.18s ease;
+      box-shadow: 0 6px 18px rgba(0, 0, 0, 0.22);
+      transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease, border-color 0.18s ease;
     }
 
     .btn-alur-cta:hover {
-      filter: brightness(1.06);
+      background: #ecfdf5;
+      border-color: #a7f3d0;
       transform: translateY(-1px);
-      box-shadow: 0 5px 14px rgba(6, 78, 59, 0.3);
+      box-shadow: 0 10px 22px rgba(0, 0, 0, 0.28);
+    }
+
+    .btn-alur-cta:focus-visible {
+      outline: 2px solid #6ee7b7;
+      outline-offset: 2px;
     }
 
     .btn-alur-cta:active {
@@ -1100,43 +1728,62 @@
       flex-shrink: 0;
     }
 
+    .bottom-card.card-peta-mini {
+      padding: 14px 14px 14px;
+    }
+
+    .card-peta-mini .bottom-card-header {
+      margin-bottom: 9px;
+      padding: 0 2px;
+    }
+
     .mini-map-container {
-      height: 160px;
-      border-radius: 10px;
+      flex: 1;
+      min-height: 232px;
+      border-radius: 12px;
       overflow: hidden;
       position: relative;
-      border: 1.5px solid #059669;
-      margin: 8px 0 12px 0;
+      border: none;
+      margin: 0 0 11px 0;
       background: #0d2238;
-      box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2);
+      box-shadow: 0 4px 16px rgba(1, 12, 8, 0.24);
+      transition: box-shadow 0.2s ease;
+    }
+
+    .card-peta-mini:hover .mini-map-container {
+      box-shadow: 0 8px 22px rgba(1, 12, 8, 0.34);
     }
 
     .mini-map-canvas {
       width: 100%;
       height: 100%;
+      min-height: 230px;
     }
 
     .btn-expand-mini-map {
       position: absolute;
-      top: 6px;
-      right: 6px;
+      top: 8px;
+      right: 8px;
       z-index: 400;
-      background: rgba(255, 255, 255, 0.92);
-      border: 1px solid #cbd5e1;
-      border-radius: 6px;
-      width: 26px;
-      height: 26px;
+      background: rgba(2, 24, 16, 0.88);
+      border: 1px solid rgba(110, 231, 183, 0.45);
+      border-radius: 8px;
+      width: 32px;
+      height: 32px;
       font-size: 14px;
       display: flex;
       align-items: center;
       justify-content: center;
       cursor: pointer;
-      color: #334155;
+      color: #ecfdf5;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.28);
+      transition: all 0.16s ease;
     }
 
     .btn-expand-mini-map:hover {
       background: #ffffff;
-      color: #059669;
+      color: #021810;
+      border-color: #ffffff;
     }
 
     .mini-map-actions-row {
@@ -1147,21 +1794,31 @@
     }
 
     .btn-buka-peta-spasial {
-      background: #194a36;
+      width: 100%;
+      background: rgba(16, 185, 129, 0.16);
       color: #ffffff;
-      border: none;
-      border-radius: 8px;
-      padding: 9px 14px;
+      border: 1.5px solid rgba(110, 231, 183, 0.42);
+      border-radius: 9px;
+      padding: 10px 15px;
+      font-family: 'Outfit', sans-serif;
       font-weight: 700;
-      font-size: 0.78rem;
+      font-size: 0.79rem;
       cursor: pointer;
       white-space: nowrap;
-      transition: all 0.2s;
+      text-align: center;
+      transition: transform 0.18s ease, background-color 0.18s ease, border-color 0.18s ease, color 0.18s ease;
     }
 
     .btn-buka-peta-spasial:hover {
-      background: #0f3d2b;
+      background: #ffffff;
+      border-color: #ffffff;
+      color: #021810;
       transform: translateY(-1px);
+    }
+
+    .btn-buka-peta-spasial:focus-visible {
+      outline: 2px solid #6ee7b7;
+      outline-offset: 2px;
     }
 
     .btn-wa-helpline-hubungi {
@@ -1189,6 +1846,14 @@
     @media (max-width: 1080px) {
       .silapor-bottom-grid {
         grid-template-columns: 1fr;
+      }
+
+      .alur-showcase {
+        grid-template-columns: 228px 1fr;
+      }
+
+      .alur-phone-svg {
+        width: 204px;
       }
     }
 
@@ -1467,12 +2132,23 @@
       margin-top: auto;
     }
 
+    body:has(#pane-beranda.active) .app-footer {
+      background: linear-gradient(180deg, rgba(2, 30, 20, 0.65) 0%, #01150e 100%);
+      border-top: none;
+      padding-left: 20px;
+      padding-right: 20px;
+    }
+
     .footer-inner {
       max-width: 960px;
       margin: 0 auto;
       display: flex;
       flex-direction: column;
       gap: 20px;
+    }
+
+    body:has(#pane-beranda.active) .footer-inner {
+      max-width: 1120px;
     }
 
     .footer-top {
@@ -4517,15 +5193,13 @@
     }
 
     @media (max-width: 768px) {
-      /* Header & Branding di HP */
+      /* Header & Branding di HP (Eco Bento Tactile) */
       .app-header {
         position: sticky;
         top: 0;
         z-index: 100;
-        background: rgba(255, 255, 255, 0.95);
-        backdrop-filter: blur(16px);
-        -webkit-backdrop-filter: blur(16px);
-        border-bottom: 1px solid rgba(16, 185, 129, 0.16);
+        background: #ffffff;
+        border-bottom: 1.5px solid #dbe7df;
         box-shadow: 0 2px 10px rgba(6, 78, 59, 0.05);
       }
 
@@ -4543,6 +5217,10 @@
         flex: 1;
       }
 
+      .header-right-portal {
+        flex-shrink: 0;
+      }
+
       .brand-lh-logo {
         width: 36px;
         height: 36px;
@@ -4551,6 +5229,7 @@
 
       .brand-text-block {
         min-width: 0;
+        overflow: hidden;
       }
 
       .brand-title-instansi {
@@ -4567,11 +5246,11 @@
         color: #475569;
         letter-spacing: 0.2px;
         line-height: 1.25;
+        overflow-wrap: break-word;
       }
 
-      .lentera-dlh-pill {
-        font-size: 0.68rem;
-        padding: 4px 8px;
+      body:has(#pane-beranda.active) .brand-sub-kab {
+        color: #9ad1b9;
       }
 
       /* Segmented Navigation Bar di HP (Mudah Diklik dengan Jempol) */
@@ -4627,33 +5306,36 @@
         padding: 10px 10px 70px 10px;
       }
 
-      /* Hero Section HP: Ringkas, Tegas & Terpadu */
+      .main-wrap:has(#pane-beranda.active) {
+        padding: 10px 12px 64px 12px;
+      }
+
+      /* Hero Section HP: Editorial Showcase Ringkas & Interaktif */
       .silapor-hero-container {
         grid-template-columns: 1fr;
-        gap: 10px;
-        margin-bottom: 14px;
+        padding: 10px 0 20px;
+        border-radius: 0;
+        gap: 18px;
+        margin-bottom: 10px;
       }
 
       .hero-left-banner {
-        padding: 18px 16px;
-        border-radius: 16px;
-        background: linear-gradient(145deg, #133a2a 0%, #064e3b 60%, #047857 100%);
-        box-shadow: 0 6px 18px rgba(6, 78, 59, 0.2);
+        padding: 0;
+        border-radius: 0;
+        gap: 12px;
+        background: transparent;
+        border: none;
+        box-shadow: none;
       }
 
       .hero-main-heading {
-        font-size: 1.22rem;
-        font-weight: 800;
-        line-height: 1.25;
-        margin-bottom: 4px;
-        color: #ffffff;
+        font-size: 1.48rem;
+        line-height: 1.15;
+        margin-bottom: 12px;
       }
 
-      .hero-sub-heading {
-        font-size: 0.8rem;
-        color: #a7f3d0;
-        margin-bottom: 14px;
-        font-weight: 600;
+      .hero-editorial-points li {
+        font-size: 0.78rem;
       }
 
       .hero-actions-row {
@@ -4663,82 +5345,79 @@
       }
 
       .btn-hero-action {
-        padding: 10px 12px;
-        border-radius: 12px;
-        gap: 8px;
-        background: #ffffff;
-        border: 1.5px solid transparent;
-        box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-        min-height: 52px;
-        text-align: left;
-      }
-
-      .btn-hero-action:active {
-        transform: scale(0.97);
-        background: #f0fdf4;
-      }
-
-      .btn-hero-icon {
-        width: 32px;
-        height: 32px;
+        padding: 11px 10px;
         border-radius: 8px;
-        background: #ecfdf5;
+        gap: 6px;
+        min-height: 44px;
+        text-align: center;
+        white-space: normal;
       }
 
       .btn-hero-icon svg {
-        width: 18px;
-        height: 18px;
-      }
-
-      .btn-hero-tag {
-        font-size: 0.62rem;
-        font-weight: 800;
-        color: #059669;
-        letter-spacing: 0.3px;
+        width: 16px;
+        height: 16px;
       }
 
       .btn-hero-title {
-        font-size: 0.8rem;
-        font-weight: 800;
-        color: #0f172a;
-        line-height: 1.15;
+        font-size: 0.68rem;
+        letter-spacing: 0.04em;
       }
 
-      /* Hero Stat Card -> Strip 3-Kolom Elegan & Rapi */
+      .btn-hero-arrow {
+        display: none;
+      }
+
+      .hero-quick-topics {
+        gap: 5px;
+      }
+
+      .hero-topic-chip {
+        font-size: 0.67rem;
+        padding: 4px 8px;
+      }
+
+      .deck-card-stats {
+        padding: 12px;
+      }
+
       .hero-right-stats {
-        background: #ffffff;
-        border: 1.5px solid #d1fae5;
-        border-radius: 14px;
-        padding: 10px;
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
+        grid-template-columns: repeat(3, minmax(0, 1fr));
         gap: 6px;
-        box-shadow: 0 4px 12px rgba(6, 78, 59, 0.05);
-      }
-
-      .hero-stat-pill {
-        grid-column: 1 / -1;
-        padding: 5px 8px;
-        justify-content: center;
-        font-size: 0.72rem;
-        gap: 6px;
-        background: #ecfdf5;
-        border: 1px solid #a7f3d0;
-        border-radius: 8px;
-        margin-bottom: 2px;
-        font-weight: 700;
-        color: #065f46;
       }
 
       .hero-stat-row {
         flex-direction: column;
         align-items: center;
+        justify-content: center;
         text-align: center;
         padding: 8px 4px;
-        gap: 2px;
+        gap: 4px;
+        min-height: 76px;
         border-radius: 10px;
-        background: #f8fafc;
-        border: 1px solid #f1f5f9;
+        border-left-width: 1px;
+        border-top: 3px solid #059669;
+      }
+
+      .hero-stat-row[data-stat-tone="amber"] {
+        border-top-color: #d97706;
+      }
+
+      .hero-stat-row[data-stat-tone="green"] {
+        border-top-color: #16a34a;
+      }
+
+      .stat-row-meta {
+        width: 100%;
+      }
+
+      .stat-row-arrow {
+        display: none;
+      }
+
+      .hero-progress-card {
+        grid-column: 1 / -1;
+        padding: 7px 10px;
       }
 
       .stat-row-icon {
@@ -4748,20 +5427,23 @@
       }
 
       .stat-row-icon svg {
-        width: 15px;
-        height: 15px;
+        width: 14px;
+        height: 14px;
       }
 
       .stat-row-lbl {
-        font-size: 0.62rem;
+        font-size: 0.61rem;
         font-weight: 700;
-        color: #64748b;
+        line-height: 1.25;
       }
 
       .stat-row-val {
-        font-size: 1.12rem;
+        font-size: 1.08rem;
         font-weight: 900;
-        color: #0f172a;
+      }
+
+      .deck-track-input {
+        font-size: 0.84rem;
       }
 
       /* Bottom Cards Stacking Mobile */
@@ -4769,25 +5451,24 @@
         grid-template-columns: 1fr;
         gap: 12px;
         margin-bottom: 14px;
+        padding-top: 16px;
       }
 
       .bottom-card {
         padding: 14px 12px;
         border-radius: 16px;
-        border: 1px solid #e2e8f0;
       }
 
       .bottom-card.card-alur {
         padding: 0;
         border-radius: 16px;
-        border: 1px solid #d1e7da;
       }
 
       .bottom-card-title {
         font-size: 0.88rem;
       }
 
-      /* Alur Pengaduan Mobile Layout (Interaktif & Berwibawa) */
+      /* Alur Pengaduan Mobile Layout (Proporsional & Responsif) */
       .alur-showcase {
         grid-template-columns: 1fr;
       }
@@ -4800,38 +5481,40 @@
         flex-direction: row;
         align-items: flex-end;
         justify-content: space-between;
-        padding: 15px 15px 0;
-        min-height: 112px;
+        padding: 14px 10px 0 14px;
+        min-height: 132px;
         border-right: none;
-        border-bottom: 1px solid #d1fae5;
+        border-bottom: none;
       }
 
       .alur-sidebar-copy {
         align-self: center;
-        padding: 0 10px 14px 0;
+        flex: 1;
+        min-width: 0;
+        padding: 0 8px 14px 0;
       }
 
       .alur-sidebar-title {
-        font-size: 1.04rem;
+        font-size: 1.06rem;
         line-height: 1.18;
       }
 
       .alur-sidebar-divider {
-        margin: 7px 0 6px;
+        margin: 8px 0 7px;
       }
 
       .alur-sidebar-sub {
-        font-size: 0.7rem;
+        font-size: 0.71rem;
       }
 
       .alur-phone-wrap {
         margin-top: 0;
-        margin-bottom: -2px;
+        margin-bottom: -1px;
         flex-shrink: 0;
       }
 
       .alur-phone-svg {
-        width: 88px;
+        width: clamp(136px, 37vw, 174px);
       }
 
       .alur-main-pane {
@@ -4843,37 +5526,18 @@
         margin-bottom: 0;
       }
 
-      .alur-progress-bars {
-        display: none;
-      }
-
-      .alur-step-tabs {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-        gap: 6px;
-      }
-
-      .alur-step-tab {
-        flex-direction: row;
-        justify-content: flex-start;
-        padding: 8px 10px;
-        gap: 6px;
-      }
-
       .alur-detail-stage {
-        padding: 11px 12px;
-        min-height: 0;
+        padding: 11px 0 2px;
+      }
+
+      .alur-stage-title {
+        font-size: 0.94rem;
       }
 
       .alur-cta-wrap {
         margin-top: 2px;
         padding-top: 10px;
-        flex-direction: column;
-        align-items: stretch;
-        gap: 8px;
-      }
-
-      .alur-cta-note {
-        justify-content: center;
+        justify-content: stretch;
       }
 
       .btn-alur-cta {
@@ -4883,14 +5547,22 @@
       }
 
       /* Mini Map Preview */
-      .mini-map-container {
-        height: 170px;
-        border-radius: 10px;
-        margin: 8px 0 10px 0;
+      .bottom-card.card-peta-mini {
+        padding: 13px 12px;
       }
 
-      #miniMapPreview {
-        height: 170px !important;
+      .mini-map-container {
+        flex: none;
+        height: 220px;
+        min-height: 220px;
+        border-radius: 10px;
+        margin: 6px 0 10px 0;
+      }
+
+      #miniMapPreview,
+      .mini-map-canvas {
+        height: 220px !important;
+        min-height: 220px !important;
       }
 
       .mini-map-actions-row {
@@ -5158,6 +5830,28 @@
       }
     }
 
+    @media (max-width: 540px) {
+      .alur-step-tabs {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr) 14px minmax(0, 1fr);
+        gap: 8px 4px;
+      }
+
+      .alur-step-arrow--mid {
+        display: none;
+      }
+
+      .alur-step-tab {
+        padding: 8px 6px;
+      }
+
+      .alur-tab-label {
+        white-space: normal;
+        overflow-wrap: break-word;
+        line-height: 1.2;
+      }
+    }
+
     @media (max-width: 440px) {
       .hero-actions-row {
         grid-template-columns: 1fr;
@@ -5172,21 +5866,23 @@
         padding: 8px 10px;
       }
 
+      .header-cta-white {
+        padding: 6px 10px;
+        font-size: 0.64rem;
+        letter-spacing: 0.04em;
+      }
+
       .brand-title-instansi {
-        font-size: 0.88rem;
+        font-size: 0.86rem;
       }
 
       .brand-sub-kab {
-        font-size: 0.62rem;
+        font-size: 0.6rem;
       }
 
       .brand-lh-logo {
         width: 32px;
         height: 32px;
-      }
-
-      .lentera-dlh-pill {
-        display: none;
       }
 
       .nav-inner {
@@ -6247,10 +6943,14 @@
         </div>
       </div>
 
+      <nav class="header-editorial-nav" aria-label="Navigasi Cepat Beranda">
+        <button type="button" class="header-nav-link" onclick="document.getElementById('alurPengaduanSection')?.scrollIntoView({behavior:'smooth'})">Alur Pengaduan</button>
+        <button type="button" class="header-nav-link" onclick="window.app && window.app.switchTab('lacak')">Lacak Aduan</button>
+        <button type="button" class="header-nav-link" onclick="window.app && window.app.switchTab('peta')">Peta Sebaran</button>
+      </nav>
+
       <div class="header-right-portal">
-        <div class="lentera-badge-wrap" title="Dinas Lingkungan Hidup Kabupaten Lembata">
-          <span class="lentera-dlh-pill">DLH KAB. LEMBATA</span>
-        </div>
+        <button type="button" class="header-cta-white" onclick="window.app && window.app.switchTab('form')">Ajukan Aduan</button>
       </div>
     </div>
   </header>
@@ -6269,81 +6969,133 @@
            HERO SECTION: LAYANAN PENGADUAN (SESUAI GAMBAR 2)
            =============================================================== -->
       <section class="silapor-hero-container">
-        <!-- Kolom Kiri: Banner Hijau Tua dengan 2 Tombol Aksi Utama -->
+        <!-- Kolom Kiri: Tipografi Editorial Berwibawa & CTA Kontras Tinggi -->
         <div class="hero-left-banner">
           <div>
-            <h2 class="hero-main-heading">Layanan Pengaduan Lingkungan Hidup</h2>
-            <p class="hero-sub-heading">Jaga Kelestarian Alam Lewotana Lembata</p>
+            <h2 class="hero-main-heading">Layanan Pengaduan<br>Lingkungan Hidup</h2>
+            <ul class="hero-editorial-points">
+              <li>Sampaikan keluhan sampah, pencemaran, atau kerusakan alam di sekitar Anda</li>
+              <li>Cukup lampirkan foto kejadian dan tandai lokasi langsung dari HP Anda</li>
+              <li>Laporan segera ditindaklanjuti dan bisa dipantau perkembangannya kapan saja</li>
+            </ul>
           </div>
 
           <div class="hero-actions-row">
-            <button type="button" class="btn-hero-action" id="btnHeroAjukan" onclick="window.app && window.app.switchTab('form')">
-              <span class="btn-hero-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#064e3b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <button type="button" class="btn-hero-action btn-hero-action--primary" id="btnHeroAjukan" onclick="window.app && window.app.switchTab('form')">
+              <span class="btn-hero-icon" aria-hidden="true">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                   <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
                   <polyline points="14 2 14 8 20 8"></polyline>
                   <line x1="16" y1="13" x2="8" y2="13"></line>
                   <line x1="16" y1="17" x2="8" y2="17"></line>
                 </svg>
               </span>
-              <div class="btn-hero-text">
-                <div class="btn-hero-tag">AJUKAN</div>
-                <div class="btn-hero-title">ADUAN BARU</div>
-              </div>
+              <span class="btn-hero-text">
+                <span class="btn-hero-title">Buat Aduan Baru</span>
+              </span>
+              <span class="btn-hero-arrow" aria-hidden="true">&rarr;</span>
             </button>
 
-            <button type="button" class="btn-hero-action" id="btnHeroLacak" onclick="window.app && window.app.switchTab('lacak')">
-              <span class="btn-hero-icon">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#064e3b" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <button type="button" class="btn-hero-action btn-hero-action--ghost" id="btnHeroLacak" onclick="window.app && window.app.switchTab('lacak')">
+              <span class="btn-hero-icon" aria-hidden="true">
+                <svg width="17" height="17" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
                   <circle cx="11" cy="11" r="8"></circle>
                   <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
                 </svg>
               </span>
-              <div class="btn-hero-text">
-                <div class="btn-hero-tag">LACAK</div>
-                <div class="btn-hero-title">STATUS ADUAN</div>
-              </div>
+              <span class="btn-hero-text">
+                <span class="btn-hero-title">Cek Status Aduan</span>
+              </span>
             </button>
           </div>
         </div>
 
-        <!-- Kolom Kanan: Panel Statistik Kartu Sage -->
-        <div class="hero-right-stats">
-          <div class="hero-stat-row">
-            <div class="stat-row-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2">
-                <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
-                <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
-              </svg>
-            </div>
-            <div>
-              <div class="stat-row-lbl">Total Aduan</div>
-              <div class="stat-row-val stat-loading" id="heroStatTotal">...</div>
-            </div>
-          </div>
-
-          <div class="hero-stat-row">
-            <div class="stat-row-icon">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2">
-                <circle cx="11" cy="11" r="8"></circle>
-                <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-              </svg>
-            </div>
-            <div>
-              <div class="stat-row-lbl">Dalam Penanganan</div>
-              <div class="stat-row-val stat-loading" id="heroStatProses">...</div>
+        <!-- Kolom Kanan: Kartu Showcase Berlapis Interaktif -->
+        <div class="hero-showcase-deck">
+          <!-- Kartu 1 (Atas-Kanan): Ekosistem & Lapor Cepat Topik -->
+          <div class="deck-card deck-card-nature">
+            <span class="deck-eyebrow">Jaga Alam Lewotana Lembata</span>
+            <h3 class="deck-nature-title">Ada masalah apa di sekitar Anda?</h3>
+            <div class="hero-quick-topics" aria-label="Pilih topik laporan cepat">
+              <button type="button" class="hero-topic-chip" data-quick-topic="Laut & Pesisir">🌊 Laut &amp; Pesisir</button>
+              <button type="button" class="hero-topic-chip" data-quick-topic="Sampah Ilegal & Bau">🗑️ Sampah</button>
+              <button type="button" class="hero-topic-chip" data-quick-topic="Pencemaran Air & Sungai">💧 Air &amp; Sungai</button>
+              <button type="button" class="hero-topic-chip" data-quick-topic="Udara & Asap">💨 Udara &amp; Asap</button>
+              <button type="button" class="hero-topic-chip" data-quick-topic="Limbah B3 & Kimia">☣️ Limbah Berbahaya</button>
+              <button type="button" class="hero-topic-chip" data-quick-topic="Kerusakan Lingkungan & Tanah">🌳 Kerusakan Alam</button>
             </div>
           </div>
 
-          <div class="hero-stat-row">
-            <div class="stat-row-icon" style="background: #dcfce7;">
-              <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5">
-                <polyline points="20 6 9 17 4 12"></polyline>
-              </svg>
+          <!-- Kartu 2 (Tengah-Kiri): Pantauan Laporan Warga -->
+          <div class="deck-card deck-card-stats" style="cursor: pointer;" onclick="window.openHeroPetaSebaran && window.openHeroPetaSebaran()" title="Klik untuk melihat peta sebaran aduan">
+            <div class="deck-win-bar">
+              <div class="deck-win-dots" aria-hidden="true"><span></span><span></span><span></span></div>
+              <span class="deck-win-title">Pantauan Laporan Warga</span>
             </div>
-            <div>
-              <div class="stat-row-lbl">Selesai</div>
-              <div class="stat-row-val stat-loading" id="heroStatSelesai">...</div>
+            <div class="hero-right-stats">
+              <div class="hero-stat-row" role="button" tabindex="0" onclick="event.stopPropagation(); window.openHeroPetaSebaran && window.openHeroPetaSebaran()" title="Lihat sebaran semua laporan di peta">
+                <div class="stat-row-icon">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2">
+                    <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
+                    <path d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z"></path>
+                  </svg>
+                </div>
+                <div class="stat-row-meta">
+                  <div class="stat-row-lbl">Laporan Masuk</div>
+                  <div class="stat-row-val stat-loading" id="heroStatTotal">...</div>
+                </div>
+                <span class="stat-row-arrow" aria-hidden="true">&#8599;</span>
+              </div>
+
+              <div class="hero-stat-row" data-stat-tone="amber" role="button" tabindex="0" onclick="event.stopPropagation(); window.openHeroPetaSebaran && window.openHeroPetaSebaran()" title="Lihat lokasi laporan yang sedang ditangani di peta">
+                <div class="stat-row-icon" style="background: #fef3c7;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2">
+                    <circle cx="11" cy="11" r="8"></circle>
+                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+                  </svg>
+                </div>
+                <div class="stat-row-meta">
+                  <div class="stat-row-lbl">Sedang Ditangani</div>
+                  <div class="stat-row-val stat-loading" id="heroStatProses">...</div>
+                </div>
+                <span class="stat-row-arrow" aria-hidden="true">&#8599;</span>
+              </div>
+
+              <div class="hero-stat-row" data-stat-tone="green" role="button" tabindex="0" onclick="event.stopPropagation(); window.openHeroPetaSebaran && window.openHeroPetaSebaran('Selesai')" title="Lihat lokasi laporan yang sudah selesai di peta">
+                <div class="stat-row-icon" style="background: #dcfce7;">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5">
+                    <polyline points="20 6 9 17 4 12"></polyline>
+                  </svg>
+                </div>
+                <div class="stat-row-meta">
+                  <div class="stat-row-lbl">Sudah Selesai</div>
+                  <div class="stat-row-val stat-loading" id="heroStatSelesai">...</div>
+                </div>
+                <span class="stat-row-arrow" aria-hidden="true">&#8599;</span>
+              </div>
+
+              <div class="hero-progress-card" role="button" tabindex="0" onclick="event.stopPropagation(); window.openHeroPetaSebaran && window.openHeroPetaSebaran()" title="Lihat peta sebaran aduan">
+                <div class="hero-progress-head">
+                  <span>Laporan Tertangani</span>
+                  <span class="hero-progress-pct" id="heroProgressPct">0%</span>
+                </div>
+                <div class="hero-progress-track">
+                  <div class="hero-progress-fill" id="heroProgressFill"></div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Kartu 3 (Bawah-Kanan): Lacak Tiket Cepat & Peta Wilayah -->
+          <div class="deck-card deck-card-track">
+            <h3 class="deck-track-title">Cek Status Laporan Anda</h3>
+            <div class="deck-track-form">
+              <input type="text" id="heroQuickTicketInput" class="deck-track-input" placeholder="ADU-26-XXXX" autocomplete="off" aria-label="Masukkan nomor tiket aduan Anda">
+              <button type="button" id="heroQuickTicketBtn" class="deck-track-btn">Cek &rarr;</button>
+            </div>
+            <div class="deck-track-foot">
+              <button type="button" class="deck-track-link" onclick="window.app && window.app.switchTab('peta')">Peta Wilayah &#8599;</button>
+              <button type="button" class="deck-track-link" onclick="document.getElementById('alurPengaduanSection')?.scrollIntoView({behavior:'smooth'})">Cara Melapor &darr;</button>
             </div>
           </div>
         </div>
@@ -6428,60 +7180,101 @@
             <!-- Panel Kiri Brand Hijau Tua Resmi + Ilustrasi Tangan Memegang HP Interaktif -->
             <div class="alur-sidebar">
               <div class="alur-sidebar-copy">
-                <span class="alur-sidebar-eyebrow">Standar Layanan</span>
-                <h3 class="alur-sidebar-title">Alur<br>Pengaduan<br>Digital</h3>
+                <h3 class="alur-sidebar-title">Alur Pengaduan<br>Digital</h3>
                 <div class="alur-sidebar-divider"></div>
-                <p class="alur-sidebar-sub">Terukur, transparan,<br>dan akuntabel</p>
+                <p class="alur-sidebar-sub">Mudah, cepat, dan bisa dipantau langsung</p>
               </div>
 
-              <!-- Ilustrasi Tangan Memegang Ponsel ECOADU LEMBATA -->
+              <!-- Ilustrasi Karakter Warga Memegang HP Mengakses Web ECOADU LEMBATA -->
               <div class="alur-phone-wrap" aria-hidden="true">
-                <svg class="alur-phone-svg" viewBox="0 0 180 175" xmlns="http://www.w3.org/2000/svg">
+                <svg class="alur-phone-svg" viewBox="0 0 240 215" preserveAspectRatio="xMidYMax meet" xmlns="http://www.w3.org/2000/svg">
                   <defs>
                     <linearGradient id="alurSkin" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stop-color="#f6ae85"/>
-                      <stop offset="100%" stop-color="#dc8155"/>
+                      <stop offset="0%" stop-color="#f3b084"/>
+                      <stop offset="100%" stop-color="#d4784d"/>
+                    </linearGradient>
+                    <linearGradient id="alurShirt" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="0%" stop-color="#10b981"/>
+                      <stop offset="100%" stop-color="#047857"/>
                     </linearGradient>
                     <linearGradient id="alurPhoneFrame" x1="0" y1="0" x2="1" y2="1">
                       <stop offset="0%" stop-color="#334155"/>
                       <stop offset="100%" stop-color="#0f172a"/>
                     </linearGradient>
                     <linearGradient id="alurLeafGrad" x1="0" y1="0" x2="1" y2="1">
-                      <stop offset="0%" stop-color="#22c55e"/>
-                      <stop offset="100%" stop-color="#0d7a3e"/>
+                      <stop offset="0%" stop-color="#10b981"/>
+                      <stop offset="100%" stop-color="#065f46"/>
                     </linearGradient>
                   </defs>
-                  <!-- Pergelangan & Telapak Tangan Belakang -->
-                  <path d="M18,175 C20,140 34,116 42,96 L142,102 C146,125 138,154 128,175 Z" fill="#cb6e44"/>
-                  <!-- Bodi Smartphone -->
-                  <g transform="rotate(-4 95 92)">
-                    <rect x="38" y="14" width="102" height="154" rx="16" fill="url(#alurPhoneFrame)"/>
-                    <!-- Layar Putih -->
-                    <rect x="44" y="21" width="90" height="140" rx="11" fill="#ffffff"/>
-                    <!-- Notch Speaker -->
-                    <rect x="73" y="25" width="32" height="4" rx="2" fill="#cbd5e1"/>
+
+                  <!-- Pendar Cahaya Latar Lembut -->
+                  <circle cx="144" cy="112" r="82" fill="#34d399" opacity="0.12"/>
+
+                  <!-- Karakter Warga Ramah di Sisi Kiri -->
+                  <g id="alurCitizenChar">
+                    <!-- Bahu & Kaos Kerah Hijau -->
+                    <path d="M4,215 C6,164 24,142 56,142 C88,142 104,162 108,215 Z" fill="url(#alurShirt)"/>
+                    <path d="M36,144 L56,162 L76,144" fill="none" stroke="#a7f3d0" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"/>
+                    <!-- Aksen Garis Emas Lembata di Bahu -->
+                    <path d="M16,174 C30,170 42,172 48,175" fill="none" stroke="#eab308" stroke-width="2.5" stroke-linecap="round" opacity="0.85"/>
+                    <!-- Leher & Kepala -->
+                    <rect x="47" y="122" width="18" height="24" rx="8" fill="#df8c61"/>
+                    <circle cx="30" cy="99" r="5.5" fill="#df8c61"/>
+                    <circle cx="56" cy="96" r="26.5" fill="url(#alurSkin)"/>
+                    <!-- Rambut Rapi -->
+                    <path d="M29,94 C28,67 45,57 65,60 C80,62 87,74 83,90 C78,79 68,75 56,76 C43,77 35,84 29,94 Z" fill="#0f172a"/>
+                    <!-- Alis, Mata Ramah & Senyum -->
+                    <path d="M43,87 Q48,84 52,87" fill="none" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round"/>
+                    <path d="M61,87 Q66,84 70,87" fill="none" stroke="#0f172a" stroke-width="1.8" stroke-linecap="round"/>
+                    <circle cx="48" cy="95" r="2.7" fill="#0f172a"/>
+                    <circle cx="66" cy="95" r="2.7" fill="#0f172a"/>
+                    <circle cx="49" cy="94" r="0.9" fill="#ffffff"/>
+                    <circle cx="67" cy="94" r="0.9" fill="#ffffff"/>
+                    <ellipse cx="42" cy="102" rx="4" ry="2.2" fill="#e11d48" opacity="0.22"/>
+                    <ellipse cx="72" cy="102" rx="4" ry="2.2" fill="#e11d48" opacity="0.22"/>
+                    <path d="M48,108 Q58,116 68,107" fill="none" stroke="#7c2d12" stroke-width="2.2" stroke-linecap="round"/>
+                    <!-- Lengan Menyangga HP -->
+                    <path d="M84,162 C95,157 104,151 112,140 L122,162 C110,174 96,184 82,190 Z" fill="#df8c61"/>
+                  </g>
+
+                  <!-- Smartphone Besar & Jelas (Menampilkan Web Aduan HP) -->
+                  <g transform="rotate(-3 160 108)">
+                    <rect x="102" y="14" width="116" height="188" rx="18" fill="url(#alurPhoneFrame)" stroke="#475569" stroke-width="1.2"/>
+                    <!-- Layar Putih Tajam -->
+                    <rect x="108" y="21" width="104" height="174" rx="13" fill="#ffffff"/>
+                    <!-- Bilah Alamat Web Browser di HP -->
+                    <rect x="113" y="27" width="94" height="15" rx="7.5" fill="#ecfdf5" stroke="#a7f3d0" stroke-width="1"/>
+                    <circle cx="122" cy="34.5" r="3" fill="#059669"/>
+                    <text x="163" y="37" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="700" font-size="6.4" fill="#065f46" letter-spacing="0.2">web aduan lembata</text>
                     <!-- Logo Daun Kembar ECOADU -->
-                    <g transform="translate(89, 64)">
-                      <path d="M-2,6 C-16,-2 -20,-18 -6,-26 C2,-16 4,-4 -2,6 Z" fill="url(#alurLeafGrad)"/>
-                      <path d="M1,6 C17,-2 22,-18 7,-27 C0,-17 -2,-5 1,6 Z" fill="#16a34a" opacity="0.92"/>
-                      <path d="M-2,5 C-7,-5 -9,-14 -6,-21" fill="none" stroke="#dcfce7" stroke-width="1.3" stroke-linecap="round"/>
-                      <path d="M2,5 C8,-5 10,-14 7,-21" fill="none" stroke="#dcfce7" stroke-width="1.3" stroke-linecap="round"/>
+                    <g transform="translate(160, 67) scale(1.12)">
+                      <path d="M-2,6 C-15,-1 -18,-16 -6,-24 C1,-15 3,-4 -2,6 Z" fill="url(#alurLeafGrad)"/>
+                      <path d="M1,6 C15,-1 19,-16 6,-25 C0,-16 -2,-4 1,6 Z" fill="#10b981" opacity="0.92"/>
+                      <path d="M-2,5 C-6,-4 -8,-12 -5,-19" fill="none" stroke="#d1fae5" stroke-width="1.2" stroke-linecap="round"/>
+                      <path d="M2,5 C7,-4 9,-12 6,-19" fill="none" stroke="#d1fae5" stroke-width="1.2" stroke-linecap="round"/>
                     </g>
                     <!-- Teks ECOADU LEMBATA di Layar -->
-                    <text x="89" y="92" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="800" font-size="14" fill="#0f172a" letter-spacing="0.4">ECOADU</text>
-                    <text x="89" y="106" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="700" font-size="9.5" fill="#15803d" letter-spacing="1.1">LEMBATA</text>
-                    <!-- Indikator Tahap Aktif di Layar Ponsel -->
-                    <rect x="48" y="116" width="82" height="28" rx="6" fill="#f0fdf4" stroke="#a7f3d0" stroke-width="1"/>
-                    <text id="alurPhoneStepTag" x="89" y="128" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="800" font-size="6.4" fill="#064e3b" letter-spacing="0.2">01 · IDENTITAS</text>
-                    <rect x="58" y="134" width="62" height="4" rx="2" fill="#d1fae5"/>
-                    <rect id="alurPhoneProgressBar" x="58" y="134" width="15.5" height="4" rx="2" fill="#059669"/>
+                    <text x="160" y="96" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="800" font-size="14" fill="#0f172a" letter-spacing="0.4">ECOADU</text>
+                    <text x="160" y="108" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="700" font-size="8.2" fill="#047857" letter-spacing="1.4">LEMBATA</text>
+                    <!-- Kartu Indikator Tahap Aktif di Layar Ponsel -->
+                    <rect x="116" y="117" width="88" height="35" rx="8" fill="#f8fafc" stroke="#a7f3d0" stroke-width="1.2"/>
+                    <text id="alurPhoneStepTag" x="160" y="131" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="800" font-size="7.6" fill="#064e3b" letter-spacing="0.4">DATA DIRI</text>
+                    <rect x="125" y="139" width="70" height="5" rx="2.5" fill="#e2e8f0"/>
+                    <rect id="alurPhoneProgressBar" x="125" y="139" width="17.5" height="5" rx="2.5" fill="#059669"/>
+                    <!-- Tombol Mockup Web Aduan di Layar -->
+                    <rect x="122" y="160" width="76" height="17" rx="8.5" fill="#043927"/>
+                    <text x="160" y="171" text-anchor="middle" font-family="Outfit, sans-serif" font-weight="800" font-size="6.4" fill="#ffffff" letter-spacing="0.5">LAPOR LEWAT HP</text>
+                    <!-- Indikator Titik Bawah -->
+                    <circle cx="155" cy="186" r="2.2" fill="#10b981"/>
+                    <circle cx="165" cy="186" r="2.2" fill="#cbd5e1"/>
                   </g>
-                  <!-- Jari-jari Kanan Menggenggam -->
-                  <rect x="131" y="64" width="19" height="13" rx="6.5" fill="url(#alurSkin)" transform="rotate(-6 140 70)"/>
-                  <rect x="132" y="81" width="21" height="13" rx="6.5" fill="url(#alurSkin)" transform="rotate(-6 142 87)"/>
-                  <rect x="129" y="98" width="18" height="12" rx="6" fill="url(#alurSkin)" transform="rotate(-6 138 104)"/>
-                  <!-- Ibu Jari Kiri & Lengan Bawah -->
-                  <path d="M14,175 L34,112 C38,99 47,96 54,101 C61,106 60,118 53,129 L46,142 C60,148 76,154 96,156 L89,175 Z" fill="url(#alurSkin)"/>
+
+                  <!-- Jari-jari Kanan Menggenggam Sisi HP -->
+                  <rect x="210" y="76" width="17" height="12" rx="6" fill="url(#alurSkin)" transform="rotate(-4 218 82)"/>
+                  <rect x="211" y="93" width="19" height="12" rx="6" fill="url(#alurSkin)" transform="rotate(-4 220 99)"/>
+                  <rect x="209" y="110" width="17" height="11.5" rx="5.75" fill="url(#alurSkin)" transform="rotate(-4 217 116)"/>
+                  <!-- Ibu Jari Kiri Menggenggam Sisi Kiri Bawah HP -->
+                  <path d="M90,188 L98,136 C100,124 109,122 115,127 C121,132 120,143 114,154 L109,165 C121,173 135,180 150,183 L143,215 L84,215 Z" fill="url(#alurSkin)"/>
                 </svg>
               </div>
             </div>
@@ -6489,7 +7282,6 @@
             <!-- Panel Kanan: Stepper Interaktif + Detail Tahap + CTA -->
             <div class="alur-main-pane">
               <div class="alur-pane-header">
-                <span class="alur-pane-eyebrow">Prosedur Resmi</span>
                 <div class="alur-progress-group">
                   <div class="alur-progress-bars" id="alurProgressBars" aria-hidden="true">
                     <span class="alur-prog-seg is-active"></span>
@@ -6501,65 +7293,65 @@
                 </div>
               </div>
 
-              <!-- Tab Pemilih 4 Tahapan -->
+              <!-- Tab Pemilih 4 Tahapan Terhubung Panah -->
               <div class="alur-step-tabs" role="tablist" aria-label="Tahapan Alur Pengaduan">
                 <button type="button" class="alur-step-tab is-active" role="tab" aria-selected="true" data-alur-step="0">
-                  <span class="alur-step-tab-top">
-                    <span class="alur-tab-num">01</span>
-                    <span class="alur-tab-icon" aria-hidden="true">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
-                    </span>
+                  <span class="alur-tab-icon" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/></svg>
                   </span>
-                  <span class="alur-tab-label">Identitas</span>
+                  <span class="alur-tab-label">Data Diri</span>
                 </button>
+
+                <span class="alur-step-arrow is-active" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
+                </span>
 
                 <button type="button" class="alur-step-tab" role="tab" aria-selected="false" data-alur-step="1">
-                  <span class="alur-step-tab-top">
-                    <span class="alur-tab-num">02</span>
-                    <span class="alur-tab-icon" aria-hidden="true">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
-                    </span>
+                  <span class="alur-tab-icon" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"/><circle cx="12" cy="13" r="4"/></svg>
                   </span>
-                  <span class="alur-tab-label">Foto &amp; GPS</span>
+                  <span class="alur-tab-label">Foto &amp; Lokasi</span>
                 </button>
 
+                <span class="alur-step-arrow alur-step-arrow--mid" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
+                </span>
+
                 <button type="button" class="alur-step-tab" role="tab" aria-selected="false" data-alur-step="2">
-                  <span class="alur-step-tab-top">
-                    <span class="alur-tab-num">03</span>
-                    <span class="alur-tab-icon" aria-hidden="true">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
-                    </span>
+                  <span class="alur-tab-icon" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
                   </span>
                   <span class="alur-tab-label">Kirim</span>
                 </button>
 
+                <span class="alur-step-arrow" aria-hidden="true">
+                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><line x1="4" y1="12" x2="20" y2="12"/><polyline points="14 6 20 12 14 18"/></svg>
+                </span>
+
                 <button type="button" class="alur-step-tab" role="tab" aria-selected="false" data-alur-step="3">
-                  <span class="alur-step-tab-top">
-                    <span class="alur-tab-num">04</span>
-                    <span class="alur-tab-icon" aria-hidden="true">
-                      <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
-                    </span>
+                  <span class="alur-tab-icon" aria-hidden="true">
+                    <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><polyline points="9 12 11 14 15 10"/></svg>
                   </span>
-                  <span class="alur-tab-label">Penanganan</span>
+                  <span class="alur-tab-label">Ditangani</span>
                 </button>
               </div>
 
               <!-- Panel Detail Tahap Aktif -->
               <div class="alur-detail-stage" id="alurDetailStage" role="tabpanel" aria-live="polite">
                 <div class="alur-stage-head">
-                  <h4 class="alur-stage-title" id="alurStageTitle">01. Pengisian Identitas Pelapor</h4>
-                  <span class="alur-stage-tag" id="alurStageTag">Kerahasiaan Terjamin</span>
+                  <h4 class="alur-stage-title" id="alurStageTitle">Isi Data Diri &amp; Lokasi</h4>
+                  <span class="alur-stage-tag" id="alurStageTag" hidden></span>
                 </div>
-                <p class="alur-stage-desc" id="alurStageDesc">Masukkan nama, nomor WhatsApp aktif untuk notifikasi resmi, serta wilayah kecamatan dan desa lokasi kejadian.</p>
+                <p class="alur-stage-desc" id="alurStageDesc">Tulis nama dan nomor WhatsApp aktif agar kami bisa mengirim kabar tindak lanjut, lalu pilih kecamatan dan desa lokasi kejadian.</p>
                 <div class="alur-stage-foot">
                   <div class="alur-stage-checks" id="alurStageChecks">
                     <span class="alur-check-pill">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                      Identitas dilindungi
+                      Kabar via WhatsApp
                     </span>
                     <span class="alur-check-pill">
                       <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg>
-                      Notifikasi WhatsApp
+                      Mudah &amp; cepat diisi
                     </span>
                   </div>
                   <div class="alur-nav-btns">
@@ -6574,12 +7366,8 @@
               </div>
 
               <div class="alur-cta-wrap">
-                <span class="alur-cta-note">
-                  <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>
-                  Identitas aman
-                </span>
                 <button type="button" class="btn-alur-cta" onclick="window.app && window.app.switchTab('form')">
-                  <span>Mulai Buat Aduan Sekarang</span>
+                  <span>Mulai Lapor Sekarang</span>
                   <span class="btn-alur-cta-icon" aria-hidden="true">
                     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"></line><polyline points="12 5 19 12 12 19"></polyline></svg>
                   </span>
@@ -6593,19 +7381,19 @@
         <div class="bottom-card card-peta-mini">
           <div class="bottom-card-header" style="justify-content: space-between; gap: 8px;">
             <h3 class="bottom-card-title">PETA SEBARAN ADUAN</h3>
-            <span style="font-size: 0.72rem; color: #047857; font-weight: 700; background: #ecfdf5; padding: 3px 9px; border-radius: 999px; white-space: nowrap; flex-shrink: 0;">Wilayah Lembata</span>
+            <span class="peta-region-badge"><span class="live-eco-dot" aria-hidden="true"></span>Wilayah Lembata</span>
           </div>
 
           <div class="mini-map-container" id="miniMapContainer">
             <div id="miniMapPreview" class="mini-map-canvas"></div>
-            <button type="button" class="btn-expand-mini-map" onclick="window.app && window.app.switchTab('peta')" title="Buka Peta Spasial Penuh">
+            <button type="button" class="btn-expand-mini-map" onclick="window.app && window.app.switchTab('peta')" title="Lihat Peta Wilayah Lengkap">
               <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M15 3h6v6M9 21H3v-6M21 3l-7 7M3 21l7-7"/></svg>
             </button>
           </div>
 
           <div class="mini-map-actions-row">
             <button type="button" class="btn-buka-peta-spasial" onclick="window.app && window.app.switchTab('peta')">
-              Buka Peta Spasial &rarr;
+              Lihat Peta Lengkap &rarr;
             </button>
           </div>
         </div>
@@ -7782,36 +8570,37 @@
 
       const STEPS = [
         {
-          phoneTag: '01 · IDENTITAS',
-          title: '01. Pengisian Identitas Pelapor',
-          tag: 'Kerahasiaan Terjamin',
-          desc: 'Masukkan nama, nomor WhatsApp aktif untuk notifikasi resmi, serta wilayah kecamatan dan desa lokasi kejadian.',
-          checks: ['Identitas dilindungi', 'Notifikasi WhatsApp']
+          phoneTag: 'DATA DIRI',
+          title: 'Isi Data Diri & Lokasi',
+          tag: '',
+          desc: 'Tulis nama dan nomor WhatsApp aktif agar kami bisa mengirim kabar tindak lanjut, lalu pilih kecamatan dan desa lokasi kejadian.',
+          checks: ['Kabar via WhatsApp', 'Mudah & cepat diisi']
         },
         {
-          phoneTag: '02 · BUKTI GPS',
-          title: '02. Unggah Bukti Foto & Lokasi GPS',
-          tag: 'Akurasi Spasial',
-          desc: 'Lampirkan foto kondisi lapangan dan tandai titik koordinat peta agar tim DLH Lembata dapat menelusuri lokasi dengan presisi.',
-          checks: ['Deteksi GPS otomatis', 'Multi-foto bukti']
+          phoneTag: 'FOTO & LOKASI',
+          title: 'Kirim Foto & Tandai Lokasi',
+          tag: 'Lokasi Akurat',
+          desc: 'Ambil atau pilih foto kondisi di lapangan dan aktifkan lokasi HP agar petugas mudah menemukan titik kejadian.',
+          checks: ['Tandai lokasi otomatis', 'Bisa unggah banyak foto']
         },
         {
-          phoneTag: '03 · KIRIM ADUAN',
-          title: '03. Uraian Kejadian & Kirim Laporan',
-          tag: 'Resi Real-Time',
-          desc: 'Jelaskan kronologi dugaan pencemaran dan kirim aduan untuk langsung memperoleh Nomor Tiket pelacakan resmi.',
-          checks: ['Tiket terbit otomatis', 'Sinkron real-time']
+          phoneTag: 'KIRIM ADUAN',
+          title: 'Ceritakan Kejadian & Kirim',
+          tag: 'Dapat Nomor Tiket',
+          desc: 'Ceritakan singkat kondisi yang terjadi lalu kirim laporan. Anda langsung mendapat nomor tiket untuk memantau statusnya.',
+          checks: ['Nomor tiket otomatis', 'Langsung tercatat']
         },
         {
-          phoneTag: '04 · PENANGANAN',
-          title: '04. Verifikasi & Penanganan Tim DLH',
-          tag: 'Transparan & Terukur',
-          desc: 'Petugas DLH melakukan pemeriksaan lapangan, mendokumentasikan Berita Acara, dan memperbarui progres hingga tuntas.',
-          checks: ['Verifikasi faktual', 'Progres terpantau']
+          phoneTag: 'DITANGANI',
+          title: 'Pemeriksaan & Tindak Lanjut',
+          tag: 'Dipantau Hingga Tuntas',
+          desc: 'Petugas Dinas Lingkungan Hidup turun memeriksa lokasi, menangani keluhan, dan memperbarui status laporan hingga selesai.',
+          checks: ['Dicek langsung petugas', 'Progres selalu diperbarui']
         }
       ];
 
       const tabs = Array.from(root.querySelectorAll('[data-alur-step]'));
+      const stepArrows = Array.from(root.querySelectorAll('.alur-step-arrow'));
       const stage = document.getElementById('alurDetailStage');
       const titleEl = document.getElementById('alurStageTitle');
       const tagEl = document.getElementById('alurStageTag');
@@ -7845,6 +8634,11 @@
           btn.setAttribute('aria-selected', isCur ? 'true' : 'false');
         });
 
+        stepArrows.forEach((arrow, i) => {
+          arrow.classList.toggle('is-active', i === nextIdx);
+          arrow.classList.toggle('is-done', i < nextIdx);
+        });
+
         progBars.forEach((seg, i) => {
           seg.classList.toggle('is-active', i === nextIdx);
           seg.classList.toggle('is-done', i < nextIdx);
@@ -7852,14 +8646,22 @@
 
         if (counterEl) counterEl.textContent = 'Tahap ' + (nextIdx + 1) + ' / ' + STEPS.length;
         if (titleEl) titleEl.textContent = step.title;
-        if (tagEl) tagEl.textContent = step.tag;
+        if (tagEl) {
+          if (step.tag) {
+            tagEl.textContent = step.tag;
+            tagEl.hidden = false;
+          } else {
+            tagEl.textContent = '';
+            tagEl.hidden = true;
+          }
+        }
         if (descEl) descEl.textContent = step.desc;
         if (checksEl) {
           checksEl.innerHTML = '';
           step.checks.forEach(c => checksEl.appendChild(renderCheckPill(c)));
         }
         if (phoneTagEl) phoneTagEl.textContent = step.phoneTag;
-        if (phoneBarEl) phoneBarEl.setAttribute('width', String(((nextIdx + 1) / STEPS.length) * 62));
+        if (phoneBarEl) phoneBarEl.setAttribute('width', String(((nextIdx + 1) / STEPS.length) * 70));
 
         if (prevBtn) prevBtn.disabled = nextIdx === 0;
         if (nextBtn) nextBtn.disabled = nextIdx === STEPS.length - 1;
@@ -7892,6 +8694,137 @@
 
       if (prevBtn) prevBtn.addEventListener('click', () => setActiveStep(activeIdx - 1, true));
       if (nextBtn) nextBtn.addEventListener('click', () => setActiveStep(activeIdx + 1, true));
+    })();
+
+    // 5. Interaktivitas Beranda Eco-Bento (Lapor Cepat, Stat Shortcut & Progress Meter)
+    (function initEcoBentoHomeInteractions() {
+      // Lapor Cepat: klik topik langsung buka form & aktifkan jenis pencemaran
+      document.querySelectorAll('[data-quick-topic]').forEach((btn) => {
+        btn.addEventListener('click', () => {
+          const topic = btn.getAttribute('data-quick-topic');
+          if (window.app && typeof window.app.switchTab === 'function') {
+            window.app.switchTab('form');
+          }
+          if (topic) {
+            const targetRadio = Array.from(document.querySelectorAll('input[name="radioJenis"]'))
+              .find((el) => el.value === topic);
+            if (targetRadio) {
+              const chipLabel = targetRadio.closest('.chip-item');
+              if (chipLabel) chipLabel.click();
+              else targetRadio.checked = true;
+            }
+          }
+          setTimeout(() => {
+            const firstInput = document.getElementById('inputNama');
+            if (firstInput) firstInput.focus({ preventScroll: false });
+          }, 180);
+        });
+      });
+
+      // Buka Peta Sebaran Aduan dari kartu statistik Pantauan Laporan Warga
+      window.openHeroPetaSebaran = function(statusFilter) {
+        const targetStatus = statusFilter || 'all';
+        const mapFilterSt = document.getElementById('mapFilterStatus');
+        const mapFilterKec = document.getElementById('mapFilterKecamatan');
+        const mapFilterJenis = document.getElementById('mapFilterJenis');
+        if (mapFilterSt) mapFilterSt.value = targetStatus;
+        if (mapFilterKec) mapFilterKec.value = 'all';
+        if (mapFilterJenis) mapFilterJenis.value = 'all';
+        if (window.lembataMap && window.lembataMap.activeFilter) {
+          window.lembataMap.activeFilter.status = targetStatus;
+          window.lembataMap.activeFilter.kecamatan = 'all';
+          window.lembataMap.activeFilter.jenis = 'all';
+        }
+        if (window.app && typeof window.app.switchTab === 'function') {
+          window.app.switchTab('peta');
+        }
+        setTimeout(() => {
+          if (window.lembataMap && typeof window.lembataMap.setFilters === 'function') {
+            window.lembataMap.setFilters(targetStatus, 'all', 'all');
+          }
+        }, 180);
+      };
+
+      // Dukungan keyboard Enter/Space pada kartu statistik beranda
+      document.querySelectorAll('.hero-stat-row[role="button"], .hero-progress-card[role="button"]').forEach((card) => {
+        card.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            e.stopPropagation();
+            card.click();
+          }
+        });
+      });
+
+      // Lacak Tiket Cepat dari kartu showcase di Hero
+      const heroTicketInput = document.getElementById('heroQuickTicketInput');
+      const heroTicketBtn = document.getElementById('heroQuickTicketBtn');
+      function launchHeroTicketLookup() {
+        const val = heroTicketInput ? heroTicketInput.value.trim() : '';
+        if (window.app && typeof window.app.switchTab === 'function') {
+          window.app.switchTab('lacak');
+        }
+        setTimeout(() => {
+          const quickInput = document.getElementById('quickTrackInput');
+          const quickBtn = document.getElementById('btnQuickTrack');
+          if (quickInput) {
+            if (val) {
+              quickInput.value = val;
+              if (quickBtn) quickBtn.click();
+            } else {
+              quickInput.focus();
+            }
+          }
+        }, 180);
+      }
+      if (heroTicketBtn) heroTicketBtn.addEventListener('click', launchHeroTicketLookup);
+      if (heroTicketInput) {
+        heroTicketInput.addEventListener('keydown', (e) => {
+          if (e.key === 'Enter') {
+            e.preventDefault();
+            launchHeroTicketLookup();
+          }
+        });
+      }
+
+      // Fokus interaktif saat mengklik/menyentuh salah satu kartu berlapis di deck Hero
+      const deckCards = Array.from(document.querySelectorAll('.hero-showcase-deck .deck-card'));
+      deckCards.forEach((card) => {
+        card.addEventListener('pointerdown', () => {
+          deckCards.forEach((c) => c.classList.remove('is-deck-front'));
+          card.classList.add('is-deck-front');
+        });
+      });
+
+      // Sinkronisasi otomatis meter tingkat penyelesaian dari #heroStatTotal & #heroStatSelesai
+      const totalEl = document.getElementById('heroStatTotal');
+      const selesaiEl = document.getElementById('heroStatSelesai');
+      const pctEl = document.getElementById('heroProgressPct');
+      const fillEl = document.getElementById('heroProgressFill');
+      if (!totalEl || !selesaiEl || !pctEl || !fillEl) return;
+
+      function parseNum(str) {
+        const cleaned = String(str || '').replace(/[^\d]/g, '');
+        return cleaned ? parseInt(cleaned, 10) : NaN;
+      }
+
+      function syncCompletionMeter() {
+        const t = parseNum(totalEl.textContent);
+        const s = parseNum(selesaiEl.textContent);
+        if (Number.isNaN(t) || Number.isNaN(s) || t <= 0) {
+          pctEl.textContent = t === 0 ? '0%' : '...';
+          fillEl.style.width = '0%';
+          return;
+        }
+        const pct = Math.max(0, Math.min(100, Math.round((s / t) * 100)));
+        pctEl.textContent = pct + '%';
+        fillEl.style.width = pct + '%';
+      }
+
+      syncCompletionMeter();
+      const observer = new MutationObserver(syncCompletionMeter);
+      observer.observe(totalEl, { childList: true, characterData: true, subtree: true });
+      observer.observe(selesaiEl, { childList: true, characterData: true, subtree: true });
     })();
   </script>
 </body>

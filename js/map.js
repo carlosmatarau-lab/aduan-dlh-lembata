@@ -746,14 +746,16 @@ class LembataMapEngine {
     }
 
     try {
-      // Koordinat Bounding Box Pulau Lembata presisi agar seluruh pulau pas di tengah
-      const southWest = L.latLng(-8.64, 123.12);
-      const northEast = L.latLng(-8.12, 123.95);
+      // Koordinat Bounding Box Pulau Lembata presisi agar pulau mengisi bingkai lebih luas & jelas
+      const southWest = L.latLng(-8.55, 123.27);
+      const northEast = L.latLng(-8.18, 123.85);
       const bounds = L.latLngBounds(southWest, northEast);
 
       this.miniMapInstance = L.map(containerId, {
-        center: [-8.38, 123.54],
-        zoom: 10,
+        center: [-8.37, 123.56],
+        zoom: 10.5,
+        zoomSnap: 0.25,
+        zoomDelta: 0.5,
         minZoom: 8,
         maxZoom: 14,
         zoomControl: false,
@@ -776,12 +778,12 @@ class LembataMapEngine {
         maxZoom: 18
       }).addTo(this.miniMapInstance);
 
-      // Posisikan seluruh Pulau Lembata pas di tengah kontainer mini map
-      this.miniMapInstance.fitBounds(bounds, { padding: [2, 2] });
+      // Posisikan seluruh Pulau Lembata pas & luas di kontainer mini map
+      this.miniMapInstance.fitBounds(bounds, { padding: [6, 6] });
       setTimeout(() => {
         if (this.miniMapInstance) {
           this.miniMapInstance.invalidateSize();
-          this.miniMapInstance.fitBounds(bounds, { padding: [2, 2] });
+          this.miniMapInstance.fitBounds(bounds, { padding: [6, 6] });
         }
       }, 250);
 
@@ -792,10 +794,10 @@ class LembataMapEngine {
       pinPoints.forEach(p => {
         const col = this.getMarkerColor(p.status);
         L.circleMarker([p.lat, p.lng], {
-          radius: 6,
+          radius: 5.5,
           fillColor: col,
           color: '#ffffff',
-          weight: 2,
+          weight: 1.8,
           opacity: 1,
           fillOpacity: 0.95
         }).addTo(this.miniMapInstance);
