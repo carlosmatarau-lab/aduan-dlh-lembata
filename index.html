@@ -850,11 +850,11 @@
     .deck-card-nature {
       top: 0;
       right: 0;
-      width: 79%;
+      width: 84%;
       z-index: 2;
       background: linear-gradient(155deg, #0b3927 0%, #135239 62%, #196848 100%);
       border: 1px solid rgba(167, 243, 208, 0.3);
-      padding: 16px 18px 32px;
+      padding: 15px 16px 32px;
       color: #ffffff;
       box-shadow: 0 18px 38px rgba(0, 0, 0, 0.38);
     }
@@ -889,30 +889,63 @@
     }
 
     .hero-quick-topics {
-      display: flex;
-      align-items: center;
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
       gap: 6px;
-      flex-wrap: wrap;
       position: relative;
       z-index: 1;
     }
 
     .hero-topic-chip {
       appearance: none;
-      background: rgba(2, 24, 16, 0.6);
-      border: 1px solid rgba(167, 243, 208, 0.3);
+      background: rgba(2, 24, 16, 0.56);
+      border: 1px solid rgba(167, 243, 208, 0.24);
       color: #ecfdf5;
       font-family: inherit;
-      font-size: 0.69rem;
+      font-size: 0.675rem;
       font-weight: 600;
-      padding: 4.5px 9.5px;
-      border-radius: 999px;
+      padding: 5px 8px;
+      min-height: 32px;
+      border-radius: 10px;
       cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: flex-start;
+      gap: 6px;
+      min-width: 0;
+      text-align: left;
+      transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease, box-shadow 0.15s ease;
+    }
+
+    .hero-topic-icon {
+      width: 20px;
+      height: 20px;
+      border-radius: 6px;
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      justify-content: center;
+      flex-shrink: 0;
+      transition: background-color 0.15s ease, color 0.15s ease;
+    }
+
+    .hero-topic-icon svg {
+      width: 12px;
+      height: 12px;
+      display: block;
+    }
+
+    .hero-topic-icon.is-sea { background: rgba(56, 189, 248, 0.18); color: #7dd3fc; }
+    .hero-topic-icon.is-waste { background: rgba(251, 191, 36, 0.18); color: #fcd34d; }
+    .hero-topic-icon.is-water { background: rgba(96, 165, 250, 0.18); color: #93c5fd; }
+    .hero-topic-icon.is-air { background: rgba(203, 213, 225, 0.18); color: #e2e8f0; }
+    .hero-topic-icon.is-hazard { background: rgba(251, 113, 133, 0.2); color: #fda4af; }
+    .hero-topic-icon.is-forest { background: rgba(52, 211, 153, 0.2); color: #6ee7b7; }
+
+    .hero-topic-label {
+      overflow: hidden;
+      text-overflow: ellipsis;
       white-space: nowrap;
-      transition: transform 0.15s ease, background-color 0.15s ease, border-color 0.15s ease, color 0.15s ease;
+      line-height: 1.2;
     }
 
     .hero-topic-chip:hover {
@@ -921,7 +954,15 @@
       color: #021810;
       font-weight: 700;
       transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.18);
     }
+
+    .hero-topic-chip:hover .hero-topic-icon.is-sea { background: #e0f2fe; color: #0284c7; }
+    .hero-topic-chip:hover .hero-topic-icon.is-waste { background: #fef3c7; color: #d97706; }
+    .hero-topic-chip:hover .hero-topic-icon.is-water { background: #dbeafe; color: #2563eb; }
+    .hero-topic-chip:hover .hero-topic-icon.is-air { background: #f1f5f9; color: #475569; }
+    .hero-topic-chip:hover .hero-topic-icon.is-hazard { background: #ffe4e6; color: #e11d48; }
+    .hero-topic-chip:hover .hero-topic-icon.is-forest { background: #dcfce7; color: #059669; }
 
     .hero-topic-chip:focus-visible {
       outline: 2px solid #fde68a;
@@ -2503,7 +2544,8 @@
       .chip-item {
         display: flex;
         align-items: center;
-        padding: 10px 14px;
+        gap: 9px;
+        padding: 10px 12px;
         background: #f8fafc;
         border: 1px solid var(--border);
         border-radius: var(--radius-md);
@@ -2513,6 +2555,29 @@
         color: var(--text-main);
         transition: all 0.2s;
       }
+
+      .chip-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 7px;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        flex-shrink: 0;
+      }
+
+      .chip-icon svg {
+        width: 14px;
+        height: 14px;
+        display: block;
+      }
+
+      .chip-icon.is-sea { background: #e0f2fe; color: #0284c7; }
+      .chip-icon.is-waste { background: #fef3c7; color: #d97706; }
+      .chip-icon.is-water { background: #dbeafe; color: #2563eb; }
+      .chip-icon.is-air { background: #f1f5f9; color: #475569; }
+      .chip-icon.is-hazard { background: #ffe4e6; color: #e11d48; }
+      .chip-icon.is-forest { background: #dcfce7; color: #059669; }
 
       .chip-item input[type="radio"] {
         display: none;
@@ -5482,12 +5547,20 @@
         }
 
         .hero-quick-topics {
-          gap: 4px;
+          grid-template-columns: repeat(2, minmax(0, 1fr));
+          gap: 5.5px;
         }
 
         .hero-topic-chip {
-          font-size: 0.635rem;
-          padding: 3.5px 7px;
+          font-size: 0.65rem;
+          padding: 5px 7px;
+          min-height: 32px;
+          gap: 6px;
+        }
+
+        .hero-topic-icon {
+          width: 19px;
+          height: 19px;
         }
 
         .deck-win-bar {
@@ -5934,12 +6007,13 @@
         }
 
         .chip-item {
-          padding: 8px 8px;
-          font-size: 0.78rem;
+          padding: 8px 9px;
+          font-size: 0.77rem;
           border-radius: 10px;
           min-height: 44px;
-          justify-content: center;
-          text-align: center;
+          justify-content: flex-start;
+          text-align: left;
+          gap: 7px;
           border: 1.5px solid #e2e8f0;
         }
 
@@ -7645,16 +7719,65 @@
             <span class="deck-eyebrow">Jaga Alam Lewotana Lembata</span>
             <h3 class="deck-nature-title">Ada masalah apa di sekitar Anda?</h3>
             <div class="hero-quick-topics" aria-label="Pilih topik laporan cepat">
-              <button type="button" class="hero-topic-chip" data-quick-topic="Laut & Pesisir">🌊 Laut &amp;
-                Pesisir</button>
-              <button type="button" class="hero-topic-chip" data-quick-topic="Sampah Ilegal & Bau">🗑️ Sampah</button>
-              <button type="button" class="hero-topic-chip" data-quick-topic="Pencemaran Air & Sungai">💧 Air &amp;
-                Sungai</button>
-              <button type="button" class="hero-topic-chip" data-quick-topic="Udara & Asap">💨 Udara &amp; Asap</button>
-              <button type="button" class="hero-topic-chip" data-quick-topic="Limbah B3 & Kimia">☣️ Limbah
-                Berbahaya</button>
-              <button type="button" class="hero-topic-chip" data-quick-topic="Kerusakan Lingkungan & Tanah">🌳 Kerusakan
-                Alam</button>
+              <button type="button" class="hero-topic-chip" data-quick-topic="Laut & Pesisir">
+                <span class="hero-topic-icon is-sea" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12c2.2-2.4 4.4-2.4 6.6 0s4.4 2.4 6.6 0 4.4-2.4 6.8 0"></path>
+                    <path d="M2 17c2.2-2.4 4.4-2.4 6.6 0s4.4 2.4 6.6 0 4.4-2.4 6.8 0"></path>
+                    <path d="M2 7c2.2-2.4 4.4-2.4 6.6 0s4.4 2.4 6.6 0 4.4-2.4 6.8 0"></path>
+                  </svg>
+                </span>
+                <span class="hero-topic-label">Laut &amp; Pesisir</span>
+              </button>
+              <button type="button" class="hero-topic-chip" data-quick-topic="Sampah Ilegal & Bau">
+                <span class="hero-topic-icon is-waste" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                    <path d="M10 11v6"></path>
+                    <path d="M14 11v6"></path>
+                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                  </svg>
+                </span>
+                <span class="hero-topic-label">Sampah</span>
+              </button>
+              <button type="button" class="hero-topic-chip" data-quick-topic="Pencemaran Air & Sungai">
+                <span class="hero-topic-icon is-water" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2.7l5.7 5.7a8 8 0 1 1-11.4 0z"></path>
+                  </svg>
+                </span>
+                <span class="hero-topic-label">Air &amp; Sungai</span>
+              </button>
+              <button type="button" class="hero-topic-chip" data-quick-topic="Udara & Asap">
+                <span class="hero-topic-icon is-air" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"></path>
+                    <path d="M9.6 4.6A2 2 0 1 1 11 8H2"></path>
+                    <path d="M12.6 19.4A2 2 0 1 0 14 16H2"></path>
+                  </svg>
+                </span>
+                <span class="hero-topic-label">Udara &amp; Asap</span>
+              </button>
+              <button type="button" class="hero-topic-chip" data-quick-topic="Limbah B3 & Kimia">
+                <span class="hero-topic-icon is-hazard" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </span>
+                <span class="hero-topic-label">Limbah Berbahaya</span>
+              </button>
+              <button type="button" class="hero-topic-chip" data-quick-topic="Kerusakan Lingkungan & Tanah">
+                <span class="hero-topic-icon is-forest" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L5 12h4l-3 7h12l-3-7h4L12 2z"></path>
+                    <line x1="12" y1="19" x2="12" y2="22"></line>
+                  </svg>
+                </span>
+                <span class="hero-topic-label">Kerusakan Alam</span>
+              </button>
             </div>
           </div>
 
@@ -8340,27 +8463,68 @@
             <div class="category-chips" id="categoryChips">
               <label class="chip-item">
                 <input type="radio" name="radioJenis" value="Laut & Pesisir">
-                <span>🌊 Laut &amp; Pesisir</span>
+                <span class="chip-icon is-sea" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M2 12c2.2-2.4 4.4-2.4 6.6 0s4.4 2.4 6.6 0 4.4-2.4 6.8 0"></path>
+                    <path d="M2 17c2.2-2.4 4.4-2.4 6.6 0s4.4 2.4 6.6 0 4.4-2.4 6.8 0"></path>
+                    <path d="M2 7c2.2-2.4 4.4-2.4 6.6 0s4.4 2.4 6.6 0 4.4-2.4 6.8 0"></path>
+                  </svg>
+                </span>
+                <span>Laut &amp; Pesisir</span>
               </label>
               <label class="chip-item">
                 <input type="radio" name="radioJenis" value="Sampah Ilegal & Bau">
-                <span>🗑️ Sampah Ilegal &amp; Bau</span>
+                <span class="chip-icon is-waste" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                    <path d="M10 11v6"></path>
+                    <path d="M14 11v6"></path>
+                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                  </svg>
+                </span>
+                <span>Sampah Ilegal &amp; Bau</span>
               </label>
               <label class="chip-item">
                 <input type="radio" name="radioJenis" value="Pencemaran Air & Sungai">
-                <span>💧 Air &amp; Sungai</span>
+                <span class="chip-icon is-water" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2.7l5.7 5.7a8 8 0 1 1-11.4 0z"></path>
+                  </svg>
+                </span>
+                <span>Air &amp; Sungai</span>
               </label>
               <label class="chip-item">
                 <input type="radio" name="radioJenis" value="Udara & Asap">
-                <span>💨 Udara &amp; Asap</span>
+                <span class="chip-icon is-air" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"></path>
+                    <path d="M9.6 4.6A2 2 0 1 1 11 8H2"></path>
+                    <path d="M12.6 19.4A2 2 0 1 0 14 16H2"></path>
+                  </svg>
+                </span>
+                <span>Udara &amp; Asap</span>
               </label>
               <label class="chip-item">
                 <input type="radio" name="radioJenis" value="Limbah B3 & Kimia">
-                <span>☣️ Limbah B3 / Medis</span>
+                <span class="chip-icon is-hazard" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path>
+                    <line x1="12" y1="9" x2="12" y2="13"></line>
+                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                  </svg>
+                </span>
+                <span>Limbah B3 / Medis</span>
               </label>
               <label class="chip-item">
                 <input type="radio" name="radioJenis" value="Kerusakan Lingkungan & Tanah">
-                <span>🌳 Kerusakan Lingkungan</span>
+                <span class="chip-icon is-forest" aria-hidden="true">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M12 2L5 12h4l-3 7h12l-3-7h4L12 2z"></path>
+                    <line x1="12" y1="19" x2="12" y2="22"></line>
+                  </svg>
+                </span>
+                <span>Kerusakan Lingkungan</span>
               </label>
             </div>
           </div>

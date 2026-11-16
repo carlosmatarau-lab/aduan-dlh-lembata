@@ -509,13 +509,36 @@
     .cat-head {
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 8px;
       font-family: var(--font-heading);
       font-size: 0.86rem;
       font-weight: 700;
       color: var(--text-main);
-      margin-bottom: 4px;
+      margin-bottom: 5px;
     }
+
+    .cat-icon {
+      width: 24px;
+      height: 24px;
+      border-radius: 7px;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+    }
+
+    .cat-icon svg {
+      width: 14px;
+      height: 14px;
+      display: block;
+    }
+
+    .cat-icon.is-sea { background: #e0f2fe; color: #0284c7; }
+    .cat-icon.is-waste { background: #fef3c7; color: #d97706; }
+    .cat-icon.is-water { background: #dbeafe; color: #2563eb; }
+    .cat-icon.is-air { background: #f1f5f9; color: #475569; }
+    .cat-icon.is-hazard { background: #ffe4e6; color: #e11d48; }
+    .cat-icon.is-forest { background: #dcfce7; color: #059669; }
 
     .cat-card p {
       font-size: 0.77rem;
@@ -1303,32 +1326,85 @@
 
         <div class="cat-grid">
           <div class="cat-card">
-            <div class="cat-head"><span>🌊</span><span>1. Laut &amp; Pesisir</span></div>
+            <div class="cat-head">
+              <span class="cat-icon is-sea" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 12c2.2-2.4 4.4-2.4 6.6 0s4.4 2.4 6.6 0 4.4-2.4 6.8 0"></path>
+                  <path d="M2 17c2.2-2.4 4.4-2.4 6.6 0s4.4 2.4 6.6 0 4.4-2.4 6.8 0"></path>
+                  <path d="M2 7c2.2-2.4 4.4-2.4 6.6 0s4.4 2.4 6.6 0 4.4-2.4 6.8 0"></path>
+                </svg>
+              </span>
+              <span>1. Laut &amp; Pesisir</span>
+            </div>
             <p>Sampah pantai, tumpahan solar/minyak perahu, racun/bom ikan, atau perusakan terumbu karang.</p>
           </div>
 
           <div class="cat-card">
-            <div class="cat-head"><span>🗑️</span><span>2. Sampah Ilegal &amp; Bau</span></div>
+            <div class="cat-head">
+              <span class="cat-icon is-waste" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                  <polyline points="3 6 5 6 21 6"></polyline>
+                  <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
+                  <path d="M10 11v6"></path>
+                  <path d="M14 11v6"></path>
+                  <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
+                </svg>
+              </span>
+              <span>2. Sampah Ilegal &amp; Bau</span>
+            </div>
             <p>Tumpukan sampah liar di jalan/fasilitas umum, pembakaran sampah pekat, atau bau limbah.</p>
           </div>
 
           <div class="cat-card">
-            <div class="cat-head"><span>💧</span><span>3. Air &amp; Sungai</span></div>
+            <div class="cat-head">
+              <span class="cat-icon is-water" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2.7l5.7 5.7a8 8 0 1 1-11.4 0z"></path>
+                </svg>
+              </span>
+              <span>3. Air &amp; Sungai</span>
+            </div>
             <p>Pembuangan oli bekas atau limbah cair usaha ke parit, sungai, atau mata air warga.</p>
           </div>
 
           <div class="cat-card">
-            <div class="cat-head"><span>💨</span><span>4. Udara &amp; Asap</span></div>
+            <div class="cat-head">
+              <span class="cat-icon is-air" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"></path>
+                  <path d="M9.6 4.6A2 2 0 1 1 11 8H2"></path>
+                  <path d="M12.6 19.4A2 2 0 1 0 14 16H2"></path>
+                </svg>
+              </span>
+              <span>4. Udara &amp; Asap</span>
+            </div>
             <p>Asap pekat cerobong usaha, pembakaran terbuka liar, atau debu yang mengganggu pernapasan.</p>
           </div>
 
           <div class="cat-card">
-            <div class="cat-head"><span>☣️</span><span>5. Limbah B3 / Medis</span></div>
+            <div class="cat-head">
+              <span class="cat-icon is-hazard" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path>
+                  <line x1="12" y1="9" x2="12" y2="13"></line>
+                  <line x1="12" y1="17" x2="12.01" y2="17"></line>
+                </svg>
+              </span>
+              <span>5. Limbah B3 / Medis</span>
+            </div>
             <p>Limbah kimia berbahaya, aki/oli bekas industri, atau limbah medis yang dibuang sembarangan.</p>
           </div>
 
           <div class="cat-card">
-            <div class="cat-head"><span>🌳</span><span>6. Kerusakan Lingkungan</span></div>
+            <div class="cat-head">
+              <span class="cat-icon is-forest" aria-hidden="true">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M12 2L5 12h4l-3 7h12l-3-7h4L12 2z"></path>
+                  <line x1="12" y1="19" x2="12" y2="22"></line>
+                </svg>
+              </span>
+              <span>6. Kerusakan Lingkungan</span>
+            </div>
             <p>Penebangan bakau/mangrove pesisir atau penyerobotan sempadan sungai dan mata air.</p>
           </div>
         </div>
