@@ -7114,6 +7114,383 @@
               color: #64748b !important;
               letter-spacing: 0.08em;
             }
+
+            /* Mobile-only elements hidden on desktop */
+            .mobile-app-dock,
+            .alur-mobile-swipe-hint {
+              display: none;
+            }
+
+            /* ===================================================================
+               FINISHING PROFESIONAL & INTERAKTIVITAS KHUSUS MOBILE (<= 768px)
+               =================================================================== */
+            @media (max-width: 768px) {
+              /* 1. Hapus Tombol "Ajukan Aduan" Kanan Atas Header Khusus di Mobile */
+              .app-header .header-right-portal,
+              body:has(#pane-beranda.active) .app-header .header-cta-white {
+                display: none !important;
+              }
+
+              /* 2. Hapus Subjudul Footer & Catatan Sinkronisasi Khusus di Mobile */
+              .app-footer .footer-brand .footer-brand-desc,
+              .app-footer .footer-sync-note {
+                display: none !important;
+              }
+
+              /* Footer Mobile Ringkas & Mini Button */
+              .app-footer,
+              body:has(#pane-beranda.active) .app-footer {
+                padding: 18px 14px calc(86px + env(safe-area-inset-bottom, 0px)) 14px !important;
+              }
+
+              .app-footer .footer-inner,
+              body:has(#pane-beranda.active) .footer-inner {
+                gap: 12px !important;
+              }
+
+              .app-footer .footer-top,
+              body:has(#pane-beranda.active) .footer-top {
+                gap: 10px !important;
+                flex-direction: column;
+                align-items: stretch;
+              }
+
+              .app-footer .footer-brand {
+                max-width: 100%;
+              }
+
+              .app-footer .footer-brand .brand-group {
+                margin-bottom: 6px !important;
+              }
+
+              .app-footer .footer-office-info {
+                margin-top: 4px !important;
+                font-size: 0.72rem !important;
+                line-height: 1.45;
+                color: #9ad1b9 !important;
+              }
+
+              .app-footer .footer-links {
+                display: flex !important;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: flex-start;
+                gap: 6px !important;
+                width: 100%;
+              }
+
+              .app-footer .footer-link-btn {
+                display: inline-flex !important;
+                align-items: center;
+                justify-content: center;
+                gap: 4px !important;
+                width: auto !important;
+                flex: 0 0 auto;
+                padding: 5px 10px !important;
+                font-size: 0.68rem !important;
+                line-height: 1.15 !important;
+                border-radius: 999px !important;
+                min-height: 28px !important;
+                white-space: nowrap;
+                touch-action: manipulation;
+              }
+
+              .app-footer .footer-link-btn svg {
+                width: 12px !important;
+                height: 12px !important;
+                flex-shrink: 0;
+              }
+
+              /* Redupkan Kontak DLH & Akses Petugas agar tidak mencolok di Mobile */
+              .app-footer .footer-link-btn.footer-wa-contact,
+              .app-footer .footer-link-btn[href*="petugas"] {
+                background: rgba(255, 255, 255, 0.05) !important;
+                border: 1px solid rgba(167, 243, 208, 0.16) !important;
+                color: #9ad1b9 !important;
+                font-weight: 600 !important;
+                box-shadow: none !important;
+              }
+
+              /* Hanya Panduan Warga yang terlihat menonjol di Mobile */
+              .app-footer .footer-link-btn[href*="panduan-warga"] {
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
+                border: 1px solid #6ee7b7 !important;
+                color: #ffffff !important;
+                font-weight: 800 !important;
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.34) !important;
+              }
+
+              .app-footer .footer-link-btn:active {
+                transform: scale(0.95);
+              }
+
+              .app-footer .footer-bottom {
+                padding-top: 12px;
+                gap: 8px;
+                flex-direction: column;
+                align-items: flex-start;
+                font-size: 0.72rem;
+              }
+
+              .app-footer .footer-bottom > div:last-child {
+                gap: 10px !important;
+                flex-wrap: wrap;
+                font-size: 0.7rem;
+                opacity: 0.92;
+              }
+
+              /* 2. Jarak Bawah Kontainer Utama agar Seimbang dengan Footer & Mobile Dock */
+              .main-wrap,
+              .main-wrap.wide-mode,
+              .main-wrap.peta-active,
+              .main-wrap:has(#pane-peta.active) {
+                padding-bottom: 24px !important;
+              }
+
+              /* 3. Sticky Header Glass Dinamis Saat Scroll di Mobile */
+              .app-header {
+                transition: background-color 0.25s ease, box-shadow 0.25s ease, border-color 0.25s ease;
+              }
+
+              body:has(#pane-beranda.active) .app-header.is-mobile-scrolled {
+                background: rgba(2, 24, 16, 0.92) !important;
+                backdrop-filter: blur(16px);
+                -webkit-backdrop-filter: blur(16px);
+                border-bottom: 1px solid rgba(52, 211, 153, 0.22) !important;
+                box-shadow: 0 8px 24px rgba(0, 0, 0, 0.32) !important;
+              }
+
+              .app-header.is-mobile-scrolled {
+                box-shadow: 0 6px 20px rgba(6, 78, 59, 0.1) !important;
+              }
+
+              /* 4. Transisi Halus Antar Halaman/Pane Mobile */
+              @keyframes mobilePaneReveal {
+                from {
+                  opacity: 0;
+                  transform: translateY(8px);
+                }
+                to {
+                  opacity: 1;
+                  transform: translateY(0);
+                }
+              }
+
+              .tab-content.active {
+                animation: mobilePaneReveal 0.24s cubic-bezier(0.16, 1, 0.3, 1);
+              }
+
+              /* 5. Sentuhan Tactile & Interaktif pada Kartu Hero, Topik & Stepper Mobile */
+              .btn-hero-action,
+              .hero-topic-chip,
+              .hero-stat-row,
+              .hero-progress-card,
+              .deck-track-btn,
+              .deck-track-link,
+              .alur-step-tab,
+              .alur-nav-btn,
+              .btn-alur-cta,
+              .btn-buka-peta-spasial,
+              .btn-expand-mini-map,
+              .header-cta-white,
+              .btn-back-beranda {
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
+              }
+
+              .btn-hero-action:active,
+              .header-cta-white:active,
+              .btn-alur-cta:active,
+              .btn-buka-peta-spasial:active,
+              .deck-track-btn:active,
+              .btn-back-beranda:active {
+                transform: scale(0.96) !important;
+              }
+
+              .hero-topic-chip {
+                transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.16s ease, border-color 0.16s ease, box-shadow 0.16s ease;
+              }
+
+              .hero-topic-chip:active {
+                transform: scale(0.93) !important;
+                background: #ffffff !important;
+                color: #021810 !important;
+                border-color: #ffffff !important;
+                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.35);
+              }
+
+              .hero-stat-row {
+                transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.16s ease, border-color 0.16s ease;
+              }
+
+              .hero-stat-row:active,
+              .hero-progress-card:active {
+                transform: scale(0.985) !important;
+                background: #ecfdf5 !important;
+                border-color: #34d399 !important;
+              }
+
+              .hero-showcase-deck .deck-card {
+                transition: transform 0.28s cubic-bezier(0.22, 1, 0.36, 1), box-shadow 0.28s ease, border-color 0.22s ease;
+              }
+
+              .hero-showcase-deck .deck-card.is-deck-front {
+                transform: translateY(-4px) scale(1.012);
+                box-shadow: 0 22px 46px rgba(0, 0, 0, 0.48), 0 0 0 1.5px rgba(110, 231, 183, 0.55);
+              }
+
+              /* Alur Pengaduan Mobile Swipe Hint & Tactile Tabs */
+              .alur-pane-header {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                gap: 8px;
+              }
+
+              .alur-mobile-swipe-hint {
+                display: inline-flex;
+                align-items: center;
+                gap: 4px;
+                font-size: 0.64rem;
+                font-weight: 700;
+                color: #a7f3d0;
+                background: rgba(16, 185, 129, 0.12);
+                border: 1px solid rgba(52, 211, 153, 0.26);
+                padding: 2px 8px;
+                border-radius: 999px;
+                white-space: nowrap;
+                opacity: 0.9;
+              }
+
+              .alur-step-tab:active,
+              .alur-nav-btn:active:not(:disabled) {
+                transform: scale(0.94);
+              }
+
+              /* Mini Map Preview Mobile Press Feedback */
+              .mini-map-container {
+                transition: transform 0.2s ease, box-shadow 0.2s ease;
+              }
+
+              .mini-map-container:active {
+                transform: scale(0.992);
+              }
+
+              /* 6. Floating Mobile App Navigation Dock (Bottom Glass Pill) */
+              .mobile-app-dock {
+                position: fixed;
+                left: 12px;
+                right: 12px;
+                bottom: max(10px, env(safe-area-inset-bottom, 10px));
+                z-index: 990;
+                max-width: 440px;
+                margin: 0 auto;
+                display: grid;
+                grid-template-columns: repeat(4, minmax(0, 1fr));
+                gap: 4px;
+                padding: 5px;
+                border-radius: 18px;
+                background: rgba(2, 24, 16, 0.9);
+                backdrop-filter: blur(18px) saturate(160%);
+                -webkit-backdrop-filter: blur(18px) saturate(160%);
+                border: 1px solid rgba(110, 231, 183, 0.28);
+                box-shadow: 0 12px 32px rgba(0, 0, 0, 0.38), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+                transition: transform 0.26s cubic-bezier(0.22, 1, 0.36, 1), opacity 0.22s ease, background-color 0.25s ease, border-color 0.25s ease;
+              }
+
+              body:not(:has(#pane-beranda.active)) .mobile-app-dock {
+                background: rgba(255, 255, 255, 0.94);
+                border: 1px solid rgba(5, 150, 105, 0.22);
+                box-shadow: 0 10px 28px rgba(6, 78, 59, 0.16), 0 2px 8px rgba(15, 23, 42, 0.08);
+              }
+
+              body.mobile-kbd-open .mobile-app-dock,
+              body:has(.modal-backdrop.show) .mobile-app-dock {
+                opacity: 0 !important;
+                pointer-events: none !important;
+                transform: translateY(22px) scale(0.96);
+              }
+
+              .mobile-dock-btn {
+                appearance: none;
+                background: transparent;
+                border: none;
+                border-radius: 13px;
+                padding: 7px 4px 6px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                gap: 3px;
+                color: #9ad1b9;
+                font-family: 'Outfit', sans-serif;
+                font-size: 0.65rem;
+                font-weight: 700;
+                letter-spacing: 0.01em;
+                cursor: pointer;
+                touch-action: manipulation;
+                -webkit-tap-highlight-color: transparent;
+                transition: transform 0.16s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.2s ease, color 0.2s ease, box-shadow 0.2s ease;
+                position: relative;
+              }
+
+              body:not(:has(#pane-beranda.active)) .mobile-dock-btn {
+                color: #64748b;
+              }
+
+              .mobile-dock-btn svg {
+                width: 18px;
+                height: 18px;
+                transition: transform 0.2s cubic-bezier(0.22, 1, 0.36, 1);
+              }
+
+              .mobile-dock-btn:active {
+                transform: scale(0.91);
+              }
+
+              /* Active State Sync via JS .is-active & CSS :has() Fallback */
+              .mobile-dock-btn.is-active,
+              body:has(#pane-beranda.active) .mobile-dock-btn[data-dock-tab="beranda"],
+              body:has(#pane-form.active) .mobile-dock-btn[data-dock-tab="form"],
+              body:has(#pane-lacak.active) .mobile-dock-btn[data-dock-tab="lacak"],
+              body:has(#pane-peta.active) .mobile-dock-btn[data-dock-tab="peta"] {
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+                color: #ffffff;
+                box-shadow: 0 4px 14px rgba(16, 185, 129, 0.38);
+              }
+
+              .mobile-dock-btn.is-active svg,
+              body:has(#pane-beranda.active) .mobile-dock-btn[data-dock-tab="beranda"] svg,
+              body:has(#pane-form.active) .mobile-dock-btn[data-dock-tab="form"] svg,
+              body:has(#pane-lacak.active) .mobile-dock-btn[data-dock-tab="lacak"] svg,
+              body:has(#pane-peta.active) .mobile-dock-btn[data-dock-tab="peta"] svg {
+                transform: translateY(-1px) scale(1.06);
+              }
+
+              /* Highlight halus tombol Lapor saat di Beranda */
+              body:has(#pane-beranda.active) .mobile-dock-btn[data-dock-tab="form"]:not(.is-active) {
+                color: #ecfdf5;
+                background: rgba(16, 185, 129, 0.16);
+              }
+
+              /* Naikkan Floating WA Button agar tidak bertumpuk dengan Mobile Dock */
+              .floating-wa-btn {
+                bottom: calc(78px + env(safe-area-inset-bottom, 0px)) !important;
+                right: 14px !important;
+                padding: 10px !important;
+                box-shadow: 0 8px 20px rgba(37, 211, 102, 0.42);
+              }
+
+              .floating-wa-btn:active {
+                transform: scale(0.92);
+              }
+
+              body.mobile-kbd-open .floating-wa-btn,
+              body:has(.modal-backdrop.show) .floating-wa-btn {
+                opacity: 0;
+                pointer-events: none;
+              }
+            }
   </style>
 </head>
 
@@ -7575,6 +7952,7 @@
                   </div>
                   <span class="alur-pane-pill" id="alurStepCounter">Tahap 1 / 4</span>
                 </div>
+                <span class="alur-mobile-swipe-hint" aria-hidden="true">Geser / Ketuk &harr;</span>
               </div>
 
               <!-- Tab Pemilih 4 Tahapan Terhubung Panah -->
@@ -8697,11 +9075,11 @@
                 KABUPATEN LEMBATA</div>
             </div>
           </div>
-          <p>
+          <p class="footer-brand-desc">
             ECOADU LEMBATA — Ekosistem Digital Aduan Lingkungan Lembata.
             Mewujudkan pelayanan publik yang cepat, akurat, dan transparan demi kelestarian alam Lewotana Lembata.
           </p>
-          <div style="margin-top: 10px; font-size: 0.8rem; color: #a7f3d0;">
+          <div class="footer-office-info" style="margin-top: 10px; font-size: 0.8rem; color: #a7f3d0;">
             📍 Kantor DLH Lembata: Jl. Trans Atadei, Lewoleba, Kabupaten Lembata, NTT &bull; ☎️ Helpline: 0822-3458-2769
           </div>
         </div>
@@ -8732,7 +9110,7 @@
         </div>
       </div>
 
-      <div
+      <div class="footer-sync-note"
         style="font-size: 0.74rem; color: #a7f3d0; font-style: italic; line-height: 1.5; margin-bottom: 12px; opacity: 0.92;">
         * Catatan Sinkronisasi: Sistem menerapkan sinkronisasi real-time lintas perangkat berbasis sinyal push otomatis
         melalui server, dengan perlindungan antrean aman untuk seluruh lampiran foto.
@@ -8780,6 +9158,45 @@
     </span>
     <span class="floating-wa-text">WhatsApp DLH</span>
   </a>
+
+  <!-- Mobile Floating App Dock (Khusus Tampilan Mobile <= 768px) -->
+  <nav class="mobile-app-dock" id="mobileAppDock" aria-label="Navigasi Cepat Mobile">
+    <button type="button" class="mobile-dock-btn is-active" data-dock-tab="beranda" aria-current="page">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round" aria-hidden="true">
+        <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"></path>
+        <polyline points="9 22 9 12 15 12 15 22"></polyline>
+      </svg>
+      <span>Beranda</span>
+    </button>
+    <button type="button" class="mobile-dock-btn" data-dock-tab="form">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round"
+        stroke-linejoin="round" aria-hidden="true">
+        <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+        <polyline points="14 2 14 8 20 8"></polyline>
+        <line x1="12" y1="18" x2="12" y2="12"></line>
+        <line x1="9" y1="15" x2="15" y2="15"></line>
+      </svg>
+      <span>Lapor</span>
+    </button>
+    <button type="button" class="mobile-dock-btn" data-dock-tab="lacak">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round" aria-hidden="true">
+        <circle cx="11" cy="11" r="8"></circle>
+        <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
+      </svg>
+      <span>Lacak</span>
+    </button>
+    <button type="button" class="mobile-dock-btn" data-dock-tab="peta">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+        stroke-linejoin="round" aria-hidden="true">
+        <polygon points="1 6 1 22 8 18 16 22 23 18 23 2 16 6 8 2 1 6"></polygon>
+        <line x1="8" y1="2" x2="8" y2="18"></line>
+        <line x1="16" y1="6" x2="16" y2="22"></line>
+      </svg>
+      <span>Peta</span>
+    </button>
+  </nav>
 
   <!-- ===================================================================
        TRANSISI PINDAH KE DASHBOARD PETUGAS (PORTAL HANDOFF OVERLAY)
@@ -9275,6 +9692,123 @@
       const observer = new MutationObserver(syncCompletionMeter);
       observer.observe(totalEl, { childList: true, characterData: true, subtree: true });
       observer.observe(selesaiEl, { childList: true, characterData: true, subtree: true });
+    })();
+
+    // 6. Finishing Interaktif Khusus Tampilan Mobile (<= 768px)
+    (function initMobileInteractivePolish() {
+      const mobileMq = window.matchMedia ? window.matchMedia('(max-width: 768px)') : null;
+      const isMobile = () => (mobileMq ? mobileMq.matches : window.innerWidth <= 768);
+
+      const dock = document.getElementById('mobileAppDock');
+      const dockBtns = dock ? Array.from(dock.querySelectorAll('.mobile-dock-btn[data-dock-tab]')) : [];
+      const header = document.querySelector('.app-header');
+      const panes = Array.from(document.querySelectorAll('.tab-content[id^="pane-"]'));
+
+      function syncDockActiveState() {
+        if (!dock) return;
+        let activeTab = 'beranda';
+        for (const p of panes) {
+          if (p.classList.contains('active')) {
+            activeTab = p.id.replace('pane-', '');
+            break;
+          }
+        }
+        dockBtns.forEach((btn) => {
+          const isMatch = btn.getAttribute('data-dock-tab') === activeTab;
+          btn.classList.toggle('is-active', isMatch);
+          if (isMatch) btn.setAttribute('aria-current', 'page');
+          else btn.removeAttribute('aria-current');
+        });
+      }
+
+      if (dock) {
+        dockBtns.forEach((btn) => {
+          btn.addEventListener('click', () => {
+            if (!isMobile()) return;
+            const targetTab = btn.getAttribute('data-dock-tab');
+            if (!targetTab) return;
+            try { if (navigator.vibrate) navigator.vibrate(8); } catch (e) { }
+
+            const currentPane = document.getElementById('pane-' + targetTab);
+            if (currentPane && currentPane.classList.contains('active')) {
+              window.scrollTo({ top: 0, behavior: 'smooth' });
+              return;
+            }
+            if (window.app && typeof window.app.switchTab === 'function') {
+              window.app.switchTab(targetTab);
+            }
+            syncDockActiveState();
+          });
+        });
+
+        // Pantau perubahan class active pada seluruh tab pane
+        if (typeof MutationObserver !== 'undefined') {
+          const paneObserver = new MutationObserver(syncDockActiveState);
+          panes.forEach((p) => paneObserver.observe(p, { attributes: true, attributeFilter: ['class'] }));
+        }
+        syncDockActiveState();
+      }
+
+      // Header glass dinamis saat scroll di mobile
+      function syncMobileHeaderScroll() {
+        if (!header) return;
+        if (!isMobile()) {
+          header.classList.remove('is-mobile-scrolled');
+          return;
+        }
+        header.classList.toggle('is-mobile-scrolled', window.scrollY > 14);
+      }
+      window.addEventListener('scroll', syncMobileHeaderScroll, { passive: true });
+      window.addEventListener('resize', () => {
+        syncMobileHeaderScroll();
+        if (!isMobile()) document.body.classList.remove('mobile-kbd-open');
+      }, { passive: true });
+      syncMobileHeaderScroll();
+
+      // Sembunyikan dock sementara saat keyboard virtual mobile aktif pada input teks
+      const TEXT_INPUT_SELECTOR = 'input:not([type="checkbox"]):not([type="radio"]):not([type="button"]):not([type="submit"]):not([type="file"]), textarea, select';
+      let kbdBlurTimer = null;
+      document.addEventListener('focusin', (e) => {
+        if (!isMobile()) return;
+        if (e.target && e.target.matches && e.target.matches(TEXT_INPUT_SELECTOR)) {
+          if (kbdBlurTimer) clearTimeout(kbdBlurTimer);
+          document.body.classList.add('mobile-kbd-open');
+        }
+      });
+      document.addEventListener('focusout', () => {
+        if (!isMobile()) return;
+        if (kbdBlurTimer) clearTimeout(kbdBlurTimer);
+        kbdBlurTimer = setTimeout(() => {
+          const active = document.activeElement;
+          if (!active || !active.matches || !active.matches(TEXT_INPUT_SELECTOR)) {
+            document.body.classList.remove('mobile-kbd-open');
+          }
+        }, 120);
+      });
+
+      // Gestur Swipe Kiri/Kanan pada Alur Pengaduan Digital (khusus mobile)
+      const alurPane = document.querySelector('#alurPengaduanSection .alur-main-pane');
+      const alurPrev = document.getElementById('alurPrevStepBtn');
+      const alurNext = document.getElementById('alurNextStepBtn');
+      if (alurPane && alurPrev && alurNext) {
+        let touchStartX = 0;
+        let touchStartY = 0;
+        alurPane.addEventListener('touchstart', (e) => {
+          if (!isMobile() || !e.touches || e.touches.length !== 1) return;
+          touchStartX = e.touches[0].clientX;
+          touchStartY = e.touches[0].clientY;
+        }, { passive: true });
+
+        alurPane.addEventListener('touchend', (e) => {
+          if (!isMobile() || !e.changedTouches || e.changedTouches.length !== 1) return;
+          const dx = e.changedTouches[0].clientX - touchStartX;
+          const dy = e.changedTouches[0].clientY - touchStartY;
+          if (Math.abs(dx) >= 42 && Math.abs(dx) > Math.abs(dy) * 1.35) {
+            if (dx < 0 && !alurNext.disabled) alurNext.click();
+            else if (dx > 0 && !alurPrev.disabled) alurPrev.click();
+          }
+        }, { passive: true });
+      }
     })();
   </script>
 </body>
