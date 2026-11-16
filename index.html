@@ -732,6 +732,10 @@
       flex-shrink: 0;
     }
 
+    .hero-mobile-lead {
+      display: none;
+    }
+
     .hero-actions-row {
       display: flex;
       align-items: center;
@@ -5432,12 +5436,16 @@
         }
 
         .hero-editorial-points {
-          gap: 4px;
+          display: none;
         }
 
-        .hero-editorial-points li {
-          font-size: 0.74rem;
-          line-height: 1.36;
+        .hero-mobile-lead {
+          display: block;
+          margin: 0;
+          font-size: 0.78rem;
+          font-weight: 500;
+          line-height: 1.42;
+          color: #d7efe4;
         }
 
         .hero-actions-row {
@@ -7593,6 +7601,7 @@
               <li>Cukup lampirkan foto kejadian dan tandai lokasi langsung dari HP Anda</li>
               <li>Laporan segera ditindaklanjuti dan bisa dipantau perkembangannya kapan saja</li>
             </ul>
+            <p class="hero-mobile-lead">Laporkan sampah atau pencemaran lewat foto dan lokasi HP, lalu pantau penanganannya langsung.</p>
           </div>
 
           <div class="hero-actions-row">
