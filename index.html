@@ -846,6 +846,52 @@
       transform: translateY(-4px);
     }
 
+    /* 3 Kartu Foto Pencemaran Lingkungan (Mengambang & Non-Navigasi) */
+    .deck-photo-card {
+      overflow: hidden;
+      background: #042217;
+      border: 1px solid rgba(255, 255, 255, 0.28);
+      box-shadow: 0 20px 42px rgba(0, 0, 0, 0.44);
+      cursor: default;
+      user-select: none;
+      -webkit-user-select: none;
+      touch-action: manipulation;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    .deck-photo-card img {
+      display: block;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      pointer-events: none;
+      -webkit-user-drag: none;
+    }
+
+    .deck-photo-coastal {
+      top: 0;
+      right: 0;
+      width: 81%;
+      aspect-ratio: 16 / 10;
+      z-index: 2;
+    }
+
+    .deck-photo-river {
+      top: 31%;
+      left: 0;
+      width: 57%;
+      aspect-ratio: 4 / 3;
+      z-index: 4;
+    }
+
+    .deck-photo-air {
+      bottom: 0;
+      right: 0;
+      width: 46%;
+      aspect-ratio: 16 / 10;
+      z-index: 6;
+    }
+
     /* Card 1: Top-Right Nature & Quick Topic Selector */
     .deck-card-nature {
       top: 0;
@@ -1259,48 +1305,21 @@
       .hero-showcase-deck {
         max-width: 580px;
         margin: 0 auto;
-        height: 434px;
+        height: auto;
+        aspect-ratio: 580 / 434;
       }
     }
 
     @media (max-width: 640px) {
       .hero-showcase-deck {
         height: auto;
+        aspect-ratio: 4 / 3;
         max-width: 100%;
-        display: flex;
-        flex-direction: column;
-        gap: 0;
+        margin: 0 auto;
       }
 
       .deck-card {
-        position: relative;
-        top: auto;
-        right: auto;
-        bottom: auto;
-        left: auto;
-      }
-
-      .deck-card-nature {
-        width: 94%;
-        align-self: flex-end;
-        z-index: 2;
-        padding: 11px 13px 24px;
-      }
-
-      .deck-card-stats {
-        width: 88%;
-        align-self: flex-start;
-        z-index: 4;
-        margin-top: -15px;
-        padding: 10px 13px 22px;
-      }
-
-      .deck-card-track {
-        width: 84%;
-        align-self: flex-end;
-        z-index: 6;
-        margin-top: -14px;
-        padding: 10px 13px;
+        border-radius: 12px;
       }
     }
 
@@ -7712,162 +7731,21 @@
           </div>
         </div>
 
-        <!-- Kolom Kanan: Kartu Showcase Berlapis Interaktif -->
+        <!-- Kolom Kanan: 3 Kartu Foto Pencemaran Lingkungan Mengambang (Visual + Animasi Sentuh) -->
         <div class="hero-showcase-deck">
-          <!-- Kartu 1 (Atas-Kanan): Ekosistem & Lapor Cepat Topik -->
-          <div class="deck-card deck-card-nature">
-            <span class="deck-eyebrow">Jaga Alam Lewotana Lembata</span>
-            <h3 class="deck-nature-title">Ada masalah apa di sekitar Anda?</h3>
-            <div class="hero-quick-topics" aria-label="Pilih topik laporan cepat">
-              <button type="button" class="hero-topic-chip" data-quick-topic="Laut & Pesisir">
-                <span class="hero-topic-icon is-sea" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M2 12c2.2-2.4 4.4-2.4 6.6 0s4.4 2.4 6.6 0 4.4-2.4 6.8 0"></path>
-                    <path d="M2 17c2.2-2.4 4.4-2.4 6.6 0s4.4 2.4 6.6 0 4.4-2.4 6.8 0"></path>
-                    <path d="M2 7c2.2-2.4 4.4-2.4 6.6 0s4.4 2.4 6.6 0 4.4-2.4 6.8 0"></path>
-                  </svg>
-                </span>
-                <span class="hero-topic-label">Laut &amp; Pesisir</span>
-              </button>
-              <button type="button" class="hero-topic-chip" data-quick-topic="Sampah Ilegal & Bau">
-                <span class="hero-topic-icon is-waste" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"></path>
-                    <path d="M10 11v6"></path>
-                    <path d="M14 11v6"></path>
-                    <path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"></path>
-                  </svg>
-                </span>
-                <span class="hero-topic-label">Sampah</span>
-              </button>
-              <button type="button" class="hero-topic-chip" data-quick-topic="Pencemaran Air & Sungai">
-                <span class="hero-topic-icon is-water" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2.7l5.7 5.7a8 8 0 1 1-11.4 0z"></path>
-                  </svg>
-                </span>
-                <span class="hero-topic-label">Air &amp; Sungai</span>
-              </button>
-              <button type="button" class="hero-topic-chip" data-quick-topic="Udara & Asap">
-                <span class="hero-topic-icon is-air" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"></path>
-                    <path d="M9.6 4.6A2 2 0 1 1 11 8H2"></path>
-                    <path d="M12.6 19.4A2 2 0 1 0 14 16H2"></path>
-                  </svg>
-                </span>
-                <span class="hero-topic-label">Udara &amp; Asap</span>
-              </button>
-              <button type="button" class="hero-topic-chip" data-quick-topic="Limbah B3 & Kimia">
-                <span class="hero-topic-icon is-hazard" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M10.3 3.9L1.8 18a2 2 0 0 0 1.7 3h17a2 2 0 0 0 1.7-3L13.7 3.9a2 2 0 0 0-3.4 0z"></path>
-                    <line x1="12" y1="9" x2="12" y2="13"></line>
-                    <line x1="12" y1="17" x2="12.01" y2="17"></line>
-                  </svg>
-                </span>
-                <span class="hero-topic-label">Limbah Berbahaya</span>
-              </button>
-              <button type="button" class="hero-topic-chip" data-quick-topic="Kerusakan Lingkungan & Tanah">
-                <span class="hero-topic-icon is-forest" aria-hidden="true">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.1" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M12 2L5 12h4l-3 7h12l-3-7h4L12 2z"></path>
-                    <line x1="12" y1="19" x2="12" y2="22"></line>
-                  </svg>
-                </span>
-                <span class="hero-topic-label">Kerusakan Alam</span>
-              </button>
-            </div>
+          <div class="deck-card deck-photo-card deck-photo-coastal">
+            <img src="assets/hero-polusi-pantai.jpg" alt="Ilustrasi pencemaran sampah plastik di pesisir pantai"
+              loading="eager" decoding="async" draggable="false">
           </div>
 
-          <!-- Kartu 2 (Tengah-Kiri): Pantauan Laporan Warga -->
-          <div class="deck-card deck-card-stats" style="cursor: pointer;"
-            onclick="window.openHeroPetaSebaran && window.openHeroPetaSebaran()"
-            title="Klik untuk melihat peta sebaran aduan">
-            <div class="deck-win-bar">
-              <div class="deck-win-dots" aria-hidden="true"><span></span><span></span><span></span></div>
-              <span class="deck-win-title">Pantauan Laporan Warga</span>
-            </div>
-            <div class="hero-right-stats">
-              <div class="hero-stat-row" role="button" tabindex="0"
-                onclick="event.stopPropagation(); window.openHeroPetaSebaran && window.openHeroPetaSebaran()"
-                title="Lihat sebaran semua laporan di peta">
-                <div class="stat-row-icon">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#334155" stroke-width="2">
-                    <polyline points="22 12 16 12 14 15 10 15 8 12 2 12"></polyline>
-                    <path
-                      d="M5.45 5.11L2 12v6a2 2 0 0 0 2 2h16a2 2 0 0 0 2-2v-6l-3.45-6.89A2 2 0 0 0 16.76 4H7.24a2 2 0 0 0-1.79 1.11z">
-                    </path>
-                  </svg>
-                </div>
-                <div class="stat-row-meta">
-                  <div class="stat-row-lbl">Laporan Masuk</div>
-                  <div class="stat-row-val stat-loading" id="heroStatTotal">...</div>
-                </div>
-                <span class="stat-row-arrow" aria-hidden="true">&#8599;</span>
-              </div>
-
-              <div class="hero-stat-row" data-stat-tone="amber" role="button" tabindex="0"
-                onclick="event.stopPropagation(); window.openHeroPetaSebaran && window.openHeroPetaSebaran()"
-                title="Lihat lokasi laporan yang sedang ditangani di peta">
-                <div class="stat-row-icon" style="background: #fef3c7;">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#b45309" stroke-width="2">
-                    <circle cx="11" cy="11" r="8"></circle>
-                    <line x1="21" y1="21" x2="16.65" y2="16.65"></line>
-                  </svg>
-                </div>
-                <div class="stat-row-meta">
-                  <div class="stat-row-lbl">Sedang Ditangani</div>
-                  <div class="stat-row-val stat-loading" id="heroStatProses">...</div>
-                </div>
-                <span class="stat-row-arrow" aria-hidden="true">&#8599;</span>
-              </div>
-
-              <div class="hero-stat-row" data-stat-tone="green" role="button" tabindex="0"
-                onclick="event.stopPropagation(); window.openHeroPetaSebaran && window.openHeroPetaSebaran('Selesai')"
-                title="Lihat lokasi laporan yang sudah selesai di peta">
-                <div class="stat-row-icon" style="background: #dcfce7;">
-                  <svg viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2.5">
-                    <polyline points="20 6 9 17 4 12"></polyline>
-                  </svg>
-                </div>
-                <div class="stat-row-meta">
-                  <div class="stat-row-lbl">Sudah Selesai</div>
-                  <div class="stat-row-val stat-loading" id="heroStatSelesai">...</div>
-                </div>
-                <span class="stat-row-arrow" aria-hidden="true">&#8599;</span>
-              </div>
-
-              <div class="hero-progress-card" role="button" tabindex="0"
-                onclick="event.stopPropagation(); window.openHeroPetaSebaran && window.openHeroPetaSebaran()"
-                title="Lihat peta sebaran aduan">
-                <div class="hero-progress-head">
-                  <span>Laporan Tertangani</span>
-                  <span class="hero-progress-pct" id="heroProgressPct">0%</span>
-                </div>
-                <div class="hero-progress-track">
-                  <div class="hero-progress-fill" id="heroProgressFill"></div>
-                </div>
-              </div>
-            </div>
+          <div class="deck-card deck-photo-card deck-photo-river">
+            <img src="assets/hero-polusi-sungai.jpg" alt="Ilustrasi pencemaran sampah di aliran sungai"
+              loading="eager" decoding="async" draggable="false">
           </div>
 
-          <!-- Kartu 3 (Bawah-Kanan): Lacak Tiket Cepat & Peta Wilayah -->
-          <div class="deck-card deck-card-track">
-            <h3 class="deck-track-title">Cek Status Laporan Anda</h3>
-            <div class="deck-track-form">
-              <input type="text" id="heroQuickTicketInput" class="deck-track-input" placeholder="ADU-26-XXXX"
-                autocomplete="off" aria-label="Masukkan nomor tiket aduan Anda">
-              <button type="button" id="heroQuickTicketBtn" class="deck-track-btn">Cek &rarr;</button>
-            </div>
-            <div class="deck-track-foot">
-              <button type="button" class="deck-track-link" onclick="window.app && window.app.switchTab('peta')">Peta
-                Wilayah &#8599;</button>
-              <button type="button" class="deck-track-link"
-                onclick="document.getElementById('alurPengaduanSection')?.scrollIntoView({behavior:'smooth'})">Cara
-                Melapor &darr;</button>
-            </div>
+          <div class="deck-card deck-photo-card deck-photo-air">
+            <img src="assets/hero-polusi-udara.jpg" alt="Ilustrasi pencemaran udara dari asap cerobong industri"
+              loading="eager" decoding="async" draggable="false">
           </div>
         </div>
         <!-- Fast Instant Hydration: Render instan (0 ms) hanya dari ecoadu_verified_cache -->
