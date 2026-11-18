@@ -7218,7 +7218,9 @@
 
             /* Mobile-only elements hidden on desktop */
             .mobile-app-dock,
-            .alur-mobile-swipe-hint {
+            .alur-mobile-swipe-hint,
+            .footer-mobile-only-icon,
+            .footer-petugas-icon {
               display: none;
             }
 
@@ -7234,24 +7236,40 @@
 
               /* 2. Hapus Subjudul Footer & Catatan Sinkronisasi Khusus di Mobile */
               .app-footer .footer-brand .footer-brand-desc,
-              .app-footer .footer-sync-note {
+              .app-footer .footer-sync-note,
+              .app-footer .footer-emoji,
+              .app-footer .office-sep,
+              .app-footer .footer-petugas-label {
                 display: none !important;
               }
 
-              /* Footer Mobile Ringkas & Mini Button */
+              .app-footer .footer-mobile-only-icon {
+                display: inline-flex !important;
+                align-items: center;
+                justify-content: center;
+                flex-shrink: 0;
+                color: #34d399;
+              }
+
+              /* Footer Mobile Profesional, Terstruktur & Bebas Tumpang Tindih */
               .app-footer,
               body:has(#pane-beranda.active) .app-footer {
-                padding: 18px 14px calc(86px + env(safe-area-inset-bottom, 0px)) 14px !important;
+                padding: 20px 16px calc(92px + env(safe-area-inset-bottom, 0px)) 16px !important;
+              }
+
+              body:has(#pane-beranda.active) .app-footer {
+                background: linear-gradient(180deg, rgba(2, 28, 19, 0.88) 0%, #01130c 100%) !important;
+                border-top: 1px solid rgba(52, 211, 153, 0.16) !important;
               }
 
               .app-footer .footer-inner,
               body:has(#pane-beranda.active) .footer-inner {
-                gap: 12px !important;
+                gap: 14px !important;
               }
 
               .app-footer .footer-top,
               body:has(#pane-beranda.active) .footer-top {
-                gap: 10px !important;
+                gap: 12px !important;
                 flex-direction: column;
                 align-items: stretch;
               }
@@ -7261,22 +7279,64 @@
               }
 
               .app-footer .footer-brand .brand-group {
-                margin-bottom: 6px !important;
+                gap: 10px !important;
+                margin-bottom: 10px !important;
+              }
+
+              .app-footer .footer-lh-logo {
+                width: 38px;
+                height: 46px;
+              }
+
+              .app-footer .footer-brand-title {
+                font-size: 0.95rem;
+                letter-spacing: 0.02em;
+              }
+
+              .app-footer .brand-sub-kab {
+                font-size: 0.68rem !important;
+                letter-spacing: 0.08em !important;
+                color: #6ee7b7 !important;
+                margin-top: 2px;
               }
 
               .app-footer .footer-office-info {
-                margin-top: 4px !important;
+                margin-top: 0 !important;
+                padding: 10px 12px !important;
+                border-radius: 12px;
+                background: rgba(255, 255, 255, 0.035);
+                border: 1px solid rgba(167, 243, 208, 0.12);
+                display: flex;
+                flex-direction: column;
+                gap: 6px;
                 font-size: 0.72rem !important;
-                line-height: 1.45;
-                color: #9ad1b9 !important;
+                line-height: 1.42;
+                color: #b7e4cf !important;
+              }
+
+              .app-footer .office-address,
+              .app-footer .office-helpline {
+                display: flex;
+                align-items: flex-start;
+                gap: 7px;
+              }
+
+              .app-footer .office-address .footer-mobile-only-icon {
+                margin-top: 2px;
+              }
+
+              .app-footer .office-helpline {
+                align-items: center;
+                font-weight: 600;
+                color: #d1fae5;
               }
 
               .app-footer .footer-links {
                 display: flex !important;
-                flex-wrap: wrap;
+                flex-wrap: nowrap;
                 align-items: center;
-                justify-content: flex-start;
-                gap: 6px !important;
+                justify-content: space-between;
+                gap: 8px !important;
                 width: 100%;
               }
 
@@ -7284,41 +7344,70 @@
                 display: inline-flex !important;
                 align-items: center;
                 justify-content: center;
-                gap: 4px !important;
+                gap: 6px !important;
                 width: auto !important;
                 flex: 0 0 auto;
-                padding: 5px 10px !important;
-                font-size: 0.68rem !important;
-                line-height: 1.15 !important;
-                border-radius: 999px !important;
-                min-height: 28px !important;
+                height: 38px !important;
+                min-height: 38px !important;
+                padding: 0 12px !important;
+                font-size: 0.74rem !important;
+                line-height: 1 !important;
+                border-radius: 11px !important;
                 white-space: nowrap;
                 touch-action: manipulation;
+                transition: transform 0.15s ease, background-color 0.2s ease, border-color 0.2s ease;
               }
 
               .app-footer .footer-link-btn svg {
-                width: 12px !important;
-                height: 12px !important;
+                width: 14px !important;
+                height: 14px !important;
                 flex-shrink: 0;
               }
 
-              /* Redupkan Kontak DLH & Akses Petugas agar tidak mencolok di Mobile */
+              /* Redupkan Kontak DLH & Icon Login Petugas agar tidak menyaingi Panduan Warga */
               .app-footer .footer-link-btn.footer-wa-contact,
               .app-footer .footer-link-btn[href*="petugas"] {
-                background: rgba(255, 255, 255, 0.05) !important;
-                border: 1px solid rgba(167, 243, 208, 0.16) !important;
-                color: #9ad1b9 !important;
+                background: rgba(255, 255, 255, 0.055) !important;
+                border: 1px solid rgba(167, 243, 208, 0.18) !important;
+                color: #cceee0 !important;
                 font-weight: 600 !important;
                 box-shadow: none !important;
               }
 
-              /* Hanya Panduan Warga yang terlihat menonjol di Mobile */
+              .app-footer .footer-link-btn.footer-wa-contact svg {
+                color: #34d399;
+              }
+
+              /* Tombol Akses Petugas khusus Mobile: Icon Login Petugas saja */
+              .app-footer .footer-link-btn[href*="petugas"] {
+                width: 38px !important;
+                min-width: 38px !important;
+                padding: 0 !important;
+                color: #8ec9ae !important;
+              }
+
+              .app-footer .footer-link-btn svg.footer-petugas-icon {
+                display: block !important;
+                width: 16px !important;
+                height: 16px !important;
+              }
+
+              /* Tombol Panduan Warga tetap mencolok sebagai CTA utama warga */
               .app-footer .footer-link-btn[href*="panduan-warga"] {
+                flex: 1 1 auto !important;
+                padding: 0 14px !important;
+                font-size: 0.78rem !important;
                 background: linear-gradient(135deg, #10b981 0%, #059669 100%) !important;
                 border: 1px solid #6ee7b7 !important;
                 color: #ffffff !important;
                 font-weight: 800 !important;
-                box-shadow: 0 4px 12px rgba(16, 185, 129, 0.34) !important;
+                letter-spacing: 0.01em;
+                box-shadow: 0 4px 16px rgba(16, 185, 129, 0.36), inset 0 1px 0 rgba(255, 255, 255, 0.22) !important;
+              }
+
+              .app-footer .footer-link-btn[href*="panduan-warga"] svg {
+                width: 15px !important;
+                height: 15px !important;
               }
 
               .app-footer .footer-link-btn:active {
@@ -7327,17 +7416,29 @@
 
               .app-footer .footer-bottom {
                 padding-top: 12px;
-                gap: 8px;
+                padding-right: 60px;
+                gap: 7px;
                 flex-direction: column;
                 align-items: flex-start;
-                font-size: 0.72rem;
+                border-top: 1px solid rgba(167, 243, 208, 0.12);
+                font-size: 0.7rem;
+                line-height: 1.45;
+                color: #7bc7a6;
               }
 
               .app-footer .footer-bottom > div:last-child {
-                gap: 10px !important;
+                gap: 6px 12px !important;
                 flex-wrap: wrap;
-                font-size: 0.7rem;
-                opacity: 0.92;
+                font-size: 0.68rem;
+                color: #9ad1b9;
+                opacity: 0.94;
+              }
+
+              .app-footer .footer-badge-item {
+                display: inline-flex;
+                align-items: center;
+                gap: 5px;
+                white-space: nowrap;
               }
 
               /* 2. Jarak Bawah Kontainer Utama agar Seimbang dengan Footer & Mobile Dock */
@@ -7590,6 +7691,22 @@
               body:has(.modal-backdrop.show) .floating-wa-btn {
                 opacity: 0;
                 pointer-events: none;
+              }
+            }
+
+            @media (max-width: 350px) {
+              .app-footer .footer-links {
+                gap: 6px !important;
+              }
+
+              .app-footer .footer-link-btn {
+                padding: 0 10px !important;
+                font-size: 0.71rem !important;
+              }
+
+              .app-footer .footer-link-btn[href*="panduan-warga"] {
+                padding: 0 10px !important;
+                font-size: 0.74rem !important;
               }
             }
   </style>
@@ -9131,7 +9248,7 @@
             Mewujudkan pelayanan publik yang cepat, akurat, dan transparan demi kelestarian alam Lewotana Lembata.
           </p>
           <div class="footer-office-info" style="margin-top: 10px; font-size: 0.8rem; color: #a7f3d0;">
-            📍 Kantor DLH Lembata: Jl. Trans Atadei, Lewoleba, Kabupaten Lembata, NTT &bull; ☎️ Helpline: 0822-3458-2769
+            <span class="office-address"><svg class="footer-mobile-only-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg><span class="footer-emoji">📍</span> Kantor DLH Lembata: Jl. Trans Atadei, Lewoleba, Kabupaten Lembata, NTT</span><span class="office-sep"> &bull; </span><span class="office-helpline"><svg class="footer-mobile-only-icon" viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg><span class="footer-emoji">☎️</span> Helpline: 0822-3458-2769</span>
           </div>
         </div>
 
@@ -9157,7 +9274,15 @@
           </a>
           <a href="petugas.html" class="footer-link-btn" onclick="transisiKePetugas(event, this.href)"
             style="background: linear-gradient(135deg, rgba(16, 185, 129, 0.25) 0%, rgba(5, 150, 105, 0.4) 100%); border: 1.5px solid #34d399; color: #ffffff; font-weight: 800;"
-            title="Akses Dashboard Khusus Petugas Verifikator DLH Lembata">Akses Petugas ↗</a>
+            title="Akses Dashboard Khusus Petugas Verifikator DLH Lembata" aria-label="Login Petugas">
+            <svg class="footer-petugas-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor"
+              stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
+              <polyline points="10 17 15 12 10 7"></polyline>
+              <line x1="15" y1="12" x2="3" y2="12"></line>
+            </svg>
+            <span class="footer-petugas-label">Akses Petugas ↗</span>
+          </a>
         </div>
       </div>
 
@@ -9172,8 +9297,8 @@
           &copy; 2026 Pemerintah Kabupaten Lembata &bull; Dinas Lingkungan Hidup.
         </div>
         <div style="display: flex; gap: 16px;">
-          <span>🌱 Gerakan Lewotana Lestari</span>
-          <span>⚡ Respons Cepat Lapangan</span>
+          <span class="footer-badge-item"><svg class="footer-mobile-only-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10Z"></path><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"></path></svg><span class="footer-emoji">🌱</span> Gerakan Lewotana Lestari</span>
+          <span class="footer-badge-item"><svg class="footer-mobile-only-icon" viewBox="0 0 24 24" width="12" height="12" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon></svg><span class="footer-emoji">⚡</span> Respons Cepat Lapangan</span>
         </div>
       </div>
     </div>
