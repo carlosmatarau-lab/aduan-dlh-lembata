@@ -7219,9 +7219,28 @@
             /* Mobile-only elements hidden on desktop */
             .mobile-app-dock,
             .alur-mobile-swipe-hint,
-            .footer-mobile-only-icon,
-            .footer-petugas-icon {
+            .footer-mobile-only-icon {
               display: none;
+            }
+
+            /* Tombol Akses Petugas Desktop & Mobile: hanya tampilkan ikon login */
+            .app-footer .footer-petugas-label {
+              display: none;
+            }
+
+            .app-footer .footer-link-btn[href*="petugas"] {
+              display: inline-flex;
+              align-items: center;
+              justify-content: center;
+              width: 38px;
+              height: 36px;
+              padding: 0;
+            }
+
+            .app-footer .footer-link-btn svg.footer-petugas-icon {
+              display: block;
+              width: 17px;
+              height: 17px;
             }
 
             /* ===================================================================
