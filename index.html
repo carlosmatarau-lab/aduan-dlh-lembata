@@ -7252,11 +7252,10 @@
             }
 
             .footer-desktop-qr {
-              display: flex;
+              display: inline-flex;
               align-items: center;
-              gap: 12px;
-              width: 100%;
-              padding: 9px 14px 9px 9px;
+              justify-content: center;
+              padding: 6px;
               border-radius: 12px;
               background: rgba(255, 255, 255, 0.055);
               border: 1px solid rgba(167, 243, 208, 0.18);
@@ -7264,7 +7263,7 @@
 
             .footer-qr-frame {
               background: #ffffff;
-              padding: 5px;
+              padding: 6px;
               border-radius: 8px;
               line-height: 0;
               flex-shrink: 0;
@@ -7273,44 +7272,9 @@
 
             .footer-qr-frame img {
               display: block;
-              width: 70px;
-              height: 70px;
+              width: 84px;
+              height: 84px;
               object-fit: contain;
-            }
-
-            .footer-qr-meta {
-              display: flex;
-              flex-direction: column;
-              gap: 3px;
-              min-width: 0;
-            }
-
-            .footer-qr-kicker {
-              font-family: 'Outfit', sans-serif;
-              font-size: 0.67rem;
-              font-weight: 800;
-              letter-spacing: 0.06em;
-              text-transform: uppercase;
-              color: #6ee7b7;
-              line-height: 1.2;
-            }
-
-            .footer-qr-desc {
-              font-size: 0.74rem;
-              font-weight: 500;
-              color: #ecfdf5;
-              line-height: 1.35;
-              margin: 0;
-            }
-
-            .footer-qr-url {
-              font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
-              font-size: 0.68rem;
-              color: #a7f3d0;
-              opacity: 0.92;
-              white-space: nowrap;
-              overflow: hidden;
-              text-overflow: ellipsis;
             }
 
             /* ===================================================================
@@ -9384,13 +9348,9 @@
 
           <div class="footer-desktop-qr" aria-label="QR Code Akses Cepat Web ECOADU Lembata">
             <div class="footer-qr-frame">
-              <img src="assets/qr-code-ecoadu.svg" alt="QR Code Akses Web ECOADU LEMBATA" width="70" height="70"
-                loading="lazy" onerror="this.onerror=null; this.src='assets/qr-code-ecoadu.png';">
-            </div>
-            <div class="footer-qr-meta">
-              <span class="footer-qr-kicker">Pindai QR Akses Web</span>
-              <p class="footer-qr-desc">Scan kamera HP untuk buka portal pengaduan.</p>
-              <span class="footer-qr-url">aduan-dlh-lembata.vercel.app</span>
+              <img src="assets/qr-code-ecoadu.svg" alt="QR Code Akses Web ECOADU LEMBATA" width="84" height="84"
+                loading="lazy" title="Pindai QR Code untuk membuka web ECOADU Lembata"
+                onerror="this.onerror=null; this.src='assets/qr-code-ecoadu.png';">
             </div>
           </div>
         </div>
