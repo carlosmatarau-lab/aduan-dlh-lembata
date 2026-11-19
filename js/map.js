@@ -184,21 +184,14 @@ class LembataMapEngine {
     return status || 'Baru';
   }
 
-  /* Warna Status Aduan */
+  /* Warna Status Aduan (Sinkron lintas halaman warga & petugas) */
   getMarkerColor(status) {
     if (this.isTidakDapatDitindaklanjuti(status)) return '#64748b'; // Abu-abu netral
-    switch (status) {
-      case 'Baru':
-      case 'Aduan Diterima': return '#f59e0b'; // Amber / Kuning Jingga
-      case 'Verifikasi Administrasi': return '#ca8a04'; // Emas
-      case 'Menunggu Verifikasi Lapangan': return '#ea580c'; // Oranye
-      case 'Sedang Diverifikasi':
-      case 'Diverifikasi': return '#8b5cf6'; // Ungu
-      case 'Dalam Penanganan':
-      case 'Ditindaklanjuti': return '#2563eb'; // Biru
-      case 'Selesai': return '#059669'; // Hijau
-      default: return '#10b981';
-    }
+    const clean = String(status || 'Baru').trim().toLowerCase();
+    if (clean.includes('verif') || clean.includes('sedang')) return '#8b5cf6'; // Ungu
+    if (clean.includes('tindak') || clean.includes('proses') || clean.includes('penanganan')) return '#2563eb'; // Biru
+    if (clean.includes('selesai') || clean.includes('tuntas')) return '#059669'; // Hijau
+    return '#f59e0b'; // Amber (Baru / Aduan Diterima)
   }
 
   /* Custom Leaflet Pin Icon (Gov Clean Pin dengan Dot Putih Solid dan Halo Denyut) */

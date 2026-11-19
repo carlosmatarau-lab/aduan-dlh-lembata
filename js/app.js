@@ -2727,11 +2727,11 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
               Terima kasih telah menyampaikan pengaduan kepada Dinas Lingkungan Hidup Kabupaten Lembata. Pengaduan Anda telah diterima dan dilakukan pemeriksaan oleh petugas. Berdasarkan hasil pemeriksaan, laporan belum dapat ditindaklanjuti lebih lanjut dengan alasan sebagaimana tercantum pada hasil verifikasi.
             </p>
             <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 0.7rem; font-weight: 700; color: #475569;">
-              <span style="background: #dcfce7; color: #166534; padding: 2px 7px; border-radius: 99px;">1. Diterima</span>
+              <span style="background: #fef3c7; color: #b45309; padding: 2px 7px; border-radius: 99px;">1. Diterima</span>
               <span>→</span>
-              <span style="background: #ede9fe; color: #6d28d9; padding: 2px 7px; border-radius: 99px;">2. Diperiksa</span>
+              <span style="background: #f3e8ff; color: #7e22ce; padding: 2px 7px; border-radius: 99px;">2. Diperiksa</span>
               <span>→</span>
-              <span style="background: #e2e8f0; color: #334155; padding: 2px 7px; border-radius: 99px;">3. Tidak Dapat Ditindaklanjuti</span>
+              <span style="background: #f1f5f9; color: #475569; padding: 2px 7px; border-radius: 99px;">3. Tidak Dapat Ditindaklanjuti</span>
             </div>
           </div>
         ` : ''}

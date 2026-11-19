@@ -389,25 +389,25 @@
     }
 
     .kpi-card-baru .kpi-icon-wrap {
-      background: #fefce8;
-      color: #ca8a04;
-      border: 1px solid #fef08a;
+      background: #fef3c7;
+      color: #b45309;
+      border: 1px solid #fde68a;
     }
 
     .kpi-card-proses .kpi-icon-wrap {
-      background: #eff6ff;
-      color: #2563eb;
+      background: #dbeafe;
+      color: #1d4ed8;
       border: 1px solid #bfdbfe;
     }
 
     .kpi-card-selesai .kpi-icon-wrap {
-      background: #ecfdf5;
-      color: #10b981;
+      background: #dcfce7;
+      color: #047857;
       border: 1px solid #a7f3d0;
     }
 
     .kpi-card-tidak-dapat .kpi-icon-wrap {
-      background: #f8fafc;
+      background: #f1f5f9;
       color: #475569;
       border: 1px solid #cbd5e1;
     }
@@ -781,28 +781,28 @@
     }
 
     .badge-baru {
-      background: #fffbeb !important;
-      color: #92400e !important;
+      background: #fef3c7 !important;
+      color: #b45309 !important;
       border: 1px solid #fde68a !important;
     }
 
     .badge-diverifikasi,
     .badge-sedang-diverifikasi {
-      background: #eef2ff !important;
-      color: #3730a3 !important;
-      border: 1px solid #c7d2fe !important;
+      background: #f3e8ff !important;
+      color: #7e22ce !important;
+      border: 1px solid #d8b4fe !important;
     }
 
     .badge-ditindaklanjuti,
     .badge-dalam-penanganan {
-      background: #eff6ff !important;
-      color: #1e40af !important;
+      background: #dbeafe !important;
+      color: #1d4ed8 !important;
       border: 1px solid #bfdbfe !important;
     }
 
     .badge-selesai {
-      background: #ecfdf5 !important;
-      color: #065f46 !important;
+      background: #dcfce7 !important;
+      color: #047857 !important;
       border: 1px solid #a7f3d0 !important;
     }
 
@@ -1822,11 +1822,11 @@
     }
 
     .dot-red {
-      background: #e11d48;
+      background: #f59e0b;
     }
 
     .dot-yellow {
-      background: #f59e0b;
+      background: #8b5cf6;
     }
 
     .dot-blue {
@@ -1834,7 +1834,7 @@
     }
 
     .dot-green {
-      background: #10b981;
+      background: #059669;
     }
 
     /* Custom Leaflet Marker Styling */
@@ -4362,7 +4362,7 @@
     }
 
     .aduan-compact-card.status-stripe-verif {
-      border-left-color: #6366f1;
+      border-left-color: #8b5cf6;
     }
 
     .aduan-compact-card.status-stripe-tindak {
@@ -4370,7 +4370,7 @@
     }
 
     .aduan-compact-card.status-stripe-selesai {
-      border-left-color: #10b981;
+      border-left-color: #059669;
     }
 
     .aduan-compact-card.status-stripe-tidak-dapat {
@@ -4571,14 +4571,18 @@
     :root {
       --st-baru-text: #b45309;
       --st-baru-bg: #fef3c7;
-      --st-verif-text: #6d28d9;
-      --st-verif-bg: #ede9fe;
+      --st-verif-text: #7e22ce;
+      --st-verif-bg: #f3e8ff;
+      --st-diverifikasi-text: #7e22ce;
+      --st-diverifikasi-bg: #f3e8ff;
       --st-proses-text: #1d4ed8;
       --st-proses-bg: #dbeafe;
+      --st-ditindaklanjuti-text: #1d4ed8;
+      --st-ditindaklanjuti-bg: #dbeafe;
       --st-selesai-text: #047857;
-      --st-selesai-bg: #d1fae5;
+      --st-selesai-bg: #dcfce7;
       --st-tolak-text: #475569;
-      --st-tolak-bg: #e2e8f0;
+      --st-tolak-bg: #f1f5f9;
     }
 
     /* Tampilan Bersyarat: Daftar Ringkas vs Tabel Desktop */
@@ -4719,7 +4723,7 @@
       right: -2px;
       width: 10px;
       height: 10px;
-      background: #ef4444;
+      background: #f59e0b;
       border: 2px solid #ffffff;
       border-radius: 50%;
     }
@@ -4961,26 +4965,26 @@
 
     /* Palet Warna Status SPBE */
     .rk-st-baru {
-      background: #fffbeb !important;
-      color: #92400e !important;
+      background: #fef3c7 !important;
+      color: #b45309 !important;
       border: 1px solid #fde68a !important;
     }
 
     .rk-st-diverifikasi {
-      background: #eef2ff !important;
-      color: #3730a3 !important;
-      border: 1px solid #c7d2fe !important;
+      background: #f3e8ff !important;
+      color: #7e22ce !important;
+      border: 1px solid #d8b4fe !important;
     }
 
     .rk-st-ditindaklanjuti {
-      background: #eff6ff !important;
-      color: #1e40af !important;
+      background: #dbeafe !important;
+      color: #1d4ed8 !important;
       border: 1px solid #bfdbfe !important;
     }
 
     .rk-st-selesai {
-      background: #ecfdf5 !important;
-      color: #065f46 !important;
+      background: #dcfce7 !important;
+      color: #047857 !important;
       border: 1px solid #a7f3d0 !important;
     }
 
@@ -7868,20 +7872,20 @@
           if (this.mapMode === 'markers' || this.mapMode === 'hybrid') {
             filtered.forEach(item => {
               const statusClean = (item.status || 'Baru').toLowerCase();
-              let pinBg = '#e11d48'; // Baru
+              let pinBg = '#f59e0b'; // Baru
               let iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>';
 
               if (this.isTidakDapatDitindaklanjuti(item.status)) {
                 pinBg = '#64748b';
                 iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;"><circle cx="12" cy="12" r="10"/><line x1="12" y1="16" x2="12" y2="12"/><line x1="12" y1="8" x2="12.01" y2="8"/></svg>';
               } else if (statusClean.includes('verif')) {
-                pinBg = '#4f46e5';
+                pinBg = '#8b5cf6';
                 iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>';
               } else if (statusClean.includes('tindak') || statusClean.includes('proses') || statusClean.includes('penanganan')) {
                 pinBg = '#2563eb';
                 iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;"><polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>';
               } else if (statusClean.includes('selesai') || statusClean.includes('tuntas')) {
-                pinBg = '#10b981';
+                pinBg = '#059669';
                 iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;"><polyline points="20 6 9 17 4 12"/></svg>';
               }
 
@@ -11151,7 +11155,7 @@
 
           const stNorm = this.normalizeStatus(item.status);
           let stripeClass = 'status-stripe-baru';
-          if (stNorm.key === 'tidak-dapat-ditindaklanjuti' || stNorm.key === 'ditolak') stripeClass = 'status-stripe-tidak-dapat';
+          if (stNorm.key === 'tidak_dapat_ditindaklanjuti' || stNorm.key === 'tidak-dapat-ditindaklanjuti' || stNorm.key === 'ditolak') stripeClass = 'status-stripe-tidak-dapat';
           else if (stNorm.key === 'diverifikasi') stripeClass = 'status-stripe-verif';
           else if (stNorm.key === 'ditindaklanjuti') stripeClass = 'status-stripe-tindak';
           else if (stNorm.key === 'selesai') stripeClass = 'status-stripe-selesai';
