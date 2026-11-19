@@ -455,7 +455,7 @@
       gap: 16px;
     }
 
-    .table-card-header>div:first-child {
+    .table-card-header > div:first-child {
       flex: 1 1 auto;
       min-width: 0;
     }
@@ -5116,15 +5116,8 @@
     }
 
     @keyframes ecoaduStatPulse {
-
-      0%,
-      100% {
-        opacity: 0.42;
-      }
-
-      50% {
-        opacity: 0.9;
-      }
+      0%, 100% { opacity: 0.42; }
+      50% { opacity: 0.9; }
     }
 
     .kpi-val.stat-loading,
@@ -5428,8 +5421,8 @@
       </section>
       <!-- Instant 0 ms KPI Hydration strictly from ecoadu_verified_cache -->
       <script>
-        (function () {
-          window.hydratePetugasVerifiedCacheKPIs = function () {
+        (function() {
+          window.hydratePetugasVerifiedCacheKPIs = function() {
             try {
               var raw = localStorage.getItem('ecoadu_verified_cache');
               if (!raw) return false;
@@ -5643,13 +5636,13 @@
               <!-- Tombol Pengaturan Khusus (Desktop & Mobile) -->
               <button type="button" class="btn-mobile-opsi-data" id="btnToggleMobileOpsi"
                 onclick="window.portal && window.portal.toggleMobileOpsiMenu(event)"
-                title="Pengaturan Data, Sinkronisasi &amp; Ekspor" aria-expanded="false" aria-haspopup="true">
+                title="Pengaturan Data, Sinkronisasi &amp; Ekspor"
+                aria-expanded="false" aria-haspopup="true">
                 <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round"
                   stroke-linejoin="round"
                   style="width: 15px; height: 15px; display: inline-block; vertical-align: middle; flex-shrink: 0;">
                   <circle cx="12" cy="12" r="3" />
-                  <path
-                    d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
+                  <path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
                 </svg>
                 <span>Pengaturan</span>
                 <svg class="chevron-pengaturan" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"
@@ -5658,8 +5651,7 @@
                 </svg>
               </button>
 
-              <div class="table-header-buttons" id="tableHeaderButtonsMenu" role="menu"
-                aria-label="Menu Pengaturan Data">
+              <div class="table-header-buttons" id="tableHeaderButtonsMenu" role="menu" aria-label="Menu Pengaturan Data">
                 <div class="settings-dropdown-label">Pengaturan &amp; Alat Data</div>
                 <!-- Refresh / Sync Manual -->
                 <button type="button" class="btn-action-tool" id="btnManualSync"
@@ -7311,7 +7303,7 @@
             };
             localStorage.setItem(window.ECOADU_VERIFIED_CACHE_KEY || 'ecoadu_verified_cache', JSON.stringify(payload));
             written = payload;
-          } catch (e) { }
+          } catch (e) {}
         }
 
         const senderId = (window.dlhRealtime && window.dlhRealtime.instanceId) || (this._syncSenderId || (this._syncSenderId = Math.random().toString(36).slice(2, 10)));
@@ -7330,7 +7322,7 @@
             }
             this._ecoaduSyncChannel.postMessage(msgPayload);
           }
-        } catch (e) { }
+        } catch (e) {}
 
         if (broadcastType && window.dlhRealtime && typeof window.dlhRealtime.broadcast === 'function') {
           window.dlhRealtime.broadcast(broadcastType, {
@@ -12171,4 +12163,557 @@
           });
         }
 
-...[truncated for diff preview]
+        const btnUploadToGas = document.getElementById('btnUploadLocalToGas');
+        if (btnUploadToGas) {
+          btnUploadToGas.addEventListener('click', async () => {
+            const count = (window.aduanStore.getAll() || []).length;
+            if (!confirm(`Unggah ${count} data aduan lokal saat ini ke Google Spreadsheet DLH Lembata?`)) return;
+            btnUploadToGas.disabled = true;
+            btnUploadToGas.textContent = 'Mengunggah...';
+            const res = await window.aduanStore.uploadAllLocalToGAS();
+            btnUploadToGas.disabled = false;
+            btnUploadToGas.textContent = 'Unggah ke Sheets';
+            if (res.success) {
+              this.updateKPIs();
+              this.renderTable();
+              this.renderMapLayers();
+              updateStatusIndicator();
+              this.showToast(`Berhasil mengunggah ${res.uploaded} data ke Google Spreadsheet.`, 'success');
+            } else {
+              this.showToast(`Gagal mengunggah: ${res.error || 'Terjadi kendala jaringan'}`, 'warning');
+            }
+          });
+        }
+
+        if (btnReset) {
+          btnReset.addEventListener('click', async () => {
+            if (confirm('Kosongkan seluruh data aduan menjadi 0 aduan (Fresh Start) di Google Spreadsheet dan semua perangkat (HP Petugas/Laptop)?')) {
+              let resetRes = null;
+              if (window.aduanStore && typeof window.aduanStore.resetDatabaseToZero === 'function') {
+                resetRes = await window.aduanStore.resetDatabaseToZero();
+              } else {
+                window.aduanStore.resetToDefault();
+              }
+              if ((resetRes && resetRes.gasSynced) || (window.aduanStore && !window.aduanStore.hasGasConfigured())) {
+                await this.syncVerifiedCacheAndBroadcast('petugas-reset', 'DATA_RESET', { count: 0 }, true);
+              }
+              this.updateKPIs();
+              this.renderTable();
+              this.renderMapLayers();
+              updateStatusIndicator();
+              modal.classList.remove('show');
+              this.showToast('Seluruh data berhasil dikosongkan (0 aduan). Siap pengujian baru.', 'success');
+            }
+          });
+        }
+      }
+
+      async manualSync() {
+        const btn = document.getElementById('btnManualSync');
+        const icon = document.getElementById('syncIconSpin');
+        if (icon) icon.style.animation = 'spin 0.8s linear infinite';
+        if (btn) btn.disabled = true;
+
+        this.showToast('Menghubungkan & mengambil data Google Spreadsheet...', 'info');
+
+        try {
+          if (window.aduanStore) {
+            if (typeof window.aduanStore.mapRemoteRecord !== 'function' && typeof AduanDataStore !== 'undefined') {
+              window.aduanStore.mapRemoteRecord = AduanDataStore.prototype.mapRemoteRecord.bind(window.aduanStore);
+            }
+            const res = await window.aduanStore.syncFromGAS(false);
+            if (res && res.success) {
+              await this.syncVerifiedCacheAndBroadcast('petugas-manual-sync', 'STATS_UPDATED', null, false);
+              const remoteCount = res.remoteCount !== undefined ? res.remoteCount : (res.count || 0);
+              this.showToast(`Berhasil menyinkronkan ${remoteCount} aduan dari Google Spreadsheet.`, 'success');
+            } else if (res && res.error) {
+              this.showToast(`Info Sinkronisasi: ${res.error}`, 'warning');
+            } else {
+              this.showToast('Data aduan berhasil disegarkan.', 'success');
+            }
+          }
+        } catch (e) {
+          console.warn('Manual sync error:', e);
+          this.showToast(`Info Sinkronisasi: ${e.message}`, 'warning');
+        } finally {
+          if (typeof this.updateStatusIndicator === 'function') this.updateStatusIndicator();
+          this.updateKPIs();
+          this.renderTable();
+          this.renderMapLayers();
+          if (btn) btn.disabled = false;
+          if (icon) icon.style.animation = 'none';
+        }
+      }
+
+      async resetOfficialData() {
+        if (!confirm('KONFIRMASI PENYEGARAN TOTAL:\n\nApakah Anda ingin mengosongkan seluruh data aduan menjadi 0 aduan (Fresh Start) di Google Spreadsheet dan semua perangkat (HP Petugas & Laptop)?\n\nSetelah ini sistem akan bersih total untuk pengujian laporan baru dari awal.')) {
+          return;
+        }
+
+        const authCode = prompt('PENGAMANAN DATABASE:\n\nTindakan ini akan mengosongkan seluruh basis data aduan menjadi 0 laporan.\nUntuk konfirmasi eksekusi, ketik kata "RESET" atau masukkan PIN Petugas:');
+        if (!authCode) {
+          this.showToast('Operasi pengosongan database dibatalkan.', 'info');
+          return;
+        }
+
+        const inputTrimmed = authCode.trim();
+        if (inputTrimmed.toUpperCase() !== 'RESET' && inputTrimmed !== '1999') {
+          this.showToast('Kode otorisasi atau PIN salah. Pengosongan database dibatalkan demi keamanan.', 'warning');
+          return;
+        }
+
+        this.showToast('Sedang menyegarkan sistem dan mengosongkan data...', 'info');
+
+        if (window.aduanStore && typeof window.aduanStore.resetDatabaseToZero === 'function') {
+          const res = await window.aduanStore.resetDatabaseToZero();
+          if ((res && res.gasSynced) || !window.aduanStore.hasGasConfigured()) {
+            await this.syncVerifiedCacheAndBroadcast('petugas-reset', 'DATA_RESET', { count: 0 }, true);
+          }
+          this.updateKPIs();
+          this.renderTable();
+          this.renderMapLayers();
+          this.showToast(res.message || 'Penyegaran Berhasil! Sistem kini bersih (0 aduan) siap untuk pengujian baru.', 'success');
+        } else if (window.aduanStore && typeof window.aduanStore.resetToOfficialDefaults === 'function') {
+          window.aduanStore.resetToOfficialDefaults();
+          if (!window.aduanStore.hasGasConfigured()) {
+            await this.syncVerifiedCacheAndBroadcast('petugas-reset', 'DATA_RESET', { count: 0 }, false);
+          }
+          this.updateKPIs();
+          this.renderTable();
+          this.renderMapLayers();
+          this.showToast('Penyegaran Berhasil! Sistem kini bersih (0 aduan).', 'success');
+        }
+      }
+
+      setupRealtimeListener() {
+        const reloadAll = (hydrateFirst = false) => {
+          if (hydrateFirst && window.aduanStore) {
+            if (typeof window.aduanStore.hydrateFromVerifiedCache === 'function') {
+              window.aduanStore.hydrateFromVerifiedCache(true);
+            } else if (typeof window.aduanStore.hydrateFromSharedState === 'function') {
+              window.aduanStore.hydrateFromSharedState(true);
+            }
+          }
+          this.updateKPIs();
+          this.renderTable();
+          this.renderMapLayers();
+          const detailModal = document.getElementById('modalDetailAduan');
+          if (detailModal && detailModal.classList.contains('show') && this._currentModalItem && this._currentModalItem.id) {
+            this.showDetailModal(this._currentModalItem.id);
+          }
+        };
+
+        if (window.dlhRealtime) {
+          window.dlhRealtime.listen((msg) => {
+            if (!msg || !msg.type) return;
+
+            reloadAll(true);
+
+            if (msg.type === 'ADUAN_BARU') {
+              const payload = msg.payload || msg.data || {};
+              const id = payload.id || '';
+              const nama = (payload.item && payload.item.namaPelapor) ? payload.item.namaPelapor : 'Masyarakat';
+              this.showToast(`Laporan Aduan Baru (${id}) diterima dari ${nama}.`, 'success');
+            }
+          });
+        }
+
+        // Dengarkan saluran BroadcastChannel('ecoadu_sync') langsung (satu channel terpadu, abaikan self-echo)
+        try {
+          if (typeof BroadcastChannel !== 'undefined') {
+            if (!this._ecoaduSyncChannel) {
+              this._ecoaduSyncChannel = new BroadcastChannel('ecoadu_sync');
+            }
+            this._ecoaduSyncChannel.onmessage = (ev) => {
+              const d = ev && ev.data ? ev.data : null;
+              const localSender = (window.dlhRealtime && window.dlhRealtime.instanceId) || this._syncSenderId;
+              if (d && d.sender && localSender && d.sender === localSender) return;
+              if (typeof this.updateStatusIndicator === 'function') this.updateStatusIndicator();
+              reloadAll(true);
+            };
+          }
+        } catch (e) {}
+
+        // Saat deleteAduan terkonfirmasi sukses di GAS: perbarui ecoadu_verified_cache, kirim BroadcastChannel, & paksa refetch server
+        window.addEventListener('ecoaduDeleteConfirmed', async (e) => {
+          const deletedId = e && e.detail ? e.detail.id : '';
+          await this.syncVerifiedCacheAndBroadcast('petugas-delete-confirmed', 'ADUAN_DELETED', { id: deletedId }, true);
+          reloadAll(false);
+        });
+
+        // Sinkronisasi otomatis antar tab browser via storage event
+        const verifiedKey = window.ECOADU_VERIFIED_CACHE_KEY || 'ecoadu_verified_cache';
+        window.addEventListener('storage', (e) => {
+          if (e.key === verifiedKey || e.key === 'dlh_lembata_aduan_v5' || e.key === 'dlh_lembata_realtime_ping' || e.key === 'dlh_lembata_aduan_v1') {
+            if (typeof this.updateStatusIndicator === 'function') this.updateStatusIndicator();
+            reloadAll(true);
+          }
+        });
+
+        window.addEventListener('aduanDataSynced', (e) => {
+          if (typeof this.updateStatusIndicator === 'function') {
+            this.updateStatusIndicator(e && e.detail ? e.detail.timestamp : null);
+          }
+          reloadAll(false);
+        });
+
+        window.addEventListener('aduanStatsSynced', () => {
+          if (typeof this.updateStatusIndicator === 'function') this.updateStatusIndicator();
+          this.updateKPIs();
+        });
+      }
+
+      /* ===================================================================
+         5. FITUR IMPOR & PENCATATAN PESAN WHATSAPP WARGA
+         =================================================================== */
+      openWaImportModal() {
+        const modal = document.getElementById('modalWaImport');
+        const input = document.getElementById('inputWaRawText');
+        const preview = document.getElementById('waParsePreviewCard');
+        const btnSave = document.getElementById('btnSaveWaImport');
+        if (input) input.value = '';
+        if (preview) preview.style.display = 'none';
+        if (btnSave) btnSave.disabled = true;
+        this.currentParsedWaData = null;
+        if (modal) modal.classList.add('show');
+      }
+
+      async pasteClipboardToWaImport() {
+        const input = document.getElementById('inputWaRawText');
+        if (!input) return;
+        try {
+          if (navigator.clipboard && navigator.clipboard.readText) {
+            const text = await navigator.clipboard.readText();
+            if (text && text.trim()) {
+              input.value = text;
+              this.parseWaText();
+              this.showToast('Teks pesan WhatsApp berhasil ditempel dari clipboard.', 'success');
+              return;
+            }
+          }
+        } catch (e) {
+          console.warn('Clipboard read failed:', e);
+        }
+        input.focus();
+        this.showToast('Gunakan pintasan Ctrl+V (atau tempel manual) pada kotak teks.', 'info');
+      }
+
+      parseWaText() {
+        const input = document.getElementById('inputWaRawText');
+        const raw = (input ? input.value : '').trim();
+        if (!raw) {
+          this.showToast('Silakan tempelkan teks pesan WhatsApp terlebih dahulu.', 'warning');
+          return;
+        }
+
+        // Helper regex extraction
+        const clean = (val) => (val || '').replace(/[\*\_]/g, '').trim();
+
+        // 1. Ekstrak Nomor Register (misal ADU-26-K8M4, ADU-LMB-2026-1017-8K4F, atau ADU-LMB-2026-001)
+        let id = '';
+        const matchId = raw.match(/NOMOR\s+REGISTER:\s*([A-Za-z0-9\-]+)/i) || raw.match(/(ADU-[A-Za-z0-9\-]+)/i);
+        if (matchId && matchId[1]) {
+          id = clean(matchId[1]).toUpperCase();
+        } else {
+          id = (window.aduanStore && typeof window.aduanStore.generateNewId === 'function')
+            ? window.aduanStore.generateNewId()
+            : (function () {
+              const chars = '23456789ABCDEFGHJKLMNPQRSTUVWXYZ';
+              let code = '';
+              for (let i = 0; i < 4; i++) code += chars.charAt(Math.floor(Math.random() * chars.length));
+              return `ADU-${String(new Date().getFullYear()).slice(-2)}-${code}`;
+            })();
+        }
+
+        // 2. Ekstrak Nama Pelapor
+        let nama = '';
+        const matchNama = raw.match(/Nama\s+Pelapor:\s*([^\n\r]+)/i);
+        if (matchNama && matchNama[1]) nama = clean(matchNama[1]);
+        if (!nama || nama === '-') nama = 'Masyarakat (Laporan WA)';
+
+        // 3. Ekstrak Nomor WhatsApp / HP
+        let noHp = '';
+        const matchHp = raw.match(/Nomor\s+WhatsApp(?:\s*\/\s*HP)?:\s*([^\n\r]+)/i) || raw.match(/No\s*HP:\s*([^\n\r]+)/i);
+        if (matchHp && matchHp[1]) {
+          noHp = clean(matchHp[1]);
+          const dHp = noHp.replace(/[^0-9]/g, '');
+          if (dHp.startsWith('8') && dHp.length >= 9 && dHp.length <= 13) noHp = '0' + dHp;
+          else if (dHp.startsWith('628') && dHp.length >= 11 && dHp.length <= 15) noHp = '0' + dHp.slice(2);
+          else if (dHp.startsWith('08')) noHp = dHp;
+        }
+
+        // 4. Ekstrak Alamat Domisili
+        let alamat = '';
+        const matchAlamat = raw.match(/Alamat\s+Domisili:\s*([^\n\r]+)/i) || raw.match(/Alamat:\s*([^\n\r]+)/i);
+        if (matchAlamat && matchAlamat[1]) alamat = clean(matchAlamat[1]);
+
+        // 5. Ekstrak Kecamatan
+        let kecamatan = 'Nubatukan';
+        const matchKec = raw.match(/Kecamatan:\s*([^\n\r]+)/i);
+        if (matchKec && matchKec[1]) {
+          const kecRaw = clean(matchKec[1]);
+          const kecDict = (typeof KECAMATAN_LEMBATA !== 'undefined' ? KECAMATAN_LEMBATA : (window.KECAMATAN_LEMBATA || {}));
+          const foundKec = Object.keys(kecDict).find(k => k.toLowerCase() === kecRaw.toLowerCase());
+          kecamatan = foundKec || kecRaw || 'Nubatukan';
+        }
+
+        // 6. Ekstrak Desa / Kelurahan
+        let desa = '';
+        const matchDesa = raw.match(/Desa\s*(?:\/\s*Kelurahan)?:\s*([^\n\r]+)/i);
+        if (matchDesa && matchDesa[1]) desa = clean(matchDesa[1]);
+
+        // 7. Ekstrak Patokan Lokasi Detail
+        let lokasiDetail = '';
+        const matchLok = raw.match(/Patokan\s+Lokasi\s+Detail:\s*([^\n\r]+)/i) || raw.match(/Lokasi\s+Detail:\s*([^\n\r]+)/i);
+        if (matchLok && matchLok[1]) lokasiDetail = clean(matchLok[1]);
+
+        // 8. Ekstrak Titik Koordinat GPS (Dukungan URL Google Maps & Titik Satelit Presisi)
+        let lat = null;
+        let lng = null;
+        const matchGps = raw.match(/Titik\s+Koordinat(?:\s+GPS)?:\s*(-?[0-9\.]+)\s*,\s*([0-9\.]+)/i) ||
+          raw.match(/maps\.google\.com\/(?:maps)?\?q=(-?[0-9\.]+),([0-9\.]+)/i) ||
+          raw.match(/google\.com\/maps\?q=(-?[0-9\.]+),([0-9\.]+)/i) ||
+          raw.match(/@(-?[0-9\.]+),([0-9\.]+)/i) ||
+          raw.match(/(-?8\.[0-9]+)\s*,\s*(12[3-4]\.[0-9]+)/i);
+        if (matchGps && matchGps[1] && matchGps[2]) {
+          lat = parseFloat(matchGps[1]);
+          lng = parseFloat(matchGps[2]);
+        }
+
+        // 9. Ekstrak Jenis Pencemaran
+        let jenisPencemaran = 'Pencemaran Lingkungan';
+        const matchJenis = raw.match(/Jenis\s+Pencemaran:\s*([^\n\r]+)/i);
+        if (matchJenis && matchJenis[1]) jenisPencemaran = clean(matchJenis[1]);
+
+        // 10. Ekstrak Tanggal Kejadian
+        let tanggalKejadian = new Date().toISOString().split('T')[0];
+        const matchTgl = raw.match(/Tanggal\s+Kejadian:\s*([^\n\r]+)/i);
+        if (matchTgl && matchTgl[1]) tanggalKejadian = clean(matchTgl[1]);
+
+        // 11. Ekstrak Sumber Dugaan
+        let sumberDugaan = '-';
+        const matchSumber = raw.match(/Dugaan\s+Sumber:\s*([^\n\r]+)/i);
+        if (matchSumber && matchSumber[1]) sumberDugaan = clean(matchSumber[1]);
+
+        // 12. Ekstrak Uraian Kronologi
+        let uraian = '';
+        const matchUraian = raw.match(/URAIAN\s+KRONOLOGI:\s*([\s\S]*?)(?=(?:⚖️|🏛️|PENYELESAIAN|PERNAH|📸|BUKTI\s+FOTO|Status:\s*Pelapor|----------------|_Laporan|$))/i);
+        if (matchUraian && matchUraian[1]) {
+          uraian = clean(matchUraian[1]);
+        }
+        if (!uraian || uraian === '-') {
+          uraian = `Pengaduan masuk dari warga via pesan WhatsApp resmi mengenai dugaan ${jenisPencemaran} di wilayah Desa ${desa || '-'}, Kecamatan ${kecamatan}.`;
+        }
+
+        // 13. Ekstrak Penyelesaian yang Diinginkan
+        let penyelesaian = '-';
+        const matchPenyelesaian = raw.match(/PENYELESAIAN\s+YANG\s+DIINGINKAN:\s*([\s\S]*?)(?=(?:🏛️|PERNAH|📸|BUKTI\s+FOTO|----------------|_Laporan|$))/i);
+        if (matchPenyelesaian && matchPenyelesaian[1]) {
+          penyelesaian = clean(matchPenyelesaian[1]);
+        }
+
+        // 14. Ekstrak Pernah Menyampaikan Pengaduan
+        let riwayatPengaduan = '-';
+        const matchRiwayat = raw.match(/PERNAH\s+MENYAMPAIKAN\s+PENGADUAN:\s*([\s\S]*?)(?=(?:📸|BUKTI\s+FOTO|----------------|_Laporan|$))/i);
+        if (matchRiwayat && matchRiwayat[1]) {
+          const cRiw = clean(matchRiwayat[1]);
+          riwayatPengaduan = (cRiw && cRiw.toLowerCase() !== 'belum pernah') ? cRiw : '-';
+        }
+
+        const now = new Date();
+        const formattedTimestamp = `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}-${String(now.getDate()).padStart(2, '0')} ${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+
+        // Periksa apakah ID ini sudah tercatat sebelumnya di database untuk mempertahankan seluruh foto bukti
+        const existingRecord = (window.aduanStore && id) ? window.aduanStore.getById(id) : null;
+        let preservedPhotos = [];
+        if (existingRecord) {
+          if (Array.isArray(existingRecord.buktiFotoList) && existingRecord.buktiFotoList.length > 0) {
+            preservedPhotos = [...existingRecord.buktiFotoList];
+          } else if (existingRecord.fotoBukti && existingRecord.fotoBukti !== '-') {
+            preservedPhotos = [existingRecord.fotoBukti];
+          }
+        }
+
+        let combinedWaUraian = uraian;
+        if ((penyelesaian && penyelesaian !== '-') || (riwayatPengaduan && riwayatPengaduan !== '-')) {
+          combinedWaUraian = `${uraian}\n\n---\n[PENYELESAIAN_DIINGINKAN]: ${penyelesaian}\n[RIWAYAT_INSTANSI]: ${riwayatPengaduan}`;
+        }
+
+        this.currentParsedWaData = {
+          id: id,
+          timestamp: formattedTimestamp,
+          namaPelapor: nama,
+          noHp: noHp || '-',
+          alamatPelapor: alamat || '-',
+          kecamatan: kecamatan,
+          desa: desa || '-',
+          lokasiDetail: lokasiDetail || '-',
+          lat: lat,
+          lng: lng,
+          jenisPencemaran: jenisPencemaran,
+          uraian: combinedWaUraian,
+          penyelesaian: penyelesaian,
+          riwayatPengaduan: riwayatPengaduan,
+          sumberDugaan: sumberDugaan,
+          tanggalKejadian: tanggalKejadian,
+          status: 'Aduan Diterima',
+          fotoBukti: preservedPhotos[0] || '',
+          linkFotoBukti: preservedPhotos.length > 1 ? preservedPhotos.join(', ') : (preservedPhotos[0] || ''),
+          buktiFotoList: preservedPhotos,
+          petugasVerifikasi: '-',
+          tanggalVerifikasi: '-',
+          hasilVerifikasi: 'Menunggu penugasan verifikator lapangan DLH.',
+          tindakanDLH: 'Aduan dicatat melalui integrasi pesan WhatsApp.',
+          tanggalSelesai: '-'
+        };
+
+        // Render pratinjau foto jika ada
+        const photoContainer = document.getElementById('previewWaPhotosContainer');
+        if (photoContainer) {
+          photoContainer.innerHTML = '';
+          if (preservedPhotos.length > 0) {
+            preservedPhotos.forEach((src, idx) => {
+              const div = document.createElement('div');
+              div.style.cssText = 'position: relative; width: 55px; height: 55px; border-radius: 6px; overflow: hidden; border: 1.5px solid #10b981; flex-shrink: 0;';
+              div.innerHTML = `<img src="${src}" alt="Foto ${idx + 1}" style="width: 100%; height: 100%; object-fit: cover;">`;
+              photoContainer.appendChild(div);
+            });
+          } else {
+            photoContainer.innerHTML = '<span style="font-size: 0.74rem; color: #64748b; font-style: italic;">Belum ada lampiran foto. Klik "Tambah Foto" jika ada foto dari WA.</span>';
+          }
+        }
+
+        // Listener unggah foto manual pada dialog impor WA
+        const inputFiles = document.getElementById('inputWaImportFiles');
+        if (inputFiles && !inputFiles._hasListener) {
+          inputFiles._hasListener = true;
+          inputFiles.addEventListener('change', () => {
+            if (inputFiles.files && inputFiles.files.length) {
+              Array.from(inputFiles.files).forEach(f => {
+                const reader = new FileReader();
+                reader.onload = (e) => {
+                  const b64 = e.target.result;
+                  if (b64 && this.currentParsedWaData) {
+                    if (!this.currentParsedWaData.buktiFotoList) this.currentParsedWaData.buktiFotoList = [];
+                    if (!this.currentParsedWaData.buktiFotoList.includes(b64)) {
+                      this.currentParsedWaData.buktiFotoList.push(b64);
+                      this.currentParsedWaData.fotoBukti = this.currentParsedWaData.buktiFotoList[0];
+                      this.currentParsedWaData.linkFotoBukti = this.currentParsedWaData.buktiFotoList.join(', ');
+
+                      const c = document.getElementById('previewWaPhotosContainer');
+                      if (c) {
+                        const div = document.createElement('div');
+                        div.style.cssText = 'position: relative; width: 55px; height: 55px; border-radius: 6px; overflow: hidden; border: 1.5px solid #10b981; flex-shrink: 0;';
+                        div.innerHTML = `<img src="${b64}" alt="Foto" style="width: 100%; height: 100%; object-fit: cover;">`;
+                        c.appendChild(div);
+                      }
+                    }
+                  }
+                };
+                reader.readAsDataURL(f);
+              });
+              inputFiles.value = '';
+            }
+          });
+        }
+
+        // Render preview card
+        const preview = document.getElementById('waParsePreviewCard');
+        const badge = document.getElementById('previewWaRegisterBadge');
+        const pNama = document.getElementById('previewWaNama');
+        const pHp = document.getElementById('previewWaHp');
+        const pKec = document.getElementById('previewWaKec');
+        const pDesa = document.getElementById('previewWaDesa');
+        const pLokasi = document.getElementById('previewWaLokasi');
+        const pGps = document.getElementById('previewWaGps');
+        const pJenis = document.getElementById('previewWaJenis');
+        const pTanggal = document.getElementById('previewWaTanggal');
+        const pUraian = document.getElementById('previewWaUraian');
+        const btnSave = document.getElementById('btnSaveWaImport');
+
+        if (badge) badge.textContent = id;
+        if (pNama) pNama.textContent = nama;
+        if (pHp) pHp.textContent = noHp || '-';
+        if (pKec) pKec.textContent = kecamatan;
+        if (pDesa) pDesa.textContent = desa || '-';
+        if (pLokasi) pLokasi.textContent = lokasiDetail || '-';
+        if (pGps) pGps.textContent = (lat && lng) ? `${lat}, ${lng}` : 'Auto-center Kecamatan';
+        if (pJenis) pJenis.textContent = jenisPencemaran;
+        if (pTanggal) pTanggal.textContent = tanggalKejadian;
+        if (pUraian) pUraian.textContent = uraian;
+
+        if (preview) preview.style.display = 'block';
+        if (btnSave) btnSave.disabled = false;
+        this.showToast('Format WhatsApp berhasil diurai. Periksa ringkasan lalu klik Simpan.', 'success');
+      }
+
+      async saveWaImport() {
+        if (this._isSavingWaImport) return;
+        this._isSavingWaImport = true;
+        const btnSave = document.getElementById('btnSaveWaImport');
+        if (btnSave) {
+          btnSave.disabled = true;
+          btnSave.innerHTML = '<span class="spinner" style="display:inline-block;width:14px;height:14px;border:2px solid #fff;border-top-color:transparent;border-radius:50%;animation:spin 0.8s linear infinite;margin-right:6px;"></span>Menyimpan...';
+        }
+
+        let recId = '';
+        let recNama = '';
+
+        try {
+          if (!this.currentParsedWaData || !window.aduanStore) {
+            this.showToast('Data aduan belum siap disimpan.', 'warning');
+            return;
+          }
+
+          const record = await window.aduanStore.addAduan(this.currentParsedWaData);
+          if (record && (!record._pendingSync || !window.aduanStore.hasGasConfigured())) {
+            await this.syncVerifiedCacheAndBroadcast('petugas-wa-import', 'STATS_UPDATED', { id: record.id }, true);
+          }
+          this.closeAllModals();
+          this.updateKPIs();
+          this.renderTable();
+          this.renderMapLayers();
+
+          recId = (record && record.id) ? record.id : (this.currentParsedWaData.id || '');
+          recNama = (record && record.namaPelapor) ? record.namaPelapor : (this.currentParsedWaData.namaPelapor || '');
+          this.showToast(`Aduan ${recId} atas nama "${recNama}" berhasil dicatat ke sistem!`, 'success');
+        } finally {
+          this._isSavingWaImport = false;
+          if (btnSave) {
+            btnSave.disabled = false;
+            btnSave.innerHTML = '<svg viewBox="0 0 24 24" width="15" height="15" fill="none" stroke="currentColor" stroke-width="2" style="margin-right:6px;"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg> Simpan Aduan ke Database';
+          }
+        }
+
+        // Focus & highlight baris di tabel jika ada
+        setTimeout(() => {
+          if (recId) {
+            const row = document.querySelector(`[data-id="${recId}"]`);
+            if (row) {
+              row.scrollIntoView({ behavior: 'smooth', block: 'center' });
+              row.style.background = '#ecfdf5';
+              setTimeout(() => { row.style.background = ''; }, 3000);
+            }
+          }
+        }, 400);
+      }
+    }
+
+    // Inisialisasi Handal (Mendukung DOMContentLoaded & readyState Interactive / Complete)
+    function startPetugasPortal() {
+      if (!window.portal) {
+        window.portal = new PetugasPortal();
+        window.portal.init();
+      }
+    }
+
+    if (document.readyState === 'loading') {
+      document.addEventListener('DOMContentLoaded', startPetugasPortal);
+    } else {
+      startPetugasPortal();
+    }
+  </script>
+
+</body>
+
+</html>
