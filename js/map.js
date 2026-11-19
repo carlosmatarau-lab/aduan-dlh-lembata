@@ -474,7 +474,7 @@ class LembataMapEngine {
       ? store.remoteStats
       : null;
 
-    if (isUnfiltered && (!allData || allData.length === 0) && remoteStats) {
+    if (isUnfiltered && (!allData || allData.length === 0) && remoteStats && (!store || !store._hasFullServerList)) {
       setStatEl(statTotal, remoteStats.total || 0, false);
       setStatEl(statBaru, remoteStats.baru || 0, false);
       setStatEl(statProses, remoteStats.dalamProses || 0, false);
@@ -491,11 +491,11 @@ class LembataMapEngine {
     let selesai = 0;
 
     filteredData.forEach(item => {
-      const s = String(item.status || '').toLowerCase();
-      if (s.includes('selesai')) selesai++;
+      const s = String(item.status || '').trim().toLowerCase();
+      if (s.includes('selesai') || s.includes('tuntas')) selesai++;
       else if (this.isTidakDapatDitindaklanjuti(item.status)) { /* status tidak dapat ditindaklanjuti tidak masuk proses aktif */ }
-      else if (s === 'aduan diterima' || s === 'baru') baru++;
-      else proses++;
+      else if (s.includes('tindak') || s.includes('penanganan') || s.includes('proses') || s.includes('verif') || s.includes('sedang')) proses++;
+      else baru++;
     });
 
     setStatEl(statTotal, filteredData.length, false);

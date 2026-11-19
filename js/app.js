@@ -2353,8 +2353,8 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
           window.aduanStore.hydrateFromVerifiedCache(true);
         } else if (forceHydrate && typeof window.aduanStore.hydrateFromSharedState === 'function') {
           window.aduanStore.hydrateFromSharedState(true);
-        } else {
-          window.aduanStore.init();
+        } else if (typeof window.aduanStore.hydrateFromVerifiedCache === 'function') {
+          window.aduanStore.hydrateFromVerifiedCache(true);
         }
       }
       this.updateKPIs();
@@ -2363,6 +2363,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         window.lembataMap.renderMarkers();
         window.lembataMap.initMiniMap('miniMapPreview');
       }
+      this._refreshOpenTicketViews();
     };
 
     // 1. Dengarkan event lokal ketika agregat statistik diperbarui
@@ -2560,10 +2561,10 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
                 if (!it || !it.id) return;
                 tot++;
                 const st = String(it.status || '').trim().toLowerCase();
-                if (st === 'selesai') sl++;
-                else if (st === 'tidak dapat ditindaklanjuti' || st === 'ditolak') {}
-                else if (st === 'aduan diterima' || st === 'baru') br++;
-                else dp++;
+                if (st.includes('selesai') || st.includes('tuntas')) sl++;
+                else if (st.includes('tidak dapat') || st.includes('tidak ditindak') || st.includes('tolak')) {}
+                else if (st.includes('tindak') || st.includes('penanganan') || st.includes('proses') || st.includes('verif') || st.includes('sedang')) dp++;
+                else br++;
               });
               stats = { total: tot, baru: br, dalamProses: dp, selesai: sl };
             }
@@ -2665,6 +2666,86 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
   /* ===================================================================
      6B. DASHBOARD MASYARAKAT: QUICK TRACKER & CATEGORY PICKER
      =================================================================== */
+  _renderQuickTrackResult(item, queryId) {
+    const resultBox = document.getElementById('quickTrackResult');
+    if (!resultBox) return;
+
+    if (!item) {
+      resultBox.style.display = 'block';
+      resultBox.innerHTML = `
+        <div style="text-align: center; padding: 12px 8px; color: #64748b;">
+          <div style="font-size: 1.5rem; margin-bottom: 4px;">🔍</div>
+          <strong style="color: #334155; font-size: 0.9rem;">Tiket "${queryId}" Belum Ditemukan</strong>
+          <p style="font-size: 0.78rem; margin-top: 4px; color: #64748b;">Pastikan nomor ID tiket sudah tepat (contoh: ADU-26-K8M4) atau laporan baru saja dibuat dan sedang disinkronkan.</p>
+        </div>
+      `;
+      return;
+    }
+
+    const displayStatus = this.getDisplayStatusLabel(item.status);
+    const isTidakDapat = this.isTidakDapatDitindaklanjuti(item.status);
+    const actualAlasan = (item.alasanTidakDitindaklanjuti && item.alasanTidakDitindaklanjuti !== '-') ? item.alasanTidakDitindaklanjuti : '';
+    const actualHasil = (item.hasilVerifikasi && item.hasilVerifikasi !== '-') ? item.hasilVerifikasi : '';
+    const actualKesimpulan = (item.kesimpulanPetugas && item.kesimpulanPetugas !== '-') ? item.kesimpulanPetugas : '';
+    const actualTindakan = (item.tindakanDLH && item.tindakanDLH !== '-') ? item.tindakanDLH : '';
+
+    resultBox.style.display = 'block';
+    resultBox.innerHTML = `
+      <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
+        <div>
+          <span style="font-size: 0.7rem; color: #64748b; font-weight: 700;">NO. TIKET RESMI:</span>
+          <div style="font-family: monospace; font-weight: 900; color: #059669; font-size: 1.15rem;">${item.id}</div>
+        </div>
+        <span class="badge ${this.getStatusBadgeClass(item.status)}">${displayStatus}</span>
+      </div>
+      ${isTidakDapat ? `
+        <div style="margin: 8px 0 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #64748b; border-radius: 8px; padding: 10px 12px;">
+          <div style="display: flex; align-items: center; gap: 6px; font-size: 0.74rem; font-weight: 800; color: #334155; letter-spacing: 0.03em; margin-bottom: 4px;">
+            <span>TIDAK DAPAT DITINDAKLANJUTI</span>
+          </div>
+          <p style="margin: 0; font-size: 0.79rem; color: #475569; line-height: 1.55;">
+            Terima kasih telah menyampaikan pengaduan kepada Dinas Lingkungan Hidup Kabupaten Lembata. Pengaduan Anda telah diterima dan dilakukan pemeriksaan oleh petugas. Berdasarkan hasil pemeriksaan, laporan belum dapat ditindaklanjuti lebih lanjut dengan alasan sebagaimana tercantum pada hasil verifikasi.
+          </p>
+          <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 0.7rem; font-weight: 700; color: #475569;">
+            <span style="background: #fef3c7; color: #b45309; padding: 2px 7px; border-radius: 99px;">1. Diterima</span>
+            <span>→</span>
+            <span style="background: #f3e8ff; color: #7e22ce; padding: 2px 7px; border-radius: 99px;">2. Diperiksa</span>
+            <span>→</span>
+            <span style="background: #f1f5f9; color: #475569; padding: 2px 7px; border-radius: 99px;">3. Tidak Dapat Ditindaklanjuti</span>
+          </div>
+        </div>
+      ` : ''}
+      <div style="font-size: 0.82rem; color: #334155; line-height: 1.55;">
+        <div><strong>Jenis:</strong> <span style="color:#059669; font-weight:700;">${item.jenisPencemaran}</span></div>
+        <div><strong>Lokasi:</strong> Kec. ${item.kecamatan}, ${window.formatWilayahAdministratif ? window.formatWilayahAdministratif(item.desa) : 'Desa ' + item.desa}</div>
+        <div><strong>Waktu Lapor:</strong> ${item.timestamp}</div>
+        ${item.petugasVerifikasi && item.petugasVerifikasi !== '-' ? `<div style="margin-top: 4px; color: #047857;"><strong>Petugas DLH:</strong> ${item.petugasVerifikasi}${item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' ? ` (${item.tanggalVerifikasi})` : ''}</div>` : '<div style="margin-top: 4px; color: #d97706;"><em>Menunggu penugasan tim verifikator lapangan DLH.</em></div>'}
+        ${actualAlasan ? `<div style="margin-top: 6px; background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 7px 9px; color: #334155;"><strong>Alasan Hasil Pemeriksaan:</strong><br>${actualAlasan}</div>` : ''}
+        ${actualHasil ? `<div style="margin-top: 5px; color: #1e293b;"><strong>Uraian Hasil Pemeriksaan:</strong> ${actualHasil}</div>` : ''}
+        ${actualKesimpulan ? `<div style="margin-top: 4px; color: #1e293b;"><strong>Kesimpulan Petugas:</strong> ${actualKesimpulan}</div>` : ''}
+        ${(!isTidakDapat || !actualKesimpulan) && actualTindakan ? `<div style="margin-top: 4px; color: #0284c7;"><strong>${isTidakDapat ? 'Keterangan / Tindak Lanjut:' : 'Tindak Lanjut:'}</strong> ${actualTindakan}</div>` : ''}
+      </div>
+    `;
+  }
+
+  _refreshOpenTicketViews() {
+    const detailModal = document.getElementById('modalDetailAduan');
+    if (detailModal && detailModal.classList.contains('show') && this._currentDetailId) {
+      const current = window.aduanStore ? window.aduanStore.getById(this._currentDetailId) : null;
+      if (current) {
+        this.showDetailModal(this._currentDetailId);
+      } else {
+        detailModal.classList.remove('show');
+        this._currentDetailId = null;
+      }
+    }
+    const resultBox = document.getElementById('quickTrackResult');
+    if (resultBox && resultBox.style.display === 'block' && this._lastTrackedId) {
+      const tracked = window.aduanStore ? window.aduanStore.getById(this._lastTrackedId) : null;
+      this._renderQuickTrackResult(tracked, this._lastTrackedId);
+    }
+  }
+
   setupQuickTracker() {
     const btnTrack = document.getElementById('btnQuickTrack');
     const inputTrack = document.getElementById('quickTrackInput');
@@ -2689,63 +2770,9 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
       btnTrack.disabled = false;
       btnTrack.innerHTML = '<span>Lacak Tiket</span>';
 
+      this._lastTrackedId = q;
       const item = window.aduanStore ? window.aduanStore.getById(q) : null;
-      if (!item) {
-        resultBox.style.display = 'block';
-        resultBox.innerHTML = `
-          <div style="text-align: center; padding: 12px 8px; color: #64748b;">
-            <div style="font-size: 1.5rem; margin-bottom: 4px;">🔍</div>
-            <strong style="color: #334155; font-size: 0.9rem;">Tiket "${q}" Belum Ditemukan</strong>
-            <p style="font-size: 0.78rem; margin-top: 4px; color: #64748b;">Pastikan nomor ID tiket sudah tepat (contoh: ADU-26-K8M4) atau laporan baru saja dibuat dan sedang disinkronkan.</p>
-          </div>
-        `;
-        return;
-      }
-
-      const displayStatus = this.getDisplayStatusLabel(item.status);
-      const isTidakDapat = this.isTidakDapatDitindaklanjuti(item.status);
-      const actualAlasan = (item.alasanTidakDitindaklanjuti && item.alasanTidakDitindaklanjuti !== '-') ? item.alasanTidakDitindaklanjuti : '';
-      const actualHasil = (item.hasilVerifikasi && item.hasilVerifikasi !== '-') ? item.hasilVerifikasi : '';
-      const actualKesimpulan = (item.kesimpulanPetugas && item.kesimpulanPetugas !== '-') ? item.kesimpulanPetugas : '';
-      const actualTindakan = (item.tindakanDLH && item.tindakanDLH !== '-') ? item.tindakanDLH : '';
-
-      resultBox.style.display = 'block';
-      resultBox.innerHTML = `
-        <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #e2e8f0; padding-bottom: 8px; margin-bottom: 8px; flex-wrap: wrap; gap: 6px;">
-          <div>
-            <span style="font-size: 0.7rem; color: #64748b; font-weight: 700;">NO. TIKET RESMI:</span>
-            <div style="font-family: monospace; font-weight: 900; color: #059669; font-size: 1.15rem;">${item.id}</div>
-          </div>
-          <span class="badge ${this.getStatusBadgeClass(item.status)}">${displayStatus}</span>
-        </div>
-        ${isTidakDapat ? `
-          <div style="margin: 8px 0 10px; background: #f8fafc; border: 1px solid #cbd5e1; border-left: 4px solid #64748b; border-radius: 8px; padding: 10px 12px;">
-            <div style="display: flex; align-items: center; gap: 6px; font-size: 0.74rem; font-weight: 800; color: #334155; letter-spacing: 0.03em; margin-bottom: 4px;">
-              <span>TIDAK DAPAT DITINDAKLANJUTI</span>
-            </div>
-            <p style="margin: 0; font-size: 0.79rem; color: #475569; line-height: 1.55;">
-              Terima kasih telah menyampaikan pengaduan kepada Dinas Lingkungan Hidup Kabupaten Lembata. Pengaduan Anda telah diterima dan dilakukan pemeriksaan oleh petugas. Berdasarkan hasil pemeriksaan, laporan belum dapat ditindaklanjuti lebih lanjut dengan alasan sebagaimana tercantum pada hasil verifikasi.
-            </p>
-            <div style="display: flex; align-items: center; gap: 6px; margin-top: 8px; font-size: 0.7rem; font-weight: 700; color: #475569;">
-              <span style="background: #fef3c7; color: #b45309; padding: 2px 7px; border-radius: 99px;">1. Diterima</span>
-              <span>→</span>
-              <span style="background: #f3e8ff; color: #7e22ce; padding: 2px 7px; border-radius: 99px;">2. Diperiksa</span>
-              <span>→</span>
-              <span style="background: #f1f5f9; color: #475569; padding: 2px 7px; border-radius: 99px;">3. Tidak Dapat Ditindaklanjuti</span>
-            </div>
-          </div>
-        ` : ''}
-        <div style="font-size: 0.82rem; color: #334155; line-height: 1.55;">
-          <div><strong>Jenis:</strong> <span style="color:#059669; font-weight:700;">${item.jenisPencemaran}</span></div>
-          <div><strong>Lokasi:</strong> Kec. ${item.kecamatan}, ${window.formatWilayahAdministratif ? window.formatWilayahAdministratif(item.desa) : 'Desa ' + item.desa}</div>
-          <div><strong>Waktu Lapor:</strong> ${item.timestamp}</div>
-          ${item.petugasVerifikasi && item.petugasVerifikasi !== '-' ? `<div style="margin-top: 4px; color: #047857;"><strong>Petugas DLH:</strong> ${item.petugasVerifikasi}${item.tanggalVerifikasi && item.tanggalVerifikasi !== '-' ? ` (${item.tanggalVerifikasi})` : ''}</div>` : '<div style="margin-top: 4px; color: #d97706;"><em>Menunggu penugasan tim verifikator lapangan DLH.</em></div>'}
-          ${actualAlasan ? `<div style="margin-top: 6px; background: #fff; border: 1px solid #e2e8f0; border-radius: 6px; padding: 7px 9px; color: #334155;"><strong>Alasan Hasil Pemeriksaan:</strong><br>${actualAlasan}</div>` : ''}
-          ${actualHasil ? `<div style="margin-top: 5px; color: #1e293b;"><strong>Uraian Hasil Pemeriksaan:</strong> ${actualHasil}</div>` : ''}
-          ${actualKesimpulan ? `<div style="margin-top: 4px; color: #1e293b;"><strong>Kesimpulan Petugas:</strong> ${actualKesimpulan}</div>` : ''}
-          ${(!isTidakDapat || !actualKesimpulan) && actualTindakan ? `<div style="margin-top: 4px; color: #0284c7;"><strong>${isTidakDapat ? 'Keterangan / Tindak Lanjut:' : 'Tindak Lanjut:'}</strong> ${actualTindakan}</div>` : ''}
-        </div>
-      `;
+      this._renderQuickTrackResult(item, q);
     };
 
     btnTrack.addEventListener('click', doTrack);
@@ -2809,6 +2836,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
     const item = window.aduanStore.getById(id);
     if (!item) return;
 
+    this._currentDetailId = item.id;
     const modal = document.getElementById('modalDetailAduan');
     const body = document.getElementById('detailModalContent');
     if (!modal || !body) return;
@@ -3458,6 +3486,7 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         window.lembataMap.initMiniMap('miniMapPreview');
       }
       this.updateCloudUI();
+      this._refreshOpenTicketViews();
       if (!e.detail?.silent) {
         const count = e.detail && e.detail.count ? e.detail.count : window.aduanStore.getAll().length;
         this.showToast(`Berhasil sinkron ${count} data dari Google Apps Script!`, 'success');

@@ -1106,6 +1106,7 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
   const isFromServerGetAll = Boolean(remoteItem && remoteItem._fromServerGetAll);
   const hasPendingOfficer = Boolean(existing && existing._pendingOfficerSync);
   const isRecentEdit = Boolean(existing && existing._lastOfficerEditTime && (Date.now() - existing._lastOfficerEditTime < OPTIMISTIC_GRACE_MS));
+  const isRecentDelta = Boolean(existing && existing._lastRemoteDeltaTime && (Date.now() - existing._lastRemoteDeltaTime < OPTIMISTIC_GRACE_MS));
   const isLocalRecentOfficerEdit = Boolean(hasPendingOfficer || isRecentEdit);
   const isRecentLocalAdd = Boolean(existing && existing._lastLocalEditTime && (Date.now() - existing._lastLocalEditTime < OPTIMISTIC_GRACE_MS));
   const isUnverifiedStVal = (st) => {
@@ -1122,12 +1123,12 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
       (remoteItem.kesimpulanPetugas && String(remoteItem.kesimpulanPetugas).trim())
     )
   );
-  // Jangan pernah menurunkan tiket yang sudah diverifikasi kembali ke 'Aduan Diterima'/'Baru',
-  // dan pertahankan label 'Tidak Dapat Ditindaklanjuti' bila server menggunakan kompatibilitas 'Ditolak'
+  // Lindungi perubahan optimistik dari respons getAll usang dalam grace period 12 detik,
+  // namun tetap izinkan pengembalian status ke 'Baru' secara resmi saat server penuh mengonfirmasinya.
   const protectOptimisticOfficer = Boolean(
     hasPendingOfficer ||
     isRecentEdit ||
-    (existingIsVerified && remoteIsUnverified)
+    (existingIsVerified && remoteIsUnverified && (isRecentDelta || !isFromServerGetAll))
   );
   const remoteExplicitPhotoClear = Boolean(
     remoteItem._officerPhotoCleared ||
@@ -1280,23 +1281,41 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
   // jika bersumber dari teks terformat di Google Spreadsheet agar lintas perangkat selalu identik 100%
   let resolvedChecklist = [];
   if (!isFinalUnverified) {
+    let remoteChk = remoteItem.checklistVerifikasi;
+    if (typeof remoteChk === 'string' && remoteChk.trim().startsWith('[')) {
+      try {
+        const parsedChk = JSON.parse(remoteChk);
+        if (Array.isArray(parsedChk)) remoteChk = parsedChk;
+      } catch (e) { }
+    }
     if (protectOptimisticOfficer && existing && Array.isArray(existing.checklistVerifikasi) && existing.checklistVerifikasi.length > 0) {
       resolvedChecklist = existing.checklistVerifikasi;
-    } else if (Array.isArray(remoteItem.checklistVerifikasi) && remoteItem.checklistVerifikasi.length > 0) {
-      resolvedChecklist = remoteItem.checklistVerifikasi;
+    } else if (Array.isArray(remoteChk) && remoteChk.length > 0) {
+      resolvedChecklist = remoteChk;
     } else if (existing && Array.isArray(existing.checklistVerifikasi) && existing.checklistVerifikasi.length > 0 && !isFromServerGetAll) {
       resolvedChecklist = existing.checklistVerifikasi;
-    } else if (typeof resolvedHasilVerif === 'string' && resolvedHasilVerif.includes('[Hasil Verifikasi Lapangan (Daftar Periksa)')) {
+    } else if (typeof resolvedHasilVerif === 'string' && resolvedHasilVerif.includes('Hasil Verifikasi Lapangan (Daftar Periksa)')) {
       const parsedItems = [];
-      const lineRegex = /^([1-5])\.\s+(.+?):\s+(Ya|Tidak|Tidak Relevan)(?:\s+\((.+)\))?$/gm;
-      let m;
-      while ((m = lineRegex.exec(resolvedHasilVerif)) !== null) {
+      const bulletRegex = /^[•\-\*]\s+(.+?):\s+\[(Terpenuhi|Tidak Terpenuhi|Tidak Dapat Dinilai)\](?:\s*-\s*(.+))?$/gm;
+      let mb;
+      while ((mb = bulletRegex.exec(resolvedHasilVerif)) !== null) {
         parsedItems.push({
-          no: parseInt(m[1], 10),
-          indikator: m[2].trim(),
-          hasil: m[3].trim(),
-          keterangan: m[4] ? m[4].trim() : ''
+          indikator: mb[1].trim(),
+          status: mb[2].trim(),
+          keterangan: mb[3] ? mb[3].trim() : ''
         });
+      }
+      if (parsedItems.length === 0) {
+        const lineRegex = /^([1-5])\.\s+(.+?):\s+(Ya|Tidak|Tidak Relevan)(?:\s+\((.+)\))?$/gm;
+        let m;
+        while ((m = lineRegex.exec(resolvedHasilVerif)) !== null) {
+          parsedItems.push({
+            no: parseInt(m[1], 10),
+            indikator: m[2].trim(),
+            hasil: m[3].trim(),
+            keterangan: m[4] ? m[4].trim() : ''
+          });
+        }
       }
       if (parsedItems.length > 0) resolvedChecklist = parsedItems;
       else if (existing && Array.isArray(existing.checklistVerifikasi)) resolvedChecklist = existing.checklistVerifikasi;
@@ -1338,6 +1357,18 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     }
   }
 
+  const rawUraianStr = String(remoteItem.uraian || '');
+  let extractedPenyelesaian = remoteItem.penyelesaian || remoteItem.harapanPenyelesaian || '';
+  if ((!extractedPenyelesaian || extractedPenyelesaian === '-') && rawUraianStr.includes('[PENYELESAIAN_DIINGINKAN]:')) {
+    const mp = rawUraianStr.match(/\[PENYELESAIAN_DIINGINKAN\]:\s*([\s\S]*?)(?=(?:\[RIWAYAT_INSTANSI\]|$))/i);
+    if (mp && mp[1]) extractedPenyelesaian = mp[1].trim();
+  }
+  let extractedRiwayat = remoteItem.riwayatPengaduan || remoteItem.riwayatInstansi || remoteItem.instansiLain || '';
+  if ((!extractedRiwayat || extractedRiwayat === '-') && rawUraianStr.includes('[RIWAYAT_INSTANSI]:')) {
+    const mr = rawUraianStr.match(/\[RIWAYAT_INSTANSI\]:\s*([\s\S]*?)$/i);
+    if (mr && mr[1]) extractedRiwayat = mr[1].trim();
+  }
+
   return {
     id: cleanId,
     timestamp: remoteItem.timestamp || '-',
@@ -1351,8 +1382,8 @@ function mapRemoteAduanRecord(remoteItem, currentList = [], isDeletedFn = null) 
     lng: resolvedLng,
     jenisPencemaran: remoteItem.jenisPencemaran || 'Lainnya',
     uraian: remoteItem.uraian || '-',
-    penyelesaian: remoteItem.penyelesaian || remoteItem.harapanPenyelesaian || (existing ? existing.penyelesaian : '-') || '-',
-    riwayatPengaduan: remoteItem.riwayatPengaduan || remoteItem.riwayatInstansi || remoteItem.instansiLain || (existing ? existing.riwayatPengaduan : '-') || '-',
+    penyelesaian: (extractedPenyelesaian && extractedPenyelesaian !== '-') ? extractedPenyelesaian : ((existing && existing.penyelesaian) || '-'),
+    riwayatPengaduan: (extractedRiwayat && extractedRiwayat !== '-') ? extractedRiwayat : ((existing && existing.riwayatPengaduan) || '-'),
     sumberDugaan: remoteItem.sumberDugaan || '-',
     tanggalKejadian: remoteItem.tanggalKejadian || '-',
     pernyataanBenar: (remoteItem.pernyataanBenar !== undefined) ? Boolean(remoteItem.pernyataanBenar) : (existing && existing.pernyataanBenar !== undefined ? Boolean(existing.pernyataanBenar) : true),
@@ -1444,6 +1475,10 @@ class AduanDataStore {
     this._inFlightGetAllRequest = false;
     this._lastLocalMutationAt = 0;
     this._lastSharedStateAt = 0;
+    this._lastFullGetAllStartedAt = 0;
+    this._lastFullGetAllCompletedAt = 0;
+    this._lastProvisionalKey = '';
+    this._provisionalResyncTimer = null;
     this._doorbellUrl = FIREBASE_DOORBELL_URL;
     this._doorbellSource = null;
     this._doorbellReconnectTimer = null;
@@ -1669,7 +1704,8 @@ class AduanDataStore {
       const rawTiket = body ? (body.tiket || body.ticketId || (body.delta && body.delta.id) || '') : '';
       const tiket = rawTiket ? String(rawTiket).trim().toUpperCase() : '';
       const delta = (body && body.delta && typeof body.delta === 'object') ? body.delta : null;
-      return { ts: incomingTs, aksi: aksi, tiket: tiket, delta: delta };
+      const provisional = Boolean(body && body.provisional);
+      return { ts: incomingTs, aksi: aksi, tiket: tiket, delta: delta, provisional: provisional };
     } catch (e) {
       return null;
     }
@@ -1852,7 +1888,7 @@ class AduanDataStore {
       if (existing.fotoPetugas) cleanDelta.fotoPetugas = existing.fotoPetugas;
     }
 
-    return { ...base, ...cleanDelta };
+    return { ...base, ...cleanDelta, _lastRemoteDeltaTime: Date.now() };
   }
 
   _emitInstantHydrationEvents(detailExtra = {}) {
@@ -1881,13 +1917,39 @@ class AduanDataStore {
   _applyRealtimeDeltaSignal(signal) {
     if (!signal || typeof signal !== 'object') return false;
 
+    // 0. Penyegaran / pengosongan database total (resetToZero / resetData) lintas perangkat seketika
+    if (signal.aksi === 'resetToZero' || signal.aksi === 'resetData') {
+      this.pendingDeletions = {};
+      this.aduanList = [];
+      this._hasFullServerList = true;
+      this.isServerSynced = true;
+      this._serverConfirmed = true;
+      this.remoteStats = {
+        total: 0, baru: 0, aduanDiterima: 0, verifAdmin: 0, menungguVerif: 0,
+        sedangDiverif: 0, dalamPenanganan: 0, diverifikasi: 0, ditindak: 0,
+        selesai: 0, tidakDapatDitindaklanjuti: 0, ditolak: 0, dalamProses: 0,
+        tingkatPenyelesaian: 0, perKecamatan: {}, perJenis: {}, lastSync: Date.now()
+      };
+      this.save('gas_reset_signal', { serverConfirmed: true });
+      if (window.dlhRealtime) {
+        window.dlhRealtime.broadcast('DATA_RESET', { count: 0, serverConfirmed: true });
+      }
+      this._emitInstantHydrationEvents({ aksi: signal.aksi, emptyRemote: true });
+      return true;
+    }
+
     // 1. Penghapusan instan saat sinyal deleteAduan tiba
     if (signal.aksi === 'deleteAduan' && signal.tiket) {
       const delId = String(signal.tiket).trim().toUpperCase();
       this.markDeleted(delId);
       const prevLen = (this.aduanList || []).length;
       this.aduanList = (this.aduanList || []).filter(item => item && String(item.id).trim().toUpperCase() !== delId);
-      this.save();
+      this.remoteStats = null;
+      if (this._hasFullServerList) {
+        this.save('gas_delta_delete', { serverConfirmed: true });
+      } else {
+        this.save('gas_delta_delete_local');
+      }
       this._emitInstantHydrationEvents({ aksi: 'deleteAduan', id: delId, removed: this.aduanList.length !== prevLen });
       return true;
     }
@@ -1902,13 +1964,19 @@ class AduanDataStore {
       const mergedInput = this._mergeSafeDeltaWithExisting(signal.delta, existing);
       const mapped = mapRemoteAduanRecord(mergedInput, this.aduanList, (id) => this.isDeleted(id));
       if (!mapped) return false;
+      mapped._lastRemoteDeltaTime = Date.now();
 
       if (existingIdx !== -1) {
         this.aduanList[existingIdx] = mapped;
       } else {
         this.aduanList.unshift(mapped);
       }
-      this.save();
+      this.remoteStats = null;
+      if (this._hasFullServerList) {
+        this.save('gas_delta_signal', { serverConfirmed: true });
+      } else {
+        this.save('gas_delta_local');
+      }
       this._emitInstantHydrationEvents({ aksi: signal.aksi || (existing ? 'updateVerifikasi' : 'addAduan'), id: deltaId });
       return true;
     }
@@ -1938,16 +2006,46 @@ class AduanDataStore {
     try {
       const es = new EventSource(this._doorbellUrl);
       this._doorbellSource = es;
+      let isInitialPut = true;
 
       const handleDoorbellEvent = (ev) => {
         if (!ev || !ev.data) return;
+        const wasInitial = isInitialPut && ev.type === 'put';
+        if (ev.type === 'put') isInitialPut = false;
         try {
           const signal = this._parseDoorbellEventData(ev.data);
-          if (!signal || !(signal.ts > this.lastSignalTs)) return;
+          if (!signal || !signal.ts) return;
 
+          if (signal.provisional) {
+            const pKey = `${signal.ts}|${signal.aksi}|${signal.tiket}`;
+            if (pKey === this._lastProvisionalKey || signal.ts <= this.lastSignalTs) return;
+            this._lastProvisionalKey = pKey;
+            const isStaleInitial = wasInitial && Math.abs(Date.now() - signal.ts) > 120000;
+            if (!isStaleInitial) {
+              this._applyRealtimeDeltaSignal(signal);
+            }
+            if (this._provisionalResyncTimer) clearTimeout(this._provisionalResyncTimer);
+            this._provisionalResyncTimer = setTimeout(() => {
+              this._provisionalResyncTimer = null;
+              this.syncStatsFromGAS();
+              this.syncFromGAS(true);
+            }, 1500);
+            return;
+          }
+
+          if (!(signal.ts > this.lastSignalTs)) return;
           this.lastSignalTs = signal.ts;
-          // Fase Instan (<1ms): render delta / hapus tiket di memori lokal seketika tanpa menunggu getAll
-          this._applyRealtimeDeltaSignal(signal);
+          if (this._provisionalResyncTimer) {
+            clearTimeout(this._provisionalResyncTimer);
+            this._provisionalResyncTimer = null;
+          }
+
+          // Hindari menimpa cache terbaru pada cold boot dengan sinyal historis lama dari Firebase (> 2 menit)
+          const isStaleInitial = wasInitial && Math.abs(Date.now() - signal.ts) > 120000;
+          if (!isStaleInitial) {
+            // Fase Instan (<1ms): render delta / hapus / reset tiket di memori lokal seketika tanpa menunggu getAll
+            this._applyRealtimeDeltaSignal(signal);
+          }
           // Rekonsiliasi penuh di latar belakang (0 ms delay) untuk foto lengkap & sinkron resmi
           this.syncStatsFromGAS();
           this.syncFromGAS(true);
@@ -2282,6 +2380,7 @@ class AduanDataStore {
     if (this.isSyncingStats) return this.currentStatsPromise;
 
     this.isSyncingStats = true;
+    const statsReqStartedAt = Date.now();
     this.currentStatsPromise = (async () => {
       try {
         let endpoint = this.getGasUrl();
@@ -2305,6 +2404,11 @@ class AduanDataStore {
         if (!response.ok) return null;
         const json = await response.json();
 
+        // Abaikan respons statistik usang bila getAll penuh yang lebih baru sudah selesai setelah request getStats dikirim
+        if (this._lastFullGetAllCompletedAt && statsReqStartedAt < this._lastFullGetAllCompletedAt) {
+          return null;
+        }
+
         if (json && json.success && json.data) {
           const d = json.data;
           const normalized = {
@@ -2322,6 +2426,7 @@ class AduanDataStore {
             lastSync: Date.now()
           };
 
+          const cleanCount = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id)).length;
           this.remoteStats = normalized;
           this.isServerSynced = true;
           this._serverConfirmed = true;
@@ -2332,11 +2437,16 @@ class AduanDataStore {
               localStorage.setItem('dlh_lembata_last_sync_timestamp', this.lastSyncTime.toISOString());
             } catch (e) { }
           }
-          try {
-            localStorage.setItem('dlh_cached_hero_stats', JSON.stringify({ ...normalized, serverConfirmed: true, updatedAt: Date.now() }));
-          } catch (e) { }
-          if ((this._hasFullServerList && (this.aduanList || []).length > 0) || (normalized.total === 0 && (this.aduanList || []).length === 0)) {
+          if (!this._hasFullServerList || cleanCount === normalized.total) {
+            try {
+              localStorage.setItem('dlh_cached_hero_stats', JSON.stringify({ ...normalized, serverConfirmed: true, updatedAt: Date.now() }));
+            } catch (e) { }
+          }
+          if ((this._hasFullServerList && cleanCount > 0 && cleanCount === normalized.total) || (normalized.total === 0 && cleanCount === 0)) {
             this.writeVerifiedCache('gas_stats', { serverConfirmed: true });
+          } else if (this._hasFullServerList && cleanCount !== normalized.total && !this.isSyncing) {
+            // Jumlah server berubah sejak getAll terakhir: segera tarik ulang daftar penuh agar tabel, peta & KPI konsisten
+            setTimeout(() => this.syncFromGAS(true), 50);
           }
 
           if (typeof window !== 'undefined') {
@@ -2399,6 +2509,7 @@ class AduanDataStore {
     this.isSyncing = true;
     this._inFlightGetAllRequest = true;
     this._syncLockStartedAt = Date.now();
+    this._lastFullGetAllStartedAt = this._syncLockStartedAt;
     const lockToken = Symbol('syncLock');
     this._activeSyncLockToken = lockToken;
     if (this._syncLockTimer) clearTimeout(this._syncLockTimer);
@@ -2515,6 +2626,7 @@ class AduanDataStore {
             this.isServerSynced = true;
             this._serverConfirmed = true;
             this._hasFullServerList = true;
+            this._lastFullGetAllCompletedAt = Date.now();
             this.remoteStats = null;
             this.save('gas_all', { serverConfirmed: true });
 
@@ -2541,6 +2653,7 @@ class AduanDataStore {
             this.isServerSynced = true;
             this._serverConfirmed = true;
             this._hasFullServerList = true;
+            this._lastFullGetAllCompletedAt = Date.now();
             if (localPending.length > 0) {
               this.aduanList = localPending;
               this.remoteStats = null;
@@ -3305,6 +3418,10 @@ class AduanDataStore {
             if (window.dlhRealtime) {
               window.dlhRealtime.broadcast('VERIFIED_CACHE_UPDATED', { id: newId, action: 'addAduan' });
             }
+            if (typeof window !== 'undefined') {
+              window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: true, id: newId, action: 'addAduan' } }));
+              window.dispatchEvent(new CustomEvent('aduanStatsSynced', { detail: { ...this.getStats() } }));
+            }
           }
         }
       }).catch(err => {
@@ -3481,10 +3598,12 @@ class AduanDataStore {
       window.dlhRealtime.broadcast('TINDAK_LANJUT_UPDATED', { id: cleanId, item: updatedRecord, updateData: updateData });
     }
 
-    // Pancarkan sinyal bel real-time lintas perangkat (0 ms delay untuk status & metadata SOP 2.0)
+    // Pancarkan sinyal bel real-time sementara (provisional) untuk pratinjau instan 0 ms
+    // tanpa memblokir sinyal resmi GAS yang dikirim setelah SpreadsheetApp.flush().
     this._ringFirebaseDoorbellFromClient('updateVerifikasi', cleanId, updatedRecord, {
       officerPhotoCount: fotoList.length,
-      photoReady: !hasBase64Officer
+      photoReady: !hasBase64Officer,
+      provisional: true
     });
 
     let serverSaveConfirmed = false;
@@ -3579,6 +3698,9 @@ class AduanDataStore {
                   officerPhotoCount: fotoList.length,
                   photoReady: true
                 });
+                if (typeof window !== 'undefined') {
+                  window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: true, id: cleanId, action: 'updateVerifikasi_photo' } }));
+                }
                 setTimeout(() => this.syncFromGAS(true), 300);
               }
             }).catch(err => console.warn('Gagal unggah latar belakang foto petugas, antrean IndexedDB aktif:', err))
@@ -3688,11 +3810,14 @@ class AduanDataStore {
         fotoKondisiRiil: onlyHttp(rec.fotoKondisiRiil || '')
       };
 
+      const aksiStr = String(aksi || 'updateVerifikasi');
+      const isDeleteOrReset = (aksiStr === 'deleteAduan' || aksiStr === 'resetToZero' || aksiStr === 'resetData');
       const signalPayload = {
-        ts: Date.now(),
-        aksi: String(aksi || 'updateVerifikasi'),
+        ts: Math.max(Date.now(), (this.lastSignalTs || 0) + 1),
+        aksi: aksiStr,
         tiket: String(ticketId || delta.id || ''),
-        delta
+        ...(isDeleteOrReset ? {} : { delta }),
+        ...(extra.provisional ? { provisional: true } : {})
       };
 
       fetch(targetUrl, {
@@ -3990,14 +4115,21 @@ class AduanDataStore {
     const cleanList = (this.aduanList || []).filter(item => item && item.id && !this.isDeleted(item.id));
     const hasRemoteStats = Boolean(this.remoteStats && typeof this.remoteStats.total === 'number');
     const hasRecentLocalMutation = Boolean(this._lastLocalMutationAt && (Date.now() - this._lastLocalMutationAt < 15000));
+    const statsNewerThanGetAll = Boolean(
+      this.lastStatsSyncTime instanceof Date &&
+      (!this._lastFullGetAllCompletedAt || this.lastStatsSyncTime.getTime() > this._lastFullGetAllCompletedAt)
+    );
 
-    // Gunakan remoteStats saat list penuh server belum tersedia atau memiliki jumlah lebih lengkap daripada cache lokal sementara
-    if (hasRemoteStats && (cleanList.length === 0 || !this._hasFullServerList || (!hasRecentLocalMutation && this.remoteStats.total > cleanList.length))) {
+    // Gunakan remoteStats hanya jika list penuh server belum tersedia, atau ada statistik server lebih baru yang berbeda jumlahnya
+    if (hasRemoteStats && (!this._hasFullServerList || (cleanList.length === 0 && !this._hasFullServerList) || (!hasRecentLocalMutation && statsNewerThanGetAll && this.remoteStats.total !== cleanList.length))) {
       return this.remoteStats;
     }
 
-    // Jika list lokal masih kosong, gunakan remoteStats / shared state hanya jika sudah valid
+    // Jika list lokal masih kosong, gunakan remoteStats / shared state hanya jika list penuh server belum dikonfirmasi kosong
     if (cleanList.length === 0) {
+      if (this._hasFullServerList) {
+        return this._computeStatsFromList(cleanList);
+      }
       if (this.remoteStats && typeof this.remoteStats.total === 'number') {
         return this.remoteStats;
       }

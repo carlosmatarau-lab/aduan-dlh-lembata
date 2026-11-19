@@ -210,7 +210,15 @@ const HEADERS_ADUAN = [
   'Timestamp_Tindak_Lanjut',
   'Timestamp_Selesai',
   'Alasan_Tidak_Ditindaklanjuti',
-  'Kesimpulan_Petugas'
+  'Kesimpulan_Petugas',
+  'Penyelesaian',
+  'Riwayat_Pengaduan',
+  'Checklist_Verifikasi',
+  'Hambatan_Pemeriksaan',
+  'Jenis_Hambatan',
+  'Uraian_Hambatan',
+  'Alasan_Kategori_Tidak_Ditindaklanjuti',
+  'Alasan_Lain_Tidak_Ditindaklanjuti'
 ];
 
 
@@ -353,6 +361,8 @@ function doPost(e) {
             lng: result.data.lng !== undefined ? result.data.lng : payloadData.lng,
             jenisPencemaran: payloadData.jenisPencemaran || 'Lainnya',
             uraian: payloadData.uraian || '-',
+            penyelesaian: payloadData.penyelesaian || '-',
+            riwayatPengaduan: payloadData.riwayatPengaduan || '-',
             status: result.data.status || payloadData.status || 'Baru',
             petugasVerifikasi: payloadData.petugasVerifikasi || '-',
             hasilVerifikasi: 'Menunggu penugasan verifikator lapangan.',
@@ -524,6 +534,8 @@ function buildSafeDelta_(raw) {
     ...(raw.jenisHambatan ? { jenisHambatan: String(raw.jenisHambatan) } : {}),
     ...(raw.uraianHambatan ? { uraianHambatan: String(raw.uraianHambatan) } : {}),
     ...(Array.isArray(raw.checklistVerifikasi) && raw.checklistVerifikasi.length > 0 ? { checklistVerifikasi: raw.checklistVerifikasi } : {}),
+    ...(raw.penyelesaian ? { penyelesaian: String(raw.penyelesaian) } : {}),
+    ...(raw.riwayatPengaduan ? { riwayatPengaduan: String(raw.riwayatPengaduan) } : {}),
     ...(raw.officerPhotoCount !== undefined && raw.officerPhotoCount !== null ? { officerPhotoCount: Number(raw.officerPhotoCount) } : {}),
     ...(raw.photoReady ? { photoReady: true } : {}),
     ...(raw.timestampVerifikasi ? { timestampVerifikasi: String(raw.timestampVerifikasi) } : {}),
@@ -833,6 +845,37 @@ function mapSheetRowToFrontend(row, fotoStorageMap, isAdmin = true) {
 
   const isOfficer = Boolean(isAdmin);
   const rawNama = String(row['Nama_Pelapor'] || '');
+  const rawUraian = String(row['Uraian_Aduan'] || '');
+  let resolvedPenyelesaian = String(row['Penyelesaian'] || '').trim();
+  let resolvedRiwayat = String(row['Riwayat_Pengaduan'] || '').trim();
+  if ((!resolvedPenyelesaian || resolvedPenyelesaian === '-') && rawUraian.indexOf('[PENYELESAIAN_DIINGINKAN]:') !== -1) {
+    const mP = rawUraian.match(/\[PENYELESAIAN_DIINGINKAN\]:\s*([\s\S]*?)(?=(?:\[RIWAYAT_INSTANSI\]|$))/i);
+    if (mP && mP[1]) resolvedPenyelesaian = mP[1].trim();
+  }
+  if ((!resolvedRiwayat || resolvedRiwayat === '-') && rawUraian.indexOf('[RIWAYAT_INSTANSI]:') !== -1) {
+    const mR = rawUraian.match(/\[RIWAYAT_INSTANSI\]:\s*([\s\S]*?)$/i);
+    if (mR && mR[1]) resolvedRiwayat = mR[1].trim();
+  }
+
+  let parsedChecklist = [];
+  if (!isUnverified && row['Checklist_Verifikasi']) {
+    const rawChk = row['Checklist_Verifikasi'];
+    if (Array.isArray(rawChk)) {
+      parsedChecklist = rawChk;
+    } else if (typeof rawChk === 'string' && rawChk.trim().indexOf('[') === 0) {
+      try {
+        const tmpChk = JSON.parse(rawChk);
+        if (Array.isArray(tmpChk)) parsedChecklist = tmpChk;
+      } catch (eChk) { }
+    }
+  }
+  const rawHambatanVal = row['Hambatan_Pemeriksaan'];
+  const parsedHambatan = !isUnverified && Boolean(
+    rawHambatanVal === true ||
+    String(rawHambatanVal || '').trim().toLowerCase() === 'true' ||
+    String(rawHambatanVal || '').trim().toLowerCase() === 'ya'
+  );
+
   const rawNoHp = (function(val) {
     if (!val || val === '-') return '-';
     let s = String(val).replace(/^'/, '').trim();
@@ -860,7 +903,9 @@ function mapSheetRowToFrontend(row, fotoStorageMap, isAdmin = true) {
     lat: parseFloat(row['Latitude']) || 0,
     lng: parseFloat(row['Longitude']) || 0,
     jenisPencemaran: String(row['Jenis_Pencemaran'] || ''),
-    uraian: String(row['Uraian_Aduan'] || ''),
+    uraian: rawUraian,
+    penyelesaian: resolvedPenyelesaian || '-',
+    riwayatPengaduan: resolvedRiwayat || '-',
     sumberDugaan: String(row['Sumber_Dugaan'] || '-'),
     tanggalKejadian: String(row['Tanggal_Kejadian'] || ''),
     linkFoto: fotoDirect,
@@ -877,10 +922,16 @@ function mapSheetRowToFrontend(row, fotoStorageMap, isAdmin = true) {
     catatanBeritaAcara: isUnverified ? '' : String(row['Catatan_Berita_Acara'] || ''),
     fotoKondisiRiil: fotoRiilDirect,
     fotoVerifikasiList: finalOfficerPhotos,
+    checklistVerifikasi: parsedChecklist,
+    hambatanPemeriksaan: parsedHambatan,
+    jenisHambatan: isUnverified ? '' : String(row['Jenis_Hambatan'] || ''),
+    uraianHambatan: isUnverified ? '' : String(row['Uraian_Hambatan'] || ''),
     timestampVerifikasi: isUnverified ? '' : String(row['Timestamp_Verifikasi'] || ''),
     timestampTindakLanjut: isUnverified ? '' : String(row['Timestamp_Tindak_Lanjut'] || ''),
     timestampSelesai: isUnverified ? '' : String(row['Timestamp_Selesai'] || ''),
     alasanTidakDitindaklanjuti: isUnverified ? '' : String(row['Alasan_Tidak_Ditindaklanjuti'] || ''),
+    alasanKategoriTidakDitindaklanjuti: isUnverified ? '' : String(row['Alasan_Kategori_Tidak_Ditindaklanjuti'] || ''),
+    alasanLainTidakDitindaklanjuti: isUnverified ? '' : String(row['Alasan_Lain_Tidak_Ditindaklanjuti'] || ''),
     kesimpulanPetugas: isUnverified ? '' : String(row['Kesimpulan_Petugas'] || '')
   };
 }
@@ -1145,25 +1196,35 @@ function handleGetStats() {
   const sheet = getOrCreateSheet(SHEET_NAME_ADUAN, HEADERS_ADUAN);
   const rawData = getSheetDataAsObjects(sheet);
 
-  let total = rawData.length;
+  const seenIds = {};
+  let total = 0;
   let baru = 0, diverifikasi = 0, ditindak = 0, selesai = 0, tidakDapatDitindaklanjuti = 0;
   const perKecamatan = {};
   const perJenis = {};
 
   rawData.forEach(row => {
+    const rawId = String(row['ID_Aduan'] || '').trim().toUpperCase();
+    if (!rawId) return;
+    const baseMatch = rawId.match(/^(ADU-LMB-\d{4}-\d{4}-[A-Z0-9]{4,5})-[A-Z0-9]{3,}$/);
+    const baseId = baseMatch ? baseMatch[1] : rawId;
+    if (seenIds[rawId] || (baseMatch && seenIds[baseId])) return;
+    seenIds[rawId] = true;
+    if (baseMatch) seenIds[baseId] = true;
+
+    total++;
     const status = String(row['Status'] || '').trim();
     const stLower = status.toLowerCase();
     const kec = String(row['Kecamatan'] || '');
     const jenis = String(row['Jenis_Pencemaran'] || '');
 
-    if (stLower === 'baru' || stLower === 'aduan diterima') baru++;
-    else if (stLower.indexOf('verifikasi') !== -1) diverifikasi++;
+    if (stLower.indexOf('selesai') !== -1 || stLower.indexOf('tuntas') !== -1) selesai++;
     else if (stLower.indexOf('tidak dapat') !== -1 || stLower.indexOf('tidak ditindak') !== -1 || stLower.indexOf('tolak') !== -1) tidakDapatDitindaklanjuti++;
     else if (stLower.indexOf('tindak') !== -1 || stLower.indexOf('penanganan') !== -1 || stLower.indexOf('proses') !== -1) ditindak++;
-    else if (stLower.indexOf('selesai') !== -1 || stLower.indexOf('tuntas') !== -1) selesai++;
+    else if (stLower.indexOf('verif') !== -1 || stLower.indexOf('sedang') !== -1) diverifikasi++;
+    else baru++;
 
-    perKecamatan[kec] = (perKecamatan[kec] || 0) + 1;
-    perJenis[jenis] = (perJenis[jenis] || 0) + 1;
+    if (kec) perKecamatan[kec] = (perKecamatan[kec] || 0) + 1;
+    if (jenis) perJenis[jenis] = (perJenis[jenis] || 0) + 1;
   });
 
   const tingkatPenyelesaian = total > 0 ? Math.round(((selesai + tidakDapatDitindaklanjuti) / total) * 100) : 0;
@@ -1358,7 +1419,7 @@ function handleAddAduan(formData) {
     if (existingRowIndex === -1 && existingValues.length > 1 && colIdIndex !== -1) {
       const colNama = HEADERS_ADUAN.indexOf('Nama_Pelapor');
       const colDesa = HEADERS_ADUAN.indexOf('Desa_Kelurahan');
-      const colUraian = HEADERS_ADUAN.indexOf('Uraian_Laporan');
+      const colUraian = HEADERS_ADUAN.indexOf('Uraian_Aduan');
       const inputNama = String(formData.namaPelapor || '').trim().toLowerCase();
       const inputDesa = String(formData.desa || '').trim().toLowerCase();
       const inputUraian = String(formData.uraian || '').trim().toLowerCase();
@@ -1382,7 +1443,7 @@ function handleAddAduan(formData) {
       writeLog('DUPLIKASI_DICEGAH', 'ID: ' + newId + ' sudah ada di baris ' + existingRowIndex + ' - Penambahan baris kedua dicegah.');
       const rowData = existingValues[existingRowIndex - 1];
       const colTs = HEADERS_ADUAN.indexOf('Timestamp');
-      const colSt = HEADERS_ADUAN.indexOf('Status_Aduan');
+      const colSt = HEADERS_ADUAN.indexOf('Status');
       const colFp = HEADERS_ADUAN.indexOf('Link_Foto_Bukti');
       return {
         success: true,
@@ -1525,7 +1586,7 @@ function handleAddAduan(formData) {
     const primaryStatus = formData.status || 'Baru';
     const isUnverified = (primaryStatus === 'Baru' || primaryStatus === 'Aduan Diterima' || primaryStatus === 'Verifikasi Administrasi');
 
-    // Susun baris data baru sesuai urutan HEADERS_ADUAN (29 kolom lengkap)
+    // Susun baris data baru sesuai urutan HEADERS_ADUAN (37 kolom lengkap)
     const newRow = [
       newId,                                                  // ID_Aduan
       now,                                                    // Timestamp
@@ -1555,7 +1616,15 @@ function handleAddAduan(formData) {
       isUnverified ? '' : (formData.timestampTindakLanjut || ''), // Timestamp_Tindak_Lanjut
       isUnverified ? '' : (formData.timestampSelesai || ''),  // Timestamp_Selesai
       isUnverified ? '' : (formData.alasanTidakDitindaklanjuti || ''), // Alasan_Tidak_Ditindaklanjuti
-      isUnverified ? '' : (formData.kesimpulanPetugas || '')  // Kesimpulan_Petugas
+      isUnverified ? '' : (formData.kesimpulanPetugas || ''), // Kesimpulan_Petugas
+      formData.penyelesaian || '-',                           // Penyelesaian
+      formData.riwayatPengaduan || '-',                       // Riwayat_Pengaduan
+      isUnverified ? '' : (Array.isArray(formData.checklistVerifikasi) && formData.checklistVerifikasi.length > 0 ? JSON.stringify(formData.checklistVerifikasi) : ''), // Checklist_Verifikasi
+      isUnverified ? '' : (formData.hambatanPemeriksaan ? 'Ya' : ''), // Hambatan_Pemeriksaan
+      isUnverified ? '' : (formData.jenisHambatan || ''),     // Jenis_Hambatan
+      isUnverified ? '' : (formData.uraianHambatan || ''),    // Uraian_Hambatan
+      isUnverified ? '' : (formData.alasanKategoriTidakDitindaklanjuti || ''), // Alasan_Kategori_Tidak_Ditindaklanjuti
+      isUnverified ? '' : (formData.alasanLainTidakDitindaklanjuti || '')      // Alasan_Lain_Tidak_Ditindaklanjuti
     ];
 
     // Tambahkan baris ke sheet
@@ -1684,6 +1753,12 @@ function handleUpdateVerifikasi(updateData) {
   const colTimeSelesai = headers.indexOf('Timestamp_Selesai');
   const colAlasanTidak = headers.indexOf('Alasan_Tidak_Ditindaklanjuti');
   const colKesimpulan = headers.indexOf('Kesimpulan_Petugas');
+  const colChecklist = headers.indexOf('Checklist_Verifikasi');
+  const colHambatan = headers.indexOf('Hambatan_Pemeriksaan');
+  const colJenisHambatan = headers.indexOf('Jenis_Hambatan');
+  const colUraianHambatan = headers.indexOf('Uraian_Hambatan');
+  const colAlasanKat = headers.indexOf('Alasan_Kategori_Tidak_Ditindaklanjuti');
+  const colAlasanLain = headers.indexOf('Alasan_Lain_Tidak_Ditindaklanjuti');
 
   // Safeguard: pastikan status tidak tertahan di 'Aduan Diterima' / 'Baru' ketika petugas menyimpan hasil verifikasi
   const isUnverifiedSheetStatus_ = function(st) {
@@ -1763,6 +1838,27 @@ function handleUpdateVerifikasi(updateData) {
   if (updateData.kesimpulanPetugas !== undefined && colKesimpulan !== -1) {
     setColValues_('Kesimpulan_Petugas', updateData.kesimpulanPetugas, false);
   }
+  if (updateData.checklistVerifikasi !== undefined && colChecklist !== -1) {
+    const chkJson = Array.isArray(updateData.checklistVerifikasi) && updateData.checklistVerifikasi.length > 0
+      ? JSON.stringify(updateData.checklistVerifikasi)
+      : (typeof updateData.checklistVerifikasi === 'string' ? updateData.checklistVerifikasi : '');
+    setColValues_('Checklist_Verifikasi', chkJson, false);
+  }
+  if (updateData.hambatanPemeriksaan !== undefined && colHambatan !== -1) {
+    setColValues_('Hambatan_Pemeriksaan', updateData.hambatanPemeriksaan ? 'Ya' : '', false);
+  }
+  if (updateData.jenisHambatan !== undefined && colJenisHambatan !== -1) {
+    setColValues_('Jenis_Hambatan', updateData.jenisHambatan || '', false);
+  }
+  if (updateData.uraianHambatan !== undefined && colUraianHambatan !== -1) {
+    setColValues_('Uraian_Hambatan', updateData.uraianHambatan || '', false);
+  }
+  if (updateData.alasanKategoriTidakDitindaklanjuti !== undefined && colAlasanKat !== -1) {
+    setColValues_('Alasan_Kategori_Tidak_Ditindaklanjuti', updateData.alasanKategoriTidakDitindaklanjuti || '', false);
+  }
+  if (updateData.alasanLainTidakDitindaklanjuti !== undefined && colAlasanLain !== -1) {
+    setColValues_('Alasan_Lain_Tidak_Ditindaklanjuti', updateData.alasanLainTidakDitindaklanjuti || '', false);
+  }
 
   // Timestamps Akuntabilitas Kinerja
   if (updateData.timestampVerifikasi && colTimeVerif !== -1) {
@@ -1786,6 +1882,12 @@ function handleUpdateVerifikasi(updateData) {
     if (colCatatanBA !== -1) sheet.getRange(targetRowIndex, colCatatanBA + 1).setValue('');
     if (colAlasanTidak !== -1) sheet.getRange(targetRowIndex, colAlasanTidak + 1).setValue('');
     if (colKesimpulan !== -1) sheet.getRange(targetRowIndex, colKesimpulan + 1).setValue('');
+    if (colChecklist !== -1) sheet.getRange(targetRowIndex, colChecklist + 1).setValue('');
+    if (colHambatan !== -1) sheet.getRange(targetRowIndex, colHambatan + 1).setValue('');
+    if (colJenisHambatan !== -1) sheet.getRange(targetRowIndex, colJenisHambatan + 1).setValue('');
+    if (colUraianHambatan !== -1) sheet.getRange(targetRowIndex, colUraianHambatan + 1).setValue('');
+    if (colAlasanKat !== -1) sheet.getRange(targetRowIndex, colAlasanKat + 1).setValue('');
+    if (colAlasanLain !== -1) sheet.getRange(targetRowIndex, colAlasanLain + 1).setValue('');
     purgeFotoStorage(officerPhotoId);
     deleteDriveFilesForId(officerPhotoId);
     for (let k = 1; k <= 6; k++) {
