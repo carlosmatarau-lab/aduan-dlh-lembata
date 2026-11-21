@@ -2796,13 +2796,23 @@ class AduanDataStore {
       const pendingItems = (this.aduanList || []).filter(item =>
         item && item.id && item._pendingSync && !item._syncingNow && !this._activeSyncIds.has(item.id)
       );
+      let flushedAny = false;
       for (const item of pendingItems) {
         try {
           this._activeSyncIds.add(item.id);
           item._syncingNow = true;
-          const res = await this.postToGAS('addAduan', item);
+          const cleanPayload = {
+            ...item,
+            fotoBukti: '',
+            linkFotoBukti: ''
+          };
+          if ((!cleanPayload.buktiFotoList || cleanPayload.buktiFotoList.length === 0) && item.fotoBukti) {
+            cleanPayload.buktiFotoList = [item.fotoBukti];
+          }
+          const res = await this.postToGAS('addAduan', cleanPayload, 35000);
           if (res && res.success) {
             delete item._pendingSync;
+            flushedAny = true;
             await this._idbDeletePhotoJob('ADD_' + String(item.id).trim().toUpperCase());
           }
         } catch (e) {
@@ -2815,7 +2825,13 @@ class AduanDataStore {
       // 2. Flush update verifikasi petugas pending
       await this.pushPendingVerifications();
 
-      this.save();
+      if (flushedAny) {
+        this.isServerSynced = true;
+        this._serverConfirmed = true;
+        this.save('flush_queue', { serverConfirmed: true });
+      } else {
+        this.save();
+      }
       window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: true } }));
     } finally {
       this._isFlushing = false;
@@ -2846,27 +2862,47 @@ class AduanDataStore {
     return { success: true, uploaded: successCount, total: list.length };
   }
 
-  async postToGAS(action, payload) {
+  async postToGAS(action, payload, timeoutMs = 25000) {
     const endpoint = this.getGasUrl();
     if (!endpoint || !endpoint.startsWith('http')) return { success: false, offline: true };
 
+    let timeoutId = null;
     try {
       const token = this.getAuthToken();
       const bodyPayload = { action: action, token: token, data: payload };
       const bodyStr = JSON.stringify(bodyPayload);
+      const effectiveTimeout = (timeoutMs && timeoutMs > 0) ? timeoutMs : (bodyStr.length > 100000 ? 35000 : 20000);
+      const controller = (typeof AbortController !== 'undefined') ? new AbortController() : null;
+      if (controller) {
+        timeoutId = setTimeout(() => {
+          try { controller.abort(); } catch (e) { }
+        }, effectiveTimeout);
+      }
       // Gunakan fetch standar tanpa keepalive agar tidak terkena kuota batas 64KB browser (W3C/WHATWG)
       // saat mengunggah bukti foto Base64 ke Google Apps Script
       const response = await fetch(endpoint, {
         method: 'POST',
         headers: { 'Content-Type': 'text/plain;charset=utf-8' },
-        body: bodyStr
+        body: bodyStr,
+        signal: controller ? controller.signal : undefined
       });
-      const data = await response.json();
-      const isSuccess = (data && data.success !== undefined) ? data.success : true;
+      if (timeoutId) clearTimeout(timeoutId);
+      if (!response.ok) {
+        return { success: false, error: `HTTP ${response.status}` };
+      }
+      const rawText = await response.text();
+      let data = null;
+      try {
+        data = JSON.parse(rawText);
+      } catch (parseErr) {
+        return { success: false, error: 'Respons server tidak valid (bukan JSON).' };
+      }
+      const isSuccess = Boolean(data && data.success === true);
       return { success: isSuccess, response: data, ...data };
     } catch (err) {
+      if (timeoutId) clearTimeout(timeoutId);
       console.warn(`Gagal kirim '${action}' ke Google Apps Script:`, err);
-      return { success: false, error: err.message };
+      return { success: false, error: err && err.name === 'AbortError' ? 'Koneksi unggah habis waktu (timeout).' : (err.message || 'Gagal jaringan') };
     }
   }
 
@@ -3231,7 +3267,7 @@ class AduanDataStore {
   }
 
 
-  async addAduan(formData) {
+  async addAduan(formData, options = {}) {
     const customId = (formData && formData.id && String(formData.id).trim().toUpperCase().startsWith('ADU-'))
       ? String(formData.id).trim().toUpperCase()
       : null;
@@ -3373,6 +3409,8 @@ class AduanDataStore {
       }
 
       const hasBase64Citizen = (payloadToSend.buktiFotoList || []).some(p => typeof p === 'string' && p.startsWith('data:image'));
+      const photoCount = (payloadToSend.buktiFotoList || []).length;
+      const onProgress = (options && typeof options.onProgress === 'function') ? options.onProgress : null;
       const queueKey = 'ADD_' + newId;
       if (hasBase64Citizen) {
         await Promise.race([
@@ -3383,19 +3421,33 @@ class AduanDataStore {
             payload: payloadToSend,
             createdAt: Date.now()
           }),
-          new Promise(r => setTimeout(r, 80))
+          new Promise(r => setTimeout(r, 400))
         ]);
       }
 
-      const sendPromise = this.postToGAS('addAduan', payloadToSend);
+      const sendWithRetry = async () => {
+        if (onProgress) {
+          onProgress(hasBase64Citizen ? 55 : 65, hasBase64Citizen ? `Mengunggah ${photoCount} foto bukti ke server DLH...` : 'Mengirim data laporan ke server DLH...');
+        }
+        let res = await this.postToGAS('addAduan', payloadToSend, hasBase64Citizen ? 35000 : 18000);
+        if (!res || !res.success) {
+          if (onProgress) {
+            onProgress(70, 'Mencoba ulang unggahan agar seluruh foto tersimpan utuh...');
+          }
+          await new Promise(r => setTimeout(r, 900));
+          res = await this.postToGAS('addAduan', payloadToSend, hasBase64Citizen ? 35000 : 18000);
+        }
+        return res;
+      };
 
-      // Tangani penyelesaian request di latar belakang tanpa menahan tampilan tiket baru
-      sendPromise.then(async (res) => {
+      const sendPromise = sendWithRetry().then(async (res) => {
         const idx = this.aduanList.findIndex(x => x.id === newId);
         if (idx !== -1) {
           delete this.aduanList[idx]._syncingNow;
           if (res && res.success) {
             delete this.aduanList[idx]._pendingSync;
+            this.aduanList[idx]._serverUploadConfirmed = true;
+            newRecord._serverUploadConfirmed = true;
             if (hasBase64Citizen) {
               await this._idbDeletePhotoJob(queueKey);
             }
@@ -3422,25 +3474,35 @@ class AduanDataStore {
               window.dispatchEvent(new CustomEvent('aduanDataSynced', { detail: { count: this.aduanList.length, silent: true, id: newId, action: 'addAduan' } }));
               window.dispatchEvent(new CustomEvent('aduanStatsSynced', { detail: { ...this.getStats() } }));
             }
+            if (onProgress) {
+              onProgress(95, hasBase64Citizen ? `${photoCount} foto bukti terverifikasi tersimpan di server!` : 'Laporan terverifikasi tersimpan di server!');
+            }
+          } else {
+            newRecord._serverUploadConfirmed = false;
           }
         }
+        return res;
       }).catch(err => {
         console.warn('Gagal sinkron instan ke Google Apps Script, antrean IndexedDB aktif:', err);
+        newRecord._serverUploadConfirmed = false;
         const idx = this.aduanList.findIndex(x => x.id === newId);
         if (idx !== -1) {
           delete this.aduanList[idx]._syncingNow;
         }
+        return { success: false, error: err && err.message };
       }).finally(() => {
         this._activeSyncIds.delete(newId);
       });
 
-      // Two-Phase Instant Commit: jika ada unggahan foto Base64, kembalikan tiket seketika agar UI tidak tertahan
-      if (!hasBase64Citizen) {
-        try {
-          const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ timeout: true }), 2500));
-          await Promise.race([sendPromise, timeoutPromise]);
-        } catch (err) { }
-      }
+      // Tunggu konfirmasi unggah nyata sebelum melanjutkan ke modal sukses / WhatsApp
+      // agar unggahan foto Base64 tidak terputus oleh navigasi browser di HP
+      try {
+        const waitMs = hasBase64Citizen ? 42000 : 12000;
+        const timeoutPromise = new Promise(resolve => setTimeout(() => resolve({ timeout: true }), waitMs));
+        await Promise.race([sendPromise, timeoutPromise]);
+      } catch (err) { }
+    } else {
+      newRecord._serverUploadConfirmed = true;
     }
 
     return newRecord;

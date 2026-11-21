@@ -955,16 +955,70 @@ class DLHApp {
     });
   }
 
+  _encodeCanvasToBoundedJpeg(sourceCanvas, initialQuality = 0.80, maxDataUrlLen = 295000) {
+    if (!sourceCanvas) return null;
+    try {
+      const qualities = [initialQuality, 0.72, 0.62, 0.52];
+      let bestUrl = '';
+      for (const q of qualities) {
+        const dUrl = sourceCanvas.toDataURL('image/jpeg', q);
+        if (dUrl && dUrl.startsWith('data:image') && dUrl.length > 50) {
+          bestUrl = dUrl;
+          if (dUrl.length <= maxDataUrlLen) return dUrl;
+        }
+      }
+      // Jika masih besar (foto sangat detail), perkecil dimensi ke maksimal 960px agar pasti lolos unggah lintas jaringan HP
+      let w = sourceCanvas.width || 960;
+      let h = sourceCanvas.height || 720;
+      const fallbackMax = 960;
+      if (w > fallbackMax || h > fallbackMax) {
+        if (w > h) { h = Math.round((h * fallbackMax) / w); w = fallbackMax; }
+        else { w = Math.round((w * fallbackMax) / h); h = fallbackMax; }
+        const smallCanvas = document.createElement('canvas');
+        smallCanvas.width = w;
+        smallCanvas.height = h;
+        const sctx = smallCanvas.getContext('2d');
+        if (sctx) {
+          sctx.imageSmoothingEnabled = true;
+          sctx.imageSmoothingQuality = 'high';
+          sctx.drawImage(sourceCanvas, 0, 0, w, h);
+          const smallUrl = smallCanvas.toDataURL('image/jpeg', 0.64);
+          if (smallUrl && smallUrl.startsWith('data:image') && smallUrl.length > 50) {
+            return smallUrl;
+          }
+        }
+      }
+      return bestUrl || null;
+    } catch (e) {
+      return null;
+    }
+  }
+
+  _dataUrlToJpegFile(dataUrl, fileName = `bukti_${Date.now()}.jpg`) {
+    try {
+      if (!dataUrl || typeof dataUrl !== 'string' || !dataUrl.includes(',')) return null;
+      const parts = dataUrl.split(',');
+      const bstr = atob(parts[1]);
+      let n = bstr.length;
+      const u8arr = new Uint8Array(n);
+      while (n--) u8arr[n] = bstr.charCodeAt(n);
+      const safeName = fileName.endsWith('.jpg') ? fileName : `${fileName}.jpg`;
+      return new File([u8arr], safeName, { type: 'image/jpeg', lastModified: Date.now() });
+    } catch (e) {
+      return null;
+    }
+  }
+
   /* ===================================================================
      3.4 PENGOMPRES & OPTIMASI MEDIA HANDAL (KAMERA & GALERI)
-     Mendukung foto beresolusi tinggi (12-50MP) tanpa blocking & tanpa timeout 2 detik
+     Mendukung foto beresolusi tinggi (12-50MP) dari berbagai merek HP tanpa gagal unggah
      =================================================================== */
-  async compressMediaFile(mediaItem, maxDim = 1440, quality = 0.82) {
+  async compressMediaFile(mediaItem, maxDim = 1280, quality = 0.80) {
     if (!mediaItem) return null;
     if (typeof mediaItem === 'string') return mediaItem;
 
-    // Jika sudah memiliki hasil kompresi dataUrl valid
-    if (mediaItem.dataUrl && typeof mediaItem.dataUrl === 'string' && mediaItem.dataUrl.startsWith('data:image')) {
+    // Jika sudah memiliki hasil kompresi dataUrl valid & terukur
+    if (mediaItem.dataUrl && typeof mediaItem.dataUrl === 'string' && mediaItem.dataUrl.startsWith('data:image') && mediaItem.dataUrl.length <= 360000) {
       return mediaItem.dataUrl;
     }
 
@@ -980,7 +1034,7 @@ class DLHApp {
     }
 
     const file = mediaItem.file || (mediaItem instanceof Blob ? mediaItem : null);
-    if (!file || !(file instanceof Blob)) {
+    if (!file || !(file instanceof Blob) || file.size === 0) {
       return (typeof mediaItem === 'string') ? mediaItem : null;
     }
 
@@ -997,7 +1051,7 @@ class DLHApp {
           const timer = setTimeout(() => {
             try { URL.revokeObjectURL(vUrl); } catch (e) { }
             resolve(null);
-          }, 8000);
+          }, 10000);
           video.onloadeddata = () => { video.currentTime = 0.5; };
           video.onseeked = () => {
             clearTimeout(timer);
@@ -1014,8 +1068,8 @@ class DLHApp {
               canvas.height = height;
               canvas.getContext('2d').drawImage(video, 0, 0, width, height);
               URL.revokeObjectURL(vUrl);
-              const vResult = canvas.toDataURL('image/jpeg', 0.7);
-              if (mediaItem && typeof mediaItem === 'object') mediaItem.dataUrl = vResult;
+              const vResult = this._encodeCanvasToBoundedJpeg(canvas, 0.72, 260000);
+              if (mediaItem && typeof mediaItem === 'object' && vResult) mediaItem.dataUrl = vResult;
               resolve(vResult);
             } catch (e) {
               URL.revokeObjectURL(vUrl);
@@ -1033,34 +1087,45 @@ class DLHApp {
       });
     }
 
-    // 2. Pendekatan Utama: createImageBitmap (Cepat, non-blocking di main thread)
+    // 2. Pendekatan Utama: createImageBitmap dengan EXIF orientation otomatis
     if (typeof window.createImageBitmap === 'function') {
       try {
-        const bitmap = await createImageBitmap(file);
-        let width = bitmap.width;
-        let height = bitmap.height;
-        if (width > maxDim || height > maxDim) {
-          if (width > height) {
-            height = Math.round((height * maxDim) / width);
-            width = maxDim;
-          } else {
-            width = Math.round((width * maxDim) / height);
-            height = maxDim;
-          }
+        let bitmap = null;
+        try {
+          bitmap = await createImageBitmap(file, { imageOrientation: 'from-image' });
+        } catch (optErr) {
+          bitmap = await createImageBitmap(file);
         }
-        const canvas = document.createElement('canvas');
-        canvas.width = width;
-        canvas.height = height;
-        const ctx = canvas.getContext('2d');
-        if (ctx) {
-          ctx.imageSmoothingEnabled = true;
-          ctx.imageSmoothingQuality = 'high';
-          ctx.drawImage(bitmap, 0, 0, width, height);
-          bitmap.close();
-          const dUrl = canvas.toDataURL('image/jpeg', quality);
-          if (dUrl && dUrl.length > 50) {
-            if (mediaItem && typeof mediaItem === 'object') mediaItem.dataUrl = dUrl;
-            return dUrl;
+        if (bitmap) {
+          let width = bitmap.width;
+          let height = bitmap.height;
+          if (width > maxDim || height > maxDim) {
+            if (width > height) {
+              height = Math.round((height * maxDim) / width);
+              width = maxDim;
+            } else {
+              width = Math.round((width * maxDim) / height);
+              height = maxDim;
+            }
+          }
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          if (ctx) {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
+            ctx.imageSmoothingEnabled = true;
+            ctx.imageSmoothingQuality = 'high';
+            ctx.drawImage(bitmap, 0, 0, width, height);
+            bitmap.close();
+            const dUrl = this._encodeCanvasToBoundedJpeg(canvas, quality, 295000);
+            if (dUrl && dUrl.length > 50) {
+              if (mediaItem && typeof mediaItem === 'object') mediaItem.dataUrl = dUrl;
+              return dUrl;
+            }
+          } else {
+            bitmap.close();
           }
         }
       } catch (bmErr) {
@@ -1068,7 +1133,7 @@ class DLHApp {
       }
     }
 
-    // 3. Pendekatan Kedua & Ketiga: HTMLImageElement via URL.createObjectURL + Fail-safe FileReader
+    // 3. Pendekatan Kedua & Ketiga: HTMLImageElement via URL.createObjectURL + Fail-safe FileReader terkompresi
     return new Promise((resolve) => {
       let resolved = false;
 
@@ -1084,10 +1149,14 @@ class DLHApp {
       const fallbackToFileReader = () => {
         this._fallbackFileReader(file, (frResult) => {
           if (frResult && frResult.startsWith('data:image')) {
-            // Coba kompresi kanvas sederhana dari DataURL
+            // Selalu kompresi via kanvas agar foto galeri beresolusi besar (5-20MB) tidak pernah gagal diunggah
             try {
               const imgFallback = new Image();
+              const fbTimer = setTimeout(() => {
+                finishOnce(frResult.length <= 420000 ? frResult : null);
+              }, 10000);
               imgFallback.onload = () => {
+                clearTimeout(fbTimer);
                 try {
                   const cv = document.createElement('canvas');
                   let w = imgFallback.naturalWidth || imgFallback.width || 640;
@@ -1099,21 +1168,27 @@ class DLHApp {
                   cv.width = w;
                   cv.height = h;
                   const c = cv.getContext('2d');
+                  c.fillStyle = '#ffffff';
+                  c.fillRect(0, 0, w, h);
                   c.imageSmoothingEnabled = true;
                   c.imageSmoothingQuality = 'high';
                   c.drawImage(imgFallback, 0, 0, w, h);
-                  finishOnce(cv.toDataURL('image/jpeg', quality));
+                  const bounded = this._encodeCanvasToBoundedJpeg(cv, quality, 295000);
+                  finishOnce(bounded || (frResult.length <= 420000 ? frResult : null));
                 } catch (cvErr) {
-                  finishOnce(frResult);
+                  finishOnce(frResult.length <= 420000 ? frResult : null);
                 }
               };
-              imgFallback.onerror = () => finishOnce(frResult);
+              imgFallback.onerror = () => {
+                clearTimeout(fbTimer);
+                finishOnce(frResult.length <= 420000 ? frResult : null);
+              };
               imgFallback.src = frResult;
             } catch (e) {
-              finishOnce(frResult);
+              finishOnce(frResult.length <= 420000 ? frResult : null);
             }
           } else {
-            finishOnce(frResult);
+            finishOnce(null);
           }
         });
       };
@@ -1124,7 +1199,7 @@ class DLHApp {
         const loadTimer = setTimeout(() => {
           try { URL.revokeObjectURL(objectUrl); } catch (e) { }
           fallbackToFileReader();
-        }, 4000);
+        }, 12000);
 
         img.onload = () => {
           clearTimeout(loadTimer);
@@ -1144,11 +1219,15 @@ class DLHApp {
             canvas.width = width;
             canvas.height = height;
             const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, width, height);
             ctx.imageSmoothingEnabled = true;
             ctx.imageSmoothingQuality = 'high';
             ctx.drawImage(img, 0, 0, width, height);
             URL.revokeObjectURL(objectUrl);
-            finishOnce(canvas.toDataURL('image/jpeg', quality));
+            const bounded = this._encodeCanvasToBoundedJpeg(canvas, quality, 295000);
+            if (bounded) finishOnce(bounded);
+            else fallbackToFileReader();
           } catch (cvErr) {
             URL.revokeObjectURL(objectUrl);
             fallbackToFileReader();
@@ -1171,7 +1250,7 @@ class DLHApp {
   _fallbackFileReader(file, callback) {
     try {
       const reader = new FileReader();
-      const t = setTimeout(() => callback(null), 6000);
+      const t = setTimeout(() => callback(null), 12000);
       reader.onload = (ev) => {
         clearTimeout(t);
         callback(ev.target ? ev.target.result : null);
@@ -1211,6 +1290,9 @@ class DLHApp {
     this.selectedMediaFiles = [];
     this.cameraStream = null;
     this.currentFacingMode = 'environment'; // Default kamera belakang
+    this._cameraTorchOn = false;
+    this._cameraGridOn = false;
+    this._pendingCameraCapture = null;
 
     const fileInput = document.getElementById('inputBuktiFoto');
     const cameraInput = document.getElementById('inputCameraCapture');
@@ -1219,9 +1301,30 @@ class DLHApp {
     const previewList = document.getElementById('uploadPreviewList');
     const uploadZone = document.getElementById('uploadZone');
     const modalCamera = document.getElementById('modalLiveCamera');
+    const viewportWrap = document.getElementById('cameraViewportWrap');
     const videoView = document.getElementById('cameraVideoView');
     const btnSnap = document.getElementById('btnSnapPhoto');
     const btnSwitchCam = document.getElementById('btnSwitchCameraDirection');
+    const btnNativeCam = document.getElementById('btnFallbackNativeCamera');
+    const btnToggleGrid = document.getElementById('btnToggleCameraGrid');
+    const btnToggleFlash = document.getElementById('btnToggleCameraFlash');
+    const gridOverlay = document.getElementById('cameraGridOverlay');
+    const focusRing = document.getElementById('cameraFocusRing');
+    const flashFx = document.getElementById('cameraFlashFx');
+    const loadingOverlay = document.getElementById('cameraLoadingOverlay');
+    const reviewStage = document.getElementById('cameraReviewStage');
+    const capturedImg = document.getElementById('cameraCapturedImg');
+    const capturedMeta = document.getElementById('cameraCapturedMeta');
+    const liveControls = document.getElementById('cameraLiveControls');
+    const reviewActions = document.getElementById('cameraReviewActions');
+    const btnRetake = document.getElementById('btnRetakePhoto');
+    const btnCaptureMore = document.getElementById('btnCaptureMore');
+    const btnUsePhoto = document.getElementById('btnUseCapturedPhoto');
+    const cameraStatusMsg = document.getElementById('cameraStatusMsg');
+    const cameraShotCounter = document.getElementById('cameraShotCounter');
+    const cameraFacingLabel = document.getElementById('cameraFacingLabel');
+    const cameraModePill = document.getElementById('cameraModePill');
+    const cameraModePillText = document.getElementById('cameraModePillText');
 
     const animCard = document.getElementById('uploadAnimationCard');
     const animTitle = document.getElementById('uploadAnimTitle');
@@ -1231,75 +1334,47 @@ class DLHApp {
     const successBanner = document.getElementById('uploadSuccessBanner');
     const successDesc = document.getElementById('uploadSuccessDesc');
 
-    let uploadAnimTimer = null;
-    const triggerUploadAnimation = (count, onComplete) => {
-      this.isUploadingPhotos = true;
-      renderPreviews();
+    const estimateKb = (dataUrl) => {
+      if (!dataUrl || typeof dataUrl !== 'string') return 0;
+      const comma = dataUrl.indexOf(',');
+      const b64Len = comma !== -1 ? (dataUrl.length - comma - 1) : dataUrl.length;
+      return Math.max(1, Math.round((b64Len * 3) / 4 / 1024));
+    };
 
-      if (!animCard) {
-        this.isUploadingPhotos = false;
-        renderPreviews();
-        if (onComplete) onComplete();
+    const updateCameraHudCount = () => {
+      if (cameraShotCounter) {
+        cameraShotCounter.textContent = `${this.selectedMediaFiles.length} / 5 Foto`;
+      }
+      if (cameraFacingLabel) {
+        cameraFacingLabel.textContent = this.currentFacingMode === 'user' ? 'Kamera Depan' : 'Kamera Belakang';
+      }
+      if (videoView) {
+        videoView.classList.toggle('is-mirrored', this.currentFacingMode === 'user');
+      }
+    };
+
+    const updateSuccessBannerState = () => {
+      if (!successBanner) return;
+      const readyCount = this.selectedMediaFiles.filter(m => m && m.dataUrl && !m.failed).length;
+      const processingCount = this.selectedMediaFiles.filter(m => m && m.isCompressing).length;
+      const failedCount = this.selectedMediaFiles.filter(m => m && m.failed).length;
+
+      if (this.selectedMediaFiles.length === 0 || processingCount > 0 || readyCount === 0) {
+        successBanner.style.display = 'none';
         return;
       }
-
-      if (uploadAnimTimer) clearInterval(uploadAnimTimer);
-      if (successBanner) successBanner.style.display = 'none';
-
-      animCard.style.display = 'block';
-      try {
-        animCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
-      } catch (e) { }
-
-      let progress = 0;
-      if (animPercent) animPercent.textContent = '0%';
-      if (progressFill) progressFill.style.width = '0%';
-      if (animTitle) animTitle.textContent = `Mengunggah & Memproses ${count} Bukti Foto...`;
-      if (animStep) animStep.textContent = 'Menghubungkan berkas dari perangkat...';
-
-      const startTime = Date.now();
-      const totalDuration = 2400; // 2.4 detik durasi animasi upload mulus & realistis
-
-      uploadAnimTimer = setInterval(() => {
-        const elapsed = Date.now() - startTime;
-        progress = Math.min(100, Math.round((elapsed / totalDuration) * 100));
-
-        if (progressFill) progressFill.style.width = `${progress}%`;
-        if (animPercent) animPercent.textContent = `${progress}%`;
-
-        if (progress < 25) {
-          if (animStep) animStep.textContent = '📥 Membaca data gambar & metadata GPS...';
-        } else if (progress < 60) {
-          if (animStep) animStep.textContent = '⚙️ Mengompresi resolusi visual untuk kecepatan pelaporan...';
-        } else if (progress < 90) {
-          if (animStep) animStep.textContent = '🔒 Mengamankan data bukti digital ke sistem DLH...';
-        } else {
-          if (animStep) animStep.textContent = '✅ Memverifikasi integritas berkas foto...';
-        }
-
-        if (progress >= 100) {
-          clearInterval(uploadAnimTimer);
-          uploadAnimTimer = null;
-          this.isUploadingPhotos = false;
-          setTimeout(() => {
-            animCard.style.display = 'none';
-            if (successBanner) {
-              successBanner.style.display = 'flex';
-              if (successDesc) {
-                successDesc.textContent = `${this.selectedMediaFiles.length} bukti foto berhasil diunggah dengan status sukses (siap dilampirkan).`;
-              }
-            }
-            renderPreviews();
-            this.showToast(`✅ ${count} Foto bukti berhasil diunggah! Status: Sukses.`, 'success');
-            if (onComplete) onComplete();
-          }, 350);
-        }
-      }, 45);
+      successBanner.style.display = 'flex';
+      if (successDesc) {
+        successDesc.textContent = failedCount > 0
+          ? `${readyCount} foto siap diunggah (${failedCount} berkas gagal dibaca — silakan hapus/pilih ulang).`
+          : `${readyCount} bukti foto berhasil diproses & siap diunggah ke server DLH.`;
+      }
     };
 
     const renderPreviews = () => {
       if (!previewList) return;
       previewList.innerHTML = '';
+      updateCameraHudCount();
 
       if (this.selectedMediaFiles.length === 0) {
         if (successBanner) successBanner.style.display = 'none';
@@ -1315,26 +1390,31 @@ class DLHApp {
 
         if (!isVideo) {
           const img = document.createElement('img');
-          img.src = media.previewUrl || media.dataUrl || (fileObj ? URL.createObjectURL(fileObj) : '');
+          img.src = media.dataUrl || media.previewUrl || (fileObj ? URL.createObjectURL(fileObj) : '');
           img.alt = 'Pratinjau Bukti Foto';
           item.appendChild(img);
         } else {
           item.innerHTML = '<span class="file-icon">🎥</span>';
         }
 
-        // Badge Status: Mengunggah vs Sukses di tiap thumbnail
+        // Badge Status Riil: Memproses vs Siap Unggah (dengan ukuran KB) vs Gagal
         const badgeSuccess = document.createElement('span');
         badgeSuccess.className = 'upload-preview-badge-success';
-        if (this.isUploadingPhotos) {
-          badgeSuccess.textContent = '⏳ Mengunggah...';
-          badgeSuccess.style.background = 'rgba(2, 132, 199, 0.9)';
+        if (media.isCompressing) {
+          badgeSuccess.textContent = '⏳ Memproses...';
+          badgeSuccess.style.background = 'rgba(2, 132, 199, 0.92)';
+        } else if (media.failed || !media.dataUrl) {
+          badgeSuccess.textContent = '⚠ Gagal';
+          badgeSuccess.style.background = 'rgba(220, 38, 38, 0.92)';
         } else {
-          badgeSuccess.textContent = '✓ Sukses';
-          badgeSuccess.style.background = 'rgba(5, 150, 105, 0.9)';
+          const kb = estimateKb(media.dataUrl);
+          badgeSuccess.textContent = `✓ Siap (${kb} KB)`;
+          badgeSuccess.style.background = 'rgba(5, 150, 105, 0.92)';
         }
         item.appendChild(badgeSuccess);
 
         const removeBtn = document.createElement('button');
+        removeBtn.type = 'button';
         removeBtn.className = 'btn-remove-preview';
         removeBtn.innerHTML = '&times;';
         removeBtn.title = 'Hapus';
@@ -1345,20 +1425,93 @@ class DLHApp {
           }
           this.selectedMediaFiles.splice(idx, 1);
           renderPreviews();
-          if (this.selectedMediaFiles.length > 0 && successBanner && successDesc) {
-            successDesc.textContent = `${this.selectedMediaFiles.length} bukti foto terlampir dengan status sukses.`;
-          }
+          updateSuccessBannerState();
         };
         item.appendChild(removeBtn);
         previewList.appendChild(item);
       });
+      updateSuccessBannerState();
+    };
+
+    const runRealProcessingProgress = async (newItems) => {
+      if (!Array.isArray(newItems) || newItems.length === 0) return;
+      this.isUploadingPhotos = true;
+      renderPreviews();
+
+      const total = newItems.length;
+      let doneCount = 0;
+
+      if (animCard) {
+        if (successBanner) successBanner.style.display = 'none';
+        animCard.style.display = 'block';
+        try { animCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); } catch (e) { }
+        if (animTitle) animTitle.textContent = `Memproses & Mengoptimasi ${total} Bukti Foto...`;
+        if (animStep) animStep.textContent = '📥 Membaca berkas foto dari perangkat...';
+        if (progressFill) progressFill.style.width = '18%';
+        if (animPercent) animPercent.textContent = '18%';
+      }
+
+      const wrapped = newItems.map((m) => Promise.resolve(m.compressPromise).then((res) => {
+        doneCount++;
+        const pct = Math.min(96, Math.round(18 + (doneCount / total) * 78));
+        if (progressFill) progressFill.style.width = `${pct}%`;
+        if (animPercent) animPercent.textContent = `${pct}%`;
+        if (animStep) {
+          animStep.textContent = doneCount < total
+            ? `⚙️ Mengoptimasi foto ${doneCount}/${total} agar ringan & cepat diunggah...`
+            : '✅ Memverifikasi seluruh berkas bukti foto...';
+        }
+        renderPreviews();
+        return res;
+      }));
+
+      await Promise.allSettled(wrapped);
+
+      const okCount = newItems.filter(m => m && m.dataUrl && !m.failed).length;
+      const failCount = total - okCount;
+
+      if (progressFill) progressFill.style.width = '100%';
+      if (animPercent) animPercent.textContent = '100%';
+      this.isUploadingPhotos = false;
+
+      setTimeout(() => {
+        if (animCard) animCard.style.display = 'none';
+        renderPreviews();
+        if (okCount > 0 && failCount === 0) {
+          this.showToast(`✅ ${okCount} foto bukti siap diunggah bersama laporan.`, 'success');
+        } else if (okCount > 0 && failCount > 0) {
+          this.showToast(`⚠️ ${okCount} foto siap, namun ${failCount} berkas gagal dibaca. Hapus foto bertanda Gagal atau ambil ulang lewat kamera.`, 'warning');
+        } else {
+          this.showToast('⚠️ Format foto tidak didukung atau rusak. Silakan pilih foto JPG/PNG lain atau ambil langsung dengan Kamera.', 'warning');
+        }
+      }, 280);
+    };
+
+    const addPrecompressedCameraPhoto = (dataUrl) => {
+      if (!dataUrl || !dataUrl.startsWith('data:image')) return false;
+      if (this.selectedMediaFiles.length >= 5) {
+        this.showToast('Batas maksimal 5 foto bukti tercapai.', 'warning');
+        return false;
+      }
+      const fileObj = this._dataUrlToJpegFile(dataUrl, `bukti_kamera_${Date.now()}.jpg`);
+      const mediaItem = {
+        file: fileObj,
+        dataUrl: dataUrl,
+        previewUrl: dataUrl,
+        isCompressing: false,
+        failed: false,
+        compressPromise: Promise.resolve(dataUrl)
+      };
+      this.selectedMediaFiles.push(mediaItem);
+      renderPreviews();
+      return true;
     };
 
     const addFiles = (files) => {
       const incoming = Array.from(files);
       if (incoming.length === 0) return;
 
-      let addedCount = 0;
+      const addedItems = [];
       incoming.forEach(f => {
         if (this.selectedMediaFiles.length < 5) {
           const previewUrl = (f instanceof Blob) ? URL.createObjectURL(f) : (typeof f === 'string' ? f : '');
@@ -1366,46 +1519,40 @@ class DLHApp {
             file: f,
             dataUrl: null,
             previewUrl: previewUrl,
-            isCompressing: true
+            isCompressing: true,
+            failed: false
           };
 
-          // Optimasi otomatis langsung di latar belakang saat foto dipilih dari galeri/kamera
+          // Optimasi adaptif agar foto 12-50MP dari galeri/kamera HP selalu terkompresi rapi <= ~220KB
           mediaItem.compressPromise = this.compressMediaFile(mediaItem)
             .then(res => {
-              if (res) mediaItem.dataUrl = res;
-              mediaItem.isCompressing = false;
-              renderPreviews();
-              return res;
-            })
-            .catch(async (err) => {
-              console.warn('Gagal optimasi foto latar belakang, fallback ke FileReader:', err);
-              try {
-                const recovered = await new Promise((r) => {
-                  const reader = new FileReader();
-                  reader.onload = (e) => r(e.target ? e.target.result : null);
-                  reader.onerror = () => r(null);
-                  reader.readAsDataURL(f);
-                });
-                if (recovered) mediaItem.dataUrl = recovered;
-              } catch (e) { }
+              if (res && typeof res === 'string' && res.startsWith('data:image')) {
+                mediaItem.dataUrl = res;
+                mediaItem.failed = false;
+              } else {
+                mediaItem.failed = true;
+              }
               mediaItem.isCompressing = false;
               renderPreviews();
               return mediaItem.dataUrl;
+            })
+            .catch(() => {
+              mediaItem.failed = true;
+              mediaItem.isCompressing = false;
+              renderPreviews();
+              return null;
             });
 
           this.selectedMediaFiles.push(mediaItem);
-          addedCount++;
+          addedItems.push(mediaItem);
         } else {
           this.showToast('Batas maksimal 5 foto bukti tercapai.', 'warning');
         }
       });
 
       renderPreviews();
-
-      if (addedCount > 0) {
-        triggerUploadAnimation(addedCount, () => {
-          renderPreviews();
-        });
+      if (addedItems.length > 0) {
+        runRealProcessingProgress(addedItems);
       }
     };
 
@@ -1420,23 +1567,67 @@ class DLHApp {
       });
     }
 
-    // 2. Native Camera Capture (Fallback HP)
+    // 2. Native Camera Capture (Fallback HP / Kamera Bawaan)
     if (cameraInput) {
       cameraInput.addEventListener('change', () => {
         if (cameraInput.files.length) {
           addFiles(cameraInput.files);
           cameraInput.value = '';
-          this.showToast('Foto dari kamera berhasil ditambahkan!', 'success');
         }
       });
     }
 
-    // 3. Live Web Camera Handler
+    // 3. Live Interactive Web Camera Handler
+    const setCameraReviewMode = (isReview, dataUrl = '') => {
+      if (reviewStage) reviewStage.classList.toggle('is-active', Boolean(isReview));
+      if (liveControls) liveControls.style.display = isReview ? 'none' : 'flex';
+      if (reviewActions) reviewActions.classList.toggle('is-active', Boolean(isReview));
+      if (cameraModePill) cameraModePill.classList.toggle('is-review', Boolean(isReview));
+      if (cameraModePillText) cameraModePillText.textContent = isReview ? 'PRATINJAU' : 'LIVE';
+
+      if (isReview && dataUrl) {
+        if (capturedImg) capturedImg.src = dataUrl;
+        const kb = estimateKb(dataUrl);
+        if (capturedMeta) capturedMeta.textContent = `✓ Foto Siap Diunggah • ${kb} KB`;
+        if (cameraStatusMsg) cameraStatusMsg.textContent = 'Periksa hasil jepretan. Pilih "Gunakan Foto" atau "Ulangi".';
+        if (btnCaptureMore) {
+          btnCaptureMore.style.display = (this.selectedMediaFiles.length + 1 < 5) ? 'inline-flex' : 'none';
+        }
+      } else {
+        this._pendingCameraCapture = null;
+        if (capturedImg) capturedImg.removeAttribute('src');
+        if (cameraStatusMsg) cameraStatusMsg.textContent = 'Ketuk layar untuk fokus • Arahkan kamera ke lokasi kejadian.';
+      }
+    };
+
+    const setCameraTorch = async (enable) => {
+      if (!this.cameraStream) return;
+      const track = this.cameraStream.getVideoTracks()[0];
+      if (!track || typeof track.applyConstraints !== 'function') return;
+      try {
+        await track.applyConstraints({ advanced: [{ torch: Boolean(enable) }] });
+        this._cameraTorchOn = Boolean(enable);
+        if (btnToggleFlash) btnToggleFlash.classList.toggle('is-active', this._cameraTorchOn);
+      } catch (e) { }
+    };
+
     const stopCamera = () => {
+      this._cameraTorchOn = false;
+      if (btnToggleFlash) {
+        btnToggleFlash.classList.remove('is-active');
+        btnToggleFlash.style.display = 'none';
+      }
       if (this.cameraStream) {
-        this.cameraStream.getTracks().forEach(t => t.stop());
+        this.cameraStream.getTracks().forEach(t => {
+          try { t.stop(); } catch (e) { }
+        });
         this.cameraStream = null;
       }
+      if (videoView) {
+        try { videoView.srcObject = null; } catch (e) { }
+      }
+      if (loadingOverlay) loadingOverlay.classList.remove('is-visible');
+      setCameraReviewMode(false);
       if (modalCamera) modalCamera.classList.remove('show');
     };
 
@@ -1447,17 +1638,23 @@ class DLHApp {
       }
 
       if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-        // Fallback langsung ke input kamera bawaan HP
         if (cameraInput) cameraInput.click();
         return;
       }
 
       try {
         if (this.cameraStream) {
-          this.cameraStream.getTracks().forEach(t => t.stop());
+          this.cameraStream.getTracks().forEach(t => { try { t.stop(); } catch (e) { } });
+          this.cameraStream = null;
         }
 
-        modalCamera.classList.add('show');
+        setCameraReviewMode(false);
+        updateCameraHudCount();
+        if (btnSnap) btnSnap.disabled = true;
+        if (loadingOverlay) loadingOverlay.classList.add('is-visible');
+        if (cameraStatusMsg) cameraStatusMsg.textContent = 'Menyalakan kamera perangkat...';
+        if (modalCamera) modalCamera.classList.add('show');
+
         const constraints = {
           video: {
             facingMode: { ideal: this.currentFacingMode },
@@ -1470,7 +1667,34 @@ class DLHApp {
         this.cameraStream = await navigator.mediaDevices.getUserMedia(constraints);
         if (videoView) {
           videoView.srcObject = this.cameraStream;
+          await new Promise((resolve) => {
+            let done = false;
+            const finish = () => { if (!done) { done = true; resolve(); } };
+            videoView.onloadedmetadata = finish;
+            setTimeout(finish, 2500);
+          });
           await videoView.play();
+        }
+
+        if (loadingOverlay) loadingOverlay.classList.remove('is-visible');
+        if (btnSnap) btnSnap.disabled = false;
+        if (cameraStatusMsg) cameraStatusMsg.textContent = 'Ketuk layar untuk fokus • Arahkan kamera ke lokasi kejadian.';
+
+        // Deteksi dukungan lampu kilat (torch) pada kamera belakang perangkat HP
+        const track = this.cameraStream.getVideoTracks()[0];
+        if (btnToggleFlash && track && typeof track.getCapabilities === 'function') {
+          try {
+            const caps = track.getCapabilities();
+            if (caps && caps.torch) {
+              btnToggleFlash.style.display = 'inline-flex';
+              this._cameraTorchOn = false;
+              btnToggleFlash.classList.remove('is-active');
+            } else {
+              btnToggleFlash.style.display = 'none';
+            }
+          } catch (capErr) {
+            btnToggleFlash.style.display = 'none';
+          }
         }
       } catch (err) {
         console.warn('Gagal membuka kamera via getUserMedia, beralih ke kamera native:', err);
@@ -1490,23 +1714,129 @@ class DLHApp {
       });
     }
 
+    if (btnNativeCam) {
+      btnNativeCam.addEventListener('click', () => {
+        stopCamera();
+        if (cameraInput) cameraInput.click();
+      });
+    }
+
+    if (btnToggleGrid && gridOverlay) {
+      btnToggleGrid.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this._cameraGridOn = !this._cameraGridOn;
+        gridOverlay.classList.toggle('show-grid', this._cameraGridOn);
+        btnToggleGrid.classList.toggle('is-active', this._cameraGridOn);
+      });
+    }
+
+    if (btnToggleFlash) {
+      btnToggleFlash.addEventListener('click', (e) => {
+        e.stopPropagation();
+        setCameraTorch(!this._cameraTorchOn);
+      });
+    }
+
+    // Interaksi Tap-to-Focus pada viewfinder kamera
+    if (viewportWrap && focusRing) {
+      let focusTimer = null;
+      viewportWrap.addEventListener('click', (e) => {
+        if (reviewStage && reviewStage.classList.contains('is-active')) return;
+        if (e.target && e.target.closest && e.target.closest('.camera-hud-tools')) return;
+        const rect = viewportWrap.getBoundingClientRect();
+        const x = Math.max(36, Math.min(rect.width - 36, e.clientX - rect.left));
+        const y = Math.max(36, Math.min(rect.height - 36, e.clientY - rect.top));
+        focusRing.style.left = `${x}px`;
+        focusRing.style.top = `${y}px`;
+        focusRing.classList.remove('is-visible');
+        void focusRing.offsetWidth;
+        focusRing.classList.add('is-visible');
+        if (focusTimer) clearTimeout(focusTimer);
+        focusTimer = setTimeout(() => focusRing.classList.remove('is-visible'), 900);
+
+        if (this.cameraStream) {
+          const track = this.cameraStream.getVideoTracks()[0];
+          if (track && typeof track.applyConstraints === 'function') {
+            try {
+              track.applyConstraints({ advanced: [{ focusMode: 'single-shot' }] }).catch(() => { });
+            } catch (fe) { }
+          }
+        }
+      });
+    }
+
     if (btnSnap) {
       btnSnap.addEventListener('click', () => {
-        if (!videoView) return;
-        const canvas = document.getElementById('cameraCanvasSnap') || document.createElement('canvas');
-        canvas.width = videoView.videoWidth || 640;
-        canvas.height = videoView.videoHeight || 480;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(videoView, 0, 0, canvas.width, canvas.height);
+        if (!videoView || videoView.readyState < 2 || !videoView.videoWidth || !videoView.videoHeight) {
+          this.showToast('Kamera sedang fokus, tunggu sebentar lalu jepret kembali.', 'info');
+          return;
+        }
 
-        canvas.toBlob((blob) => {
-          if (blob) {
-            const snapFile = new File([blob], `bukti_kamera_${Date.now()}.jpg`, { type: 'image/jpeg' });
-            addFiles([snapFile]);
-            this.showToast('Foto bukti berhasil diambil dari kamera!', 'success');
-          }
+        // Efek kilatan shutter visual
+        if (flashFx) {
+          flashFx.classList.add('is-flashing');
+          setTimeout(() => flashFx.classList.remove('is-flashing'), 140);
+        }
+
+        const canvas = document.getElementById('cameraCanvasSnap') || document.createElement('canvas');
+        let w = videoView.videoWidth;
+        let h = videoView.videoHeight;
+        const maxCamDim = 1280;
+        if (w > maxCamDim || h > maxCamDim) {
+          if (w > h) { h = Math.round((h * maxCamDim) / w); w = maxCamDim; }
+          else { w = Math.round((w * maxCamDim) / h); h = maxCamDim; }
+        }
+        canvas.width = w;
+        canvas.height = h;
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return;
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(0, 0, w, h);
+        ctx.imageSmoothingEnabled = true;
+        ctx.imageSmoothingQuality = 'high';
+        ctx.drawImage(videoView, 0, 0, w, h);
+
+        const boundedDataUrl = this._encodeCanvasToBoundedJpeg(canvas, 0.82, 295000);
+        if (!boundedDataUrl) {
+          this.showToast('Gagal menangkap gambar dari kamera. Silakan coba lagi atau gunakan Kamera HP.', 'warning');
+          return;
+        }
+
+        this._pendingCameraCapture = boundedDataUrl;
+        setCameraReviewMode(true, boundedDataUrl);
+      });
+    }
+
+    if (btnRetake) {
+      btnRetake.addEventListener('click', () => {
+        setCameraReviewMode(false);
+      });
+    }
+
+    if (btnCaptureMore) {
+      btnCaptureMore.addEventListener('click', () => {
+        if (this._pendingCameraCapture) {
+          addPrecompressedCameraPhoto(this._pendingCameraCapture);
+          this._pendingCameraCapture = null;
+          this.showToast(`Foto #${this.selectedMediaFiles.length} ditambahkan! Silakan jepret foto berikutnya.`, 'success');
+        }
+        updateCameraHudCount();
+        if (this.selectedMediaFiles.length >= 5) {
           stopCamera();
-        }, 'image/jpeg', 0.88);
+        } else {
+          setCameraReviewMode(false);
+        }
+      });
+    }
+
+    if (btnUsePhoto) {
+      btnUsePhoto.addEventListener('click', () => {
+        if (this._pendingCameraCapture) {
+          addPrecompressedCameraPhoto(this._pendingCameraCapture);
+          this._pendingCameraCapture = null;
+          this.showToast(`✅ Foto bukti berhasil diambil & siap diunggah (${this.selectedMediaFiles.length}/5).`, 'success');
+        }
+        stopCamera();
       });
     }
 
@@ -1753,29 +2083,36 @@ class DLHApp {
 
         const rawResults = await Promise.all(mediaPromises);
 
-        // Jaminan pemulihan 100%: Jangan biarkan ada foto pengadu yang hilang/terpangkas
+        // Jaminan pemulihan & kompresi aman: pastikan setiap foto valid & tidak mengirim mentahan >420KB
         for (let i = 0; i < (this.selectedMediaFiles || []).length; i++) {
           if (!rawResults[i]) {
-            const rawFile = this.selectedMediaFiles[i].file || (this.selectedMediaFiles[i] instanceof Blob ? this.selectedMediaFiles[i] : null);
-            if (rawFile instanceof Blob) {
-              try {
-                const recovered = await new Promise((res) => {
-                  const r = new FileReader();
-                  r.onload = (ev) => res(ev.target ? ev.target.result : null);
-                  r.onerror = () => res(null);
-                  r.readAsDataURL(rawFile);
-                });
-                if (recovered) {
-                  rawResults[i] = recovered;
-                  this.selectedMediaFiles[i].dataUrl = recovered;
-                }
-              } catch (e) { }
+            const recovered = await this.compressMediaFile(this.selectedMediaFiles[i], 1024, 0.72);
+            if (recovered && typeof recovered === 'string' && recovered.startsWith('data:image')) {
+              rawResults[i] = recovered;
+              this.selectedMediaFiles[i].dataUrl = recovered;
+              this.selectedMediaFiles[i].failed = false;
             }
           }
         }
 
-        const buktiList = rawResults.filter(Boolean);
+        const buktiList = rawResults.filter(u => typeof u === 'string' && u.startsWith('data:image'));
         console.log(`Sinkronisasi Bukti Foto Pengadu: ${expectedCount} dipilih -> ${buktiList.length} terdata.`);
+
+        if (expectedCount > 0 && buktiList.length < expectedCount) {
+          const failedNum = expectedCount - buktiList.length;
+          if (buktiList.length === 0) {
+            if (animProgressInterval) clearInterval(animProgressInterval);
+            if (modalSubmitting) modalSubmitting.style.display = 'none';
+            if (btnSubmit) {
+              btnSubmit.disabled = false;
+              btnSubmit.innerHTML = '<span>📲</span> KIRIM LAPORAN KE KONTAK LAYANAN PENGADUAN';
+            }
+            this._isSubmittingAduan = false;
+            this.showToast('⚠️ Foto bukti gagal diproses dari perangkat. Silakan hapus foto bertanda Gagal lalu ambil ulang menggunakan Kamera atau pilih file JPG/PNG lain.', 'warning');
+            return;
+          }
+          this.showToast(`⚠️ ${failedNum} berkas foto tidak dapat dibaca; melanjutkan pengiriman dengan ${buktiList.length} foto valid.`, 'warning');
+        }
 
         // Kategori pencemaran
         const selectedRadio = document.querySelector('input[name="radioJenis"]:checked');
@@ -1895,7 +2232,13 @@ class DLHApp {
         }
 
         if (store && typeof store.addAduan === 'function') {
-          newRecord = await store.addAduan(formData);
+          newRecord = await store.addAduan(formData, {
+            onProgress: (pct, stepMsg) => {
+              updateSubmitProgress(pct, stepMsg, buktiList.length > 0
+                ? `Mohon tunggu hingga ${buktiList.length} foto bukti selesai tersimpan di server...`
+                : 'Menyimpan data laporan ke server DLH...');
+            }
+          });
         } else {
           // Fallback aman jika store belum terpasang
           const now = new Date();
@@ -2063,12 +2406,22 @@ _Mohon bantuan tindak lanjut dari Petugas Layanan Pengaduan. Terima kasih!_`;
         this.renderTable();
         if (window.lembataMap) window.lembataMap.renderMarkers();
 
-        // 🌟 TAMPILKAN STATUS UPLOAD SUKSES & SELESAIKAN ANIMASI LOADING
+        // 🌟 TAMPILKAN STATUS UPLOAD RIIL (TERKONFIRMASI SERVER VS ANTREAN OFFLINE)
         if (animProgressInterval) clearInterval(animProgressInterval);
-        updateSubmitProgress(100, '✅ Status: Upload Sukses!', 'Bukti foto & berkas laporan berhasil diunggah.');
-        if (submitUploadIcon) submitUploadIcon.textContent = '✓';
-        if (submitUploadTitle) submitUploadTitle.textContent = 'Status: Upload Sukses!';
-        await new Promise(resolve => setTimeout(resolve, 750));
+        const serverConfirmed = Boolean(newRecord && newRecord._serverUploadConfirmed !== false);
+        if (serverConfirmed) {
+          updateSubmitProgress(100, '✅ Status: Upload Sukses!', buktiList.length > 0
+            ? `${buktiList.length} bukti foto & berkas laporan berhasil tersimpan di server DLH.`
+            : 'Berkas laporan berhasil tersimpan di server DLH.');
+          if (submitUploadIcon) submitUploadIcon.textContent = '✓';
+          if (submitUploadTitle) submitUploadTitle.textContent = 'Status: Upload Sukses!';
+        } else {
+          updateSubmitProgress(100, '⏳ Tersimpan di Antrean Perangkat', 'Koneksi sedang lambat/terputus — foto & laporan akan diunggah otomatis saat sinyal stabil.');
+          if (submitUploadIcon) submitUploadIcon.textContent = '⏳';
+          if (submitUploadTitle) submitUploadTitle.textContent = 'Menunggu Koneksi Unggah';
+          this.showToast('⚠️ Koneksi ke server lambat. Foto disimpan aman di antrean perangkat & otomatis diunggah saat sinyal pulih.', 'warning');
+        }
+        await new Promise(resolve => setTimeout(resolve, 650));
         if (modalSubmitting) modalSubmitting.style.display = 'none';
 
         // Tampilkan Modal Sukses Aduan

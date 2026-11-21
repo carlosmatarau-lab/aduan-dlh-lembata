@@ -6161,8 +6161,29 @@
       }
 
       .camera-viewport-wrap {
-        height: 260px;
-        border-radius: 10px;
+        height: 52vh;
+        min-height: 300px;
+        max-height: 420px;
+        border-radius: 14px;
+      }
+
+      .camera-footer-controls {
+        padding: 12px 12px 16px;
+      }
+
+      .camera-ctrl-btn {
+        min-width: 74px;
+        padding: 8px 10px;
+        font-size: 0.72rem;
+      }
+
+      .camera-review-actions {
+        gap: 6px;
+      }
+
+      .camera-review-btn {
+        font-size: 0.78rem;
+        padding: 10px 10px;
       }
     }
 
@@ -6379,61 +6400,501 @@
     }
 
     .modal-camera-dialog {
-      max-width: 480px;
+      max-width: 500px;
       width: 95%;
+      background: #0b1220 !important;
+      color: #f8fafc !important;
+      border: 1px solid rgba(52, 211, 153, 0.25) !important;
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.65) !important;
+      overflow: hidden;
+    }
+
+    .camera-modal-header {
+      background: linear-gradient(135deg, #064e3b 0%, #0f172a 100%) !important;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+      padding: 12px 16px !important;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+    }
+
+    .camera-header-left {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      min-width: 0;
+    }
+
+    .camera-header-title {
+      margin: 0;
+      font-size: 0.96rem;
+      font-weight: 800;
+      color: #ffffff;
+      line-height: 1.2;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .camera-live-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      background: rgba(16, 185, 129, 0.2);
+      color: #6ee7b7;
+      border: 1px solid rgba(52, 211, 153, 0.35);
+      flex-shrink: 0;
+    }
+
+    .camera-live-dot {
+      width: 7px;
+      height: 7px;
+      border-radius: 50%;
+      background: #10b981;
+      animation: camPulseDot 1.4s infinite;
+    }
+
+    .camera-live-pill.is-review {
+      background: rgba(59, 130, 246, 0.22);
+      color: #93c5fd;
+      border-color: rgba(96, 165, 250, 0.4);
+    }
+
+    .camera-live-pill.is-review .camera-live-dot {
+      background: #60a5fa;
+      animation: none;
+    }
+
+    @keyframes camPulseDot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.4; transform: scale(0.75); }
+    }
+
+    .camera-header-right {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-shrink: 0;
+    }
+
+    .camera-count-badge {
+      font-size: 0.72rem;
+      font-weight: 800;
+      padding: 4px 9px;
+      border-radius: 999px;
+      background: rgba(255, 255, 255, 0.1);
+      color: #e2e8f0;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+
+    .camera-close-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: rgba(255, 255, 255, 0.12) !important;
+      color: #ffffff !important;
+      border: 1px solid rgba(255, 255, 255, 0.18) !important;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+      line-height: 1;
+      cursor: pointer;
+      transition: background 0.18s ease, transform 0.15s ease;
+    }
+
+    .camera-close-btn:hover {
+      background: rgba(239, 68, 68, 0.75) !important;
+      transform: scale(1.06);
+    }
+
+    .camera-modal-body {
+      padding: 12px 14px 8px !important;
+      background: #0b1220;
+      text-align: center;
     }
 
     .camera-viewport-wrap {
       position: relative;
       width: 100%;
-      height: 320px;
-      background: #090d16;
-      border-radius: 12px;
+      height: 390px;
+      background: #020617;
+      border-radius: 16px;
       overflow: hidden;
       display: flex;
       align-items: center;
       justify-content: center;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      cursor: crosshair;
+      user-select: none;
+      -webkit-tap-highlight-color: transparent;
     }
 
     #cameraVideoView {
       width: 100%;
       height: 100%;
       object-fit: cover;
+      transition: opacity 0.2s ease;
+    }
+
+    #cameraVideoView.is-mirrored {
+      transform: scaleX(-1);
+    }
+
+    .camera-hud-top {
+      position: absolute;
+      top: 10px;
+      left: 10px;
+      right: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 6;
+      pointer-events: none;
+    }
+
+    .camera-facing-chip {
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #f8fafc;
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 5px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(255, 255, 255, 0.16);
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+    }
+
+    .camera-hud-tools {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      pointer-events: auto;
+    }
+
+    .camera-tool-icon-btn {
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      border: 1px solid rgba(255, 255, 255, 0.22);
+      background: rgba(15, 23, 42, 0.72);
+      backdrop-filter: blur(8px);
+      -webkit-backdrop-filter: blur(8px);
+      color: #e2e8f0;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      transition: all 0.18s ease;
+    }
+
+    .camera-tool-icon-btn:hover {
+      background: rgba(16, 185, 129, 0.35);
+      color: #ffffff;
+    }
+
+    .camera-tool-icon-btn.is-active {
+      background: rgba(16, 185, 129, 0.85);
+      border-color: #6ee7b7;
+      color: #ffffff;
+      box-shadow: 0 0 12px rgba(16, 185, 129, 0.5);
     }
 
     .camera-target-grid {
       position: absolute;
-      top: 12%;
-      left: 12%;
-      right: 12%;
-      bottom: 12%;
-      border: 2px dashed rgba(255, 255, 255, 0.45);
-      border-radius: 8px;
+      inset: 12%;
       pointer-events: none;
-      box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.25);
+      z-index: 3;
+      border: none;
+      box-shadow: none;
+    }
+
+    .camera-corner {
+      position: absolute;
+      width: 24px;
+      height: 24px;
+      border-color: rgba(110, 231, 183, 0.88);
+      border-style: solid;
+      border-width: 0;
+      filter: drop-shadow(0 1px 4px rgba(0, 0, 0, 0.65));
+    }
+
+    .camera-corner.tl { top: 0; left: 0; border-top-width: 3px; border-left-width: 3px; border-top-left-radius: 6px; }
+    .camera-corner.tr { top: 0; right: 0; border-top-width: 3px; border-right-width: 3px; border-top-right-radius: 6px; }
+    .camera-corner.bl { bottom: 0; left: 0; border-bottom-width: 3px; border-left-width: 3px; border-bottom-left-radius: 6px; }
+    .camera-corner.br { bottom: 0; right: 0; border-bottom-width: 3px; border-right-width: 3px; border-bottom-right-radius: 6px; }
+
+    .camera-grid-3x3 {
+      position: absolute;
+      inset: 0;
+      pointer-events: none;
+      z-index: 2;
+      opacity: 0;
+      transition: opacity 0.2s ease;
+      background-image:
+        linear-gradient(to right, transparent 33.2%, rgba(255, 255, 255, 0.22) 33.3%, rgba(255, 255, 255, 0.22) 33.5%, transparent 33.6%, transparent 66.5%, rgba(255, 255, 255, 0.22) 66.6%, rgba(255, 255, 255, 0.22) 66.8%, transparent 66.9%),
+        linear-gradient(to bottom, transparent 33.2%, rgba(255, 255, 255, 0.22) 33.3%, rgba(255, 255, 255, 0.22) 33.5%, transparent 33.6%, transparent 66.5%, rgba(255, 255, 255, 0.22) 66.6%, rgba(255, 255, 255, 0.22) 66.8%, transparent 66.9%);
+    }
+
+    .camera-grid-3x3.show-grid {
+      opacity: 1;
+    }
+
+    .camera-focus-ring {
+      position: absolute;
+      width: 62px;
+      height: 62px;
+      border: 2px solid #34d399;
+      border-radius: 12px;
+      box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45), inset 0 0 12px rgba(52, 211, 153, 0.35);
+      pointer-events: none;
+      z-index: 5;
+      opacity: 0;
+      transform: translate(-50%, -50%) scale(1.35);
+      transition: opacity 0.22s ease, transform 0.22s ease;
+    }
+
+    .camera-focus-ring.is-visible {
+      opacity: 1;
+      transform: translate(-50%, -50%) scale(1);
+    }
+
+    .camera-flash-fx {
+      position: absolute;
+      inset: 0;
+      background: #ffffff;
+      opacity: 0;
+      pointer-events: none;
+      z-index: 9;
+      transition: opacity 0.16s ease-out;
+    }
+
+    .camera-flash-fx.is-flashing {
+      opacity: 0.92;
+      transition: none;
+    }
+
+    .camera-loading-overlay {
+      position: absolute;
+      inset: 0;
+      background: rgba(2, 6, 23, 0.85);
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 10px;
+      z-index: 7;
+      color: #cbd5e1;
+      font-size: 0.82rem;
+      font-weight: 600;
+    }
+
+    .camera-loading-overlay.is-visible {
+      display: flex;
+    }
+
+    .camera-spinner {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      border: 3px solid rgba(52, 211, 153, 0.25);
+      border-top-color: #10b981;
+      animation: spin 0.75s linear infinite;
+    }
+
+    .camera-review-stage {
+      position: absolute;
+      inset: 0;
+      background: #020617;
+      display: none;
+      align-items: center;
+      justify-content: center;
+      z-index: 8;
+    }
+
+    .camera-review-stage.is-active {
+      display: flex;
+    }
+
+    #cameraCapturedImg {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      background: #020617;
+    }
+
+    .camera-review-badge {
+      position: absolute;
+      bottom: 12px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(6, 78, 59, 0.9);
+      color: #ecfdf5;
+      border: 1px solid rgba(110, 231, 183, 0.5);
+      padding: 5px 12px;
+      border-radius: 999px;
+      font-size: 0.74rem;
+      font-weight: 700;
+      white-space: nowrap;
+      backdrop-filter: blur(6px);
+    }
+
+    .camera-status-bar {
+      font-size: 0.76rem;
+      color: #94a3b8;
+      margin-top: 8px;
+      min-height: 18px;
+      font-weight: 500;
     }
 
     .camera-footer-controls {
+      background: #0f172a !important;
+      border-top: 1px solid rgba(255, 255, 255, 0.08) !important;
+      padding: 14px 18px 18px !important;
       display: flex;
-      justify-content: space-between;
-      align-items: center;
+      flex-direction: column;
+      align-items: stretch;
       gap: 8px;
     }
 
-    .btn-shutter {
-      background: #dc2626 !important;
-      border-color: #b91c1c !important;
-      font-size: 0.95rem !important;
-      padding: 10px 22px !important;
-      font-weight: 800 !important;
-      border-radius: 999px !important;
-      box-shadow: 0 4px 14px rgba(220, 38, 38, 0.4) !important;
-      transition: all 0.15s ease !important;
+    .camera-live-controls {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      width: 100%;
     }
 
-    .btn-shutter:hover {
-      background: #b91c1c !important;
-      transform: scale(1.04);
+    .camera-ctrl-btn {
+      display: inline-flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      min-width: 84px;
+      padding: 8px 12px;
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.08);
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      color: #e2e8f0;
+      font-size: 0.74rem;
+      font-weight: 700;
+      cursor: pointer;
+      white-space: nowrap;
+      transition: all 0.18s ease;
+    }
+
+    .camera-ctrl-btn:hover {
+      background: rgba(255, 255, 255, 0.16);
+      color: #ffffff;
+    }
+
+    .btn-shutter {
+      width: 68px !important;
+      height: 68px !important;
+      padding: 0 !important;
+      border-radius: 50% !important;
+      background: rgba(255, 255, 255, 0.14) !important;
+      border: 3.5px solid #ffffff !important;
+      box-shadow: 0 0 0 4px rgba(16, 185, 129, 0.25), 0 8px 20px rgba(0, 0, 0, 0.45) !important;
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      cursor: pointer;
+      flex-shrink: 0;
+      transition: transform 0.14s ease, box-shadow 0.18s ease, opacity 0.18s ease !important;
+    }
+
+    .btn-shutter-core {
+      width: 52px;
+      height: 52px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      display: block;
+      transition: transform 0.12s ease, background 0.18s ease;
+    }
+
+    .btn-shutter:hover:not(:disabled) {
+      transform: scale(1.06);
+      box-shadow: 0 0 0 6px rgba(16, 185, 129, 0.35), 0 10px 24px rgba(0, 0, 0, 0.5) !important;
+    }
+
+    .btn-shutter:active:not(:disabled) .btn-shutter-core {
+      transform: scale(0.86);
+      background: #047857;
+    }
+
+    .btn-shutter:disabled {
+      opacity: 0.45;
+      cursor: not-allowed;
+    }
+
+    .camera-review-actions {
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 8px;
+      width: 100%;
+    }
+
+    .camera-review-actions.is-active {
+      display: flex;
+    }
+
+    .camera-review-btn {
+      flex: 1;
+      padding: 11px 12px;
+      border-radius: 12px;
+      font-size: 0.82rem;
+      font-weight: 800;
+      border: 1px solid transparent;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 6px;
+      white-space: nowrap;
+      transition: all 0.16s ease;
+    }
+
+    .camera-review-btn.is-retake {
+      background: rgba(255, 255, 255, 0.1);
+      border-color: rgba(255, 255, 255, 0.18);
+      color: #f1f5f9;
+    }
+
+    .camera-review-btn.is-retake:hover {
+      background: rgba(255, 255, 255, 0.18);
+    }
+
+    .camera-review-btn.is-more {
+      background: rgba(16, 185, 129, 0.16);
+      border-color: rgba(52, 211, 153, 0.45);
+      color: #6ee7b7;
+    }
+
+    .camera-review-btn.is-more:hover {
+      background: rgba(16, 185, 129, 0.28);
+    }
+
+    .camera-review-btn.is-confirm {
+      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+      color: #ffffff;
+      box-shadow: 0 4px 14px rgba(16, 185, 129, 0.4);
+    }
+
+    .camera-review-btn.is-confirm:hover {
+      filter: brightness(1.06);
+      transform: translateY(-1px);
     }
 
     /* ===================================================================
@@ -9342,34 +9803,111 @@
   </div>
 
   <!-- ===============================================================
-       MODAL: KAMERA LANGSUNG AMBIL BUKTI FOTO
+       MODAL: KAMERA LANGSUNG AMBIL BUKTI FOTO (INTERAKTIF)
        =============================================================== -->
   <div class="modal-backdrop" id="modalLiveCamera">
     <div class="modal-dialog modal-camera-dialog">
-      <div class="modal-header">
-        <h3>📸 Ambil Bukti Foto Lapangan</h3>
-        <button class="modal-close btn-close-camera" aria-label="Tutup">&times;</button>
+      <div class="modal-header camera-modal-header">
+        <div class="camera-header-left">
+          <h3 class="camera-header-title">Kamera Bukti Lapangan</h3>
+          <span class="camera-live-pill" id="cameraModePill">
+            <span class="camera-live-dot"></span>
+            <span id="cameraModePillText">LIVE</span>
+          </span>
+        </div>
+        <div class="camera-header-right">
+          <span class="camera-count-badge" id="cameraShotCounter">0 / 5 Foto</span>
+          <button type="button" class="camera-close-btn btn-close-camera" aria-label="Tutup">&times;</button>
+        </div>
       </div>
-      <div class="modal-body" style="padding: 16px; text-align: center;">
-        <div class="camera-viewport-wrap">
+
+      <div class="modal-body camera-modal-body">
+        <div class="camera-viewport-wrap" id="cameraViewportWrap">
           <video id="cameraVideoView" autoplay playsinline muted></video>
           <canvas id="cameraCanvasSnap" style="display: none;"></canvas>
-          <div class="camera-target-grid"></div>
+
+          <div class="camera-hud-top" id="cameraHudTop">
+            <span class="camera-facing-chip" id="cameraFacingLabel">Kamera Belakang</span>
+            <div class="camera-hud-tools">
+              <button type="button" class="camera-tool-icon-btn" id="btnToggleCameraGrid" title="Tampilkan Grid 3×3" aria-label="Grid 3x3">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="18" height="18" rx="2"></rect>
+                  <line x1="9" y1="3" x2="9" y2="21"></line>
+                  <line x1="15" y1="3" x2="15" y2="21"></line>
+                  <line x1="3" y1="9" x2="21" y2="9"></line>
+                  <line x1="3" y1="15" x2="21" y2="15"></line>
+                </svg>
+              </button>
+              <button type="button" class="camera-tool-icon-btn" id="btnToggleCameraFlash" title="Lampu Kilat / Senter" aria-label="Lampu Kilat" style="display: none;">
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"></polygon>
+                </svg>
+              </button>
+            </div>
+          </div>
+
+          <div class="camera-grid-3x3" id="cameraGridOverlay"></div>
+          <div class="camera-target-grid" id="cameraTargetBrackets">
+            <span class="camera-corner tl"></span>
+            <span class="camera-corner tr"></span>
+            <span class="camera-corner bl"></span>
+            <span class="camera-corner br"></span>
+          </div>
+          <div class="camera-focus-ring" id="cameraFocusRing"></div>
+          <div class="camera-flash-fx" id="cameraFlashFx"></div>
+
+          <div class="camera-loading-overlay" id="cameraLoadingOverlay">
+            <span class="camera-spinner"></span>
+            <span>Menyiapkan kamera perangkat...</span>
+          </div>
+
+          <div class="camera-review-stage" id="cameraReviewStage">
+            <img id="cameraCapturedImg" alt="Pratinjau Hasil Jepretan Kamera">
+            <span class="camera-review-badge" id="cameraCapturedMeta">Foto Siap Diunggah</span>
+          </div>
         </div>
-        <div id="cameraStatusMsg" style="font-size: 0.8rem; color: #64748b; margin-top: 8px;">
-          Arahkan kamera ke objek atau lokasi pencemaran lingkungan.
+
+        <div id="cameraStatusMsg" class="camera-status-bar">
+          Ketuk layar untuk fokus • Arahkan kamera ke lokasi kejadian.
         </div>
       </div>
+
       <div class="modal-footer camera-footer-controls">
-        <button type="button" class="btn btn-outline btn-sm" id="btnSwitchCameraDirection">
-          🔄 Ganti Kamera
-        </button>
-        <button type="button" class="btn btn-primary btn-shutter" id="btnSnapPhoto">
-          📸 Jepret Foto
-        </button>
-        <button type="button" class="btn btn-secondary btn-close-camera">
-          Batal
-        </button>
+        <div class="camera-live-controls" id="cameraLiveControls">
+          <button type="button" class="camera-ctrl-btn" id="btnSwitchCameraDirection" title="Ganti Kamera Depan / Belakang">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M11 19H4a2 2 0 0 1-2-2V7a2 2 0 0 1 2-2h5"></path>
+              <path d="M13 5h7a2 2 0 0 1 2 2v10a2 2 0 0 1-2 2h-5"></path>
+              <polyline points="16 17 21 12 16 7"></polyline>
+              <polyline points="8 7 3 12 8 17"></polyline>
+            </svg>
+            <span>Balik</span>
+          </button>
+
+          <button type="button" class="btn-shutter" id="btnSnapPhoto" aria-label="Jepret Foto" title="Jepret Foto">
+            <span class="btn-shutter-core"></span>
+          </button>
+
+          <button type="button" class="camera-ctrl-btn" id="btnFallbackNativeCamera" title="Gunakan Aplikasi Kamera Bawaan HP">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z"></path>
+              <circle cx="12" cy="13" r="4"></circle>
+            </svg>
+            <span>Kamera HP</span>
+          </button>
+        </div>
+
+        <div class="camera-review-actions" id="cameraReviewActions">
+          <button type="button" class="camera-review-btn is-retake" id="btnRetakePhoto">
+            🔄 Ulangi
+          </button>
+          <button type="button" class="camera-review-btn is-more" id="btnCaptureMore">
+            + Foto Lagi
+          </button>
+          <button type="button" class="camera-review-btn is-confirm" id="btnUseCapturedPhoto">
+            ✓ Gunakan Foto
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -9584,9 +10122,9 @@
     integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
 
   <!-- Application Logic -->
-  <script charset="UTF-8" src="js/data.js?v=20261119_cross_device_sync_01"></script>
-  <script charset="UTF-8" src="js/map.js?v=20261119_cross_device_sync_01"></script>
-  <script charset="UTF-8" src="js/app.js?v=20261119_cross_device_sync_01"></script>
+  <script charset="UTF-8" src="js/data.js?v=20261122_camera_upload_01"></script>
+  <script charset="UTF-8" src="js/map.js?v=20261122_camera_upload_01"></script>
+  <script charset="UTF-8" src="js/app.js?v=20261122_camera_upload_01"></script>
 
   <!-- ===================================================================
        SCRIPTS: SPLASH SCREEN & PORTAL TRANSITION HANDLER
