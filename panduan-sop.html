@@ -19,12 +19,15 @@
     rel="stylesheet">
 
   <style>
+    /* ==========================================================================
+       1. SISTEM DESAIN DOKUMEN RESMI ECOADU LEMBATA (PANDUAN & SOP PETUGAS)
+       ========================================================================== */
     :root {
-      --bg-page: #f2f7f4;
+      --bg-page: #f1f6f3;
       --bg-surface: #ffffff;
       --bg-soft: #f8fafc;
       --bg-mint: #ecfdf5;
-      --bg-mint-soft: #f0fdf4;
+      --bg-mint-soft: #f2fbf6;
 
       --emerald-950: #021810;
       --emerald-900: #064e3b;
@@ -40,7 +43,7 @@
       --text-muted: #64748b;
 
       --border-soft: #e2e8f0;
-      --border-card: #dbe7df;
+      --border-card: #d9e6de;
 
       --font-heading: 'Outfit', system-ui, -apple-system, sans-serif;
       --font-body: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
@@ -49,8 +52,8 @@
       --radius-sm: 8px;
       --radius-md: 12px;
       --radius-lg: 18px;
-      --shadow-paper: 0 10px 30px -8px rgba(6, 78, 59, 0.1), 0 2px 8px rgba(15, 23, 42, 0.04);
-      --shadow-card: 0 2px 8px rgba(15, 23, 42, 0.04);
+      --shadow-paper: 0 12px 32px -10px rgba(6, 78, 59, 0.11), 0 2px 8px rgba(15, 23, 42, 0.04);
+      --shadow-card: 0 1px 4px rgba(15, 23, 42, 0.04);
     }
 
     *,
@@ -73,14 +76,16 @@
       background-color: var(--bg-page);
       background-image:
         radial-gradient(ellipse 70% 35% at 85% 0%, rgba(16, 185, 129, 0.08) 0%, transparent 70%),
-        linear-gradient(180deg, #eef6f1 0%, #f5f9f6 55%, #eef4f0 100%);
+        linear-gradient(180deg, #edf5f0 0%, #f5f9f6 55%, #edf3ef 100%);
       line-height: 1.6;
       min-height: 100vh;
       overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
     }
 
-    /* TOPBAR NAVIGASI */
+    /* ==========================================================================
+       2. TOPBAR NAVIGASI RESMI
+       ========================================================================== */
     .nature-ribbon {
       height: 4px;
       width: 100%;
@@ -94,13 +99,13 @@
       background: rgba(2, 24, 16, 0.96);
       backdrop-filter: blur(12px);
       -webkit-backdrop-filter: blur(12px);
-      border-bottom: 1px solid rgba(167, 243, 208, 0.14);
+      border-bottom: 1px solid rgba(167, 243, 208, 0.15);
       color: #ffffff;
       box-shadow: 0 4px 18px rgba(2, 24, 16, 0.18);
     }
 
     .top-bar-inner {
-      max-width: 980px;
+      max-width: 960px;
       margin: 0 auto;
       padding: 10px 20px;
       display: flex;
@@ -126,9 +131,10 @@
     }
 
     .brand-logos img {
-      height: 34px;
+      height: 32px;
       width: auto;
       object-fit: contain;
+      filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.25));
     }
 
     .brand-text {
@@ -139,31 +145,32 @@
 
     .brand-title {
       font-family: var(--font-heading);
+      font-size: 0.96rem;
       font-weight: 800;
-      font-size: 0.98rem;
-      letter-spacing: 0.01em;
-      line-height: 1.15;
+      letter-spacing: 0.015em;
+      color: #ffffff;
       display: flex;
       align-items: center;
       gap: 7px;
-      flex-wrap: wrap;
+      line-height: 1.2;
     }
 
     .brand-pill {
-      font-size: 0.64rem;
-      font-weight: 800;
-      text-transform: uppercase;
-      letter-spacing: 0.06em;
       background: rgba(16, 185, 129, 0.22);
-      color: #6ee7b7;
       border: 1px solid rgba(110, 231, 183, 0.45);
+      color: #a7f3d0;
+      font-size: 0.62rem;
+      font-weight: 800;
       padding: 2px 8px;
       border-radius: 999px;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      white-space: nowrap;
     }
 
     .brand-sub {
       font-size: 0.72rem;
-      color: #a7f3d0;
+      color: #9ad1b9;
       font-weight: 500;
       white-space: nowrap;
       overflow: hidden;
@@ -180,32 +187,32 @@
     .btn-top {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 6px;
-      padding: 7px 13px;
-      border-radius: 999px;
       font-family: var(--font-body);
       font-size: 0.78rem;
       font-weight: 700;
+      padding: 7px 14px;
+      border-radius: 999px;
       text-decoration: none;
-      cursor: pointer;
       border: 1px solid transparent;
-      transition: transform 0.15s ease, background-color 0.2s ease;
+      cursor: pointer;
       white-space: nowrap;
+      transition: transform 0.15s ease, background-color 0.16s ease, border-color 0.16s ease;
     }
 
-    .btn-top:active {
-      transform: scale(0.97);
+    .btn-top:hover {
+      transform: translateY(-1px);
     }
 
     .btn-top-portal {
-      background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-      color: #ffffff;
-      border-color: #6ee7b7;
-      box-shadow: 0 3px 12px rgba(16, 185, 129, 0.28);
+      background: #ffffff;
+      color: var(--emerald-900);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
     }
 
     .btn-top-portal:hover {
-      background: linear-gradient(135deg, #059669 0%, #047857 100%);
+      background: #ecfdf5;
     }
 
     .btn-top-print {
@@ -216,13 +223,16 @@
 
     .btn-top-print:hover {
       background: rgba(255, 255, 255, 0.18);
+      border-color: rgba(167, 243, 208, 0.48);
     }
 
-    /* KONTAINER DOKUMEN */
+    /* ==========================================================================
+       3. LEMBAR DOKUMEN PROPORSIONAL (A4 EDITORIAL)
+       ========================================================================== */
     .doc-wrap {
-      max-width: 980px;
-      margin: 24px auto 40px;
-      padding: 0 16px;
+      max-width: 960px;
+      margin: 26px auto 44px;
+      padding: 0 20px;
     }
 
     .doc-paper {
@@ -230,69 +240,137 @@
       border: 1px solid var(--border-card);
       border-radius: var(--radius-lg);
       box-shadow: var(--shadow-paper);
-      padding: 32px 34px 36px;
+      padding: 34px 38px 38px;
     }
 
-    /* HERO */
+    /* ==========================================================================
+       4. KEPALA DOKUMEN (HERO & METADATA SOP)
+       ========================================================================== */
     .guide-hero {
-      padding-bottom: 22px;
-      border-bottom: 2px solid #e7f3ec;
-      margin-bottom: 22px;
+      background: linear-gradient(135deg, #021810 0%, #064e3b 60%, #047857 100%);
+      color: #ffffff;
+      border-radius: 14px;
+      padding: 26px 28px 22px;
+      margin-bottom: 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .guide-hero::after {
+      content: '';
+      position: absolute;
+      right: -45px;
+      top: -45px;
+      width: 210px;
+      height: 210px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(52, 211, 153, 0.22) 0%, transparent 70%);
+      pointer-events: none;
     }
 
     .hero-badge {
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      background: var(--bg-mint);
-      color: var(--emerald-800);
-      border: 1px solid var(--emerald-200);
-      font-size: 0.72rem;
-      font-weight: 800;
-      letter-spacing: 0.05em;
+      background: rgba(16, 185, 129, 0.22);
+      border: 1px solid rgba(167, 243, 208, 0.36);
+      color: #a7f3d0;
+      font-family: var(--font-heading);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.06em;
       text-transform: uppercase;
       padding: 4px 11px;
       border-radius: 999px;
       margin-bottom: 10px;
+      position: relative;
+      z-index: 1;
     }
 
     .guide-hero h1 {
       font-family: var(--font-heading);
-      font-size: 1.75rem;
+      font-size: 1.62rem;
       font-weight: 800;
-      color: var(--emerald-950);
-      line-height: 1.22;
-      margin-bottom: 8px;
+      line-height: 1.24;
       letter-spacing: -0.015em;
+      margin-bottom: 8px;
+      position: relative;
+      z-index: 1;
     }
 
     .guide-hero p {
-      font-size: 0.94rem;
-      color: var(--text-muted);
-      max-width: 720px;
+      font-size: 0.9rem;
+      color: #d1fae5;
+      max-width: 730px;
+      line-height: 1.56;
+      position: relative;
+      z-index: 1;
     }
 
-    /* 4 PRINSIP KERJA */
-    .promise-grid {
+    .guide-hero .code-tag {
+      background: rgba(255, 255, 255, 0.14);
+      color: #ecfdf5;
+      border-color: rgba(167, 243, 208, 0.35);
+    }
+
+    .hero-meta-bar {
+      margin-top: 16px;
+      padding-top: 13px;
+      border-top: 1px solid rgba(167, 243, 208, 0.2);
       display: grid;
       grid-template-columns: repeat(4, minmax(0, 1fr));
       gap: 10px;
-      margin-bottom: 22px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .hero-meta-item {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+      min-width: 0;
+    }
+
+    .hero-meta-label {
+      font-size: 0.65rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      color: #6ee7b7;
+    }
+
+    .hero-meta-val {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: #ffffff;
+      line-height: 1.3;
+    }
+
+    /* ==========================================================================
+       5. 4 PRINSIP KERJA & DAFTAR ISI CEPAT
+       ========================================================================== */
+    .promise-grid {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 12px;
+      margin-bottom: 18px;
     }
 
     .promise-card {
       background: var(--bg-soft);
       border: 1px solid var(--border-soft);
       border-radius: var(--radius-md);
-      padding: 12px 13px;
+      padding: 13px;
       display: flex;
       align-items: flex-start;
       gap: 10px;
+      height: 100%;
+      box-shadow: var(--shadow-card);
     }
 
     .promise-icon {
-      width: 32px;
-      height: 32px;
+      width: 34px;
+      height: 34px;
       border-radius: 9px;
       display: inline-flex;
       align-items: center;
@@ -307,60 +385,75 @@
 
     .promise-title {
       font-family: var(--font-heading);
-      font-size: 0.86rem;
+      font-size: 0.85rem;
       font-weight: 700;
       color: var(--text-main);
       line-height: 1.25;
-      margin-bottom: 2px;
+      margin-bottom: 3px;
     }
 
     .promise-desc {
-      font-size: 0.74rem;
+      font-size: 0.75rem;
       color: var(--text-muted);
       line-height: 1.4;
     }
 
-    /* MENU CEPAT */
-    .quick-nav {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
+    /* Daftar Isi / Navigasi Cepat */
+    .toc-wrap {
+      margin-bottom: 28px;
       padding: 12px 14px;
       background: var(--bg-mint-soft);
       border: 1px solid #ccebd9;
       border-radius: var(--radius-md);
-      margin-bottom: 28px;
+    }
+
+    .toc-label {
+      font-family: var(--font-heading);
+      font-size: 0.7rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--emerald-800);
+      margin-bottom: 9px;
+    }
+
+    .quick-nav {
+      display: grid;
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+      gap: 8px;
     }
 
     .quick-nav-item {
-      display: inline-flex;
+      display: flex;
       align-items: center;
-      gap: 6px;
-      padding: 6px 12px;
+      gap: 8px;
+      padding: 8px 10px;
       background: #ffffff;
       border: 1px solid #d1e7da;
-      border-radius: 999px;
+      border-radius: var(--radius-sm);
       text-decoration: none;
-      font-size: 0.78rem;
-      font-weight: 700;
       color: var(--emerald-900);
-      transition: background-color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+      font-size: 0.76rem;
+      font-weight: 700;
+      line-height: 1.25;
+      transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
     }
 
     .quick-nav-item:hover {
-      background: var(--emerald-800);
-      border-color: var(--emerald-800);
-      color: #ffffff;
+      border-color: var(--emerald-600);
+      background: #f0fdf4;
       transform: translateY(-1px);
+      box-shadow: 0 3px 10px rgba(5, 150, 105, 0.11);
     }
 
     .qn-num {
-      width: 18px;
-      height: 18px;
-      border-radius: 50%;
-      background: var(--emerald-600);
+      width: 22px;
+      height: 22px;
+      border-radius: 6px;
+      background: var(--emerald-900);
       color: #ffffff;
-      font-size: 0.68rem;
+      font-family: var(--font-heading);
+      font-size: 0.7rem;
       font-weight: 800;
       display: inline-flex;
       align-items: center;
@@ -368,15 +461,17 @@
       flex-shrink: 0;
     }
 
-    /* SEKSI UTAMA */
+    /* ==========================================================================
+       6. STRUKTUR BAGIAN DOKUMEN SERAGAM
+       ========================================================================== */
     .guide-section {
       padding-top: 26px;
       margin-top: 26px;
-      border-top: 1px solid #ebf2ee;
-      scroll-margin-top: 72px;
+      border-top: 1px solid #e6efe9;
+      scroll-margin-top: 74px;
     }
 
-    .guide-section:first-of-type {
+    .guide-section.is-first {
       padding-top: 0;
       margin-top: 0;
       border-top: none;
@@ -386,54 +481,73 @@
       display: flex;
       align-items: center;
       justify-content: space-between;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 12px;
+      gap: 10px;
+      padding-bottom: 10px;
+      margin-bottom: 14px;
+      border-bottom: 2px solid #e4efe8;
     }
 
     .sec-title-group {
       display: flex;
       align-items: center;
       gap: 10px;
+      min-width: 0;
     }
 
     .sec-num {
-      font-family: var(--font-heading);
-      font-size: 0.78rem;
-      font-weight: 800;
-      color: #ffffff;
-      background: var(--emerald-800);
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
       padding: 4px 10px;
       border-radius: 7px;
-      letter-spacing: 0.03em;
+      background: var(--emerald-900);
+      color: #ffffff;
+      font-family: var(--font-heading);
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      white-space: nowrap;
       flex-shrink: 0;
     }
 
     .sec-title {
       font-family: var(--font-heading);
-      font-size: 1.24rem;
+      font-size: 1.12rem;
       font-weight: 800;
-      color: var(--text-main);
-      line-height: 1.25;
+      color: var(--emerald-950);
+      line-height: 1.28;
     }
 
     .sec-tag {
-      font-size: 0.72rem;
+      font-size: 0.7rem;
       font-weight: 700;
       color: var(--emerald-700);
       background: var(--bg-mint);
       border: 1px solid var(--emerald-200);
-      padding: 3px 9px;
+      padding: 3px 10px;
       border-radius: 999px;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
     .sec-lead {
-      font-size: 0.9rem;
+      font-size: 0.87rem;
       color: var(--text-body);
       margin-bottom: 14px;
+      line-height: 1.58;
     }
 
-    /* GRID 2 KOLOM & KARTU */
+    .sub-heading {
+      font-family: var(--font-heading);
+      font-size: 0.86rem;
+      font-weight: 800;
+      color: var(--emerald-900);
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      margin: 18px 0 10px;
+    }
+
+    /* GRID 2 KOLOM & KARTU INFORMASI */
     .grid-2 {
       display: grid;
       grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -445,18 +559,19 @@
       background: var(--bg-soft);
       border: 1px solid var(--border-soft);
       border-radius: var(--radius-md);
-      padding: 15px 16px;
+      padding: 16px 18px;
+      height: 100%;
     }
 
     .info-card h3 {
       font-family: var(--font-heading);
-      font-size: 0.94rem;
+      font-size: 0.92rem;
       font-weight: 800;
       color: var(--emerald-900);
-      margin-bottom: 8px;
+      margin-bottom: 9px;
       display: flex;
       align-items: center;
-      gap: 7px;
+      gap: 8px;
     }
 
     .clean-list {
@@ -465,19 +580,20 @@
       gap: 6px;
       font-size: 0.82rem;
       color: var(--text-body);
-      line-height: 1.5;
+      line-height: 1.54;
     }
 
     .clean-list strong {
       color: var(--text-main);
     }
 
-    /* TABEL RINGKAS */
+    /* TABEL SOP TERSTRUKTUR */
     .table-wrap {
       overflow-x: auto;
       border: 1px solid var(--border-soft);
       border-radius: var(--radius-md);
       margin-bottom: 14px;
+      background: #ffffff;
     }
 
     .sop-table {
@@ -491,40 +607,46 @@
       background: #f1f5f9;
       color: var(--text-main);
       font-family: var(--font-heading);
+      font-size: 0.79rem;
       font-weight: 700;
       text-align: left;
-      padding: 10px 12px;
+      padding: 11px 14px;
       border-bottom: 1px solid var(--border-soft);
       white-space: nowrap;
     }
 
     .sop-table td {
-      padding: 10px 12px;
+      padding: 11px 14px;
       border-bottom: 1px solid #f1f5f9;
       vertical-align: top;
-      line-height: 1.48;
+      line-height: 1.52;
       color: var(--text-body);
     }
 
-    .sop-table tr:last-child td {
+    .sop-table tbody tr:last-child td {
       border-bottom: none;
     }
 
-    /* STATUS PILL */
+    .sop-table tbody tr:nth-child(even) td {
+      background: #fafcfb;
+    }
+
+    /* LENCANA STATUS SINKRON */
     .st-pill {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      padding: 4px 10px;
+      gap: 7px;
+      padding: 4px 11px;
       border-radius: 999px;
-      font-size: 0.73rem;
+      font-size: 0.74rem;
       font-weight: 800;
+      letter-spacing: 0.01em;
       white-space: nowrap;
     }
 
     .st-dot {
-      width: 7px;
-      height: 7px;
+      width: 8px;
+      height: 8px;
       border-radius: 50%;
       flex-shrink: 0;
     }
@@ -544,33 +666,34 @@
     .st-tidak { background: #f1f5f9; color: #475569; border: 1px solid #cbd5e1; }
     .st-tidak .st-dot { background: #64748b; }
 
-    /* 5 LANGKAH KERJA */
-    .steps-grid {
-      display: grid;
-      grid-template-columns: repeat(5, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 14px;
+    /* ALUR KERJA 5 TAHAP PROPORSIONAL (TIMELINE TERSTRUKTUR) */
+    .flow-list {
+      display: flex;
+      flex-direction: column;
+      gap: 9px;
+      margin-bottom: 18px;
     }
 
-    .step-card {
+    .flow-step {
+      display: grid;
+      grid-template-columns: 34px 170px minmax(0, 1fr);
+      align-items: center;
+      gap: 14px;
+      padding: 12px 15px;
       background: #ffffff;
       border: 1px solid var(--border-soft);
       border-radius: var(--radius-md);
-      padding: 13px 12px;
       box-shadow: var(--shadow-card);
-      display: flex;
-      flex-direction: column;
-      gap: 7px;
     }
 
     .step-num {
-      width: 26px;
-      height: 26px;
-      border-radius: 8px;
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
       background: linear-gradient(135deg, #059669 0%, #047857 100%);
       color: #ffffff;
       font-family: var(--font-heading);
-      font-size: 0.82rem;
+      font-size: 0.84rem;
       font-weight: 800;
       display: inline-flex;
       align-items: center;
@@ -578,36 +701,44 @@
       flex-shrink: 0;
     }
 
-    .step-card h3 {
+    .flow-step-title {
       font-family: var(--font-heading);
-      font-size: 0.88rem;
+      font-size: 0.9rem;
       font-weight: 800;
       color: var(--text-main);
       line-height: 1.25;
     }
 
-    .step-card p {
-      font-size: 0.77rem;
+    .flow-step-desc {
+      font-size: 0.82rem;
       color: var(--text-body);
-      line-height: 1.45;
+      line-height: 1.5;
     }
 
-    /* CHECKLIST & CHIP */
-    .chk-guide-pills {
-      display: flex;
-      flex-wrap: wrap;
-      gap: 8px;
-      margin-bottom: 12px;
+    /* LEGENDA CHECKLIST 3 KOLOM SEIMBANG */
+    .chk-guide-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 10px;
+      margin-bottom: 14px;
     }
 
     .chk-pill {
+      display: flex;
+      flex-direction: column;
+      gap: 3px;
+      padding: 10px 12px;
+      border-radius: 10px;
+      font-size: 0.78rem;
+      line-height: 1.4;
+    }
+
+    .chk-pill strong {
+      font-family: var(--font-heading);
+      font-size: 0.82rem;
       display: inline-flex;
       align-items: center;
       gap: 6px;
-      padding: 6px 11px;
-      border-radius: 9px;
-      font-size: 0.77rem;
-      font-weight: 700;
     }
 
     .chk-pill.ok { background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; }
@@ -618,7 +749,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 6px;
-      margin-top: 8px;
+      margin-top: 10px;
     }
 
     .chip-tag {
@@ -637,12 +768,12 @@
       border-color: #fecaca;
     }
 
-    /* NOTE & WARNING BOX */
+    /* KOTAK CATATAN & PERINGATAN */
     .note-box {
       padding: 12px 14px;
       border-radius: 10px;
       font-size: 0.81rem;
-      line-height: 1.5;
+      line-height: 1.55;
       margin-top: 10px;
     }
 
@@ -676,6 +807,7 @@
       border: 1px solid #cbd5e1;
       padding: 1px 6px;
       border-radius: 5px;
+      white-space: nowrap;
     }
 
     /* KONTAK ADMIN */
@@ -683,60 +815,72 @@
       background: linear-gradient(135deg, #064e3b 0%, #022c22 100%);
       color: #ffffff;
       border-radius: var(--radius-md);
-      padding: 20px;
+      padding: 20px 22px;
       display: flex;
       align-items: center;
       justify-content: space-between;
       flex-wrap: wrap;
-      gap: 14px;
+      gap: 16px;
+    }
+
+    .contact-info {
+      flex: 1 1 360px;
     }
 
     .contact-info h3 {
       font-family: var(--font-heading);
       font-size: 1rem;
       font-weight: 800;
-      margin-bottom: 4px;
+      margin-bottom: 5px;
     }
 
     .contact-info p {
-      font-size: 0.8rem;
+      font-size: 0.81rem;
       color: #d1fae5;
-      line-height: 1.5;
+      line-height: 1.55;
     }
 
     .contact-actions {
       display: flex;
       flex-wrap: wrap;
-      gap: 8px;
+      gap: 9px;
+      flex-shrink: 0;
     }
 
     .btn-contact {
       display: inline-flex;
       align-items: center;
+      justify-content: center;
       gap: 6px;
-      padding: 9px 15px;
-      border-radius: 9px;
+      padding: 9px 16px;
+      border-radius: 10px;
       font-size: 0.82rem;
-      font-weight: 800;
+      font-weight: 700;
       text-decoration: none;
+      transition: transform 0.15s ease, opacity 0.15s ease;
+    }
+
+    .btn-contact:hover {
+      transform: translateY(-1px);
+      opacity: 0.96;
     }
 
     .btn-contact.is-wa {
-      background: #25d366;
+      background: #16a34a;
       color: #ffffff;
     }
 
     .btn-contact.is-dash {
       background: rgba(255, 255, 255, 0.14);
       color: #ffffff;
-      border: 1px solid rgba(255, 255, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.32);
     }
 
-    /* FOOTER */
+    /* FOOTER & SCROLL TOP */
     .doc-footer {
-      max-width: 980px;
+      max-width: 960px;
       margin: 0 auto 30px;
-      padding: 0 16px;
+      padding: 0 20px;
       text-align: center;
       font-size: 0.76rem;
       color: var(--text-muted);
@@ -747,42 +891,68 @@
       right: 18px;
       bottom: 18px;
       z-index: 90;
-      width: 40px;
-      height: 40px;
+      width: 42px;
+      height: 42px;
       border-radius: 50%;
       background: var(--emerald-900);
       color: #ffffff;
-      border: 1px solid rgba(167, 243, 208, 0.35);
-      display: flex;
+      border: 1.5px solid rgba(167, 243, 208, 0.35);
+      display: inline-flex;
       align-items: center;
       justify-content: center;
       text-decoration: none;
-      box-shadow: 0 6px 16px rgba(2, 24, 16, 0.28);
+      box-shadow: 0 6px 16px rgba(2, 24, 16, 0.25);
+      transition: transform 0.16s ease, background-color 0.16s ease;
     }
 
-    /* RESPONSIVE */
-    @media (max-width: 860px) {
+    .btn-scroll-top:hover {
+      transform: translateY(-2px);
+      background: var(--emerald-700);
+    }
+
+    /* ==========================================================================
+       7. RESPONSIF TABLET & MOBILE
+       ========================================================================== */
+    @media screen and (max-width: 860px) {
+      .hero-meta-bar,
       .promise-grid {
         grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .steps-grid {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .quick-nav {
+        grid-template-columns: repeat(3, minmax(0, 1fr));
       }
 
-      .grid-2 {
+      .grid-2,
+      .chk-guide-grid {
         grid-template-columns: 1fr;
+      }
+
+      .flow-step {
+        grid-template-columns: 30px 140px minmax(0, 1fr);
+        gap: 10px;
       }
     }
 
-    @media (max-width: 640px) {
+    @media screen and (max-width: 640px) {
       .top-bar-inner {
         padding: 9px 12px;
         gap: 8px;
       }
 
       .brand-logos img {
-        height: 28px;
+        height: 26px;
+      }
+
+      .brand-title {
+        font-size: 0.84rem;
+        gap: 5px;
+        flex-wrap: wrap;
+      }
+
+      .brand-pill {
+        font-size: 0.56rem;
+        padding: 1px 6px;
       }
 
       .brand-sub {
@@ -790,8 +960,18 @@
       }
 
       .btn-top {
-        padding: 6px 10px;
-        font-size: 0.72rem;
+        padding: 7px 11px;
+        font-size: 0.74rem;
+      }
+
+      .btn-top-print span {
+        display: none;
+      }
+
+      .btn-top-print {
+        width: 34px;
+        height: 34px;
+        padding: 0;
       }
 
       .doc-wrap {
@@ -800,51 +980,289 @@
       }
 
       .doc-paper {
-        padding: 20px 16px 24px;
+        padding: 18px 14px 22px;
         border-radius: 14px;
       }
 
-      .guide-hero h1 {
-        font-size: 1.32rem;
+      .guide-hero {
+        padding: 18px 15px 16px;
+        border-radius: 12px;
+        margin-bottom: 14px;
       }
 
-      .promise-grid,
-      .steps-grid {
-        grid-template-columns: 1fr;
+      .guide-hero h1 {
+        font-size: 1.22rem;
+      }
+
+      .guide-hero p {
+        font-size: 0.81rem;
+      }
+
+      .hero-meta-bar {
+        margin-top: 12px;
+        padding-top: 10px;
+        gap: 9px 10px;
+      }
+
+      .hero-meta-val {
+        font-size: 0.73rem;
+      }
+
+      .promise-grid {
+        gap: 8px;
+        margin-bottom: 14px;
+      }
+
+      .promise-card {
+        padding: 10px;
+        gap: 8px;
+      }
+
+      .promise-icon {
+        width: 28px;
+        height: 28px;
+      }
+
+      .promise-title {
+        font-size: 0.78rem;
+      }
+
+      .promise-desc {
+        font-size: 0.7rem;
+      }
+
+      .toc-wrap {
+        padding: 10px;
+        margin-bottom: 18px;
       }
 
       .quick-nav {
-        padding: 10px;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
         gap: 6px;
       }
 
       .quick-nav-item {
-        font-size: 0.73rem;
-        padding: 5px 10px;
+        padding: 8px 9px;
+        font-size: 0.74rem;
+        gap: 7px;
+      }
+
+      .quick-nav-item:last-child {
+        grid-column: 1 / -1;
+      }
+
+      .guide-section {
+        padding-top: 18px;
+        margin-top: 18px;
+      }
+
+      .sec-head {
+        margin-bottom: 11px;
+        padding-bottom: 8px;
+      }
+
+      .sec-title-group {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 5px;
+      }
+
+      .sec-num {
+        font-size: 0.66rem;
+        padding: 3px 8px;
       }
 
       .sec-title {
-        font-size: 1.08rem;
+        font-size: 1rem;
+      }
+
+      .sec-tag {
+        display: none;
+      }
+
+      .sec-lead {
+        font-size: 0.81rem;
+        margin-bottom: 10px;
+      }
+
+      .sub-heading {
+        font-size: 0.78rem;
+        margin: 14px 0 8px;
+      }
+
+      .info-card {
+        padding: 13px 14px;
+      }
+
+      .flow-step {
+        grid-template-columns: 30px minmax(0, 1fr);
+        align-items: flex-start;
+        gap: 4px 10px;
+        padding: 12px;
+      }
+
+      .flow-step .step-num {
+        grid-row: 1 / span 2;
+        margin-top: 1px;
+      }
+
+      .flow-step-title {
+        font-size: 0.87rem;
+      }
+
+      .flow-step-desc {
+        grid-column: 2;
+        font-size: 0.79rem;
+      }
+
+      /* Tabel SOP otomatis jadi kartu vertikal proporsional tanpa scroll samping di HP */
+      .table-wrap {
+        overflow-x: visible;
+      }
+
+      .sop-table thead {
+        display: none;
+      }
+
+      .sop-table,
+      .sop-table tbody,
+      .sop-table tr,
+      .sop-table td {
+        display: block;
+        width: 100%;
+      }
+
+      .sop-table tbody tr {
+        padding: 12px 13px;
+        border-bottom: 1px solid #e2e8f0;
+        background: #ffffff;
+      }
+
+      .sop-table tbody tr:nth-child(even) {
+        background: #fafcfb;
+      }
+
+      .sop-table tbody tr:last-child {
+        border-bottom: none;
+      }
+
+      .sop-table td {
+        padding: 3px 0;
+        border: none;
+        background: transparent !important;
+        font-size: 0.8rem;
+        line-height: 1.5;
+      }
+
+      .sop-table td:first-child {
+        font-size: 0.85rem;
+        color: var(--emerald-950);
+        padding-bottom: 6px;
+        margin-bottom: 6px;
+        border-bottom: 1px dashed #e2e8f0;
+      }
+
+      .sop-table td[data-label]::before {
+        content: attr(data-label);
+        display: block;
+        font-family: var(--font-heading);
+        font-size: 0.67rem;
+        font-weight: 800;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        color: var(--emerald-700);
+        margin-bottom: 2px;
+      }
+
+      .sop-table td[data-label] + td[data-label] {
+        margin-top: 7px;
+      }
+
+      .contact-card {
+        padding: 16px;
+      }
+
+      .contact-info p {
+        overflow-wrap: anywhere;
+      }
+
+      .contact-actions {
+        width: 100%;
+        flex-direction: column;
+      }
+
+      .btn-contact {
+        width: 100%;
+      }
+
+      .doc-footer {
+        margin-bottom: 64px;
+        padding: 0 12px;
+        font-size: 0.72rem;
+      }
+
+      .btn-scroll-top {
+        width: 38px;
+        height: 38px;
+        right: 12px;
+        bottom: calc(14px + env(safe-area-inset-bottom, 0px));
       }
     }
 
-    /* PRINT / PDF */
-    @media print {
-      body {
-        background: #ffffff;
-        color: #0f172a;
-        font-size: 11pt;
-        line-height: 1.45;
+    @media screen and (max-width: 400px) {
+      .brand-pill {
+        display: none;
       }
 
-      .no-print {
+      .btn-top {
+        padding: 6px 10px;
+        font-size: 0.71rem;
+      }
+
+      .promise-card {
+        flex-direction: column;
+        gap: 6px;
+      }
+
+      .st-pill {
+        white-space: normal;
+      }
+    }
+
+    /* ==========================================================================
+       8. ATURAN CETAK / SIMPAN PDF (@media print — A4 RAPI)
+       ========================================================================== */
+    @media print {
+      @page {
+        size: A4 portrait;
+        margin: 12mm 14mm;
+      }
+
+      * {
+        -webkit-print-color-adjust: exact !important;
+        print-color-adjust: exact !important;
+      }
+
+      body {
+        background: #ffffff !important;
+        color: #0f172a !important;
+        font-size: 9.6pt;
+        line-height: 1.44;
+      }
+
+      .no-print,
+      .nature-ribbon,
+      .top-bar,
+      .toc-wrap,
+      .contact-actions,
+      .btn-scroll-top {
         display: none !important;
       }
 
       .doc-wrap {
+        max-width: 100%;
         margin: 0;
         padding: 0;
-        max-width: 100%;
       }
 
       .doc-paper {
@@ -853,8 +1271,85 @@
         padding: 0;
       }
 
+      .guide-hero {
+        background: #ecfdf5 !important;
+        color: #064e3b !important;
+        border: 1.5px solid #064e3b;
+        padding: 14px 16px;
+        margin-bottom: 12px;
+      }
+
+      .guide-hero p,
+      .hero-meta-val {
+        color: #1e293b !important;
+      }
+
+      .guide-hero .code-tag {
+        background: #ffffff !important;
+        color: #064e3b !important;
+        border-color: #a7f3d0 !important;
+      }
+
+      .hero-meta-bar {
+        border-top-color: #a7f3d0;
+        grid-template-columns: repeat(4, 1fr);
+        margin-top: 10px;
+        padding-top: 8px;
+      }
+
+      .hero-meta-label {
+        color: #047857 !important;
+      }
+
+      .hero-badge {
+        background: #064e3b !important;
+        color: #ffffff !important;
+      }
+
+      .promise-grid {
+        grid-template-columns: repeat(4, 1fr);
+        gap: 8px;
+        margin-bottom: 12px;
+      }
+
       .guide-section {
+        padding-top: 14px;
+        margin-top: 14px;
+      }
+
+      .info-card,
+      .flow-step,
+      .table-wrap,
+      .note-box,
+      .contact-card {
         break-inside: avoid;
+        page-break-inside: avoid;
+      }
+
+      .grid-2 {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
+      }
+
+      .chk-guide-grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 8px;
+      }
+
+      .sop-table th,
+      .sop-table td {
+        padding: 7px 9px;
+        font-size: 8.8pt;
+      }
+
+      .contact-card {
+        background: #f8fafc !important;
+        color: #0f172a !important;
+        border: 1.5px solid #064e3b;
+      }
+
+      .contact-info p {
+        color: #334155 !important;
       }
     }
   </style>
@@ -906,15 +1401,34 @@
   <main class="doc-wrap">
     <article class="doc-paper">
 
-      <!-- HERO -->
+      <!-- KEPALA DOKUMEN -->
       <section class="guide-hero">
         <div class="hero-badge">Pedoman Kerja Verifikator DLH</div>
         <h1>Panduan Operasional &amp; SOP Petugas (ECOADU)</h1>
         <p>
-          Ringkasan prosedur kerja petugas dan administrator pada Dashboard Petugas
-          (<span class="code-tag">petugas.html</span>): mulai dari masuk sistem, verifikasi lapangan, penerbitan
-          Berita Acara, hingga sinkronisasi data.
+          Standar prosedur operasional bagi petugas verifikator dan administrator pada Dashboard Petugas
+          (<span class="code-tag">petugas.html</span>): mulai dari keamanan akses, pemeriksaan lapangan,
+          penerbitan Berita Acara, hingga sinkronisasi dan pengelolaan data.
         </p>
+
+        <div class="hero-meta-bar" aria-label="Informasi Dokumen SOP">
+          <div class="hero-meta-item">
+            <span class="hero-meta-label">Instansi Pengelola</span>
+            <span class="hero-meta-val">DLH Kabupaten Lembata</span>
+          </div>
+          <div class="hero-meta-item">
+            <span class="hero-meta-label">Sasaran Pengguna</span>
+            <span class="hero-meta-val">Petugas &amp; Admin DLH</span>
+          </div>
+          <div class="hero-meta-item">
+            <span class="hero-meta-label">Portal Operasional</span>
+            <span class="hero-meta-val">Dashboard Petugas</span>
+          </div>
+          <div class="hero-meta-item">
+            <span class="hero-meta-label">Kode &amp; Edisi</span>
+            <span class="hero-meta-val">ECOADU-SOP / 2026</span>
+          </div>
+        </div>
       </section>
 
       <!-- 4 PRINSIP UTAMA -->
@@ -973,20 +1487,23 @@
         </div>
       </section>
 
-      <!-- MENU CEPAT -->
-      <nav class="quick-nav no-print" aria-label="Menu Cepat SOP Petugas">
-        <a href="#akses" class="quick-nav-item"><span class="qn-num">1</span><span>Akses &amp; Dashboard</span></a>
-        <a href="#alur-status" class="quick-nav-item"><span class="qn-num">2</span><span>5 Status &amp; Alur Kerja</span></a>
-        <a href="#checklist" class="quick-nav-item"><span class="qn-num">3</span><span>Checklist Verifikasi</span></a>
-        <a href="#berita-acara" class="quick-nav-item"><span class="qn-num">4</span><span>Berita Acara &amp; Hambatan</span></a>
-        <a href="#data-sync" class="quick-nav-item"><span class="qn-num">5</span><span>WA, Sheets &amp; Data</span></a>
+      <!-- DAFTAR ISI / NAVIGASI CEPAT -->
+      <nav class="toc-wrap no-print" aria-label="Daftar Isi SOP Petugas">
+        <div class="toc-label">Daftar Isi Dokumen SOP</div>
+        <div class="quick-nav">
+          <a href="#akses" class="quick-nav-item"><span class="qn-num">01</span><span>Akses &amp; Dashboard</span></a>
+          <a href="#alur-status" class="quick-nav-item"><span class="qn-num">02</span><span>Alur &amp; 5 Status</span></a>
+          <a href="#checklist" class="quick-nav-item"><span class="qn-num">03</span><span>Checklist Verifikasi</span></a>
+          <a href="#berita-acara" class="quick-nav-item"><span class="qn-num">04</span><span>Berita Acara</span></a>
+          <a href="#data-sync" class="quick-nav-item"><span class="qn-num">05</span><span>WA &amp; Data Sheets</span></a>
+        </div>
       </nav>
 
-      <!-- BAGIAN 1: AKSES & DASHBOARD -->
-      <section class="guide-section" id="akses">
+      <!-- BAGIAN 01: AKSES & DASHBOARD -->
+      <section class="guide-section is-first" id="akses">
         <div class="sec-head">
           <div class="sec-title-group">
-            <span class="sec-num">BAGIAN 1</span>
+            <span class="sec-num">BAGIAN 01</span>
             <h2 class="sec-title">Akses, Keamanan &amp; Navigasi Dashboard</h2>
           </div>
           <span class="sec-tag">Sesuai Tampilan Web</span>
@@ -1002,12 +1519,13 @@
               Masuk &amp; Keamanan Sesi
             </h3>
             <ul class="clean-list">
-              <li>Buka <span class="code-tag">petugas.html</span> (atau ikon login petugas di kaki halaman web warga),
-                lalu masukkan PIN/kata sandi resmi dan tekan <strong>Buka Dashboard Petugas</strong>.</li>
-              <li>Centang <strong>Ingat sesi masuk di perangkat ini</strong> hanya pada perangkat dinas milik sendiri;
-                jangan aktifkan di perangkat umum.</li>
-              <li>Tekan tombol <strong>Kunci</strong> di kanan atas setiap kali meninggalkan perangkat.</li>
-              <li>Jika lupa sandi, klik tautan bantuan lupa sandi di layar masuk untuk menghubungi Admin DLH.</li>
+              <li>Buka <span class="code-tag">petugas.html</span> (atau tombol <strong>Akses Petugas</strong> di kaki
+                halaman web warga), masukkan PIN/kata sandi resmi, lalu tekan <strong>Buka Dashboard Petugas</strong>.</li>
+              <li>Setiap kali keluar dari halaman petugas atau kembali ke laman warga, sesi terkunci otomatis sehingga
+                wajib memasukkan sandi kembali saat membuka dashboard.</li>
+              <li>Tekan tombol <strong>Kunci</strong> di kanan atas setiap kali selesai bekerja atau meninggalkan
+                perangkat.</li>
+              <li>Jika lupa sandi, klik tautan bantuan akses di layar masuk untuk menghubungi Admin DLH.</li>
             </ul>
           </div>
 
@@ -1022,18 +1540,20 @@
             </h3>
             <ul class="clean-list">
               <li><strong>5 Kartu KPI Atas:</strong> Klik <em>Total Aduan</em>, <em>Belum Verifikasi</em>, <em>Dalam
-                  Proses</em>, <em>Tuntas Selesai</em>, atau <em>Tidak Dapat Ditindaklanjuti</em> untuk menyaring daftar.</li>
-              <li><strong>Mode Layar:</strong> Di komputer tersedia tombol <strong>Mode Berdampingan</strong> (peta +
-                daftar sejajar) atau mode penuh (peta + tabel). Di HP tampil otomatis sebagai kartu ringkas.</li>
-              <li><strong>Peta Sebaran:</strong> Pilih mode <strong>Marker GPS</strong>, <strong>Heatmap</strong>, atau
-                <strong>Gabungan</strong>; ganti peta dasar (OSM, Esri, Citra Satelit, Topografi); saring Kecamatan/Status;
-                atau tekan <strong>Fokus Lembata</strong>.</li>
+                  Proses</em>, <em>Tuntas Selesai</em>, atau <em>Tidak Dapat Ditindaklanjuti</em> untuk menyaring
+                daftar.</li>
+              <li><strong>Mode Layar:</strong> Di komputer tersedia <strong>Mode Berdampingan</strong> (peta + daftar
+                sejajar) atau mode penuh (peta + tabel). Di HP tampil otomatis sebagai kartu ringkas.</li>
+              <li><strong>Peta Sebaran:</strong> Pilih <strong>Marker GPS</strong>, <strong>Heatmap</strong>, atau
+                <strong>Gabungan</strong>; ganti peta dasar (OSM, Esri, Citra Satelit, Topografi); saring
+                Kecamatan/Status; atau tekan <strong>Fokus Lembata</strong>.</li>
               <li><strong>Pencarian &amp; Filter:</strong> Cari ID tiket, nama, desa, atau isi aduan lalu tekan
-                <strong>Reset Filter</strong> untuk kembali ke semua data.</li>
+                <strong>Reset Filter</strong> untuk kembali ke seluruh data.</li>
             </ul>
           </div>
         </div>
 
+        <div class="sub-heading">Matriks Tombol Aksi pada Daftar Aduan</div>
         <div class="table-wrap">
           <table class="sop-table">
             <thead>
@@ -1046,76 +1566,84 @@
             <tbody>
               <tr>
                 <td><strong>Detail / Rincian</strong></td>
-                <td>Membuka Rincian Lengkap: 7 unsur laporan, foto warga &amp; petugas, <em>Sorot Peta</em>, <em>Cetak BA
-                    Pemeriksaan</em>, <em>Hapus</em>, serta <em>Cetak BA Penolakan/Hambatan</em> bila ada.</td>
-                <td>Periksa lengkap sebelum turun ke lokasi; jaga kerahasiaan data pelapor.</td>
+                <td data-label="Fungsi di Dashboard">Membuka Rincian Lengkap: 7 unsur laporan, foto warga &amp; petugas, <em>Sorot Peta</em>, <em>Cetak
+                    BA Pemeriksaan</em>, <em>Hapus</em>, serta <em>Cetak BA Penolakan/Hambatan</em> bila ada.</td>
+                <td data-label="Catatan Penggunaan">Periksa lengkap sebelum turun ke lokasi; jaga kerahasiaan data pelapor.</td>
               </tr>
               <tr>
                 <td><strong>Tanggapi / Verifikasi</strong></td>
-                <td>Membuka formulir verifikasi lapangan, ubah status, checklist 5 indikator, templat respons, unggah
+                <td data-label="Fungsi di Dashboard">Membuka formulir verifikasi lapangan, ubah status, checklist 5 indikator, templat respons, unggah
                   foto riil, dan penanda hambatan.</td>
-                <td>Isi berdasarkan fakta pemeriksaan lapangan yang benar-benar dilakukan.</td>
+                <td data-label="Catatan Penggunaan">Isi berdasarkan fakta pemeriksaan lapangan yang benar-benar dilakukan.</td>
               </tr>
               <tr>
                 <td><strong>WA / Hubungi Pelapor</strong></td>
-                <td>Membuka chat WhatsApp resmi ke nomor pelapor dengan pesan template sesuai nomor tiket.</td>
-                <td>Gunakan bahasa kedinasan; jangan kirim identitas pelapor ke pihak terlapor.</td>
+                <td data-label="Fungsi di Dashboard">Membuka chat WhatsApp resmi ke nomor pelapor dengan pesan template sesuai nomor tiket.</td>
+                <td data-label="Catatan Penggunaan">Gunakan bahasa kedinasan; jangan kirim identitas pelapor ke pihak terlapor.</td>
               </tr>
               <tr>
                 <td><strong>Menu &#8942; (Tabel Desktop)</strong></td>
-                <td>Akses cepat ke <em>Lihat Rincian</em>, <em>Verifikasi</em>, <em>Sorot di Peta</em>, <em>Titik
+                <td data-label="Fungsi di Dashboard">Akses cepat ke <em>Lihat Rincian</em>, <em>Verifikasi</em>, <em>Sorot di Peta</em>, <em>Titik
                     GPS</em> (Google Maps), <em>WA</em>, dan <em>Hapus Laporan</em>.</td>
-                <td><em>Hapus Laporan</em> bersifat permanen dan hanya untuk duplikat/uji coba oleh admin.</td>
+                <td data-label="Catatan Penggunaan"><em>Hapus Laporan</em> bersifat permanen dan hanya untuk duplikat/uji coba oleh admin.</td>
               </tr>
             </tbody>
           </table>
         </div>
       </section>
 
-      <!-- BAGIAN 2: 5 STATUS & ALUR KERJA -->
+      <!-- BAGIAN 02: ALUR KERJA & 5 STATUS PENANGANAN -->
       <section class="guide-section" id="alur-status">
         <div class="sec-head">
           <div class="sec-title-group">
-            <span class="sec-num">BAGIAN 2</span>
-            <h2 class="sec-title">5 Status Penanganan &amp; Alur Kerja Petugas</h2>
+            <span class="sec-num">BAGIAN 02</span>
+            <h2 class="sec-title">5 Tahap Alur Kerja &amp; Matriks Status Penanganan</h2>
           </div>
           <span class="sec-tag">SOP Inti</span>
         </div>
 
         <p class="sec-lead">
-          Setiap laporan mengikuti 5 langkah kerja minimum dari masuk hingga selesai:
+          Setiap pengaduan wajib mengikuti 5 tahapan kerja minimum berikut dari penerimaan hingga penutupan tiket:
         </p>
 
-        <div class="steps-grid">
-          <div class="step-card">
+        <div class="flow-list">
+          <div class="flow-step">
             <span class="step-num">1</span>
-            <h3>Telaah Awal</h3>
-            <p>Buka tiket baru, baca kronologi, cek foto awal, desa/kecamatan, dan koordinat GPS.</p>
+            <div class="flow-step-title">Telaah Awal</div>
+            <div class="flow-step-desc">Buka tiket baru, baca kronologi kejadian, periksa foto awal pelapor,
+              desa/kecamatan, dan titik koordinat GPS.</div>
           </div>
-          <div class="step-card">
+
+          <div class="flow-step">
             <span class="step-num">2</span>
-            <h3>Periksa Lokasi</h3>
-            <p>Turun ke lokasi (utamakan APD &amp; keselamatan), amati fakta, klarifikasi pihak terkait, ambil foto riil.</p>
+            <div class="flow-step-title">Periksa Lokasi</div>
+            <div class="flow-step-desc">Turun ke lokasi dengan mengutamakan APD &amp; keselamatan tim, amati fakta
+              lapangan, klarifikasi pihak terkait, dan ambil foto riil.</div>
           </div>
-          <div class="step-card">
+
+          <div class="flow-step">
             <span class="step-num">3</span>
-            <h3>Isi Verifikasi</h3>
-            <p>Klik <strong>Verifikasi / Tanggapi</strong>, isi checklist 5 indikator, uraian fakta, tindakan DLH, &amp;
-              unggah foto riil.</p>
+            <div class="flow-step-title">Isi Verifikasi</div>
+            <div class="flow-step-desc">Klik <strong>Verifikasi / Tanggapi</strong>, lengkapi checklist 5 indikator,
+              uraian fakta lapangan, tindakan DLH, dan unggah foto kondisi riil.</div>
           </div>
-          <div class="step-card">
+
+          <div class="flow-step">
             <span class="step-num">4</span>
-            <h3>Berita Acara</h3>
-            <p>Klik <strong>No. BA Otomatis</strong>, isi catatan BA, lalu cetak <strong>BA Pemeriksaan</strong> (atau
-              <strong>BA Hambatan</strong> jika terkendala).</p>
+            <div class="flow-step-title">Terbitkan Berita Acara</div>
+            <div class="flow-step-desc">Klik <strong>No. BA Otomatis</strong>, isi catatan BA, lalu cetak
+              <strong>BA Pemeriksaan</strong> (atau <strong>BA Hambatan</strong> apabila terkendala di lapangan).</div>
           </div>
-          <div class="step-card">
+
+          <div class="flow-step">
             <span class="step-num">5</span>
-            <h3>Kabari Pelapor</h3>
-            <p>Pastikan data tersimpan/tersinkron, lalu beri pembaruan resmi kepada pelapor via tombol <strong>WA</strong>.</p>
+            <div class="flow-step-title">Kabari Pelapor</div>
+            <div class="flow-step-desc">Pastikan hasil verifikasi tersimpan &amp; tersinkronisasi, lalu sampaikan
+              pembaruan resmi kepada pelapor melalui tombol <strong>WA</strong>.</div>
           </div>
         </div>
 
+        <div class="sub-heading">Matriks 5 Status Resmi Penanganan</div>
         <div class="table-wrap">
           <table class="sop-table">
             <thead>
@@ -1128,28 +1656,30 @@
             <tbody>
               <tr>
                 <td><span class="st-pill st-baru"><span class="st-dot"></span>Baru</span></td>
-                <td>Laporan baru masuk ke sistem (status awal <em>Aduan Diterima</em>) dan menunggu telaah petugas.</td>
-                <td>Pastikan memiliki nomor tiket &amp; siap ditugaskan ke verifikator.</td>
+                <td data-label="Arti &amp; Kapan Digunakan">Laporan baru masuk ke sistem (status awal <em>Aduan Diterima</em>) dan menunggu telaah petugas.</td>
+                <td data-label="Syarat Wajib">Pastikan memiliki nomor tiket &amp; siap ditugaskan ke verifikator.</td>
               </tr>
               <tr>
                 <td><span class="st-pill st-verif"><span class="st-dot"></span>Diverifikasi</span></td>
-                <td>Tim Pengawas DLH melakukan pemeriksaan faktual langsung di lokasi kejadian.</td>
-                <td>Isi nama petugas verifikator, tanggal periksa, dan fakta lapangan.</td>
+                <td data-label="Arti &amp; Kapan Digunakan">Tim Pengawas DLH melakukan pemeriksaan faktual langsung di lokasi kejadian.</td>
+                <td data-label="Syarat Wajib">Isi nama petugas verifikator, tanggal periksa, dan fakta lapangan.</td>
               </tr>
               <tr>
                 <td><span class="st-pill st-tindak"><span class="st-dot"></span>Ditindaklanjuti</span></td>
-                <td>Aksi penanganan sedang berjalan (pembersihan, mediasi, teguran tertulis, atau koordinasi instansi).</td>
-                <td>Cantumkan tindakan/rekomendasi DLH yang sedang dilaksanakan.</td>
+                <td data-label="Arti &amp; Kapan Digunakan">Aksi penanganan sedang berjalan (pembersihan, mediasi, teguran tertulis, atau koordinasi instansi).
+                </td>
+                <td data-label="Syarat Wajib">Cantumkan tindakan/rekomendasi DLH yang sedang dilaksanakan.</td>
               </tr>
               <tr>
                 <td><span class="st-pill st-selesai"><span class="st-dot"></span>Selesai</span></td>
-                <td>Penanganan tuntas diselesaikan. <em>Tidak boleh dipakai hanya karena sudah survey atau kirim WA.</em></td>
-                <td>Tindakan tuntas, foto kondisi akhir/bukti ada, tanggal selesai &amp; BA tercatat.</td>
+                <td data-label="Arti &amp; Kapan Digunakan">Penanganan tuntas diselesaikan. <em>Tidak boleh dipakai hanya karena sudah survei atau kirim
+                    WA.</em></td>
+                <td data-label="Syarat Wajib">Tindakan tuntas, foto kondisi akhir/bukti ada, tanggal selesai &amp; BA tercatat.</td>
               </tr>
               <tr>
                 <td><span class="st-pill st-tidak"><span class="st-dot"></span>Tidak Dapat Ditindaklanjuti</span></td>
-                <td>Setelah diperiksa, tidak ditemukan indikasi/objek atau pengaduan di luar kewenangan DLH.</td>
-                <td>Wajib pilih <strong>1 dari 4 Alasan Resmi</strong>, isi <strong>Kesimpulan Petugas</strong>, &amp;
+                <td data-label="Arti &amp; Kapan Digunakan">Setelah diperiksa, tidak ditemukan indikasi/objek atau pengaduan di luar kewenangan DLH.</td>
+                <td data-label="Syarat Wajib">Wajib pilih <strong>1 dari 4 Alasan Resmi</strong>, isi <strong>Kesimpulan Petugas</strong>, &amp;
                   <strong>Fakta Lapangan</strong>.</td>
               </tr>
             </tbody>
@@ -1157,24 +1687,33 @@
         </div>
       </section>
 
-      <!-- BAGIAN 3: CHECKLIST & TEMPLAT CEPAT -->
+      <!-- BAGIAN 03: CHECKLIST & TEMPLAT CEPAT -->
       <section class="guide-section" id="checklist">
         <div class="sec-head">
           <div class="sec-title-group">
-            <span class="sec-num">BAGIAN 3</span>
+            <span class="sec-num">BAGIAN 03</span>
             <h2 class="sec-title">Checklist Verifikasi (5 Indikator) &amp; Templat Cepat</h2>
           </div>
           <span class="sec-tag">Modal Verifikasi</span>
         </div>
 
         <p class="sec-lead">
-          Pada formulir verifikasi tersedia 5 indikator pemeriksaan dengan 3 pilihan status berikut:
+          Pada formulir verifikasi tersedia 5 indikator pemeriksaan lapangan dengan 3 pilihan penilaian berikut:
         </p>
 
-        <div class="chk-guide-pills">
-          <span class="chk-pill ok">&#10003; Terpenuhi &mdash; Sesuai / terlaksana di lapangan</span>
-          <span class="chk-pill no">&#10005; Tidak &mdash; Diperiksa, tidak ditemukan / tidak terpenuhi</span>
-          <span class="chk-pill tdd">&#9432; Tidak Dapat Dinilai &mdash; Terkendala objektif (wajib isi keterangan)</span>
+        <div class="chk-guide-grid">
+          <div class="chk-pill ok">
+            <strong>&#10003; Terpenuhi</strong>
+            <span>Sesuai fakta / terlaksana langsung di lapangan.</span>
+          </div>
+          <div class="chk-pill no">
+            <strong>&#10005; Tidak</strong>
+            <span>Sudah diperiksa, tidak ditemukan / tidak terpenuhi.</span>
+          </div>
+          <div class="chk-pill tdd">
+            <strong>&#9432; Tidak Dapat Dinilai</strong>
+            <span>Terkendala kondisi objektif (wajib isi keterangan).</span>
+          </div>
         </div>
 
         <div class="grid-2">
@@ -1216,11 +1755,11 @@
         </div>
       </section>
 
-      <!-- BAGIAN 4: BERITA ACARA & HAMBATAN -->
+      <!-- BAGIAN 04: BERITA ACARA & HAMBATAN -->
       <section class="guide-section" id="berita-acara">
         <div class="sec-head">
           <div class="sec-title-group">
-            <span class="sec-num">BAGIAN 4</span>
+            <span class="sec-num">BAGIAN 04</span>
             <h2 class="sec-title">Berita Acara &amp; Penanganan Hambatan Lapangan</h2>
           </div>
           <span class="sec-tag">Dokumentasi Resmi</span>
@@ -1230,8 +1769,8 @@
           <div class="info-card">
             <h3>Cetak Berita Acara Pemeriksaan</h3>
             <ol class="clean-list">
-              <li>Di Modal Verifikasi, isi <strong>Nomor Register Berita Acara Fisik</strong> (atau klik tombol <strong>No.
-                  BA Otomatis</strong>).</li>
+              <li>Di Modal Verifikasi, isi <strong>Nomor Register Berita Acara Fisik</strong> (atau klik tombol
+                <strong>No. BA Otomatis</strong>).</li>
               <li>Tulis <strong>Catatan Singkat Berita Acara</strong> (saksi/aparat pendamping, fakta fisik, komitmen
                 tindak lanjut), lalu klik <strong>Simpan Hasil Verifikasi</strong>.</li>
               <li>Buka kembali tiket lewat <strong>Detail / Rincian</strong>, lalu tekan <strong>Cetak BA
@@ -1242,9 +1781,11 @@
           <div class="info-card">
             <h3>Penolakan atau Hambatan Pemeriksaan</h3>
             <ol class="clean-list">
-              <li>Centang kotak <strong>Terdapat Penolakan / Hambatan Pemeriksaan Lapangan</strong> di Modal Verifikasi.</li>
+              <li>Centang kotak <strong>Terdapat Penolakan / Hambatan Pemeriksaan Lapangan</strong> di Modal
+                Verifikasi.</li>
               <li>Pilih <strong>Jenis Hambatan</strong>: <em>Penolakan Akses oleh Terlapor</em>, <em>Lokasi Terkunci /
-                  Tidak Ada Pihak</em>, <em>Faktor Cuaca / Keselamatan Tim</em>, atau <em>Kendala Teknis Lainnya</em>.</li>
+                  Tidak Ada Pihak</em>, <em>Faktor Cuaca / Keselamatan Tim</em>, atau <em>Kendala Teknis Lainnya</em>.
+              </li>
               <li>Catat kronologi fakta &amp; saksi secara objektif, lalu cetak melalui tombol <strong>Cetak BA
                   Penolakan</strong> / <strong>Cetak Berita Acara Hambatan Lapangan</strong>.</li>
             </ol>
@@ -1252,17 +1793,17 @@
         </div>
 
         <div class="note-box is-amber">
-          <strong>Batas Kewenangan:</strong> Penolakan akses oleh terlapor dicatat sebagai <em>Hambatan Pemeriksaan</em>
-          (bukan otomatis menutup laporan sebagai <em>Tidak Dapat Ditindaklanjuti</em>). Petugas dilarang menyampaikan
-          ancaman pidana sepihak di lapangan tanpa telaah hukum dan persetujuan pejabat berwenang.
+          <strong>Batas Kewenangan:</strong> Penolakan akses oleh terlapor dicatat sebagai <em>Hambatan
+            Pemeriksaan</em> (bukan otomatis menutup laporan sebagai <em>Tidak Dapat Ditindaklanjuti</em>). Petugas
+          dilarang menyampaikan ancaman pidana sepihak di lapangan tanpa telaah hukum dan persetujuan pejabat berwenang.
         </div>
       </section>
 
-      <!-- BAGIAN 5: MENU PENGATURAN DATA, WA & SINKRONISASI -->
+      <!-- BAGIAN 05: MENU PENGATURAN DATA, WA & SINKRONISASI -->
       <section class="guide-section" id="data-sync">
         <div class="sec-head">
           <div class="sec-title-group">
-            <span class="sec-num">BAGIAN 5</span>
+            <span class="sec-num">BAGIAN 05</span>
             <h2 class="sec-title">Catat dari WA, Sinkronisasi Sheets &amp; Pengaturan Data</h2>
           </div>
           <span class="sec-tag">Menu Pengaturan</span>
@@ -1270,7 +1811,7 @@
 
         <p class="sec-lead">
           Pada panel <strong>Rekapitulasi Data Pengaduan</strong>, tekan tombol <strong>Pengaturan</strong> untuk
-          mengakses alat pengelolaan data berikut:
+          mengakses seluruh alat sinkronisasi dan pengelolaan data berikut:
         </p>
 
         <div class="table-wrap">
@@ -1278,38 +1819,39 @@
             <thead>
               <tr>
                 <th style="width: 24%;">Menu Pengaturan</th>
-                <th style="width: 48%;">Cara Pakai</th>
+                <th style="width: 48%;">Prosedur Penggunaan</th>
                 <th style="width: 28%;">Catatan Penting</th>
               </tr>
             </thead>
             <tbody>
               <tr>
                 <td><strong>Segarkan</strong></td>
-                <td>Memuat ulang dan menyelaraskan data terbaru dari server Google Spreadsheet.</td>
-                <td>Cek jam <em>Terakhir disinkronkan</em> pada tombol status Cloud di atas.</td>
+                <td data-label="Prosedur Penggunaan">Memuat ulang dan menyelaraskan data terbaru dari server Google Spreadsheet.</td>
+                <td data-label="Catatan Penting">Cek jam <em>Terakhir disinkronkan</em> pada tombol status Cloud di atas.</td>
               </tr>
               <tr>
                 <td><strong>Catat dari WA</strong></td>
-                <td>Tempel teks laporan WhatsApp warga &rarr; klik <strong>Ekstrak &amp; Tinjau Data Aduan</strong>
+                <td data-label="Prosedur Penggunaan">Tempel teks laporan WhatsApp warga &rarr; klik <strong>Ekstrak &amp; Tinjau Data Aduan</strong>
                   &rarr; koreksi/lengkapi foto &rarr; klik <strong>Simpan Aduan ke Dashboard Petugas</strong>.</td>
-                <td>Wajib periksa kembali hasil ekstraksi otomatis dan hindari duplikasi tiket.</td>
+                <td data-label="Catatan Penting">Wajib periksa kembali hasil ekstraksi otomatis dan hindari duplikasi tiket.</td>
               </tr>
               <tr>
                 <td><strong>Database Sheets</strong></td>
-                <td>Mengatur URL Web App Google Apps Script, <strong>Sinkronkan Sekarang</strong>, <strong>Unggah ke
+                <td data-label="Prosedur Penggunaan">Mengatur URL Web App Google Apps Script, <strong>Sinkronkan Sekarang</strong>, <strong>Unggah ke
                     Sheets</strong>, atau <strong>Simpan URL</strong>.</td>
-                <td>Jika URL dikosongkan, sistem berjalan lokal (Mode Offline) dan menampilkan lencana <em>Pending
+                <td data-label="Catatan Penting">Jika URL dikosongkan, sistem berjalan lokal (Mode Offline) dan menampilkan lencana <em>Pending
                     Sync</em>.</td>
               </tr>
               <tr>
                 <td><strong>Ekspor CSV</strong></td>
-                <td>Mengunduh seluruh data aduan dalam format CSV untuk laporan pimpinan atau arsip cadangan.</td>
-                <td>Memuat identitas &amp; nomor HP pelapor; simpan hanya di jalur kedinasan internal.</td>
+                <td data-label="Prosedur Penggunaan">Mengunduh seluruh data aduan dalam format CSV untuk laporan pimpinan atau arsip cadangan.</td>
+                <td data-label="Catatan Penting">Memuat identitas &amp; nomor HP pelapor; simpan hanya di jalur kedinasan internal.</td>
               </tr>
               <tr>
                 <td><strong>Reset ke 0</strong></td>
-                <td>Mengosongkan seluruh data aduan menjadi 0 aduan (<em>Fresh Start</em>) di server &amp; perangkat.</td>
-                <td>Khusus admin untuk inisialisasi awal atau uji coba; wajib backup CSV terlebih dahulu.</td>
+                <td data-label="Prosedur Penggunaan">Mengosongkan seluruh data aduan menjadi 0 aduan (<em>Fresh Start</em>) di server &amp; perangkat.
+                </td>
+                <td data-label="Catatan Penting">Khusus admin untuk inisialisasi awal atau uji coba; wajib backup CSV terlebih dahulu.</td>
               </tr>
             </tbody>
           </table>
@@ -1317,18 +1859,19 @@
 
         <div class="note-box is-red">
           <strong>Keselamatan &amp; Insiden:</strong> Utamakan keselamatan tim (jangan masuk area berisiko tinggi tanpa
-          APD dan kewenangan). Jika terjadi gangguan sinkronisasi, perangkat hilang, atau kebocoran data pelapor,
-          segera hentikan operasi massal dan laporkan ke Administrator DLH Lembata.
+          APD dan kewenangan). Jika terjadi gangguan sinkronisasi, perangkat hilang, atau kebocoran data pelapor, segera
+          hentikan operasi massal dan laporkan ke Administrator DLH Lembata.
         </div>
       </section>
 
-      <!-- KONTAK ADMIN -->
+      <!-- PENUTUP: KONTAK BANTUAN TEKNIS ADMIN -->
       <section class="guide-section" id="kontak-admin">
         <div class="contact-card">
           <div class="contact-info">
             <h3>Bantuan Teknis &amp; Reset Sandi Admin DLH Lembata</h3>
             <p>
-              Kantor DLH Kab. Lembata, Jl. Trans Atadei, Lewoleba &bull; Senin &ndash; Jumat, 08.00 &ndash; 16.00 WITA<br>
+              Kantor DLH Kab. Lembata, Jl. Trans Atadei, Lewoleba &bull; Senin &ndash; Jumat, 08.00 &ndash; 16.00
+              WITA<br>
               WhatsApp Admin: <strong>+62 822-3458-2769</strong> &bull; Email:
               <strong>dlh.kabupatenlembata@gmail.com</strong>
             </p>
