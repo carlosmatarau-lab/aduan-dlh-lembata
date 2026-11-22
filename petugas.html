@@ -1838,10 +1838,20 @@
     }
 
     /* Custom Leaflet Marker Styling */
+    .custom-marker-icon-wrapper {
+      background: transparent;
+      border: none;
+      overflow: visible !important;
+    }
+
     .custom-marker-pin-wrap {
+      position: relative;
+      width: 28px;
+      height: 28px;
       display: flex;
       flex-direction: column;
       align-items: center;
+      justify-content: center;
       cursor: pointer;
     }
 
@@ -1889,6 +1899,113 @@
       100% {
         transform: scale(1.6);
         opacity: 0;
+      }
+    }
+
+    /* Notifikasi Penanda Aduan Paling Baru di Atas Pin Peta Petugas */
+    .marker-latest-badge {
+      position: absolute;
+      bottom: calc(100% + 7px);
+      left: 50%;
+      transform: translateX(-50%);
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: linear-gradient(135deg, #dc2626 0%, #b91c1c 100%);
+      color: #ffffff;
+      border: 1.5px solid #ffffff;
+      font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+      font-size: 9.8px;
+      font-weight: 800;
+      line-height: 1.25;
+      letter-spacing: 0.02em;
+      white-space: nowrap;
+      box-shadow: 0 3px 8px rgba(15, 23, 42, 0.34);
+      pointer-events: none;
+      user-select: none;
+      z-index: 2;
+      animation: latestBadgeFloat 2.6s ease-in-out infinite;
+      transition: opacity 0.16s ease, visibility 0.16s ease;
+    }
+
+    .marker-latest-badge::after {
+      content: '';
+      position: absolute;
+      left: 50%;
+      bottom: -4px;
+      width: 6px;
+      height: 6px;
+      background: #b91c1c;
+      border-right: 1.5px solid #ffffff;
+      border-bottom: 1.5px solid #ffffff;
+      transform: translateX(-50%) rotate(45deg);
+      pointer-events: none;
+    }
+
+    .marker-latest-dot {
+      width: 5px;
+      height: 5px;
+      border-radius: 50%;
+      background: #fef08a;
+      box-shadow: 0 0 0 2px rgba(254, 240, 138, 0.32);
+      flex-shrink: 0;
+      animation: latestDotPulse 1.6s ease-in-out infinite;
+    }
+
+    .custom-marker-icon-wrapper.popup-open .marker-latest-badge {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    @keyframes latestBadgeFloat {
+      0%, 100% {
+        transform: translateX(-50%) translateY(0);
+      }
+      50% {
+        transform: translateX(-50%) translateY(-2.5px);
+      }
+    }
+
+    @keyframes latestDotPulse {
+      0%, 100% {
+        opacity: 1;
+        transform: scale(1);
+      }
+      50% {
+        opacity: 0.55;
+        transform: scale(0.8);
+      }
+    }
+
+    @media (max-width: 768px) {
+      .marker-latest-badge {
+        bottom: calc(100% + 5px);
+        padding: 1.5px 6px;
+        gap: 3px;
+        font-size: 8.8px;
+        border-width: 1.25px;
+      }
+
+      .marker-latest-badge::after {
+        width: 5px;
+        height: 5px;
+        bottom: -3.5px;
+        border-right-width: 1.25px;
+        border-bottom-width: 1.25px;
+      }
+
+      .marker-latest-dot {
+        width: 4.5px;
+        height: 4.5px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .marker-latest-badge,
+      .marker-latest-dot {
+        animation: none;
       }
     }
 
@@ -7856,10 +7973,48 @@
         return;
       }
 
+      getLatestReceivedAduanId(allData) {
+        if (!Array.isArray(allData) || allData.length === 0) return null;
+
+        const extractTime = (rec) => {
+          if (!rec) return 0;
+          if (typeof rec.createdAt === 'number' && !isNaN(rec.createdAt) && rec.createdAt > 0) {
+            return rec.createdAt;
+          }
+          const d1 = typeof this.parseAduanDate === 'function' ? this.parseAduanDate(rec.timestamp) : null;
+          if (d1 && !isNaN(d1.getTime())) return d1.getTime();
+          const d2 = typeof this.parseAduanDate === 'function' ? this.parseAduanDate(rec.tanggalKejadian) : null;
+          if (d2 && !isNaN(d2.getTime())) return d2.getTime();
+          return 0;
+        };
+
+        const validWithCoords = allData.filter(item => item && item.id && item.lat && item.lng);
+        if (validWithCoords.length === 0) return null;
+
+        const firstTime = extractTime(validWithCoords[0]);
+        const lastTime = extractTime(validWithCoords[validWithCoords.length - 1]);
+        const isAscendingOrder = firstTime > 0 && lastTime > 0 && lastTime > firstTime;
+
+        let latestItem = validWithCoords[0];
+        let latestTime = firstTime;
+
+        for (let i = 1; i < validWithCoords.length; i++) {
+          const item = validWithCoords[i];
+          const t = extractTime(item);
+          if (t > latestTime || (t === latestTime && isAscendingOrder)) {
+            latestTime = t;
+            latestItem = item;
+          }
+        }
+
+        return latestItem && latestItem.id ? String(latestItem.id).trim().toUpperCase() : null;
+      }
+
       renderMapLayers() {
         if (!this.map) return;
 
         const data = window.aduanStore ? window.aduanStore.getAll() : [];
+        const latestAduanId = this.getLatestReceivedAduanId(data);
         const filtered = data.filter(item => {
           let matchKec = true;
           if (this.mapFilters.kecamatan !== 'all') {
@@ -7921,10 +8076,16 @@
                 iconSvg = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" style="width: 14px; height: 14px;"><polyline points="20 6 9 17 4 12"/></svg>';
               }
 
+              const isLatestReceived = Boolean(latestAduanId && String(item.id || '').trim().toUpperCase() === latestAduanId);
+              const latestBadgeHtml = isLatestReceived
+                ? `<div class="marker-latest-badge" aria-label="Aduan baru terakhir masuk"><span class="marker-latest-dot" aria-hidden="true"></span><span>Aduan Baru</span></div>`
+                : '';
+
               const customIcon = L.divIcon({
-                className: 'custom-marker-icon-wrapper',
+                className: isLatestReceived ? 'custom-marker-icon-wrapper is-latest-aduan-marker' : 'custom-marker-icon-wrapper',
                 html: `
-                  <div class="custom-marker-pin-wrap">
+                  <div class="custom-marker-pin-wrap${isLatestReceived ? ' is-latest-aduan' : ''}">
+                    ${latestBadgeHtml}
                     <div class="marker-pulse-ring" style="--pin-bg: ${pinBg};"></div>
                     <div class="custom-marker-pin" style="--pin-bg: ${pinBg};">
                       <span class="custom-marker-icon-inner" style="display: flex; align-items: center; justify-content: center; width: 100%; height: 100%; color: #ffffff;">${iconSvg}</span>
@@ -7936,7 +8097,20 @@
                 popupAnchor: [0, -28]
               });
 
-              const marker = L.marker([item.lat, item.lng], { icon: customIcon });
+              const marker = L.marker([item.lat, item.lng], {
+                icon: customIcon,
+                zIndexOffset: isLatestReceived ? 250 : 0
+              });
+              if (isLatestReceived) {
+                marker.on('popupopen', () => {
+                  const el = marker.getElement ? marker.getElement() : marker._icon;
+                  if (el) el.classList.add('popup-open');
+                });
+                marker.on('popupclose', () => {
+                  const el = marker.getElement ? marker.getElement() : marker._icon;
+                  if (el) el.classList.remove('popup-open');
+                });
+              }
               marker.recordId = item.id;
               this.markersById[item.id] = marker;
               this.markerMap[item.id] = marker;
