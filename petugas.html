@@ -7221,7 +7221,7 @@
   <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 
   <!-- Scripts: Data Engine & Portal Controller -->
-  <script src="js/data.js?v=20261122_camera_upload_01"></script>
+  <script src="js/data.js?v=20261123_unmasked_login_01"></script>
   <script>
     // Safeguard prototype jika browser masih memuat file js lama dari cache
     if (typeof AduanDataStore !== 'undefined') {
@@ -7360,8 +7360,9 @@
           }
         });
 
-        // SINKRONISASI OTOMATIS DARI GOOGLE SPREADSHEET SAAT DASHBOARD DIBUKA
-        if (window.aduanStore && window.aduanStore.hasGasConfigured()) {
+        // SINKRONISASI OTOMATIS DARI GOOGLE SPREADSHEET HANYA SETELAH LOGIN PETUGAS AKTIF
+        // (mencegah data pelapor tersamarkan/masked dimuat sebelum token petugas tersedia)
+        if (this._unlockedThisLoad === true && window.aduanStore && window.aduanStore.hasGasConfigured()) {
           try {
             const syncRes = await window.aduanStore.syncFromGAS(true);
             if (syncRes && syncRes.success) {
@@ -7375,10 +7376,11 @@
           }
         }
 
-        // POLLING LATAR BELAKANG SETIAP 5000 ms (5 DETIK) KHUSUS SAAT TAB TERLIHAT
+        // POLLING LATAR BELAKANG SETIAP 5000 ms (5 DETIK) KHUSUS SAAT TAB TERLIHAT & SUDAH LOGIN
         if (!this._pollingStarted) {
           this._pollingStarted = true;
           this._visiblePollingTimer = setInterval(async () => {
+            if (this._unlockedThisLoad !== true) return;
             if (document.visibilityState !== 'visible') return;
             if (!window.aduanStore || !window.aduanStore.hasGasConfigured()) return;
             if (this._isPollingNow) return;
@@ -7709,48 +7711,53 @@
             card.classList.add('unlocking');
           }
           if (btnIcon) btnIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>`;
-          if (btnText) btnText.textContent = 'Membuka Dashboard...';
+          if (btnText) btnText.textContent = 'Memuat Data Dashboard...';
 
-          setTimeout(async () => {
-            if (loginPage) loginPage.style.display = 'none';
-            if (dashWrap) dashWrap.style.display = 'flex';
-            this.applyDashboardStagger();
+          // Ambil data pelapor utuh (unmasked) dari server DENGAN token petugas TERLEBIH DAHULU
+          // sebelum dashboard ditampilkan, agar nama & kontak pelapor langsung tampil utuh tanpa tersamarkan sementara
+          let pinSyncOk = false;
+          if (window.aduanStore && typeof window.aduanStore.syncFromGAS === 'function' && window.aduanStore.hasGasConfigured()) {
+            try {
+              const pinSyncRes = await Promise.race([
+                window.aduanStore.syncFromGAS(true),
+                new Promise((resolve) => setTimeout(() => resolve({ success: false, timeout: true }), 8000))
+              ]);
+              pinSyncOk = Boolean(pinSyncRes && pinSyncRes.success);
+            } catch (e) { }
+          }
 
-            if (card) card.classList.remove('unlocking', 'scanning');
-            if (submitBtn) submitBtn.disabled = false;
-            if (btnIcon) btnIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>`;
-            if (btnText) btnText.textContent = 'Buka Dashboard Petugas';
-            if (badgeIcon) badgeIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
+          if (pinSyncOk || (window.aduanStore && !window.aduanStore.hasGasConfigured() && window.aduanStore.hasReadyStats())) {
+            this.syncVerifiedCacheAndBroadcast('petugas-login', 'STATS_UPDATED', null, false);
+          }
 
-            const toastMsg = isSmartFallback
-              ? 'Akses Berhasil: Selamat bertugas di Dashboard Petugas DLH Lembata (Mode Cepat)!'
-              : 'Akses Berhasil: Selamat bertugas di Dashboard Petugas DLH Lembata!';
-            this.showToast(toastMsg, 'success');
+          // Render KPI, tabel (nama & kontak utuh), dan peta sebelum membuka tampilan dashboard
+          this.updateKPIs();
+          this.renderTable();
+          this.renderMapLayers();
 
-            // Sinkronkan data langsung dari server agar data PII unmasked termutakhirkan
-            let pinSyncOk = false;
-            if (window.aduanStore && typeof window.aduanStore.syncFromGAS === 'function') {
-              try {
-                const pinSyncRes = await window.aduanStore.syncFromGAS(true);
-                pinSyncOk = Boolean(pinSyncRes && pinSyncRes.success);
-              } catch (e) { }
-            }
+          if (loginPage) loginPage.style.display = 'none';
+          if (dashWrap) dashWrap.style.display = 'flex';
+          this.applyDashboardStagger();
 
-            if (pinSyncOk || (window.aduanStore && !window.aduanStore.hasGasConfigured() && window.aduanStore.hasReadyStats())) {
-              this.syncVerifiedCacheAndBroadcast('petugas-login', 'STATS_UPDATED', null, false);
-            }
-            this.updateKPIs();
-            this.renderTable();
-            this.renderMapLayers();
-            try { this.initSplitScreen(); } catch (e) { }
-            if (this.map) {
-              setTimeout(() => {
-                try { this.map.invalidateSize(); } catch (e) { }
-              }, 100);
-            } else {
-              this.initMap();
-            }
-          }, 120);
+          if (card) card.classList.remove('unlocking', 'scanning');
+          if (submitBtn) submitBtn.disabled = false;
+          if (btnIcon) btnIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>`;
+          if (btnText) btnText.textContent = 'Buka Dashboard Petugas';
+          if (badgeIcon) badgeIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>`;
+
+          const toastMsg = isSmartFallback
+            ? 'Akses Berhasil: Selamat bertugas di Dashboard Petugas DLH Lembata (Mode Cepat)!'
+            : 'Akses Berhasil: Selamat bertugas di Dashboard Petugas DLH Lembata!';
+          this.showToast(toastMsg, 'success');
+
+          try { this.initSplitScreen(); } catch (e) { }
+          if (this.map) {
+            setTimeout(() => {
+              try { this.map.invalidateSize(); } catch (e) { }
+            }, 100);
+          } else {
+            this.initMap();
+          }
         } else {
           // SKENARIO C (PIN Salah): Kredensial tidak cocok baik di server maupun di fallback
           if (card) card.classList.remove('scanning');

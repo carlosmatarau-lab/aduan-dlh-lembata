@@ -1615,7 +1615,7 @@ class AduanDataStore {
     if (this.hasGasConfigured() && !this._pollIntervalStarted) {
       this._pollIntervalStarted = true;
       setTimeout(() => this.syncStatsFromGAS(), 50);
-      setTimeout(() => this.syncFromGAS(true), 250);
+      setTimeout(() => { if (!this.isLockedPetugasPage()) this.syncFromGAS(true); }, 250);
       setTimeout(() => this.flushPendingQueue(), 900);
 
       // Sambungkan pendengar EventSource ke Firebase Realtime Database
@@ -1628,7 +1628,7 @@ class AduanDataStore {
         const ms = (typeof document !== 'undefined' && document.hidden) ? 45000 : 20000;
         pollTimer = setInterval(() => {
           this.syncStatsFromGAS();
-          this.syncFromGAS(true);
+          if (!this.isLockedPetugasPage()) this.syncFromGAS(true);
         }, ms);
       };
       restartPolling();
@@ -1638,13 +1638,13 @@ class AduanDataStore {
         window.addEventListener('focus', () => {
           this.initRealtimeDoorbell(false);
           this.syncStatsFromGAS();
-          this.syncFromGAS(true);
+          if (!this.isLockedPetugasPage()) this.syncFromGAS(true);
           restartPolling();
         });
         window.addEventListener('online', () => {
           this.initRealtimeDoorbell(true);
           this.syncStatsFromGAS();
-          this.syncFromGAS(true);
+          if (!this.isLockedPetugasPage()) this.syncFromGAS(true);
           this.flushPendingQueue();
           restartPolling();
         });
@@ -1653,7 +1653,7 @@ class AduanDataStore {
             if (document.visibilityState === 'visible') {
               this.initRealtimeDoorbell(false);
               this.syncStatsFromGAS();
-              this.syncFromGAS(true);
+              if (!this.isLockedPetugasPage()) this.syncFromGAS(true);
             }
             restartPolling();
           });
@@ -2226,6 +2226,17 @@ class AduanDataStore {
     return '';
   }
 
+  isLockedPetugasPage() {
+    try {
+      const p = (typeof window !== 'undefined' && window.location && window.location.pathname)
+        ? String(window.location.pathname)
+        : '';
+      return /petugas\.html/i.test(p) && !this.getAuthToken();
+    } catch (e) {
+      return false;
+    }
+  }
+
   hasGasConfigured() {
     const url = this.getGasUrl();
     return isSafeHttpsEndpoint(url);
@@ -2484,30 +2495,42 @@ class AduanDataStore {
       return { success: false, reason: 'URL Web App Google Apps Script belum disetel.' };
     }
 
+    const callerAuthToken = this.getAuthToken();
+
     // Pengunci isSyncing dengan batas waktu aman 8 detik agar sinyal bel tidak pernah terkunci permanen
     // Jika dipanggil saat isSyncing === true, tandai this.pendingResync = true agar langsung menyinkronkan ulang di finally
     if (this.isSyncing) {
       const lockAge = this._syncLockStartedAt ? (Date.now() - this._syncLockStartedAt) : 0;
       const effectiveLockTimeout = this._inFlightGetAllRequest ? 28000 : SYNC_LOCK_TIMEOUT_MS;
       if (lockAge < effectiveLockTimeout) {
-        this.pendingResync = true;
-        if (this.currentSyncPromise) {
-          return await this.currentSyncPromise;
+        // Jika request yang sedang berjalan TANPA token (masked) sementara pemanggil kini SUDAH login petugas,
+        // tunggu request lama selesai lalu segera lanjut ambil data utuh (unmasked) dengan token petugas!
+        if (callerAuthToken && !this._currentSyncAuthToken && this.currentSyncPromise) {
+          this.pendingResync = false;
+          try { await this.currentSyncPromise; } catch (e) { }
+        } else {
+          this.pendingResync = true;
+          if (this.currentSyncPromise) {
+            return await this.currentSyncPromise;
+          }
+          return { success: true, silent: true, message: 'Sinkronisasi cloud sedang berjalan...' };
         }
-        return { success: true, silent: true, message: 'Sinkronisasi cloud sedang berjalan...' };
+      } else {
+        // Lock melewati timeout: lepas pengunci lama agar sinkronisasi terbaru tetap jalan
+        if (this._syncLockTimer) {
+          clearTimeout(this._syncLockTimer);
+          this._syncLockTimer = null;
+        }
+        this.isSyncing = false;
+        this._inFlightGetAllRequest = false;
+        this.currentSyncPromise = null;
+        this._currentSyncAuthToken = '';
       }
-      // Lock melewati timeout: lepas pengunci lama agar sinkronisasi terbaru tetap jalan
-      if (this._syncLockTimer) {
-        clearTimeout(this._syncLockTimer);
-        this._syncLockTimer = null;
-      }
-      this.isSyncing = false;
-      this._inFlightGetAllRequest = false;
-      this.currentSyncPromise = null;
     }
 
     this.isSyncing = true;
     this._inFlightGetAllRequest = true;
+    this._currentSyncAuthToken = callerAuthToken;
     this._syncLockStartedAt = Date.now();
     this._lastFullGetAllStartedAt = this._syncLockStartedAt;
     const lockToken = Symbol('syncLock');
@@ -2702,6 +2725,7 @@ class AduanDataStore {
           this.isSyncing = false;
           this._inFlightGetAllRequest = false;
           this.currentSyncPromise = null;
+          this._currentSyncAuthToken = '';
           this._syncLockStartedAt = 0;
           if (this.pendingResync) {
             this.pendingResync = false;
