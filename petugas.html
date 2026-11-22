@@ -1468,6 +1468,312 @@
       display: none !important;
     }
 
+    /* ===================================================================
+       ANIMASI INTERAKTIF LOGIN & SINKRONISASI DATA PETUGAS (ANTI-BLANK)
+       =================================================================== */
+    .petugas-login-page {
+      transition: opacity 0.24s ease;
+    }
+
+    .petugas-login-page.is-fading-out {
+      opacity: 0;
+      pointer-events: none;
+    }
+
+    .auth-card.is-syncing-login {
+      border-color: rgba(16, 185, 129, 0.55);
+      box-shadow: 0 25px 60px -12px rgba(0, 0, 0, 0.52), 0 0 42px rgba(16, 185, 129, 0.28);
+    }
+
+    .auth-card.is-syncing-login::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3.5px;
+      background: linear-gradient(90deg, #059669, #34d399, #10b981, #059669);
+      background-size: 200% 100%;
+      animation: authTopShimmer 1.4s linear infinite;
+    }
+
+    @keyframes authTopShimmer {
+      0% { background-position: 200% 0; }
+      100% { background-position: -200% 0; }
+    }
+
+    .auth-sync-stage {
+      display: none;
+      flex-direction: column;
+      align-items: center;
+      text-align: center;
+      padding: 6px 2px 4px;
+      animation: authStageIn 0.28s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .auth-sync-stage.is-active {
+      display: flex;
+    }
+
+    @keyframes authStageIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px) scale(0.98);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+      }
+    }
+
+    .auth-radar-wrap {
+      position: relative;
+      width: 74px;
+      height: 74px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    .auth-radar-ring {
+      position: absolute;
+      inset: 0;
+      border-radius: 50%;
+      border: 2px solid rgba(16, 185, 129, 0.35);
+      animation: authRadarPulse 1.8s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+    }
+
+    .auth-radar-ring.ring-2 {
+      animation-delay: 0.65s;
+    }
+
+    .auth-radar-orbit {
+      position: absolute;
+      inset: 4px;
+      border-radius: 50%;
+      border: 2.5px solid rgba(16, 185, 129, 0.14);
+      border-top-color: #059669;
+      border-right-color: #10b981;
+      animation: authOrbitSpin 0.95s linear infinite;
+    }
+
+    .auth-sync-stage.is-ready .auth-radar-orbit {
+      border-color: #10b981;
+      animation: none;
+    }
+
+    .auth-radar-core {
+      width: 50px;
+      height: 50px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, #064e3b 0%, #059669 100%);
+      color: #ffffff;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 8px 20px rgba(5, 150, 105, 0.35);
+      position: relative;
+      z-index: 2;
+      transition: transform 0.25s ease, background 0.25s ease;
+    }
+
+    .auth-sync-stage.is-ready .auth-radar-core {
+      background: linear-gradient(135deg, #059669 0%, #10b981 100%);
+      transform: scale(1.06);
+    }
+
+    @keyframes authRadarPulse {
+      0% { transform: scale(0.84); opacity: 0.78; }
+      100% { transform: scale(1.28); opacity: 0; }
+    }
+
+    @keyframes authOrbitSpin {
+      to { transform: rotate(360deg); }
+    }
+
+    .auth-sync-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: #ecfdf5;
+      border: 1px solid #a7f3d0;
+      color: #047857;
+      font-size: 0.68rem;
+      font-weight: 800;
+      letter-spacing: 0.05em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 999px;
+      margin-bottom: 8px;
+    }
+
+    .auth-sync-pill-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #10b981;
+      animation: authDotBlink 1.2s ease-in-out infinite;
+    }
+
+    @keyframes authDotBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
+    }
+
+    .auth-sync-title {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: 1.12rem;
+      font-weight: 800;
+      color: #064e3b;
+      line-height: 1.25;
+      margin-bottom: 4px;
+    }
+
+    .auth-sync-subtitle {
+      font-size: 0.79rem;
+      color: #64748b;
+      line-height: 1.45;
+      margin-bottom: 14px;
+      max-width: 340px;
+    }
+
+    .auth-sync-progress-wrap {
+      width: 100%;
+      margin-bottom: 14px;
+    }
+
+    .auth-sync-progress-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: #047857;
+      margin-bottom: 6px;
+    }
+
+    .auth-sync-progress-track {
+      width: 100%;
+      height: 7px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+
+    .auth-sync-progress-fill {
+      height: 100%;
+      width: 18%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #064e3b 0%, #059669 55%, #34d399 100%);
+      transition: width 0.35s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .auth-sync-steps {
+      width: 100%;
+      display: flex;
+      flex-direction: column;
+      gap: 7px;
+      text-align: left;
+    }
+
+    .auth-sync-step {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      padding: 8px 11px;
+      border-radius: 10px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: #64748b;
+      transition: background-color 0.22s ease, border-color 0.22s ease, color 0.22s ease;
+    }
+
+    .auth-sync-step.is-active {
+      background: #ecfdf5;
+      border-color: #a7f3d0;
+      color: #065f46;
+      font-weight: 700;
+    }
+
+    .auth-sync-step.is-done {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      color: #047857;
+      font-weight: 700;
+    }
+
+    .auth-step-indicator {
+      width: 20px;
+      height: 20px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      color: #64748b;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      flex-shrink: 0;
+      font-size: 0.7rem;
+      font-weight: 800;
+    }
+
+    .auth-sync-step.is-active .auth-step-indicator {
+      background: #d1fae5;
+      color: #047857;
+    }
+
+    .auth-sync-step.is-done .auth-step-indicator {
+      background: #059669;
+      color: #ffffff;
+    }
+
+    .auth-step-spinner {
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      border: 2px solid rgba(4, 120, 87, 0.25);
+      border-top-color: #047857;
+      animation: authOrbitSpin 0.75s linear infinite;
+    }
+
+    @media (max-width: 480px) {
+      .auth-radar-wrap {
+        width: 64px;
+        height: 64px;
+        margin-bottom: 12px;
+      }
+
+      .auth-radar-core {
+        width: 44px;
+        height: 44px;
+      }
+
+      .auth-sync-title {
+        font-size: 1.02rem;
+      }
+
+      .auth-sync-subtitle {
+        font-size: 0.75rem;
+      }
+
+      .auth-sync-step {
+        padding: 7px 9px;
+        font-size: 0.73rem;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .auth-radar-ring,
+      .auth-radar-orbit,
+      .auth-sync-pill-dot,
+      .auth-step-spinner,
+      .auth-card.is-syncing-login::before {
+        animation: none;
+      }
+    }
+
     @keyframes badgePulse {
 
       0%,
@@ -5264,6 +5570,7 @@
     </div>
 
     <div class="auth-card" id="authCard">
+      <div id="authFormPanel">
       <h2 class="auth-title">Akses Khusus Petugas DLH</h2>
       <p class="auth-subtitle">
         Dashboard Pengawasan &amp; Verifikasi Aduan Pencemaran Lingkungan<br>
@@ -5344,6 +5651,57 @@
           style="font-size: 0.82rem; color: #64748b; text-decoration: none; font-weight: 700; display: inline-flex; align-items: center; gap: 6px;">
           ← Kembali ke Formulir Warga
         </a>
+      </div>
+      </div>
+
+      <!-- Tahap Transisi Interaktif: Menyinkronkan Data Utuh Sebelum Membuka Dashboard -->
+      <div id="authSyncStage" class="auth-sync-stage" aria-live="polite">
+        <div class="auth-radar-wrap" aria-hidden="true">
+          <span class="auth-radar-ring"></span>
+          <span class="auth-radar-ring ring-2"></span>
+          <span class="auth-radar-orbit"></span>
+          <span class="auth-radar-core" id="authSyncCoreIcon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+              stroke-linejoin="round" style="width: 22px; height: 22px;">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <polyline points="9 12 11 14 15 10" />
+            </svg>
+          </span>
+        </div>
+
+        <span class="auth-sync-pill" id="authSyncPill">
+          <span class="auth-sync-pill-dot"></span>
+          <span id="authSyncPillText">Sesi Verifikator Terverifikasi</span>
+        </span>
+        <h3 class="auth-sync-title" id="authSyncTitle">Menyinkronkan Dashboard Petugas...</h3>
+        <p class="auth-sync-subtitle" id="authSyncSubtitle">
+          Mengambil data aduan terbaru, identitas pelapor utuh, dan koordinat peta langsung dari server DLH.
+        </p>
+
+        <div class="auth-sync-progress-wrap">
+          <div class="auth-sync-progress-head">
+            <span id="authSyncStatusLabel">Menghubungkan database terenkripsi...</span>
+            <span id="authSyncPercent">35%</span>
+          </div>
+          <div class="auth-sync-progress-track">
+            <div class="auth-sync-progress-fill" id="authSyncProgressFill"></div>
+          </div>
+        </div>
+
+        <div class="auth-sync-steps">
+          <div class="auth-sync-step is-done" id="authStep1">
+            <span class="auth-step-indicator" id="authStep1Icon">&#10003;</span>
+            <span>Validasi PIN &amp; Token Sesi Petugas</span>
+          </div>
+          <div class="auth-sync-step is-active" id="authStep2">
+            <span class="auth-step-indicator" id="authStep2Icon"><span class="auth-step-spinner"></span></span>
+            <span>Sinkronisasi Data &amp; Identitas Pelapor Utuh</span>
+          </div>
+          <div class="auth-sync-step" id="authStep3">
+            <span class="auth-step-indicator" id="authStep3Icon">3</span>
+            <span>Menyiapkan Peta Sebaran &amp; Tabel Rekapitulasi</span>
+          </div>
+        </div>
       </div>
     </div>
 
@@ -7508,8 +7866,12 @@
         if (lockDom) {
           const loginPage = document.getElementById('petugasLoginPage');
           const dashWrap = document.getElementById('dashboardAppWrapper');
-          if (loginPage) loginPage.style.display = 'flex';
+          if (loginPage) {
+            loginPage.classList.remove('is-fading-out');
+            loginPage.style.display = 'flex';
+          }
           if (dashWrap) dashWrap.style.display = 'none';
+          this.setAuthSyncStage('reset');
           const input = document.getElementById('inputPetugasPin');
           if (input) input.value = '';
           const errEl = document.getElementById('authErrorMsg');
@@ -7558,6 +7920,82 @@
               });
             }
           }
+        }
+      }
+
+      setAuthSyncStage(mode = 'reset') {
+        const card = document.getElementById('authCard');
+        const formPanel = document.getElementById('authFormPanel');
+        const syncStage = document.getElementById('authSyncStage');
+        const pillText = document.getElementById('authSyncPillText');
+        const titleEl = document.getElementById('authSyncTitle');
+        const subEl = document.getElementById('authSyncSubtitle');
+        const labelEl = document.getElementById('authSyncStatusLabel');
+        const pctEl = document.getElementById('authSyncPercent');
+        const fillEl = document.getElementById('authSyncProgressFill');
+        const s1 = document.getElementById('authStep1');
+        const s2 = document.getElementById('authStep2');
+        const s3 = document.getElementById('authStep3');
+        const i1 = document.getElementById('authStep1Icon');
+        const i2 = document.getElementById('authStep2Icon');
+        const i3 = document.getElementById('authStep3Icon');
+
+        const spinnerHtml = '<span class="auth-step-spinner"></span>';
+
+        if (mode === 'reset') {
+          if (card) card.classList.remove('is-syncing-login', 'unlocking', 'scanning');
+          if (formPanel) formPanel.style.display = '';
+          if (syncStage) syncStage.classList.remove('is-active', 'is-ready');
+          if (fillEl) fillEl.style.width = '18%';
+          if (pctEl) pctEl.textContent = '18%';
+          return;
+        }
+
+        if (card) {
+          card.classList.remove('scanning', 'unlocking');
+          card.classList.add('is-syncing-login');
+        }
+        if (formPanel) formPanel.style.display = 'none';
+        if (syncStage) syncStage.classList.add('is-active');
+
+        if (mode === 'syncing') {
+          if (syncStage) syncStage.classList.remove('is-ready');
+          if (pillText) pillText.textContent = 'Akses Verifikator Terverifikasi';
+          if (titleEl) titleEl.textContent = 'Menyinkronkan Data Aduan...';
+          if (subEl) subEl.textContent = 'Mengambil identitas pelapor utuh, peta GPS, dan status terbaru dari server DLH.';
+          if (labelEl) labelEl.textContent = 'Mengambil data pelapor terenkripsi...';
+          if (pctEl) pctEl.textContent = '48%';
+          if (fillEl) fillEl.style.width = '48%';
+          if (s1) { s1.className = 'auth-sync-step is-done'; }
+          if (i1) i1.innerHTML = '&#10003;';
+          if (s2) { s2.className = 'auth-sync-step is-active'; }
+          if (i2) i2.innerHTML = spinnerHtml;
+          if (s3) { s3.className = 'auth-sync-step'; }
+          if (i3) i3.textContent = '3';
+        } else if (mode === 'preparing') {
+          if (labelEl) labelEl.textContent = 'Menyiapkan peta spasial & tabel aduan...';
+          if (pctEl) pctEl.textContent = '84%';
+          if (fillEl) fillEl.style.width = '84%';
+          if (s1) { s1.className = 'auth-sync-step is-done'; }
+          if (i1) i1.innerHTML = '&#10003;';
+          if (s2) { s2.className = 'auth-sync-step is-done'; }
+          if (i2) i2.innerHTML = '&#10003;';
+          if (s3) { s3.className = 'auth-sync-step is-active'; }
+          if (i3) i3.innerHTML = spinnerHtml;
+        } else if (mode === 'ready') {
+          if (syncStage) syncStage.classList.add('is-ready');
+          if (pillText) pillText.textContent = 'Sinkronisasi Selesai';
+          if (titleEl) titleEl.textContent = 'Dashboard Siap Dibuka!';
+          if (subEl) subEl.textContent = 'Seluruh data aduan dan identitas pelapor telah tersinkron utuh.';
+          if (labelEl) labelEl.textContent = 'Membuka Dashboard Petugas...';
+          if (pctEl) pctEl.textContent = '100%';
+          if (fillEl) fillEl.style.width = '100%';
+          if (s1) { s1.className = 'auth-sync-step is-done'; }
+          if (i1) i1.innerHTML = '&#10003;';
+          if (s2) { s2.className = 'auth-sync-step is-done'; }
+          if (i2) i2.innerHTML = '&#10003;';
+          if (s3) { s3.className = 'auth-sync-step is-done'; }
+          if (i3) i3.innerHTML = '&#10003;';
         }
       }
 
@@ -7706,12 +8144,8 @@
             localStorage.removeItem('dlh_petugas_remember');
           } catch (e) { }
 
-          if (card) {
-            card.classList.remove('scanning');
-            card.classList.add('unlocking');
-          }
-          if (btnIcon) btnIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>`;
-          if (btnText) btnText.textContent = 'Memuat Data Dashboard...';
+          // Tampilkan animasi interaktif sinkronisasi di dalam kartu login (tidak menghilangkan kartu / tanpa layar kosong)
+          this.setAuthSyncStage('syncing');
 
           // Ambil data pelapor utuh (unmasked) dari server DENGAN token petugas TERLEBIH DAHULU
           // sebelum dashboard ditampilkan, agar nama & kontak pelapor langsung tampil utuh tanpa tersamarkan sementara
@@ -7726,6 +8160,8 @@
             } catch (e) { }
           }
 
+          this.setAuthSyncStage('preparing');
+
           if (pinSyncOk || (window.aduanStore && !window.aduanStore.hasGasConfigured() && window.aduanStore.hasReadyStats())) {
             this.syncVerifiedCacheAndBroadcast('petugas-login', 'STATS_UPDATED', null, false);
           }
@@ -7735,11 +8171,20 @@
           this.renderTable();
           this.renderMapLayers();
 
-          if (loginPage) loginPage.style.display = 'none';
+          this.setAuthSyncStage('ready');
+          await new Promise((resolve) => setTimeout(resolve, 260));
+
+          if (loginPage) loginPage.classList.add('is-fading-out');
+          await new Promise((resolve) => setTimeout(resolve, 180));
+
+          if (loginPage) {
+            loginPage.style.display = 'none';
+            loginPage.classList.remove('is-fading-out');
+          }
           if (dashWrap) dashWrap.style.display = 'flex';
           this.applyDashboardStagger();
 
-          if (card) card.classList.remove('unlocking', 'scanning');
+          this.setAuthSyncStage('reset');
           if (submitBtn) submitBtn.disabled = false;
           if (btnIcon) btnIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 9.9-1"/></svg>`;
           if (btnText) btnText.textContent = 'Buka Dashboard Petugas';
