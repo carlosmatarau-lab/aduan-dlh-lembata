@@ -3101,12 +3101,35 @@ class AduanDataStore {
     this.isServerSynced = true;
     this._serverConfirmed = true;
 
+    const hasOfficerAuth = Boolean(this.getAuthToken());
+    const existingUnmaskedById = new Map();
+    if (hasOfficerAuth && Array.isArray(this.aduanList)) {
+      this.aduanList.forEach(ex => {
+        if (ex && ex.id && ex.namaPelapor && !/\*{2,}/.test(String(ex.namaPelapor))) {
+          existingUnmaskedById.set(String(ex.id).trim().toUpperCase(), ex);
+        }
+      });
+    }
+
     const filteredCache = cache.data.filter(item => {
       if (!item || !item.id) return false;
       if (String(item.id).toUpperCase() === 'ADU-LMB-2026-001' && (item.namaPelapor === 'Carlos Matarau' || item.status === 'Ditolak')) {
         return false;
       }
       return !this.isDeleted(item.id);
+    }).map(item => {
+      if (!hasOfficerAuth) return item;
+      const cid = String(item.id).trim().toUpperCase();
+      const prev = existingUnmaskedById.get(cid);
+      if (prev && /\*{2,}/.test(String(item.namaPelapor || ''))) {
+        return {
+          ...item,
+          namaPelapor: prev.namaPelapor,
+          noHp: (prev.noHp && prev.noHp !== '-') ? prev.noHp : item.noHp,
+          alamatPelapor: (prev.alamatPelapor && !String(prev.alamatPelapor).includes('Dirahasiakan')) ? prev.alamatPelapor : item.alamatPelapor
+        };
+      }
+      return item;
     });
     const cacheIdSet = new Set(filteredCache.map(x => String(x.id).trim().toUpperCase()));
     const newerPending = (this.aduanList || []).filter(item => {
