@@ -23,6 +23,8 @@
   <!-- Google Fonts: Inter & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://script.google.com" crossorigin>
+  <link rel="preconnect" href="https://script.googleusercontent.com" crossorigin>
   <link
     href="https://fonts.googleapis.com/css2?family=Outfit:wght@600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap"
     rel="stylesheet">
@@ -1469,57 +1471,20 @@
     }
 
     /* ===================================================================
-       EXECUTIVE SPBE COMMAND CONSOLE — INTERACTIVE LOGIN & LIVE DATA SYNC
+       ANIMASI LOGIN PETUGAS SIMPEL, CEPAT & PROFESIONAL (ANTI-BLANK)
        =================================================================== */
     .petugas-login-page {
-      transition: opacity 0.3s cubic-bezier(0.16, 1, 0.3, 1), transform 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      transition: opacity 0.16s ease;
     }
 
     .petugas-login-page.is-fading-out {
       opacity: 0;
-      transform: scale(1.015);
       pointer-events: none;
     }
 
     .auth-card.is-syncing-login {
-      max-width: 470px;
-      padding: 26px 26px 24px;
-      background:
-        radial-gradient(260px circle at var(--mx, 50%) var(--my, 28%), rgba(52, 211, 153, 0.16), transparent 70%),
-        linear-gradient(155deg, #021c14 0%, #053b2c 55%, #03261c 100%);
-      border: 1.5px solid rgba(52, 211, 153, 0.38);
-      box-shadow: 0 28px 65px -12px rgba(0, 0, 0, 0.65), 0 0 48px rgba(16, 185, 129, 0.24), inset 0 1px 0 rgba(255, 255, 255, 0.1);
-      color: #ecfdf5;
-    }
-
-    .auth-card.is-syncing-login::before {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background-image:
-        linear-gradient(rgba(167, 243, 208, 0.045) 1px, transparent 1px),
-        linear-gradient(90deg, rgba(167, 243, 208, 0.045) 1px, transparent 1px);
-      background-size: 22px 22px;
-      pointer-events: none;
-      mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.85) 20%, transparent 80%);
-      -webkit-mask-image: radial-gradient(ellipse at center, rgba(0, 0, 0, 0.85) 20%, transparent 80%);
-    }
-
-    .auth-card.is-syncing-login::after {
-      content: '';
-      position: absolute;
-      top: 0;
-      left: 0;
-      right: 0;
-      height: 3px;
-      background: linear-gradient(90deg, transparent, #34d399, #a7f3d0, #10b981, transparent);
-      background-size: 200% 100%;
-      animation: cmdTopBeam 1.6s linear infinite;
-    }
-
-    @keyframes cmdTopBeam {
-      0% { background-position: 200% 0; }
-      100% { background-position: -200% 0; }
+      border-color: rgba(16, 185, 129, 0.45);
+      box-shadow: 0 22px 52px -12px rgba(0, 0, 0, 0.46), 0 0 28px rgba(16, 185, 129, 0.2);
     }
 
     .auth-sync-stage {
@@ -1527,392 +1492,163 @@
       flex-direction: column;
       align-items: center;
       text-align: center;
-      position: relative;
-      z-index: 2;
-      animation: cmdConsoleEnter 0.32s cubic-bezier(0.16, 1, 0.3, 1);
+      padding: 18px 8px 12px;
+      animation: simpleAuthFadeIn 0.2s ease-out;
     }
 
     .auth-sync-stage.is-active {
       display: flex;
     }
 
-    @keyframes cmdConsoleEnter {
+    @keyframes simpleAuthFadeIn {
       from {
         opacity: 0;
-        transform: translateY(10px) scale(0.975);
+        transform: translateY(6px);
       }
       to {
         opacity: 1;
-        transform: translateY(0) scale(1);
+        transform: translateY(0);
       }
     }
 
-    .cmd-console-topbar {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: 8px;
-      padding-bottom: 12px;
-      margin-bottom: 16px;
-      border-bottom: 1px solid rgba(167, 243, 208, 0.14);
-    }
-
-    .cmd-console-badge {
-      display: inline-flex;
-      align-items: center;
-      gap: 7px;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 0.67rem;
-      font-weight: 700;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      color: #a7f3d0;
-    }
-
-    .cmd-live-beacon {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #34d399;
-      box-shadow: 0 0 0 3px rgba(52, 211, 153, 0.24);
-      animation: cmdBeaconBlink 1.3s ease-in-out infinite;
-    }
-
-    @keyframes cmdBeaconBlink {
-      0%, 100% { opacity: 1; transform: scale(1); }
-      50% { opacity: 0.45; transform: scale(0.82); }
-    }
-
-    .cmd-elapsed-chip {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 0.68rem;
-      font-weight: 700;
-      color: #6ee7b7;
-      background: rgba(16, 185, 129, 0.16);
-      border: 1px solid rgba(110, 231, 183, 0.28);
-      padding: 2px 8px;
-      border-radius: 999px;
-    }
-
-    /* Gauge Melingkar Presisi SVG */
-    .cmd-gauge-wrap {
+    .simple-sync-loader {
       position: relative;
-      width: 112px;
-      height: 112px;
+      width: 62px;
+      height: 62px;
       display: flex;
       align-items: center;
       justify-content: center;
-      margin-bottom: 14px;
-      cursor: pointer;
-      transition: transform 0.2s ease;
+      margin-bottom: 16px;
     }
 
-    .cmd-gauge-wrap:active {
-      transform: scale(0.96);
-    }
-
-    .cmd-gauge-halo {
-      position: absolute;
-      inset: 6px;
-      border-radius: 50%;
-      background: radial-gradient(circle, rgba(16, 185, 129, 0.24) 0%, transparent 72%);
-      animation: cmdHaloBreath 2.2s ease-in-out infinite;
-      pointer-events: none;
-    }
-
-    @keyframes cmdHaloBreath {
-      0%, 100% { transform: scale(0.94); opacity: 0.65; }
-      50% { transform: scale(1.1); opacity: 1; }
-    }
-
-    .cmd-gauge-ticks {
+    .simple-sync-ring {
       position: absolute;
       inset: 0;
       border-radius: 50%;
-      border: 1.5px dashed rgba(167, 243, 208, 0.24);
-      animation: cmdRingRotate 14s linear infinite;
-      pointer-events: none;
+      border: 3px solid #d1fae5;
+      border-top-color: #059669;
+      border-right-color: #10b981;
+      animation: simpleRingSpin 0.8s linear infinite;
+      transition: border-color 0.2s ease;
     }
 
-    @keyframes cmdRingRotate {
+    .auth-sync-stage.is-ready .simple-sync-ring {
+      border-color: #10b981;
+      animation: none;
+    }
+
+    .simple-sync-core {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      background: #ecfdf5;
+      color: #065f46;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+    }
+
+    .auth-sync-stage.is-ready .simple-sync-core {
+      background: #059669;
+      color: #ffffff;
+      transform: scale(1.06);
+    }
+
+    @keyframes simpleRingSpin {
       to { transform: rotate(360deg); }
-    }
-
-    .cmd-gauge-svg {
-      width: 104px;
-      height: 104px;
-      transform: rotate(-90deg);
-      filter: drop-shadow(0 0 8px rgba(52, 211, 153, 0.35));
-    }
-
-    .cmd-gauge-track {
-      fill: none;
-      stroke: rgba(167, 243, 208, 0.14);
-      stroke-width: 5.5;
-    }
-
-    .cmd-gauge-fill {
-      fill: none;
-      stroke: #34d399;
-      stroke-width: 5.5;
-      stroke-linecap: round;
-      stroke-dasharray: 276.46;
-      stroke-dashoffset: 226.7;
-      transition: stroke-dashoffset 0.28s cubic-bezier(0.16, 1, 0.3, 1), stroke 0.25s ease;
-    }
-
-    .auth-sync-stage.is-ready .cmd-gauge-fill {
-      stroke: #6ee7b7;
-    }
-
-    .cmd-gauge-center {
-      position: absolute;
-      inset: 0;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      gap: 2px;
-      pointer-events: none;
-    }
-
-    .cmd-gauge-icon {
-      color: #6ee7b7;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      transition: transform 0.25s ease, color 0.25s ease;
-    }
-
-    .auth-sync-stage.is-ready .cmd-gauge-icon {
-      color: #ffffff;
-      transform: scale(1.12);
-    }
-
-    .cmd-gauge-pct {
-      font-family: 'Outfit', system-ui, sans-serif;
-      font-size: 1.18rem;
-      font-weight: 800;
-      color: #ffffff;
-      line-height: 1.05;
-      letter-spacing: -0.02em;
     }
 
     .auth-sync-title {
       font-family: 'Outfit', system-ui, sans-serif;
-      font-size: 1.16rem;
+      font-size: 1.08rem;
       font-weight: 800;
-      color: #ffffff;
-      line-height: 1.25;
-      margin-bottom: 4px;
+      color: #064e3b;
+      line-height: 1.28;
+      margin-bottom: 5px;
     }
 
     .auth-sync-subtitle {
-      font-size: 0.78rem;
-      color: #a7f3d0;
-      opacity: 0.9;
-      line-height: 1.46;
-      margin-bottom: 14px;
-      max-width: 380px;
+      font-size: 0.81rem;
+      color: #64748b;
+      line-height: 1.45;
+      margin-bottom: 18px;
+      max-width: 320px;
     }
 
-    /* Pipeline 4 Simpul Terhubung */
-    .cmd-pipeline {
+    .simple-progress-track {
       width: 100%;
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 6px;
-      margin-bottom: 12px;
-      position: relative;
+      max-width: 310px;
+      height: 6px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+      margin-bottom: 10px;
     }
 
-    .cmd-pipe-node {
-      background: rgba(255, 255, 255, 0.05);
-      border: 1px solid rgba(167, 243, 208, 0.14);
-      border-radius: 10px;
-      padding: 8px 6px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 5px;
-      transition: background-color 0.22s ease, border-color 0.22s ease, transform 0.22s ease;
+    .simple-progress-fill {
+      height: 100%;
+      width: 24%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #064e3b 0%, #059669 60%, #34d399 100%);
+      transition: width 0.26s ease-out;
     }
 
-    .cmd-pipe-node.is-active {
-      background: rgba(16, 185, 129, 0.2);
-      border-color: rgba(52, 211, 153, 0.65);
-      transform: translateY(-1px);
-      box-shadow: 0 4px 12px rgba(5, 150, 105, 0.25);
-    }
-
-    .cmd-pipe-node.is-done {
-      background: rgba(16, 185, 129, 0.14);
-      border-color: rgba(110, 231, 183, 0.42);
-    }
-
-    .cmd-pipe-dot {
-      width: 22px;
-      height: 22px;
-      border-radius: 50%;
-      background: rgba(255, 255, 255, 0.1);
-      color: #94a3b8;
-      font-size: 0.68rem;
-      font-weight: 800;
+    .simple-sync-meta {
       display: inline-flex;
       align-items: center;
-      justify-content: center;
-    }
-
-    .cmd-pipe-node.is-active .cmd-pipe-dot {
-      background: #10b981;
-      color: #ffffff;
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.28);
-    }
-
-    .cmd-pipe-node.is-done .cmd-pipe-dot {
-      background: #34d399;
-      color: #022c22;
-    }
-
-    .cmd-pipe-lbl {
-      font-size: 0.66rem;
-      font-weight: 700;
-      color: #9ad1b9;
-      line-height: 1.2;
-      text-align: center;
-    }
-
-    .cmd-pipe-node.is-active .cmd-pipe-lbl,
-    .cmd-pipe-node.is-done .cmd-pipe-lbl {
-      color: #ffffff;
-    }
-
-    .cmd-node-spinner {
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-      border: 2px solid rgba(255, 255, 255, 0.32);
-      border-top-color: #ffffff;
-      animation: cmdRingRotate 0.7s linear infinite;
-    }
-
-    /* 3 Kartu Telemetri Real-Time */
-    .cmd-telemetry-grid {
-      width: 100%;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 7px;
-      margin-bottom: 12px;
-    }
-
-    .cmd-tele-card {
-      background: rgba(2, 20, 14, 0.55);
-      border: 1px solid rgba(167, 243, 208, 0.16);
-      border-radius: 9px;
-      padding: 7px 8px;
-      text-align: left;
-    }
-
-    .cmd-tele-k {
-      font-size: 0.6rem;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      text-transform: uppercase;
-      color: #6ee7b7;
-      margin-bottom: 2px;
-    }
-
-    .cmd-tele-v {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-size: 0.73rem;
-      font-weight: 700;
-      color: #ffffff;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    /* Bar Status Dinamis Bawah */
-    .cmd-ticker-bar {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      padding: 8px 11px;
-      border-radius: 9px;
-      background: rgba(16, 185, 129, 0.12);
-      border: 1px solid rgba(110, 231, 183, 0.24);
+      gap: 6px;
       font-size: 0.74rem;
-      font-weight: 600;
-      color: #d1fae5;
-      text-align: left;
+      font-weight: 700;
+      color: #047857;
     }
 
-    .cmd-ticker-pulse {
-      width: 7px;
-      height: 7px;
+    .simple-sync-dot {
+      width: 6px;
+      height: 6px;
       border-radius: 50%;
-      background: #34d399;
-      flex-shrink: 0;
-      animation: cmdBeaconBlink 1s ease-in-out infinite;
+      background: #10b981;
+      animation: simpleDotBlink 1s ease-in-out infinite;
+    }
+
+    .auth-sync-stage.is-ready .simple-sync-dot {
+      animation: none;
+      background: #059669;
+    }
+
+    @keyframes simpleDotBlink {
+      0%, 100% { opacity: 1; }
+      50% { opacity: 0.35; }
     }
 
     @media (max-width: 480px) {
-      .auth-card.is-syncing-login {
-        padding: 20px 16px 18px;
+      .auth-sync-stage {
+        padding: 14px 4px 10px;
       }
 
-      .cmd-gauge-wrap {
-        width: 98px;
-        height: 98px;
+      .simple-sync-loader {
+        width: 56px;
+        height: 56px;
+        margin-bottom: 14px;
       }
 
-      .cmd-gauge-svg {
-        width: 92px;
-        height: 92px;
-      }
-
-      .cmd-gauge-pct {
-        font-size: 1.05rem;
+      .simple-sync-core {
+        width: 40px;
+        height: 40px;
       }
 
       .auth-sync-title {
-        font-size: 1.04rem;
+        font-size: 1rem;
       }
 
       .auth-sync-subtitle {
-        font-size: 0.74rem;
-      }
-
-      .cmd-pipeline {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
-      }
-
-      .cmd-pipe-node {
-        flex-direction: row;
-        justify-content: flex-start;
-        padding: 7px 9px;
-        gap: 7px;
-      }
-
-      .cmd-pipe-lbl {
-        text-align: left;
-        font-size: 0.7rem;
-      }
-
-      .cmd-tele-v {
-        font-size: 0.68rem;
+        font-size: 0.77rem;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .cmd-gauge-halo,
-      .cmd-gauge-ticks,
-      .cmd-live-beacon,
-      .cmd-node-spinner,
-      .cmd-ticker-pulse,
-      .auth-card.is-syncing-login::after {
+      .simple-sync-ring,
+      .simple-sync-dot {
         animation: none;
       }
     }
@@ -5797,77 +5533,32 @@
       </div>
       </div>
 
-      <!-- Tahap Transisi Eksekutif SPBE Command Console: Menunggu Seluruh Data Utuh Tersinkron -->
+      <!-- Animasi Transisi Login Simpel & Bersih (Menunggu Sinkronisasi Data Utuh) -->
       <div id="authSyncStage" class="auth-sync-stage" aria-live="polite">
-        <div class="cmd-console-topbar">
-          <span class="cmd-console-badge">
-            <span class="cmd-live-beacon"></span>
-            <span id="authSyncPillText">SPBE COMMAND CONSOLE</span>
+        <div class="simple-sync-loader" aria-hidden="true">
+          <span class="simple-sync-ring"></span>
+          <span class="simple-sync-core" id="authSyncCoreIcon">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
+              stroke-linejoin="round" style="width: 21px; height: 21px;">
+              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
+              <polyline points="9 12 11 14 15 10" />
+            </svg>
           </span>
-          <span class="cmd-elapsed-chip" id="cmdSyncElapsed">0.0s</span>
         </div>
 
-        <div class="cmd-gauge-wrap" id="cmdGaugeInteractive" title="Sinkronisasi aktif dengan server DLH Lembata">
-          <span class="cmd-gauge-halo"></span>
-          <span class="cmd-gauge-ticks"></span>
-          <svg class="cmd-gauge-svg" viewBox="0 0 100 100" aria-hidden="true">
-            <circle class="cmd-gauge-track" cx="50" cy="50" r="44"></circle>
-            <circle class="cmd-gauge-fill" id="authSyncRingFill" cx="50" cy="50" r="44"></circle>
-          </svg>
-          <div class="cmd-gauge-center">
-            <span class="cmd-gauge-icon" id="authSyncCoreIcon">
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
-                stroke-linejoin="round" style="width: 19px; height: 19px;">
-                <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-                <polyline points="9 12 11 14 15 10" />
-              </svg>
-            </span>
-            <span class="cmd-gauge-pct" id="authSyncPercent">16%</span>
-          </div>
-        </div>
-
-        <h3 class="auth-sync-title" id="authSyncTitle">Menyinkronkan Portal Verifikator</h3>
+        <h3 class="auth-sync-title" id="authSyncTitle">Memverifikasi Akses Petugas...</h3>
         <p class="auth-sync-subtitle" id="authSyncSubtitle">
-          Menunggu seluruh data pengaduan &amp; identitas pelapor terbuka utuh dari server sebelum memuat dashboard.
+          Menyinkronkan data aduan, nama pelapor utuh, dan bukti foto terbaru dari server DLH.
         </p>
 
-        <div class="cmd-pipeline">
-          <div class="cmd-pipe-node is-done" id="authStep1">
-            <span class="cmd-pipe-dot" id="authStep1Icon">&#10003;</span>
-            <span class="cmd-pipe-lbl">Otorisasi</span>
-          </div>
-          <div class="cmd-pipe-node is-active" id="authStep2">
-            <span class="cmd-pipe-dot" id="authStep2Icon"><span class="cmd-node-spinner"></span></span>
-            <span class="cmd-pipe-lbl">Cloud Sheets</span>
-          </div>
-          <div class="cmd-pipe-node" id="authStep3">
-            <span class="cmd-pipe-dot" id="authStep3Icon">3</span>
-            <span class="cmd-pipe-lbl">Data Pelapor</span>
-          </div>
-          <div class="cmd-pipe-node" id="authStep4">
-            <span class="cmd-pipe-dot" id="authStep4Icon">4</span>
-            <span class="cmd-pipe-lbl">Spasial GIS</span>
-          </div>
+        <div class="simple-progress-track">
+          <div class="simple-progress-fill" id="authSyncProgressFill"></div>
         </div>
 
-        <div class="cmd-telemetry-grid">
-          <div class="cmd-tele-card">
-            <div class="cmd-tele-k">Sesi Petugas</div>
-            <div class="cmd-tele-v" id="cmdTeleAuth">Terverifikasi</div>
-          </div>
-          <div class="cmd-tele-card">
-            <div class="cmd-tele-k">Rekap Tiket</div>
-            <div class="cmd-tele-v" id="cmdTeleCount">Memuat...</div>
-          </div>
-          <div class="cmd-tele-card">
-            <div class="cmd-tele-k">Nama Pelapor</div>
-            <div class="cmd-tele-v" id="cmdTelePii">Membuka...</div>
-          </div>
-        </div>
-
-        <div class="cmd-ticker-bar">
-          <span class="cmd-ticker-pulse"></span>
-          <span id="authSyncStatusLabel">Menghubungkan sesi terenkripsi ke database DLH Lembata...</span>
+        <div class="simple-sync-meta">
+          <span class="simple-sync-dot"></span>
+          <span id="authSyncStatusLabel">Memeriksa kredensial verifikator...</span>
+          <span id="authSyncPercent">25%</span>
         </div>
       </div>
     </div>
@@ -7854,9 +7545,12 @@
         try { this.setupPhotoUploadUI(); } catch (e) { console.error('setupPhotoUploadUI:', e); }
         try { this.setupCloudSyncUI(); } catch (e) { console.error('setupCloudSyncUI:', e); }
         try { this.setupRealtimeListener(); } catch (e) { console.error('setupRealtimeListener:', e); }
-        try { this.updateKPIs(); } catch (e) { console.error('updateKPIs:', e); }
-        try { this.renderTable(); } catch (e) { console.error('renderTable:', e); }
-        try { this.initMap(); } catch (e) { console.error('initMap:', e); }
+        // Tunda render tabel & inisialisasi peta satelit hingga login berhasil agar halaman login terbuka instan & hemat bandwidth
+        if (this._unlockedThisLoad === true) {
+          try { this.updateKPIs(); } catch (e) { console.error('updateKPIs:', e); }
+          try { this.renderTable(); } catch (e) { console.error('renderTable:', e); }
+          try { this.initMap(); } catch (e) { console.error('initMap:', e); }
+        }
 
         if (window.aduanStore && typeof window.aduanStore.hasReadyStats === 'function' && window.aduanStore.hasReadyStats()) {
           this.syncVerifiedCacheAndBroadcast('petugas-init', null, null, false);
@@ -8108,81 +7802,32 @@
         }
       }
 
-      _updateSyncGaugePercent(pct) {
+      _setSimpleSyncProgress(pct) {
         const clamped = Math.max(0, Math.min(100, Math.round(pct)));
         this._currentSyncPct = clamped;
+        const fillEl = document.getElementById('authSyncProgressFill');
         const pctEl = document.getElementById('authSyncPercent');
-        const ringEl = document.getElementById('authSyncRingFill');
+        if (fillEl && fillEl.style) fillEl.style.width = clamped + '%';
         if (pctEl) pctEl.textContent = clamped + '%';
-        if (ringEl && ringEl.style) {
-          const circumference = 276.46;
-          const offset = circumference - (clamped / 100) * circumference;
-          ringEl.style.strokeDashoffset = offset.toFixed(2);
-        }
-      }
-
-      _bindLoginConsoleInteractivity() {
-        if (this._loginConsoleInteractiveBound) return;
-        this._loginConsoleInteractiveBound = true;
-        const card = document.getElementById('authCard');
-        const gauge = document.getElementById('cmdGaugeInteractive');
-        if (card && typeof card.addEventListener === 'function') {
-          card.addEventListener('pointermove', (ev) => {
-            if (!card.classList || !card.classList.contains('is-syncing-login') || !card.getBoundingClientRect) return;
-            const rect = card.getBoundingClientRect();
-            if (!rect.width || !rect.height) return;
-            const x = Math.round(((ev.clientX - rect.left) / rect.width) * 100);
-            const y = Math.round(((ev.clientY - rect.top) / rect.height) * 100);
-            card.style.setProperty('--mx', x + '%');
-            card.style.setProperty('--my', y + '%');
-          });
-        }
-        if (gauge && typeof gauge.addEventListener === 'function') {
-          gauge.addEventListener('click', () => {
-            const labelEl = document.getElementById('authSyncStatusLabel');
-            if (labelEl && this._loginSyncInterval) {
-              labelEl.textContent = 'Jalur sinkronisasi aktif — memastikan seluruh nama pelapor tampil utuh...';
-            }
-          });
-        }
       }
 
       setAuthSyncStage(mode = 'reset', extra = {}) {
         const card = document.getElementById('authCard');
         const formPanel = document.getElementById('authFormPanel');
         const syncStage = document.getElementById('authSyncStage');
-        const pillText = document.getElementById('authSyncPillText');
-        const elapsedEl = document.getElementById('cmdSyncElapsed');
         const titleEl = document.getElementById('authSyncTitle');
         const subEl = document.getElementById('authSyncSubtitle');
         const labelEl = document.getElementById('authSyncStatusLabel');
-        const teleAuth = document.getElementById('cmdTeleAuth');
-        const teleCount = document.getElementById('cmdTeleCount');
-        const telePii = document.getElementById('cmdTelePii');
-        const s1 = document.getElementById('authStep1');
-        const s2 = document.getElementById('authStep2');
-        const s3 = document.getElementById('authStep3');
-        const s4 = document.getElementById('authStep4');
-        const i1 = document.getElementById('authStep1Icon');
-        const i2 = document.getElementById('authStep2Icon');
-        const i3 = document.getElementById('authStep3Icon');
-        const i4 = document.getElementById('authStep4Icon');
-
-        const spinnerHtml = '<span class="cmd-node-spinner"></span>';
 
         if (mode === 'reset') {
           this._stopLoginSyncTicker();
           if (card) card.classList.remove('is-syncing-login', 'unlocking', 'scanning');
           if (formPanel) formPanel.style.display = '';
           if (syncStage) syncStage.classList.remove('is-active', 'is-ready');
-          if (elapsedEl) elapsedEl.textContent = '0.0s';
-          if (teleCount) teleCount.textContent = 'Memuat...';
-          if (telePii) telePii.textContent = 'Membuka...';
-          this._updateSyncGaugePercent(16);
+          this._setSimpleSyncProgress(20);
           return;
         }
 
-        this._bindLoginConsoleInteractivity();
         if (card) {
           card.classList.remove('scanning', 'unlocking');
           card.classList.add('is-syncing-login');
@@ -8190,89 +7835,43 @@
         if (formPanel) formPanel.style.display = 'none';
         if (syncStage) syncStage.classList.add('is-active');
 
-        if (mode === 'syncing') {
+        if (mode === 'verifying') {
           this._stopLoginSyncTicker();
           if (syncStage) syncStage.classList.remove('is-ready');
-          if (pillText) pillText.textContent = 'SPBE COMMAND CONSOLE';
-          if (titleEl) titleEl.textContent = 'Menyinkronkan Data Pengaduan';
-          if (subEl) subEl.textContent = 'Menunggu seluruh tiket aduan & identitas pelapor terbuka utuh dari server sebelum memuat dashboard.';
-          if (labelEl) labelEl.textContent = 'Menghubungkan ke server Google Spreadsheet DLH Lembata...';
-          if (teleAuth) teleAuth.textContent = 'Aktif • Token';
-          if (teleCount) teleCount.textContent = 'Menarik data...';
-          if (telePii) telePii.textContent = 'Dekripsi PII...';
-          if (s1) s1.className = 'cmd-pipe-node is-done';
-          if (i1) i1.innerHTML = '&#10003;';
-          if (s2) s2.className = 'cmd-pipe-node is-active';
-          if (i2) i2.innerHTML = spinnerHtml;
-          if (s3) s3.className = 'cmd-pipe-node';
-          if (i3) i3.textContent = '3';
-          if (s4) s4.className = 'cmd-pipe-node';
-          if (i4) i4.textContent = '4';
-          this._updateSyncGaugePercent(22);
+          if (titleEl) titleEl.textContent = 'Memverifikasi Akses Petugas...';
+          if (subEl) subEl.textContent = 'Memeriksa PIN resmi & membuka jalur data terenkripsi DLH Lembata.';
+          if (labelEl) labelEl.textContent = 'Validasi kredensial...';
+          this._setSimpleSyncProgress(26);
+        } else if (mode === 'syncing') {
+          this._stopLoginSyncTicker();
+          if (syncStage) syncStage.classList.remove('is-ready');
+          if (titleEl) titleEl.textContent = 'Menyinkronkan Data Aduan...';
+          if (subEl) subEl.textContent = 'Memuat nama pelapor utuh, bukti foto, dan status terbaru dari server.';
+          if (labelEl) labelEl.textContent = 'Mengambil data terbaru...';
+          this._setSimpleSyncProgress(46);
 
-          const startedAt = Date.now();
-          const tickerMessages = [
-            'Menghubungkan ke server Google Spreadsheet DLH Lembata...',
-            'Mengunduh rekapitulasi tiket aduan terbaru lintas perangkat...',
-            'Membuka penyamaran nama & nomor kontak pelapor untuk petugas...',
-            'Memvalidasi lampiran foto bukti & titik koordinat GPS...'
-          ];
-          let msgIdx = 0;
           this._loginSyncInterval = setInterval(() => {
-            const elapsedSec = ((Date.now() - startedAt) / 1000).toFixed(1);
-            if (elapsedSec && elapsedEl) elapsedEl.textContent = elapsedSec + 's';
-            const curr = this._currentSyncPct || 22;
-            if (curr < 84) {
-              const step = curr < 56 ? 3 : (curr < 74 ? 1.5 : 0.6);
-              this._updateSyncGaugePercent(Math.min(84, curr + step));
+            const curr = this._currentSyncPct || 46;
+            if (curr < 88) {
+              const step = curr < 68 ? 3 : 1;
+              this._setSimpleSyncProgress(Math.min(88, curr + step));
             }
-            if (curr >= 52 && s2 && s3 && !s3.classList.contains('is-active') && !s3.classList.contains('is-done')) {
-              s2.className = 'cmd-pipe-node is-done';
-              if (i2) i2.innerHTML = '&#10003;';
-              s3.className = 'cmd-pipe-node is-active';
-              if (i3) i3.innerHTML = spinnerHtml;
-            }
-            const nextIdx = Math.min(tickerMessages.length - 1, Math.floor((Date.now() - startedAt) / 1600));
-            if (nextIdx !== msgIdx && labelEl) {
-              msgIdx = nextIdx;
-              labelEl.textContent = tickerMessages[msgIdx];
-            }
-          }, 140);
+          }, 180);
         } else if (mode === 'preparing') {
           this._stopLoginSyncTicker();
           const totalRecords = typeof extra.count === 'number' ? extra.count : 0;
-          if (titleEl) titleEl.textContent = 'Menyusun Ruang Kerja Petugas';
-          if (labelEl) labelEl.textContent = 'Merender tabel verifikasi utuh & peta spasial Kabupaten Lembata...';
-          if (teleCount) teleCount.textContent = totalRecords + ' Tiket Sinkron';
-          if (telePii) telePii.textContent = '100% Utuh';
-          if (s1) s1.className = 'cmd-pipe-node is-done';
-          if (i1) i1.innerHTML = '&#10003;';
-          if (s2) s2.className = 'cmd-pipe-node is-done';
-          if (i2) i2.innerHTML = '&#10003;';
-          if (s3) s3.className = 'cmd-pipe-node is-done';
-          if (i3) i3.innerHTML = '&#10003;';
-          if (s4) s4.className = 'cmd-pipe-node is-active';
-          if (i4) i4.innerHTML = spinnerHtml;
-          this._updateSyncGaugePercent(93);
+          if (titleEl) titleEl.textContent = 'Menyiapkan Dashboard...';
+          if (labelEl) labelEl.textContent = totalRecords > 0
+            ? (totalRecords + ' aduan & bukti foto siap dimuat')
+            : 'Menyiapkan tampilan dashboard...';
+          this._setSimpleSyncProgress(94);
         } else if (mode === 'ready') {
           this._stopLoginSyncTicker();
-          const totalRecords = typeof extra.count === 'number' ? extra.count : 0;
           if (syncStage) syncStage.classList.add('is-ready');
-          if (pillText) pillText.textContent = 'SINKRONISASI TUNTAS';
-          if (titleEl) titleEl.textContent = 'Dashboard Petugas Siap!';
-          if (subEl) subEl.textContent = 'Seluruh data pengaduan & identitas pelapor telah terverifikasi tanpa penyamaran.';
-          if (labelEl) labelEl.textContent = 'Membuka halaman Dashboard Petugas DLH Lembata...';
-          if (teleCount) teleCount.textContent = totalRecords + ' Tiket Aktif';
-          if (telePii) telePii.textContent = 'Terbuka Utuh';
-          if (s1) s1.className = 'cmd-pipe-node is-done';
-          if (i1) i1.innerHTML = '&#10003;';
-          if (s2) s2.className = 'cmd-pipe-node is-done';
-          if (i2) i2.innerHTML = '&#10003;';
-          if (s3) s3.className = 'cmd-pipe-node is-done';
-          if (i3) i3.innerHTML = '&#10003;';
-          if (s4) s4.className = 'cmd-pipe-node is-done';
-          if (i4) i4.innerHTML = '&#10003;';
-          this._updateSyncGaugePercent(100);
+          if (titleEl) titleEl.textContent = 'Dashboard Siap Dibuka';
+          if (subEl) subEl.textContent = 'Seluruh data aduan, identitas pelapor, dan bukti foto telah tersinkron.';
+          if (labelEl) labelEl.textContent = 'Sinkronisasi tuntas';
+          this._setSimpleSyncProgress(100);
         }
       }
 
@@ -8352,14 +7951,10 @@
         const lowerEntered = entered.toLowerCase();
         const isFallbackValid = fallbackCredentials.includes(lowerEntered);
 
-        // Tampilkan indikator proses validasi kredensial
+        // Langsung tampilkan animasi verifikasi simpel sejak klik agar transisi terasa cepat & mulus
         if (errEl) errEl.textContent = '';
         if (submitBtn) submitBtn.disabled = true;
-        if (btnIcon) btnIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><line x1="12" y1="2" x2="12" y2="6"/><line x1="12" y1="18" x2="12" y2="22"/><line x1="4.93" y1="4.93" x2="7.76" y2="7.76"/><line x1="16.24" y1="16.24" x2="19.07" y2="19.07"/><line x1="2" y1="12" x2="6" y2="12"/><line x1="18" y1="12" x2="22" y2="12"/><line x1="4.93" y1="19.07" x2="7.76" y2="16.24"/><line x1="16.24" y1="7.76" x2="19.07" y2="4.93"/></svg>`;
-        if (btnText) btnText.textContent = 'Memverifikasi Kredensial...';
-        if (card) {
-          card.classList.add('scanning');
-        }
+        this.setAuthSyncStage('verifying');
 
         let loginSuccess = false;
         let tokenToUse = '';
@@ -8468,10 +8063,10 @@
           this.renderMapLayers();
 
           this.setAuthSyncStage('ready', { count: syncedTotal });
-          await new Promise((resolve) => setTimeout(resolve, 300));
+          await new Promise((resolve) => setTimeout(resolve, 120));
 
           if (loginPage) loginPage.classList.add('is-fading-out');
-          await new Promise((resolve) => setTimeout(resolve, 180));
+          await new Promise((resolve) => setTimeout(resolve, 140));
 
           if (loginPage) {
             loginPage.style.display = 'none';
@@ -8500,8 +8095,8 @@
             this.initMap();
           }
         } else {
-          // SKENARIO C (PIN Salah): Kredensial tidak cocok baik di server maupun di fallback
-          if (card) card.classList.remove('scanning');
+          // SKENARIO C (PIN Salah): Kembalikan formulir login dan tampilkan pesan galat
+          this.setAuthSyncStage('reset');
           if (submitBtn) submitBtn.disabled = false;
           if (btnIcon) btnIcon.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" style="width: 16px; height: 16px;"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/></svg>`;
           if (btnText) btnText.textContent = 'Buka Dashboard Petugas';
