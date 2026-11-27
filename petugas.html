@@ -1471,10 +1471,10 @@
     }
 
     /* ===================================================================
-       EXECUTIVE INSTITUTIONAL LOGIN SYNC CARD — REAL-TIME DATA PROGRESS
+       ULTRA-CLEAN MINIMALIST LOGIN SYNC ANIMATION (REAL-TIME DATA)
        =================================================================== */
     .petugas-login-page {
-      transition: opacity 0.16s ease;
+      transition: opacity 0.2s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .petugas-login-page.is-fading-out {
@@ -1483,27 +1483,29 @@
     }
 
     .auth-card.is-syncing-login {
-      padding: 0;
-      text-align: left;
-      border-color: rgba(16, 185, 129, 0.45);
-      box-shadow: 0 24px 56px -14px rgba(2, 24, 16, 0.55), 0 0 0 1px rgba(16, 185, 129, 0.15);
+      padding: 40px 32px 34px;
+      text-align: center;
+      border-color: rgba(16, 185, 129, 0.22);
+      box-shadow: 0 24px 54px -16px rgba(2, 24, 16, 0.45);
     }
 
     .auth-sync-stage {
       display: none;
       flex-direction: column;
+      align-items: center;
+      text-align: center;
       width: 100%;
-      animation: proSyncCardIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
+      animation: cleanFadeUp 0.26s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
     .auth-sync-stage.is-active {
       display: flex;
     }
 
-    @keyframes proSyncCardIn {
+    @keyframes cleanFadeUp {
       from {
         opacity: 0;
-        transform: translateY(6px);
+        transform: translateY(8px);
       }
       to {
         opacity: 1;
@@ -1511,318 +1513,218 @@
       }
     }
 
-    /* Strip Header Institusional Atas */
-    .pro-sync-head {
+    /* Hairline Circular Progress Ring + Center Tabular Percentage / Morph Check */
+    .clean-ring-wrap {
+      position: relative;
+      width: 84px;
+      height: 84px;
       display: flex;
       align-items: center;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 15px 22px;
-      background: linear-gradient(90deg, #ecfdf5 0%, #f0fdf4 65%, #ffffff 100%);
-      border-bottom: 1px solid #d1fae5;
+      justify-content: center;
+      margin-bottom: 22px;
     }
 
-    .pro-sync-brand {
+    .clean-ring-glow {
+      position: absolute;
+      inset: 6px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(16, 185, 129, 0.12) 0%, transparent 72%);
+      animation: cleanSoftBreath 2.4s ease-in-out infinite;
+      pointer-events: none;
+    }
+
+    @keyframes cleanSoftBreath {
+      0%, 100% { transform: scale(0.95); opacity: 0.6; }
+      50% { transform: scale(1.12); opacity: 1; }
+    }
+
+    .clean-ring-svg {
+      width: 84px;
+      height: 84px;
+      transform: rotate(-90deg);
+    }
+
+    .clean-ring-track {
+      fill: none;
+      stroke: #edf2f0;
+      stroke-width: 3;
+    }
+
+    .clean-ring-arc {
+      fill: none;
+      stroke: #059669;
+      stroke-width: 3;
+      stroke-linecap: round;
+      stroke-dasharray: 238.76;
+      stroke-dashoffset: 238.76;
+      transition: stroke-dashoffset 0.18s cubic-bezier(0.22, 1, 0.36, 1), stroke 0.22s ease;
+    }
+
+    .clean-ring-orbit {
+      fill: none;
+      stroke: rgba(16, 185, 129, 0.32);
+      stroke-width: 1.5;
+      stroke-linecap: round;
+      stroke-dasharray: 28 210;
+      transform-origin: 42px 42px;
+      animation: cleanOrbitSweep 1.5s linear infinite;
+    }
+
+    .auth-sync-stage.is-ready .clean-ring-orbit {
+      opacity: 0;
+      animation: none;
+    }
+
+    @keyframes cleanOrbitSweep {
+      to { transform: rotate(360deg); }
+    }
+
+    .clean-ring-center {
+      position: absolute;
+      inset: 0;
       display: flex;
       align-items: center;
-      gap: 10px;
-      min-width: 0;
+      justify-content: center;
     }
 
-    /* Equalizer 3-Bar Live Data Wave */
-    .pro-wave-icon {
+    .clean-pct-num {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-variant-numeric: tabular-nums;
+      font-size: 1.28rem;
+      font-weight: 700;
+      color: #064e3b;
+      letter-spacing: -0.03em;
+      transition: opacity 0.18s ease, transform 0.18s ease;
+    }
+
+    .clean-check-svg {
+      position: absolute;
       width: 30px;
       height: 30px;
-      border-radius: 9px;
-      background: #064e3b;
-      display: inline-flex;
-      align-items: flex-end;
-      justify-content: center;
-      gap: 3px;
-      padding-bottom: 8px;
-      flex-shrink: 0;
-      transition: background-color 0.2s ease, transform 0.2s ease;
+      color: #059669;
+      opacity: 0;
+      transform: scale(0.7);
+      transition: opacity 0.22s ease, transform 0.26s cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    .pro-wave-bar {
-      width: 3px;
-      height: 6px;
-      border-radius: 2px;
-      background: #6ee7b7;
-      animation: proWaveBounce 0.9s ease-in-out infinite;
+    .clean-check-path {
+      stroke-dasharray: 32;
+      stroke-dashoffset: 32;
+      transition: stroke-dashoffset 0.28s cubic-bezier(0.22, 1, 0.36, 1) 0.06s;
     }
 
-    .pro-wave-bar:nth-child(2) {
-      animation-delay: 0.18s;
-      background: #34d399;
+    .auth-sync-stage.is-ready .clean-pct-num {
+      opacity: 0;
+      transform: scale(0.75);
     }
 
-    .pro-wave-bar:nth-child(3) {
-      animation-delay: 0.36s;
-      background: #a7f3d0;
+    .auth-sync-stage.is-ready .clean-check-svg {
+      opacity: 1;
+      transform: scale(1);
     }
 
-    @keyframes proWaveBounce {
-      0%, 100% { height: 5px; opacity: 0.65; }
-      50% { height: 14px; opacity: 1; }
-    }
-
-    .pro-wave-check {
-      display: none;
-      color: #ffffff;
-    }
-
-    .auth-sync-stage.is-ready .pro-wave-icon {
-      background: #059669;
-      align-items: center;
-      padding-bottom: 0;
-      transform: scale(1.05);
-    }
-
-    .auth-sync-stage.is-ready .pro-wave-bar {
-      display: none;
-    }
-
-    .auth-sync-stage.is-ready .pro-wave-check {
-      display: inline-flex;
-    }
-
-    .pro-sync-kicker {
-      font-family: 'Outfit', system-ui, sans-serif;
-      font-size: 0.72rem;
-      font-weight: 800;
-      letter-spacing: 0.06em;
-      text-transform: uppercase;
-      color: #065f46;
-      line-height: 1.2;
-    }
-
-    .pro-sync-pct-pill {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
-      font-variant-numeric: tabular-nums;
-      font-size: 0.9rem;
-      font-weight: 800;
-      color: #064e3b;
-      background: #ffffff;
-      border: 1.5px solid #a7f3d0;
-      padding: 4px 11px;
-      border-radius: 999px;
-      min-width: 58px;
-      text-align: center;
-      box-shadow: 0 2px 6px rgba(5, 150, 105, 0.1);
-      flex-shrink: 0;
-    }
-
-    .auth-sync-stage.is-ready .pro-sync-pct-pill {
-      background: #059669;
-      border-color: #059669;
-      color: #ffffff;
-    }
-
-    /* Badan Konten Progres Real Data */
-    .pro-sync-body {
-      padding: 20px 22px 22px;
-      display: flex;
-      flex-direction: column;
-      gap: 13px;
-    }
-
-    .pro-sync-title-row {
-      display: flex;
-      align-items: flex-start;
-      justify-content: space-between;
-      gap: 10px;
+    .auth-sync-stage.is-ready .clean-check-path {
+      stroke-dashoffset: 0;
     }
 
     .auth-sync-title {
       font-family: 'Outfit', system-ui, sans-serif;
-      font-size: 1.06rem;
-      font-weight: 800;
+      font-size: 1.08rem;
+      font-weight: 700;
       color: #0f172a;
-      line-height: 1.28;
-      margin-bottom: 3px;
+      letter-spacing: -0.015em;
+      line-height: 1.3;
+      margin-bottom: 6px;
     }
 
-    .auth-sync-subtitle {
-      font-size: 0.78rem;
+    .auth-sync-status {
+      font-size: 0.81rem;
+      font-weight: 500;
       color: #64748b;
       line-height: 1.45;
-    }
-
-    .pro-data-chip {
-      display: inline-flex;
-      align-items: center;
-      gap: 5px;
-      padding: 4px 9px;
-      border-radius: 8px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      min-height: 22px;
+      max-width: 320px;
+      margin-bottom: 22px;
       font-variant-numeric: tabular-nums;
-      font-size: 0.71rem;
-      font-weight: 700;
-      color: #047857;
-      white-space: nowrap;
-      flex-shrink: 0;
     }
 
-    /* Rel Progres Berkilau Berkelanjutan */
-    .pro-progress-rail {
+    /* Hairline Progress Track */
+    .clean-line-track {
       width: 100%;
-      height: 9px;
+      max-width: 240px;
+      height: 3px;
+      background: #edf2f0;
       border-radius: 999px;
-      background: #e2e8f0;
       overflow: hidden;
-      position: relative;
+      margin-bottom: 16px;
     }
 
-    .pro-progress-fill {
+    .clean-line-fill {
       height: 100%;
-      width: 8%;
+      width: 0%;
       border-radius: 999px;
-      background: linear-gradient(90deg, #064e3b 0%, #059669 55%, #10b981 100%);
-      position: relative;
-      overflow: hidden;
-      transition: width 0.14s linear;
+      background: linear-gradient(90deg, #065f46 0%, #10b981 100%);
+      transition: width 0.16s linear;
     }
 
-    .pro-progress-fill::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.42) 50%, transparent 100%);
-      transform: translateX(-100%);
-      animation: proBarSheen 1.25s ease-in-out infinite;
-    }
-
-    .auth-sync-stage.is-ready .pro-progress-fill::after {
-      animation: none;
-      opacity: 0;
-    }
-
-    @keyframes proBarSheen {
-      100% { transform: translateX(100%); }
-    }
-
-    .pro-live-line {
-      display: flex;
-      align-items: center;
-      gap: 7px;
-      font-size: 0.76rem;
-      font-weight: 600;
-      color: #334155;
-      min-height: 20px;
-    }
-
-    .pro-live-dot {
-      width: 7px;
-      height: 7px;
-      border-radius: 50%;
-      background: #10b981;
-      flex-shrink: 0;
-      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
-      animation: proLivePulse 1.1s ease-in-out infinite;
-    }
-
-    .auth-sync-stage.is-ready .pro-live-dot {
-      animation: none;
-      background: #059669;
-    }
-
-    @keyframes proLivePulse {
-      0%, 100% { transform: scale(1); opacity: 1; }
-      50% { transform: scale(0.75); opacity: 0.45; }
-    }
-
-    /* Pita 4 Milestone Horizontal Ringkas */
-    .pro-milestones {
-      display: grid;
-      grid-template-columns: repeat(4, minmax(0, 1fr));
-      gap: 6px;
-      padding-top: 11px;
-      border-top: 1px solid #f1f5f9;
-    }
-
-    .pro-ms-item {
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      gap: 5px;
-      padding: 6px 5px;
-      border-radius: 8px;
-      background: #f8fafc;
-      border: 1px solid #e2e8f0;
-      font-size: 0.68rem;
-      font-weight: 700;
-      color: #94a3b8;
-      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
-      white-space: nowrap;
-    }
-
-    .pro-ms-item.is-active {
-      background: #ecfdf5;
-      border-color: #6ee7b7;
-      color: #065f46;
-    }
-
-    .pro-ms-item.is-done {
-      background: #f0fdf4;
-      border-color: #bbf7d0;
-      color: #047857;
-    }
-
-    .pro-ms-dot {
-      width: 14px;
-      height: 14px;
-      border-radius: 50%;
-      background: #e2e8f0;
-      color: #64748b;
+    /* 4 Whisper Step Dots (Apple-style Minimal Pagination) */
+    .clean-step-dots {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      font-size: 0.62rem;
-      font-weight: 800;
-      flex-shrink: 0;
+      gap: 6px;
     }
 
-    .pro-ms-item.is-active .pro-ms-dot {
-      background: #10b981;
-      color: #ffffff;
+    .clean-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 999px;
+      background: #dbe5e0;
+      transition: width 0.24s cubic-bezier(0.22, 1, 0.36, 1), background-color 0.22s ease;
     }
 
-    .pro-ms-item.is-done .pro-ms-dot {
+    .clean-dot.is-active {
+      width: 22px;
       background: #059669;
-      color: #ffffff;
+    }
+
+    .clean-dot.is-done {
+      width: 6px;
+      background: #10b981;
     }
 
     @media (max-width: 480px) {
-      .pro-sync-head {
-        padding: 13px 16px;
+      .auth-card.is-syncing-login {
+        padding: 32px 22px 28px;
       }
 
-      .pro-sync-body {
-        padding: 16px 16px 18px;
+      .clean-ring-wrap,
+      .clean-ring-svg {
+        width: 76px;
+        height: 76px;
       }
 
-      .pro-sync-title-row {
-        flex-direction: column;
-        gap: 6px;
+      .clean-ring-wrap {
+        margin-bottom: 18px;
       }
 
-      .pro-milestones {
-        grid-template-columns: repeat(2, minmax(0, 1fr));
+      .clean-pct-num {
+        font-size: 1.16rem;
       }
 
-      .pro-ms-item {
-        justify-content: flex-start;
-        padding: 6px 8px;
+      .auth-sync-title {
+        font-size: 1rem;
+      }
+
+      .auth-sync-status {
+        font-size: 0.77rem;
+        margin-bottom: 18px;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .pro-wave-bar,
-      .pro-progress-fill::after,
-      .pro-live-dot {
+      .clean-ring-glow,
+      .clean-ring-orbit {
         animation: none;
       }
     }
@@ -5707,64 +5609,36 @@
       </div>
       </div>
 
-      <!-- Animasi Transisi Login Profesional Berbasis Progres Real Data -->
+      <!-- Animasi Transisi Login Ultra-Clean Berbasis Progres Real Data -->
       <div id="authSyncStage" class="auth-sync-stage" aria-live="polite">
-        <div class="pro-sync-head">
-          <div class="pro-sync-brand">
-            <span class="pro-wave-icon" aria-hidden="true">
-              <span class="pro-wave-bar"></span>
-              <span class="pro-wave-bar"></span>
-              <span class="pro-wave-bar"></span>
-              <span class="pro-wave-check">
-                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"
-                  stroke-linejoin="round" style="width: 15px; height: 15px;">
-                  <polyline points="20 6 9 17 4 12" />
-                </svg>
-              </span>
-            </span>
-            <span class="pro-sync-kicker" id="authSyncKicker">Sinkronisasi Portal Petugas</span>
+        <div class="clean-ring-wrap" aria-hidden="true">
+          <span class="clean-ring-glow"></span>
+          <svg class="clean-ring-svg" viewBox="0 0 84 84">
+            <circle class="clean-ring-track" cx="42" cy="42" r="38"></circle>
+            <circle class="clean-ring-orbit" cx="42" cy="42" r="38"></circle>
+            <circle class="clean-ring-arc" id="authSyncRingArc" cx="42" cy="42" r="38"></circle>
+          </svg>
+          <div class="clean-ring-center">
+            <span class="clean-pct-num" id="authSyncPercent">0%</span>
+            <svg class="clean-check-svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6"
+              stroke-linecap="round" stroke-linejoin="round">
+              <polyline class="clean-check-path" points="20 6 9 17 4 12" />
+            </svg>
           </div>
-          <span class="pro-sync-pct-pill" id="authSyncPercent">0%</span>
         </div>
 
-        <div class="pro-sync-body">
-          <div class="pro-sync-title-row">
-            <div>
-              <h3 class="auth-sync-title" id="authSyncTitle">Memverifikasi Akses Petugas</h3>
-              <p class="auth-sync-subtitle" id="authSyncSubtitle">
-                Memuat seluruh aduan, identitas pelapor utuh, dan bukti foto secara real-time.
-              </p>
-            </div>
-            <span class="pro-data-chip" id="authSyncDataChip">Menyambung...</span>
-          </div>
+        <h3 class="auth-sync-title" id="authSyncTitle">Memverifikasi Akses</h3>
+        <p class="auth-sync-status" id="authSyncStatusLabel">Memeriksa PIN petugas...</p>
 
-          <div class="pro-progress-rail">
-            <div class="pro-progress-fill" id="authSyncProgressFill"></div>
-          </div>
+        <div class="clean-line-track">
+          <div class="clean-line-fill" id="authSyncProgressFill"></div>
+        </div>
 
-          <div class="pro-live-line">
-            <span class="pro-live-dot"></span>
-            <span id="authSyncStatusLabel">Memeriksa PIN &amp; otorisasi server DLH...</span>
-          </div>
-
-          <div class="pro-milestones">
-            <div class="pro-ms-item is-active" id="proMs1">
-              <span class="pro-ms-dot" id="proMs1Dot">1</span>
-              <span>PIN</span>
-            </div>
-            <div class="pro-ms-item" id="proMs2">
-              <span class="pro-ms-dot" id="proMs2Dot">2</span>
-              <span>Server</span>
-            </div>
-            <div class="pro-ms-item" id="proMs3">
-              <span class="pro-ms-dot" id="proMs3Dot">3</span>
-              <span>Data &amp; Foto</span>
-            </div>
-            <div class="pro-ms-item" id="proMs4">
-              <span class="pro-ms-dot" id="proMs4Dot">4</span>
-              <span>Dashboard</span>
-            </div>
-          </div>
+        <div class="clean-step-dots" aria-hidden="true">
+          <span class="clean-dot is-active" id="proMs1"></span>
+          <span class="clean-dot" id="proMs2"></span>
+          <span class="clean-dot" id="proMs3"></span>
+          <span class="clean-dot" id="proMs4"></span>
         </div>
       </div>
     </div>
@@ -8013,24 +7887,25 @@
         this._displayedSyncPct = clamped;
         const fillEl = document.getElementById('authSyncProgressFill');
         const pctEl = document.getElementById('authSyncPercent');
+        const arcEl = document.getElementById('authSyncRingArc');
         if (fillEl && fillEl.style) fillEl.style.width = clamped + '%';
         if (pctEl) pctEl.textContent = clamped + '%';
+        if (arcEl && arcEl.style) {
+          const circ = 238.76;
+          arcEl.style.strokeDashoffset = (circ - (clamped / 100) * circ).toFixed(2);
+        }
       }
 
       _setMilestoneStep(activeIdx) {
         for (let idx = 1; idx <= 4; idx++) {
-          const item = document.getElementById('proMs' + idx);
-          const dot = document.getElementById('proMs' + idx + 'Dot');
-          if (!item) continue;
+          const dot = document.getElementById('proMs' + idx);
+          if (!dot) continue;
           if (idx < activeIdx || activeIdx > 4) {
-            item.className = 'pro-ms-item is-done';
-            if (dot) dot.innerHTML = '&#10003;';
+            dot.className = 'clean-dot is-done';
           } else if (idx === activeIdx) {
-            item.className = 'pro-ms-item is-active';
-            if (dot) dot.textContent = String(idx);
+            dot.className = 'clean-dot is-active';
           } else {
-            item.className = 'pro-ms-item';
-            if (dot) dot.textContent = String(idx);
+            dot.className = 'clean-dot';
           }
         }
       }
