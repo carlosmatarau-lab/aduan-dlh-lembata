@@ -1471,7 +1471,7 @@
     }
 
     /* ===================================================================
-       ANIMASI LOGIN PETUGAS SIMPEL, CEPAT & PROFESIONAL (ANTI-BLANK)
+       EXECUTIVE INSTITUTIONAL LOGIN SYNC CARD — REAL-TIME DATA PROGRESS
        =================================================================== */
     .petugas-login-page {
       transition: opacity 0.16s ease;
@@ -1483,24 +1483,24 @@
     }
 
     .auth-card.is-syncing-login {
+      padding: 0;
+      text-align: left;
       border-color: rgba(16, 185, 129, 0.45);
-      box-shadow: 0 22px 52px -12px rgba(0, 0, 0, 0.46), 0 0 28px rgba(16, 185, 129, 0.2);
+      box-shadow: 0 24px 56px -14px rgba(2, 24, 16, 0.55), 0 0 0 1px rgba(16, 185, 129, 0.15);
     }
 
     .auth-sync-stage {
       display: none;
       flex-direction: column;
-      align-items: center;
-      text-align: center;
-      padding: 18px 8px 12px;
-      animation: simpleAuthFadeIn 0.2s ease-out;
+      width: 100%;
+      animation: proSyncCardIn 0.22s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
     .auth-sync-stage.is-active {
       display: flex;
     }
 
-    @keyframes simpleAuthFadeIn {
+    @keyframes proSyncCardIn {
       from {
         opacity: 0;
         transform: translateY(6px);
@@ -1511,144 +1511,318 @@
       }
     }
 
-    .simple-sync-loader {
-      position: relative;
-      width: 62px;
-      height: 62px;
+    /* Strip Header Institusional Atas */
+    .pro-sync-head {
       display: flex;
       align-items: center;
-      justify-content: center;
-      margin-bottom: 16px;
+      justify-content: space-between;
+      gap: 10px;
+      padding: 15px 22px;
+      background: linear-gradient(90deg, #ecfdf5 0%, #f0fdf4 65%, #ffffff 100%);
+      border-bottom: 1px solid #d1fae5;
     }
 
-    .simple-sync-ring {
-      position: absolute;
-      inset: 0;
-      border-radius: 50%;
-      border: 3px solid #d1fae5;
-      border-top-color: #059669;
-      border-right-color: #10b981;
-      animation: simpleRingSpin 0.8s linear infinite;
-      transition: border-color 0.2s ease;
-    }
-
-    .auth-sync-stage.is-ready .simple-sync-ring {
-      border-color: #10b981;
-      animation: none;
-    }
-
-    .simple-sync-core {
-      width: 44px;
-      height: 44px;
-      border-radius: 50%;
-      background: #ecfdf5;
-      color: #065f46;
+    .pro-sync-brand {
       display: flex;
       align-items: center;
-      justify-content: center;
-      transition: background-color 0.2s ease, color 0.2s ease, transform 0.2s ease;
+      gap: 10px;
+      min-width: 0;
     }
 
-    .auth-sync-stage.is-ready .simple-sync-core {
-      background: #059669;
+    /* Equalizer 3-Bar Live Data Wave */
+    .pro-wave-icon {
+      width: 30px;
+      height: 30px;
+      border-radius: 9px;
+      background: #064e3b;
+      display: inline-flex;
+      align-items: flex-end;
+      justify-content: center;
+      gap: 3px;
+      padding-bottom: 8px;
+      flex-shrink: 0;
+      transition: background-color 0.2s ease, transform 0.2s ease;
+    }
+
+    .pro-wave-bar {
+      width: 3px;
+      height: 6px;
+      border-radius: 2px;
+      background: #6ee7b7;
+      animation: proWaveBounce 0.9s ease-in-out infinite;
+    }
+
+    .pro-wave-bar:nth-child(2) {
+      animation-delay: 0.18s;
+      background: #34d399;
+    }
+
+    .pro-wave-bar:nth-child(3) {
+      animation-delay: 0.36s;
+      background: #a7f3d0;
+    }
+
+    @keyframes proWaveBounce {
+      0%, 100% { height: 5px; opacity: 0.65; }
+      50% { height: 14px; opacity: 1; }
+    }
+
+    .pro-wave-check {
+      display: none;
       color: #ffffff;
-      transform: scale(1.06);
     }
 
-    @keyframes simpleRingSpin {
-      to { transform: rotate(360deg); }
+    .auth-sync-stage.is-ready .pro-wave-icon {
+      background: #059669;
+      align-items: center;
+      padding-bottom: 0;
+      transform: scale(1.05);
+    }
+
+    .auth-sync-stage.is-ready .pro-wave-bar {
+      display: none;
+    }
+
+    .auth-sync-stage.is-ready .pro-wave-check {
+      display: inline-flex;
+    }
+
+    .pro-sync-kicker {
+      font-family: 'Outfit', system-ui, sans-serif;
+      font-size: 0.72rem;
+      font-weight: 800;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: #065f46;
+      line-height: 1.2;
+    }
+
+    .pro-sync-pct-pill {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: #064e3b;
+      background: #ffffff;
+      border: 1.5px solid #a7f3d0;
+      padding: 4px 11px;
+      border-radius: 999px;
+      min-width: 58px;
+      text-align: center;
+      box-shadow: 0 2px 6px rgba(5, 150, 105, 0.1);
+      flex-shrink: 0;
+    }
+
+    .auth-sync-stage.is-ready .pro-sync-pct-pill {
+      background: #059669;
+      border-color: #059669;
+      color: #ffffff;
+    }
+
+    /* Badan Konten Progres Real Data */
+    .pro-sync-body {
+      padding: 20px 22px 22px;
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
+    }
+
+    .pro-sync-title-row {
+      display: flex;
+      align-items: flex-start;
+      justify-content: space-between;
+      gap: 10px;
     }
 
     .auth-sync-title {
       font-family: 'Outfit', system-ui, sans-serif;
-      font-size: 1.08rem;
+      font-size: 1.06rem;
       font-weight: 800;
-      color: #064e3b;
+      color: #0f172a;
       line-height: 1.28;
-      margin-bottom: 5px;
+      margin-bottom: 3px;
     }
 
     .auth-sync-subtitle {
-      font-size: 0.81rem;
+      font-size: 0.78rem;
       color: #64748b;
       line-height: 1.45;
-      margin-bottom: 18px;
-      max-width: 320px;
     }
 
-    .simple-progress-track {
-      width: 100%;
-      max-width: 310px;
-      height: 6px;
-      background: #e2e8f0;
-      border-radius: 999px;
-      overflow: hidden;
-      margin-bottom: 10px;
-    }
-
-    .simple-progress-fill {
-      height: 100%;
-      width: 24%;
-      border-radius: 999px;
-      background: linear-gradient(90deg, #064e3b 0%, #059669 60%, #34d399 100%);
-      transition: width 0.26s ease-out;
-    }
-
-    .simple-sync-meta {
+    .pro-data-chip {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
-      font-size: 0.74rem;
+      gap: 5px;
+      padding: 4px 9px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+      font-variant-numeric: tabular-nums;
+      font-size: 0.71rem;
       font-weight: 700;
       color: #047857;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
 
-    .simple-sync-dot {
-      width: 6px;
-      height: 6px;
+    /* Rel Progres Berkilau Berkelanjutan */
+    .pro-progress-rail {
+      width: 100%;
+      height: 9px;
+      border-radius: 999px;
+      background: #e2e8f0;
+      overflow: hidden;
+      position: relative;
+    }
+
+    .pro-progress-fill {
+      height: 100%;
+      width: 8%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #064e3b 0%, #059669 55%, #10b981 100%);
+      position: relative;
+      overflow: hidden;
+      transition: width 0.14s linear;
+    }
+
+    .pro-progress-fill::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255, 255, 255, 0.42) 50%, transparent 100%);
+      transform: translateX(-100%);
+      animation: proBarSheen 1.25s ease-in-out infinite;
+    }
+
+    .auth-sync-stage.is-ready .pro-progress-fill::after {
+      animation: none;
+      opacity: 0;
+    }
+
+    @keyframes proBarSheen {
+      100% { transform: translateX(100%); }
+    }
+
+    .pro-live-line {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 0.76rem;
+      font-weight: 600;
+      color: #334155;
+      min-height: 20px;
+    }
+
+    .pro-live-dot {
+      width: 7px;
+      height: 7px;
       border-radius: 50%;
       background: #10b981;
-      animation: simpleDotBlink 1s ease-in-out infinite;
+      flex-shrink: 0;
+      box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.2);
+      animation: proLivePulse 1.1s ease-in-out infinite;
     }
 
-    .auth-sync-stage.is-ready .simple-sync-dot {
+    .auth-sync-stage.is-ready .pro-live-dot {
       animation: none;
       background: #059669;
     }
 
-    @keyframes simpleDotBlink {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.35; }
+    @keyframes proLivePulse {
+      0%, 100% { transform: scale(1); opacity: 1; }
+      50% { transform: scale(0.75); opacity: 0.45; }
+    }
+
+    /* Pita 4 Milestone Horizontal Ringkas */
+    .pro-milestones {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 6px;
+      padding-top: 11px;
+      border-top: 1px solid #f1f5f9;
+    }
+
+    .pro-ms-item {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 5px;
+      padding: 6px 5px;
+      border-radius: 8px;
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      font-size: 0.68rem;
+      font-weight: 700;
+      color: #94a3b8;
+      transition: background-color 0.2s ease, border-color 0.2s ease, color 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .pro-ms-item.is-active {
+      background: #ecfdf5;
+      border-color: #6ee7b7;
+      color: #065f46;
+    }
+
+    .pro-ms-item.is-done {
+      background: #f0fdf4;
+      border-color: #bbf7d0;
+      color: #047857;
+    }
+
+    .pro-ms-dot {
+      width: 14px;
+      height: 14px;
+      border-radius: 50%;
+      background: #e2e8f0;
+      color: #64748b;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.62rem;
+      font-weight: 800;
+      flex-shrink: 0;
+    }
+
+    .pro-ms-item.is-active .pro-ms-dot {
+      background: #10b981;
+      color: #ffffff;
+    }
+
+    .pro-ms-item.is-done .pro-ms-dot {
+      background: #059669;
+      color: #ffffff;
     }
 
     @media (max-width: 480px) {
-      .auth-sync-stage {
-        padding: 14px 4px 10px;
+      .pro-sync-head {
+        padding: 13px 16px;
       }
 
-      .simple-sync-loader {
-        width: 56px;
-        height: 56px;
-        margin-bottom: 14px;
+      .pro-sync-body {
+        padding: 16px 16px 18px;
       }
 
-      .simple-sync-core {
-        width: 40px;
-        height: 40px;
+      .pro-sync-title-row {
+        flex-direction: column;
+        gap: 6px;
       }
 
-      .auth-sync-title {
-        font-size: 1rem;
+      .pro-milestones {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
       }
 
-      .auth-sync-subtitle {
-        font-size: 0.77rem;
+      .pro-ms-item {
+        justify-content: flex-start;
+        padding: 6px 8px;
       }
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .simple-sync-ring,
-      .simple-sync-dot {
+      .pro-wave-bar,
+      .pro-progress-fill::after,
+      .pro-live-dot {
         animation: none;
       }
     }
@@ -5533,32 +5707,64 @@
       </div>
       </div>
 
-      <!-- Animasi Transisi Login Simpel & Bersih (Menunggu Sinkronisasi Data Utuh) -->
+      <!-- Animasi Transisi Login Profesional Berbasis Progres Real Data -->
       <div id="authSyncStage" class="auth-sync-stage" aria-live="polite">
-        <div class="simple-sync-loader" aria-hidden="true">
-          <span class="simple-sync-ring"></span>
-          <span class="simple-sync-core" id="authSyncCoreIcon">
-            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"
-              stroke-linejoin="round" style="width: 21px; height: 21px;">
-              <path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z" />
-              <polyline points="9 12 11 14 15 10" />
-            </svg>
-          </span>
+        <div class="pro-sync-head">
+          <div class="pro-sync-brand">
+            <span class="pro-wave-icon" aria-hidden="true">
+              <span class="pro-wave-bar"></span>
+              <span class="pro-wave-bar"></span>
+              <span class="pro-wave-bar"></span>
+              <span class="pro-wave-check">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round"
+                  stroke-linejoin="round" style="width: 15px; height: 15px;">
+                  <polyline points="20 6 9 17 4 12" />
+                </svg>
+              </span>
+            </span>
+            <span class="pro-sync-kicker" id="authSyncKicker">Sinkronisasi Portal Petugas</span>
+          </div>
+          <span class="pro-sync-pct-pill" id="authSyncPercent">0%</span>
         </div>
 
-        <h3 class="auth-sync-title" id="authSyncTitle">Memverifikasi Akses Petugas...</h3>
-        <p class="auth-sync-subtitle" id="authSyncSubtitle">
-          Menyinkronkan data aduan, nama pelapor utuh, dan bukti foto terbaru dari server DLH.
-        </p>
+        <div class="pro-sync-body">
+          <div class="pro-sync-title-row">
+            <div>
+              <h3 class="auth-sync-title" id="authSyncTitle">Memverifikasi Akses Petugas</h3>
+              <p class="auth-sync-subtitle" id="authSyncSubtitle">
+                Memuat seluruh aduan, identitas pelapor utuh, dan bukti foto secara real-time.
+              </p>
+            </div>
+            <span class="pro-data-chip" id="authSyncDataChip">Menyambung...</span>
+          </div>
 
-        <div class="simple-progress-track">
-          <div class="simple-progress-fill" id="authSyncProgressFill"></div>
-        </div>
+          <div class="pro-progress-rail">
+            <div class="pro-progress-fill" id="authSyncProgressFill"></div>
+          </div>
 
-        <div class="simple-sync-meta">
-          <span class="simple-sync-dot"></span>
-          <span id="authSyncStatusLabel">Memeriksa kredensial verifikator...</span>
-          <span id="authSyncPercent">25%</span>
+          <div class="pro-live-line">
+            <span class="pro-live-dot"></span>
+            <span id="authSyncStatusLabel">Memeriksa PIN &amp; otorisasi server DLH...</span>
+          </div>
+
+          <div class="pro-milestones">
+            <div class="pro-ms-item is-active" id="proMs1">
+              <span class="pro-ms-dot" id="proMs1Dot">1</span>
+              <span>PIN</span>
+            </div>
+            <div class="pro-ms-item" id="proMs2">
+              <span class="pro-ms-dot" id="proMs2Dot">2</span>
+              <span>Server</span>
+            </div>
+            <div class="pro-ms-item" id="proMs3">
+              <span class="pro-ms-dot" id="proMs3Dot">3</span>
+              <span>Data &amp; Foto</span>
+            </div>
+            <div class="pro-ms-item" id="proMs4">
+              <span class="pro-ms-dot" id="proMs4Dot">4</span>
+              <span>Dashboard</span>
+            </div>
+          </div>
         </div>
       </div>
     </div>
@@ -7437,7 +7643,7 @@
   <script src="https://unpkg.com/leaflet.heat@0.2.0/dist/leaflet-heat.js"></script>
 
   <!-- Scripts: Data Engine & Portal Controller -->
-  <script src="js/data.js?v=20261124_pro_login_sync_02"></script>
+  <script src="js/data.js?v=20261127_real_progress_03"></script>
   <script>
     // Safeguard prototype jika browser masih memuat file js lama dari cache
     if (typeof AduanDataStore !== 'undefined') {
@@ -7802,29 +8008,100 @@
         }
       }
 
-      _setSimpleSyncProgress(pct) {
+      _renderSyncProgressValue(pct) {
         const clamped = Math.max(0, Math.min(100, Math.round(pct)));
-        this._currentSyncPct = clamped;
+        this._displayedSyncPct = clamped;
         const fillEl = document.getElementById('authSyncProgressFill');
         const pctEl = document.getElementById('authSyncPercent');
         if (fillEl && fillEl.style) fillEl.style.width = clamped + '%';
         if (pctEl) pctEl.textContent = clamped + '%';
       }
 
+      _setMilestoneStep(activeIdx) {
+        for (let idx = 1; idx <= 4; idx++) {
+          const item = document.getElementById('proMs' + idx);
+          const dot = document.getElementById('proMs' + idx + 'Dot');
+          if (!item) continue;
+          if (idx < activeIdx || activeIdx > 4) {
+            item.className = 'pro-ms-item is-done';
+            if (dot) dot.innerHTML = '&#10003;';
+          } else if (idx === activeIdx) {
+            item.className = 'pro-ms-item is-active';
+            if (dot) dot.textContent = String(idx);
+          } else {
+            item.className = 'pro-ms-item';
+            if (dot) dot.textContent = String(idx);
+          }
+        }
+      }
+
+      _driveRealProgress(targetPct, opts = {}) {
+        const safeTarget = Math.max(this._targetSyncPct || 0, Math.min(100, targetPct));
+        this._targetSyncPct = safeTarget;
+        if (typeof opts.softCap === 'number') {
+          this._softCapSyncPct = Math.max(safeTarget, Math.min(99, opts.softCap));
+        }
+        if (opts.title) {
+          const t = document.getElementById('authSyncTitle');
+          if (t) t.textContent = opts.title;
+        }
+        if (opts.label) {
+          const l = document.getElementById('authSyncStatusLabel');
+          if (l) l.textContent = opts.label;
+        }
+        if (opts.chip) {
+          const c = document.getElementById('authSyncDataChip');
+          if (c) c.textContent = opts.chip;
+        }
+        if (typeof opts.step === 'number') {
+          this._setMilestoneStep(opts.step);
+        }
+
+        if (safeTarget >= 100) {
+          this._stopLoginSyncTicker();
+          this._renderSyncProgressValue(100);
+          return;
+        }
+
+        if (!this._loginSyncInterval) {
+          this._loginSyncInterval = setInterval(() => {
+            const curr = this._displayedSyncPct || 0;
+            const target = this._targetSyncPct || 0;
+            const cap = this._softCapSyncPct || target;
+
+            if (curr < target) {
+              const step = Math.max(1, Math.ceil((target - curr) * 0.35));
+              this._renderSyncProgressValue(Math.min(target, curr + step));
+            } else if (curr < cap) {
+              // Gerak halus mengikuti fase aktif tanpa pernah melompat jauh melampaui data riil
+              const remaining = cap - curr;
+              const micro = remaining > 6 ? 0.55 : 0.22;
+              this._softFloatPct = Math.max(curr, this._softFloatPct || curr) + micro;
+              const nextInt = Math.min(cap, Math.floor(this._softFloatPct));
+              if (nextInt > curr) this._renderSyncProgressValue(nextInt);
+            }
+          }, 90);
+        }
+      }
+
       setAuthSyncStage(mode = 'reset', extra = {}) {
         const card = document.getElementById('authCard');
         const formPanel = document.getElementById('authFormPanel');
         const syncStage = document.getElementById('authSyncStage');
-        const titleEl = document.getElementById('authSyncTitle');
+        const kickerEl = document.getElementById('authSyncKicker');
         const subEl = document.getElementById('authSyncSubtitle');
-        const labelEl = document.getElementById('authSyncStatusLabel');
 
         if (mode === 'reset') {
           this._stopLoginSyncTicker();
+          this._displayedSyncPct = 0;
+          this._targetSyncPct = 0;
+          this._softCapSyncPct = 0;
+          this._softFloatPct = 0;
           if (card) card.classList.remove('is-syncing-login', 'unlocking', 'scanning');
           if (formPanel) formPanel.style.display = '';
           if (syncStage) syncStage.classList.remove('is-active', 'is-ready');
-          this._setSimpleSyncProgress(20);
+          this._renderSyncProgressValue(0);
+          this._setMilestoneStep(1);
           return;
         }
 
@@ -7836,42 +8113,67 @@
         if (syncStage) syncStage.classList.add('is-active');
 
         if (mode === 'verifying') {
-          this._stopLoginSyncTicker();
+          this._displayedSyncPct = 6;
+          this._targetSyncPct = 6;
+          this._softFloatPct = 6;
           if (syncStage) syncStage.classList.remove('is-ready');
-          if (titleEl) titleEl.textContent = 'Memverifikasi Akses Petugas...';
-          if (subEl) subEl.textContent = 'Memeriksa PIN resmi & membuka jalur data terenkripsi DLH Lembata.';
-          if (labelEl) labelEl.textContent = 'Validasi kredensial...';
-          this._setSimpleSyncProgress(26);
+          if (kickerEl) kickerEl.textContent = 'Otorisasi Portal Petugas';
+          if (subEl) subEl.textContent = 'Memeriksa kredensial resmi sebelum mengambil seluruh data aduan dari server.';
+          this._renderSyncProgressValue(6);
+          this._driveRealProgress(12, {
+            softCap: 23,
+            step: 1,
+            title: 'Memverifikasi Kredensial Petugas',
+            label: 'Validasi PIN resmi ke server DLH Lembata...',
+            chip: 'Otorisasi PIN'
+          });
         } else if (mode === 'syncing') {
-          this._stopLoginSyncTicker();
           if (syncStage) syncStage.classList.remove('is-ready');
-          if (titleEl) titleEl.textContent = 'Menyinkronkan Data Aduan...';
-          if (subEl) subEl.textContent = 'Memuat nama pelapor utuh, bukti foto, dan status terbaru dari server.';
-          if (labelEl) labelEl.textContent = 'Mengambil data terbaru...';
-          this._setSimpleSyncProgress(46);
-
-          this._loginSyncInterval = setInterval(() => {
-            const curr = this._currentSyncPct || 46;
-            if (curr < 88) {
-              const step = curr < 68 ? 3 : 1;
-              this._setSimpleSyncProgress(Math.min(88, curr + step));
-            }
-          }, 180);
+          if (kickerEl) kickerEl.textContent = 'Sinkronisasi Data Real-Time';
+          if (subEl) subEl.textContent = 'Mengunduh tiket aduan, nama pelapor utuh, nomor kontak, dan bukti foto.';
+          this._driveRealProgress(28, {
+            softCap: 43,
+            step: 2,
+            title: 'Menyinkronkan Database Aduan',
+            label: 'Menghubungkan ke Google Spreadsheet DLH...',
+            chip: 'Token Aktif'
+          });
+        } else if (mode === 'data-progress') {
+          const p = Number(extra.pct || 45);
+          const phase = extra.phase || '';
+          const step = (phase === 'connecting' || phase === 'headers') ? 2 : 3;
+          const chip = extra.sizeText
+            ? ('Unduh ' + extra.sizeText)
+            : (typeof extra.count === 'number' ? (extra.count + ' Aduan') : 'Sinkronisasi...');
+          const softCap = phase === 'connecting' ? 43 : (phase === 'headers' ? 52 : Math.min(93, p + 3));
+          this._driveRealProgress(p, {
+            softCap,
+            step,
+            title: step === 3 ? 'Memuat Data Pelapor & Bukti Foto' : 'Menghubungkan Server Database',
+            label: extra.label || 'Mengunduh data aduan terbaru...',
+            chip
+          });
         } else if (mode === 'preparing') {
-          this._stopLoginSyncTicker();
           const totalRecords = typeof extra.count === 'number' ? extra.count : 0;
-          if (titleEl) titleEl.textContent = 'Menyiapkan Dashboard...';
-          if (labelEl) labelEl.textContent = totalRecords > 0
-            ? (totalRecords + ' aduan & bukti foto siap dimuat')
-            : 'Menyiapkan tampilan dashboard...';
-          this._setSimpleSyncProgress(94);
+          const p = Number(extra.pct || 95);
+          this._driveRealProgress(p, {
+            softCap: 99,
+            step: 4,
+            title: 'Menyiapkan Dashboard Petugas',
+            label: extra.label || (totalRecords > 0 ? ('Merender ' + totalRecords + ' aduan dengan identitas utuh...') : 'Menyusun tabel & peta spasial...'),
+            chip: totalRecords > 0 ? (totalRecords + ' Tiket Utuh') : 'Menyusun UI'
+          });
         } else if (mode === 'ready') {
-          this._stopLoginSyncTicker();
+          const totalRecords = typeof extra.count === 'number' ? extra.count : 0;
           if (syncStage) syncStage.classList.add('is-ready');
-          if (titleEl) titleEl.textContent = 'Dashboard Siap Dibuka';
-          if (subEl) subEl.textContent = 'Seluruh data aduan, identitas pelapor, dan bukti foto telah tersinkron.';
-          if (labelEl) labelEl.textContent = 'Sinkronisasi tuntas';
-          this._setSimpleSyncProgress(100);
+          if (kickerEl) kickerEl.textContent = 'Sinkronisasi Selesai';
+          if (subEl) subEl.textContent = 'Seluruh nama pelapor, kontak, dan bukti foto tampil utuh.';
+          this._driveRealProgress(100, {
+            step: 5,
+            title: 'Dashboard Petugas Siap',
+            label: totalRecords > 0 ? (totalRecords + ' aduan tersinkron penuh — membuka halaman...') : 'Membuka halaman petugas...',
+            chip: '100% Utuh'
+          });
         }
       }
 
@@ -8016,16 +8318,23 @@
             localStorage.removeItem('dlh_petugas_remember');
           } catch (e) { }
 
-          // Tampilkan SPBE Command Console interaktif sambil menunggu SELURUH data sinkron & nama pelapor terbuka utuh
+          // Jalankan animasi progres real-time yang digerakkan langsung oleh respons server, byte unduhan, dan jumlah aduan aktual
           this.setAuthSyncStage('syncing');
 
           let pinSyncOk = false;
           const isBrowserOnline = (typeof navigator === 'undefined' || navigator.onLine !== false);
           if (window.aduanStore && typeof window.aduanStore.syncFromGAS === 'function' && window.aduanStore.hasGasConfigured() && isBrowserOnline) {
+            const syncProgressOpts = {
+              onProgress: (info) => {
+                if (!info) return;
+                this.setAuthSyncStage('data-progress', info);
+              }
+            };
+
             const runAuthenticatedSync = async (timeoutMs) => {
               try {
                 return await Promise.race([
-                  window.aduanStore.syncFromGAS(true),
+                  window.aduanStore.syncFromGAS(true, syncProgressOpts),
                   new Promise((resolve) => setTimeout(() => resolve({ success: false, timeout: true }), timeoutMs))
                 ]);
               } catch (err) {
@@ -8033,15 +8342,17 @@
               }
             };
 
-            // Percobaan 1: Tunggu penuh hingga server GAS selesai mengirim data pelapor utuh (mendukung cold-start GAS hingga 28 detik)
+            // Percobaan 1: Tunggu penuh hingga server GAS selesai mengirim data pelapor utuh & foto bukti
             let pinSyncRes = await runAuthenticatedSync(28000);
             pinSyncOk = Boolean(pinSyncRes && pinSyncRes.success);
 
-            // Percobaan 2 otomatis: Jika percobaan 1 gagal/timeout ATAU masih terdeteksi nama pelapor tersamarkan (***),
-            // ulangi sinkronisasi bertoken hingga seluruh nama pelapor terbuka utuh sebelum memuat dashboard
+            // Percobaan 2 otomatis jika percobaan 1 gagal/timeout ATAU masih ada nama pelapor tersamarkan (***)
             if (!pinSyncOk || this.hasMaskedReporterData()) {
-              const lbl = document.getElementById('authSyncStatusLabel');
-              if (lbl) lbl.textContent = 'Memastikan seluruh identitas pelapor terbuka utuh dari server...';
+              this.setAuthSyncStage('data-progress', {
+                phase: 'connecting',
+                pct: 52,
+                label: 'Memverifikasi ulang identitas pelapor utuh dari server...'
+              });
               pinSyncRes = await runAuthenticatedSync(25000);
               pinSyncOk = Boolean(pinSyncRes && pinSyncRes.success);
             }
@@ -8051,19 +8362,20 @@
             ? window.aduanStore.getAll().length
             : 0;
 
-          this.setAuthSyncStage('preparing', { count: syncedTotal });
+          this.setAuthSyncStage('preparing', { count: syncedTotal, pct: 95, label: 'Menyusun statistik & KPI...' });
 
           if (pinSyncOk || (window.aduanStore && !window.aduanStore.hasGasConfigured() && window.aduanStore.hasReadyStats())) {
             this.syncVerifiedCacheAndBroadcast('petugas-login', 'STATS_UPDATED', null, false);
           }
 
-          // Render KPI, tabel (nama & kontak utuh), dan peta terlebih dahulu sebelum membuka halaman dashboard
+          // Render KPI, tabel (nama & kontak utuh), dan peta dengan progres nyata hingga 100%
           this.updateKPIs();
+          this.setAuthSyncStage('preparing', { count: syncedTotal, pct: 98, label: syncedTotal > 0 ? ('Menampilkan ' + syncedTotal + ' aduan dengan nama & foto utuh...') : 'Menyiapkan tabel aduan...' });
           this.renderTable();
           this.renderMapLayers();
 
           this.setAuthSyncStage('ready', { count: syncedTotal });
-          await new Promise((resolve) => setTimeout(resolve, 120));
+          await new Promise((resolve) => setTimeout(resolve, 110));
 
           if (loginPage) loginPage.classList.add('is-fading-out');
           await new Promise((resolve) => setTimeout(resolve, 140));

@@ -2490,10 +2490,16 @@ class AduanDataStore {
     return this.syncFromGAS(silent);
   }
 
-  async syncFromGAS(silent = false) {
+  async syncFromGAS(silent = false, options = null) {
     if (!this.hasGasConfigured()) {
       return { success: false, reason: 'URL Web App Google Apps Script belum disetel.' };
     }
+
+    const onProgress = (options && typeof options.onProgress === 'function') ? options.onProgress : null;
+    const emitProgress = (payload) => {
+      if (!onProgress) return;
+      try { onProgress(payload); } catch (e) { }
+    };
 
     const callerAuthToken = this.getAuthToken();
 
@@ -2597,14 +2603,78 @@ class AduanDataStore {
         if (authToken) {
           endpoint += `&token=${encodeURIComponent(authToken)}`;
         }
+        emitProgress({ phase: 'connecting', pct: 30, label: 'Menghubungkan ke server database DLH...' });
         const response = await fetch(endpoint, { method: 'GET', mode: 'cors', cache: 'no-store' });
         if (!response.ok) throw new Error(`HTTP Error ${response.status}`);
-        const json = await response.json();
+        emitProgress({ phase: 'headers', pct: 44, label: 'Server merespons, mengunduh data aduan...' });
+
+        // Baca respons secara streaming agar persentase & ukuran unduhan (KB) mengikuti kondisi real data
+        let json = null;
+        if (onProgress && response.body && typeof response.body.getReader === 'function' && typeof TextDecoder !== 'undefined') {
+          try {
+            const reader = response.body.getReader();
+            const decoder = new TextDecoder('utf-8');
+            const contentLengthHeader = response.headers && typeof response.headers.get === 'function'
+              ? parseInt(response.headers.get('content-length') || '0', 10)
+              : 0;
+            let expectedBytes = contentLengthHeader > 0 ? contentLengthHeader : 0;
+            if (!expectedBytes) {
+              try {
+                const cachedBytes = parseInt(localStorage.getItem('dlh_last_sync_bytes') || '0', 10);
+                expectedBytes = cachedBytes > 1000 ? cachedBytes : 180000;
+              } catch (e) {
+                expectedBytes = 180000;
+              }
+            }
+
+            let receivedBytes = 0;
+            let rawText = '';
+            while (true) {
+              const { done, value } = await reader.read();
+              if (done) break;
+              if (value) {
+                receivedBytes += value.byteLength || value.length || 0;
+                rawText += decoder.decode(value, { stream: true });
+                const ratio = contentLengthHeader > 0
+                  ? Math.min(1, receivedBytes / contentLengthHeader)
+                  : (1 - Math.exp(-receivedBytes / Math.max(expectedBytes * 0.55, 40000)));
+                const pct = Math.min(84, Math.max(45, Math.round(44 + ratio * 40)));
+                const kb = Math.max(1, Math.round(receivedBytes / 1024));
+                const sizeText = kb >= 1024 ? `${(kb / 1024).toFixed(1)} MB` : `${kb} KB`;
+                emitProgress({
+                  phase: 'downloading',
+                  pct,
+                  receivedBytes,
+                  sizeText,
+                  label: `Mengunduh paket data aduan (${sizeText})...`
+                });
+              }
+            }
+            rawText += decoder.decode();
+            if (receivedBytes > 1000) {
+              try { localStorage.setItem('dlh_last_sync_bytes', String(receivedBytes)); } catch (e) { }
+            }
+            emitProgress({ phase: 'parsing', pct: 86, receivedBytes, label: 'Memverifikasi struktur data & lampiran foto...' });
+            json = JSON.parse(rawText);
+          } catch (streamErr) {
+            if (json === null) {
+              json = await response.json();
+            }
+          }
+        } else {
+          json = await response.json();
+        }
 
         if (json && json.success && Array.isArray(json.data)) {
           if (json.data.length > 0) {
             // Sinkronkan data dari Google Apps Script sebagai Single Source of Truth
             const validItems = json.data.filter(item => !this.isDeleted(item.id));
+            emitProgress({
+              phase: 'mapping',
+              pct: 89,
+              count: validItems.length,
+              label: `Memproses ${validItems.length} data aduan & identitas pelapor...`
+            });
             const serverIdSet = new Set(validItems.map(item => String(item.id).trim().toUpperCase()));
 
             const mapFn = typeof this.mapRemoteRecord === 'function'
@@ -2652,6 +2722,12 @@ class AduanDataStore {
             this._lastFullGetAllCompletedAt = Date.now();
             this.remoteStats = null;
             this.save('gas_all', { serverConfirmed: true });
+            emitProgress({
+              phase: 'saved',
+              pct: 93,
+              count: this.aduanList.length,
+              label: `${this.aduanList.length} aduan tersinkron — menyusun tampilan...`
+            });
 
             this.lastSyncTime = new Date();
             try {
