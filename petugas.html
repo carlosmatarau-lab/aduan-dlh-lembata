@@ -2681,38 +2681,148 @@
         border-radius: 10px !important;
       }
 
-      /* KPI Summary Cards (Grid 2 Kolom Seimbang) */
+      /* KPI Summary Cards Mobile: 1 Hero Ringkas (Total Aduan) + Grid 2x2 Status Simetris & Profesional */
       .kpi-grid {
-        grid-template-columns: repeat(2, 1fr) !important;
-        gap: 8px !important;
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+        gap: 9px !important;
         margin-bottom: 14px !important;
       }
 
-      .kpi-card-tidak-dapat {
-        grid-column: 1 / -1;
-      }
-
       .kpi-card {
-        padding: 9px 11px !important;
-        gap: 8px !important;
-        border-radius: 12px !important;
+        background: #ffffff;
+        border: 1px solid #e2e8f0;
+        border-radius: 14px !important;
+        box-shadow: 0 2px 6px rgba(15, 23, 42, 0.04);
+        position: relative;
+        overflow: hidden;
+        height: 100%;
       }
 
+      /* Kartu Utama: Total Aduan membentang rapi di baris atas (1 baris proporsional) */
+      .kpi-card-total {
+        grid-column: 1 / -1 !important;
+        display: flex !important;
+        align-items: center !important;
+        gap: 11px !important;
+        padding: 11px 14px !important;
+        min-height: 54px !important;
+        background: linear-gradient(135deg, #ffffff 0%, #f4fbf7 100%);
+      }
+
+      .kpi-card-total .kpi-info {
+        display: flex !important;
+        flex-direction: row-reverse !important;
+        align-items: center !important;
+        justify-content: space-between !important;
+        gap: 10px !important;
+        min-width: 0;
+      }
+
+      .kpi-card-total .kpi-title {
+        font-size: 0.82rem !important;
+        font-weight: 800 !important;
+        color: #064e3b !important;
+        letter-spacing: 0.01em !important;
+      }
+
+      .kpi-card-total .kpi-val {
+        font-size: 1.48rem !important;
+        font-weight: 800 !important;
+        color: #064e3b !important;
+        font-variant-numeric: tabular-nums;
+        margin: 0 !important;
+        line-height: 1 !important;
+      }
+
+      /* 4 Kartu Status: Grid 2x2 Sejajar — Ikon & Angka di baris atas, Label penuh di baris bawah */
+      .kpi-card-tidak-dapat {
+        grid-column: auto !important;
+      }
+
+      .kpi-card:not(.kpi-card-total) {
+        display: grid !important;
+        grid-template-columns: auto 1fr !important;
+        grid-template-rows: auto 1fr !important;
+        align-items: center !important;
+        align-content: space-between !important;
+        column-gap: 8px !important;
+        row-gap: 8px !important;
+        padding: 11px 12px 10px !important;
+        min-height: 82px !important;
+      }
+
+      .kpi-card:not(.kpi-card-total) .kpi-info {
+        display: contents !important;
+      }
+
+      .kpi-card:not(.kpi-card-total) .kpi-icon-wrap {
+        grid-column: 1;
+        grid-row: 1;
+      }
+
+      .kpi-card:not(.kpi-card-total) .kpi-val {
+        grid-column: 2;
+        grid-row: 1;
+        text-align: right;
+        font-size: 1.32rem !important;
+        font-weight: 800 !important;
+        color: #0f172a;
+        font-variant-numeric: tabular-nums;
+        margin: 0 !important;
+        line-height: 1 !important;
+      }
+
+      .kpi-card:not(.kpi-card-total) .kpi-title {
+        grid-column: 1 / -1;
+        grid-row: 2;
+        align-self: end;
+        font-size: 0.72rem !important;
+        font-weight: 700 !important;
+        color: #475569 !important;
+        line-height: 1.28 !important;
+        letter-spacing: 0.01em !important;
+      }
+
+      /* Aksen garis tipis atas per status agar visual lebih terstruktur & profesional */
+      .kpi-card-baru::before,
+      .kpi-card-proses::before,
+      .kpi-card-selesai::before,
+      .kpi-card-tidak-dapat::before {
+        content: '';
+        position: absolute;
+        top: 0;
+        left: 0;
+        right: 0;
+        height: 2.5px;
+      }
+      .kpi-card-baru::before { background: #f59e0b; }
+      .kpi-card-proses::before { background: #2563eb; }
+      .kpi-card-selesai::before { background: #059669; }
+      .kpi-card-tidak-dapat::before { background: #64748b; }
+
+      /* Ukuran ikon SVG presisi dengan ruang napas lega di dalam kotak */
       .kpi-icon-wrap {
         width: 32px !important;
         height: 32px !important;
-        font-size: 1.1rem !important;
-        border-radius: 8px !important;
+        border-radius: 9px !important;
+        padding: 0 !important;
       }
 
-      .kpi-val {
-        font-size: 1.25rem !important;
-        margin-bottom: 1px !important;
+      .kpi-icon-wrap svg {
+        width: 17px !important;
+        height: 17px !important;
+        stroke-width: 2 !important;
+        display: block;
       }
 
-      .kpi-title {
-        font-size: 0.68rem !important;
-        line-height: 1.2 !important;
+      .kpi-card-total .kpi-icon-wrap {
+        width: 34px !important;
+        height: 34px !important;
+      }
+
+      .kpi-card-total .kpi-icon-wrap svg {
+        width: 18px !important;
+        height: 18px !important;
       }
 
       /* Card Peta Spasial & Heatmap */
@@ -3126,20 +3236,21 @@
 
       /* KPI: kartu tap-friendly, proporsional */
       .kpi-grid {
-        gap: 8px !important;
+        gap: 9px !important;
       }
 
       .kpi-card {
-        min-height: 56px !important;
         -webkit-tap-highlight-color: transparent;
       }
 
       .kpi-card:active {
-        transform: scale(0.97) !important;
+        transform: scale(0.98) !important;
       }
 
       .kpi-card.active-kpi {
-        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.18) !important;
+        border: 1.8px solid #059669 !important;
+        background: #ecfdf5 !important;
+        box-shadow: 0 0 0 3px rgba(16, 185, 129, 0.15) !important;
         transform: none !important;
       }
 
@@ -3222,12 +3333,20 @@
         font-size: 0.7rem !important;
       }
 
-      .kpi-val {
-        font-size: 1.15rem !important;
+      .kpi-card-total .kpi-val {
+        font-size: 1.38rem !important;
       }
 
-      .kpi-title {
-        font-size: 0.65rem !important;
+      .kpi-card-total .kpi-title {
+        font-size: 0.78rem !important;
+      }
+
+      .kpi-card:not(.kpi-card-total) .kpi-val {
+        font-size: 1.24rem !important;
+      }
+
+      .kpi-card:not(.kpi-card-total) .kpi-title {
+        font-size: 0.69rem !important;
       }
 
       .modal-footer {
